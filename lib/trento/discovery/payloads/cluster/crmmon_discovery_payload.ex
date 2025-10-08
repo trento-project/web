@@ -27,7 +27,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     def changeset(node_history, attrs) do
       node_history
       |> cast(attrs, [])
-      |> cast_embed(:nodes, with: &nodes_changeset/2, required: true)
+      |> cast_embed(:nodes, with: &nodes_changeset/2)
       |> validate_required_fields(@required_fields)
     end
 
@@ -282,10 +282,16 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     |> update_in(["clones", Access.all(), "resources"], &ListHelper.to_list/1)
     |> Map.update("resources", [], &ListHelper.to_list/1)
     |> maybe_node_attributes_to_list()
+    |> maybe_node_history_to_list()
   end
 
   defp maybe_node_attributes_to_list(%{"node_attributes" => _} = attrs),
     do: update_in(attrs, ["node_attributes", "nodes"], &ListHelper.to_list/1)
 
   defp maybe_node_attributes_to_list(attrs), do: attrs
+
+  defp maybe_node_history_to_list(%{"node_history" => _} = attrs),
+    do: update_in(attrs, ["node_history", "nodes"], &ListHelper.to_list/1)
+
+  defp maybe_node_history_to_list(attrs), do: attrs
 end
