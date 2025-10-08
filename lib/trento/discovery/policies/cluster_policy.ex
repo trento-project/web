@@ -926,6 +926,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_resource_status(%{orphaned: true}), do: "Orphaned"
   defp parse_resource_status(_), do: ""
 
+  defp parse_fail_count(_node_name, _resource_id, %{
+         node_history: %{
+           nodes: []
+         }
+       }),
+       do: 0
+
   defp parse_fail_count(node_name, resource_id, %{
          node_history: %{
            nodes: nodes
