@@ -50,7 +50,6 @@ jobs:
           echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
 
-
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
     needs: [setup-matrix-env]
