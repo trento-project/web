@@ -354,6 +354,7 @@ export const WithRunningOperation = {
 export const WithDisabledOperation = {
   args: {
     ...Default.args,
+    hostname: 'my-host.example.com',
     saptuneStatus: {
       package_version: '3.0.0',
       enabled_solution: 'HANA',
@@ -365,5 +366,18 @@ export const WithForbiddenOperation = {
   args: {
     ...Default.args,
     userAbilities: [],
+  },
+};
+
+export const WithRebootEnabled = {
+  args: {
+    ...Default.args,
+    operationsEnabled: true,
+    sapInstances: sapInstances.map((instance) => ({
+      ...instance,
+      health: 'unknown',
+    })),
+    cluster: undefined,
+    heartbeat: 'passing',
   },
 };
