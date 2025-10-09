@@ -252,8 +252,11 @@ defmodule TrentoWeb.V1.ClusterController do
   def get_operation_cluster(%{
         assigns: %{operation: :cluster_maintenance_change},
         params: %{id: id}
-      }),
-      do: Clusters.get_cluster_by_id(id)
+      }) do
+    id
+    |> Clusters.get_cluster_by_id()
+    |> Repo.preload(:hosts)
+  end
 
   def get_operation_cluster(%{
         assigns: %{operation: _},
