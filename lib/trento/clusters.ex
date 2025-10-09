@@ -473,6 +473,4 @@ defmodule Trento.Clusters do
       status == ClusterHostStatus.online()
     end)
   end
-
-  defp maybe_filter_online_hosts(hosts, _), do: hosts
 end
