@@ -175,9 +175,9 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
           resp_body: resp_body
         }
       ) do
-    jti = resp_body |> Jason.decode!() |> Map.get("jti")
+    id = resp_body |> Jason.decode!() |> Map.get("id")
 
-    Map.put(request_body, :jti, jti)
+    Map.put(request_body, :id, id)
   end
 
   def get_activity_metadata(
@@ -198,7 +198,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         %Plug.Conn{
           params: %{
             id: user_id,
-            jti: jti
+            token_id: token_id
           },
           assigns: %{
             deleted_token: %{
@@ -207,7 +207,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
           }
         }
       ) do
-    %{user_id: user_id, jti: jti, name: name}
+    %{user_id: user_id, id: token_id, name: name}
   end
 
   def get_activity_metadata(

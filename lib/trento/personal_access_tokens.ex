@@ -24,7 +24,7 @@ defmodule Trento.PersonalAccessTokens do
           {:ok, PersonalAccessToken.t()} | {:error, :not_found | any()}
   def revoke_personal_access_token(%User{id: user_id}, token_id) do
     PersonalAccessToken
-    |> where([pat], pat.jti == ^token_id and pat.user_id == ^user_id)
+    |> where([pat], pat.id == ^token_id and pat.user_id == ^user_id)
     |> Repo.one()
     |> case do
       nil -> {:error, :not_found}
@@ -32,19 +32,18 @@ defmodule Trento.PersonalAccessTokens do
     end
   end
 
-  @spec valid?(bitstring(), non_neg_integer()) :: boolean()
-  def valid?(jti, user_id) do
-    jti
-    |> load_user_pat(user_id)
+  @spec valid?(PersonalAccessToken.t()) :: boolean()
+  def valid?(%PersonalAccessToken{} = pat) do
+    pat
     |> Repo.preload(:user)
     |> valid_pat?()
   end
 
-  @spec validate_and_introspect(bitstring(), non_neg_integer()) ::
+  @spec validate_and_introspect(bitstring()) ::
           {:ok, PersonalAccessToken.t()} | {:error, :invalid_token}
-  def validate_and_introspect(jti, user_id) do
-    jti
-    |> load_user_pat(user_id)
+  def validate_and_introspect(token) do
+    token
+    |> load_pat()
     |> Repo.preload(user: [:abilities])
     |> then(
       &case valid_pat?(&1) do
@@ -54,10 +53,21 @@ defmodule Trento.PersonalAccessTokens do
     )
   end
 
-  defp load_user_pat(jti, user_id),
-    do: Repo.get_by(PersonalAccessToken, jti: jti, user_id: user_id)
+  def load_pat(token) do
+    Repo.get_by(PersonalAccessToken,
+      hashed_token: PersonalAccessToken.hash_token(token)
+    )
+  end
+
+  # defp load_user_pat(id, user_id),
+  #   do: Repo.get_by(PersonalAccessToken, id: id, user_id: user_id)
 
   defp valid_pat?(nil), do: false
+
+  defp valid_pat?(%PersonalAccessToken{
+         user: nil
+       }),
+       do: false
 
   defp valid_pat?(%PersonalAccessToken{
          user: %User{
@@ -75,5 +85,9 @@ defmodule Trento.PersonalAccessTokens do
        when not is_nil(locked_at),
        do: false
 
-  defp valid_pat?(%PersonalAccessToken{}), do: true
+  defp valid_pat?(%PersonalAccessToken{
+         expires_at: expires_at
+       }) do
+    expires_at == nil or DateTime.compare(expires_at, DateTime.utc_now()) == :gt
+  end
 end
