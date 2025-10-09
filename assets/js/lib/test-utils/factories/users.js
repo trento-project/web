@@ -62,7 +62,7 @@ export const createUserRequestFactory = Factory.define(() => {
 });
 
 export const personalAccessTokenFactory = Factory.define(() => ({
-  jti: faker.string.uuid(),
+  id: faker.string.uuid(),
   name: faker.internet.displayName(),
   expires_at: formatISO(faker.date.future()),
   created_at: formatISO(faker.date.past()),

@@ -194,7 +194,7 @@ defmodule TrentoWeb.Router do
       resources "/users", UsersController, except: [:new, :edit, :update]
       patch "/users/:id", UsersController, :patch
       put "/users/:id", UsersController, :put
-      delete "/users/:id/tokens/:jti", UsersController, :revoke_personal_access_token
+      delete "/users/:id/tokens/:token_id", UsersController, :revoke_personal_access_token
 
       scope "/profile" do
         get "/", ProfileController, :show
@@ -205,7 +205,7 @@ defmodule TrentoWeb.Router do
 
         scope "/tokens" do
           post "/", PersonalAccessTokensController, :create_personal_access_token
-          delete "/:jti", PersonalAccessTokensController, :revoke_personal_access_token
+          delete "/:id", PersonalAccessTokensController, :revoke_personal_access_token
         end
       end
 
