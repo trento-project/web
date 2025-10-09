@@ -5,6 +5,8 @@ defmodule Trento.Operations.ClusterPolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   alias Trento.Clusters
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -44,7 +46,19 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
-  def authorize_operation(:cluster_maintenance_change, _, _), do: :ok
+  def authorize_operation(
+        :cluster_maintenance_change,
+        %ClusterReadModel{name: name, hosts: hosts},
+        _
+      ) do
+    if Enum.any?(hosts, fn %{cluster_host_status: status} ->
+         status == ClusterHostStatus.online()
+       end) do
+      :ok
+    else
+      {:error, ["Cluster #{name} does not have any online node"]}
+    end
+  end
 
   def authorize_operation(:cluster_host_start, _, _), do: :ok
   def authorize_operation(:cluster_host_stop, _, _), do: :ok

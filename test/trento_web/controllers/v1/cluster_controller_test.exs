@@ -195,6 +195,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
     test "should respond with 500 on messaging error", %{conn: conn} do
       %{id: cluster_id} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id)
 
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -228,6 +229,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
            api_spec: api_spec
          } do
       %{id: cluster_id} = insert(:cluster)
+      %{id: host_id} = insert(:host, cluster_id: cluster_id)
 
       %{id: user_id} = insert(:user)
 
@@ -242,14 +244,30 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         end
       )
 
-      conn
-      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{
-        "maintenance" => true
-      })
+      posted_conn =
+        conn
+        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{
+          "maintenance" => true
+        })
+
+      posted_conn
       |> json_response(:accepted)
       |> assert_schema("OperationAcceptedV1", api_spec)
+
+      assert %{
+               assigns: %{
+                 cluster: %{
+                   id: ^cluster_id,
+                   hosts: [
+                     %{
+                       id: ^host_id
+                     }
+                   ]
+                 }
+               }
+             } = posted_conn
     end
   end
 

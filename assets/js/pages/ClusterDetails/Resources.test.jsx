@@ -131,7 +131,8 @@ describe('Resources', () => {
               clusterID,
               null,
               noop,
-              noop
+              noop,
+              true
             )}
           />
         );
@@ -161,7 +162,39 @@ describe('Resources', () => {
             clusterID,
             { group_id: '123', operation: CLUSTER_MAINTENANCE_CHANGE },
             noop,
-            noop
+            noop,
+            true
+          )}
+        />
+      );
+
+      const operationButtons = screen.getAllByRole('button');
+
+      await user.click(operationButtons[0]);
+
+      screen
+        .getAllByRole('menuitem')
+        .forEach((item) => expect(item).toBeDisabled());
+    });
+
+    it('should disable operations if none of the hosts are online', async () => {
+      const user = userEvent.setup();
+      const clusterID = faker.string.uuid();
+      const resources = clusterResourceFactory.buildList(5, {
+        parent: null,
+      });
+
+      render(
+        <Resources
+          resources={resources}
+          hosts={[]}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          getResourceOperations={getResourceOperations(
+            clusterID,
+            null,
+            noop,
+            noop,
+            false
           )}
         />
       );
@@ -205,7 +238,8 @@ describe('Resources', () => {
               clusterID,
               runningOperation(clusterID, resources[0]),
               noop,
-              noop
+              noop,
+              true
             )}
           />
         );
@@ -261,7 +295,8 @@ describe('Resources', () => {
               clusterID,
               null,
               noop,
-              noop
+              noop,
+              true
             )}
           />
         );

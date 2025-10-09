@@ -55,7 +55,8 @@ export const getClusterOperations = (
   runningOperation,
   setMaintenanceOperationParams,
   setOperationModelOpen,
-  details
+  details,
+  someHostOnline
 ) => [
   {
     value: 'Cluster Maintenance',
@@ -65,7 +66,7 @@ export const getClusterOperations = (
       CLUSTER_MAINTENANCE_CHANGE,
       matchesClusterMaintenance
     ),
-    disabled: !!runningOperation,
+    disabled: !!runningOperation || !someHostOnline,
     permitted: ['maintenance_change:cluster'],
     onClick: () => {
       setMaintenanceOperationParams({
@@ -96,7 +97,7 @@ export const getClusterHostOperations = curry(
         CLUSTER_MAINTENANCE_CHANGE,
         matchesNodeMaintenance(host.name)
       ),
-      disabled: !!runningOperation,
+      disabled: !!runningOperation || !isOnlineInCluster(host),
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
         setMaintenanceOperationParams({
@@ -185,6 +186,7 @@ export const getResourceOperations = curry(
     runningOperation,
     setMaintenanceOperationParams,
     setOperationModelOpen,
+    someHostOnline,
     resource
   ) => [
     {
@@ -195,7 +197,7 @@ export const getResourceOperations = curry(
         CLUSTER_MAINTENANCE_CHANGE,
         matchesResourceMaintenance(resource.id)
       ),
-      disabled: !!runningOperation,
+      disabled: !!runningOperation || !someHostOnline,
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
         setMaintenanceOperationParams({

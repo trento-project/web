@@ -6,6 +6,8 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
   import Trento.Factory
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   test "should forbid unknown operation" do
     cluster = build(:cluster)
 
@@ -72,9 +74,27 @@ defmodule Trento.Operations.ClusterPolicyTest do
   end
 
   describe "cluster_maintenance_change" do
-    test "should always authorize cluster_maintenance_change operation" do
-      cluster = build(:cluster)
-      assert ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
+    test "should authorize cluster_maintenance_change operation if at least one host is online" do
+      cluster =
+        build(:cluster,
+          hosts: [
+            build(:host, cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, cluster_host_status: ClusterHostStatus.online())
+          ]
+        )
+
+      assert :ok == ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
+    end
+
+    test "should forbid cluster_maintenance_change operation if all hosts are offline" do
+      %{name: cluster_name} =
+        cluster =
+        build(:cluster,
+          hosts: build_list(2, :host, cluster_host_status: ClusterHostStatus.offline())
+        )
+
+      assert {:error, ["Cluster #{cluster_name} does not have any online node"]} ==
+               ClusterPolicy.authorize_operation(:cluster_maintenance_change, cluster, %{})
     end
   end
 

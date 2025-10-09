@@ -225,6 +225,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     it('should open cluster maintenance change modal', async () => {
       const user = userEvent.setup();
       const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, { cluster_host_status: 'online' });
 
       renderWithRouter(
         <ClusterDetails
@@ -232,7 +233,7 @@ describe('ClusterDetails ClusterDetails component', () => {
           clusterName={name}
           details={details}
           hasSelectedChecks
-          hosts={[]}
+          hosts={hosts}
           selectedChecks={[]}
           userAbilities={userAbilities}
           onStartExecution={noop}
@@ -333,6 +334,37 @@ describe('ClusterDetails ClusterDetails component', () => {
       await user.click(closeButton);
       expect(mockCleanForbiddenOperation).toHaveBeenCalled();
     });
+
+    it('should disable cluster maintenance change operation when none of the hosts is online', async () => {
+      const user = userEvent.setup();
+      const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, {
+        cluster_host_status: 'offline',
+      });
+
+      renderWithRouter(
+        <ClusterDetails
+          clusterID={id}
+          clusterName={name}
+          details={details}
+          hasSelectedChecks
+          hosts={hosts}
+          selectedChecks={[]}
+          userAbilities={userAbilities}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+      await user.click(operationsButton);
+
+      const menuItem = screen.getByRole('menuitem', {
+        name: 'Cluster Maintenance',
+      });
+      expect(menuItem).toBeDisabled();
+    });
   });
 
   describe('forbidden actions', () => {
@@ -406,6 +438,9 @@ describe('ClusterDetails ClusterDetails component', () => {
       async ({ forbidden, label, abilities }) => {
         const user = userEvent.setup();
         const { id, name, details } = clusterFactory.build();
+        const hosts = hostFactory.buildList(2, {
+          cluster_host_status: 'online',
+        });
 
         renderWithRouter(
           <ClusterDetails
@@ -413,7 +448,7 @@ describe('ClusterDetails ClusterDetails component', () => {
             clusterName={name}
             details={details}
             hasSelectedChecks
-            hosts={[]}
+            hosts={hosts}
             selectedChecks={['check1']}
             userAbilities={abilities}
             operationsEnabled
