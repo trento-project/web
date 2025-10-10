@@ -113,8 +113,9 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                      1000
   end
 
-  test "should project an already existing host cluster_id when HostRegistered event is received" do
-    %{id: host_id, cluster_id: cluster_id} = insert(:host)
+  test "should project an already existing host cluster_id and cluster_host_status when HostRegistered event is received" do
+    %{id: host_id, cluster_id: cluster_id, cluster_host_status: cluster_host_status} =
+      insert(:host)
     event = build(:host_registered_event, host_id: host_id)
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
@@ -126,7 +127,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert_broadcast "host_registered",
                      %{
                        id: ^host_id,
-                       cluster_id: ^cluster_id
+                       cluster_id: ^cluster_id,
+                       cluster_host_status: ^cluster_host_status
                      },
                      1000
   end
@@ -556,6 +558,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       id: id,
       ip_addresses: ip_addresses,
       cluster_id: cluster_id,
+      cluster_host_status: cluster_host_status,
       provider: provider,
       provider_data: provider_data,
       deregistered_at: deregistered_at,
@@ -573,6 +576,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                      %{
                        agent_version: ^agent_version,
                        cluster_id: ^cluster_id,
+                       cluster_host_status: ^cluster_host_status,
                        heartbeat: ^heartbeat,
                        hostname: ^hostname,
                        id: ^id,

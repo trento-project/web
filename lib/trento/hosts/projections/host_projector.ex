@@ -62,7 +62,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         })
 
       Ecto.Multi.insert(multi, :host, changeset,
-        on_conflict: {:replace_all_except, [:cluster_id]},
+        on_conflict: {:replace_all_except, [:cluster_id, :cluster_host_status]},
         conflict_target: [:id],
         returning: true
       )
