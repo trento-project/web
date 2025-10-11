@@ -49,7 +49,7 @@ defmodule TrentoWeb.V1.HostController do
   action_fallback TrentoWeb.FallbackController
 
   operation :list,
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     summary: "List hosts.",
     description:
       "Retrieves a comprehensive list of all hosts discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
