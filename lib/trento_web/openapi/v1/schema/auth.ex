@@ -381,7 +381,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "IntrospectTokenRequest",
+        title: "IntrospectTokenRequestV1",
         description: "Introspect token request for obtaining token metadata.",
         type: :object,
         additionalProperties: false,
@@ -416,7 +416,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
 
     OpenApiSpex.schema(
       %{
-        title: "IntrospectedToken",
+        title: "IntrospectedTokenV1",
         description: "Introspect token request for obtaining token metadata.",
         type: :object,
         additionalProperties: false,

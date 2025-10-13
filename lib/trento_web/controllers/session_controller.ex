@@ -193,7 +193,7 @@ defmodule TrentoWeb.SessionController do
     description:
       "Introspects an Access Token to verify its validity and retrieve associated metadata.",
     tags: ["Auth"],
-    request_body: {"IntrospectTokenRequest", "application/json", IntrospectTokenRequest},
+    request_body: {"Introspect token request.", "application/json", IntrospectTokenRequest},
     responses: [
       ok: {"Introspected token metadata.", "application/json", IntrospectedToken}
     ]
