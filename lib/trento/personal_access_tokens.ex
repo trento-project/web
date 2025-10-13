@@ -59,11 +59,6 @@ defmodule Trento.PersonalAccessTokens do
   defp apply_validation(nil), do: {:error, :invalid_pat}
 
   defp apply_validation(%PersonalAccessToken{
-         user: nil
-       }),
-       do: {:error, :invalid_pat}
-
-  defp apply_validation(%PersonalAccessToken{
          user: %User{
            deleted_at: deleted_at
          }
