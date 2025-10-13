@@ -31,6 +31,7 @@ defmodule Trento.ClustersTest do
   alias Google.Protobuf.Value, as: ProtobufValue
 
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterEnsaVersion, as: ClusterEnsaVersion
   require Trento.Clusters.Enums.FilesystemType, as: FilesystemType
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
@@ -1159,8 +1160,9 @@ defmodule Trento.ClustersTest do
   end
 
   describe "request_operation/3" do
-    test "should request cluster_maintenance_change operation" do
+    test "should request cluster_maintenance_change operation on online node" do
       %{id: cluster_id} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.offline())
       [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
 
       expect(
