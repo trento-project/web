@@ -60,7 +60,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       "Revokes a Personal Access Token identified by its unique identifier, ensuring that it can no longer be used for authentication.",
     tags: ["Profile"],
     parameters: [
-      id: [
+      token_id: [
         in: :path,
         required: true,
         description: "The unique identifier of the Personal Access Token to be revoked.",
@@ -78,11 +78,11 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def revoke_personal_access_token(conn, %{id: id}) do
+  def revoke_personal_access_token(conn, %{token_id: token_id}) do
     with {:ok, token} <-
            conn
            |> Pow.Plug.current_user()
-           |> PersonalAccessTokens.revoke_personal_access_token(id) do
+           |> PersonalAccessTokens.revoke_personal_access_token(token_id) do
       # add deleted token to assigns to use in the activity log
       conn
       |> assign(:deleted_token, token)

@@ -205,7 +205,7 @@ defmodule TrentoWeb.Router do
 
         scope "/tokens" do
           post "/", PersonalAccessTokensController, :create_personal_access_token
-          delete "/:id", PersonalAccessTokensController, :revoke_personal_access_token
+          delete "/:token_id", PersonalAccessTokensController, :revoke_personal_access_token
         end
       end
 
