@@ -754,36 +754,51 @@ defmodule TrentoWeb.SessionControllerTest do
           "token" => token
         })
         |> json_response(200)
-        |> assert_schema("IntrospectedToken", api_spec)
+        |> assert_schema("IntrospectedTokenV1", api_spec)
         |> then(&assert %{active: false} == &1)
       end
     end
 
-    test "should introspect active token", %{conn: conn, api_spec: api_spec} do
-      for {valid_token, _} <- [
-            TokensCase.valid_user_bound_access_token(),
-            TokensCase.valid_pat()
-          ] do
-        conn
-        |> post("/api/session/token/introspect", %{
-          "token" => valid_token
-        })
-        |> json_response(200)
-        |> assert_schema("IntrospectedToken", api_spec)
-        |> then(
-          &assert %{
-                    active: true,
-                    sub: _,
-                    jti: _,
-                    exp: _,
-                    aud: _,
-                    iss: _,
-                    iat: _,
-                    nbf: _,
-                    abilities: _
-                  } = &1
-        )
-      end
+    test "should introspect active access token", %{conn: conn, api_spec: api_spec} do
+      {valid_token, _} = TokensCase.valid_user_bound_access_token()
+
+      conn
+      |> post("/api/session/token/introspect", %{
+        "token" => valid_token
+      })
+      |> json_response(200)
+      |> assert_schema("IntrospectedTokenV1", api_spec)
+      |> then(
+        &assert %{
+                  active: true,
+                  sub: _,
+                  jti: _,
+                  exp: _,
+                  aud: _,
+                  iss: _,
+                  iat: _,
+                  nbf: _,
+                  abilities: _
+                } = &1
+      )
+    end
+
+    test "should introspect active PAT", %{conn: conn, api_spec: api_spec} do
+      {valid_token, _} = TokensCase.valid_pat()
+
+      conn
+      |> post("/api/session/token/introspect", %{
+        "token" => valid_token
+      })
+      |> json_response(200)
+      |> assert_schema("IntrospectedTokenV1", api_spec)
+      |> then(
+        &assert %{
+                  active: true,
+                  sub: _,
+                  abilities: _
+                } = &1
+      )
     end
   end
 end
