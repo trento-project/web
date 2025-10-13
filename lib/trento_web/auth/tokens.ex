@@ -4,6 +4,7 @@ defmodule TrentoWeb.Auth.Tokens do
   """
 
   alias TrentoWeb.Auth.{AccessToken, RefreshToken}
+
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
   alias Trento.PersonalAccessTokens

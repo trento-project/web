@@ -69,6 +69,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             name: "My Token",
             expires_at: "2024-12-31T23:59:59Z",
             created_at: "2023-01-01T00:00:00Z"
+          },
+          %{
+            id: "660e8400-e29b-41d4-a716-446655440000",
+            name: "Another Token",
+            expires_at: "2024-11-30T23:59:59Z",
+            created_at: "2023-02-01T00:00:00Z"
           }
         ]
       },

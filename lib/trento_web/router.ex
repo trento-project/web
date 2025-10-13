@@ -84,6 +84,7 @@ defmodule TrentoWeb.Router do
     post "/session/refresh", SessionController, :refresh, as: :refresh
     post "/session/:provider/callback", SessionController, :callback
     get "/session/:provider/saml_callback", SessionController, :saml_callback
+    post "/session/token/introspect", SessionController, :introspect_token
   end
 
   scope "/api", TrentoWeb do
