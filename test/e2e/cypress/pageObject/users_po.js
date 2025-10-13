@@ -463,10 +463,10 @@ export const apiCreatePersonalAccessToken = (
   });
 };
 
-export const apiDeletePersonalAccessToken = (jti) => {
+export const apiDeletePersonalAccessToken = (id) => {
   return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
     cy.request({
-      url: `/api/v1/profile/tokens/${jti}`,
+      url: `/api/v1/profile/tokens/${id}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })

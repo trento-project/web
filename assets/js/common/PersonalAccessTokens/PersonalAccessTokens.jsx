@@ -28,7 +28,7 @@ function PersonalAccessTokens({
         name={tokenToDelete?.name}
         isOpen={tokenToDelete !== null}
         onDelete={() => {
-          onDeleteToken(tokenToDelete?.jti);
+          onDeleteToken(tokenToDelete?.id);
           setTokenToDelete(null);
         }}
         onClose={() => setTokenToDelete(null)}
@@ -76,9 +76,9 @@ function PersonalAccessTokens({
           {personalAccessTokens && personalAccessTokens.length > 0 ? (
             <div className="space-y-3">
               {personalAccessTokens.map(
-                ({ jti, name, expires_at: expiresAt }) => (
+                ({ id, name, expires_at: expiresAt }) => (
                   <div
-                    key={jti}
+                    key={id}
                     className="flex border rounded-md border-gray-200 px-4 py-3"
                   >
                     <div>
@@ -101,7 +101,7 @@ function PersonalAccessTokens({
                         type="danger"
                         size="small"
                         onClick={() => {
-                          setTokenToDelete({ jti, name });
+                          setTokenToDelete({ id, name });
                         }}
                       >
                         Delete
