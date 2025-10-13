@@ -9,6 +9,9 @@ defmodule Trento.UsersTest do
 
   alias Trento.Users
   alias Trento.Users.User
+
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+
   import Trento.Factory
 
   describe "user profile" do
@@ -151,19 +154,24 @@ defmodule Trento.UsersTest do
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
       %{id: identity_id} = insert(:user_identity, user_id: user_id)
 
-      pat1 = insert(:personal_access_token, user_id: user_id)
+      pat = insert(:personal_access_token, user_id: user_id)
 
       %{id: deleted_user_id} = insert(:user, deleted_at: DateTime.utc_now())
       insert(:personal_access_token, user_id: deleted_user_id, expires_at: nil)
 
       users = Users.list_users()
 
+      expected_pat = %PersonalAccessToken{
+        pat
+        | token: nil
+      }
+
       assert [
                %User{
                  id: ^user_id,
                  user_identities: [%{id: ^identity_id}],
                  abilities: [%{id: ^ability_id}],
-                 personal_access_tokens: [^pat1]
+                 personal_access_tokens: [^expected_pat]
                }
              ] = users
 
@@ -204,18 +212,33 @@ defmodule Trento.UsersTest do
               }} = Users.get_user(user_id)
     end
 
-    test "get_user returns a user with the user personal access tokens" do
+    test "get_user returns a user with its personal access tokens" do
       %{id: user_id1} = insert(:user)
       %{id: user_id2} = insert(:user)
 
-      pat1 = insert(:personal_access_token, user_id: user_id1)
-      pat2 = insert(:personal_access_token, user_id: user_id1, expires_at: nil)
+      yesterday = DateTime.add(DateTime.utc_now(), -1, :day)
+      two_days_ago = DateTime.add(DateTime.utc_now(), -2, :day)
+
+      %{id: pat_id1} = insert(:personal_access_token, user_id: user_id1, created_at: two_days_ago)
+
+      %{id: pat_id2} =
+        insert(:personal_access_token,
+          user_id: user_id1,
+          expires_at: nil,
+          created_at: yesterday
+        )
 
       assert {:ok,
               %User{
                 id: ^user_id1,
-                personal_access_tokens: [^pat2, ^pat1]
+                personal_access_tokens:
+                  [
+                    %{id: ^pat_id2},
+                    %{id: ^pat_id1}
+                  ] = user_pats
               }} = Users.get_user(user_id1)
+
+      assert Enum.all?(user_pats, &(&1.token == nil))
 
       assert {:ok,
               %User{

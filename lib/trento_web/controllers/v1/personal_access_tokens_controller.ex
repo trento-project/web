@@ -34,26 +34,22 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
     ]
 
   def create_personal_access_token(conn, _) do
-    body_params = OpenApiSpex.body_params(conn)
+    %User{} = current_user = Pow.Plug.current_user(conn)
 
-    %User{id: user_id} = current_user = Pow.Plug.current_user(conn)
+    plain_pat = PAT.generate()
 
-    with {:ok,
-          %UserPersonalAccessToken{
-            jti: jti,
-            created_at: created_at,
-            expires_at: expires_at
-          } = pat} <- PersonalAccessTokens.create_personal_access_token(current_user, body_params) do
-      claims = %{
-        "jti" => jti,
-        "sub" => user_id
-      }
+    creation_params =
+      conn
+      |> OpenApiSpex.body_params()
+      |> Map.put(:token, plain_pat)
 
+    with {:ok, %UserPersonalAccessToken{} = pat} <-
+           PersonalAccessTokens.create_personal_access_token(current_user, creation_params) do
       conn
       |> put_status(:created)
       |> render(:new_personal_access_token, %{
         personal_access_token: pat,
-        generated_token: PAT.generate!(claims, created_at, expires_at)
+        generated_token: plain_pat
       })
     end
   end
@@ -61,13 +57,13 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
   operation :revoke_personal_access_token,
     summary: "Revokes an existing Personal Access Token",
     description:
-      "Revokes a Personal Access Token identified by its unique identifier (JTI), ensuring that it can no longer be used for authentication.",
+      "Revokes a Personal Access Token identified by its unique identifier, ensuring that it can no longer be used for authentication.",
     tags: ["Profile"],
     parameters: [
-      jti: [
+      id: [
         in: :path,
         required: true,
-        description: "The unique identifier (JTI) of the Personal Access Token to be revoked.",
+        description: "The unique identifier of the Personal Access Token to be revoked.",
         schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
@@ -82,11 +78,11 @@ defmodule TrentoWeb.V1.PersonalAccessTokensController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def revoke_personal_access_token(conn, %{jti: jti}) do
+  def revoke_personal_access_token(conn, %{id: id}) do
     with {:ok, token} <-
            conn
            |> Pow.Plug.current_user()
-           |> PersonalAccessTokens.revoke_personal_access_token(jti) do
+           |> PersonalAccessTokens.revoke_personal_access_token(id) do
       # add deleted token to assigns to use in the activity log
       conn
       |> assign(:deleted_token, token)

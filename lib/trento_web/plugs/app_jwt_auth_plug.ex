@@ -23,16 +23,16 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlug do
     Read, validate and decode the JWT from authorization header at each call
   """
   def fetch(conn, _config) do
-    with {:ok, jwt_token} <- read_token(conn),
-         {:ok, %{"sub" => sub}} <- Tokens.verify_and_validate(jwt_token) do
+    with {:ok, token} <- read_token(conn),
+         {:ok, %{"sub" => sub}} <- Tokens.verify_and_validate(token) do
       conn =
         conn
-        |> Conn.put_private(:api_access_token, jwt_token)
+        |> Conn.put_private(:api_access_token, token)
         |> Conn.put_private(:user_id, sub)
 
       {conn,
        %{
-         "access_token" => jwt_token,
+         "access_token" => token,
          "user_id" => sub
        }}
     else
