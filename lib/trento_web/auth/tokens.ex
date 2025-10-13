@@ -84,9 +84,6 @@ defmodule TrentoWeb.Auth.Tokens do
 
   defp validate_token(_, _), do: {:error, :invalid_audience}
 
-  # defp handle_pat_validation(false, _), do: {:error, :invalid_pat}
-  # defp handle_pat_validation(true, claims), do: {:ok, claims}
-
   defp introspect_token(jwt_token, @access_token_audience) do
     with {:ok, %{"sub" => user_id} = claims} <- AccessToken.verify_and_validate(jwt_token),
          {:ok, %{abilities: abilities}} <- Users.get_user(user_id) do
