@@ -224,7 +224,7 @@ defmodule Trento.Clusters do
     targets =
       cluster_id
       |> get_cluster_hosts()
-      |> maybe_filter_online_hosts(operation)
+      |> filter_online_hosts(operation)
       |> Enum.with_index()
       |> Enum.map(fn {%{id: host_id}, index} ->
         arguments = Map.put(params, :is_dc, index == 0)
@@ -468,7 +468,7 @@ defmodule Trento.Clusters do
     end)
   end
 
-  defp maybe_filter_online_hosts(hosts, :cluster_maintenance_change) do
+  defp filter_online_hosts(hosts, :cluster_maintenance_change) do
     Enum.filter(hosts, fn %{cluster_host_status: status} ->
       status == ClusterHostStatus.online()
     end)
