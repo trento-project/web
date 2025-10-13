@@ -74,12 +74,14 @@ defmodule Trento.PersonalAccessTokens do
        when not is_nil(locked_at),
        do: {:error, :invalid_pat}
 
+  defp apply_validation(%PersonalAccessToken{expires_at: nil} = pat), do: {:ok, pat}
+
   defp apply_validation(
          %PersonalAccessToken{
            expires_at: expires_at
          } = pat
        ) do
-    case expires_at == nil or DateTime.compare(expires_at, DateTime.utc_now()) == :gt do
+    case DateTime.compare(expires_at, DateTime.utc_now()) == :gt do
       true -> {:ok, pat}
       false -> {:error, :invalid_pat}
     end
