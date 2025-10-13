@@ -22,10 +22,21 @@ defmodule Trento.PersonalAccessTokens.PersonalAccessToken do
     timestamps(inserted_at: :created_at, type: :utc_datetime_usec)
   end
 
+  @doc """
+  Generates a SHA-512 hash of the given token.
+  Returns nil if the input token is nil.
+
+  Argon2 does not fit well for this use case because:
+    1. Every Argon2.hash_pwd_salt(token) call generates a different hash even for the same input token.
+       This is due to the random salt used internally by Argon2, so that it becomes impossible to query the database for a given token hash.
+    2. In order to run a Argon2.verify_pass(plain_pat, hashed_pat) we would need to query the hashed_pat first. But unless we rely on other information we cannot get that.
+    3. We need the hashing to be fast since it will possibly happen on a lot of interactions with the system.
+  """
+  @spec hash_token(String.t() | nil) :: String.t() | nil
   def hash_token(nil), do: nil
 
   def hash_token(token) do
-    :sha256
+    :sha512
     |> :crypto.hash(token)
     |> Base.encode64(padding: false)
   end
