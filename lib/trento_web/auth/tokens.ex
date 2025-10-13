@@ -7,12 +7,14 @@ defmodule TrentoWeb.Auth.Tokens do
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
   alias Trento.PersonalAccessTokens
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias Trento.Users
 
   alias Trento.Support.StructHelper
 
   @access_token_audience AccessToken.aud()
   @pat_audience PAT.aud()
+  @pat_prefix PAT.prefix()
 
   defdelegate generate_access_token!(claims), to: AccessToken
   defdelegate access_token_expires_in(), to: AccessToken, as: :expires_in
@@ -20,17 +22,17 @@ defmodule TrentoWeb.Auth.Tokens do
   defdelegate verify_and_validate_refresh_token(token), to: RefreshToken, as: :verify_and_validate
 
   @doc """
-  Verifies and validates a given JWT token.
+  Verifies and validates a given token (might or might not be a JWT).
 
   ## Parameters
-    - token: The JWT token to be verified.
+    - token: The token to be verified. It can be a JWT access token or a Personal Access Token (PAT).
 
   ## Returns
     - {:ok, claims} if the token is valid.
     - {:error, reason} if the token is invalid, expired, revoked or, in case of PATs, belongs to a deleted/disabled user.
   """
   @spec verify_and_validate(binary()) :: {:ok, map()} | {:error, atom()}
-  def verify_and_validate(jwt_token), do: apply_callback(jwt_token, &validate_token/2)
+  def verify_and_validate(token), do: apply_callback(token, &validate_token/2)
 
   @doc """
   Introspects and validates a given JWT token.
@@ -52,10 +54,12 @@ defmodule TrentoWeb.Auth.Tokens do
     |> Map.drop(["typ"])
   end
 
-  defp apply_callback(jwt_token, callback) do
-    case Joken.peek_claims(jwt_token) do
+  defp apply_callback(@pat_prefix <> _ = token, callback), do: callback.(token, @pat_audience)
+
+  defp apply_callback(token, callback) do
+    case Joken.peek_claims(token) do
       {:ok, %{"jti" => _jti, "sub" => _user_id, "aud" => audience}} ->
-        callback.(jwt_token, audience)
+        callback.(token, audience)
 
       {:error, _} = error ->
         error
@@ -65,15 +69,13 @@ defmodule TrentoWeb.Auth.Tokens do
     end
   end
 
-  defp validate_token(jwt_token, @access_token_audience),
-    do: AccessToken.verify_and_validate(jwt_token)
+  defp validate_token(token, @access_token_audience),
+    do: AccessToken.verify_and_validate(token)
 
-  defp validate_token(jwt_token, @pat_audience) do
-    case PAT.verify_and_validate(jwt_token) do
-      {:ok, %{"jti" => jti, "sub" => user_id} = claims} ->
-        jti
-        |> PersonalAccessTokens.valid?(user_id)
-        |> handle_pat_validation(claims)
+  defp validate_token(token, @pat_audience) do
+    case PersonalAccessTokens.validate(token) do
+      {:ok, %PersonalAccessToken{user_id: user_id}} ->
+        {:ok, %{"sub" => user_id}}
 
       {:error, _} = error ->
         error
@@ -82,8 +84,8 @@ defmodule TrentoWeb.Auth.Tokens do
 
   defp validate_token(_, _), do: {:error, :invalid_audience}
 
-  defp handle_pat_validation(false, _), do: {:error, :invalid_pat}
-  defp handle_pat_validation(true, claims), do: {:ok, claims}
+  # defp handle_pat_validation(false, _), do: {:error, :invalid_pat}
+  # defp handle_pat_validation(true, claims), do: {:ok, claims}
 
   defp introspect_token(jwt_token, @access_token_audience) do
     with {:ok, %{"sub" => user_id} = claims} <- AccessToken.verify_and_validate(jwt_token),
@@ -92,11 +94,10 @@ defmodule TrentoWeb.Auth.Tokens do
     end
   end
 
-  defp introspect_token(jwt_token, @pat_audience) do
-    with {:ok, %{"jti" => jti, "sub" => user_id} = claims} <- PAT.verify_and_validate(jwt_token),
-         {:ok, %{user: %{abilities: abilities}}} <-
-           PersonalAccessTokens.validate_and_introspect(jti, user_id) do
-      enrich_claims(claims, abilities)
+  defp introspect_token(token, @pat_audience) do
+    with {:ok, %{user_id: user_id, user: %{abilities: abilities}}} <-
+           PersonalAccessTokens.validate_and_introspect(token) do
+      enrich_claims(%{"sub" => user_id}, abilities)
     end
   end
 
