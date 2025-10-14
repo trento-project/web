@@ -22,6 +22,7 @@ export const PACEMAKER_ENABLE = 'pacemaker_enable';
 export const PACEMAKER_DISABLE = 'pacemaker_disable';
 export const DATABASE_START = 'database_start';
 export const DATABASE_STOP = 'database_stop';
+export const HOST_REBOOT = 'reboot';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
@@ -37,6 +38,7 @@ const OPERATION_LABELS = {
   [PACEMAKER_DISABLE]: 'Disable Pacemaker',
   [DATABASE_START]: 'Database start',
   [DATABASE_STOP]: 'Database stop',
+  [HOST_REBOOT]: 'Reboot host',
 };
 
 const OPERATION_INTERNAL_NAMES = {
@@ -53,6 +55,7 @@ const OPERATION_INTERNAL_NAMES = {
   'pacemakerdisable@v1': PACEMAKER_DISABLE,
   'databasestart@v1': DATABASE_START,
   'databasestop@v1': DATABASE_STOP,
+  'hostreboot@v1': HOST_REBOOT,
 };
 
 const OPERATION_RESOURCE_TYPES = {
@@ -69,6 +72,7 @@ const OPERATION_RESOURCE_TYPES = {
   [PACEMAKER_DISABLE]: CLUSTER_HOST_OPERATION,
   [DATABASE_START]: DATABASE_OPERATION,
   [DATABASE_STOP]: DATABASE_OPERATION,
+  [HOST_REBOOT]: HOST_OPERATION,
 };
 
 const OPERATION_FORBIDDEN_MESSAGES = {

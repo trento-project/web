@@ -354,6 +354,7 @@ export const WithRunningOperation = {
 export const WithDisabledOperation = {
   args: {
     ...Default.args,
+    hostname: 'my-host.example.com',
     saptuneStatus: {
       package_version: '3.0.0',
       enabled_solution: 'HANA',

@@ -466,20 +466,29 @@ defmodule TrentoWeb.V1.HostControllerTest do
           |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{})
           |> json_response(:unprocessable_entity)
 
-        assert %{
-                 "errors" => [
-                   %{
-                     "detail" => "Failed to cast value to one of: no schemas validate",
-                     "source" => %{"pointer" => "/"},
-                     "title" => "Invalid value"
-                   },
-                   %{
-                     "detail" => "Missing field: solution",
-                     "source" => %{"pointer" => "/solution"},
-                     "title" => "Invalid value"
-                   }
-                 ]
-               } == resp
+        resp_preflight =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> get("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{})
+          |> json_response(:unprocessable_entity)
+
+        expected = %{
+          "errors" => [
+            %{
+              "detail" => "Failed to cast value to one of: no schemas validate",
+              "source" => %{"pointer" => "/"},
+              "title" => "Invalid value"
+            },
+            %{
+              "detail" => "Missing field: solution",
+              "source" => %{"pointer" => "/solution"},
+              "title" => "Invalid value"
+            }
+          ]
+        }
+
+        assert expected == resp
+        assert expected == resp_preflight
       end
 
       test "should respond with 500 on messaging error for operation '#{operation}'",

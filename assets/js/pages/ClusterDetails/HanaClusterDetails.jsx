@@ -76,7 +76,7 @@ function HanaClusterDetails({
               {
                 title: 'SID',
                 content: enrichedSapSystems,
-                render: (content) => (
+                 render: (content) => (
                   <div>
                     {content.map(({ id, sid: sapSystemSid }) => (
                       <span key={sapSystemSid}>

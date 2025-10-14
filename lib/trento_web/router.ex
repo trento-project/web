@@ -177,6 +177,7 @@ defmodule TrentoWeb.Router do
              :delete_database_instance
 
       if Application.compile_env!(:trento, :operations_enabled) do
+        get "/hosts/:id/operations/:operation", HostController, :request_operation_preflight
         post "/hosts/:id/operations/:operation", HostController, :request_operation
         post "/clusters/:id/operations/:operation", ClusterController, :request_operation
         post "/sap_systems/:id/operations/:operation", SapSystemController, :request_operation

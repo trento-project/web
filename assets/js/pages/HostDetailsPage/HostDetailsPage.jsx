@@ -19,7 +19,15 @@ import {
   getSoftwareUpdatesStats,
   getSoftwareUpdatesErrors,
 } from '@state/selectors/softwareUpdates';
+
+import {
+  // SAPTUNE_SOLUTION_APPLY,
+  // SAPTUNE_SOLUTION_CHANGE,
+  HOST_REBOOT,
+} from '@lib/operations';
+
 import { getRunningOperation } from '@state/selectors/runningOperations';
+import { getPreflightOperation } from '@state/selectors/preflightOperations';
 
 import { getHost, getHostSelectedChecks } from '@state/selectors/host';
 import { isSaving } from '@state/selectors/checksSelection';
@@ -34,6 +42,8 @@ import {
   removeRunningOperation,
 } from '@state/runningOperations';
 
+import { requestOperationPreflight } from '@state/preflightOperations';
+
 import { deregisterHost } from '@state/hosts';
 import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 
@@ -45,6 +55,10 @@ import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
 const operationsEnabled = getFromConfig('operationsEnabled');
+
+const operations = [
+  HOST_REBOOT
+]
 
 function HostDetailsPage() {
   const { hostID } = useParams();
@@ -92,6 +106,7 @@ function HostDetailsPage() {
   );
 
   const runningOperation = useSelector(getRunningOperation(hostID));
+  const preflightOperations = operations.reduce((acc, op) => ({ ...acc, [op]: useSelector(getPreflightOperation(hostID, op)) }), {});
 
   const getExportersStatus = async () => {
     const { data } = await networkClient.get(
@@ -114,7 +129,13 @@ function HostDetailsPage() {
     getExportersStatus();
     refreshCatalog();
     dispatch(updateLastExecution(hostID));
-    operationsEnabled && dispatch(updateRunningOperations());
+
+    if (operationsEnabled) {
+      dispatch(updateRunningOperations());
+      operations.forEach((operation) => {
+        dispatch(requestOperationPreflight({ groupID: hostID, operation }));
+      });
+    }
   }, []);
 
   if (!host) {
@@ -153,6 +174,7 @@ function HostDetailsPage() {
       userAbilities={abilities}
       operationsEnabled={operationsEnabled}
       runningOperation={runningOperation}
+      preflightOperations={preflightOperations}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));
       }}
