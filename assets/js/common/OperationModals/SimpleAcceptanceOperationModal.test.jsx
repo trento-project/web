@@ -15,6 +15,7 @@ import {
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
+  HOST_REBOOT,
 } from '@lib/operations';
 
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
@@ -85,6 +86,12 @@ describe('SimpleAcceptanceOperationModal', () => {
       descriptionResolverArgs: { hostName },
       title: 'Stop cluster host',
       expectedDescription: `Stop cluster host ${hostName}`,
+    },
+    {
+      operation: HOST_REBOOT,
+      descriptionResolverArgs: { hostName },
+      title: 'Reboot host',
+      expectedDescription: `Reboot host ${hostName}`,
     },
     {
       operation: 'unknown_operation',

@@ -8,6 +8,7 @@ import {
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
+  HOST_REBOOT,
 } from '@lib/operations';
 
 import OperationModal from './OperationModal';
@@ -20,6 +21,7 @@ const TITLES = {
   [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
   [CLUSTER_HOST_START]: 'Start cluster host',
   [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [HOST_REBOOT]: 'Reboot host',
 };
 
 const getOperationTitle = (operation) =>
@@ -53,6 +55,9 @@ const getClusterMaintenanceDescription = (
   );
 };
 
+const getHostRebootDescription = (operation, { hostName }) =>
+  `${getOperationTitle(operation)} ${hostName}`;
+
 const getClusterHostStartStopDescription = (operation, { hostName }) =>
   `${getOperationTitle(operation)} ${hostName}`;
 
@@ -64,6 +69,7 @@ const DESCRIPTION_RESOLVERS = {
   [CLUSTER_MAINTENANCE_CHANGE]: getClusterMaintenanceDescription,
   [CLUSTER_HOST_START]: getClusterHostStartStopDescription,
   [CLUSTER_HOST_STOP]: getClusterHostStartStopDescription,
+  [HOST_REBOOT]: getHostRebootDescription,
 };
 
 function SimpleAcceptanceOperationModal({
