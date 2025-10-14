@@ -68,12 +68,12 @@ defmodule TrentoWeb.Router do
     pipe_through :browser
 
     get "/api/doc", OpenApiSpex.Plug.SwaggerUI,
-      path: "/api/v1/openapi",
+      path: "/api/all/openapi",
       urls: [
+        %{url: "/api/all/openapi", name: "All"},
         %{url: "/api/v1/openapi", name: "Version 1"},
         %{url: "/api/v2/openapi", name: "Version 2"},
-        %{url: "/api/unversioned/openapi", name: "Unversioned"},
-        %{url: "/api/all/openapi", name: "All"}
+        %{url: "/api/unversioned/openapi", name: "Unversioned"}
       ]
   end
 
