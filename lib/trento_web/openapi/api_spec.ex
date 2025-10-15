@@ -144,7 +144,12 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
 
           true ->
             %OpenApiSpex.Server{
-              url: "https://demo.trento-project.io",
+              url: "{url}",
+              variables: %{
+                url: %{
+                  default: "https://demo.trento-project.io"
+                }
+              },
               description:
                 "This is the Trento demo server, provided for testing and demonstration purposes."
             }
