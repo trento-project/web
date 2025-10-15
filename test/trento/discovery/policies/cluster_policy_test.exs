@@ -2646,6 +2646,68 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     assert attributes2 == %{}
   end
 
+  test "should handle hana scale up cluster when nodes history is empty" do
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{
+                 details: %HanaClusterDetails{
+                   nodes: [
+                     %HanaClusterNode{
+                       attributes: %{},
+                       hana_status: "Unknown",
+                       indexserver_actual_role: nil,
+                       name: "node01",
+                       nameserver_actual_role: nil,
+                       resources: [],
+                       site: nil,
+                       status: "Offline",
+                       virtual_ip: nil
+                     },
+                     %HanaClusterNode{
+                       attributes: %{
+                         "hana_prd_op_mode" => "logreplay",
+                         "hana_prd_site" => "Site2",
+                         "hana_prd_srmode" => "sync"
+                       },
+                       hana_status: "Unknown",
+                       indexserver_actual_role: nil,
+                       name: "node02",
+                       nameserver_actual_role: nil,
+                       resources: [],
+                       site: "Site2",
+                       status: "Online",
+                       virtual_ip: nil
+                     }
+                   ],
+                   sites: [
+                     %HanaClusterSite{
+                       name: "Site2",
+                       state: "Unknown",
+                       sr_health_state: "Unknown"
+                     }
+                   ],
+                   resources: resources,
+                   secondary_sync_state: "Unknown",
+                   sr_health_state: "Unknown",
+                   system_replication_mode: "sync",
+                   system_replication_operation_mode: "logreplay",
+                   architecture_type: HanaArchitectureType.classic(),
+                   hana_scenario: HanaScenario.cost_optimized()
+                 },
+                 type: :hana_scale_up
+               }
+             ]
+           } =
+             "ha_cluster_discovery_hana_scale_up_empty_nodes_history"
+             |> load_discovery_event_fixture()
+             |> ClusterPolicy.handle(nil)
+
+    Enum.each(resources, fn %{fail_count: fail_count} ->
+      assert fail_count == 0
+    end)
+  end
+
   describe "ascs/ers clusters health" do
     test "should set the health to critical when one of the nodes is unclean" do
       assert {:ok,
