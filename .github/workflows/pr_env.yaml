@@ -40,6 +40,7 @@ jobs:
         with:
           repository: trento-project/ansible
           path: ansible
+          ref: wanda-proxy-location-oas-server
       - name: Install ansible-core
         run: sudo pipx install --force ansible-core==2.16.3
       - name: Install galaxy deps
