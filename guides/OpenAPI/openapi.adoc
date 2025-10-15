@@ -1,0 +1,19 @@
+= OpenAPI specification
+
+Trento API is OpenAPI compliant and the specification is available in a running environment.
+
+Find the different available specifications at a running Trento `/api/doc` subpath.
+
+In order to set a specific OpenAPI server url, use the `OAS_SERVER_URL` runtime environment variable.
+This value replaces a autogenarated url that defaults to `+http://<TRENTO_WEB_ORIGIN>:<PORT>+` value.
+This can come useful when Trento Web is running behind a reverse proxy or in a k8s setup.
+
+....
+# Without OAS_SERVER_URL variable and the next variables
+# the OpenAPI server value is: http://my-trento:4000
+TRENTO_WEB_ORIGIN=my-trento
+PORT=4000
+
+# OAS_SERVER_URL replaces that default value
+OAS_SERVER_URL=https://my-trento.io
+....

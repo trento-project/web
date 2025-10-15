@@ -114,6 +114,7 @@ rules:
   rhoas-schema-name-pascal-case: "off"
   rhoas-servers-config: "off"
   servers-must-match-api-standards: "off"
+  hosts-https-only-oas3: "off"
 EOF
 
     spectral lint "$OPENAPI_FILE" -r "$SPECTRAL_RULESET_FILE" --verbose --format=text || status=1
@@ -132,6 +133,7 @@ rules:
   description-duplication: false
   camel-case-properties: false
   no-unnecessary-combinator: false
+  owasp-security-hosts-https-oas3: false
 EOF
 
     vacuum lint "$OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || status=1
