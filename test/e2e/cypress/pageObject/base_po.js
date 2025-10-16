@@ -421,3 +421,16 @@ export const clearSUMASettings = () =>
       },
     })
   );
+
+export const getAlertingSettings = () => {
+  return apiLogin().then(({ accessToken }) =>
+    cy.request({
+      url: '/api/v1/settings/alerting',
+      method: 'GET',
+      auth: {
+        bearer: accessToken,
+      },
+      failOnStatusCode: false,
+    })
+  );
+};

@@ -57,7 +57,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     resp =
       conn
       |> json_response(200)
-      |> assert_schema("UserProfile", api_spec)
+      |> assert_schema("UserProfileV1", api_spec)
 
     assert %{id: ^user_id} = resp
   end
@@ -81,7 +81,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> put_req_header("content-type", "application/json")
       |> patch("/api/v1/profile", valid_params)
       |> json_response(:ok)
-      |> assert_schema("UserProfile", api_spec)
+      |> assert_schema("UserProfileV1", api_spec)
 
     assert %{id: ^user_id, fullname: ^fullname, email: ^email} = resp
   end
@@ -94,7 +94,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> get("/api/v1/profile/totp_enrollment")
     |> json_response(:ok)
-    |> assert_schema("UserTOTPEnrollmentPayload", api_spec)
+    |> assert_schema("UserTOTPEnrollmentPayloadV1", api_spec)
   end
 
   test "should get an error when requesting totp enrollment data for an already totp enrolled user",
@@ -120,7 +120,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> get("/api/v1/profile/totp_enrollment")
     |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntity", api_spec)
+    |> assert_schema("UnprocessableEntityV1", api_spec)
   end
 
   test "should return forbidden if the totp enrollment is requested for default admin", %{
@@ -140,7 +140,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> get("/api/v1/profile/totp_enrollment")
     |> json_response(:forbidden)
-    |> assert_schema("Forbidden", api_spec)
+    |> assert_schema("ForbiddenV1", api_spec)
   end
 
   test "should not reset totp when a reset is requested for the default admin", %{
@@ -160,7 +160,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> delete("/api/v1/profile/totp_enrollment")
     |> json_response(:forbidden)
-    |> assert_schema("Forbidden", api_spec)
+    |> assert_schema("ForbiddenV1", api_spec)
   end
 
   test "should reset totp enrollment for a user", %{
@@ -189,7 +189,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:forbidden)
-    |> assert_schema("Forbidden", api_spec)
+    |> assert_schema("ForbiddenV1", api_spec)
   end
 
   test "should not confirm a totp enrollment if totp is already enabled for the user", %{
@@ -214,7 +214,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntity", api_spec)
+    |> assert_schema("UnprocessableEntityV1", api_spec)
   end
 
   test "should not confirm a totp enrollment if totp is not valid", %{
@@ -237,7 +237,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
     |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntity", api_spec)
+    |> assert_schema("UnprocessableEntityV1", api_spec)
   end
 
   test "should confirm a totp enrollment if totp is valid for the enrollment", %{
@@ -262,7 +262,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     |> put_req_header("content-type", "application/json")
     |> post("/api/v1/profile/totp_enrollment", %{totp_code: NimbleTOTP.verification_code(secret)})
     |> json_response(:ok)
-    |> assert_schema("UserTOTPEnrollmentConfirmPayload", api_spec)
+    |> assert_schema("UserTOTPEnrollmentConfirmPayloadV1", api_spec)
   end
 
   defp admin_username, do: Application.fetch_env!(:trento, :admin_user)

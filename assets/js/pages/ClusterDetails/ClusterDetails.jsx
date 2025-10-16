@@ -11,6 +11,8 @@ import {
 
 import { RUNNING_STATES } from '@state/lastExecutions';
 
+import { isSomeHostOnline } from '@lib/model/clusters';
+
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   PACEMAKER_ENABLE,
@@ -81,19 +83,23 @@ function ClusterDetails({
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
+  const someHostOnline = isSomeHostOnline(hosts);
+
   const clusterOperations = getClusterOperations(
     clusterID,
     runningOperation,
     setMaintenanceOperationParams,
     setOperationModalOpen,
-    details
+    details,
+    someHostOnline
   );
 
   const curriedGetResourceOperations = getResourceOperations(
     clusterID,
     runningOperation,
     setMaintenanceOperationParams,
-    setOperationModalOpen
+    setOperationModalOpen,
+    someHostOnline
   );
 
   const getOperationModalDescriptionArgs = (operation) => {

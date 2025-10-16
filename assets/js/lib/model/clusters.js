@@ -1,4 +1,4 @@
-import { map, uniq } from 'lodash';
+import { map, uniq, some } from 'lodash';
 
 // Cluster types
 export const HANA_SCALE_UP = 'hana_scale_up';
@@ -53,3 +53,6 @@ export const FS_TYPE_MIXED = 'mixed_fs_types';
 
 export const getClusterSids = ({ sap_instances: sapInstances }) =>
   uniq(map(sapInstances, 'sid'));
+
+export const isSomeHostOnline = (hosts) =>
+  some(hosts, { cluster_host_status: 'online' });

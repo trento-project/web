@@ -5,7 +5,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Checks.ChecksSelectionRequest do
 
   OpenApiSpex.schema(
     %{
-      title: "ChecksSelectionRequest",
+      title: "ChecksSelectionRequestV1",
       description:
         "Represents a request containing a list of checks to be executed on the target infrastructure, supporting automated validation and compliance.",
       additionalProperties: false,

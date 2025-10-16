@@ -349,4 +349,113 @@ describe('Users', () => {
       loginPage.loginShouldFail(usersPage.USER.username, usersPage.PASSWORD);
     });
   });
+
+  describe('Profile personal access tokens', () => {
+    beforeEach(() => {
+      basePage.logout();
+      usersPage.apiDeleteAllUsers();
+      usersPage.apiCreateUser();
+      basePage.visit();
+      loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
+      basePage.clickUserDropdownProfileButton();
+      basePage.validateUrl('/profile');
+    });
+
+    it('should show an empty list of personal access tokens', () => {
+      usersPage.personalAccessTokensAreDisplayed([]);
+    });
+
+    it('should create a new personal access token and grant access to guarded resources', () => {
+      usersPage.clickGenerateTokenButton();
+      usersPage.typeTokenName();
+      usersPage.clickModalGenerateTokenButton();
+      usersPage.newAccessTokenIsDisplayed().then((token) => {
+        usersPage.apiPersonalAccessTokenAuthorized(token);
+      });
+      usersPage.modalCopyAccessTokenButtonIsDisplayed();
+      usersPage.clickGeneratedTokenCloseButton();
+      usersPage.personalAccessTokensAreDisplayed([
+        { name: usersPage.DEFAULT_TOKEN_NAME },
+      ]);
+    });
+
+    it('should delete a personal access token and revoke access to guarded resources', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ name, access_token: token }) => {
+          usersPage.apiPersonalAccessTokenAuthorized(token);
+          cy.visit('/profile');
+          usersPage.personalAccessTokensAreDisplayed([{ name }]);
+          usersPage.clickDeleteTokenButton();
+          usersPage.clickModalDeleteTokenButton();
+          usersPage.personalAccessTokensAreDisplayed([]);
+          usersPage.apiPersonalAccessTokenUnauthorized(token);
+        });
+    });
+
+    it('should inherit user abilities when a personal access token is used', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ access_token: token }) => {
+          usersPage.apiPersonalAccessTokenForbidden(token);
+          usersPage.apiApplyAllUsersPermission();
+          usersPage.apiPersonalAccessTokenAuthorized(token, '/api/v1/users');
+        });
+    });
+
+    it('should revoke access for a locked user', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ access_token: token }) => {
+          usersPage.apiPersonalAccessTokenAuthorized(token);
+          usersPage.apiDisableUser();
+          usersPage.apiPersonalAccessTokenUnauthorized(token);
+        });
+    });
+
+    it('should revoke access for a deleted user', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ access_token: token }) => {
+          usersPage.apiPersonalAccessTokenAuthorized(token);
+          usersPage.apiDeleteAllUsers();
+          usersPage.apiPersonalAccessTokenUnauthorized(token);
+        });
+    });
+  });
+
+  describe('Edit user personal access tokens', () => {
+    beforeEach(() => {
+      usersPage.apiDeleteAllUsers();
+      usersPage.apiCreateUser();
+      basePage.apiLoginAndCreateSession();
+    });
+
+    it('should show an empty list of personal access tokens', () => {
+      usersPage.visit();
+      usersPage.clickNewUser();
+      usersPage.personalAccessTokensAreDisplayed([]);
+    });
+
+    it('should display personal access tokens created by selected user', () => {
+      usersPage.apiCreatePersonalAccessToken().then(({ name }) => {
+        usersPage.visit();
+        usersPage.clickNewUser();
+        usersPage.personalAccessTokensAreDisplayed([{ name }]);
+      });
+    });
+
+    it('should delete the user personal access token and revoke access to guarded resources', () => {
+      usersPage
+        .apiCreatePersonalAccessToken()
+        .then(({ access_token: token }) => {
+          usersPage.visit();
+          usersPage.clickNewUser();
+          usersPage.clickDeleteTokenButton();
+          usersPage.clickModalDeleteTokenButton();
+          usersPage.personalAccessTokensAreDisplayed([]);
+          usersPage.apiPersonalAccessTokenUnauthorized(token);
+        });
+    });
+  });
 });

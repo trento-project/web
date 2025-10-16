@@ -25,6 +25,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :user_modification,
         :user_deletion,
         :profile_update,
+        :personal_access_token_creation,
+        :personal_access_token_deletion,
+        :personal_access_token_admin_deletion,
         :cluster_checks_selected,
         :cluster_checks_execution_request,
         :host_checks_selected,
@@ -286,6 +289,26 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         activity: :profile_update,
         connection_info: {TrentoWeb.V1.ProfileController, :update},
         interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :personal_access_token_creation,
+        connection_info:
+          {TrentoWeb.V1.PersonalAccessTokensController, :create_personal_access_token},
+        interesting_statuses: 201,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :personal_access_token_deletion,
+        connection_info:
+          {TrentoWeb.V1.PersonalAccessTokensController, :revoke_personal_access_token},
+        interesting_statuses: 204,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :personal_access_token_admin_deletion,
+        connection_info: {TrentoWeb.V1.UsersController, :revoke_personal_access_token},
+        interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{

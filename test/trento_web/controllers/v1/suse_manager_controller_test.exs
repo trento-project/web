@@ -56,7 +56,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         conn
         |> get("/api/v1/hosts/#{host_id}/software_updates")
         |> json_response(:ok)
-        |> assert_schema("AvailableSoftwareUpdatesResponse", api_spec)
+        |> assert_schema("AvailableSoftwareUpdatesResponseV1", api_spec)
     end
 
     test "should return 403 when no settings have been saved", %{conn: conn} do
@@ -84,7 +84,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       conn
       |> get("/api/v1/hosts/#{host_id}/software_updates")
       |> json_response(:not_found)
-      |> assert_schema("NotFound", api_spec)
+      |> assert_schema("NotFoundV1", api_spec)
     end
   end
 
@@ -121,7 +121,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         conn
         |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
         |> json_response(:ok)
-        |> assert_schema("PatchesForPackagesResponse", api_spec)
+        |> assert_schema("PatchesForPackagesResponseV1", api_spec)
     end
 
     test "should return an error if at least one package query fails", %{
@@ -157,7 +157,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       conn
       |> get("/api/v1/software_updates/packages?host_id=#{host_id}")
       |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntity", api_spec)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
     end
   end
 
@@ -230,7 +230,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       # Assert on the JSON response that the `fixes` Map contains entries.
       assert fixes |> Map.keys() |> length == json_fixes |> Map.keys() |> length
 
-      result = assert_schema(json, "ErrataDetailsResponse", api_spec)
+      result = assert_schema(json, "ErrataDetailsResponseV1", api_spec)
 
       %{
         errata_details: %{
@@ -304,7 +304,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
         |> json_response(:ok)
 
-      result = assert_schema(json, "ErrataDetailsResponse", api_spec)
+      result = assert_schema(json, "ErrataDetailsResponseV1", api_spec)
 
       %{
         affected_systems: [%{name: ^first_affected_system}]
@@ -379,7 +379,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         conn
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
         |> json_response(:unprocessable_entity)
-        |> assert_schema("UnprocessableEntity", api_spec)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
       end
     end
 
@@ -451,7 +451,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         conn
         |> get("/api/v1/software_updates/errata_details/#{advisory_name}")
         |> json_response(:unprocessable_entity)
-        |> assert_schema("UnprocessableEntity", api_spec)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
       end
     end
   end

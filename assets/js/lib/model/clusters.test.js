@@ -1,12 +1,14 @@
 import {
   clusterFactory,
   clusteredSapInstanceFactory,
+  hostFactory,
 } from '@lib/test-utils/factories';
 
 import {
   getClusterTypeLabel,
   isValidClusterType,
   getClusterSids,
+  isSomeHostOnline,
 } from './clusters';
 
 describe('clusters', () => {
@@ -38,5 +40,18 @@ describe('clusters', () => {
       sap_instances: [instance1, instance2, instance3],
     });
     expect(getClusterSids(cluster)).toEqual([instance1.sid, instance2.sid]);
+  });
+
+  it('should return true if some hosts is online', () => {
+    const hosts = [
+      hostFactory.build({ cluster_host_status: 'online' }),
+      hostFactory.build({ cluster_host_status: 'offline' }),
+    ];
+    expect(isSomeHostOnline(hosts)).toBeTruthy();
+  });
+
+  it('should return false if none of hosts are online', () => {
+    const hosts = hostFactory.buildList(2, { cluster_host_status: 'offline' });
+    expect(isSomeHostOnline(hosts)).toBeFalsy();
   });
 });

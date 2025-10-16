@@ -9,7 +9,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
 
     OpenApiSpex.schema(
       %{
-        title: "PersonalAccessTokenEntry",
+        title: "PersonalAccessTokenEntryV1",
         description: "A User's Personal Access Token.",
         type: :object,
         additionalProperties: false,
@@ -59,7 +59,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
 
     OpenApiSpex.schema(
       %{
-        title: "PersonalAccessTokenCollection",
+        title: "PersonalAccessTokenCollectionV1",
         description: "List of a user's Personal Access Tokens.",
         type: :array,
         items: PersonalAccessTokenEntry,
@@ -81,7 +81,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
 
     OpenApiSpex.schema(
       %{
-        title: "CreatePersonalAccessToken",
+        title: "CreatePersonalAccessTokenV1",
         description: "Request to create a new Personal Access Token.",
         type: :object,
         additionalProperties: false,
@@ -115,7 +115,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
 
     OpenApiSpex.schema(
       %{
-        title: "CreatedPersonalAccessToken",
+        title: "CreatedPersonalAccessTokenV1",
         description: "A User's newly created Personal Access Token.",
         type: :object,
         additionalProperties: false,

@@ -22,26 +22,53 @@ concurrency:
 
 env:
   MIX_ENV: test
+  ELIXIR_BC: "1.15.7-otp-26"
+  ERLANG_BC: "26.2.1"
+  NODEJS_BC: "20.14.0"
 
 jobs:
+  setup-matrix-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
+      ERLANG_DEV: ${{ env.ERLANG_VERSION }}
+      NODEJS_DEV: ${{ env.NODEJS_VERSION }}
+      ELIXIR_BC: ${{ env.ELIXIR_BC }}
+      ERLANG_BC: ${{ env.ERLANG_BC }}
+      NODEJS_BC: ${{ env.NODEJS_BC }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: gather versions
+        uses: endorama/asdf-parse-tool-versions@v1
+      - name: Compute matrix
+        run: |
+          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
           - mix_env: dev
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: dev
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - mix_env: test
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - mix_env: test
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -76,28 +103,30 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - nodejs: "20"
-          - nodejs: "22"
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ matrix.nodejs }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm install
@@ -144,7 +173,7 @@ jobs:
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@v1
       - name: Generate openapi.json
-        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.V1.ApiSpec
+        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.All.ApiSpec
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
         with:
@@ -159,17 +188,17 @@ jobs:
 
   static-code-analysis:
     name: Static Code Analysis
-    needs: [elixir-deps, npm-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-            nodejs: "20"
-          - elixir: "1.18"
-            otp: "27"
-            nodejs: "22"
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+            nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+            nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -182,6 +211,7 @@ jobs:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.nodejs }}
@@ -200,7 +230,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -216,19 +246,20 @@ jobs:
 
   test-javascript:
     name: Javascript tests
-    needs: npm-deps
+    needs: [setup-matrix-env, npm-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - nodejs: "20"
-          - nodejs: "22"
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.nodejs }}
@@ -238,21 +269,21 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ matrix.nodejs }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
         run: cd assets && npm test
 
   test-elixir:
     name: Elixir tests
-    needs: [elixir-deps]
+    needs: [setup-matrix-env, elixir-deps]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -287,7 +318,7 @@ jobs:
 
   chromatic:
     name: Chromatic deployment
-    needs: [elixir-deps, npm-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps]
     runs-on: ubuntu-24.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
     steps:
@@ -295,9 +326,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -305,9 +333,10 @@ jobs:
           otp-version: "27"
           elixir-version: "1.18"
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -323,7 +352,7 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Build CSS
         run: npx tailwindcss --input=css/app.css --output=../priv/static/assets/app.css --postcss
         working-directory: assets
@@ -340,44 +369,40 @@ jobs:
 
   npm-e2e-deps:
     name: Npm E2E dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
 
   test-e2e:
     name: E2E Tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         containers: [1, 2, 3, 4, 5, 6, 7, 8]
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
-
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: dev
     steps:
@@ -385,9 +410,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -395,9 +417,10 @@ jobs:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -413,14 +436,14 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -439,10 +462,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -463,7 +485,7 @@ jobs:
 
   test-regression:
     name: Regression tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -482,9 +504,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -492,9 +511,10 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v4
         id: mix-cache
@@ -510,14 +530,14 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -547,10 +567,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
@@ -570,7 +589,7 @@ jobs:
 
   test-integration:
     name: Integration tests
-    needs: [elixir-deps, npm-deps, npm-e2e-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -586,6 +605,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oidc
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -597,6 +617,7 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: oauth2
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
@@ -608,9 +629,11 @@ jobs:
               MIX_ENV: dev
               CYPRESS_SSO_INTEGRATION_TESTS: true
               CYPRESS_SSO_TYPE: saml
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
+              cypress/e2e/alerting.cy.js
             config_file_content: |
               import Config
 
@@ -623,15 +646,21 @@ jobs:
             env:
               MIX_ENV: dev
               CYPRESS_ALERTING_DB_TESTS: true
+              CYPRESS_ALERTING_TESTS: true
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
+          - test: alerting_from_env
+            cypress_spec: |
+              cypress/e2e/alerting.cy.js
+            env:
+              MIX_ENV: dev
+              CYPRESS_ALERTING_TESTS: true
+              NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@v1
@@ -639,6 +668,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Setup Node
+        id: setup-node
         uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODEJS_VERSION }}
@@ -657,14 +687,23 @@ jobs:
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@v4
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+          chmod: +x
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.3.0
         with:
@@ -681,6 +720,7 @@ jobs:
         uses: cypress-io/github-action@v6
         env:
           cypress_video: false
+          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
@@ -695,14 +735,15 @@ jobs:
 
   target-branch-deps:
     name: Rebuild target branch dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -736,16 +777,16 @@ jobs:
 
   api-docs-check:
     name: API docs check
-    needs: elixir-deps
+    needs: [setup-matrix-env, elixir-deps]
     if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - elixir: "1.15"
-            otp: "26"
-          - elixir: "1.18"
-            otp: "27"
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.12.1
@@ -761,9 +802,6 @@ jobs:
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
-        id: tool-versions
       - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@v4
         id: mix-cache-current
@@ -774,45 +812,44 @@ jobs:
             priv/plts
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Setup Node.js
+        id: setup-node
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install API linting tools
         run: |
           npm install -g @redocly/cli@latest
           npm install -g @quobix/vacuum@latest
           npm install -g @stoplight/spectral-cli
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
       - name: Run API docs check
         run: ./hack/api_docs_check.sh
 
   api-bc-check:
     name: API bc check
-    needs: [elixir-deps, target-branch-deps]
+    needs: [setup-matrix-env, elixir-deps, target-branch-deps]
     if: github.event_name == 'pull_request' && !failure() && !cancelled()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
           - version: Unversioned
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: Unversioned
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V1
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V1
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           - version: V2
-            elixir: "1.15"
-            otp: "26"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
           - version: V2
-            elixir: "1.18"
-            otp: "27"
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@v5
@@ -981,10 +1018,9 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
+          chmod: +x
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Push data
         run: |
           photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"

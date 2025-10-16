@@ -25,6 +25,10 @@ export const USER_CREATION = 'user_creation';
 export const USER_MODIFICATION = 'user_modification';
 export const USER_DELETION = 'user_deletion';
 export const PROFILE_UPDATE = 'profile_update';
+export const PERSONAL_ACCESS_TOKEN_CREATION = 'personal_access_token_creation';
+export const PERSONAL_ACCESS_TOKEN_DELETION = 'personal_access_token_deletion';
+export const PERSONAL_ACCESS_TOKEN_ADMIN_DELETION =
+  'personal_access_token_admin_deletion';
 export const CLUSTER_CHECKS_EXECUTION_REQUEST =
   'cluster_checks_execution_request';
 export const HOST_CHECKS_EXECUTION_REQUEST = 'host_checks_execution_request';
@@ -275,6 +279,24 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
     resource: (_entry) => 'Profile',
+    allowedTo: userManagement,
+  },
+  [PERSONAL_ACCESS_TOKEN_CREATION]: {
+    label: 'Personal Access Token Created',
+    message: (_entry) => `Personal access token was created`,
+    resource: (_entry) => 'Profile',
+    allowedTo: userManagement,
+  },
+  [PERSONAL_ACCESS_TOKEN_DELETION]: {
+    label: 'Personal Access Token Deleted',
+    message: (_entry) => `Personal access token was deleted`,
+    resource: (_entry) => 'Profile',
+    allowedTo: userManagement,
+  },
+  [PERSONAL_ACCESS_TOKEN_ADMIN_DELETION]: {
+    label: 'Personal Access Token Deleted',
+    message: (_entry) => `Personal access token was deleted by admin`,
+    resource: userResourceType,
     allowedTo: userManagement,
   },
   [CLUSTER_CHECKS_EXECUTION_REQUEST]: {
