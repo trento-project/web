@@ -22,23 +22,24 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string},
-          type: %Schema{type: :string},
-          role: %Schema{type: :string},
-          status: %Schema{type: :string},
-          fail_count: %Schema{type: :integer},
-          managed: %Schema{type: :boolean},
-          node: %Schema{type: :string, nullable: true},
+          id: %Schema{type: :string, example: "ocf:heartbeat:IPaddr2"},
+          type: %Schema{type: :string, example: "ocf"},
+          role: %Schema{type: :string, example: "Started"},
+          status: %Schema{type: :string, example: "running"},
+          fail_count: %Schema{type: :integer, example: 0},
+          managed: %Schema{type: :boolean, example: true},
+          node: %Schema{type: :string, nullable: true, example: "node-01"},
           parent: %Schema{
             type: :object,
             additionalProperties: false,
             nullable: true,
             properties: %{
-              id: %Schema{type: :string},
+              id: %Schema{type: :string, example: "cluster-ip-group"},
               managed: %Schema{
                 type: :boolean,
                 description:
-                  "Indicates whether the resource is managed by the cluster infrastructure, supporting automated management and monitoring."
+                  "Indicates whether the resource is managed by the cluster infrastructure, supporting automated management and monitoring.",
+                example: true
               },
               multi_state: %Schema{
                 type: :boolean,
@@ -48,7 +49,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
                 - true: promotable group
                 - false: cloned group
                 - null: standard group
-                """
+                """,
+                example: false
               }
             }
           }
@@ -83,25 +85,34 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         type: :object,
         additionalProperties: false,
         properties: %{
-          name: %Schema{type: :string},
-          site: %Schema{type: :string},
-          indexserver_actual_role: %Schema{type: :string, nullable: true},
-          nameserver_actual_role: %Schema{type: :string, nullable: true},
-          hana_status: %Schema{type: :string, deprecated: true},
-          status: %Schema{type: :string},
+          name: %Schema{type: :string, example: "hana01"},
+          site: %Schema{type: :string, example: "NUREMBERG"},
+          indexserver_actual_role: %Schema{type: :string, nullable: true, example: "master"},
+          nameserver_actual_role: %Schema{type: :string, nullable: true, example: "master"},
+          hana_status: %Schema{type: :string, deprecated: true, example: "Primary"},
+          status: %Schema{type: :string, example: "online"},
           attributes: %Schema{
             type: :object,
             description:
               "A set of attributes describing the configuration and state of the HANA cluster node, supporting monitoring and management.",
             additionalProperties: %Schema{type: :string}
           },
-          virtual_ip: %Schema{type: :string},
+          virtual_ip: %Schema{type: :string, example: "192.168.1.10"},
           resources: %Schema{
             description:
               "A list of cluster resources associated with this HANA cluster node, supporting infrastructure management.",
             type: :array,
             items: ClusterResource,
-            deprecated: true
+            deprecated: true,
+            example: [
+              %{
+                id: "rsc_SAPHana_PRD_HDB00",
+                type: "ocf::suse:SAPHana",
+                role: "Master",
+                status: "running",
+                fail_count: 0
+              }
+            ]
           }
         },
         example: %{
@@ -145,17 +156,20 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           name: %Schema{
             type: :string,
             description:
-              "The name of the HANA cluster site, supporting identification and management."
+              "The name of the HANA cluster site, supporting identification and management.",
+            example: "NUREMBERG"
           },
           state: %Schema{
             type: :string,
             description:
-              "The operational state of the HANA cluster site, supporting monitoring and alerting."
+              "The operational state of the HANA cluster site, supporting monitoring and alerting.",
+            example: "Primary"
           },
           sr_health_state: %Schema{
             type: :string,
             description:
-              "The system replication health state of the HANA cluster site, supporting infrastructure health tracking."
+              "The system replication health state of the HANA cluster site, supporting infrastructure health tracking.",
+            example: "4"
           }
         },
         example: %{
@@ -194,60 +208,96 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           system_replication_mode: %Schema{
             type: :string,
             description:
-              "The system replication mode of the HANA cluster, supporting data protection and availability."
+              "The system replication mode of the HANA cluster, supporting data protection and availability.",
+            example: "sync"
           },
           system_replication_operation_mode: %Schema{
             type: :string,
             description:
-              "The system replication operation mode of the HANA cluster, supporting data protection and availability."
+              "The system replication operation mode of the HANA cluster, supporting data protection and availability.",
+            example: "logreplay"
           },
           secondary_sync_state: %Schema{
             type: :string,
             description:
-              "The secondary sync state of the HANA cluster, supporting data protection and availability."
+              "The secondary sync state of the HANA cluster, supporting data protection and availability.",
+            example: "SOK"
           },
           sr_health_state: %Schema{
             type: :string,
             description:
               "The system replication health state of the HANA cluster, supporting infrastructure health tracking.",
-            deprecated: true
+            deprecated: true,
+            example: "4"
           },
           fencing_type: %Schema{
             type: :string,
             description:
-              "The fencing type used in the HANA cluster, supporting infrastructure protection and management."
+              "The fencing type used in the HANA cluster, supporting infrastructure protection and management.",
+            example: "external/sbd"
           },
           maintenance_mode: %Schema{
             type: :boolean,
             description:
-              "Indicates whether maintenance mode is enabled for the HANA cluster, supporting infrastructure management and troubleshooting."
+              "Indicates whether maintenance mode is enabled for the HANA cluster, supporting infrastructure management and troubleshooting.",
+            example: false
           },
           stopped_resources: %Schema{
             description:
               "A list of the stopped resources on this HANA cluster, supporting infrastructure monitoring and management.",
             type: :array,
             items: ClusterResource,
-            deprecated: true
+            deprecated: true,
+            example: []
           },
           nodes: %Schema{
             type: :array,
-            items: HanaClusterNode
+            items: HanaClusterNode,
+            example: [
+              %{
+                name: "hana01",
+                site: "NUREMBERG",
+                hana_status: "Primary"
+              }
+            ]
           },
           sites: %Schema{
             description:
               "A list of HANA cluster sites, supporting infrastructure monitoring and management.",
             type: :array,
-            items: HanaClusterSite
+            items: HanaClusterSite,
+            example: [
+              %{
+                name: "NUREMBERG",
+                state: "Primary",
+                sr_health_state: "4"
+              }
+            ]
           },
           sbd_devices: %Schema{
             type: :array,
-            items: Cluster.SbdDevice
+            items: Cluster.SbdDevice,
+            example: [
+              %{
+                device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",
+                status: "healthy"
+              }
+            ]
           },
           resources: %Schema{
             description:
               "A list of cluster resources associated with this HANA cluster, supporting infrastructure management.",
             type: :array,
-            items: ClusterResource
+            items: ClusterResource,
+            example: [
+              %{
+                id: "rsc_SAPHana_PRD_HDB00",
+                type: "ocf::suse:SAPHana",
+                role: "Master",
+                status: "running",
+                fail_count: 0
+              }
+            ]
           }
         },
         required: [:nodes],
@@ -320,36 +370,50 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             type: :array,
             items: %Schema{type: :string},
             description:
-              "A list of filesystems managed in this ASCS/ERS cluster node, supporting infrastructure management."
+              "A list of filesystems managed in this ASCS/ERS cluster node, supporting infrastructure management.",
+            example: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"]
           },
           name: %Schema{
             type: :string,
             description:
-              "The name of the ASCS/ERS cluster node, supporting identification and management."
+              "The name of the ASCS/ERS cluster node, supporting identification and management.",
+            example: "node01"
           },
           status: %Schema{
             type: :string,
             description:
-              "The operational status of the ASCS/ERS cluster node, supporting monitoring and alerting."
+              "The operational status of the ASCS/ERS cluster node, supporting monitoring and alerting.",
+            example: "online"
           },
           resources: %Schema{
             type: :array,
             items: ClusterResource,
             description:
               "A list of cluster resources associated with this ASCS/ERS cluster node, supporting infrastructure management.",
-            deprecated: true
+            deprecated: true,
+            example: [
+              %{
+                id: "rsc_SAPInstance_HA1_ASCS00",
+                type: "ocf::heartbeat:SAPInstance",
+                role: "Started",
+                status: "Started",
+                fail_count: 0
+              }
+            ]
           },
           roles: %Schema{
             type: :array,
             items: %Schema{type: :string, enum: AscsErsClusterRole.values()},
             description:
-              "A list of roles managed in this ASCS/ERS cluster node, supporting infrastructure management."
+              "A list of roles managed in this ASCS/ERS cluster node, supporting infrastructure management.",
+            example: ["ascs"]
           },
           virtual_ips: %Schema{
             type: :array,
             items: %Schema{type: :string},
             description:
-              "A list of virtual IPs managed in this ASCS/ERS cluster node, supporting infrastructure management."
+              "A list of virtual IPs managed in this ASCS/ERS cluster node, supporting infrastructure management.",
+            example: ["192.168.1.10"]
           }
         },
         example: %{
@@ -391,23 +455,34 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           sid: %Schema{
             type: :string,
             description:
-              "The SAP system identifier (SID) managed by the ASCS/ERS cluster, supporting system identification."
+              "The SAP system identifier (SID) managed by the ASCS/ERS cluster, supporting system identification.",
+            example: "HA1"
           },
           distributed: %Schema{
             type: :boolean,
             description:
-              "Indicates whether ASCS and ERS instances are distributed and running in different nodes, supporting infrastructure management."
+              "Indicates whether ASCS and ERS instances are distributed and running in different nodes, supporting infrastructure management.",
+            example: false
           },
           filesystem_resource_based: %Schema{
             type: :boolean,
             description:
-              "Indicates whether ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent, supporting infrastructure management."
+              "Indicates whether ASCS and ERS filesystems are handled by the cluster with the Filesystem resource agent, supporting infrastructure management.",
+            example: true
           },
           nodes: %Schema{
             type: :array,
             items: AscsErsClusterNode,
             description:
-              "A list of ASCS/ERS nodes for this SAP system, supporting infrastructure management."
+              "A list of ASCS/ERS nodes for this SAP system, supporting infrastructure management.",
+            example: [
+              %{
+                name: "node01",
+                roles: ["ascs"],
+                virtual_ips: ["192.168.1.10"],
+                filesystems: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"]
+              }
+            ]
           }
         },
         example: %{
@@ -442,37 +517,70 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
           fencing_type: %Schema{
             type: :string,
             description:
-              "The fencing type used in the ASCS/ERS cluster, supporting infrastructure protection and management."
+              "The fencing type used in the ASCS/ERS cluster, supporting infrastructure protection and management.",
+            example: "external/sbd"
           },
           maintenance_mode: %Schema{
             type: :boolean,
             description:
-              "Indicates whether maintenance mode is enabled for the ASCS/ERS cluster, supporting infrastructure management and troubleshooting."
+              "Indicates whether maintenance mode is enabled for the ASCS/ERS cluster, supporting infrastructure management and troubleshooting.",
+            example: false
           },
           sap_systems: %Schema{
             type: :array,
             items: AscsErsClusterSAPSystem,
             description:
-              "A list of managed SAP systems in a single or multi SID ASCS/ERS cluster, supporting infrastructure management."
+              "A list of managed SAP systems in a single or multi SID ASCS/ERS cluster, supporting infrastructure management.",
+            example: [
+              %{
+                sid: "HA1",
+                filesystem_resource_based: true,
+                distributed: false,
+                nodes: [
+                  %{
+                    name: "node01",
+                    roles: ["ascs"],
+                    virtual_ips: ["192.168.1.10"],
+                    filesystems: ["/sapmnt/HA1", "/usr/sap/HA1/ASCS00"]
+                  }
+                ]
+              }
+            ]
           },
           sbd_devices: %Schema{
             type: :array,
             items: Cluster.SbdDevice,
             description:
-              "A list of SBD devices used in the ASCS/ERS cluster, supporting infrastructure management."
+              "A list of SBD devices used in the ASCS/ERS cluster, supporting infrastructure management.",
+            example: [
+              %{
+                device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",
+                status: "healthy"
+              }
+            ]
           },
           stopped_resources: %Schema{
             type: :array,
             items: ClusterResource,
             description:
               "A list of the stopped resources on this ASCS/ERS cluster, supporting infrastructure monitoring and management.",
-            deprecated: true
+            deprecated: true,
+            example: []
           },
           resources: %Schema{
             description:
               "A list of cluster resources associated with this ASCS/ERS cluster, supporting infrastructure management.",
             type: :array,
-            items: ClusterResource
+            items: ClusterResource,
+            example: [
+              %{
+                id: "rsc_SAPInstance_HA1_ASCS00",
+                type: "ocf::heartbeat:SAPInstance",
+                role: "Started",
+                status: "Started",
+                fail_count: 0
+              }
+            ]
           }
         },
         required: [:sap_systems],
@@ -558,24 +666,32 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
         type: :object,
         additionalProperties: false,
         properties: %{
-          id: %Schema{type: :string, description: "Cluster ID.", format: :uuid},
+          id: %Schema{
+            type: :string,
+            description: "Cluster ID.",
+            format: :uuid,
+            example: "123e4567-e89b-12d3-a456-426614174000"
+          },
           name: %Schema{
             type: :string,
             description:
-              "The name of the Pacemaker cluster, supporting identification and management."
+              "The name of the Pacemaker cluster, supporting identification and management.",
+            example: "hana_cluster"
           },
           sid: %Schema{
             type: :string,
             description:
               "The SAP system identifier (SID) for the Pacemaker cluster. Deprecated: use sap_instances instead.",
-            deprecated: true
+            deprecated: true,
+            example: "PRD"
           },
           additional_sids: %Schema{
             type: :array,
             items: %Schema{type: :string},
             description:
               "A list of additionally discovered SIDs, such as ASCS/ERS cluster SIDs. Deprecated: use sap_instances instead.",
-            deprecated: true
+            deprecated: true,
+            example: ["ASCS"]
           },
           sap_instances: %Schema{
             description:
@@ -587,17 +703,25 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
                 sid: %Schema{
                   type: :string,
                   description:
-                    "The SAP instance identifier (SID) in the Pacemaker cluster, supporting system identification."
+                    "The SAP instance identifier (SID) in the Pacemaker cluster, supporting system identification.",
+                  example: "PRD"
                 },
                 instance_number: %Schema{
                   type: :string,
                   description:
-                    "The SAP instance number in the Pacemaker cluster, supporting system identification."
+                    "The SAP instance number in the Pacemaker cluster, supporting system identification.",
+                  example: "00"
                 }
               },
               additionalProperties: false,
               required: [:sid, :instance_number]
-            }
+            },
+            example: [
+              %{
+                sid: "PRD",
+                instance_number: "00"
+              }
+            ]
           },
           provider: Provider.SupportedProviders,
           type: %Schema{
@@ -610,31 +734,44 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             description:
               "A list of check IDs selected for an execution on this Pacemaker cluster, supporting monitoring and management.",
             type: :array,
-            items: %Schema{type: :string}
+            items: %Schema{type: :string},
+            example: ["check_2"]
           },
           health: ResourceHealth,
           resources_number: %Schema{
             type: :integer,
             description:
               "The number of resources in the Pacemaker cluster, supporting infrastructure monitoring and management.",
-            nullable: true
+            nullable: true,
+            example: 10
           },
           hosts_number: %Schema{
             type: :integer,
             description:
               "The number of hosts in the Pacemaker cluster, supporting infrastructure monitoring and management.",
-            nullable: true
+            nullable: true,
+            example: 2
           },
           cib_last_written: %Schema{
             type: :string,
             description:
               "The date and time when the CIB was last written for the Pacemaker cluster, supporting audit and monitoring.",
-            nullable: true
+            nullable: true,
+            example: "2024-01-15T10:30:00Z"
           },
           details: Details,
           tags: Tags,
-          inserted_at: %Schema{type: :string, format: :datetime},
-          updated_at: %Schema{type: :string, format: :datetime, nullable: true}
+          inserted_at: %Schema{
+            type: :string,
+            format: :datetime,
+            example: "2024-01-15T09:00:00Z"
+          },
+          updated_at: %Schema{
+            type: :string,
+            format: :datetime,
+            nullable: true,
+            example: "2024-01-15T10:30:00Z"
+          }
         },
         example: %{
           id: "123e4567-e89b-12d3-a456-426614174000",
