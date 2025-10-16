@@ -7,7 +7,7 @@
 # api_docs_check.sh
 #
 # This script generates and lints OpenAPI documentation for the Trento
-# web application. It supports multiple OpenAPI versions and runs various 
+# web application. It supports multiple OpenAPI versions and runs various
 # linters (redocly, vacuum, spectral) to ensure API documentation quality
 # and compliance.
 #
@@ -32,7 +32,6 @@ TEMP_FILES=()
 trap 'rm -f "${TEMP_FILES[@]}"' EXIT
 
 # Parse command line arguments
-SKIP_GENERATION=false
 
 for arg in "$@"; do
     case $arg in
@@ -104,7 +103,6 @@ rules:
   common-responses-unauthorized: "off"
   no-numeric-ids: "off"
   no-unknown-error-format: "off"
-  path-must-match-api-standards: "off"
   path-must-match-api-standards: "off"
   paths-kebab-case: "off"
   rhoas-error-schema: "off"
