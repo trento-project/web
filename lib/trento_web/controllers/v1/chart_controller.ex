@@ -9,10 +9,9 @@ defmodule TrentoWeb.V1.ChartController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  tags ["Charts"]
-
   operation :host_cpu,
     summary: "Get a CPU chart of a host.",
+    tags: ["Charts"],
     description:
       "Retrieves detailed CPU usage statistics for a specific host over a defined time interval, enabling performance analysis and resource monitoring for infrastructure management.",
     parameters: [
@@ -70,6 +69,7 @@ defmodule TrentoWeb.V1.ChartController do
 
   operation :host_memory,
     summary: "Get a Memory chart of a host.",
+    tags: ["Charts"],
     description:
       "Retrieves detailed memory usage statistics for a specific host over a defined time interval, supporting infrastructure monitoring and troubleshooting for system administrators.",
     parameters: [

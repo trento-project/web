@@ -40,7 +40,7 @@ defmodule TrentoWeb.V1.SettingsController do
     summary: "Get API key settings.",
     description:
       "Retrieves the current settings for API key generation, including expiration and configuration details, supporting secure access management.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     responses: [
       ok:
         {"A comprehensive set of API key settings and configuration details for secure access management.",
@@ -133,7 +133,7 @@ defmodule TrentoWeb.V1.SettingsController do
     summary: "Fetches the Activity Log settings.",
     description:
       "Retrieves the current configuration for the Activity Log, including retention period and related settings, supporting compliance and audit requirements.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     responses: [
       ok:
         {"A comprehensive set of activity log settings and configuration details for compliance and audit requirements.",
@@ -150,7 +150,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_suse_manager_settings,
     summary: "Gets the SUSE Multi-Linux Manager Settings.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     description:
       "Retrieves the saved configuration and credentials for SUSE Multi-Linux Manager integration, supporting automated software management and updates.",
     responses: [
@@ -222,7 +222,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :test_suse_manager_settings,
     summary: "Tests connection with SUSE Multi-Linux Manager.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     description:
       "Tests the connection to SUSE Multi-Linux Manager using the currently saved credentials and configuration, supporting validation and troubleshooting of integration settings.",
     responses: [
@@ -243,7 +243,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_public_keys,
     summary: "Get uploaded public keys.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     description:
       "Retrieves all uploaded public keys for secure authentication and integration, supporting infrastructure security and access control.",
     responses: [
@@ -260,7 +260,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   operation :get_alerting_settings,
     summary: "Get alerting settings.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     description:
       "Retrieves the current configuration for alerting in Trento, including notification settings and integration details, supporting operational monitoring and incident response.",
     responses: [

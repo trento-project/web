@@ -41,10 +41,9 @@ defmodule TrentoWeb.V1.DatabaseController do
 
   action_fallback TrentoWeb.FallbackController
 
-  tags ["Target Infrastructure"]
-
   operation :list_databases,
     summary: "List HANA Databases.",
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
@@ -61,6 +60,7 @@ defmodule TrentoWeb.V1.DatabaseController do
 
   operation :delete_database_instance,
     summary: "Delete database instance.",
+    tags: ["Target Infrastructure"],
     description:
       "Removes the specified database instance from the system if it is no longer present, supporting infrastructure cleanup and resource management.",
     parameters: [

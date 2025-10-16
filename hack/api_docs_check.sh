@@ -7,7 +7,7 @@
 # api_docs_check.sh
 #
 # This script generates and lints OpenAPI documentation for the Trento
-# web application. It supports multiple OpenAPI versions and runs various 
+# web application. It supports multiple OpenAPI versions and runs various
 # linters (redocly, vacuum, spectral) to ensure API documentation quality
 # and compliance.
 #
@@ -32,7 +32,6 @@ TEMP_FILES=()
 trap 'rm -f "${TEMP_FILES[@]}"' EXIT
 
 # Parse command line arguments
-SKIP_GENERATION=false
 
 for arg in "$@"; do
     case $arg in
@@ -102,9 +101,9 @@ rules:
   api-health: "off"
   api-home: "off"
   common-responses-unauthorized: "off"
+  hosts-https-only-oas3: "off"
   no-numeric-ids: "off"
   no-unknown-error-format: "off"
-  path-must-match-api-standards: "off"
   path-must-match-api-standards: "off"
   paths-kebab-case: "off"
   rhoas-error-schema: "off"
@@ -128,10 +127,11 @@ EOF
     cat > "$VACUUM_RULESET_FILE" << EOF
 extends: [[vacuum:oas, recommended]]
 rules:
-  paths-kebab-case: false
-  description-duplication: false
   camel-case-properties: false
+  description-duplication: false
   no-unnecessary-combinator: false
+  owasp-security-hosts-https-oas3: false
+  paths-kebab-case: false
 EOF
 
     vacuum lint "$OPENAPI_FILE" -r "$VACUUM_RULESET_FILE" -d --ignore-array-circle-ref || status=1

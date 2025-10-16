@@ -10,7 +10,7 @@ defmodule TrentoWeb.V1.AboutController do
 
   operation :info,
     summary: "Platform General Information.",
-    tags: ["Platform"],
+    tags: ["Platform", "MCP"],
     description:
       "Returns general information about the current Platform installation, including version and subscription details, to help users and administrators understand the system environment.",
     responses: [
