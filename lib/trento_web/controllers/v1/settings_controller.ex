@@ -40,7 +40,7 @@ defmodule TrentoWeb.V1.SettingsController do
     summary: "Get API key settings.",
     description:
       "Retrieves the current settings for API key generation, including expiration and configuration details, supporting secure access management.",
-    tags: ["Settings"],
+    tags: ["Settings", "MCP"],
     responses: [
       ok:
         {"A comprehensive set of API key settings and configuration details for secure access management.",

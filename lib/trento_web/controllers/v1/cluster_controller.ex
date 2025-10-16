@@ -45,7 +45,7 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :list,
     summary: "List Pacemaker Clusters.",
     deprecated: true,
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
@@ -62,7 +62,7 @@ defmodule TrentoWeb.V1.ClusterController do
 
   operation :request_checks_execution,
     summary: "Request Checks Execution for a Cluster.",
-    tags: ["Checks"],
+    tags: ["Checks", "MCP"],
     description:
       "Initiates the execution of the most recently selected Checks for a specified cluster on the target infrastructure, enabling automated validation and compliance assessment.",
     parameters: [
