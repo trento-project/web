@@ -15,8 +15,8 @@ export const editUser = (userID, payload, version) =>
 
 export const deleteUser = (userID) => del(`/users/${userID}`);
 
-export const deleteUserAccessToken = (userID, jti) =>
-  del(`/users/${userID}/tokens/${jti}`);
+export const deleteUserAccessToken = (userID, tokenID) =>
+  del(`/users/${userID}/tokens/${tokenID}`);
 
 export const getUserProfile = () => get('/profile');
 
@@ -32,4 +32,5 @@ export const confirmTotpEnrolling = (payload) =>
 export const generatePersonalAccessToken = (name, expiresAt) =>
   post('/profile/tokens', { name, expires_at: expiresAt });
 
-export const deletePersonalAccessToken = (jti) => del(`/profile/tokens/${jti}`);
+export const deletePersonalAccessToken = (tokenID) =>
+  del(`/profile/tokens/${tokenID}`);

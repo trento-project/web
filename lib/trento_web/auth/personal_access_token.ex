@@ -2,23 +2,20 @@ defmodule TrentoWeb.Auth.PersonalAccessToken do
   @moduledoc """
   PersonalAccessToken represents a users' generated token.
   """
-  use Joken.Config, default_signer: :access_token_signer
-
-  alias TrentoWeb.Auth.ApiKey
-
-  @iss Application.compile_env!(:trento, :jwt_authentication)[:issuer]
 
   @aud "trento_pat"
+  @prefix @aud <> "_"
 
   @spec aud :: String.t()
   def aud, do: @aud
 
-  @impl Joken.Config
-  def token_config, do: default_claims(iss: @iss, aud: @aud)
+  @spec prefix :: String.t()
+  def prefix, do: @prefix
 
-  def generate!(claims, created_at, expires_at) do
-    claims
-    |> ApiKey.prepare_claims(created_at, expires_at)
-    |> generate_and_sign!()
+  def generate do
+    @prefix <>
+      (64
+       |> :crypto.strong_rand_bytes()
+       |> Base.url_encode64(padding: false))
   end
 end

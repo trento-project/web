@@ -70,33 +70,8 @@ defmodule TrentoWeb.TokensCase do
       |> Map.delete("sub")
       |> AccessToken.generate_access_token!()
 
-  def token(:sub_less_pat, claims),
-    do:
-      claims
-      |> Map.delete("sub")
-      |> PAT.generate!(issued_at(), future_date())
-
   def token(:badly_signed_access_token, claims),
     do: AccessToken.generate_and_sign!(claims, @bad_signer)
-
-  def token(:badly_signed_pat, _) do
-    %User{id: user_id} = insert(:user)
-
-    %PersonalAccessToken{jti: jti} =
-      insert(
-        :personal_access_token,
-        user_id: user_id,
-        expires_at: future_date()
-      )
-
-    valid_claims = %{
-      "jti" => jti,
-      "sub" => user_id,
-      "exp" => future_timestamp()
-    }
-
-    PAT.generate_and_sign!(valid_claims, @bad_signer)
-  end
 
   def token(:expired_access_token, claims),
     do:
@@ -104,42 +79,22 @@ defmodule TrentoWeb.TokensCase do
       |> Map.put("exp", past_timestamp())
       |> AccessToken.generate_access_token!()
 
-  def token(:unbound_expired_pat, claims),
-    do:
-      claims
-      |> Map.put("exp", past_timestamp())
-      |> PAT.generate!(issued_at(), past_date())
-
   def token(:user_bound_expired_pat, _) do
+    plain_pat = PAT.generate()
     %User{id: user_id} = insert(:user)
 
-    %PersonalAccessToken{jti: jti} =
+    %PersonalAccessToken{} =
       insert(
         :personal_access_token,
         user_id: user_id,
-        expires_at: past_date()
+        expires_at: past_date(),
+        token: plain_pat
       )
 
-    claims = %{
-      "jti" => jti,
-      "sub" => user_id,
-      "exp" => past_timestamp()
-    }
-
-    token(:unbound_expired_pat, claims)
+    plain_pat
   end
 
-  def token(:revoked_pat, _) do
-    %User{id: user_id} = insert(:user)
-
-    claims = %{
-      "jti" => Faker.UUID.v4(),
-      "sub" => user_id,
-      "exp" => future_timestamp()
-    }
-
-    PAT.generate!(claims, issued_at(), future_date())
-  end
+  def token(:revoked_pat, _), do: PAT.generate()
 
   def valid_access_token do
     claims = default_claims()
@@ -160,20 +115,20 @@ defmodule TrentoWeb.TokensCase do
   def valid_pat do
     %User{id: user_id} = insert(:user)
 
-    %PersonalAccessToken{jti: jti} =
+    pat = PAT.generate()
+
+    %PersonalAccessToken{} =
       insert(
         :personal_access_token,
         user_id: user_id,
-        expires_at: future_date()
+        token: pat,
+        expires_at: Faker.DateTime.forward(2)
       )
 
-    claims = %{
-      "jti" => jti,
-      "sub" => user_id,
-      "exp" => future_timestamp()
-    }
-
-    {PAT.generate!(claims, issued_at(), future_date()), claims}
+    {pat,
+     %{
+       "sub" => user_id
+     }}
   end
 
   def invalid_tokens do
@@ -183,11 +138,8 @@ defmodule TrentoWeb.TokensCase do
       token(:jti_less),
       token(:audience_less),
       token(:sub_less_access_token),
-      token(:sub_less_pat),
       token(:badly_signed_access_token),
-      token(:badly_signed_pat),
       token(:expired_access_token),
-      token(:unbound_expired_pat),
       token(:user_bound_expired_pat),
       token(:revoked_pat)
     ]
@@ -200,11 +152,8 @@ defmodule TrentoWeb.TokensCase do
       :jti_less,
       :audience_less,
       :sub_less_access_token,
-      :sub_less_pat,
       :badly_signed_access_token,
-      :badly_signed_pat,
       :expired_access_token,
-      :unbound_expired_pat,
       :user_bound_expired_pat,
       :revoked_pat
     ]

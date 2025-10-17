@@ -9,7 +9,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
     Enum.map(
       personal_access_tokens,
       &%{
-        jti: &1.jti,
+        id: &1.id,
         name: &1.name,
         created_at: &1.created_at,
         expires_at: &1.expires_at
@@ -19,7 +19,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
 
   def new_personal_access_token(%{
         personal_access_token: %PersonalAccessToken{
-          jti: jti,
+          id: id,
           name: name,
           created_at: created_at,
           expires_at: expires_at
@@ -27,7 +27,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensJSON do
         generated_token: generated_token
       }),
       do: %{
-        jti: jti,
+        id: id,
         name: name,
         created_at: created_at,
         expires_at: expires_at,

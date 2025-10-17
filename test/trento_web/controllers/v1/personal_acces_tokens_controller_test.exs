@@ -185,7 +185,7 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
         assert_schema(resp, "CreatedPersonalAccessTokenV1", api_spec)
 
         assert %{
-                 "jti" => _,
+                 "id" => _,
                  "name" => ^pat_name,
                  "expires_at" => ^expires_at,
                  "created_at" => _,
@@ -215,15 +215,15 @@ defmodule TrentoWeb.V1.PersonalAccessTokensControllerTest do
       conn: conn,
       admin_user: %{id: user_id}
     } do
-      %PersonalAccessToken{jti: jti, name: name} =
+      %PersonalAccessToken{id: pat_id, name: name} =
         insert(:personal_access_token, user_id: user_id)
 
-      deleted_conn = delete(conn, "/api/v1/profile/tokens/#{jti}")
+      deleted_conn = delete(conn, "/api/v1/profile/tokens/#{pat_id}")
 
       assert %{
                assigns: %{
                  deleted_token: %PersonalAccessToken{
-                   jti: ^jti,
+                   id: ^pat_id,
                    name: ^name
                  }
                }
