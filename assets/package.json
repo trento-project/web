@@ -80,7 +80,10 @@
     "uuid": "^11.1.0"
   },
   "overrides": {
-    "@testing-library/dom": "^9.0.1"
+    "@testing-library/dom": "^9.0.1",
+    "eos-icons-react": {
+      "react": "$react"
+    }
   },
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
