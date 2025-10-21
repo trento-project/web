@@ -8,9 +8,7 @@ describe('SaptuneSolutionOperationModal', () => {
   it.each(['Apply Saptune Solution', 'Change Saptune Solution'])(
     'should show correct title and description',
     async (title) => {
-      await act(async () => {
-        render(<SaptuneSolutionOperationModal isOpen title={title} />);
-      });
+      render(<SaptuneSolutionOperationModal isOpen title={title} />);
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(
@@ -22,9 +20,7 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should forbid selecting a solution until accepting liability disclaimer', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(<SaptuneSolutionOperationModal isOpen />);
-    });
+    render(<SaptuneSolutionOperationModal isOpen />);
 
     expect(screen.getByText('Apply')).toBeDisabled();
     expect(screen.getByText('Select a saptune solution')).toBeDisabled();
@@ -38,9 +34,7 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should forbid applying a solution until one is actually selected', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
-    });
+    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
 
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
@@ -95,15 +89,13 @@ describe('SaptuneSolutionOperationModal', () => {
     const user = userEvent.setup();
     const mockOnRequest = jest.fn();
 
-    await act(async () => {
-      render(
-        <SaptuneSolutionOperationModal
-          isOpen
-          isHanaRunning
-          onRequest={mockOnRequest}
-        />
-      );
-    });
+    render(
+      <SaptuneSolutionOperationModal
+        isOpen
+        isHanaRunning
+        onRequest={mockOnRequest}
+      />
+    );
 
     await user.click(screen.getByRole('checkbox'));
     expect(screen.getByText('Apply')).toBeDisabled();
@@ -122,9 +114,7 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render Application solutions', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
-    });
+    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
 
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
@@ -136,31 +126,27 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render HANA and Application solutions', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(
-        <SaptuneSolutionOperationModal isOpen isHanaRunning isAppRunning />
-      );
+    render(<SaptuneSolutionOperationModal isOpen isHanaRunning isAppRunning />);
+
+    await waitFor(async () => {
+      await user.click(screen.getByRole('checkbox'));
+      await user.click(screen.getByText('Select a saptune solution'));
+
+      expect(screen.getByText('S4HANA-APP+DB')).toBeInTheDocument();
+      expect(screen.getByText('NETWEAVER+HANA')).toBeInTheDocument();
     });
-
-    await user.click(screen.getByRole('checkbox'));
-    await user.click(screen.getByText('Select a saptune solution'));
-
-    expect(screen.getByText('S4HANA-APP+DB')).toBeInTheDocument();
-    expect(screen.getByText('NETWEAVER+HANA')).toBeInTheDocument();
   });
 
   it('should render proper options when a solution is currently applied', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(
-        <SaptuneSolutionOperationModal
-          isOpen
-          isHanaRunning
-          currentlyApplied="HANA"
-        />
-      );
-    });
+    render(
+      <SaptuneSolutionOperationModal
+        isOpen
+        isHanaRunning
+        currentlyApplied="HANA"
+      />
+    );
 
     expect(screen.getByRole('button', { name: 'HANA' })).toBeInTheDocument();
 
@@ -175,15 +161,13 @@ describe('SaptuneSolutionOperationModal', () => {
   it('currently applied solution should be disabled', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(
-        <SaptuneSolutionOperationModal
-          isOpen
-          isHanaRunning
-          currentlyApplied="HANA"
-        />
-      );
-    });
+    render(
+      <SaptuneSolutionOperationModal
+        isOpen
+        isHanaRunning
+        currentlyApplied="HANA"
+      />
+    );
 
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'HANA' }));

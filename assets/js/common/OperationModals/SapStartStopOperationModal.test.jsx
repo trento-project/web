@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -50,16 +50,14 @@ describe('SapStartStopOperationModal', () => {
   ])(
     `should show correct title and description for $operation`,
     async ({ operation, title, site, expectedDescription }) => {
-      await act(async () => {
-        render(
-          <SapStartStopOperationModal
-            operation={operation}
-            sid={sid}
-            site={site}
-            isOpen
-          />
-        );
-      });
+      render(
+        <SapStartStopOperationModal
+          operation={operation}
+          sid={sid}
+          site={site}
+          isOpen
+        />
+      );
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(screen.getByText(expectedDescription)).toBeInTheDocument();
@@ -93,17 +91,15 @@ describe('SapStartStopOperationModal', () => {
       const user = userEvent.setup();
       const onRequest = jest.fn();
 
-      await act(async () => {
-        render(
-          <SapStartStopOperationModal
-            operation={SAP_SYSTEM_START}
-            sid={sid}
-            type={APPLICATION_TYPE}
-            isOpen
-            onRequest={onRequest}
-          />
-        );
-      });
+      render(
+        <SapStartStopOperationModal
+          operation={SAP_SYSTEM_START}
+          sid={sid}
+          type={APPLICATION_TYPE}
+          isOpen
+          onRequest={onRequest}
+        />
+      );
 
       expect(screen.getByText('Apply')).toBeDisabled();
       await user.click(screen.getByRole('checkbox'));
@@ -122,18 +118,16 @@ describe('SapStartStopOperationModal', () => {
     const user = userEvent.setup();
     const onRequest = jest.fn();
 
-    await act(async () => {
-      render(
-        <SapStartStopOperationModal
-          operation={DATABASE_START}
-          sid={sid}
-          type={DATABASE_TYPE}
-          site={systemReplicationSite}
-          isOpen
-          onRequest={onRequest}
-        />
-      );
-    });
+    render(
+      <SapStartStopOperationModal
+        operation={DATABASE_START}
+        sid={sid}
+        type={DATABASE_TYPE}
+        site={systemReplicationSite}
+        isOpen
+        onRequest={onRequest}
+      />
+    );
 
     expect(screen.getByText('Apply')).toBeDisabled();
     await user.click(screen.getByRole('checkbox'));
@@ -149,16 +143,14 @@ describe('SapStartStopOperationModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    await act(async () => {
-      render(
-        <SapStartStopOperationModal
-          operation={SAP_SYSTEM_START}
-          sid={sid}
-          isOpen
-          onCancel={onCancel}
-        />
-      );
-    });
+    render(
+      <SapStartStopOperationModal
+        operation={SAP_SYSTEM_START}
+        sid={sid}
+        isOpen
+        onCancel={onCancel}
+      />
+    );
 
     await user.click(screen.getByText('Cancel'));
 
