@@ -51,7 +51,7 @@ jobs:
           VERSION=$(/scripts/get_version_from_git.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve NPM Cached Dependencies
@@ -126,7 +126,7 @@ jobs:
           VERSION=$(/scripts/get_version_from_git.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve NPM Cached Dependencies
