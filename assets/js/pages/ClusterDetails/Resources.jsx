@@ -27,7 +27,7 @@ const groupResources = (clusterResources, hosts) =>
         const { parent } = firstResource;
         if (parent) {
           const type =
-            parent.multi_state == null ? 'Group' : firstResource.type;
+            parent.multi_state === null ? 'Group' : firstResource.type;
           return { ...parent, type, children: groupedResources };
         }
 
@@ -105,7 +105,7 @@ const getResourceTableConfig = (
     resource.children
       ? resource.children.map((child, idx) => (
           <tr
-            key={`${idx}_${child.node}_${child.id}`}  
+            key={`${idx}_${child.node}_${child.id}`}
             hidden={!rowExpanded}
             className="bg-gray-50 border-b border-gray-200"
           >
