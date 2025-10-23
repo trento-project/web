@@ -55,7 +55,7 @@ export const Positioning = {
   render: (args) => (
     <div className="mt-20 grid grid-rows-4 grid-flow-col gap-20 justify-items-center">
       {PLACES.map((place) => (
-        <div>
+        <div key={place}>
           <Tooltip place={place} content={place} {...args}>
             <div className="bg-sky-400 p-2 text-white font-semibold rounded">
               Hover me
