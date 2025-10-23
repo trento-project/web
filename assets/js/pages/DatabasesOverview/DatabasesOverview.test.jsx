@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 
 import { databaseFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
-import { filterTable, clearFilter } from '@common/Table/Table.test';
+import { filterTable, clearFilter } from '@lib/test-utils/table';
 
 import DatabasesOverview from './DatabasesOverview';
 

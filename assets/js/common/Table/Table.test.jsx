@@ -13,29 +13,9 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
+import { filterTable } from '@lib/test-utils/table';
 
 import Table from './Table';
-
-export const filterTable = (name, option) => {
-  const filterContainer = screen.getByTestId(`filter-${name}`);
-
-  fireEvent.click(filterContainer);
-
-  const optionContainer = Array.from(
-    screen
-      .getByTestId(`filter-${name}-options`)
-      .querySelectorAll('li > div > span')
-  ).find((f) => f.textContent === option);
-
-  fireEvent.click(optionContainer);
-  fireEvent.click(screen.getByTestId(`filter-${name}`));
-};
-
-export const clearFilter = (name) => {
-  const filterContainer = screen.getByTestId(`filter-${name}-clear`);
-
-  fireEvent.click(filterContainer);
-};
 
 describe('Table component', () => {
   const tableConfig = {
