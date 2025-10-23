@@ -147,13 +147,6 @@ describe('canStartExecution function', () => {
     expect(canStartExecution(selectedChecks, saving)).toBe(false);
   });
 
-  it('should not allow an execution if selected checks are empty and not saving', () => {
-    const selectedChecks = [];
-    const saving = true;
-
-    expect(canStartExecution(selectedChecks, saving)).toBe(false);
-  });
-
   it('should not allow an execution if selected checks are populated and saving', () => {
     const selectedChecks = [faker.string.uuid()];
     const saving = true;
