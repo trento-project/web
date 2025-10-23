@@ -33,6 +33,10 @@ function CreateUserPage() {
   const [errorsState, setErrors] = useState([]);
   const [abilitiesState, setAbilities] = useState([]);
 
+  useEffect(() => {
+    fetchAbilities(setAbilities);
+  }, []);
+
   const onCreateUser = (payload) => {
     setSaving(true);
     createUser(payload)
@@ -60,10 +64,6 @@ function CreateUserPage() {
   if (isSingleSignOnEnabled()) {
     return <NotFound />;
   }
-
-  useEffect(() => {
-    fetchAbilities(setAbilities);
-  }, []);
 
   return (
     <div>

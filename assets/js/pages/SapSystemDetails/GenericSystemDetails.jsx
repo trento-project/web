@@ -116,9 +116,6 @@ export function GenericSystemDetails({
   onRequestOperation = noop,
   onCleanForbiddenOperation = noop,
 }) {
-  if (!system) {
-    return <div>Not Found</div>;
-  }
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
   const [operationModalOpen, setOperationModelOpen] =
@@ -126,6 +123,10 @@ export function GenericSystemDetails({
   const [currentOperationInstance, setCurrentOperationInstance] =
     useState(undefined);
   const [currentOperationSite, setCurrentOperationSite] = useState(undefined);
+
+  if (!system) {
+    return <div>Not Found</div>;
+  }
 
   const onCleanUpClick = (instance) => {
     setCleanUpModalOpen(true);
