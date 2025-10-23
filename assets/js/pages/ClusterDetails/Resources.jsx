@@ -105,7 +105,7 @@ const getResourceTableConfig = (
     resource.children
       ? resource.children.map((child, idx) => (
           <tr
-            key={`${idx}_${child.node}_${child.id}`} // eslint-disable-line react/no-array-index-key
+            key={`${idx}_${child.node}_${child.id}`}  
             hidden={!rowExpanded}
             className="bg-gray-50 border-b border-gray-200"
           >

@@ -107,7 +107,6 @@ export const structToSearchParams = pipe(
 export const setPaginationToSearchParams =
   (searchParams = new URLSearchParams()) =>
   (pagination) => {
-    // eslint-disable-next-line no-unused-vars
     const filters = pipe(
       searchParamsToEntries,
       Object.fromEntries,

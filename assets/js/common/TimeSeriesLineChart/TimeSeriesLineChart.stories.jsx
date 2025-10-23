@@ -111,7 +111,6 @@ export const Default = {
     start: subHours(now, 5),
     end: now,
     onIntervalChange: (start, end) =>
-      // eslint-disable-next-line no-console
       console.log(`Interval changed, start ${start} - end ${end}`),
     datasets: buildDatasets(defaultTimeframes),
   },
