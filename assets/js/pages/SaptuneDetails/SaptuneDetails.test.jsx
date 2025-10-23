@@ -13,7 +13,7 @@ import {
 
 import SaptuneDetails from './SaptuneDetails';
 
-export const TUNING_VALUES = {
+const TUNING_VALUES = {
   compliant: 'Compliant',
   'not compliant': 'Not compliant',
   'not tuned': 'No tuning',

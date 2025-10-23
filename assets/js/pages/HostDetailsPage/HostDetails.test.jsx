@@ -13,7 +13,6 @@ import {
   saptuneStatusFactory,
   databaseInstanceFactory,
 } from '@lib/test-utils/factories';
-import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,
@@ -22,6 +21,12 @@ import {
 } from '@lib/operations';
 
 import HostDetails from './HostDetails';
+
+const TUNING_VALUES = {
+  compliant: 'Compliant',
+  'not compliant': 'Not compliant',
+  'not tuned': 'No tuning',
+};
 
 const axiosMock = new MockAdapter(networkClient);
 const userAbilities = [{ name: 'all', resource: 'all' }];
