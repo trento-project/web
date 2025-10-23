@@ -98,9 +98,7 @@ describe('HomeHealthSummary component', () => {
         .classList.toString()
     ).toContain('hover:opacity-100');
   });
-});
 
-describe('HomeHealthSummary component', () => {
   it('should have a working link to the passing checks in the overview component', () => {
     const { container } = renderWithRouter(
       <HomeHealthSummary
