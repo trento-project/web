@@ -8,12 +8,12 @@ import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 import { renderWithRouter } from '@lib/test-utils';
+import { TUNING_VALUES } from '@lib/test-utils/saptune';
 import {
   hostFactory,
   saptuneStatusFactory,
   databaseInstanceFactory,
 } from '@lib/test-utils/factories';
-import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,

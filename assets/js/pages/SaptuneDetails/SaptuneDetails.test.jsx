@@ -13,11 +13,7 @@ import {
 
 import SaptuneDetails from './SaptuneDetails';
 
-export const TUNING_VALUES = {
-  compliant: 'Compliant',
-  'not compliant': 'Not compliant',
-  'not tuned': 'No tuning',
-};
+import { TUNING_VALUES } from '@lib/test-utils/saptune';
 
 describe('SaptuneDetails', () => {
   it('should render saptune details correctly', () => {
