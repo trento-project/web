@@ -222,7 +222,9 @@ describe('ExecutionResults', () => {
       />
     );
 
-    screen.getByText('Checks execution starting...');
+    expect(
+      screen.getByText('Checks execution starting...')
+    ).toBeInTheDocument();
   });
 
   it('should render ExecutionResults with running state', async () => {
@@ -253,7 +255,8 @@ describe('ExecutionResults', () => {
         executionError={executionError}
       />
     );
-    screen.getByText('Checks execution running...');
+
+    expect(screen.getByText('Checks execution running...')).toBeInTheDocument();
   });
 
   it('should render ChecksSelectionHints when executionData is null or executionLoading is false', async () => {

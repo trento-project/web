@@ -73,9 +73,11 @@ describe('Login component', () => {
     renderWithRouter(StatefulLogin);
 
     await waitFor(() =>
-      screen.getByText(
-        `An error occurred during login, try again: ${error.message}`
-      )
+      expect(
+        screen.getByText(
+          `An error occurred during login, try again: ${error.message}`
+        )
+      ).toBeInTheDocument()
     );
   });
 

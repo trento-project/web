@@ -129,7 +129,9 @@ describe('ProfilePage', () => {
       await testUser.click(screen.getByRole('button', { name: 'Save' }));
     });
 
-    await screen.findByText('Error validating fullname');
+    await expect(
+      screen.findByText('Error validating fullname')
+    ).resolves.toBeInTheDocument();
   });
 
   it('should dismiss password change toast when password is changed', async () => {

@@ -37,28 +37,68 @@ import {
   getSapSystemOperations,
 } from './sapOperations';
 
-const expectOperationEnabled = (operation, enabled) => {
-  const opItem = screen.getByRole('menuitem', {
-    name: operation,
-  });
+expect.extend({
+  toHaveMenuitem(operation, options) {
+    const enabled = options?.enabled ?? false;
+    let opItem;
+    try {
+      opItem = screen.getByRole('menuitem', { name: operation });
+    } catch (error) {
+      return {
+        pass: false,
+        message: () =>
+          `Expected menuitem with name "${operation}" to be in the document, but was not found.`,
+      };
+    }
+    const isEnabled = !opItem.hasAttribute('disabled');
+    const pass = enabled ? isEnabled : !isEnabled;
+    return {
+      pass,
+      message: () =>
+        `Expected menuitem "${operation}" to be ${
+          enabled ? 'enabled' : 'disabled'
+        }, but it was ${isEnabled ? 'enabled' : 'disabled'}.`,
+    };
+  },
 
-  expect(opItem).toBeInTheDocument();
-  if (enabled) {
-    expect(opItem).toBeEnabled();
-  } else {
-    expect(opItem).toBeDisabled();
-  }
-};
+  toBeRunning(operation) {
+    let opItem;
+    try {
+      opItem = screen.getByRole('menuitem', { name: operation });
+    } catch (error) {
+      return {
+        pass: false,
+        message: () =>
+          `Expected menuitem with name "${operation}" to be in the document, but it was not found.`,
+      };
+    }
 
-const expectOperationRunning = (operation) => {
-  const opItem = screen.getByRole('menuitem', {
-    name: operation,
-  });
+    const isDisabled = opItem.hasAttribute('disabled');
+    if (!isDisabled) {
+      return {
+        pass: false,
+        message: () =>
+          `Expected menuitem "${operation}" to be disabled but it was enabled.`,
+      };
+    }
 
-  expect(opItem).toBeDisabled();
-  const { getByTestId } = within(opItem);
-  expect(getByTestId('eos-svg-component')).toBeInTheDocument();
-};
+    const { queryByTestId } = within(opItem);
+    const svgPresent = queryByTestId('eos-svg-component') !== null;
+    if (!svgPresent) {
+      return {
+        pass: false,
+        message: () =>
+          `Expected menuitem "${operation}" to contain an element with testId "eos-svg-component", but none was found.`,
+      };
+    }
+
+    return {
+      pass: true,
+      message: () =>
+        `Expected menuitem "${operation}" not to be running (disabled with svg), but it was.`,
+    };
+  },
+});
 
 describe('GenericSystemDetails', () => {
   it('should render correctly', () => {
@@ -398,7 +438,7 @@ describe('GenericSystemDetails', () => {
 
       await user.click(screen.getByRole('button', { name: 'Operations' }));
 
-      expectOperationEnabled(operation, enabled);
+      expect(operation).toHaveMenuitem({ enabled });
     }
   );
 
@@ -450,7 +490,7 @@ describe('GenericSystemDetails', () => {
 
       await user.click(screen.getByRole('button', { name: 'Operations' }));
 
-      expectOperationEnabled(operation, enabled);
+      expect(operation).toHaveMenuitem({ enabled });
     }
   );
 
@@ -551,7 +591,7 @@ describe('GenericSystemDetails', () => {
 
       await user.click(siteOpButton1);
 
-      expectOperationEnabled(operation, enabled);
+      expect(operation).toHaveMenuitem({ enabled });
 
       await user.click(siteOpButton2);
 
@@ -617,7 +657,7 @@ describe('GenericSystemDetails', () => {
 
       await user.click(opButton);
 
-      expectOperationRunning(menuItemText);
+      expect(menuItemText).toBeRunning(operation);
     }
   );
 
@@ -683,7 +723,7 @@ describe('GenericSystemDetails', () => {
 
       await user.click(screen.getByRole('button', { name: 'Operations' }));
 
-      expectOperationRunning(menuItemText);
+      expect(menuItemText).toBeRunning(operation);
     }
   );
 
@@ -756,10 +796,10 @@ describe('GenericSystemDetails', () => {
       const siteOpButton2 = getByRoleSite2('button');
 
       await user.click(siteOpButton1);
-      expectOperationRunning(menuItemText);
+      expect(menuItemText).toBeRunning(operation);
 
       await user.click(siteOpButton2);
-      expectOperationEnabled(menuItemText, false);
+      expect(menuItemText).toHaveMenuitem({ enabled: false });
     }
   );
 
@@ -811,8 +851,8 @@ describe('GenericSystemDetails', () => {
 
       await user.click(opButton);
 
-      expectOperationEnabled('Start instance', false);
-      expectOperationEnabled('Stop instance', false);
+      expect('Start instance').toHaveMenuitem({ enabled: false });
+      expect('Stop instance').toHaveMenuitem({ enabled: false });
     }
   );
 
@@ -853,8 +893,8 @@ describe('GenericSystemDetails', () => {
     const opButton = screen.getByRole('button', { name: 'Operations' });
     await user.click(opButton);
 
-    expectOperationEnabled('Start system', false);
-    expectOperationEnabled('Stop system', false);
+    expect('Start system').toHaveMenuitem({ enabled: false });
+    expect('Stop system').toHaveMenuitem({ enabled: false });
   });
 
   it('should show forbidden operation modal', async () => {
@@ -1006,7 +1046,7 @@ describe('GenericSystemDetails', () => {
 
         await user.click(opButton);
 
-        expectOperationEnabled(label, !forbidden);
+        expect(label).toHaveMenuitem({ enabled: !forbidden });
       }
     );
 
@@ -1111,7 +1151,7 @@ describe('GenericSystemDetails', () => {
 
         await user.click(screen.getByRole('button', { name: 'Operations' }));
 
-        expectOperationEnabled(label, !forbidden);
+        expect(label).toHaveMenuitem({ enabled: !forbidden });
       }
     );
 
@@ -1177,7 +1217,7 @@ describe('GenericSystemDetails', () => {
         const siteOpButton = getByRole('button');
         await user.click(siteOpButton);
 
-        expectOperationEnabled(label, !forbidden);
+        expect(label).toHaveMenuitem({ enabled: !forbidden });
       }
     );
   });
