@@ -12,7 +12,7 @@ describe('analytics config', () => {
     expect(getFromConfig('analyticsEnabled')).toBeTruthy();
   });
 
-  it('it should allow analytics opt-in to be configurable', () => {
+  it('should allow analytics opt-in to be configurable', () => {
     optinCapturing(false);
     expect(posthog.has_opted_out_capturing()).toBeTruthy();
 
