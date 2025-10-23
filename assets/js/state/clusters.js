@@ -18,7 +18,7 @@ export const clustersListSlice = createSlice({
     updateCluster: (state, action) => {
       state.clusters = state.clusters.map((cluster) => {
         if (cluster.id === action.payload.id) {
-          cluster = { ...cluster, ...action.payload };
+          return { ...cluster, ...action.payload };
         }
         return cluster;
       });
