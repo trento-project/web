@@ -6,7 +6,7 @@ import {
   clusterFactory,
   clusteredSapInstanceFactory,
 } from '@lib/test-utils/factories';
-import { filterTable, clearFilter } from '@common/Table/Table.test';
+import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { renderWithRouter, withState } from '@lib/test-utils';
 
 import ClustersList from './ClustersList';

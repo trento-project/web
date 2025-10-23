@@ -18,7 +18,7 @@ import {
   defaultInitialState,
 } from '@lib/test-utils';
 
-import { filterTable, clearFilter } from '@common/Table/Table.test';
+import { filterTable, clearFilter } from '@lib/test-utils/table';
 
 import HostsList from './HostsList';
 
