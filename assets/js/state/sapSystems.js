@@ -4,7 +4,7 @@ import { instancesMatch, upsertInstances, updateInstance } from './instances';
 const initialState = {
   loading: false,
   sapSystems: [],
-  // eslint-disable-next-line
+   
   applicationInstances: [],
 };
 

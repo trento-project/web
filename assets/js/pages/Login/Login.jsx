@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState, useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useDispatch, useSelector } from 'react-redux';

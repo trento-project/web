@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { faker } from '@faker-js/faker';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
+ 
 import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
