@@ -260,6 +260,8 @@ module.exports = [
             '@state/*',
             '@pages/*',
             '@hooks/*',
+            // FIXME: Assets are not generated before linting, so these paths don't resolve
+            '../../priv/static/assets/*',
           ],
         },
       ],
