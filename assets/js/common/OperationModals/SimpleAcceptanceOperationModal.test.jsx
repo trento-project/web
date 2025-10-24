@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -107,15 +107,13 @@ describe('SimpleAcceptanceOperationModal', () => {
       descriptionResolverArgs,
       expectedDescription,
     }) => {
-      await act(async () => {
-        render(
-          <SimpleAcceptanceOperationModal
-            operation={operation}
-            descriptionResolverArgs={descriptionResolverArgs}
-            isOpen
-          />
-        );
-      });
+      render(
+        <SimpleAcceptanceOperationModal
+          operation={operation}
+          descriptionResolverArgs={descriptionResolverArgs}
+          isOpen
+        />
+      );
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(screen.getByText(expectedDescription)).toBeInTheDocument();
@@ -126,15 +124,13 @@ describe('SimpleAcceptanceOperationModal', () => {
     const user = userEvent.setup();
     const onRequest = jest.fn();
 
-    await act(async () => {
-      render(
-        <SimpleAcceptanceOperationModal
-          operation={SAP_INSTANCE_START}
-          isOpen
-          onRequest={onRequest}
-        />
-      );
-    });
+    render(
+      <SimpleAcceptanceOperationModal
+        operation={SAP_INSTANCE_START}
+        isOpen
+        onRequest={onRequest}
+      />
+    );
 
     expect(screen.getByText('Apply')).toBeDisabled();
     await user.click(screen.getByRole('checkbox'));
@@ -147,15 +143,13 @@ describe('SimpleAcceptanceOperationModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    await act(async () => {
-      render(
-        <SimpleAcceptanceOperationModal
-          operation={SAP_INSTANCE_START}
-          isOpen
-          onCancel={onCancel}
-        />
-      );
-    });
+    render(
+      <SimpleAcceptanceOperationModal
+        operation={SAP_INSTANCE_START}
+        isOpen
+        onCancel={onCancel}
+      />
+    );
 
     await user.click(screen.getByText('Cancel'));
 

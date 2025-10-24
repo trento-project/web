@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -10,15 +10,13 @@ describe('SuseManagerClearSettingsModal', () => {
     const user = userEvent.setup();
     const onClearSettings = jest.fn();
 
-    await act(async () => {
-      render(
-        <SuseManagerClearSettingsModal
-          open
-          onClearSettings={onClearSettings}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <SuseManagerClearSettingsModal
+        open
+        onClearSettings={onClearSettings}
+        onCancel={() => {}}
+      />
+    );
 
     expect(
       screen.getByText('Clear SUSE Multi-Linux Manager Settings')
@@ -32,15 +30,13 @@ describe('SuseManagerClearSettingsModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    await act(async () => {
-      render(
-        <SuseManagerClearSettingsModal
-          open
-          onClearSettings={() => {}}
-          onCancel={onCancel}
-        />
-      );
-    });
+    render(
+      <SuseManagerClearSettingsModal
+        open
+        onClearSettings={() => {}}
+        onCancel={onCancel}
+      />
+    );
 
     expect(
       screen.getByText('Clear SUSE Multi-Linux Manager Settings')

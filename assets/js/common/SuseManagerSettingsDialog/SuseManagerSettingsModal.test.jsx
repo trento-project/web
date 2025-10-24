@@ -1,6 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -10,11 +10,9 @@ import SuseManagerSettingsModal from '.';
 
 describe('SuseManagerSettingsModal component', () => {
   it('renders correctly', async () => {
-    await act(async () => {
-      render(
-        <SuseManagerSettingsModal open onSave={() => {}} onChange={() => {}} />
-      );
-    });
+    render(
+      <SuseManagerSettingsModal open onSave={() => {}} onChange={() => {}} />
+    );
 
     expect(screen.getByText('SUSE Manager URL')).toBeVisible();
     expect(screen.getByText('Username')).toBeVisible();
@@ -31,18 +29,16 @@ describe('SuseManagerSettingsModal component', () => {
     const initialUsername = faker.word.noun();
     const certUploadDate = faker.date.recent();
 
-    await act(async () => {
-      render(
-        <SuseManagerSettingsModal
-          open
-          initialUrl={initialUrl}
-          initialUsername={initialUsername}
-          certUploadDate={certUploadDate}
-          onSave={() => {}}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <SuseManagerSettingsModal
+        open
+        initialUrl={initialUrl}
+        initialUsername={initialUsername}
+        certUploadDate={certUploadDate}
+        onSave={() => {}}
+        onCancel={() => {}}
+      />
+    );
 
     expect(screen.getByText('Certificate Uploaded')).toBeVisible();
     expect(screen.getByText('•••••')).toBeVisible();
@@ -59,11 +55,9 @@ describe('SuseManagerSettingsModal component', () => {
     const certificate = faker.lorem.text();
     const onSave = jest.fn();
 
-    await act(async () => {
-      render(
-        <SuseManagerSettingsModal open onSave={onSave} onCancel={() => {}} />
-      );
-    });
+    render(
+      <SuseManagerSettingsModal open onSave={onSave} onCancel={() => {}} />
+    );
 
     const urlInput = screen.getByPlaceholderText('Enter a URL');
     const passwordInput = screen.getByPlaceholderText(
@@ -97,18 +91,16 @@ describe('SuseManagerSettingsModal component', () => {
     const username = faker.word.noun();
     const onSave = jest.fn();
 
-    await act(async () => {
-      render(
-        <SuseManagerSettingsModal
-          initialUsername={faker.word.noun()}
-          initialUrl={faker.internet.url()}
-          certUploadDate={faker.date.recent()}
-          open
-          onSave={onSave}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <SuseManagerSettingsModal
+        initialUsername={faker.word.noun()}
+        initialUrl={faker.internet.url()}
+        certUploadDate={faker.date.recent()}
+        open
+        onSave={onSave}
+        onCancel={() => {}}
+      />
+    );
 
     const urlInput = screen.getByPlaceholderText('Enter a URL');
     const userInput = screen.getByPlaceholderText(
@@ -145,18 +137,16 @@ describe('SuseManagerSettingsModal component', () => {
       },
     ];
 
-    await act(async () => {
-      render(
-        <SuseManagerSettingsModal
-          initialUsername={faker.word.noun()}
-          initialUrl={faker.internet.url()}
-          errors={errors}
-          open
-          onSave={() => {}}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <SuseManagerSettingsModal
+        initialUsername={faker.word.noun()}
+        initialUrl={faker.internet.url()}
+        errors={errors}
+        open
+        onSave={() => {}}
+        onCancel={() => {}}
+      />
+    );
 
     expect(screen.getAllByText(detail)).toHaveLength(2);
   });

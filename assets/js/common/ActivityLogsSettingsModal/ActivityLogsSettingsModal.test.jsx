@@ -1,10 +1,11 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { defaultGlobalError } from '@lib/api/validationErrors';
+import ErrorBoundary from '@lib/test-utils/ui/ErrorBoundary';
 import ActivityLogsSettingsModal from '.';
 
 const positiveInt = () => faker.number.int({ min: 1 });
@@ -12,36 +13,34 @@ const positiveInt = () => faker.number.int({ min: 1 });
 describe('ActivityLogsSettingsModal component', () => {
   it('renders correctly', async () => {
     const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
-    await act(async () => {
-      render(
-        <ActivityLogsSettingsModal
-          open
-          onSave={() => {}}
-          onChange={() => {}}
-          initialRetentionTime={initialRetentionTime}
-        />
-      );
+    render(
+      <ActivityLogsSettingsModal
+        open
+        onSave={() => {}}
+        onChange={() => {}}
+        initialRetentionTime={initialRetentionTime}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Retention Time')).toBeVisible();
+
+      expect(screen.getByRole('spinbutton')).toHaveValue();
+      expect(screen.getByRole('spinbutton')).toBeVisible();
+      expect(screen.getByText(initialRetentionTime.unit)).toBeVisible();
     });
-
-    expect(screen.getByText('Retention Time')).toBeVisible();
-
-    expect(screen.getByRole('spinbutton')).toHaveValue();
-    expect(screen.getByRole('spinbutton')).toBeVisible();
-    expect(screen.getByText(initialRetentionTime.unit)).toBeVisible();
   });
 
   it('should throw when required props are not provided', async () => {
-    await expect(
-      act(async () => {
-        render(
-          <ActivityLogsSettingsModal
-            open
-            onSave={() => {}}
-            onChange={() => {}}
-          />
-        );
-      })
-    ).rejects.toEqual(expect.any(Error));
+    const errorSpy = jest.fn();
+
+    render(
+      <ErrorBoundary onError={errorSpy}>
+        <ActivityLogsSettingsModal open onSave={() => {}} onChange={() => {}} />
+      </ErrorBoundary>
+    );
+
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   it('should try to save all the changed fields', async () => {
@@ -56,16 +55,14 @@ describe('ActivityLogsSettingsModal component', () => {
     };
     const onSave = jest.fn();
 
-    await act(async () => {
-      render(
-        <ActivityLogsSettingsModal
-          open
-          initialRetentionTime={initialRetentionTime}
-          onSave={onSave}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <ActivityLogsSettingsModal
+        open
+        initialRetentionTime={initialRetentionTime}
+        onSave={onSave}
+        onCancel={() => {}}
+      />
+    );
 
     // first clean up the text input then type the new value
     const textInput = screen.getByRole('spinbutton');
@@ -91,21 +88,21 @@ describe('ActivityLogsSettingsModal component', () => {
     const initialRetentionTime = { value: positiveInt(), unit: 'month' };
     const onSave = jest.fn();
 
-    await act(async () => {
-      render(
-        <ActivityLogsSettingsModal
-          open
-          initialRetentionTime={initialRetentionTime}
-          onSave={onSave}
-          onCancel={() => {}}
-        />
-      );
-    });
+    render(
+      <ActivityLogsSettingsModal
+        open
+        initialRetentionTime={initialRetentionTime}
+        onSave={onSave}
+        onCancel={() => {}}
+      />
+    );
 
     await user.click(screen.getByText('Save Settings'));
 
-    expect(onSave).toHaveBeenCalledWith({
-      retention_time: initialRetentionTime,
+    await waitFor(() => {
+      expect(onSave).toHaveBeenCalledWith({
+        retention_time: initialRetentionTime,
+      });
     });
   });
 
@@ -134,21 +131,21 @@ describe('ActivityLogsSettingsModal component', () => {
     async ({ errors, expectedErrorMessage }) => {
       const initialRetentionTime = { value: positiveInt(), unit: 'month' };
 
-      await act(async () => {
-        render(
-          <ActivityLogsSettingsModal
-            errors={errors}
-            initialRetentionTime={initialRetentionTime}
-            open
-            onSave={() => {}}
-            onCancel={() => {}}
-          />
-        );
-      });
+      render(
+        <ActivityLogsSettingsModal
+          errors={errors}
+          initialRetentionTime={initialRetentionTime}
+          open
+          onSave={() => {}}
+          onCancel={() => {}}
+        />
+      );
 
-      expect(
-        screen.getAllByText(expectedErrorMessage, { exact: false })
-      ).toHaveLength(1);
+      await waitFor(() => {
+        expect(
+          screen.getAllByText(expectedErrorMessage, { exact: false })
+        ).toHaveLength(1);
+      });
     }
   );
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
@@ -47,21 +47,19 @@ describe('UserForm', () => {
       analytics_enabled: analyticsEnabled,
     } = userFactory.build();
 
-    await act(async () => {
-      render(
-        <UserForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          createdAt={createdAt}
-          updatedAt={updatedAt}
-          totp_enabled_at={totpEnabledAt}
-          analyticsEnabledConfig
-          analytics_enabled={analyticsEnabled}
-          editing
-        />
-      );
-    });
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        totp_enabled_at={totpEnabledAt}
+        analyticsEnabledConfig
+        analytics_enabled={analyticsEnabled}
+        editing
+      />
+    );
 
     expect(screen.getByLabelText('fullname').value).toBe(fullname);
     expect(screen.getByLabelText('email').value).toBe(email);
@@ -208,19 +206,17 @@ describe('UserForm', () => {
       updated_at: updatedAt,
     } = userFactory.build();
 
-    await act(async () => {
-      render(
-        <UserForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          createdAt={createdAt}
-          updatedAt={updatedAt}
-          editing
-          onSave={mockOnSave}
-        />
-      );
-    });
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        editing
+        onSave={mockOnSave}
+      />
+    );
 
     await user.click(screen.getByText('Enabled'));
     await user.click(screen.getAllByText(option)[0]);
@@ -248,21 +244,19 @@ describe('UserForm', () => {
       totp_enabled_at: totpEnabledAt,
     } = userFactory.build();
 
-    await act(async () => {
-      render(
-        <UserForm
-          saveText="Save"
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          createdAt={createdAt}
-          updatedAt={updatedAt}
-          totpEnabledAt={totpEnabledAt}
-          editing
-          onSave={mockOnSave}
-        />
-      );
-    });
+    render(
+      <UserForm
+        saveText="Save"
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        totpEnabledAt={totpEnabledAt}
+        editing
+        onSave={mockOnSave}
+      />
+    );
     await user.click(screen.getAllByText('Enabled')[1]);
     await user.click(screen.getByText('Disabled'));
 
@@ -290,19 +284,17 @@ describe('UserForm', () => {
       totp_enabled_at: totpEnabledAt,
     } = userFactory.build({ totp_enabled_at: null });
 
-    await act(async () => {
-      render(
-        <UserForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          createdAt={createdAt}
-          updatedAt={updatedAt}
-          totpEnabledAt={totpEnabledAt}
-          editing
-        />
-      );
-    });
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        totpEnabledAt={totpEnabledAt}
+        editing
+      />
+    );
 
     await user.click(screen.getByText('Disabled'));
 
