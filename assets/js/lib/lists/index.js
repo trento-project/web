@@ -1,5 +1,3 @@
-/* eslint-disable no-bitwise */
-
 export const toggle = (element, list) =>
   list.includes(element)
     ? list.filter((string) => string !== element)

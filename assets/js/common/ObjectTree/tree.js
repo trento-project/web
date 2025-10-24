@@ -1,6 +1,6 @@
 export const flattenTree = (tree, parent, id = 0) => {
   const { count, children } =
-    tree.children == null || tree.children.length === 0
+    !tree.children || tree.children.length === 0
       ? { count: id, children: [] }
       : tree.children.reduce(
           (
@@ -46,7 +46,7 @@ export const treeify = (name, data) => ({
     const { [key]: element } = data;
     const dataType = typeof element;
 
-    if (element == null) {
+    if (element === null) {
       return { name: key, value: null };
     }
 

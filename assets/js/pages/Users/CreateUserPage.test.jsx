@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 import { faker } from '@faker-js/faker';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
@@ -126,7 +125,9 @@ describe('CreateUserPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
-    await screen.findByText('Error validating fullname');
+    await expect(
+      screen.findByText('Error validating fullname')
+    ).resolves.toBeInTheDocument();
   });
 
   it('should render toast with an error message when creating a user failed because of a network error', async () => {

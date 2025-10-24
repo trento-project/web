@@ -6,9 +6,14 @@ import userEvent from '@testing-library/user-event';
 
 import { SUPPORTED_VERSION } from '@lib/saptune';
 import { saptuneStatusFactory } from '@lib/test-utils/factories';
-import { TUNING_VALUES } from '@pages/SaptuneDetails/SaptuneDetails.test';
 
 import SaptuneSummary from './SaptuneSummary';
+
+const TUNING_VALUES = {
+  compliant: 'Compliant',
+  'not compliant': 'Not compliant',
+  'not tuned': 'No tuning',
+};
 
 describe('SaptuneSummary component', () => {
   it('should show the summary of saptune', () => {

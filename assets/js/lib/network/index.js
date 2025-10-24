@@ -41,7 +41,7 @@ const refreshAuthLogic = async (failedRequest) => {
     const accessToken = data.access_token;
     storeAccessToken(accessToken);
     // need the params reassing, the library works that way
-    // eslint-disable-next-line
+
     failedRequest.response.config.headers.Authorization = `Bearer ${accessToken}`;
   } catch (e) {
     logWarn('could not refresh the token, error during the request flow', e);

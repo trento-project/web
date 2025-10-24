@@ -28,7 +28,7 @@ describe('Analytics Eula Modal component', () => {
     ).toBeTruthy();
   });
 
-  it('it should call onEnable when Enable button is clicked', async () => {
+  it('should call onEnable when Enable button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnEnable = jest.fn();
 
@@ -41,7 +41,7 @@ describe('Analytics Eula Modal component', () => {
     expect(mockOnEnable).toHaveBeenCalledWith(false);
   });
 
-  it('it should call onCancel when Close button is clicked', async () => {
+  it('should call onCancel when Close button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnCancel = jest.fn();
 
@@ -54,7 +54,7 @@ describe('Analytics Eula Modal component', () => {
     expect(mockOnCancel).toHaveBeenCalledWith(false);
   });
 
-  it('it should return true when checkbox is checked and Close button is clicked ', async () => {
+  it('should return true when checkbox is checked and Close button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnCancel = jest.fn();
 

@@ -67,7 +67,7 @@ describe('DateFilter component', () => {
     expect(screen.getByText('24h ago')).toBeInTheDocument();
   });
 
-  it('should render custom option ', async () => {
+  it('should render custom option', async () => {
     const user = userEvent.setup();
 
     render(
