@@ -244,6 +244,77 @@ jobs:
       - name: Check JS Code Format
         run: cd assets && npm run format:check
 
+  static-code-analysis-js:
+    name: Static Code Analysis JS
+    needs: [setup-matrix-env, npm-deps]
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.nodejs }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Run Eslint
+        run: cd assets && npm run lint
+      - name: Check JS Code Format
+        run: cd assets && npm run format:check
+
+  static-code-analysis-elixir:
+    name: Static Code Analysis Elixir
+    needs: [setup-matrix-env, elixir-deps]
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Retrieve Elixir Cached Dependencies
+        uses: actions/cache@v4
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Check for unused dependencies
+        run: mix deps.unlock --check-unused
+      - name: Check Code Format
+        run: mix format --check-formatted
+      - name: Run Credo
+        run: mix credo
+      - name: Run Dialyzer
+        run: mix dialyzer
+
   test-javascript:
     name: Javascript tests
     needs: [setup-matrix-env, npm-deps]
