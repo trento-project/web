@@ -76,11 +76,11 @@ function EditUserPage() {
       });
   };
 
-  const onDeleteToken = (jti) => {
-    deleteUserAccessToken(userID, jti)
+  const onDeleteToken = (id) => {
+    deleteUserAccessToken(userID, id)
       .then(() => {
         const updatedTokens = userState.personal_access_tokens.filter(
-          (token) => token.jti !== jti
+          (token) => token.id !== id
         );
         setUser({ ...userState, personal_access_tokens: updatedTokens });
         toast.success('Personal access token deleted!');

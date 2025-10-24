@@ -143,9 +143,9 @@ function ProfilePage() {
 
   const generateToken = (name, expiresAt) => {
     generatePersonalAccessToken(name, expiresAt)
-      .then(({ data: { jti, expires_at, access_token } }) => {
+      .then(({ data: { id, expires_at, access_token } }) => {
         const updatedTokens = [
-          { jti, name, expires_at },
+          { id, name, expires_at },
           ...userState.personal_access_tokens,
         ];
         setUser({ ...userState, personal_access_tokens: updatedTokens });
@@ -155,11 +155,11 @@ function ProfilePage() {
       .catch(() => toast.error('Error generating personal access token.'));
   };
 
-  const deleteToken = (jti) => {
-    deletePersonalAccessToken(jti)
+  const deleteToken = (id) => {
+    deletePersonalAccessToken(id)
       .then(() => {
         const updatedTokens = userState.personal_access_tokens.filter(
-          (token) => token.jti !== jti
+          (token) => token.id !== id
         );
         setUser({ ...userState, personal_access_tokens: updatedTokens });
         toast.success('Personal access token deleted!');

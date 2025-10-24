@@ -21,7 +21,8 @@ defmodule Trento.PersonalAccessTokensTest do
                  PersonalAccessTokens.create_personal_access_token(
                    user,
                    %{
-                     name: Faker.Lorem.word()
+                     name: Faker.Lorem.word(),
+                     token: Faker.Lorem.word()
                    }
                  )
       end
@@ -35,7 +36,8 @@ defmodule Trento.PersonalAccessTokensTest do
                PersonalAccessTokens.create_personal_access_token(
                  user,
                  %{
-                   name: Faker.Lorem.word()
+                   name: Faker.Lorem.word(),
+                   token: Faker.Lorem.word()
                  }
                )
     end
@@ -47,7 +49,8 @@ defmodule Trento.PersonalAccessTokensTest do
                PersonalAccessTokens.create_personal_access_token(
                  user,
                  %{
-                   name: Faker.Lorem.word()
+                   name: Faker.Lorem.word(),
+                   token: Faker.Lorem.word()
                  }
                )
     end
@@ -100,6 +103,8 @@ defmodule Trento.PersonalAccessTokensTest do
 
         %{attrs: attrs, expected_errors: expected_errors} = @failing_validation_scenario
 
+        attrs = Map.put(attrs, :token, Faker.Lorem.word())
+
         assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
                  PersonalAccessTokens.create_personal_access_token(user, attrs)
 
@@ -114,7 +119,22 @@ defmodule Trento.PersonalAccessTokensTest do
 
       assert {:error, %Ecto.Changeset{errors: [name: {"has already been taken", _}]}} =
                PersonalAccessTokens.create_personal_access_token(user, %{
-                 name: taken_name
+                 name: taken_name,
+                 token: Faker.Lorem.word()
+               })
+    end
+
+    test "should not allow recreating the same PAT" do
+      %User{id: user_id} = user = insert(:user)
+
+      taken_pat = Faker.Lorem.word()
+
+      %PersonalAccessToken{} = insert(:personal_access_token, user_id: user_id, token: taken_pat)
+
+      assert {:error, %Ecto.Changeset{errors: [hashed_token: {"has already been taken", _}]}} =
+               PersonalAccessTokens.create_personal_access_token(user, %{
+                 name: "another name",
+                 token: taken_pat
                })
     end
 
@@ -166,6 +186,8 @@ defmodule Trento.PersonalAccessTokensTest do
               |> elem(1)
           end
 
+        attrs = Map.put(attrs, :token, Faker.Lorem.word())
+
         assert {:ok,
                 %PersonalAccessToken{
                   name: ^pat_name,
@@ -182,12 +204,16 @@ defmodule Trento.PersonalAccessTokensTest do
 
       %User{id: other_user_id} = other_user = insert(:user)
 
+      creation_attrs = %{
+        name: taken_name,
+        token: Faker.Lorem.word()
+      }
+
       assert {:ok,
               %PersonalAccessToken{
                 name: ^taken_name,
                 user_id: ^other_user_id
-              }} =
-               PersonalAccessTokens.create_personal_access_token(other_user, %{name: taken_name})
+              }} = PersonalAccessTokens.create_personal_access_token(other_user, creation_attrs)
     end
   end
 
@@ -195,9 +221,9 @@ defmodule Trento.PersonalAccessTokensTest do
     test "should revoke a deleted user's personal access token" do
       %User{id: user_id} = user = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+      %PersonalAccessToken{id: pat_id} = insert(:personal_access_token, user_id: user_id)
 
-      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_jti)
+      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_id)
 
       assert_personal_access_token_items(user_id, 0)
     end
@@ -214,11 +240,11 @@ defmodule Trento.PersonalAccessTokensTest do
 
       insert(:personal_access_token, user_id: user_id)
 
-      %PersonalAccessToken{jti: non_existent_pat_jti} =
+      %PersonalAccessToken{id: non_existent_pat_id} =
         build(:personal_access_token, user_id: user_id)
 
       assert {:error, :not_found} =
-               PersonalAccessTokens.revoke_personal_access_token(user, non_existent_pat_jti)
+               PersonalAccessTokens.revoke_personal_access_token(user, non_existent_pat_id)
 
       assert_personal_access_token_items(user_id, 1)
     end
@@ -227,119 +253,104 @@ defmodule Trento.PersonalAccessTokensTest do
       %User{id: user_id} = user = insert(:user)
 
       [
-        %PersonalAccessToken{jti: pat_jti1},
-        %PersonalAccessToken{jti: pat_jti2}
+        %PersonalAccessToken{id: pat_id1},
+        %PersonalAccessToken{id: pat_id2}
       ] = insert_list(2, :personal_access_token, user_id: user_id)
 
-      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_jti1)
+      assert {:ok, _} = PersonalAccessTokens.revoke_personal_access_token(user, pat_id1)
 
       user_keys = load_user_personal_access_tokens(user_id)
 
       assert 1 == length(user_keys)
 
-      assert [%PersonalAccessToken{jti: ^pat_jti2}] = user_keys
+      assert [%PersonalAccessToken{id: ^pat_id2}] = user_keys
     end
   end
 
   describe "validating a Personal Access Token" do
-    test "should return false when validating a non existent PAT: invalid jti/user_id combination" do
-      refute PersonalAccessTokens.valid?(Faker.UUID.v4(), FakerRandom.random_between(3, 100))
-    end
+    test "should return false when validating a non existent PAT" do
+      non_existent_pat = Faker.Lorem.word()
 
-    test "should return false when validating a non existent PAT: non existent PAT for a user" do
-      %User{id: user_id} = insert(:user)
-      insert(:personal_access_token, user_id: user_id)
-
-      refute PersonalAccessTokens.valid?(Faker.UUID.v4(), user_id)
-    end
-
-    test "should return false when validating a non existent PAT: non matching PAT-user association" do
-      %User{id: user_id} = insert(:user)
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
-      %User{id: other_user_id} = insert(:user)
-
-      refute PersonalAccessTokens.valid?(pat_jti, other_user_id)
+      assert {:error, :invalid_pat} = PersonalAccessTokens.validate(non_existent_pat)
     end
 
     test "should return false when validating a PAT for a deleted user" do
+      plain_pat = Faker.Lorem.word()
+
       %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
-      %PersonalAccessToken{jti: pat_jti} =
-        insert(:personal_access_token, user_id: deleted_user_id)
+      insert(:personal_access_token, user_id: deleted_user_id, token: plain_pat)
 
-      refute PersonalAccessTokens.valid?(pat_jti, deleted_user_id)
+      assert {:error, :invalid_pat} = PersonalAccessTokens.validate(plain_pat)
     end
 
     test "should return false when validating a PAT for a locked user" do
-      %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: locked_user_id)
+      plain_pat = Faker.Lorem.word()
 
-      refute PersonalAccessTokens.valid?(pat_jti, locked_user_id)
+      %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
+
+      insert(:personal_access_token, user_id: locked_user_id, token: plain_pat)
+
+      assert {:error, :invalid_pat} = PersonalAccessTokens.validate(plain_pat)
     end
 
     test "should successfully validate an existing PAT for an active user" do
-      %User{id: user_id} = insert(:user)
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+      plain_pat = Faker.Lorem.word()
 
-      assert PersonalAccessTokens.valid?(pat_jti, user_id)
+      %User{id: user_id} = insert(:user)
+
+      insert(:personal_access_token, user_id: user_id, token: plain_pat)
+
+      assert {:ok, %PersonalAccessToken{}} = PersonalAccessTokens.validate(plain_pat)
     end
   end
 
   describe "validating and introspecting a Personal Access Token" do
     test "should return an error when validating and introspecting a non existent PAT: invalid jti/user_id combination" do
-      assert {:error, :invalid_token} =
-               PersonalAccessTokens.validate_and_introspect(
-                 Faker.UUID.v4(),
-                 FakerRandom.random_between(3, 100)
-               )
-    end
+      non_existent_pat = Faker.Lorem.word()
 
-    test "should return an error when validating and introspecting a non existent PAT: non existent PAT for a user" do
-      %User{id: user_id} = insert(:user)
-      insert(:personal_access_token, user_id: user_id)
-
-      assert {:error, :invalid_token} =
-               PersonalAccessTokens.validate_and_introspect(Faker.UUID.v4(), user_id)
-    end
-
-    test "should return an error when validating and introspecting a non existent PAT: non matching PAT-user association" do
-      %User{id: user_id} = insert(:user)
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
-      %User{id: other_user_id} = insert(:user)
-
-      assert {:error, :invalid_token} =
-               PersonalAccessTokens.validate_and_introspect(pat_jti, other_user_id)
+      assert {:error, :invalid_pat} =
+               PersonalAccessTokens.validate_and_introspect(non_existent_pat)
     end
 
     test "should return an error when validating and introspecting a PAT for a deleted user" do
       %User{id: deleted_user_id} = insert(:user, deleted_at: Faker.DateTime.backward(3))
 
-      %PersonalAccessToken{jti: pat_jti} =
-        insert(:personal_access_token, user_id: deleted_user_id)
+      pat = Faker.Lorem.word()
 
-      assert {:error, :invalid_token} =
-               PersonalAccessTokens.validate_and_introspect(pat_jti, deleted_user_id)
+      %PersonalAccessToken{} =
+        insert(:personal_access_token, user_id: deleted_user_id, token: pat)
+
+      assert {:error, :invalid_pat} =
+               PersonalAccessTokens.validate_and_introspect(pat)
     end
 
     test "should return an error when validating and introspecting a PAT for a locked user" do
       %User{id: locked_user_id} = insert(:user, locked_at: Faker.DateTime.backward(3))
-      %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: locked_user_id)
 
-      assert {:error, :invalid_token} =
-               PersonalAccessTokens.validate_and_introspect(pat_jti, locked_user_id)
+      pat = Faker.Lorem.word()
+
+      %PersonalAccessToken{} =
+        insert(:personal_access_token, user_id: locked_user_id, token: pat)
+
+      assert {:error, :invalid_pat} = PersonalAccessTokens.validate_and_introspect(pat)
     end
 
     test "should successfully validate and introspect an existing PAT for an active user" do
       for factory <- [:user, :user_with_abilities] do
         %User{id: user_id} = insert(factory)
-        %PersonalAccessToken{jti: pat_jti} = insert(:personal_access_token, user_id: user_id)
+
+        pat = Faker.Lorem.word()
+
+        %PersonalAccessToken{id: pat_id} =
+          insert(:personal_access_token, user_id: user_id, token: pat)
 
         assert {:ok,
                 %PersonalAccessToken{
-                  jti: ^pat_jti,
+                  id: ^pat_id,
                   user_id: ^user_id,
                   user: %User{abilities: abilities}
-                }} = PersonalAccessTokens.validate_and_introspect(pat_jti, user_id)
+                }} = PersonalAccessTokens.validate_and_introspect(pat)
 
         if factory == :user do
           assert [] == abilities

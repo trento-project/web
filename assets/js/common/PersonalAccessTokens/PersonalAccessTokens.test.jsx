@@ -92,7 +92,7 @@ describe('PersonalAccessTokens', () => {
     await user.click(screen.getByRole('button', { name: 'delete-token' }));
     await user.click(screen.getByRole('button', { name: 'Delete Token' }));
 
-    expect(mockOnDeleteToken).toHaveBeenCalledWith(token.jti);
+    expect(mockOnDeleteToken).toHaveBeenCalledWith(token.id);
   });
 
   it('should generate token when generation modal generate is clicked', async () => {
