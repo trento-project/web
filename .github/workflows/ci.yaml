@@ -477,7 +477,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: e2e-screenshots-${{ matrix.containers }}
@@ -581,7 +581,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: regression-${{ matrix.test }}-e2e-screenshots
@@ -727,7 +727,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: integration-${{ matrix.test }}-e2e-screenshots
@@ -899,7 +899,7 @@ jobs:
             --text /specs/changes.txt \
             --html /specs/changes.html
       - name: Upload OpenAPI diff report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: openapi-diff-report-${{ matrix.version }}

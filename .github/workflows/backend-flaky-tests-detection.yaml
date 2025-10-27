@@ -116,7 +116,7 @@ jobs:
             fi
           done
       - name: Upload backend tests junit reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: junit-reports-${{ matrix.container }}
           path: junit-reports/*.xml
