@@ -189,9 +189,9 @@ defmodule TrentoWeb.SessionController do
   end
 
   operation :introspect_token,
-    summary: "Introspect an Access Token",
+    summary: "Introspect a Token",
     description:
-      "Introspects an Access Token to verify its validity and retrieve associated metadata.",
+      "Introspects a Token (Access Token or Personal Access Token) to verify its validity and retrieve associated metadata.",
     tags: ["Auth"],
     request_body: {"Introspect token request.", "application/json", IntrospectTokenRequest},
     responses: [

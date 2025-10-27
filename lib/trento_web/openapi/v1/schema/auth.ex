@@ -370,11 +370,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Auth do
     @moduledoc """
     Schema for introspect token requests.
 
-    This schema defines the structure for requests to introspect access tokens
+    This schema defines the structure for requests to introspect tokens
     and obtain their metadata, enabling better token management and validation.
 
     ## Fields
-    - `token`: A valid JWT access token to introspect
+    - `token`: A token (JWT access token or Personal Access Token) to introspect
     """
 
     require OpenApiSpex

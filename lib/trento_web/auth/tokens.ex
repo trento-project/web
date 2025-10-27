@@ -36,17 +36,17 @@ defmodule TrentoWeb.Auth.Tokens do
   def verify_and_validate(token), do: apply_callback(token, &validate_token/2)
 
   @doc """
-  Introspects and validates a given JWT token.
+  Introspects and validates a given token (might or might not be a JWT).
 
   ## Parameters
-    - token: The JWT token to be introspected.
+    - token: The token to be introspected. It can be a JWT access token or a Personal Access Token (PAT).
 
   ## Returns
     - claims: always a map of claims. If the token is invalid, the map contains only the "active" claim set to false.
   """
   @spec introspect(binary()) :: map()
-  def introspect(jwt_token) do
-    jwt_token
+  def introspect(token) do
+    token
     |> apply_callback(&introspect_token/2)
     |> case do
       {:ok, claims} -> Map.put(claims, "active", true)
