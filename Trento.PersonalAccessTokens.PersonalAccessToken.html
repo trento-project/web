@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-56B94F99.js"></script>
+    <script src="dist/sidebar_items-8B746749.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -177,6 +177,17 @@ Info
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#hash_token/1" data-no-tooltip translate="no">hash_token(token)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Generates a SHA-512 hash of the given token.
+Returns nil if the input token is nil.</p></div>
+
+    </div>
+
 </div>
 
   </section>
@@ -215,8 +226,10 @@ Info
   __meta__: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   created_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   expires_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
-  jti: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  hashed_token: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   name: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
+  token: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   updated_at: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   user: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(),
   user_id: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
@@ -248,7 +261,7 @@ Info
     </a>
     <h1 class="signature" translate="no">changeset(pat, attrs)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens/personal_access_token.ex#L23" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens/personal_access_token.ex#L44" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -259,6 +272,36 @@ Info
   <section class="docstring">
 
 
+  </section>
+</section>
+<section class="detail" id="hash_token/1">
+
+  <div class="detail-header">
+    <a href="#hash_token/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">hash_token(token)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/personal_access_tokens/personal_access_token.ex#L36" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> hash_token(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>() | nil</pre>
+
+      </div>
+
+<p>Generates a SHA-512 hash of the given token.
+Returns nil if the input token is nil.</p><p>Argon2 does not fit well for this use case because:</p><ol><li>Every Argon2.hash_pwd_salt(token) call generates a different hash even for the same input token.
+This is due to the random salt used internally by Argon2, so that it becomes impossible to query the database for a given token hash.</li><li>In order to run a Argon2.verify_pass(plain_pat, hashed_pat) we would need to query the hashed_pat first. But unless we rely on other information we cannot get that.</li><li>We need the hashing to be fast since it will possibly happen on a lot of interactions with the system.</li></ol>
   </section>
 </section>
 
