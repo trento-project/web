@@ -343,8 +343,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "27"
-          elixir-version: "1.18"
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@v6
