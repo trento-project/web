@@ -455,6 +455,8 @@ TrentoWeb.OpenApi.Unversioned.ApiSpec.html
 TrentoWeb.OpenApi.V1.ApiSpec.html
 TrentoWeb.OpenApi.V1.Schema.Auth.Credentials.html
 TrentoWeb.OpenApi.V1.Schema.Auth.ExternalIdpCallback.html
+TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectTokenRequest.html
+TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectedToken.html
 TrentoWeb.OpenApi.V1.Schema.Auth.LoginCredentials.html
 TrentoWeb.OpenApi.V1.Schema.Auth.RefreshTokenRequest.html
 TrentoWeb.OpenApi.V1.Schema.Auth.RefreshedCredentials.html
@@ -542,7 +544,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-F4B84A7B.js
-dist/sidebar_items-8B746749.js
+dist/search_data-91D4EE4E.js
+dist/sidebar_items-9E501A94.js
 index.html
 search.html

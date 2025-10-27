@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-8B746749.js"></script>
+    <script src="dist/sidebar_items-9E501A94.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -187,11 +187,11 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#introspect/1" data-no-tooltip translate="no">introspect(jwt_token)</a>
+        <a href="#introspect/1" data-no-tooltip translate="no">introspect(token)</a>
 
       </div>
 
-        <div class="summary-synopsis"><p>Introspects and validates a given JWT token.</p></div>
+        <div class="summary-synopsis"><p>Introspects and validates a given token (might or might not be a JWT).</p></div>
 
     </div>
 
@@ -237,7 +237,7 @@ Info
     </a>
     <h1 class="signature" translate="no">access_token_expires_in()</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L20" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L21" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -259,7 +259,7 @@ Info
     </a>
     <h1 class="signature" translate="no">generate_access_token!(claims)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L19" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L20" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -281,7 +281,7 @@ Info
     </a>
     <h1 class="signature" translate="no">generate_refresh_token!(claims)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L21" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -301,9 +301,9 @@ Info
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">introspect(jwt_token)</h1>
+    <h1 class="signature" translate="no">introspect(token)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L48" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -319,13 +319,13 @@ Info
 
       </div>
 
-<p>Introspects and validates a given JWT token.</p><h2 id="introspect/1-parameters" class="section-heading">
+<p>Introspects and validates a given token (might or might not be a JWT).</p><h2 id="introspect/1-parameters" class="section-heading">
   <a href="#introspect/1-parameters" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
   <span class="text">Parameters</span>
 </h2>
-<ul><li>token: The JWT token to be introspected.</li></ul><h2 id="introspect/1-returns" class="section-heading">
+<ul><li>token: The token to be introspected. It can be a JWT access token or a Personal Access Token (PAT).</li></ul><h2 id="introspect/1-returns" class="section-heading">
   <a href="#introspect/1-returns" class="hover-link">
     <i class="ri-link-m" aria-hidden="true"></i>
   </a>
@@ -343,7 +343,7 @@ Info
     </a>
     <h1 class="signature" translate="no">verify_and_validate(token)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L35" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L36" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -383,7 +383,7 @@ Info
     </a>
     <h1 class="signature" translate="no">verify_and_validate_refresh_token(token)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L22" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/auth/tokens.ex#L23" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
