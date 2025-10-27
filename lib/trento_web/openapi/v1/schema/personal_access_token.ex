@@ -14,7 +14,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
         type: :object,
         additionalProperties: false,
         properties: %{
-          jti: %Schema{
+          id: %Schema{
             type: :string,
             format: :uuid,
             description: "Personal Access Token ID.",
@@ -42,9 +42,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             example: "2023-01-01T00:00:00Z"
           }
         },
-        required: [:jti, :name, :expires_at, :created_at],
+        required: [:id, :name, :expires_at, :created_at],
         example: %{
-          jti: "550e8400-e29b-41d4-a716-446655440000",
+          id: "550e8400-e29b-41d4-a716-446655440000",
           name: "My Token",
           expires_at: "2024-12-31T23:59:59Z",
           created_at: "2023-01-01T00:00:00Z"
@@ -65,7 +65,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
         items: PersonalAccessTokenEntry,
         example: [
           %{
-            jti: "550e8400-e29b-41d4-a716-446655440000",
+            id: "550e8400-e29b-41d4-a716-446655440000",
             name: "My Token",
             expires_at: "2024-12-31T23:59:59Z",
             created_at: "2023-01-01T00:00:00Z"
@@ -120,7 +120,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
         type: :object,
         additionalProperties: false,
         properties: %{
-          jti: %Schema{
+          id: %Schema{
             type: :string,
             format: :uuid,
             description: "Personal Access Token ID.",
@@ -154,9 +154,9 @@ defmodule TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken do
             example: "abc123"
           }
         },
-        required: [:jti, :name, :expires_at, :created_at, :access_token],
+        required: [:id, :name, :expires_at, :created_at, :access_token],
         example: %{
-          jti: "550e8400-e29b-41d4-a716-446655440000",
+          id: "550e8400-e29b-41d4-a716-446655440000",
           name: "My Token",
           expires_at: "2024-12-31T23:59:59Z",
           created_at: "2023-01-01T00:00:00Z",

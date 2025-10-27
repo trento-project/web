@@ -175,6 +175,8 @@ defmodule Trento.Factory do
 
   alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
 
+  alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1334,11 +1336,22 @@ defmodule Trento.Factory do
     }
   end
 
-  def personal_access_token_factory do
+  def personal_access_token_factory(attrs) do
+    plain_token = Map.get(attrs, :token, PAT.generate())
+    id = Map.get(attrs, :id, Faker.UUID.v4())
+    name = Map.get(attrs, :name, Faker.UUID.v4())
+    created_at = Map.get(attrs, :created_at, Faker.DateTime.backward(1))
+    expires_at = Map.get(attrs, :expires_at, Faker.DateTime.forward(50))
+    user_id = Map.get(attrs, :user_id, 1)
+
     %PersonalAccessToken{
-      jti: Faker.UUID.v4(),
-      name: Faker.UUID.v4(),
-      expires_at: Faker.DateTime.forward(50)
+      id: id,
+      name: name,
+      created_at: created_at,
+      expires_at: expires_at,
+      token: plain_token,
+      hashed_token: PersonalAccessToken.hash_token(plain_token),
+      user_id: user_id
     }
   end
 

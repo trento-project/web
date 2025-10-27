@@ -42,20 +42,17 @@ defmodule TrentoWeb.Auth.TokensTest do
       for token <- [
             TokensCase.token(:jti_less),
             TokensCase.token(:audience_less),
-            TokensCase.token(:sub_less_access_token),
-            TokensCase.token(:sub_less_pat)
+            TokensCase.token(:sub_less_access_token)
           ] do
         assert {:error, :invalid_token} = Tokens.verify_and_validate(token)
       end
     end
 
     test "should return an error when the token signature is invalid" do
-      for badly_signed_token <- [
-            TokensCase.token(:badly_signed_access_token),
-            TokensCase.token(:badly_signed_pat)
-          ] do
-        assert {:error, :signature_error} = Tokens.verify_and_validate(badly_signed_token)
-      end
+      assert {:error, :signature_error} =
+               :badly_signed_access_token
+               |> TokensCase.token()
+               |> Tokens.verify_and_validate()
     end
   end
 
@@ -93,13 +90,10 @@ defmodule TrentoWeb.Auth.TokensTest do
 
   describe "pat verification" do
     test "should return an error when the personal access token is expired" do
-      for expired_pat <- [
-            TokensCase.token(:unbound_expired_pat),
-            TokensCase.token(:user_bound_expired_pat)
-          ] do
-        assert {:error, [message: "Invalid token", claim: "exp", claim_val: _]} =
-                 Tokens.verify_and_validate(expired_pat)
-      end
+      assert {:error, :invalid_pat} =
+               :user_bound_expired_pat
+               |> TokensCase.token()
+               |> Tokens.verify_and_validate()
     end
 
     test "should return an error on revoked pat validation" do
@@ -110,36 +104,19 @@ defmodule TrentoWeb.Auth.TokensTest do
     end
 
     test "should succeed on valid pat" do
-      future_timestamp = TokensCase.future_timestamp()
-
       %User{id: user_id} = insert(:user)
 
-      %PersonalAccessToken{jti: jti} =
+      plain_pat = PAT.generate()
+
+      %PersonalAccessToken{} =
         insert(
           :personal_access_token,
           user_id: user_id,
-          expires_at: TokensCase.future_date()
+          expires_at: Faker.DateTime.forward(3),
+          token: plain_pat
         )
 
-      claims = %{
-        "jti" => jti,
-        "sub" => user_id,
-        "exp" => future_timestamp
-      }
-
-      assert {:ok,
-              %{
-                "sub" => ^user_id,
-                "jti" => ^jti,
-                "exp" => ^future_timestamp,
-                "aud" => "trento_pat",
-                "iss" => _issuer,
-                "iat" => _issued_at,
-                "nbf" => _not_before
-              }} =
-               claims
-               |> PAT.generate!(TokensCase.issued_at(), TokensCase.future_date())
-               |> Tokens.verify_and_validate()
+      assert {:ok, %{"sub" => ^user_id}} = Tokens.verify_and_validate(plain_pat)
     end
   end
 
@@ -161,13 +138,6 @@ defmodule TrentoWeb.Auth.TokensTest do
 
         %User{id: user_id} = insert(factory)
 
-        %PersonalAccessToken{jti: pat_jti} =
-          insert(
-            :personal_access_token,
-            user_id: user_id,
-            expires_at: TokensCase.future_date()
-          )
-
         claims = %{
           "sub" => user_id,
           "exp" => expiration
@@ -188,21 +158,21 @@ defmodule TrentoWeb.Auth.TokensTest do
                  |> AccessToken.generate_access_token!()
                  |> Tokens.introspect()
 
+        plain_pat = PAT.generate()
+
+        %PersonalAccessToken{} =
+          insert(
+            :personal_access_token,
+            user_id: user_id,
+            expires_at: Faker.DateTime.forward(3),
+            token: plain_pat
+          )
+
         assert %{
                  "active" => true,
                  "sub" => ^user_id,
-                 "jti" => ^pat_jti,
-                 "exp" => ^expiration,
-                 "aud" => "trento_pat",
-                 "iss" => _issuer,
-                 "iat" => _issued_at,
-                 "nbf" => _not_before,
                  "abilities" => pat_abilities
-               } =
-                 claims
-                 |> Map.put("jti", pat_jti)
-                 |> PAT.generate!(TokensCase.issued_at(), TokensCase.future_date())
-                 |> Tokens.introspect()
+               } = Tokens.introspect(plain_pat)
 
         if factory == :user do
           assert [] == access_token_abilities

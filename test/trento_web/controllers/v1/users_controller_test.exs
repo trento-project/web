@@ -32,7 +32,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do
       %{id: user_id} = insert(:user)
-      %{jti: jti} = build(:personal_access_token)
+      %{id: token_id} = build(:personal_access_token)
 
       conn =
         conn
@@ -46,7 +46,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
           patch(conn, "/api/v1/users/1", %{}),
           get(conn, "/api/v1/users/1"),
           delete(conn, "/api/v1/users/1"),
-          delete(conn, "/api/v1/users/1/tokens/#{jti}")
+          delete(conn, "/api/v1/users/1/tokens/#{token_id}")
         ],
         fn conn ->
           conn
@@ -466,32 +466,32 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{jti: jti} = build(:personal_access_token)
+      %{id: token_id} = build(:personal_access_token)
 
       conn
       |> put_req_header("content-type", "application/json")
-      |> delete("/api/v1/users/8908409480/tokens/#{jti}")
+      |> delete("/api/v1/users/8908409480/tokens/#{token_id}")
       |> json_response(:not_found)
       |> assert_schema("NotFoundV1", api_spec)
     end
 
-    test "should not delete the token when the token jti is not found", %{
+    test "should not delete the token when the token id is not found", %{
       conn: conn,
       api_spec: api_spec
     } do
       %{id: id} = insert(:user)
-      %{jti: jti} = build(:personal_access_token)
+      %{id: token_id} = build(:personal_access_token)
 
       conn
       |> put_req_header("content-type", "application/json")
-      |> delete("/api/v1/users/#{id}/tokens/#{jti}")
+      |> delete("/api/v1/users/#{id}/tokens/#{token_id}")
       |> json_response(:not_found)
       |> assert_schema("NotFoundV1", api_spec)
     end
 
-    test "should delete the token when the user and the token jti are found", %{conn: conn} do
+    test "should delete the token when the user and the token id are found", %{conn: conn} do
       %{id: id} = insert(:user)
-      %{jti: jti, name: name} = insert(:personal_access_token, user_id: id)
+      %{id: token_id, name: name} = insert(:personal_access_token, user_id: id)
 
       {:ok, _, _} =
         TrentoWeb.UserSocket
@@ -501,12 +501,12 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       deleted_conn =
         conn
         |> put_req_header("content-type", "application/json")
-        |> delete("/api/v1/users/#{id}/tokens/#{jti}")
+        |> delete("/api/v1/users/#{id}/tokens/#{token_id}")
 
       assert %{
                assigns: %{
                  deleted_token: %{
-                   jti: ^jti,
+                   id: ^token_id,
                    name: ^name
                  }
                }

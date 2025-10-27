@@ -24,7 +24,7 @@ defmodule Trento.PersonalAccessTokens do
           {:ok, PersonalAccessToken.t()} | {:error, :not_found | any()}
   def revoke_personal_access_token(%User{id: user_id}, token_id) do
     PersonalAccessToken
-    |> where([pat], pat.jti == ^token_id and pat.user_id == ^user_id)
+    |> where([pat], pat.id == ^token_id and pat.user_id == ^user_id)
     |> Repo.one()
     |> case do
       nil -> {:error, :not_found}
@@ -32,48 +32,58 @@ defmodule Trento.PersonalAccessTokens do
     end
   end
 
-  @spec valid?(bitstring(), non_neg_integer()) :: boolean()
-  def valid?(jti, user_id) do
-    jti
-    |> load_user_pat(user_id)
+  @spec validate(bitstring()) ::
+          {:ok, PersonalAccessToken.t()} | {:error, :invalid_pat}
+  def validate(token) do
+    token
+    |> load()
     |> Repo.preload(:user)
-    |> valid_pat?()
+    |> apply_validation()
   end
 
-  @spec validate_and_introspect(bitstring(), non_neg_integer()) ::
-          {:ok, PersonalAccessToken.t()} | {:error, :invalid_token}
-  def validate_and_introspect(jti, user_id) do
-    jti
-    |> load_user_pat(user_id)
+  @spec validate_and_introspect(bitstring()) ::
+          {:ok, PersonalAccessToken.t()} | {:error, :invalid_pat}
+  def validate_and_introspect(token) do
+    token
+    |> load()
     |> Repo.preload(user: [:abilities])
-    |> then(
-      &case valid_pat?(&1) do
-        true -> {:ok, &1}
-        false -> {:error, :invalid_token}
-      end
+    |> apply_validation()
+  end
+
+  defp load(token) do
+    Repo.get_by(PersonalAccessToken,
+      hashed_token: PersonalAccessToken.hash_token(token)
     )
   end
 
-  defp load_user_pat(jti, user_id),
-    do: Repo.get_by(PersonalAccessToken, jti: jti, user_id: user_id)
+  defp apply_validation(nil), do: {:error, :invalid_pat}
 
-  defp valid_pat?(nil), do: false
-
-  defp valid_pat?(%PersonalAccessToken{
+  defp apply_validation(%PersonalAccessToken{
          user: %User{
            deleted_at: deleted_at
          }
        })
        when not is_nil(deleted_at),
-       do: false
+       do: {:error, :invalid_pat}
 
-  defp valid_pat?(%PersonalAccessToken{
+  defp apply_validation(%PersonalAccessToken{
          user: %User{
            locked_at: locked_at
          }
        })
        when not is_nil(locked_at),
-       do: false
+       do: {:error, :invalid_pat}
 
-  defp valid_pat?(%PersonalAccessToken{}), do: true
+  defp apply_validation(%PersonalAccessToken{expires_at: nil} = pat), do: {:ok, pat}
+
+  defp apply_validation(
+         %PersonalAccessToken{
+           expires_at: expires_at
+         } = pat
+       ) do
+    case DateTime.compare(expires_at, DateTime.utc_now()) == :gt do
+      true -> {:ok, pat}
+      false -> {:error, :invalid_pat}
+    end
+  end
 end

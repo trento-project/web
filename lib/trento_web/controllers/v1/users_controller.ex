@@ -191,7 +191,7 @@ defmodule TrentoWeb.V1.UsersController do
   operation :revoke_personal_access_token,
     summary: "Revokes an existing Personal Access Token for a User.",
     description:
-      "Revokes a Personal Access Token identified by its unique identifier (JTI) for a specific user, ensuring that it can no longer be used for authentication.",
+      "Revokes a Personal Access Token identified by its unique identifier for a specific user, ensuring that it can no longer be used for authentication.",
     tags: ["User Management"],
     parameters: [
       id: [
@@ -201,10 +201,10 @@ defmodule TrentoWeb.V1.UsersController do
         required: true,
         schema: %OpenApiSpex.Schema{type: :integer, example: 1}
       ],
-      jti: [
+      token_id: [
         in: :path,
         required: true,
-        description: "The unique identifier (JTI) of the Personal Access Token to be revoked.",
+        description: "The unique identifier of the Personal Access Token to be revoked.",
         schema: %OpenApiSpex.Schema{
           type: :string,
           format: :uuid,
@@ -219,9 +219,9 @@ defmodule TrentoWeb.V1.UsersController do
       forbidden: Schema.Forbidden.response()
     ]
 
-  def revoke_personal_access_token(conn, %{id: id, jti: jti}) do
+  def revoke_personal_access_token(conn, %{id: id, token_id: token_id}) do
     with {:ok, token} <-
-           PersonalAccessTokens.revoke_personal_access_token(%User{id: id}, jti),
+           PersonalAccessTokens.revoke_personal_access_token(%User{id: id}, token_id),
          :ok <- TrentoWeb.Endpoint.broadcast("users:#{id}", "user_updated", %{}) do
       # add deleted token to assigns to use in the activity log
       conn

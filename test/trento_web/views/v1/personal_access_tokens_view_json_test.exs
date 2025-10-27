@@ -18,36 +18,36 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
     end
 
     test "should render a list of personal access tokens" do
-      jti1 = Faker.UUID.v4()
+      id1 = Faker.UUID.v4()
       name1 = Faker.Lorem.word()
       created_at1 = Faker.DateTime.backward(1)
       expires_at1 = nil
 
-      jti2 = Faker.UUID.v4()
+      id2 = Faker.UUID.v4()
       name2 = Faker.StarWars.character()
       created_at2 = Faker.DateTime.backward(2)
       expires_at2 = Faker.DateTime.forward(3)
 
-      jti3 = Faker.UUID.v4()
+      id3 = Faker.UUID.v4()
       name3 = Faker.StarWars.character()
       created_at3 = Faker.DateTime.backward(3)
       expires_at3 = Faker.DateTime.forward(4)
 
       personal_access_tokens = [
         build(:personal_access_token,
-          jti: jti1,
+          id: id1,
           name: name1,
           created_at: created_at1,
           expires_at: expires_at1
         ),
         build(:personal_access_token,
-          jti: jti2,
+          id: id2,
           name: name2,
           created_at: created_at2,
           expires_at: expires_at2
         ),
         build(:personal_access_token,
-          jti: jti3,
+          id: id3,
           name: name3,
           created_at: created_at3,
           expires_at: expires_at3
@@ -56,19 +56,19 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
 
       assert [
                %{
-                 jti: jti1,
+                 id: id1,
                  name: name1,
                  created_at: created_at1,
                  expires_at: expires_at1
                },
                %{
-                 jti: jti2,
+                 id: id2,
                  name: name2,
                  created_at: created_at2,
                  expires_at: expires_at2
                },
                %{
-                 jti: jti3,
+                 id: id3,
                  name: name3,
                  created_at: created_at3,
                  expires_at: expires_at3
@@ -103,14 +103,14 @@ defmodule TrentoWeb.V1.PersonalAccessTokensViewJSONTest do
 
       test "should render a new personal access token #{scenario_name}" do
         %PersonalAccessToken{
-          jti: jti,
+          id: pat_id,
           name: name,
           created_at: created_at,
           expires_at: expires_at
         } = personal_access_token = build(:personal_access_token, @pat_factory_options)
 
         assert %{
-                 jti: jti,
+                 id: pat_id,
                  name: name,
                  created_at: created_at,
                  expires_at: expires_at,
