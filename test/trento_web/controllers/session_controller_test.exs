@@ -2,6 +2,7 @@ defmodule TrentoWeb.SessionControllerTest do
   @moduledoc false
 
   use TrentoWeb.ConnCase, async: false
+  use TrentoWeb.TokensCase
 
   import Mox
   import OpenApiSpex.TestAssertions
@@ -732,6 +733,72 @@ defmodule TrentoWeb.SessionControllerTest do
       conn
       |> json_response(422)
       |> assert_schema("UnprocessableEntityV1", api_spec)
+    end
+  end
+
+  describe "token introspection" do
+    setup do
+      stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_671_715_992 end)
+
+      :ok
+    end
+
+    for type <- TokensCase.token_types() do
+      @token_type type
+
+      test "should introspect inactive token: #{type}", %{conn: conn, api_spec: api_spec} do
+        token = TokensCase.token(@token_type)
+
+        conn
+        |> post("/api/session/token/introspect", %{
+          "token" => token
+        })
+        |> json_response(200)
+        |> assert_schema("IntrospectedTokenV1", api_spec)
+        |> then(&assert %{active: false} == &1)
+      end
+    end
+
+    test "should introspect active access token", %{conn: conn, api_spec: api_spec} do
+      {valid_token, _} = TokensCase.valid_user_bound_access_token()
+
+      conn
+      |> post("/api/session/token/introspect", %{
+        "token" => valid_token
+      })
+      |> json_response(200)
+      |> assert_schema("IntrospectedTokenV1", api_spec)
+      |> then(
+        &assert %{
+                  active: true,
+                  sub: _,
+                  jti: _,
+                  exp: _,
+                  aud: _,
+                  iss: _,
+                  iat: _,
+                  nbf: _,
+                  abilities: _
+                } = &1
+      )
+    end
+
+    test "should introspect active PAT", %{conn: conn, api_spec: api_spec} do
+      {valid_token, _} = TokensCase.valid_pat()
+
+      conn
+      |> post("/api/session/token/introspect", %{
+        "token" => valid_token
+      })
+      |> json_response(200)
+      |> assert_schema("IntrospectedTokenV1", api_spec)
+      |> then(
+        &assert %{
+                  active: true,
+                  sub: _,
+                  abilities: _
+                } = &1
+      )
     end
   end
 end

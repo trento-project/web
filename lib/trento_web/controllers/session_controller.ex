@@ -8,11 +8,15 @@ defmodule TrentoWeb.SessionController do
   alias TrentoWeb.OpenApi.V1.Schema.Auth.{
     Credentials,
     ExternalIdpCallback,
+    IntrospectedToken,
+    IntrospectTokenRequest,
     LoginCredentials,
     RefreshedCredentials,
     RefreshTokenRequest,
     UserIDPCredentials
   }
+
+  alias TrentoWeb.Auth.Tokens
 
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
@@ -182,6 +186,20 @@ defmodule TrentoWeb.SessionController do
         Logger.error("error during saml callback execution: #{inspect(error)}")
         error
     end
+  end
+
+  operation :introspect_token,
+    summary: "Introspect a Token",
+    description:
+      "Introspects a Token (Access Token or Personal Access Token) to verify its validity and retrieve associated metadata.",
+    tags: ["Auth"],
+    request_body: {"Introspect token request.", "application/json", IntrospectTokenRequest},
+    responses: [
+      ok: {"Introspected token metadata.", "application/json", IntrospectedToken}
+    ]
+
+  def introspect_token(conn, %{"token" => token}) do
+    render(conn, :introspected_token, claims: Tokens.introspect(token))
   end
 
   defp authenticate_trento_user(conn, credentials) do
