@@ -223,6 +223,9 @@ if config_env() in [:prod, :demo] do
       }
     ]
 
+  config :trento,
+    oas_server_url: System.get_env("OAS_SERVER_URL")
+
   enable_oidc = System.get_env("ENABLE_OIDC", "false") == "true"
   enable_oauth2 = System.get_env("ENABLE_OAUTH2", "false") == "true"
   enable_saml = System.get_env("ENABLE_SAML", "false") == "true"

@@ -343,8 +343,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: "27"
-          elixir-version: "1.18"
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@v6
@@ -1005,7 +1005,7 @@ jobs:
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
-            --set trento-web.trentoWebOrigin="${TRENTO_WEB_ORIGIN}" \
+            --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
             -f ../../hack/cert-manager/override-values.yaml
 
   run-photofinish-demo-env:

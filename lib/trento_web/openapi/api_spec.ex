@@ -136,18 +136,28 @@ defmodule TrentoWeb.OpenApi.ApiSpec do
       end
 
       defp endpoint do
-        if Process.whereis(Endpoint) do
-          # Populate the Server info from a phoenix endpoint
-          Server.from_endpoint(Endpoint)
-        else
-          # If the endpoint is not running, use a placeholder
-          # this happens when generating openapi.json with --start-app=false
-          # e.g. mix openapi.spec.json --start-app=false --spec WandaWeb.ApiSpec
-          %OpenApiSpex.Server{
-            url: "https://demo.trento-project.io",
-            description:
-              "This is the Trento demo server, provided for testing and demonstration purposes."
-          }
+        oas_server_url = Application.fetch_env!(:trento, :oas_server_url)
+
+        cond do
+          not is_nil(oas_server_url) ->
+            %OpenApiSpex.Server{
+              url: oas_server_url
+            }
+
+          Process.whereis(Endpoint) ->
+            Server.from_endpoint(Endpoint)
+
+          true ->
+            %OpenApiSpex.Server{
+              url: "{url}",
+              variables: %{
+                url: %{
+                  default: "https://demo.trento-project.io"
+                }
+              },
+              description:
+                "This is the Trento demo server, provided for testing and demonstration purposes."
+            }
         end
       end
     end

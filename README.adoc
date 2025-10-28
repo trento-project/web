@@ -103,6 +103,12 @@ in the Landscape being monitored/observed by Trento.
 
 See xref:Alerting/alerting.adoc[related documentation] for more information.
 
+=== OpenAPI specification
+
+Trento API is OpenAPI compliant.
+
+See xref:OpenAPI/openapi.adoc[related documentation] for more information.
+
 == Installation
 
 *Trento* can be installed in various ways, depending on your needs and
