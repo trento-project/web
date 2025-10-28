@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import {
@@ -18,9 +18,7 @@ describe('GenerateTokenModal', () => {
     const user = userEvent.setup();
     const mockOnGenerate = jest.fn();
     const tokenName = 'My token';
-    await act(async () => {
-      render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
-    });
+    render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
 
     expect(
       screen.getByRole('button', { name: 'Generate Token' })
@@ -43,9 +41,7 @@ describe('GenerateTokenModal', () => {
       const user = userEvent.setup();
       const mockOnGenerate = jest.fn();
       const tokenName = 'My token';
-      await act(async () => {
-        render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
-      });
+      render(<GenerateTokenModal isOpen onGenerate={mockOnGenerate} />);
 
       expect(
         screen.getByRole('button', { name: 'Generate Token' })
@@ -78,9 +74,7 @@ describe('GenerateTokenModal', () => {
   it('should run onClose when the close button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
-    await act(async () => {
-      render(<GenerateTokenModal isOpen onClose={mockOnClose} />);
-    });
+    render(<GenerateTokenModal isOpen onClose={mockOnClose} />);
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
     expect(mockOnClose).toHaveBeenCalled();

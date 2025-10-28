@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import OperationsButton from './OperationsButton';
@@ -27,14 +27,12 @@ describe('OperationsButton', () => {
   it('should show correct operations', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(
-        <OperationsButton
-          operations={testOperations}
-          userAbilities={userAbilities}
-        />
-      );
-    });
+    render(
+      <OperationsButton
+        operations={testOperations}
+        userAbilities={userAbilities}
+      />
+    );
 
     expect(screen.getByText('Operations')).toBeInTheDocument();
 
@@ -54,14 +52,12 @@ describe('OperationsButton', () => {
       0: { ...testOperations[0], disabled: true },
     });
 
-    await act(async () => {
-      render(
-        <OperationsButton
-          operations={disabledOperations}
-          userAbilities={userAbilities}
-        />
-      );
-    });
+    render(
+      <OperationsButton
+        operations={disabledOperations}
+        userAbilities={userAbilities}
+      />
+    );
 
     await user.click(screen.getByText('Operations'));
 
@@ -75,14 +71,12 @@ describe('OperationsButton', () => {
       0: { ...testOperations[0], running: true },
     });
 
-    await act(async () => {
-      render(
-        <OperationsButton
-          operations={runningOperations}
-          userAbilities={userAbilities}
-        />
-      );
-    });
+    render(
+      <OperationsButton
+        operations={runningOperations}
+        userAbilities={userAbilities}
+      />
+    );
 
     await user.click(screen.getByText('Operations'));
 
@@ -98,14 +92,12 @@ describe('OperationsButton', () => {
   it('should forbid operation if the user does not have the correct abilities', async () => {
     const user = userEvent.setup();
 
-    await act(async () => {
-      render(
-        <OperationsButton
-          operations={testOperations}
-          userAbilities={[{ name: 'foo', resource: 'resource' }]}
-        />
-      );
-    });
+    render(
+      <OperationsButton
+        operations={testOperations}
+        userAbilities={[{ name: 'foo', resource: 'resource' }]}
+      />
+    );
 
     await user.click(screen.getByText('Operations'));
 

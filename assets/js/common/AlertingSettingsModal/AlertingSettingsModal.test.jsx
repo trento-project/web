@@ -1,6 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { capitalize } from 'lodash';
@@ -14,9 +14,7 @@ import AlertingSettingsModal from './AlertingSettingsModal';
 
 describe('AlertingSettingsModal', () => {
   it('renders correctly when opened with no arguments passed', async () => {
-    await act(() => {
-      render(<AlertingSettingsModal open />);
-    });
+    render(<AlertingSettingsModal open />);
 
     const alertingEnabled = screen.getByRole('switch', {
       name: 'Send Email Alerts',
@@ -64,11 +62,7 @@ describe('AlertingSettingsModal', () => {
     const { smtpServer, smtpPort, smtpUsername, senderEmail, recipientEmail } =
       alertingSettings;
 
-    await act(() => {
-      render(
-        <AlertingSettingsModal previousSettings={alertingSettings} open />
-      );
-    });
+    render(<AlertingSettingsModal previousSettings={alertingSettings} open />);
 
     expect(
       screen.getByRole('switch', { name: 'Send Email Alerts' })

@@ -33,9 +33,7 @@ describe('ActivityLogDetailModal component', () => {
       userRelatedActivity = false,
     }) => {
       const { id } = entry;
-      await act(async () => {
-        render(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
-      });
+      render(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
 
       expect(screen.getByText('ID')).toBeVisible();
       expect(screen.getByText(id)).toBeVisible();
@@ -64,9 +62,7 @@ describe('ActivityLogDetailModal component', () => {
   it('should render detail for unknown activity type', async () => {
     const unknownActivityType = faker.lorem.word();
     const entry = activityLogEntryFactory.build({ type: unknownActivityType });
-    await act(async () => {
-      render(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
-    });
+    render(<ActivityLogDetailModal open entry={toRenderedEntry(entry)} />);
 
     const activityReferences = screen.getAllByText(unknownActivityType);
     expect(activityReferences).toHaveLength(2);
@@ -113,15 +109,13 @@ describe('ActivityLogDetailModal component', () => {
 
   it('should call onClose when the close button is clicked', async () => {
     const onClose = jest.fn();
-    await act(async () => {
-      render(
-        <ActivityLogDetailModal
-          open
-          entry={activityLogEntryFactory.build()}
-          onClose={onClose}
-        />
-      );
-    });
+    render(
+      <ActivityLogDetailModal
+        open
+        entry={activityLogEntryFactory.build()}
+        onClose={onClose}
+      />
+    );
 
     await userEvent.click(screen.getByText('Close'));
     expect(onClose).toHaveBeenCalled();
