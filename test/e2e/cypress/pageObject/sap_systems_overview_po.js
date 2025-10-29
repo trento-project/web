@@ -103,7 +103,11 @@ export const clickCleanUpModalConfirmationButton = () =>
 const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
   cy.get(expandTableElement).each((cell, index) => {
-    cy.get(`${expandTableElement}:eq(${index})`).click();
+    if (cell.hasClass('closed')) {
+      cy.wrap(cell).click();
+    } else {
+      cy.log(`Row ${index} is already expanded`);
+    }
     tableRowIsVisible(index);
   });
 };
