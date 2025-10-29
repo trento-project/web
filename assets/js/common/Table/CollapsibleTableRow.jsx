@@ -38,6 +38,8 @@ function CollapsibleTableRow({
                   'cursor-pointer self-center fill-gray-500',
                   {
                     'transform rotate-180': rowExpanded,
+                    closed: !rowExpanded,
+                    open: rowExpanded,
                   }
                 )}
               />

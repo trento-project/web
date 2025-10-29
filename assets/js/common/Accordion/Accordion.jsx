@@ -59,6 +59,8 @@ function Accordion({
                 <EOS_KEYBOARD_ARROW_DOWN
                   className={classNames('self-center fill-gray-500', {
                     'transform rotate-180': open,
+                    open,
+                    closed: !open,
                   })}
                 />
               </div>
