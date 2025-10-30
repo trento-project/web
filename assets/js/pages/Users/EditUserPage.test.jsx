@@ -8,7 +8,6 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as router from 'react-router';
 
 import { networkClient } from '@lib/network';
@@ -158,7 +157,9 @@ describe('EditUserPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    await screen.findByText('Error validating fullname');
+    await expect(
+      screen.findByText('Error validating fullname')
+    ).resolves.toBeInTheDocument();
   });
 
   it('should display user already updated warning banner', async () => {
@@ -180,9 +181,11 @@ describe('EditUserPage', () => {
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
-    await screen.findByText('Information has been updated by another user', {
-      exact: false,
-    });
+    await expect(
+      screen.findByText('Information has been updated by another user', {
+        exact: false,
+      })
+    ).resolves.toBeInTheDocument();
   });
 
   it('should not enable editing if the user is admin', async () => {

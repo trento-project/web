@@ -14,12 +14,13 @@ function ForbiddenGuard({
   disabled = false,
   children,
 }) {
+  const { abilities } = useSelector(getUserProfile);
+
   if (disabled) {
     return children;
   }
 
   const permittedFor = ALL_PERMITTED.concat(permitted);
-  const { abilities } = useSelector(getUserProfile);
 
   const userAbilities = abilities.map(
     ({ name, resource }) => `${name}:${resource}`

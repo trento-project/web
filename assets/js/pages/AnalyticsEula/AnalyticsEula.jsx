@@ -11,10 +11,7 @@ import AnalyticsEulaModal from './AnalyticsEulaModal';
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
 
 export default function AnalyticsEula() {
-  if (!analyticsEnabledConfig) {
-    return null;
-  }
-
+  const dispatch = useDispatch();
   const user = useSelector(getUserProfile);
   const { analytics_eula_accepted } = user;
   const [analyticsEulaModalOpen, setAnalyticsEulaModalOpen] = useState(
@@ -22,7 +19,10 @@ export default function AnalyticsEula() {
   );
 
   const isDefaultAdmin = isAdmin(user);
-  const dispatch = useDispatch();
+
+  if (!analyticsEnabledConfig) {
+    return null;
+  }
 
   const updateAnalyticsEula = (params) => {
     editUserProfile(params)

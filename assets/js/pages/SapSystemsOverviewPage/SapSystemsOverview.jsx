@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { filter, uniq, flatMap } from 'lodash';

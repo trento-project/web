@@ -37,7 +37,6 @@ class MockChannel {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
   join() {
     return mockJoinedChannel;
   }

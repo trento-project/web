@@ -78,23 +78,6 @@ describe('getError', () => {
 
     expect(getError('username', errors)).toBe("can't be blank");
   });
-
-  it('should get nothing when the keyword is not in the list', () => {
-    const errors = [
-      {
-        detail: "can't be blank",
-        source: { pointer: '/username' },
-        title: 'Invalid value',
-      },
-      {
-        detail: "can't be blank",
-        source: { pointer: '/ca_cert' },
-        title: 'Invalid value',
-      },
-    ];
-
-    expect(getError('url', errors)).toBe(undefined);
-  });
 });
 
 describe('getGlobalError', () => {

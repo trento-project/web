@@ -4,7 +4,7 @@ import { instancesMatch, upsertInstances, updateInstance } from './instances';
 const initialState = {
   loading: false,
   sapSystems: [],
-  // eslint-disable-next-line
+
   applicationInstances: [],
 };
 
@@ -43,7 +43,7 @@ export const sapSystemsListSlice = createSlice({
     updateSAPSystem: (state, { payload: sapSystemToUpdate }) => {
       state.sapSystems = state.sapSystems.map((sapSystem) => {
         if (sapSystem.id === sapSystemToUpdate.id) {
-          sapSystem = { ...sapSystem, ...sapSystemToUpdate };
+          return { ...sapSystem, ...sapSystemToUpdate };
         }
         return sapSystem;
       });

@@ -1,4 +1,3 @@
-/* eslint-disable no-console, react/function-component-definition */
 import React from 'react';
 import { useArgs } from 'storybook/preview-api';
 import ApiKeySettingsModal from './ApiKeySettingsModal';
@@ -44,7 +43,7 @@ export default {
   },
 };
 
-export const Default = (args) => {
+export function Default(args) {
   const [{ open }, updateArgs] = useArgs();
   const handleClose = () => updateArgs({ open: !open });
 
@@ -57,9 +56,9 @@ export const Default = (args) => {
       <ApiKeySettingsModal {...args} onClose={handleClose} />
     </>
   );
-};
+}
 
-export const OnlyGenerationForm = (args) => {
+export function OnlyGenerationForm(args) {
   const [{ open }, updateArgs] = useArgs();
   const handleClose = () => updateArgs({ open: !open });
 
@@ -77,4 +76,4 @@ export const OnlyGenerationForm = (args) => {
       />
     </>
   );
-};
+}
