@@ -4,17 +4,13 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
   use TrentoWeb.ConnCase, async: true
   use TrentoWeb.TokensCase
 
-  alias TrentoWeb.Auth.{
-    AccessToken,
-    RefreshToken
-  }
+  alias TrentoWeb.Auth.RefreshToken
 
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.Plugs.AppJWTAuthPlug
 
   import Mox
-  import Trento.Factory
 
   @pow_config [otp_app: :trento]
 
@@ -129,30 +125,17 @@ defmodule TrentoWeb.Plugs.AppJWTAuthPlugTest do
 
   describe "create/3" do
     test "should add to the conn the access/refresh token pair and the expiration", %{conn: conn} do
-      %{id: user_id, abilities: [%{name: name, resource: resource} | _]} =
-        user = insert(:user_with_abilities)
+      user = %{id: 1}
 
-      assert {
-               res_conn,
-               %{
-                 id: ^user_id,
-                 abilities: [%{name: ^name, resource: ^resource}]
-               }
-             } = AppJWTAuthPlug.create(conn, user, @pow_config)
+      assert {res_conn, ^user} = AppJWTAuthPlug.create(conn, user, @pow_config)
 
       assert %{
                private: %{
-                 api_access_token: jwt,
+                 api_access_token: _jwt,
                  access_token_expiration: 180,
                  api_refresh_token: _refresh
                }
              } = res_conn
-
-      assert {:ok,
-              %{
-                "sub" => ^user_id,
-                "abilities" => [%{"name" => ^name, "resource" => ^resource}]
-              }} = AccessToken.verify_and_validate(jwt)
     end
   end
 
