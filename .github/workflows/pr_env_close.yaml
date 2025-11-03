@@ -80,6 +80,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: trento-project/ansible
+          ref: make-introspection-endpoint-internal
           path: ansible
       - name: Add pipx_bin to path
         if: ${{ env.ACT }}
