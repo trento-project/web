@@ -252,7 +252,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
                 health: Health.passing(),
                 features: "ABAP|GATEWAY|ICMAN|IGS",
                 host: build(:host, cluster: nil)
-              )
+              ),
+            build(:application_instance,
+              health: Health.passing(),
+              features: "MESSAGESERVER|ENQUE",
+              host: build(:host, cluster: nil)
+            )
           ]
         )
 
@@ -337,6 +342,29 @@ defmodule Trento.Operations.SapSystemPolicyTest do
       assert :ok ==
                SapSystemPolicy.authorize_operation(:sap_system_stop, sap_system, %{
                  instance_type: "abap"
+               })
+    end
+
+    test "should authorize operation in a J2EE system if other instances are stopped and the request is for the message server" do
+      sap_system =
+        build(:sap_system,
+          application_instances: [
+            build(:application_instance,
+              health: Health.unknown(),
+              features: "J2EE|IGS",
+              host: build(:host, cluster: nil)
+            ),
+            build(:application_instance,
+              health: Health.passing(),
+              features: "GATEWAY|MESSAGESERVER|ENQUE",
+              host: build(:host, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               SapSystemPolicy.authorize_operation(:sap_system_stop, sap_system, %{
+                 instance_type: "scs"
                })
     end
   end

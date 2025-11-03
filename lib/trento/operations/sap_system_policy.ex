@@ -117,7 +117,7 @@ defmodule Trento.Operations.SapSystemPolicy do
        ) do
     application_instances
     |> Enum.filter(fn %{features: features, health: health} ->
-      health != :unknown && !String.starts_with?(features, "MESSAGESERVER")
+      health != :unknown && !String.contains?(features, "MESSAGESERVER")
     end)
     |> case do
       [] ->
