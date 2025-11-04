@@ -475,7 +475,7 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
-          chmod: +x
+          chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
@@ -580,7 +580,7 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
-          chmod: +x
+          chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
@@ -714,7 +714,7 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
-          chmod: +x
+          chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Docker compose dependencies"
@@ -1032,7 +1032,7 @@ jobs:
           repo: trento-project/photofinish
           tag: v1.4.2
           cache: enable
-          chmod: +x
+          chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push data
