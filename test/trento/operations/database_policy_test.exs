@@ -203,6 +203,39 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
 
+    test "should forbid operation if the request is for a database without system replication and attached application instances are not stopped" do
+      database =
+        build(:database,
+          sap_systems: [
+            %{
+              application_instances:
+                [
+                  %{sid: sid1, instance_number: inst_number1},
+                  %{sid: sid2, instance_number: inst_number2}
+                ] =
+                  build_list(2, :application_instance,
+                    health: Health.passing(),
+                    features: "ABAP|GATEWAY|ICMAN|IGS"
+                  )
+            }
+          ],
+          database_instances: [
+            build(:database_instance,
+              system_replication: nil,
+              system_replication_site: nil,
+              host: build(:host, cluster: nil)
+            )
+          ]
+        )
+
+      assert {:error,
+              [
+                "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
+                "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
+              ]} ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
     test "should authorize operation if cluster is in maintenance and system replication is not enabled" do
       %{sap_instances: [%{sid: sid, instance_number: instance_number}]} =
         cluster = build_cluster_with_maintenance(true)
@@ -273,7 +306,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
     end
 
-    test "should forbid operation if the request is for the secondary site and attached application instances are not stopped" do
+    test "should authorize operation if the request is for the secondary site and attached application instances are not stopped" do
       database =
         build(:database,
           sap_systems: [

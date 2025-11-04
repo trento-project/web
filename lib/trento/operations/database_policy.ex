@@ -119,11 +119,17 @@ defmodule Trento.Operations.DatabasePolicy do
 
   defp application_instances_stopped(%DatabaseReadModel{sap_systems: []}, _, _), do: :ok
 
-  # primary site, check if app instances are stopped
+  # secondary site
+  defp application_instances_stopped(_, %{site: site}, primary_site)
+       when site != primary_site,
+       do: :ok
+
+  # primary site or database without system replication, check if app instances are stopped
+  # this includes scenarios where "site" param is not given or is nil as well
   defp application_instances_stopped(
          %DatabaseReadModel{sap_systems: sap_systems},
-         %{site: site},
-         site
+         _,
+         _
        ) do
     sap_systems
     |> Enum.flat_map(fn %{application_instances: app_instances} -> app_instances end)
@@ -141,7 +147,4 @@ defmodule Trento.Operations.DatabasePolicy do
          end)}
     end
   end
-
-  # secondary site
-  defp application_instances_stopped(_, _, _), do: :ok
 end
