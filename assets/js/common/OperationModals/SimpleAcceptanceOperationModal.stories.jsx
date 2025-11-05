@@ -123,7 +123,7 @@ export const ResourceMaintenanceChange = {
 
 export const RebootHost = {
   args: {
-    operation: 'host_reboot',
+    operation: 'reboot',
     descriptionResolverArgs: { hostName },
   },
 };

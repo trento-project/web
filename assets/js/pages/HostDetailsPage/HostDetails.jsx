@@ -214,7 +214,7 @@ function HostDetails({
             descriptionResolverArgs={{ hostName: hostname }}
             isOpen={!!simpleOperationModalOpen}
             onRequest={() => {
-              requestOperation(currentOperation, { host_id: hostID });
+              requestOperation(currentOperation, {});
               closeOperationModal();
             }}
             onCancel={closeOperationModal}
