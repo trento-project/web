@@ -52,6 +52,7 @@ module.exports = [
         clearInterval: true,
         $: false,
         jQuery: false,
+        CustomEvent: true,
         // Jest globals
         describe: true,
         test: true,

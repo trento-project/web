@@ -235,6 +235,7 @@ config :trento,
 
 config :trento, :analytics,
   enabled: false,
+  gtm_key: "",
   analytics_key: "",
   analytics_url: ""
 
