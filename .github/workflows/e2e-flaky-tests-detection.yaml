@@ -96,7 +96,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
@@ -168,7 +168,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.4.1
         with:

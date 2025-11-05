@@ -400,7 +400,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm install
@@ -456,7 +456,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -550,7 +550,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@v2.4.1
         with:
@@ -707,7 +707,7 @@ jobs:
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-e2e-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install photofinish
         uses: jaxxstorm/action-install-gh-release@v2.1.0
         with:
