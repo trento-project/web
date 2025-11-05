@@ -17,7 +17,7 @@ the ground up, to facilitate SAP operations, proactively preventing
 infrastructural issues by diagnosing common configuration mistakes by
 validating systems against SUSE best practices. +
 It’s meant to complement link:https://www.suse.com/products/sles-for-sap/[SUSE Linux Enterprise
-Server for SAP Applications] in helping IT organizations run
+Server for SAP applications] in helping IT organizations run
 mission-critical enterprise software.
 
 == Documentation
@@ -64,7 +64,7 @@ Trento is able to execute a variety of _configuration health checks_
 (a.k.a. the _HA Config Checks_) among the installed Trento Agents.
 
 * Pacemaker, Corosync, SBD, SAPHanaSR and other generic _SUSE Linux
-Enterprise for SAP Application_ OS settings
+Enterprise for SAP application_ OS settings
 * Specific configuration audits for SAP HANA Scale-Up
 Performance-Optimized scenarios deployed on MS Azure cloud.
 
