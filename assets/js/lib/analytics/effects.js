@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router';
 import {
   capture,
+  getAnalyticsEnabledConfig,
   identify,
   init,
   isLoaded,
@@ -47,6 +48,10 @@ export function PostHogIdentify() {
     useSelector(getUserProfile);
 
   useEffect(() => {
+    if (!getAnalyticsEnabledConfig()) {
+      return;
+    }
+
     if (!userID && analyticsEnabled === undefined) {
       return;
     }
