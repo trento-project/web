@@ -427,6 +427,43 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
+    # generic test for operations
+    test "should respond with 422 if operation receives an unsupported params payload",
+         %{
+           conn: conn
+         } do
+      %{id: host_id} = insert(:host)
+
+      unsupported_params = %{"unsupported_param" => "value"}
+      operation = "any_operation"
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/hosts/#{host_id}/operations/#{operation}", unsupported_params)
+        |> json_response(:unprocessable_entity)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Failed to cast value to one of: no schemas validate",
+                   "source" => %{"pointer" => "/"},
+                   "title" => "Invalid value"
+                 },
+                 %{
+                   "detail" => "Unexpected field: unsupported_param",
+                   "source" => %{"pointer" => "/unsupported_param"},
+                   "title" => "Invalid value"
+                 },
+                 %{
+                   "detail" => "Unexpected field: unsupported_param",
+                   "source" => %{"pointer" => "/unsupported_param"},
+                   "title" => "Invalid value"
+                 }
+               ]
+             } == resp
+    end
+
     # test all common responses for the requested operations
     # the table below contains the operations to be tested and a sample host
     # with the required preconditions to allow the operation
@@ -452,34 +489,6 @@ defmodule TrentoWeb.V1.HostControllerTest do
         |> post("/api/v1/hosts/#{UUID.uuid4()}/operations/#{@operation}")
         |> json_response(:not_found)
         |> assert_schema("NotFoundV1", api_spec)
-      end
-
-      test "should respond with 422 if operation '#{operation}' does not receive needed params",
-           %{
-             conn: conn
-           } do
-        %{id: host_id} = insert(@host)
-
-        resp =
-          conn
-          |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/hosts/#{host_id}/operations/#{@operation}", %{})
-          |> json_response(:unprocessable_entity)
-
-        assert %{
-                 "errors" => [
-                   %{
-                     "detail" => "Failed to cast value to one of: no schemas validate",
-                     "source" => %{"pointer" => "/"},
-                     "title" => "Invalid value"
-                   },
-                   %{
-                     "detail" => "Missing field: solution",
-                     "source" => %{"pointer" => "/solution"},
-                     "title" => "Invalid value"
-                   }
-                 ]
-               } == resp
       end
 
       test "should respond with 500 on messaging error for operation '#{operation}'",

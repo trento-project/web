@@ -25,13 +25,30 @@ defmodule TrentoWeb.OpenApi.V1.Schema.HostOperationParams do
     )
   end
 
+  defmodule RebootApplyParams do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "RebootApplyParamsV1",
+        description: "Represents the parameters for applying a Reboot to a host.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{},
+        example: %{}
+      },
+      struct?: false
+    )
+  end
+
   OpenApiSpex.schema(
     %{
       title: "HostOperationParamsV1",
       description:
         "Represents the parameters for a host operation request, including actions such as applying Saptune solutions for system management.",
       oneOf: [
-        SaptuneSolutionApplyParams
+        SaptuneSolutionApplyParams,
+        RebootApplyParams
       ],
       example: %{
         solution: "HANA"
