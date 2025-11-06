@@ -50,7 +50,7 @@ export const init = (loadedFunc = noop) => {
 
   const gtmConfig = getGtmConfig();
 
-  if (gtmConfig) {
+  if (gtmConfig !== undefined) {
     if (!has(gtmConfig, 'apiKey')) {
       logError('cannot load apiKey value from GTM');
       return;
