@@ -235,9 +235,7 @@ config :trento,
 
 config :trento, :analytics,
   enabled: false,
-  gtm_key: "",
-  analytics_key: "",
-  analytics_url: ""
+  gtm_id: ""
 
 config :trento, Trento.Vault,
   ciphers: [

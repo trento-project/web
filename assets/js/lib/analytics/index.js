@@ -15,7 +15,22 @@ const DEFAULT_OPTS = {
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
 const installationID = getFromConfig('installationID');
 
-// window.posthogConfig is loaded from GTM snippet
+// window.posthogConfig is loaded from GTM (Google Tag Manager) snippet
+// The GTM container must have a Tag with Custom HTML type with the next
+// content:
+{
+  /* 
+<script>
+  var posthogConfig = {
+    apiKey: <<POSTHOG_API_KEY>>,
+    config: {
+      api_host: 'https://eu.posthog.com' // posthog instance
+      // any other additional custom configuration
+    }
+  }
+</script> 
+*/
+}
 const getGtmConfig = () => window.posthogConfig;
 
 // TODO: Remove this when this feature is ready for production
