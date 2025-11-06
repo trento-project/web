@@ -67,7 +67,7 @@ describe('operations', () => {
       label: 'Stop cluster host',
     },
     {
-      operation: 'host_reboot',
+      operation: 'reboot',
       label: 'Reboot host',
     },
   ])(`should return the operation $operation label`, ({ operation, label }) => {
@@ -133,7 +133,7 @@ describe('operations', () => {
     },
     {
       operation: 'hostreboot@v1',
-      name: 'host_reboot',
+      name: 'reboot',
     },
   ])(
     `should return the operation $operation internal name`,
@@ -200,7 +200,7 @@ describe('operations', () => {
       resourceType: 'cluster_host',
     },
     {
-      operation: 'host_reboot',
+      operation: 'reboot',
       resourceType: 'host',
     },
   ])(
