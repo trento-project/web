@@ -19,7 +19,7 @@
     "axios-mock-adapter": "^2.1.0",
     "babel-jest": "^30.2.0",
     "babel-loader": "^10.0.0",
-    "chromatic": "^13.1.2",
+    "chromatic": "^13.3.3",
     "esbuild": "^0.25.12",
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^9.38.0",
