@@ -12,6 +12,7 @@ import {
   ascsErsClusterDetailsFactory,
   hanaClusterDetailsNodesFactory,
   systemdUnitFactory,
+  hostFactory,
 } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 
@@ -51,6 +52,7 @@ describe.each([
     name: 'HanaClusterSite',
     Component: HanaClusterSite,
     props: {
+      hosts: hostFactory.buildList(2),
       nodes: hanaClusterDetailsNodesFactory.buildList(2, {
         id: faker.string.uuid(),
         resources: [],
@@ -284,6 +286,115 @@ describe.each([
       screen.getByRole('menuitem', { name: 'Node maintenance' })
     ).toBeDisabled();
   });
+
+  it.each([
+    {
+      state: 'enable',
+      operation: 'Stop cluster in node',
+      status: 'Online',
+      hostStatus: 'online',
+    },
+    {
+      state: 'enable',
+      operation: 'Stop cluster in node',
+      status: 'Maintenance',
+      hostStatus: 'online',
+    },
+    {
+      state: 'disable',
+      operation: 'Stop cluster in node',
+      status: 'Offline',
+      hostStatus: 'offline',
+    },
+    {
+      state: 'disable',
+      operation: 'Stop cluster in node',
+      status: 'Offline',
+      hostStatus: 'online',
+    },
+    {
+      state: 'disable',
+      operation: 'Start cluster in node',
+      status: 'Online',
+      hostStatus: 'online',
+    },
+    {
+      state: 'disable',
+      operation: 'Start cluster in node',
+      status: 'Maintenance',
+      hostStatus: 'online',
+    },
+    {
+      state: 'enable',
+      operation: 'Start cluster in node',
+      status: 'Offline',
+      hostStatus: 'offline',
+    },
+    {
+      state: 'enable',
+      operation: 'Start cluster in node',
+      status: 'Offline',
+      hostStatus: 'online',
+    },
+  ])(
+    'should $state $operation operation when cluster host status is $status',
+    async ({ state, operation, status, hostStatus }) => {
+      const user = userEvent.setup();
+      const clusterID = faker.string.uuid();
+
+      const propsWithState = {
+        ...props,
+        nodes: props.nodes.map((host) => ({
+          ...host,
+          status,
+        })),
+        // props below are used in ASCS/ERS cluster type
+        hosts: hostFactory.buildList(1, { cluster_host_status: hostStatus }),
+        details: {
+          ...props?.details,
+          sap_systems: [
+            {
+              nodes: hanaClusterDetailsNodesFactory.buildList(2, { status }),
+            },
+          ],
+        },
+      };
+
+      renderWithRouter(
+        <Component
+          {...propsWithState}
+          userAbilities={[{ name: 'all', resource: 'all' }]}
+          getClusterHostOperations={getClusterHostOperations(
+            clusterID,
+            null,
+            noop,
+            noop,
+            noop,
+            true
+          )}
+        />
+      );
+
+      const nodesTable = screen.getByRole('table');
+
+      const { getAllByRole } = within(nodesTable);
+
+      const [
+        operationBtnHost1,
+        _detailsBtnHost1,
+        _operationBtnHost2,
+        _detailsBtnHost2,
+      ] = getAllByRole('button');
+
+      await user.click(operationBtnHost1);
+
+      const item = screen.getByRole('menuitem', { name: operation });
+
+      state === 'enable'
+        ? expect(item).toBeEnabled()
+        : expect(item).toBeDisabled();
+    }
+  );
 
   const userAbilitiesScenarios = [
     {

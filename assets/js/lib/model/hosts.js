@@ -13,5 +13,7 @@ export const canEnableUnit = (host, unit) =>
 export const canDisableUnit = (host, unit) =>
   getUnitFileState(host, unit) === 'enabled';
 
+// isOnlineInCluster returns true if the host in the cluster has
+// a status that is not Offline: Online, Maintenance, Pending, etc
 export const isOnlineInCluster = (host) =>
-  getOr('Offline', 'status', host) === 'Online';
+  getOr('Offline', 'status', host) !== 'Offline';

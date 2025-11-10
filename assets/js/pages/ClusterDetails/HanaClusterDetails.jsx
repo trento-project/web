@@ -15,7 +15,7 @@ import HanaClusterSite from './HanaClusterSite';
 // In that case, we can trust the status as declared in the nodelist
 const hostStatusInCluster = (node, hosts) =>
   hosts.every(({ cluster_host_status }) => cluster_host_status === 'offline')
-    ? 'offline'
+    ? 'Offline'
     : node.status;
 
 export const enrichNodes = (clusterNodes, hosts, resources) =>
