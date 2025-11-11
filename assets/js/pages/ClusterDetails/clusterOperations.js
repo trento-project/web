@@ -87,7 +87,6 @@ export const getClusterHostOperations = curry(
     setCurrentOperationHost,
     setMaintenanceOperationParams,
     setOperationModelOpen,
-    someHostOnline,
     host
   ) => [
     {
@@ -98,7 +97,7 @@ export const getClusterHostOperations = curry(
         CLUSTER_MAINTENANCE_CHANGE,
         matchesNodeMaintenance(host.name)
       ),
-      disabled: !!runningOperation || !someHostOnline,
+      disabled: !!runningOperation || !isOnlineInCluster(host),
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
         setMaintenanceOperationParams({

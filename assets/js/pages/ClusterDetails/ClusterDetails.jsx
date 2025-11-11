@@ -144,8 +144,7 @@ function ClusterDetails({
           runningOperation,
           setCurrentOperationHost,
           setMaintenanceOperationParams,
-          setOperationModalOpen,
-          someHostOnline
+          setOperationModalOpen
         ),
       })
     : null;

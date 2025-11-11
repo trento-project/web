@@ -111,8 +111,7 @@ describe.each([
             null,
             noop,
             noop,
-            noop,
-            true
+            noop
           )}
         />
       );
@@ -147,8 +146,7 @@ describe.each([
           { group_id: '123', operation: PACEMAKER_ENABLE },
           noop,
           noop,
-          noop,
-          true
+          noop
         )}
       />
     );
@@ -217,8 +215,7 @@ describe.each([
             runningOperation(clusterID, nodes[0]),
             noop,
             noop,
-            noop,
-            true
+            noop
           )}
         />
       );
@@ -250,44 +247,25 @@ describe.each([
     }
   );
 
-  it('should disable Node maintenance operation if none of the nodes are online', async () => {
-    const user = userEvent.setup();
-    const clusterID = faker.string.uuid();
-
-    renderWithRouter(
-      <Component
-        {...props}
-        userAbilities={[{ name: 'all', resource: 'all' }]}
-        getClusterHostOperations={getClusterHostOperations(
-          clusterID,
-          null,
-          noop,
-          noop,
-          noop,
-          false
-        )}
-      />
-    );
-
-    const nodesTable = screen.getByRole('table');
-
-    const { getAllByRole } = within(nodesTable);
-
-    const [
-      operationBtnHost1,
-      _detailsBtnHost1,
-      _operationBtnHost2,
-      _detailsBtnHost2,
-    ] = getAllByRole('button');
-
-    await user.click(operationBtnHost1);
-
-    expect(
-      screen.getByRole('menuitem', { name: 'Node maintenance' })
-    ).toBeDisabled();
-  });
-
   it.each([
+    {
+      state: 'enable',
+      operation: 'Node maintenance',
+      status: 'Online',
+      hostStatus: 'online',
+    },
+    {
+      state: 'enable',
+      operation: 'Node maintenance',
+      status: 'Maintenance',
+      hostStatus: 'online',
+    },
+    {
+      state: 'disable',
+      operation: 'Node maintenance',
+      status: 'Offline',
+      hostStatus: 'offline',
+    },
     {
       state: 'enable',
       operation: 'Stop cluster in node',
@@ -369,8 +347,7 @@ describe.each([
             null,
             noop,
             noop,
-            noop,
-            true
+            noop
           )}
         />
       );
@@ -472,8 +449,7 @@ describe.each([
             null,
             noop,
             noop,
-            noop,
-            true
+            noop
           )}
         />
       );
