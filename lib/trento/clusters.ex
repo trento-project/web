@@ -72,6 +72,22 @@ defmodule Trento.Clusters do
     |> Repo.one()
   end
 
+  @spec host_is_primary_node?(ClusterReadModel.t(), HostReadModel.t()) :: boolean()
+  def host_is_primary_node?(
+        %ClusterReadModel{type: type, details: %{nodes: nodes}},
+        %HostReadModel{
+          hostname: hostname
+        }
+      )
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    case Enum.find(nodes, fn %{name: name} -> name == hostname end) do
+      %{hana_status: "Primary"} -> true
+      _ -> false
+    end
+  end
+
+  def host_is_primary_node?(_, _), do: false
+
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(cluster_id, checks) do
     Logger.debug("Selecting checks, cluster: #{cluster_id}")
@@ -211,6 +227,25 @@ defmodule Trento.Clusters do
     end
   end
 
+  @spec get_cluster_primary_node(ClusterReadModel.t()) :: {:ok, map()} | {:error, String.t()}
+  def get_cluster_primary_node(%ClusterReadModel{type: type, details: %{nodes: nodes}})
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    node =
+      nodes
+      |> Enum.filter(fn
+        %{hana_status: "Primary"} -> true
+        _ -> false
+      end)
+      |> List.first()
+
+    case node do
+      nil -> {:error, "No primary node found"}
+      _ -> {:ok, node}
+    end
+  end
+
+  def get_cluster_primary_node(_), do: {:error, "Cluster type does not support primary node"}
+
   @spec request_operation(atom(), String.t(), map()) :: {:ok, String.t()} | {:error, any}
   def request_operation(operation, cluster_id, params)
       when operation in ClusterOperations.values() do
@@ -262,6 +297,19 @@ defmodule Trento.Clusters do
   end
 
   def request_host_operation(_, _, _), do: {:error, :operation_not_found}
+
+  @spec secondary_nodes_stopped?(ClusterReadModel.t()) :: boolean()
+  def secondary_nodes_stopped?(%ClusterReadModel{hosts: hosts} = cluster) do
+    cluster
+    |> get_cluster_secondary_nodes()
+    |> Enum.map(& &1.name)
+    |> Enum.map(fn hostname ->
+      Enum.find(hosts, fn host -> host.hostname == hostname end)
+    end)
+    |> Enum.all?(fn host ->
+      match?(%HostReadModel{cluster_host_status: ClusterHostStatus.offline()}, host)
+    end)
+  end
 
   defp managed?(%{id: resource_id, managed: managed}, resource_id), do: managed
   defp managed?(_, _), do: false
@@ -441,24 +489,14 @@ defmodule Trento.Clusters do
 
   @spec all_nodes_stopped?(ClusterReadModel.t()) :: boolean()
   defp all_nodes_stopped?(%ClusterReadModel{hosts: hosts}) when is_list(hosts) do
-    Enum.all?(hosts, &match?(%HostReadModel{cluster_host_status: "offline"}, &1))
+    Enum.all?(
+      hosts,
+      &match?(%HostReadModel{cluster_host_status: ClusterHostStatus.offline()}, &1)
+    )
   end
 
   defp all_nodes_stopped?(%ClusterReadModel{}),
     do: false
-
-  @spec secondary_nodes_stopped?(ClusterReadModel.t()) :: boolean()
-  defp secondary_nodes_stopped?(%ClusterReadModel{hosts: hosts} = cluster) do
-    cluster
-    |> get_cluster_secondary_nodes()
-    |> Enum.map(& &1.name)
-    |> Enum.map(fn hostname ->
-      Enum.find(hosts, fn host -> host.hostname == hostname end)
-    end)
-    |> Enum.all?(fn host ->
-      match?(%HostReadModel{cluster_host_status: "offline"}, host)
-    end)
-  end
 
   defp get_cluster_secondary_nodes(%ClusterReadModel{type: type, details: %{nodes: nodes}})
        when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do

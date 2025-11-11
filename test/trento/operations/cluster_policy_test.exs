@@ -7,6 +7,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
   import Trento.Factory
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   test "should forbid unknown operation" do
     cluster = build(:cluster)
@@ -192,6 +193,152 @@ defmodule Trento.Operations.ClusterPolicyTest do
         assert {:error, [^expected_error]} =
                  ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
       end
+    end
+  end
+
+  describe "cluster host start/stop" do
+    test "should authorize cluster_host_start operation" do
+      cluster =
+        build(:cluster,
+          hosts: [
+            build(:host, cluster_host_status: ClusterHostStatus.online())
+          ]
+        )
+
+      assert :ok == ClusterPolicy.authorize_operation(:cluster_host_start, cluster, %{})
+    end
+
+    test "should authorize cluster_host_stop operation" do
+      cluster =
+        build(:cluster,
+          hosts: [
+            build(:host, cluster_host_status: ClusterHostStatus.offline())
+          ]
+        )
+
+      assert :ok == ClusterPolicy.authorize_operation(:cluster_host_stop, cluster, %{})
+    end
+
+    test "should not authorize cluster_host_stop operation on primary node if secondary nodes are online" do
+      primary_node_id = Faker.UUID.v4()
+
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            ),
+          hosts: [
+            build(:host,
+              id: primary_node_id,
+              hostname: "node1",
+              cluster_host_status: ClusterHostStatus.online()
+            ),
+            build(:host, hostname: "node2", cluster_host_status: ClusterHostStatus.online())
+          ]
+        )
+
+      assert {:error, [error_message]} =
+               ClusterPolicy.authorize_operation(:cluster_host_stop, cluster, %{
+                 host_id: primary_node_id
+               })
+
+      assert error_message ==
+               "Cannot stop the primary node node1 because some secondary nodes are still online"
+    end
+
+    test "should authorize cluster_host_stop operation on primary node if secondary nodes are offline" do
+      primary_node_id = Faker.UUID.v4()
+
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            ),
+          hosts: [
+            build(:host,
+              id: primary_node_id,
+              hostname: "node1",
+              cluster_host_status: ClusterHostStatus.online()
+            ),
+            build(:host, hostname: "node2", cluster_host_status: ClusterHostStatus.offline())
+          ]
+        )
+
+      assert :ok ==
+               ClusterPolicy.authorize_operation(:cluster_host_stop, cluster, %{
+                 host_id: primary_node_id
+               })
+    end
+
+    test "should not authorize cluster_host_start operation on secondary node if primary node is offline" do
+      secondary_node_id = Faker.UUID.v4()
+
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "node1", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host,
+              id: secondary_node_id,
+              hostname: "node2",
+              cluster_host_status: ClusterHostStatus.offline()
+            )
+          ]
+        )
+
+      assert {:error, [error_message]} =
+               ClusterPolicy.authorize_operation(:cluster_host_start, cluster, %{
+                 host_id: secondary_node_id
+               })
+
+      assert error_message ==
+               "Cannot start secondary node node2 before starting primary node node1"
+    end
+
+    test "should authorize cluster_host_start operation on secondary node if primary node is online" do
+      secondary_node_id = Faker.UUID.v4()
+
+      cluster =
+        build(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            ),
+          hosts: [
+            build(:host, hostname: "node1", cluster_host_status: ClusterHostStatus.online()),
+            build(:host,
+              id: secondary_node_id,
+              hostname: "node2",
+              cluster_host_status: ClusterHostStatus.offline()
+            )
+          ]
+        )
+
+      assert :ok ==
+               ClusterPolicy.authorize_operation(:cluster_host_start, cluster, %{
+                 host_id: secondary_node_id
+               })
     end
   end
 end

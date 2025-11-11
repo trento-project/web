@@ -2,6 +2,8 @@ defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+
   alias Trento.Clusters
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -300,7 +302,7 @@ defmodule TrentoWeb.V1.ClusterController do
   def get_operation(_), do: nil
 
   def get_operation_params(%{assigns: %{operation: operation}, params: %{host_id: host_id}})
-      when operation in [:pacemaker_enable, :pacemaker_disable] do
+      when operation in ClusterHostOperations.values() do
     %{
       host_id: host_id
     }

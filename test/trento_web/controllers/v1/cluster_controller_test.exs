@@ -543,6 +543,215 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> assert_schema("ForbiddenV1", api_spec)
       end
     end
+
+    #
+    # Cluster host start/stop specific scenarios
+    #
+
+    test "should return 403 when attempting to stop primary node while secondary nodes are online",
+         %{
+           conn: conn,
+           api_spec: api_spec,
+           admin_user: %{id: user_id}
+         } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          sap_instances: [
+            build(:clustered_sap_instance,
+              resource_type: "sap_hana_topology"
+            )
+          ],
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            )
+        )
+
+      primary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node1",
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      _secondary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node2",
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_node_host.id}/operations/cluster_host_stop"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should successfully stop primary node when all secondary nodes are offline", %{
+      conn: conn,
+      api_spec: api_spec,
+      admin_user: %{id: user_id}
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          sap_instances: [
+            build(:clustered_sap_instance,
+              resource_type: "sap_hana_topology"
+            )
+          ],
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            )
+        )
+
+      primary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node1",
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      _secondary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node2",
+          cluster_host_status: ClusterHostStatus.offline()
+        )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_node_host.id}/operations/cluster_host_stop"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should return 403 when attempting to start secondary node while primary node is offline",
+         %{
+           conn: conn,
+           api_spec: api_spec,
+           admin_user: %{id: user_id}
+         } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          sap_instances: [
+            build(:clustered_sap_instance,
+              resource_type: "sap_hana_topology"
+            )
+          ],
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            )
+        )
+
+      _primary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node1",
+          cluster_host_status: ClusterHostStatus.offline()
+        )
+
+      secondary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node2",
+          cluster_host_status: ClusterHostStatus.offline()
+        )
+
+      _another_secondary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node3",
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_node_host.id}/operations/cluster_host_start"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should successfully start secondary node when primary node is online", %{
+      conn: conn,
+      api_spec: api_spec,
+      admin_user: %{id: user_id}
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          sap_instances: [
+            build(:clustered_sap_instance,
+              resource_type: "sap_hana_topology"
+            )
+          ],
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: "node1", hana_status: "Primary"),
+                build(:hana_cluster_node, name: "node2", hana_status: "Secondary")
+              ]
+            )
+        )
+
+      _primary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node1",
+          cluster_host_status: ClusterHostStatus.online()
+        )
+
+      secondary_node_host =
+        insert(:host,
+          cluster_id: cluster_id,
+          hostname: "node2",
+          cluster_host_status: ClusterHostStatus.offline()
+        )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_node_host.id}/operations/cluster_host_start"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
   end
 
   describe "forbidden response" do

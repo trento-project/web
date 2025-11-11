@@ -6,6 +6,7 @@ defmodule Trento.Operations.ClusterPolicy do
   @behaviour Trento.Operations.PolicyBehaviour
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   alias Trento.Clusters
 
@@ -60,7 +61,63 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
+  # can start a secondary node only if the primary node is already started
+  def authorize_operation(
+        :cluster_host_start,
+        %ClusterReadModel{hosts: hosts, type: type} = cluster,
+        %{
+          host_id: host_id
+        }
+      )
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    host = Enum.find(hosts, &(&1.id === host_id))
+
+    is_primary_node = Clusters.host_is_primary_node?(cluster, host)
+
+    if is_primary_node do
+      :ok
+    else
+      {:ok, primary_node} = Clusters.get_cluster_primary_node(cluster)
+
+      primary_host = Enum.find(hosts, &(&1.hostname === primary_node.name))
+
+      if primary_host.cluster_host_status == ClusterHostStatus.online() do
+        :ok
+      else
+        {:error,
+         [
+           "Cannot start secondary node #{host.hostname} before starting primary node #{primary_host.hostname}"
+         ]}
+      end
+    end
+  end
+
   def authorize_operation(:cluster_host_start, _, _), do: :ok
+
+  # can stop a primary node only if all secondary nodes are already stopped
+  def authorize_operation(
+        :cluster_host_stop,
+        %ClusterReadModel{hosts: hosts, type: type} = cluster,
+        %{
+          host_id: host_id
+        }
+      )
+      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    host = Enum.find(hosts, &(&1.id === host_id))
+
+    is_primary_node = Clusters.host_is_primary_node?(cluster, host)
+    all_secondary_nodes_stopped = Clusters.secondary_nodes_stopped?(cluster)
+
+    if is_primary_node and not all_secondary_nodes_stopped do
+      {:error,
+       [
+         "Cannot stop the primary node #{host.hostname} because some secondary nodes are still online"
+       ]}
+    else
+      :ok
+    end
+  end
+
   def authorize_operation(:cluster_host_stop, _, _), do: :ok
 
   def authorize_operation(
