@@ -4,6 +4,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   alias Trento.Operations.HostPolicy
 
@@ -385,8 +386,8 @@ defmodule Trento.Operations.HostPolicyTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -417,8 +418,8 @@ defmodule Trento.Operations.HostPolicyTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -450,8 +451,8 @@ defmodule Trento.Operations.HostPolicyTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "offline"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host3", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -483,8 +484,8 @@ defmodule Trento.Operations.HostPolicyTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "online"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host3", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -518,8 +519,8 @@ defmodule Trento.Operations.HostPolicyTest do
                 )
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -553,8 +554,8 @@ defmodule Trento.Operations.HostPolicyTest do
                 )
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
