@@ -11,6 +11,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
 
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup :setup_api_spec_v1
@@ -272,6 +274,24 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   end
 
   describe "cluster host operations" do
+    #
+    # Generic cluster host operation tests
+    #
+
+    # the operation is arbitrary, we just need an existing one
+    @any_existing_operation "pacemaker_enable"
+
+    # the host is built to serve as an example of an allowed scenario for the test operation
+    @any_allowed_scenario_host build(:host,
+                                 cluster_id: UUID.uuid4(),
+                                 systemd_units: [
+                                   build(:host_systemd_unit,
+                                     name: "pacemaker.service",
+                                     unit_file_state: "disabled"
+                                   )
+                                 ]
+                               )
+
     test "should return not found if the operation on unmapped operation", %{
       conn: conn,
       api_spec: api_spec
@@ -282,128 +302,166 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("NotFoundV1", api_spec)
     end
 
-    operations_scenarios = [
-      %{
-        operation: "pacemaker_enable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-        ]
-      },
-      %{
-        operation: "pacemaker_disable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
-        ]
-      },
-      %{
-        operation: "cluster_host_start",
-        host_units: []
-      },
-      %{
-        operation: "cluster_host_stop",
-        host_units: []
-      }
-    ]
+    test "should return not found when requesting an operation for a non existent cluster",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      conn
+      |> post(
+        "/api/v1/clusters/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/operations/#{@any_existing_operation}"
+      )
+      |> json_response(:not_found)
+      |> assert_schema("NotFoundV1", api_spec)
+    end
 
-    for %{operation: operation, host_units: host_units} <- operations_scenarios do
-      @operation operation
-      @host_units host_units
+    test "should return not found when requesting an operation for a deregistered cluster",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id} = insert(:cluster, deregistered_at: Faker.DateTime.backward(1))
 
-      test "should return not found when requesting #{operation} for a non existent cluster",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
+      conn
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/#{@any_existing_operation}"
+      )
+      |> json_response(:not_found)
+      |> assert_schema("NotFoundV1", api_spec)
+    end
+
+    test "should return not found when requesting an operation for a host not part of the cluster",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id_1} = insert(:cluster)
+
+      %{id: cluster_id_2} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id_2)
+
+      %{id: cluster_id_3} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id_3, deregistered_at: nil)
+
+      %{id: deregistered_host_id} =
+        insert(:host, cluster_id: cluster_id_3, deregistered_at: Faker.DateTime.backward(1))
+
+      for {cluster_id, host_id} <- [
+            {cluster_id_1, Faker.UUID.v4()},
+            {cluster_id_2, Faker.UUID.v4()},
+            {cluster_id_3, deregistered_host_id}
+          ] do
         conn
-        |> post("/api/v1/clusters/#{UUID.uuid4()}/hosts/#{UUID.uuid4()}/operations/#{@operation}")
-        |> json_response(:not_found)
-        |> assert_schema("NotFoundV1", api_spec)
-      end
-
-      test "should return not found when requesting #{operation} for a deregistered cluster",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
-        %{id: cluster_id} = insert(:cluster, deregistered_at: Faker.DateTime.backward(1))
-
-        conn
-        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/#{@operation}")
-        |> json_response(:not_found)
-        |> assert_schema("NotFoundV1", api_spec)
-      end
-
-      test "should return not found when requesting #{operation} for a host not part of the cluster",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
-        %{id: cluster_id_1} = insert(:cluster)
-
-        %{id: cluster_id_2} = insert(:cluster)
-        insert(:host, cluster_id: cluster_id_2)
-
-        %{id: cluster_id_3} = insert(:cluster)
-        insert(:host, cluster_id: cluster_id_3, deregistered_at: nil)
-
-        %{id: deregistered_host_id} =
-          insert(:host, cluster_id: cluster_id_3, deregistered_at: Faker.DateTime.backward(1))
-
-        for {cluster_id, host_id} <- [
-              {cluster_id_1, Faker.UUID.v4()},
-              {cluster_id_2, Faker.UUID.v4()},
-              {cluster_id_3, deregistered_host_id}
-            ] do
-          conn
-          |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
-          |> json_response(:not_found)
-          |> assert_schema("NotFoundV1", api_spec)
-        end
-      end
-
-      test "should return 500 when requesting #{operation} on messaging error", %{conn: conn} do
-        %{id: cluster_id} = insert(:cluster)
-        %{id: host_id} = insert(:host, cluster_id: cluster_id, systemd_units: @host_units)
-
-        expect(
-          Trento.Infrastructure.Messaging.Adapter.Mock,
-          :publish,
-          fn OperationsPublisher, _, _ ->
-            {:error, :amqp_error}
-          end
+        |> post(
+          "/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@any_existing_operation}"
         )
-
-        resp =
-          conn
-          |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
-          |> json_response(:internal_server_error)
-
-        assert %{
-                 "errors" => [
-                   %{
-                     "detail" => "Something went wrong.",
-                     "title" => "Internal Server Error"
-                   }
-                 ]
-               } = resp
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
       end
+    end
 
-      test "should successfully perform #{operation} when the user has #{operation}:cluster ability",
-           %{
-             conn: conn,
-             api_spec: api_spec
-           } do
-        %{id: user_id} = insert(:user)
-        %{id: ability_id} = insert(:ability, name: @operation, resource: "cluster")
-        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+    test "should return 500 when requesting an operation on messaging error", %{conn: conn} do
+      %{id: host_id, cluster_id: cluster_id} =
+        insert(@any_allowed_scenario_host)
+
+      insert(:cluster, id: cluster_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          {:error, :amqp_error}
+        end
+      )
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(
+          "/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@any_existing_operation}"
+        )
+        |> json_response(:internal_server_error)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "detail" => "Something went wrong.",
+                   "title" => "Internal Server Error"
+                 }
+               ]
+             } = resp
+    end
+
+    test "should successfully perform an operation when the user has :cluster ability",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: user_id} = insert(:user)
+      %{id: ability_id} = insert(:ability, name: @any_existing_operation, resource: "cluster")
+      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+      %{id: host_id, cluster_id: cluster_id} =
+        insert(@any_allowed_scenario_host)
+
+      insert(:cluster, id: cluster_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@any_existing_operation}"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    #
+    # Pacemaker enable/disable specific scenarios
+    #
+
+    for %{name: name} = scenario <- [
+          %{
+            name: "enable disabled pacemaker",
+            operation: "pacemaker_enable",
+            host_units: [
+              build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
+            ]
+          },
+          %{
+            name: "disable enabled pacemaker",
+            operation: "pacemaker_disable",
+            host_units: [
+              build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
+            ]
+          }
+        ] do
+      @allowed_scenario scenario
+
+      test "should allow to #{name}", %{
+        conn: conn,
+        api_spec: api_spec,
+        admin_user: %{id: user_id}
+      } do
+        %{
+          operation: operation,
+          host_units: host_units
+        } = @allowed_scenario
 
         %{id: cluster_id} = insert(:cluster)
 
         %{id: host_id} =
           insert(:host,
             cluster_id: cluster_id,
-            systemd_units: @host_units
+            systemd_units: host_units
           )
 
         expect(
@@ -417,45 +475,46 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         conn
         |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{@operation}")
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{operation}")
         |> json_response(:accepted)
         |> assert_schema("OperationAcceptedV1", api_spec)
       end
     end
 
-    forbidden_operations_scenarios = [
-      %{
-        name: "enable already enabled pacemaker",
-        operation: "pacemaker_enable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
-        ]
-      },
-      %{
-        name: "disable already disabled pacemaker",
-        operation: "pacemaker_disable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-        ]
-      },
-      %{
-        name: "enable enabled pacemaker when it is in an unrecognized state",
-        operation: "pacemaker_enable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "foo")
-        ]
-      },
-      %{
-        name: "disable pacemaker when it is in an unrecognized state",
-        operation: "pacemaker_disable",
-        host_units: [
-          build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "bar")
-        ]
-      }
-    ]
-
     for %{name: name} = scenario <-
-          forbidden_operations_scenarios do
+          [
+            %{
+              name: "enable already enabled pacemaker",
+              operation: "pacemaker_enable",
+              host_units: [
+                build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
+              ]
+            },
+            %{
+              name: "disable already disabled pacemaker",
+              operation: "pacemaker_disable",
+              host_units: [
+                build(:host_systemd_unit,
+                  name: "pacemaker.service",
+                  unit_file_state: "disabled"
+                )
+              ]
+            },
+            %{
+              name: "enable enabled pacemaker when it is in an unrecognized state",
+              operation: "pacemaker_enable",
+              host_units: [
+                build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "foo")
+              ]
+            },
+            %{
+              name: "disable pacemaker when it is in an unrecognized state",
+              operation: "pacemaker_disable",
+              host_units: [
+                build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "bar")
+              ]
+            }
+          ] do
       @unauthorized_scenario scenario
 
       test "should return 403 when attempting to #{name}", %{
