@@ -3,7 +3,6 @@ defmodule Trento.Operations.HostPolicyTest do
   use ExUnit.Case, async: true
 
   require Trento.Enums.Health, as: Health
-  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   alias Trento.Operations.HostPolicy
