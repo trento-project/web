@@ -1323,8 +1323,8 @@ defmodule Trento.ClustersTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -1343,8 +1343,8 @@ defmodule Trento.ClustersTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -1377,8 +1377,8 @@ defmodule Trento.ClustersTest do
                 )
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -1400,8 +1400,8 @@ defmodule Trento.ClustersTest do
                 )
             ),
           hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
+            build(:host, hostname: "host1", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -1421,8 +1421,8 @@ defmodule Trento.ClustersTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "offline"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.offline()),
+            build(:host, hostname: "host3", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 
@@ -1448,8 +1448,8 @@ defmodule Trento.ClustersTest do
               ]
             ),
           hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "online"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
+            build(:host, hostname: "host2", cluster_host_status: ClusterHostStatus.online()),
+            build(:host, hostname: "host3", cluster_host_status: ClusterHostStatus.offline())
           ]
         )
 

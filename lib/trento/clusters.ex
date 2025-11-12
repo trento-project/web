@@ -441,7 +441,10 @@ defmodule Trento.Clusters do
 
   @spec all_nodes_stopped?(ClusterReadModel.t()) :: boolean()
   defp all_nodes_stopped?(%ClusterReadModel{hosts: hosts}) when is_list(hosts) do
-    Enum.all?(hosts, &match?(%HostReadModel{cluster_host_status: "offline"}, &1))
+    Enum.all?(
+      hosts,
+      &match?(%HostReadModel{cluster_host_status: ClusterHostStatus.offline()}, &1)
+    )
   end
 
   defp all_nodes_stopped?(%ClusterReadModel{}),
@@ -456,7 +459,7 @@ defmodule Trento.Clusters do
       Enum.find(hosts, fn host -> host.hostname == hostname end)
     end)
     |> Enum.all?(fn host ->
-      match?(%HostReadModel{cluster_host_status: "offline"}, host)
+      match?(%HostReadModel{cluster_host_status: ClusterHostStatus.offline()}, host)
     end)
   end
 

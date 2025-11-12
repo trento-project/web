@@ -259,7 +259,7 @@ defmodule TrentoWeb.V1.HostController do
   def get_operation_host(%{params: %{id: id}}) do
     HostReadModel
     |> Repo.get(id)
-    |> Repo.preload([:cluster, :application_instances, :database_instances])
+    |> Repo.preload([:application_instances, :database_instances, cluster: [:hosts]])
   end
 
   def get_operation(%{params: %{operation: "saptune_solution_apply"}}),
