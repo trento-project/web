@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { get, zipWith, startCase, some, every } from 'lodash';
+import { get, zipWith, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -16,7 +16,6 @@ import {
   getOperationForbiddenMessage,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { isValidClusterType } from '@lib/model/clusters';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -171,9 +170,6 @@ function HostDetails({
     setSimpleOperationModalOpen(false);
   };
 
-  const allInstancesStopped = every(sapInstances, { health: 'unknown' });
-  const clusterCanReboot = !cluster || isValidClusterType(cluster.type);
-
   return (
     <>
       <DeregistrationModal
@@ -238,7 +234,7 @@ function HostDetails({
                     {
                       value: 'Reboot Host',
                       running: runningOperationName === HOST_REBOOT,
-                      disabled: !allInstancesStopped || !clusterCanReboot,
+                      disabled: false,
                       permitted: ['reboot:host'],
                       onClick: openOperationModal(HOST_REBOOT),
                     },
