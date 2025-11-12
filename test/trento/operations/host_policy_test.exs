@@ -361,7 +361,6 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should forbid host reboot if pacemaker service is enabled" do
       host =
         build(:host,
-          cluster: nil,
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
           ],
