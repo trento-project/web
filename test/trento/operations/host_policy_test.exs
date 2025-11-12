@@ -433,7 +433,8 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster_id: cluster.id
         )
 
-      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
+      {:error, ["The host is part of a cluster that has some online node"]} =
+        HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
     test "should authorize host reboot if cluster is hana scale out and all secondary nodes are stopped" do
@@ -499,7 +500,8 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster_id: cluster.id
         )
 
-      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
+      {:error, ["The host is part of a cluster that has some online HANA secondary node"]} =
+        HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
     test "should authorize host reboot if cluster is ASCS/ERS and all nodes are stopped" do

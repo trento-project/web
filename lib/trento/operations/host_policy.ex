@@ -75,7 +75,8 @@ defmodule Trento.Operations.HostPolicy do
           true,
           all_instances_stopped?(application_instances),
           all_instances_stopped?(database_instances),
-          true
+          true,
+          nil
         )
 
   def authorize_operation(
@@ -108,7 +109,8 @@ defmodule Trento.Operations.HostPolicy do
           systemd_unit_enabled?(systemd_units, "pacemaker.service") == false,
           all_instances_stopped?(application_instances),
           all_instances_stopped?(database_instances),
-          Clusters.can_reboot?(cluster)
+          Clusters.can_reboot?(cluster),
+          cluster
         )
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
@@ -137,19 +139,20 @@ defmodule Trento.Operations.HostPolicy do
        ]}
 
   defp authorize_reboot_operation(
-         pacemaker_stopped,
+         pacemaker_disabled,
          application_instances_stopped,
          database_instances_stopped,
-         cluster_can_reboot
+         cluster_can_reboot,
+         cluster
        ) do
     authorizations = [
-      or_error(pacemaker_stopped, "Pacemaker service is enabled in the host"),
+      or_error(pacemaker_disabled, "Pacemaker service is enabled in the host"),
       or_error(
         application_instances_stopped,
         "There are running application instances on the host"
       ),
       or_error(database_instances_stopped, "There are running database instances on the host"),
-      or_error(cluster_can_reboot, "The host is part of a cluster that cannot be rebooted")
+      or_error(cluster_can_reboot, cluster_node_running_error_msg(cluster))
     ]
 
     OperationsHelper.reduce_operation_authorizations(authorizations)
@@ -157,6 +160,12 @@ defmodule Trento.Operations.HostPolicy do
 
   defp or_error(true, _), do: :ok
   defp or_error(false, error), do: {:error, [error]}
+
+  defp cluster_node_running_error_msg(%ClusterReadModel{type: ClusterType.hana_scale_out()}),
+    do: "The host is part of a cluster that has some online HANA secondary node"
+
+  defp cluster_node_running_error_msg(_),
+    do: "The host is part of a cluster that has some online node"
 
   defp systemd_unit_enabled?(systemd_units, unit_name) do
     Enum.any?(systemd_units, fn
