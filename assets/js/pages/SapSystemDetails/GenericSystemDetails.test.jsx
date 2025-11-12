@@ -334,8 +334,7 @@ describe('GenericSystemDetails', () => {
     expect(mockedCleanUp).toHaveBeenCalledWith(sapSystem.instances[0]);
   });
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('should show instance operations', async () => {
+  it('should show instance operations', async () => {
     const user = userEvent.setup();
 
     const sapSystem = sapSystemFactory.build({
