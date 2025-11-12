@@ -4,6 +4,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   alias Trento.Operations.HostPolicy
 
@@ -358,11 +359,9 @@ defmodule Trento.Operations.HostPolicyTest do
     end
 
     test "should forbid host reboot if pacemaker service is enabled" do
-      cluster = build(:cluster, name: "hana-cluster", type: ClusterType.hana_scale_up())
-
       host =
         build(:host,
-          cluster: cluster,
+          cluster: nil,
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
           ],
@@ -373,204 +372,35 @@ defmodule Trento.Operations.HostPolicyTest do
       {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
-    test "should authorize host reboot if cluster is hana scale up and all nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.hana_scale_up(),
-          details:
-            build(:hana_cluster_details,
-              nodes: [
-                build(:hana_cluster_node, name: "node1"),
-                build(:hana_cluster_node, name: "node2")
-              ]
-            ),
-          hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
-          ]
-        )
-
+    test "should authorize host reboot if the cluster is stopped/offline in the host" do
       host =
         build(:host,
           hostname: "host1",
-          cluster: cluster,
+          cluster_host_status: ClusterHostStatus.offline(),
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
           application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
+          database_instances: []
         )
 
       assert :ok == HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
-    test "should forbid host reboot if cluster is hana scale up and not all nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.hana_scale_up(),
-          details:
-            build(:hana_cluster_details,
-              nodes: [
-                build(:hana_cluster_node, name: "node1"),
-                build(:hana_cluster_node, name: "node2")
-              ]
-            ),
-          hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
-          ]
-        )
-
+    test "should forbid host reboot if the cluster is running/online in the host" do
       host =
         build(:host,
           hostname: "host1",
-          cluster: cluster,
+          cluster_host_status: ClusterHostStatus.online(),
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
           ],
           application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
+          database_instances: []
         )
 
-      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
-    end
-
-    test "should authorize host reboot if cluster is hana scale out and all secondary nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.hana_scale_out(),
-          details:
-            build(:hana_cluster_details,
-              nodes: [
-                build(:hana_cluster_node, name: "host1", hana_status: "Primary"),
-                build(:hana_cluster_node, name: "host2", hana_status: "Secondary"),
-                build(:hana_cluster_node, name: "host3", hana_status: "Secondary")
-              ]
-            ),
-          hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "offline"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
-          ]
-        )
-
-      host =
-        build(:host,
-          cluster: cluster,
-          hostname: "host1",
-          systemd_units: [
-            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-          ],
-          application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
-        )
-
-      assert :ok == HostPolicy.authorize_operation(:reboot, host, %{})
-    end
-
-    test "should forbid host reboot if cluster is hana scale out and not all secondary nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.hana_scale_out(),
-          details:
-            build(:hana_cluster_details,
-              nodes: [
-                build(:hana_cluster_node, name: "host1", hana_status: "Primary"),
-                build(:hana_cluster_node, name: "host2", hana_status: "Secondary"),
-                build(:hana_cluster_node, name: "host3", hana_status: "Secondary")
-              ]
-            ),
-          hosts: [
-            build(:host, hostname: "host2", cluster_host_status: "online"),
-            build(:host, hostname: "host3", cluster_host_status: "offline")
-          ]
-        )
-
-      host =
-        build(:host,
-          cluster: cluster,
-          hostname: "host1",
-          systemd_units: [
-            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-          ],
-          application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
-        )
-
-      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
-    end
-
-    test "should authorize host reboot if cluster is ASCS/ERS and all nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.ascs_ers(),
-          details:
-            build(:ascs_ers_cluster_details,
-              sap_systems:
-                build(:ascs_ers_cluster_sap_system,
-                  nodes: [
-                    build(:ascs_ers_cluster_node, name: "host1"),
-                    build(:ascs_ers_cluster_node, name: "host2")
-                  ]
-                )
-            ),
-          hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "offline"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
-          ]
-        )
-
-      host =
-        build(:host,
-          cluster: cluster,
-          hostname: "host1",
-          systemd_units: [
-            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-          ],
-          application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
-        )
-
-      assert :ok == HostPolicy.authorize_operation(:reboot, host, %{})
-    end
-
-    test "should forbid host reboot if cluster is ASCS/ERS and not all nodes are stopped" do
-      cluster =
-        build(:cluster,
-          type: ClusterType.ascs_ers(),
-          details:
-            build(:ascs_ers_cluster_details,
-              sap_systems:
-                build(:ascs_ers_cluster_sap_system,
-                  nodes: [
-                    build(:ascs_ers_cluster_node, name: "host1"),
-                    build(:ascs_ers_cluster_node, name: "host2")
-                  ]
-                )
-            ),
-          hosts: [
-            build(:host, hostname: "host1", cluster_host_status: "online"),
-            build(:host, hostname: "host2", cluster_host_status: "offline")
-          ]
-        )
-
-      host =
-        build(:host,
-          cluster: cluster,
-          hostname: "host1",
-          systemd_units: [
-            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
-          ],
-          application_instances: [],
-          database_instances: [],
-          cluster_id: cluster.id
-        )
-
-      {:error, _} = HostPolicy.authorize_operation(:reboot, host, %{})
+      {:error, ["Cluster is running in the host"]} =
+        HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
     test "should authorize host reboot if all application and database instances are stopped" do

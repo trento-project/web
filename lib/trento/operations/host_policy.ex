@@ -7,11 +7,10 @@ defmodule Trento.Operations.HostPolicy do
 
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
-  alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Support.OperationsHelper
 
-  alias Trento.Clusters
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
@@ -96,7 +95,7 @@ defmodule Trento.Operations.HostPolicy do
   def authorize_operation(
         :reboot,
         %HostReadModel{
-          cluster: %ClusterReadModel{} = cluster,
+          cluster_host_status: cluster_host_status,
           systemd_units: systemd_units,
           application_instances: application_instances,
           database_instances: database_instances
@@ -108,7 +107,7 @@ defmodule Trento.Operations.HostPolicy do
           systemd_unit_enabled?(systemd_units, "pacemaker.service") == false,
           all_instances_stopped?(application_instances),
           all_instances_stopped?(database_instances),
-          Clusters.can_reboot?(cluster)
+          cluster_host_status == ClusterHostStatus.offline()
         )
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
@@ -137,19 +136,19 @@ defmodule Trento.Operations.HostPolicy do
        ]}
 
   defp authorize_reboot_operation(
-         pacemaker_stopped,
+         pacemaker_disabled,
          application_instances_stopped,
          database_instances_stopped,
-         cluster_can_reboot
+         cluster_host_offline
        ) do
     authorizations = [
-      or_error(pacemaker_stopped, "Pacemaker service is enabled in the host"),
+      or_error(pacemaker_disabled, "Pacemaker service is enabled in the host"),
       or_error(
         application_instances_stopped,
         "There are running application instances on the host"
       ),
       or_error(database_instances_stopped, "There are running database instances on the host"),
-      or_error(cluster_can_reboot, "The host is part of a cluster that cannot be rebooted")
+      or_error(cluster_host_offline, "Cluster is running in the host")
     ]
 
     OperationsHelper.reduce_operation_authorizations(authorizations)
