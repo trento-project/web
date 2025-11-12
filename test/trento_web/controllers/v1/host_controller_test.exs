@@ -588,6 +588,46 @@ defmodule TrentoWeb.V1.HostControllerTest do
     end
   end
 
+  test "should load host with needed additional resources", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    %{id: cluster_id} = insert(:cluster, type: :hana_scale_up)
+    %{id: host_id} = insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+    database_instances = insert_list(2, :database_instance, host_id: host_id)
+    application_instances = insert_list(2, :application_instance, host_id: host_id)
+
+    expect(
+      Trento.Infrastructure.Messaging.Adapter.Mock,
+      :publish,
+      fn OperationsPublisher, _, %OperationRequested{} ->
+        :ok
+      end
+    )
+
+    posted_conn =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/hosts/#{host_id}/operations/reboot", %{})
+
+    posted_conn
+    |> json_response(:accepted)
+    |> assert_schema("OperationAcceptedV1", api_spec)
+
+    assert %{
+             assigns: %{
+               host: %{
+                 id: ^host_id,
+                 database_instances: ^database_instances,
+                 application_instances: ^application_instances,
+                 cluster: %{
+                   id: ^cluster_id
+                 }
+               }
+             }
+           } = posted_conn
+  end
+
   for {saptune_operation, saptune_status} <- [
         {"saptune_solution_apply", nil},
         {"saptune_solution_change", build(:saptune_status)}
