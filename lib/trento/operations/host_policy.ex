@@ -54,12 +54,10 @@ defmodule Trento.Operations.HostPolicy do
     |> OperationsHelper.reduce_operation_authorizations(databases_authorized)
   end
 
-  # Based on the maintenance procedures for HANA clusters, it's clear to me the following:
-  #   the pacemaker service is be disabled (at boot) in the node to be rebooted
-  #   in a HANA scale-up cluster, pacemaker is stopped in all the cluster nodes
-  #   in a HANA scale-out cluster, pacemaker is stopped in all secondary nodes
-  #   in an ASCS/ERS cluster, pacemaker is stopped in all the cluster nodes
-  #   If there is an SAP workload in the host, it is stopped (HANA instance, SAP instance)
+  # based on the maintenance procedures for HANA clusters:
+  # - pacemaker service is disabled (at boot) in the host to be rebooted
+  # - pacemaker is stopped in the host
+  # - If there is an SAP workload in the host, it is stopped (HANA instance, SAP instance)
   def authorize_operation(
         :reboot,
         %HostReadModel{
