@@ -27,7 +27,7 @@ env:
   NODEJS_BC: "20.14.0"
 
 jobs:
-  # New job to detect changed paths
+  # job to detect changed paths
   detect-changes:
     runs-on: ubuntu-24.04
     outputs:
@@ -55,12 +55,19 @@ jobs:
         with:
           filters: |
             elixir:
+              - '*.ex'
+              - '*.exs'
               - 'lib/**'
               - 'config/**'
-              - 'mix.exs'
               - 'mix.lock'
+              - 'test/fixtures/**'
+              - 'test/**/*.ex'
+              - 'priv/repo/migrations/**'
+              - '.tool-versions'
             assets:
               - 'assets/**'
+              - 'priv/static/**'
+              - '.tool-versions'
 
       - name: Force all changes if on main
         id: force-changes
