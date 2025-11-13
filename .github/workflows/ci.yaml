@@ -7,10 +7,10 @@ on:
     paths-ignore:
       - "VERSION"
       - "CHANGELOG.md"
-  # pull_request:
-  #   types: [opened, synchronize, labeled]
-  #   paths-ignore:
-  #     - "VERSION"
+  pull_request:
+    types: [opened, synchronize, labeled]
+    paths-ignore:
+      - "VERSION"
   workflow_dispatch:
   workflow_call:
   repository_dispatch:
