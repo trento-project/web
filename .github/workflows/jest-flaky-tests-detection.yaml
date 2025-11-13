@@ -135,12 +135,21 @@ jobs:
         run: |
           REPORTS_PATH="../../junit-reports"
           TOTAL_RUNS=${{ env.NUM_RUNS }}
+          TOTAL_THREADS=$((TOTAL_RUNS * 2))  # 2 Node versions
+
+          # Count how many test runs failed by checking XML files with failures
+          FAILED_RUNS=$(grep -l 'failures="[1-9]' $REPORTS_PATH/*.xml 2>/dev/null | wc -l || echo 0)
+
+          # Calculate flaky test rate
+          if [ "$TOTAL_THREADS" -gt 0 ]; then
+            FLAKY_RATE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_THREADS" | bc)
+          else
+            FLAKY_RATE=0
+          fi
 
           echo "### 📊 Jest Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total runs per Node version:** ${TOTAL_RUNS}" >> $GITHUB_STEP_SUMMARY
-          echo "**Node BC version:** ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Node DEV version:** ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Flaky test rate:** ${FLAKY_RATE}% (${FAILED_RUNS}/${TOTAL_THREADS} runs failed)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           make venv-create
