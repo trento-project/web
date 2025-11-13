@@ -23,7 +23,7 @@ concurrency:
 
 env:
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
-  MAX_WORKERS: ${{ github.event.inputs.max_workers || 2 }}
+  MAX_WORKERS: ${{ github.event.inputs.max_workers || '2' }}
 
 jobs:
   setup-matrix-env:
