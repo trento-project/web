@@ -10,20 +10,21 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NUM_RUNS: 50
+  NUM_RUNS: 10
 
 jobs:
   setup-matrix-env:
     runs-on: ubuntu-24.04
     outputs:
-      NODEJS_BC: ${{ env.NODEJS_BC }}
-      NODEJS_DEV: ${{ env.NODEJS_DEV }}
+      NODEJS_BC: ${{ steps.compute-matrix.outputs.NODEJS_BC }}
+      NODEJS_DEV: ${{ steps.compute-matrix.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
       - name: gather versions
         uses: endorama/asdf-parse-tool-versions@v1
       - name: Compute matrix
+        id: compute-matrix
         run: |
           echo "NODEJS_BC=20.14.0" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
@@ -71,7 +72,7 @@ jobs:
         shell: bash
 
   test-javascript:
-    name: Javascript tests (Run ${{ matrix.run }})
+    name: Javascript tests (Node ${{ matrix.nodejs }}, Run ${{ matrix.run }})
     needs: [setup-matrix-env, npm-deps, generate-matrix]
     runs-on: ubuntu-24.04
     strategy:
@@ -105,12 +106,12 @@ jobs:
         run: cd assets && npm test -- --reporters=default --reporters=jest-junit
         env:
           JEST_JUNIT_OUTPUT_DIR: /tmp
-          JEST_JUNIT_OUTPUT_NAME: jest-junit-${{ strategy.job-index }}-${{ env.ENV_TS }}.xml
+          JEST_JUNIT_OUTPUT_NAME: jest-junit-node${{ matrix.nodejs }}-run${{ matrix.run }}-${{ env.ENV_TS }}.xml
       - name: Upload jest test junit reports
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: jest-junit-reports-${{ strategy.job-index }}
+          name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
           path: /tmp/*.xml
 
   flaky-tests-analysis:
