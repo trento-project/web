@@ -634,6 +634,7 @@ defmodule Trento.Factory do
   end
 
   def hana_cluster_details_factory do
+    # dummy
     %HanaClusterDetails{
       architecture_type: HanaArchitectureType.classic(),
       hana_scenario: HanaScenario.performance_optimized(),
