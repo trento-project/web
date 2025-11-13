@@ -50,21 +50,6 @@ defmodule Trento.Clusters do
     end
   end
 
-  def can_reboot?(%ClusterReadModel{type: type, hosts: hosts} = cluster) when is_list(hosts) do
-    case type do
-      t when t in [ClusterType.ascs_ers(), ClusterType.hana_scale_up()] ->
-        all_nodes_stopped?(cluster)
-
-      ClusterType.hana_scale_out() ->
-        secondary_nodes_stopped?(cluster)
-
-      _ ->
-        false
-    end
-  end
-
-  def can_reboot?(_), do: false
-
   @spec get_cluster_by_id(String.t()) :: ClusterReadModel.t() | nil
   def get_cluster_by_id(id) do
     ClusterReadModel
@@ -438,35 +423,6 @@ defmodule Trento.Clusters do
     do: HanaScenario.cost_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.unknown()
-
-  @spec all_nodes_stopped?(ClusterReadModel.t()) :: boolean()
-  defp all_nodes_stopped?(%ClusterReadModel{hosts: hosts}) when is_list(hosts) do
-    Enum.all?(hosts, &match?(%HostReadModel{cluster_host_status: "offline"}, &1))
-  end
-
-  defp all_nodes_stopped?(%ClusterReadModel{}),
-    do: false
-
-  @spec secondary_nodes_stopped?(ClusterReadModel.t()) :: boolean()
-  defp secondary_nodes_stopped?(%ClusterReadModel{hosts: hosts} = cluster) do
-    cluster
-    |> get_cluster_secondary_nodes()
-    |> Enum.map(& &1.name)
-    |> Enum.map(fn hostname ->
-      Enum.find(hosts, fn host -> host.hostname == hostname end)
-    end)
-    |> Enum.all?(fn host ->
-      match?(%HostReadModel{cluster_host_status: "offline"}, host)
-    end)
-  end
-
-  defp get_cluster_secondary_nodes(%ClusterReadModel{type: type, details: %{nodes: nodes}})
-       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
-    Enum.filter(nodes, fn
-      %{hana_status: "Secondary"} -> true
-      _ -> false
-    end)
-  end
 
   defp filter_online_hosts(hosts, :cluster_maintenance_change) do
     Enum.filter(hosts, fn %{cluster_host_status: status} ->
