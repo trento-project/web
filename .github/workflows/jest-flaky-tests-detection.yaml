@@ -13,9 +13,9 @@ on:
         required: false
         default: "100"
       max_workers:
-        description: "Jest maxWorkers parameter (e.g., 1, 2, 50%)"
+        description: "Jest maxWorkers parameter (e.g., 1, 2, 30%)"
         required: false
-        default: "50%"
+        default: "30%"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,7 +23,7 @@ concurrency:
 
 env:
   NUM_RUNS: ${{ github.event.inputs.num_runs || '50' }}
-  MAX_WORKERS: ${{ github.event.inputs.max_workers || '50%' }}
+  MAX_WORKERS: ${{ github.event.inputs.max_workers || '30%' }}
 
 jobs:
   setup-matrix-env:
