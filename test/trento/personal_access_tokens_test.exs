@@ -340,7 +340,7 @@ defmodule Trento.PersonalAccessTokensTest do
       for factory <- [:user, :user_with_abilities] do
         %User{id: user_id} = insert(factory)
 
-        pat = Faker.Lorem.word()
+        pat = Faker.UUID.v4()
 
         %PersonalAccessToken{id: pat_id} =
           insert(:personal_access_token, user_id: user_id, token: pat)
