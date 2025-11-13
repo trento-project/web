@@ -20,6 +20,8 @@ jobs:
   deploy-demo-env:
     name: Deploy updated images to the demo environment
     runs-on: self-hosted
+    permissions:
+      contents: read
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
       TRENTO_WEB_ORIGIN: ${{ secrets.TRENTO_DEMO_IP }}
@@ -78,6 +80,8 @@ jobs:
     name: Use photofinish to push mock data to the demo environment
     runs-on: ubuntu-24.04
     needs: deploy-demo-env
+    permissions:
+      contents: read
     env:
       TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
       TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}

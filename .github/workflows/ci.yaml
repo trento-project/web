@@ -1018,6 +1018,8 @@ jobs:
 
   deploy-demo:
     name: Deploy demo environment
+    permissions:
+      contents: read
     if: |
       always() &&
       vars.DEPLOY_DEMO == 'true' &&
