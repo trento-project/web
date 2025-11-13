@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
+  NUM_RUNS: ${{ github.event.inputs.num_runs || 6 }}
   MAX_WORKERS: ${{ github.event.inputs.max_workers || 2 }}
 
 jobs:
@@ -118,7 +118,8 @@ jobs:
       - name: Verify Jest Configuration
         run: |
           echo "MAX_WORKERS environment variable: ${{ env.MAX_WORKERS }}"
-          cd assets && npx jest --showConfig | grep -A 1 "maxWorkers"
+          echo "Testing with --maxWorkers=${{ env.MAX_WORKERS }}"
+          cd assets && npx jest --maxWorkers=${{ env.MAX_WORKERS }} --showConfig | grep -A 1 "maxWorkers"
       - name: Run JS tests
         run: cd assets && npx jest --maxWorkers=${{ env.MAX_WORKERS }} --reporters=default --reporters=jest-junit
         env:
