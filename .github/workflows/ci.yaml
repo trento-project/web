@@ -27,8 +27,63 @@ env:
   NODEJS_BC: "20.14.0"
 
 jobs:
+  # New job to detect changed paths
+  detect-changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      elixir-changed: ${{ steps.filter.outputs.elixir }}
+      assets-changed: ${{ steps.filter.outputs.assets }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Check if running against main
+        id: check-main
+        run: |
+          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event_name }}" == "workflow_call" ]] || [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
+            echo "running-on-main=true" >> $GITHUB_OUTPUT
+          else
+            echo "running-on-main=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        if: steps.check-main.outputs.running-on-main != 'true'
+        with:
+          filters: |
+            elixir:
+              - 'lib/**'
+              - 'config/**'
+              - 'mix.exs'
+              - 'mix.lock'
+            assets:
+              - 'assets/**'
+
+      - name: Force all changes if on main
+        id: force-changes
+        if: steps.check-main.outputs.running-on-main == 'true'
+        run: |
+          echo "elixir=true" >> $GITHUB_OUTPUT
+          echo "assets=true" >> $GITHUB_OUTPUT
+
+      - name: Set final outputs
+        run: |
+          if [[ "${{ steps.check-main.outputs.running-on-main }}" == "true" ]]; then
+            echo "Setting all as changed (main branch)"
+            echo "elixir-changed=true" >> $GITHUB_ENV
+            echo "assets-changed=true" >> $GITHUB_ENV
+          else
+            echo "Using detected changes"
+            echo "elixir-changed=${{ steps.filter.outputs.elixir || 'false' }}" >> $GITHUB_ENV
+            echo "assets-changed=${{ steps.filter.outputs.assets || 'false' }}" >> $GITHUB_ENV
+          fi
+
   setup-matrix-env:
     runs-on: ubuntu-24.04
+    needs: [detect-changes]
     outputs:
       ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
       ERLANG_DEV: ${{ env.ERLANG_VERSION }}
@@ -52,7 +107,8 @@ jobs:
 
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
-    needs: [setup-matrix-env]
+    needs: [setup-matrix-env, detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -103,7 +159,8 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
-    needs: [setup-matrix-env]
+    needs: [setup-matrix-env, detect-changes]
+    if: needs.detect-changes.outputs.assets-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -133,6 +190,7 @@ jobs:
 
   codespell:
     name: Check common misspellings
+    needs: [detect-changes]
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -151,6 +209,7 @@ jobs:
 
   generate-docs:
     name: Generate project documentation
+    needs: [detect-changes]
     runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
@@ -188,7 +247,8 @@ jobs:
 
   static-code-analysis-js:
     name: Static Code Analysis JS
-    needs: [setup-matrix-env, npm-deps]
+    needs: [setup-matrix-env, npm-deps, detect-changes]
+    if: needs.detect-changes.outputs.assets-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -219,7 +279,8 @@ jobs:
 
   static-code-analysis-elixir:
     name: Static Code Analysis Elixir
-    needs: [setup-matrix-env, elixir-deps]
+    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -259,7 +320,8 @@ jobs:
 
   test-javascript:
     name: Javascript tests
-    needs: [setup-matrix-env, npm-deps]
+    needs: [setup-matrix-env, npm-deps, detect-changes]
+    if: needs.detect-changes.outputs.assets-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -288,7 +350,8 @@ jobs:
 
   test-elixir:
     name: Elixir tests
-    needs: [setup-matrix-env, elixir-deps]
+    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -331,9 +394,9 @@ jobs:
 
   chromatic:
     name: Chromatic deployment
-    needs: [setup-matrix-env, elixir-deps, npm-deps]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, detect-changes]
     runs-on: ubuntu-24.04
-    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true'
+    if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true' && needs.detect-changes.outputs.assets-changed == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -382,7 +445,7 @@ jobs:
 
   npm-e2e-deps:
     name: Npm E2E dependencies
-    needs: [setup-matrix-env]
+    needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -407,7 +470,8 @@ jobs:
 
   test-e2e:
     name: E2E Tests
-    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
+    needs:
+      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -498,7 +562,8 @@ jobs:
 
   test-regression:
     name: Regression tests
-    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
+    needs:
+      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -602,7 +667,8 @@ jobs:
 
   test-integration:
     name: Integration tests
-    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps]
+    needs:
+      [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -748,7 +814,7 @@ jobs:
 
   target-branch-deps:
     name: Rebuild target branch dependencies
-    needs: [setup-matrix-env]
+    needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -790,8 +856,8 @@ jobs:
 
   api-docs-check:
     name: API docs check
-    needs: [setup-matrix-env, elixir-deps]
-    if: github.event_name == 'pull_request' && !failure() && !cancelled()
+    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -839,8 +905,8 @@ jobs:
 
   api-bc-check:
     name: API bc check
-    needs: [setup-matrix-env, elixir-deps, target-branch-deps]
-    if: github.event_name == 'pull_request' && !failure() && !cancelled()
+    needs: [setup-matrix-env, elixir-deps, target-branch-deps, detect-changes]
+    if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
@@ -928,7 +994,7 @@ jobs:
       - test-e2e
       - test-integration
       - test-regression
-    if: (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
+    if: ((github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
     uses: ./.github/workflows/build-containers.yaml
     strategy:
       matrix:
