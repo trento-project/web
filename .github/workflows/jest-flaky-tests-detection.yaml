@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NUM_RUNS: 10
+  NUM_RUNS: 60
 
 jobs:
   setup-matrix-env:
