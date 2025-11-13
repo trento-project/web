@@ -102,8 +102,14 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
-      - name: Run JS tests
-        run: cd assets && npm test -- --reporters=default --reporters=jest-junit
+      - name: Check Jest maxWorkers configuration
+        run: |
+          cd assets
+          MAX_WORKERS=$(npx jest --showConfig 2>&1 | jq -r '.globalConfig.maxWorkers')
+          echo "maxWorkers=$MAX_WORKERS" > /tmp/maxWorkers-node${{ matrix.nodejs }}-run${{ matrix.run }}.txt
+          echo "Jest will use $MAX_WORKERS workers"
+      - name: Run JS tests (without --maxWorkers override)
+        run: cd assets && npx jest --reporters=default --reporters=jest-junit
         env:
           JEST_JUNIT_OUTPUT_DIR: /tmp
           JEST_JUNIT_OUTPUT_NAME: jest-junit-node${{ matrix.nodejs }}-run${{ matrix.run }}-${{ env.ENV_TS }}.xml
@@ -113,6 +119,12 @@ jobs:
         with:
           name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
           path: /tmp/*.xml
+      - name: Upload maxWorkers info
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: maxworkers-info-node${{ matrix.nodejs }}-run${{ matrix.run }}
+          path: /tmp/maxWorkers-*.txt
 
   flaky-tests-analysis:
     name: Flaky Tests Analysis
@@ -130,12 +142,33 @@ jobs:
           path: junit-reports
           pattern: jest-junit-reports-*
           merge-multiple: true
+      - name: Download maxWorkers info artifacts
+        uses: actions/download-artifact@v6
+        with:
+          path: maxworkers-info
+          pattern: maxworkers-info-*
+          merge-multiple: true
       - name: Analyze Flaky Tests and Generate Summary
         id: analyze
         run: |
           REPORTS_PATH="../../junit-reports"
           TOTAL_RUNS=${{ env.NUM_RUNS }}
           TOTAL_THREADS=$((TOTAL_RUNS * 2))  # 2 Node versions
+
+          # Calculate average maxWorkers used
+          MAXWORKERS_FILES="../../maxworkers-info"
+          if [ -d "$MAXWORKERS_FILES" ] && [ "$(ls -A $MAXWORKERS_FILES/*.txt 2>/dev/null)" ]; then
+            TOTAL_WORKERS=0
+            COUNT=0
+            for file in $MAXWORKERS_FILES/*.txt; do
+              WORKERS=$(grep -o '[0-9]*' "$file")
+              TOTAL_WORKERS=$((TOTAL_WORKERS + WORKERS))
+              COUNT=$((COUNT + 1))
+            done
+            AVG_WORKERS=$(echo "scale=1; $TOTAL_WORKERS / $COUNT" | bc)
+          else
+            AVG_WORKERS="N/A"
+          fi
 
           # Count how many test runs failed by checking XML files with failures
           FAILED_RUNS=$(grep -l 'failures="[1-9]' $REPORTS_PATH/*.xml 2>/dev/null | wc -l || echo 0)
@@ -150,6 +183,8 @@ jobs:
           echo "### 📊 Jest Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Flaky test rate:** ${FLAKY_RATE}% (${FAILED_RUNS}/${TOTAL_THREADS} runs failed)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Average maxWorkers used:** ${AVG_WORKERS}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           make venv-create
