@@ -105,7 +105,7 @@ jobs:
       - name: Check Jest maxWorkers configuration
         run: |
           cd assets
-          MAX_WORKERS=$(npx jest --showConfig 2>&1 | jq -r '.globalConfig.maxWorkers')
+          MAX_WORKERS=$(npx jest --maxWorkers=3 --showConfig 2>&1 | jq -r '.globalConfig.maxWorkers')
           echo "maxWorkers=$MAX_WORKERS" > /tmp/maxWorkers-node${{ matrix.nodejs }}-run${{ matrix.run }}.txt
           echo "Jest will use $MAX_WORKERS workers"
       - name: Run JS tests (without --maxWorkers override)
