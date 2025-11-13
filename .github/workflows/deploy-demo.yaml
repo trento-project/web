@@ -1,0 +1,99 @@
+name: Deploy Demo Environment
+
+on:
+  workflow_call:
+    secrets:
+      TRENTO_DEMO_IP:
+        required: true
+      DEMO_PASSWORD:
+        required: true
+      TRENTO_NAMESPACE:
+        required: true
+      TRENTO_ADMIN_EMAIL:
+        required: true
+      TRENTO_INGRESS_CLASS:
+        required: true
+      TRENTO_API_KEY:
+        required: true
+
+jobs:
+  deploy-demo-env:
+    name: Deploy updated images to the demo environment
+    runs-on: self-hosted
+    env:
+      IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
+      TRENTO_WEB_ORIGIN: ${{ secrets.TRENTO_DEMO_IP }}
+      TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
+      TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
+      TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
+    steps:
+      - name: Start a local k8s cluster
+        uses: jupyterhub/action-k3s-helm@v4
+        with:
+          k3s-version: v1.31.2+k3s1
+      - name: Add bitnami & jetstack(cert-manager) helm deps
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+      - name: Install CRDs for cert-manager
+        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.crds.yaml
+      - name: Install cert-manager
+        run: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.14.5
+        continue-on-error: true
+      - name: Download and unzip helm chart
+        run: |
+          rm rolling.zip | true
+          rm -rf helm-charts-rolling | true
+          wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
+          unzip rolling.zip
+      - name: Prepare valid cluster-issuer and certificate (for cert-manager)
+        run: |
+          envsubst < helm-charts-rolling/hack/cert-manager/certificate.tpl.yaml > helm-charts-rolling/hack/cert-manager/certificate.yaml
+          envsubst < helm-charts-rolling/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
+          envsubst < helm-charts-rolling/hack/cert-manager/override-values.tpl.yaml > helm-charts-rolling/hack/cert-manager/override-values.yaml
+      - name: Apply cluster-issuer and certificate (for cert-manager)
+        run: |
+          kubectl apply -f helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
+          kubectl apply -f helm-charts-rolling/hack/cert-manager/certificate.yaml
+      - name: Install trento-server helm chart
+        run: |
+          cd helm-charts-rolling/charts/trento-server
+          helm dependency update
+          helm upgrade -i trento --wait . \
+            --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
+            --set trento-web.image.pullPolicy=Always \
+            --set trento-web.image.repository="${IMAGE_REPOSITORY}/trento-web" \
+            --set trento-web.image.tag="demo" \
+            --set trento-wanda.image.pullPolicy=Always \
+            --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
+            --set trento-wanda.image.tag="demo" \
+            --set trento-wanda.checks.image.pullPolicy=Always \
+            --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
+            --set trento-wanda.checks.image.tag="rolling" \
+            --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
+            -f ../../hack/cert-manager/override-values.yaml
+
+  run-photofinish-demo-env:
+    name: Use photofinish to push mock data to the demo environment
+    runs-on: ubuntu-24.04
+    needs: deploy-demo-env
+    env:
+      TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
+      TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Install photofinish
+        uses: jaxxstorm/action-install-gh-release@v2.1.0
+        with:
+          repo: trento-project/photofinish
+          tag: v1.4.2
+          cache: enable
+          chmod: 0755
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push data
+        run: |
+          photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
