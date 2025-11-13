@@ -12,18 +12,13 @@ on:
         description: "Number of times to run tests per Node version"
         required: false
         default: "100"
-      max_workers:
-        description: "Jest maxWorkers parameter (e.g., 1, 2, 3)"
-        required: false
-        default: 2
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  NUM_RUNS: ${{ github.event.inputs.num_runs || 6 }}
-  MAX_WORKERS: ${{ github.event.inputs.max_workers || 2 }}
+  NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
 
 jobs:
   setup-matrix-env:
@@ -115,11 +110,6 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
-      - name: Verify Jest Configuration
-        run: |
-          echo "MAX_WORKERS environment variable: ${{ env.MAX_WORKERS }}"
-          echo "Testing with --maxWorkers=\"${{ env.MAX_WORKERS }}\""
-          cd assets && npx jest --maxWorkers="${{ env.MAX_WORKERS }}" --showConfig | grep -A 1 "maxWorkers"
       - name: Run JS tests
         run: cd assets && npm test
         env:
@@ -168,7 +158,6 @@ jobs:
           echo "### 📊 Jest Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Flaky test rate:** ${FLAKY_RATE}% (${FAILED_RUNS}/${TOTAL_THREADS} runs failed)" >> $GITHUB_STEP_SUMMARY
-          echo "**maxWorkers:** ${{ env.MAX_WORKERS }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           make venv-create
