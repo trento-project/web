@@ -97,7 +97,7 @@
     "format:check": "prettier -c .",
     "format": "prettier --write .",
     "pretest": "ls ../priv/static/assets/app.css || npm run tailwind:build",
-    "test": "jest --maxWorkers=1",
+    "test": "jest --maxWorkers=2",
     "chromatic": "npx chromatic --exit-zero-on-changes"
   }
 }
