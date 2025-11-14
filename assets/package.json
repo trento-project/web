@@ -7,7 +7,7 @@
     "@eslint/compat": "^1.4.0",
     "@eslint/js": "^9.38.0",
     "@faker-js/faker": "^9.4.0",
-    "@storybook/addon-docs": "^9.1.2",
+    "@storybook/addon-docs": "^10.0.6",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/react": "^9.0.18",
     "@storybook/react-webpack5": "^9.0.5",
