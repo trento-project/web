@@ -39,19 +39,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if running against main
-        id: check-main
+      - name: Check if running against a pull request
+        id: check-pr
         run: |
-          if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" ]] || [[ "${{ github.event_name }}" == "workflow_dispatch" ]] || [[ "${{ github.event_name }}" == "workflow_call" ]] || [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            echo "running-on-main=true" >> $GITHUB_OUTPUT
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "running-on-pr=true" >> $GITHUB_OUTPUT
           else
-            echo "running-on-main=false" >> $GITHUB_OUTPUT
-          fi
-
+            echo "running-on-pr=false" >> $GITHUB_OUTPUT
+          fiq
       - name: Detect file changes
         uses: dorny/paths-filter@v3
         id: filter
-        if: steps.check-main.outputs.running-on-main != 'true'
+        if: steps.check-main.outputs.running-on-pr != 'false'
         with:
           filters: |
             elixir:
@@ -65,28 +64,23 @@ jobs:
               - 'test/**/*.exs'
               - 'priv/repo/migrations/**'
               - '.tool-versions'
+              - '.github/workflows/ci.yaml' # always run ci.yaml changes
             assets:
               - 'assets/**'
               - 'priv/static/**'
               - '.tool-versions'
-
-      - name: Force all changes if on main
-        id: force-changes
-        if: steps.check-main.outputs.running-on-main == 'true'
-        run: |
-          echo "elixir=true" >> $GITHUB_OUTPUT
-          echo "assets=true" >> $GITHUB_OUTPUT
+              - '.github/workflows/ci.yaml' # always run ci.yaml changes
 
       - name: Set final outputs
         run: |
-          if [[ "${{ steps.check-main.outputs.running-on-main }}" == "true" ]]; then
-            echo "Setting all as changed (main branch)"
-            echo "elixir-changed=true" >> $GITHUB_ENV
-            echo "assets-changed=true" >> $GITHUB_ENV
-          else
+          if [[ "${{ steps.check-pr.outputs.running-on-pr }}" == "true" ]]; then
             echo "Using detected changes"
             echo "elixir-changed=${{ steps.filter.outputs.elixir || 'false' }}" >> $GITHUB_ENV
             echo "assets-changed=${{ steps.filter.outputs.assets || 'false' }}" >> $GITHUB_ENV
+          else
+            echo "Setting all as changed"
+            echo "elixir-changed=true" >> $GITHUB_ENV
+            echo "assets-changed=true" >> $GITHUB_ENV
           fi
 
   setup-matrix-env:
