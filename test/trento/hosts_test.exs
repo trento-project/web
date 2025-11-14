@@ -1,3 +1,5 @@
+# dummy
+
 defmodule Trento.HostsTest do
   use ExUnit.Case
   use Trento.DataCase
