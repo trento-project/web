@@ -62,6 +62,7 @@ jobs:
               - 'mix.lock'
               - 'test/fixtures/**'
               - 'test/**/*.ex'
+              - 'test/**/*.exs'
               - 'priv/repo/migrations/**'
               - '.tool-versions'
             assets:
