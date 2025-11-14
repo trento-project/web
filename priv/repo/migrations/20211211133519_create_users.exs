@@ -1,3 +1,4 @@
+# dummy
 defmodule Trento.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
