@@ -1002,7 +1002,7 @@ jobs:
       - test-e2e
       - test-integration
       - test-regression
-    if: ((github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch')
+    if: ((github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' || (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo'))
     uses: ./.github/workflows/build-containers.yaml
     strategy:
       matrix:
@@ -1022,7 +1022,7 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event.action == 'deploy-demo' ||
+          (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo') ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
         )
@@ -1088,7 +1088,7 @@ jobs:
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
-          github.event.action == 'deploy-demo' ||
+          (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo') ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
         )
