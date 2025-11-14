@@ -1,6 +1,6 @@
 defmodule Mix.Tasks.ClearAlertingSettings do
   @moduledoc "Delete the record for alerting settings from the DB."
-
+  # dummy
   use Mix.Task
 
   import Trento.Tasks.Helper
