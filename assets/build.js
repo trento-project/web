@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 
+// dummy
 const path = require('path');
 const alias = require('esbuild-plugin-path-alias');
 const esbuild = require('esbuild');
