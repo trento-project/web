@@ -1,0 +1,186 @@
+name: Jest Flaky Tests Analysis
+
+on:
+  schedule:
+    - cron: "0 1 * * *"  # Runs every day at 1:00 AM UTC
+  workflow_dispatch:
+    inputs:
+      num_runs:
+        description: "Number of times to run tests per Node version"
+        required: false
+        default: "50"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
+
+jobs:
+  setup-matrix-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      NODEJS_BC: ${{ steps.compute-matrix.outputs.NODEJS_BC }}
+      NODEJS_DEV: ${{ steps.compute-matrix.outputs.NODEJS_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: gather versions
+        uses: endorama/asdf-parse-tool-versions@v1
+      - name: Compute matrix
+        id: compute-matrix
+        run: |
+          echo "NODEJS_BC=20.14.0" >> $GITHUB_OUTPUT
+          echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
+
+  npm-deps:
+    name: Npm dependencies
+    needs: [setup-matrix-env]
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.nodejs }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Install NPM dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: cd assets && npm install
+
+  generate-matrix:
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.generate.outputs.matrix }}
+    steps:
+      - name: Generate Matrix
+        id: generate
+        run: |
+          echo "{\"run\": [$(seq -s, 1 ${{ env.NUM_RUNS }})]}" > matrix.json
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+        shell: bash
+
+  test-javascript:
+    name: Javascript tests (Node ${{ matrix.nodejs }}, Run ${{ matrix.run }})
+    needs: [setup-matrix-env, npm-deps, generate-matrix]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
+        nodejs:
+          - ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
+          - ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.nodejs }}
+      - name: Retrieve NPM Cached Dependencies
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+      - name: Set ENV_TS to get current Timestamp for JUnit reports
+        run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
+      - name: Run JS tests
+        run: cd assets && npm test
+        env:
+          JEST_JUNIT_OUTPUT_DIR: /tmp
+          JEST_JUNIT_OUTPUT_NAME: jest-junit-node${{ matrix.nodejs }}-run${{ matrix.run }}-${{ env.ENV_TS }}.xml
+      - name: Upload jest test junit reports
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
+          path: /tmp/*.xml
+
+  flaky-tests-analysis:
+    name: Flaky Tests Analysis
+    needs: [test-javascript, setup-matrix-env]
+    runs-on: ubuntu-24.04
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Download JUnit reports artifacts
+        uses: actions/download-artifact@v6
+        with:
+          path: junit-reports
+          pattern: jest-junit-reports-*
+          merge-multiple: true
+      - name: Analyze Flaky Tests and Generate Summary
+        id: analyze
+        run: |
+          REPORTS_PATH="../../junit-reports"
+          TOTAL_RUNS=${{ env.NUM_RUNS }}
+          TOTAL_THREADS=$((TOTAL_RUNS * 2))  # 2 Node versions
+
+          # Count how many test runs failed by checking XML files with failures
+          FAILED_RUNS=$(grep -l 'failures="[1-9]' $REPORTS_PATH/*.xml 2>/dev/null | wc -l || echo 0)
+
+          # Calculate flaky test rate
+          if [ "$TOTAL_THREADS" -gt 0 ]; then
+            FLAKY_RATE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_THREADS" | bc)
+          else
+            FLAKY_RATE=0
+          fi
+
+          echo "### 📊 Jest Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Flaky test rate:** ${FLAKY_RATE}% (${FAILED_RUNS}/${TOTAL_THREADS} runs failed)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          make venv-create
+          source .venv/bin/activate
+          make install-deps
+
+          FLAKY_TEST_LIST=$(make PATH-TO-JUNIT-FILES=$REPORTS_PATH analyze-files 2>&1 | tail -n +2)
+
+          NUM_FLAKY_TESTS=$(( $(echo -n "$FLAKY_TEST_LIST" | grep -c . || true) - 1 ))
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "### Flaky Tests Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Unique flaky tests reported:** **$NUM_FLAKY_TESTS**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$NUM_FLAKY_TESTS" -gt 0 ]; then
+            echo "<details><summary>Click to see the full list of flaky tests</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$FLAKY_TEST_LIST" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+          fi
+        working-directory: hack/flaky_tests_analysis
+      - name: Delete Artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: jest-junit-reports-*
