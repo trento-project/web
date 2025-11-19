@@ -879,10 +879,6 @@ jobs:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v5
         with:
