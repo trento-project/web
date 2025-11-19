@@ -10,6 +10,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+  alias Trento.Operations.V1.OperationRequested
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -483,6 +484,46 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> json_response(:forbidden)
         |> assert_schema("ForbiddenV1", api_spec)
       end
+    end
+
+    test "should load cluster hosts with needed additional resources", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up)
+      %{id: host_id} = insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+      database_instances = insert_list(2, :database_instance, host_id: host_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, %OperationRequested{} ->
+          :ok
+        end
+      )
+
+      posted_conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/cluster_host_start")
+
+      posted_conn
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+
+      assert %{
+               assigns: %{
+                 cluster: %{
+                   hosts: [host_data]
+                 }
+               }
+             } = posted_conn
+
+      assert %{
+               id: ^host_id,
+               database_instances: ^database_instances,
+               cluster_id: ^cluster_id
+             } = host_data
     end
   end
 
