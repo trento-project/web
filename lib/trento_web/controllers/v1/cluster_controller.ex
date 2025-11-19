@@ -264,7 +264,7 @@ defmodule TrentoWeb.V1.ClusterController do
       }) do
     id
     |> Clusters.get_cluster_by_id()
-    |> Repo.preload(:hosts)
+    |> Repo.preload(hosts: [:database_instances])
     |> case do
       nil ->
         nil
