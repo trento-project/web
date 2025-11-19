@@ -5,6 +5,10 @@ on:
     types:
       - closed
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
@@ -48,10 +52,6 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_TAG: ${{ github.event.pull_request.number }}-env
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
