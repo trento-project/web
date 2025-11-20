@@ -118,7 +118,7 @@ function Layout() {
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
-            'h-screen block shadow-lg fixed flex-shrink-0 z-20',
+            'h-screen flex shadow-lg fixed flex-shrink-0 z-20',
             { 'w-16': isCollapsed, 'w-64': !isCollapsed }
           )}
         >
@@ -149,18 +149,18 @@ function Layout() {
               )}
             </button>
           </div>
-          <div className="relative bg-white h-full pb-24 dark:bg-gray-700">
+          <div className="flex flex-1 flex-col bg-white pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
             <div className="flex items-center justify-center pt-6">
               <img
                 className={classNames('h-auto transition-scale duration-100', {
-                  'w-12': isCollapsed,
+                  'w-12 ml-1': isCollapsed,
                   'w-24': !isCollapsed,
                 })}
                 alt="trento project logo"
                 src={TrentoLogo}
               />{' '}
             </div>
-            <nav className="mt-6">
+            <nav className="mt-6 flex flex-col flex-1">
               <div>
                 {navigation.map((item) => (
                   <ForbiddenGuard
@@ -170,11 +170,12 @@ function Layout() {
                   >
                     <NavLink
                       className={({ isActive }) =>
-                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center pl-6 p-2 my-2 transition-colors duration-200 justify-start ${
+                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center my-2 transition-colors duration-200 justify-start border-l-4 ${
                           isActive
-                            ? 'pl-5 border-l-4 border-jungle-green-500'
-                            : 'hover:pl-5 hover:border-l-4 hover:border-jungle-green-300'
-                        }`
+                            ? 'border-l-4 border-jungle-green-500'
+                            : 'border-white hover:border-l-4 hover:border-jungle-green-300'
+                        }
+                        ${isCollapsed ? 'justify-center py-2' : 'pl-6 p-2'}`
                       }
                       to={item.href}
                       end={item.href === '/'}
@@ -194,24 +195,24 @@ function Layout() {
                   </ForbiddenGuard>
                 ))}
               </div>
-              <div className="absolute bottom-24 left-4">
-                <a
-                  href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
-                  target="_blank"
-                  className={classNames(
-                    'flex gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
-                    {
-                      'px-2': isCollapsed,
-                      'px-4': !isCollapsed,
-                    }
-                  )}
-                  rel="noreferrer"
-                >
-                  <EOS_MENU_BOOK className="fill-green-800" />
-                  {!isCollapsed ? <span>Read the Trento docs</span> : null}
-                </a>
-              </div>
             </nav>
+            <div className="flex justify-center">
+              <a
+                href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
+                target="_blank"
+                className={classNames(
+                  'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                  {
+                    'px-2 ml-1': isCollapsed,
+                    'px-4': !isCollapsed,
+                  }
+                )}
+                rel="noreferrer"
+              >
+                <EOS_MENU_BOOK className="fill-green-800" />
+                {!isCollapsed ? <span>Read the Trento docs</span> : null}
+              </a>
+            </div>
           </div>
         </div>
         <div className="flex flex-col w-full md:space-y-4">
