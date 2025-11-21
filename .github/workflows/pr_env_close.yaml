@@ -30,7 +30,7 @@ jobs:
     if: needs.check_env_creation_privilege.outputs.create_env == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Comment on the pull request
         uses: actions/github-script@v8
         with:
@@ -52,7 +52,7 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_TAG: ${{ github.event.pull_request.number }}-env
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: docker/setup-buildx-action@v3
@@ -76,7 +76,7 @@ jobs:
     needs: delete-pr-image
     steps:
       - name: Checkout ansible repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: trento-project/ansible
           path: ansible

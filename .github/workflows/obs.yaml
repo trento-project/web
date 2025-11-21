@@ -37,7 +37,7 @@ jobs:
       options: -u 0:0
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Read .tool-versions
@@ -112,7 +112,7 @@ jobs:
         SOURCE_DIR: packaging/suse/rpm
       options: -u 0:0
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Read .tool-versions

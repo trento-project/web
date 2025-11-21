@@ -25,7 +25,7 @@ jobs:
       NODEJS_DEV: ${{ steps.compute-matrix.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: gather versions
         uses: endorama/asdf-parse-tool-versions@v1
       - name: Compute matrix
@@ -45,7 +45,7 @@ jobs:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup Node
@@ -90,7 +90,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup Node
@@ -126,7 +126,7 @@ jobs:
     if: always()
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Download JUnit reports artifacts
