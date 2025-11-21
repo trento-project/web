@@ -8,12 +8,12 @@ const storybookPlugin = require('eslint-plugin-storybook');
 const prettierConfig = require('eslint-config-prettier');
 const path = require('path');
 
-const resolvePath = (p) => path.resolve(__dirname, p);
+const resolvePath = (p) => path.resolve(path.resolve(path.dirname('')), p);
 
 module.exports = [
-  {
-    ignores: [
-      '**/node_modules/**',
+{
+  ignores: [
+    '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
       '**/.storybook/public/**',
