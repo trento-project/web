@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { action } from 'storybook/internal/actions';
+import { action } from 'storybook/actions';
 import AnalyticsEulaModal from './AnalyticsEulaModal';
 
 export default {
