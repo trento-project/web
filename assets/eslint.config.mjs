@@ -1,22 +1,20 @@
-
-import { defineConfig } from "eslint/config";
-import  js from "@eslint/js";
-import  reactPlugin from "eslint-plugin-react";
-import  reactHooksPlugin from "eslint-plugin-react-hooks";
-import  jsxA11yPlugin from "eslint-plugin-jsx-a11y";
-import  importPlugin from "eslint-plugin-import";
-import * as storybookPlugin from "eslint-plugin-storybook";
-import  jestPlugin from "eslint-plugin-jest";
-import  prettierConfig from "eslint-config-prettier";
-import  path from "path";
+import { defineConfig } from 'eslint/config';
+import js from '@eslint/js';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
+import importPlugin from 'eslint-plugin-import';
+import * as storybookPlugin from 'eslint-plugin-storybook';
+import jestPlugin from 'eslint-plugin-jest';
+import prettierConfig from 'eslint-config-prettier';
+import path from 'path';
 
 const resolvePath = (p) => path.resolve(path.resolve(path.dirname('')), p);
 
-
 export default defineConfig([
-{
-  ignores: [
-    '**/node_modules/**',
+  {
+    ignores: [
+      '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
       '**/.storybook/public/**',
