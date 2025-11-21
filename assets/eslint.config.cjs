@@ -1,19 +1,16 @@
-
-import { defineConfig } from "eslint/config";
-import  js from "@eslint/js";
-import  reactPlugin from "eslint-plugin-react";
-import  reactHooksPlugin from "eslint-plugin-react-hooks";
-import  jsxA11yPlugin from "eslint-plugin-jsx-a11y";
-import  importPlugin from "eslint-plugin-import";
-import * as storybookPlugin from "eslint-plugin-storybook";
-import  jestPlugin from "eslint-plugin-jest";
-import  prettierConfig from "eslint-config-prettier";
-import  path from "path";
+const js = require('@eslint/js');
+const reactPlugin = require('eslint-plugin-react');
+const reactHooksPlugin = require('eslint-plugin-react-hooks');
+const jsxA11yPlugin = require('eslint-plugin-jsx-a11y');
+const importPlugin = require('eslint-plugin-import');
+const jestPlugin = require('eslint-plugin-jest');
+const storybookPlugin = require('eslint-plugin-storybook');
+const prettierConfig = require('eslint-config-prettier');
+const path = require('path');
 
 const resolvePath = (p) => path.resolve(path.resolve(path.dirname('')), p);
 
-
-export default defineConfig([
+module.exports = [
 {
   ignores: [
     '**/node_modules/**',
@@ -272,4 +269,4 @@ export default defineConfig([
   },
 
   prettierConfig,
-]);
+];
