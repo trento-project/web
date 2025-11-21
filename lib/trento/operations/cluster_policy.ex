@@ -73,27 +73,39 @@ defmodule Trento.Operations.ClusterPolicy do
     database_instances = get_cluster_database_instances(hosts, sap_instances)
     host_running_primary? = primary_instance_in_host?(database_instances, host_id)
 
-    if host_running_primary? do
-      :ok
-    else
-      all_primary_running? =
-        all_sr_instances_with_state?(
-          database_instances,
-          hosts,
-          "Primary",
-          ClusterHostStatus.online()
-        )
+    sr_primary_instances =
+      get_sr_instances(
+      end)
 
-      if all_primary_running? do
+    count_primary_running = Enum.count(sr_primary_instances)
+
+
+    count_primary_running =
+      count_sr_instances(
+        database_instances,
+        hosts,
+        "Primary"
+      )
+
+    host = Enum.find(hosts, &(&1.id === host_id))
+
+    cond do
+      count_primary_running == 0 ->
+        {:error,
+         [
+           "Cannot start node #{host.hostname} because no primary database instance is running in the cluster"
+         ]}
+
+      host_running_primary? or all_primary_running? ->
         :ok
-      else
+
+      true ->
         host = Enum.find(hosts, &(&1.id === host_id))
 
         {:error,
          [
            "Cannot start secondary node #{host.hostname} before starting all the primary nodes"
          ]}
-      end
     end
   end
 
@@ -199,9 +211,7 @@ defmodule Trento.Operations.ClusterPolicy do
         _ -> []
       end)
 
-    hosts
-    |> Enum.filter(fn %{id: host_id} -> host_id in host_ids_with_srmode end)
-    |> Enum.all?(fn %{cluster_host_status: curr_status} -> curr_status == status end)
+    Enum.filter(hosts, fn %{id: host_id} -> host_id in host_ids_with_srmode end)
   end
 
   defp desired_unit_state(:pacemaker_enable), do: "disabled"

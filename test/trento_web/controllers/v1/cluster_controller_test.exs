@@ -12,6 +12,8 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
   alias Trento.Operations.V1.OperationRequested
 
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   setup :setup_api_spec_v1
@@ -295,14 +297,6 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         host_units: [
           build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
         ]
-      },
-      %{
-        operation: "cluster_host_start",
-        host_units: []
-      },
-      %{
-        operation: "cluster_host_stop",
-        host_units: []
       }
     ]
 
@@ -490,8 +484,17 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: cluster_id} = insert(:cluster, type: :hana_scale_up)
-      %{id: host_id} = insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+      any_operation = "pacemaker_enable"
+      %{id: cluster_id} = insert(:cluster)
+
+      %{id: host_id} =
+        insert(:host,
+          cluster_id: cluster_id,
+          systemd_units: [
+            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
+          ]
+        )
+
       database_instances = insert_list(2, :database_instance, host_id: host_id)
 
       expect(
@@ -505,7 +508,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       posted_conn =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/cluster_host_start")
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{any_operation}")
 
       posted_conn
       |> json_response(:accepted)
@@ -532,7 +535,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -578,7 +581,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
          } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -609,13 +612,14 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("ForbiddenV1", api_spec)
     end
 
-    test "should always start a primary node in a hana cluster", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
+    test "should start a primary node in a hana cluster when at least one primary node is online",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -654,6 +658,66 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("OperationAcceptedV1", api_spec)
     end
 
+    test "should not start a primary node in a hana cluster when no primary node is online", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(1, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid1,
+        system_replication: "Secondary"
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should always start a node in a ascs/ers cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: ClusterType.ascs_ers()
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
     test "should stop a cluster primary node if the secondary node is already stopped",
          %{
            conn: conn,
@@ -661,7 +725,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
          } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -707,7 +771,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
          } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -744,7 +808,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
         insert(:cluster,
-          type: :hana_scale_up,
+          type: ClusterType.hana_scale_up(),
           sap_instances: build_list(2, :clustered_sap_instance)
         )
 
@@ -778,6 +842,35 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> put_req_header("content-type", "application/json")
       |> post(
         "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_host_id}/operations/cluster_host_stop"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should always stop a node in a ascs/ers cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: ClusterType.ascs_ers()
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_stop"
       )
       |> json_response(:accepted)
       |> assert_schema("OperationAcceptedV1", api_spec)
