@@ -75,17 +75,17 @@ defmodule Trento.Operations.ClusterPolicy do
 
     sr_primary_instances =
       get_sr_instances(
-      end)
-
-    count_primary_running = Enum.count(sr_primary_instances)
-
-
-    count_primary_running =
-      count_sr_instances(
         database_instances,
         hosts,
         "Primary"
       )
+
+    all_primary_running? =
+      Enum.all?(sr_primary_instances, fn %{cluster_host_status: curr_status} ->
+        curr_status == ClusterHostStatus.online()
+      end)
+
+    count_primary_running = Enum.count(sr_primary_instances)
 
     host = Enum.find(hosts, &(&1.id === host_id))
 
@@ -122,18 +122,18 @@ defmodule Trento.Operations.ClusterPolicy do
       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     database_instances = get_cluster_database_instances(hosts, sap_instances)
     host_running_primary? = primary_instance_in_host?(database_instances, host_id)
+
     sr_secondary_instances =
       get_sr_instances(
-      all_sr_instances_with_state?(
         database_instances,
+        hosts,
         "Secondary"
-        ClusterHostStatus.offline()
       )
+
     all_secondary_stopped? =
       Enum.all?(sr_secondary_instances, fn %{cluster_host_status: curr_status} ->
         curr_status == ClusterHostStatus.offline()
       end)
-
 
     if host_running_primary? and not all_secondary_stopped? do
       host = Enum.find(hosts, &(&1.id === host_id))
@@ -203,8 +203,8 @@ defmodule Trento.Operations.ClusterPolicy do
       inst_host_id == host_id and sr == "Primary"
     end)
   end
+
   defp get_sr_instances(database_instances, hosts, sr_mode) do
-  defp all_sr_instances_with_state?(database_instances, hosts, sr_mode, status) do
     host_ids_with_srmode =
       Enum.flat_map(database_instances, fn
         %{host_id: host_id, system_replication: ^sr_mode} -> [host_id]
