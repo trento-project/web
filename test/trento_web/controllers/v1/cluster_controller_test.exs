@@ -10,6 +10,9 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
+  alias Trento.Operations.V1.OperationRequested
+
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -294,14 +297,6 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         host_units: [
           build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
         ]
-      },
-      %{
-        operation: "cluster_host_start",
-        host_units: []
-      },
-      %{
-        operation: "cluster_host_stop",
-        host_units: []
       }
     ]
 
@@ -483,6 +478,403 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         |> json_response(:forbidden)
         |> assert_schema("ForbiddenV1", api_spec)
       end
+    end
+
+    test "should load cluster hosts with needed additional resources", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      any_operation = "pacemaker_enable"
+      %{id: cluster_id} = insert(:cluster)
+
+      %{id: host_id} =
+        insert(:host,
+          cluster_id: cluster_id,
+          systemd_units: [
+            build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
+          ]
+        )
+
+      database_instances = insert_list(2, :database_instance, host_id: host_id)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, %OperationRequested{} ->
+          :ok
+        end
+      )
+
+      posted_conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/clusters/#{cluster_id}/hosts/#{host_id}/operations/#{any_operation}")
+
+      posted_conn
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+
+      assert %{
+               assigns: %{
+                 cluster: %{
+                   hosts: [host_data]
+                 }
+               }
+             } = posted_conn
+
+      assert %{
+               id: ^host_id,
+               database_instances: ^database_instances,
+               cluster_id: ^cluster_id
+             } = host_data
+    end
+
+    test "should start a cluster secondary node if the primary node is already started", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should not start a cluster secondary node if the primary node is not already started",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should start a node if it is running a hana primary load",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should not start a primary node in a hana cluster when no primary database instance is present",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(1, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid1,
+        system_replication: "Secondary"
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should always start a node in a ascs/ers cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: ClusterType.ascs_ers()
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_start"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should stop a cluster primary node if the secondary node is already stopped",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_stop"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should not stop a cluster primary node if the secondary node is not already stopped",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_stop"
+      )
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should always stop a secondary node in a hana cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id, sap_instances: [%{sid: sid1}, %{sid: sid2}]} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          sap_instances: build_list(2, :clustered_sap_instance)
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      %{id: secondary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      insert(:database_instance,
+        host_id: primary_host_id,
+        sid: sid1,
+        system_replication: "Primary"
+      )
+
+      insert(:database_instance,
+        host_id: secondary_host_id,
+        sid: sid2,
+        system_replication: "Secondary"
+      )
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{secondary_host_id}/operations/cluster_host_stop"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
+    end
+
+    test "should always stop a node in a ascs/ers cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: ClusterType.ascs_ers()
+        )
+
+      %{id: primary_host_id} =
+        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+
+      expect(
+        Trento.Infrastructure.Messaging.Adapter.Mock,
+        :publish,
+        fn OperationsPublisher, _, _ ->
+          :ok
+        end
+      )
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(
+        "/api/v1/clusters/#{cluster_id}/hosts/#{primary_host_id}/operations/cluster_host_stop"
+      )
+      |> json_response(:accepted)
+      |> assert_schema("OperationAcceptedV1", api_spec)
     end
   end
 

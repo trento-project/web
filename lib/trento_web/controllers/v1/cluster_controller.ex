@@ -19,6 +19,8 @@ defmodule TrentoWeb.V1.ClusterController do
     UnprocessableEntity
   }
 
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+
   plug TrentoWeb.Plugs.LoadUserPlug
 
   plug Bodyguard.Plug.Authorize,
@@ -264,7 +266,7 @@ defmodule TrentoWeb.V1.ClusterController do
       }) do
     id
     |> Clusters.get_cluster_by_id()
-    |> Repo.preload(:hosts)
+    |> Repo.preload(hosts: [:database_instances])
     |> case do
       nil ->
         nil
@@ -300,7 +302,7 @@ defmodule TrentoWeb.V1.ClusterController do
   def get_operation(_), do: nil
 
   def get_operation_params(%{assigns: %{operation: operation}, params: %{host_id: host_id}})
-      when operation in [:pacemaker_enable, :pacemaker_disable] do
+      when operation in ClusterHostOperations.values() do
     %{
       host_id: host_id
     }
