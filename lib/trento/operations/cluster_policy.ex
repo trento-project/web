@@ -100,8 +100,6 @@ defmodule Trento.Operations.ClusterPolicy do
         :ok
 
       true ->
-        host = Enum.find(hosts, &(&1.id === host_id))
-
         {:error,
          [
            "Cannot start secondary node #{host.hostname} before starting all the primary nodes"
