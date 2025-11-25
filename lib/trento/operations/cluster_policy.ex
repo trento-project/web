@@ -93,7 +93,7 @@ defmodule Trento.Operations.ClusterPolicy do
       count_primary_running == 0 ->
         {:error,
          [
-           "Cannot start node #{host.hostname} because no primary database instance is running in the cluster"
+           "Cluster on host #{host.hostname} cannot be started because no primary database instance is running in the cluster"
          ]}
 
       host_running_primary? or all_primary_running? ->
