@@ -612,7 +612,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("ForbiddenV1", api_spec)
     end
 
-    test "should start a primary node in a hana cluster when at least one primary node is online",
+    test "should start a node if it is running a hana primary load",
          %{
            conn: conn,
            api_spec: api_spec
