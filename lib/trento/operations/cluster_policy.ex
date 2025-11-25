@@ -102,7 +102,7 @@ defmodule Trento.Operations.ClusterPolicy do
       true ->
         {:error,
          [
-           "Cannot start secondary node #{host.hostname} before starting all the primary nodes"
+           "Cluster on host #{host.hostname} cannot be started because no primary database instance is running in the cluster"
          ]}
     end
   end
