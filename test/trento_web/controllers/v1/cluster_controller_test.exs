@@ -658,10 +658,11 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("OperationAcceptedV1", api_spec)
     end
 
-    test "should not start a primary node in a hana cluster when no primary node is online", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
+    test "should not start a primary node in a hana cluster when no primary database instance is present",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
       %{id: cluster_id, sap_instances: [%{sid: sid1}]} =
         insert(:cluster,
           type: ClusterType.hana_scale_up(),
