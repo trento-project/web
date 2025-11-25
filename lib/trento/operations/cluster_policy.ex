@@ -138,7 +138,7 @@ defmodule Trento.Operations.ClusterPolicy do
 
       {:error,
        [
-         "Cannot stop the primary node #{host.hostname} because some secondary nodes are still online"
+         "Cluster on host #{host.hostname} cannot be stopped because some secondary nodes are still online"
        ]}
     else
       :ok
