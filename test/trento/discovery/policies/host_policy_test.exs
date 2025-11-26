@@ -393,6 +393,16 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should fail the validation of the host discovery with last_boot_timestamp payload when the last_boot_timestamp is malformed" do
+    assert {
+             :error,
+             {:validation, %{last_boot_timestamp: ["is invalid"]}}
+           } =
+             "host_discovery_with_last_boot_timestamp_wrong"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
   test "should emit update saptune command when a saptune_discovery is received with status nil" do
     assert {
              :ok,
