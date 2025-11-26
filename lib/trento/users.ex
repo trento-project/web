@@ -237,6 +237,13 @@ defmodule Trento.Users do
     end
   end
 
+  def update_last_login_at(%User{} = user) do
+    # Using an upsert instead of update to keep the updated_at timestamp unchanged
+    user
+    |> User.last_login_changeset(%{last_login_at: DateTime.utc_now()})
+    |> Repo.insert(conflict_target: :id, on_conflict: {:replace, [:last_login_at]})
+  end
+
   defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
 
   defp maybe_set_locked_at(%{enabled: false} = attrs) do

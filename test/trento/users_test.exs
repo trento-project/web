@@ -756,6 +756,15 @@ defmodule Trento.UsersTest do
 
       assert {:error, :not_found} == result
     end
+
+    test "update_last_login_at/1 updates last_login_at field" do
+      user = insert(:user, last_login_at: nil)
+      {:ok, user} = Users.get_user(user.id)
+
+      assert {:ok, %User{} = updated_user} = Users.update_last_login_at(user)
+      assert updated_user.last_login_at != nil
+      assert updated_user.updated_at == user.updated_at
+    end
   end
 
   defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
