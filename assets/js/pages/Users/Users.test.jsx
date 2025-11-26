@@ -16,6 +16,7 @@ describe('Users', () => {
       'Email',
       'Status',
       'Created',
+      'Last Login',
       'Actions',
     ];
     headers.forEach((headerText) => {
@@ -40,13 +41,20 @@ describe('Users', () => {
       '2024-04-22T16:20:57.801758Z',
     ];
     const expectedCreationTime = ['March 22, 2024', 'April 22, 2024'];
+    const lastLoginTime = [
+      '2025-11-26T16:20:57.801758Z',
+      '2025-12-26T16:20:57.801758Z',
+    ];
+    const expectedLastLoginTime = ['November 26, 2025', 'December 26, 2025'];
     const admin = adminUser.build({
       enabled: true,
       created_at: creationTime[0],
+      last_login_at: lastLoginTime[0],
     });
     const user = userFactory.build({
       enabled: false,
       created_at: creationTime[1],
+      last_login_at: lastLoginTime[1],
     });
     const users = [admin, user];
 
@@ -57,18 +65,29 @@ describe('Users', () => {
     expect(screen.getByText(admin.email)).toBeVisible();
     expect(screen.getAllByText('Enabled').length).toBe(1);
     expect(screen.getByText(expectedCreationTime[0])).toBeVisible();
+    expect(screen.getByText(expectedLastLoginTime[0])).toBeVisible();
 
     expect(screen.getByText(user.username)).toBeVisible();
     expect(screen.getByText(user.fullname)).toBeVisible();
     expect(screen.getByText(user.email)).toBeVisible();
     expect(screen.getAllByText('Disabled').length).toBe(1);
     expect(screen.getByText(expectedCreationTime[1])).toBeVisible();
+    expect(screen.getByText(expectedLastLoginTime[1])).toBeVisible();
 
     const toolTipText = 'Admin user cannot be deleted';
     const deleteButtons = screen.getAllByText('Delete');
     expect(deleteButtons.length).toBe(2);
     await userEvent.hover(deleteButtons[0]);
     expect(await screen.findByText(toolTipText)).toBeVisible();
+  });
+
+  it('should render an empty last login time', () => {
+    const users = userFactory.buildList(1, { last_login_at: null });
+
+    renderWithRouter(<Users users={users} loading={false} />);
+
+    const table = screen.getByRole('table');
+    expect(table.querySelector('td:nth-child(6)')).toHaveTextContent('-');
   });
 
   it('should open modal when delete button is pressed and close when cancel button is pressed', async () => {

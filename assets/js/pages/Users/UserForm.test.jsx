@@ -31,6 +31,7 @@ describe('UserForm', () => {
     expect(screen.queryByText('Analytics Opt-in')).not.toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
     expect(screen.queryByText('Updated')).not.toBeInTheDocument();
+    expect(screen.queryByText('Last Login')).not.toBeInTheDocument();
 
     expect(screen.getByRole('button', { name: 'Save' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeVisible();
@@ -45,6 +46,7 @@ describe('UserForm', () => {
       updated_at: updatedAt,
       totp_enabled_at: totpEnabledAt,
       analytics_enabled: analyticsEnabled,
+      last_login_at: lastLoginAt,
     } = userFactory.build();
 
     render(
@@ -57,6 +59,7 @@ describe('UserForm', () => {
         totp_enabled_at={totpEnabledAt}
         analyticsEnabledConfig
         analytics_enabled={analyticsEnabled}
+        lastLoginAt={lastLoginAt}
         editing
       />
     );
@@ -68,6 +71,7 @@ describe('UserForm', () => {
     expect(screen.getAllByPlaceholderText('********').length).toBe(2);
     expect(screen.getByText('Created')).toBeVisible();
     expect(screen.getByText('Updated')).toBeVisible();
+    expect(screen.getByText('Last Login')).toBeVisible();
     expect(screen.getByText('TOTP')).toBeVisible();
     expect(screen.getByText('Analytics Opt-in')).toBeVisible();
     expect(screen.getByText('Enabled')).toBeVisible();
@@ -356,6 +360,22 @@ describe('UserForm', () => {
       enabled: true,
       abilities: abilities.slice(0, 2),
     });
+  });
+
+  it('should render an empty last login time', () => {
+    const { created_at: createdAt, updated_at: updatedAt } =
+      userFactory.build();
+
+    render(
+      <UserForm
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        lastLoginAt={null}
+        editing
+      />
+    );
+
+    expect(screen.getByText('Last Login').nextSibling).toHaveTextContent('-');
   });
 
   describe('Single sign on', () => {

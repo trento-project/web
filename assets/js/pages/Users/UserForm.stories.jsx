@@ -16,6 +16,7 @@ const {
   created_at: createdAt,
   updated_at: updatedAt,
   totp_enabled_at: totpEnabledAt,
+  last_login_at: lastLoginAt,
 } = userFactory.build();
 
 const {
@@ -90,6 +91,12 @@ export default {
         type: 'text',
       },
     },
+    lastLoginAt: {
+      description: 'User last login timestamp',
+      control: {
+        type: 'text',
+      },
+    },
     editing: {
       description: 'User is being edited',
       control: {
@@ -154,6 +161,7 @@ export const Editing = {
     createdAt,
     updatedAt,
     totpEnabledAt,
+    lastLoginAt,
     editing: true,
     saveText: 'Save',
   },
@@ -214,5 +222,12 @@ export const SingleSignOnEnabled = {
   args: {
     ...Editing.args,
     singleSignOnEnabled: true,
+  },
+};
+
+export const UserNotLoggedYet = {
+  args: {
+    ...Editing.args,
+    lastLoginAt: null,
   },
 };

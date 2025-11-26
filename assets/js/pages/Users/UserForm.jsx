@@ -34,6 +34,7 @@ function UserForm({
   createdAt = '',
   updatedAt = '',
   totpEnabledAt = '',
+  lastLoginAt = '',
   analyticsEnabledConfig = false,
   analyticsEnabled,
   errors = defaultErrors,
@@ -307,6 +308,10 @@ function UserForm({
               <Label className="col-start-1 col-span-2">Updated</Label>
               <span className="col-start-3 col-span-4">
                 {format(parseISO(updatedAt), 'PPpp')}
+              </span>
+              <Label className="col-start-1 col-span-2">Last Login</Label>
+              <span className="col-start-3 col-span-4">
+                {lastLoginAt ? format(parseISO(lastLoginAt), 'PPpp') : '-'}
               </span>
             </>
           )}
