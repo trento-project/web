@@ -63,6 +63,15 @@ function Users({
         ),
       },
       {
+        title: 'Last Login',
+        key: 'last_login_at',
+        render: (content) => (
+          <span>
+            {content ? format(parseISO(content), 'MMMM dd, yyyy') : '-'}
+          </span>
+        ),
+      },
+      {
         title: 'Actions',
         key: 'actions',
         render: (content, item) => (
