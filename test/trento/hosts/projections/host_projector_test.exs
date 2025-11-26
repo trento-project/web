@@ -78,7 +78,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       netmasks: netmasks,
       provider: provider,
       provider_data: provider_data,
-      systemd_units: systemd_units
+      systemd_units: systemd_units,
+      time_zone: time_zone
     } = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.host_id == host_projection.id
@@ -108,7 +109,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        netmasks: ^netmasks,
                        provider: ^provider,
                        provider_data: ^provider_data,
-                       systemd_units: ^systemd_units
+                       systemd_units: ^systemd_units,
+                       time_zone: ^time_zone
                      },
                      1000
   end

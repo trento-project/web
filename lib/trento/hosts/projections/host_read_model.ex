@@ -42,6 +42,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :provider_data, :map
     field :saptune_status, Trento.Support.Ecto.Payload, keys_as_atoms: true
     field :prometheus_targets, :map
+    field :time_zone, :string
 
     has_many :tags, Tag, foreign_key: :resource_id
 
