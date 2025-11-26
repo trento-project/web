@@ -37,3 +37,8 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
     # 5870 matches to "vmhdbdev01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net" fqdn
     5870
   ]
+
+config :trento, :analytics,
+  enabled: true,
+  analytics_key: System.get_env("POSTHOG_API_KEY"),
+  analytics_url: "https://eu.posthog.com"
