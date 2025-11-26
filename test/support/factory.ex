@@ -194,7 +194,9 @@ defmodule Trento.Factory do
       installation_source: Enum.random([:community, :suse, :unknown]),
       prometheus_targets: build(:host_prometheus_targets),
       heartbeat: :unknown,
-      systemd_units: build_list(2, :host_systemd_unit)
+      systemd_units: build_list(2, :host_systemd_unit),
+      last_boot_timestamp:
+        Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     }
   end
 
@@ -211,7 +213,9 @@ defmodule Trento.Factory do
       socket_count: Enum.random(1..16),
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown]),
-      prometheus_targets: build(:host_prometheus_targets)
+      prometheus_targets: build(:host_prometheus_targets),
+      last_boot_timestamp:
+        Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     }
   end
 
@@ -967,7 +971,9 @@ defmodule Trento.Factory do
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown]),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
-      prometheus_targets: build(:host_prometheus_targets)
+      prometheus_targets: build(:host_prometheus_targets),
+      last_boot_timestamp:
+        Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     })
   end
 
