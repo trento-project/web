@@ -6,6 +6,33 @@ defmodule TrentoWeb.V1.UsersJSONTest do
   alias TrentoWeb.V1.UsersJSON
 
   describe "renders user.json" do
+    test "should correctly render a user" do
+      %{
+        id: id,
+        fullname: fullname,
+        username: username,
+        email: email,
+        password_change_requested_at: password_change_requested_at,
+        totp_enabled_at: totp_enabled_at,
+        last_login_at: last_login_at,
+        inserted_at: inserted_at,
+        updated_at: updated_at
+      } = user = build(:user, abilities: [], user_identities: [], personal_access_tokens: [])
+
+      assert %{
+               id: ^id,
+               fullname: ^fullname,
+               username: ^username,
+               email: ^email,
+               abilities: [],
+               password_change_requested_at: ^password_change_requested_at,
+               totp_enabled_at: ^totp_enabled_at,
+               last_login_at: ^last_login_at,
+               created_at: ^inserted_at,
+               updated_at: ^updated_at
+             } = UsersJSON.user(%{user: user})
+    end
+
     test "should correctly render a user when the user has user identities" do
       identities = build_list(1, :user_identity)
       abilities = build_list(1, :ability)
