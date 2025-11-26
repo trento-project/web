@@ -378,6 +378,49 @@ defmodule TrentoWeb.SessionControllerTest do
 
       Application.put_env(:trento, :oidc, enabled: false)
     end
+
+    test "should update user last login at timestamp on valid login", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{id: user_id, username: username, password: password} = insert(:user, last_login_at: nil)
+
+      expect(
+        Joken.CurrentTime.Mock,
+        :current_time,
+        6,
+        fn ->
+          1_671_715_992
+        end
+      )
+
+      conn
+      |> post("/api/session", %{
+        "username" => username,
+        "password" => password
+      })
+      |> json_response(200)
+      |> assert_schema("CredentialsV1", api_spec)
+
+      {:ok, updated_user} = Trento.Users.get_user(user_id)
+      assert updated_user.last_login_at != nil
+    end
+
+    test "should not update user last login at timestamp if the login fails", %{
+      conn: conn
+    } do
+      %{id: user_id, username: username} = insert(:user, last_login_at: nil)
+
+      conn
+      |> post("/api/session", %{
+        "username" => username,
+        "password" => Faker.Pokemon.name()
+      })
+      |> json_response(401)
+
+      {:ok, updated_user} = Trento.Users.get_user(user_id)
+      assert updated_user.last_login_at == nil
+    end
   end
 
   describe "callback endpoint" do

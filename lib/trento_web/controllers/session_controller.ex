@@ -48,7 +48,9 @@ defmodule TrentoWeb.SessionController do
 
   def create(conn, credentials) do
     case authenticate_trento_user(conn, credentials) do
-      {:ok, conn} ->
+      {:ok, %{assigns: %{current_user: logged_user}} = conn} ->
+        Users.update_last_login_at(logged_user)
+
         render(conn, :logged,
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration],
