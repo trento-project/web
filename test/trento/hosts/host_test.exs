@@ -90,6 +90,7 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           fully_qualified_domain_name: nil,
           prometheus_targets: prometheus_targets,
+          time_zone: "Europe/Rome",
           systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
         }),
         %HostRegistered{
@@ -105,7 +106,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: "Europe/Rome"
         },
         %Host{
           host_id: host_id,
@@ -121,7 +123,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: "Europe/Rome"
         }
       )
     end
@@ -492,7 +495,8 @@ defmodule Trento.Hosts.HostTest do
         build(:host_registered_event,
           host_id: host_id,
           arch: Architecture.unknown(),
-          fully_qualified_domain_name: fully_qualified_domain_name
+          fully_qualified_domain_name: fully_qualified_domain_name,
+          time_zone: "America/New_York"
         ),
         RegisterHost.new!(%{
           host_id: host_id,
@@ -507,7 +511,8 @@ defmodule Trento.Hosts.HostTest do
           arch: new_arch,
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
-          systemd_units: Enum.map(new_systemd_units, &Map.from_struct/1)
+          systemd_units: Enum.map(new_systemd_units, &Map.from_struct/1),
+          time_zone: "Europe/Rome"
         }),
         %HostDetailsUpdated{
           host_id: host_id,
@@ -522,7 +527,8 @@ defmodule Trento.Hosts.HostTest do
           arch: new_arch,
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
-          systemd_units: new_systemd_units
+          systemd_units: new_systemd_units,
+          time_zone: "Europe/Rome"
         },
         %Host{
           host_id: host_id,
@@ -538,7 +544,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: new_systemd_units
+          systemd_units: new_systemd_units,
+          time_zone: "Europe/Rome"
         }
       )
     end
