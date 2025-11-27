@@ -75,6 +75,7 @@ export const UsersOverview = {
       userFactory.build(),
       userFactory.build(),
       userFactory.build(),
+      userFactory.build({ last_login_at: null }),
     ],
   },
   render: withContainerWrapper,

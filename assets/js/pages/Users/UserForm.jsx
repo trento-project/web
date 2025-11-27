@@ -34,6 +34,7 @@ function UserForm({
   createdAt = '',
   updatedAt = '',
   totpEnabledAt = '',
+  lastLoginAt = '',
   analyticsEnabledConfig = false,
   analyticsEnabled,
   errors = defaultErrors,
@@ -267,29 +268,33 @@ function UserForm({
               }}
             />
           </div>
-          {editing && !singleSignOnEnabled && (
+          {editing && (
             <>
-              <Label
-                className="col-start-1 col-span-2 sm:pt-2"
-                htmlFor="totp"
-                aria-label="totp"
-              >
-                TOTP
-              </Label>
-              <div className="col-start-3 col-span-4">
-                <Select
-                  className="w-full"
-                  optionsName="totp"
-                  options={[
-                    { value: 'Enabled', disabled: !totpEnabledAt },
-                    'Disabled',
-                  ]}
-                  value={totpState ? 'Enabled' : 'Disabled'}
-                  onChange={(value) => {
-                    setTotpState(value === 'Enabled');
-                  }}
-                />
-              </div>
+              {!singleSignOnEnabled && (
+                <>
+                  <Label
+                    className="col-start-1 col-span-2 sm:pt-2"
+                    htmlFor="totp"
+                    aria-label="totp"
+                  >
+                    TOTP
+                  </Label>
+                  <div className="col-start-3 col-span-4">
+                    <Select
+                      className="w-full"
+                      optionsName="totp"
+                      options={[
+                        { value: 'Enabled', disabled: !totpEnabledAt },
+                        'Disabled',
+                      ]}
+                      value={totpState ? 'Enabled' : 'Disabled'}
+                      onChange={(value) => {
+                        setTotpState(value === 'Enabled');
+                      }}
+                    />
+                  </div>
+                </>
+              )}
               {analyticsEnabledConfig && (
                 <>
                   <Label className="col-start-1 col-span-2 sm:pt-2">
@@ -300,14 +305,22 @@ function UserForm({
                   </span>
                 </>
               )}
-              <Label className="col-start-1 col-span-2">Created</Label>
-              <span className="col-start-3 col-span-4">
-                {format(parseISO(createdAt), 'PPpp')}
-              </span>
-              <Label className="col-start-1 col-span-2">Updated</Label>
-              <span className="col-start-3 col-span-4">
-                {format(parseISO(updatedAt), 'PPpp')}
-              </span>
+              {!singleSignOnEnabled && (
+                <>
+                  <Label className="col-start-1 col-span-2">Created</Label>
+                  <span className="col-start-3 col-span-4">
+                    {format(parseISO(createdAt), 'PPpp')}
+                  </span>
+                  <Label className="col-start-1 col-span-2">Updated</Label>
+                  <span className="col-start-3 col-span-4">
+                    {format(parseISO(updatedAt), 'PPpp')}
+                  </span>
+                  <Label className="col-start-1 col-span-2">Last Login</Label>
+                  <span className="col-start-3 col-span-4">
+                    {lastLoginAt ? format(parseISO(lastLoginAt), 'PPpp') : '-'}
+                  </span>
+                </>
+              )}
             </>
           )}
           <p className="col-span-6">
