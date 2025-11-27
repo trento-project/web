@@ -114,8 +114,11 @@ defmodule Trento.Users.User do
     |> put_change(:email, "#{email}__#{deleted_at}")
   end
 
-  def last_login_changeset(user, attrs) do
-    cast(user, attrs, [:last_login_at])
+  def last_login_changeset(%{updated_at: updated_at} = user, attrs) do
+    # forcing the usage of the current updated_at. otherwise it is automatically updated
+    user
+    |> cast(attrs, [:last_login_at])
+    |> force_change(:updated_at, updated_at)
   end
 
   @spec with_polished_username(%__MODULE__{}) :: %__MODULE__{}
