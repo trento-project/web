@@ -761,9 +761,13 @@ defmodule Trento.UsersTest do
       user = insert(:user, last_login_at: nil)
       {:ok, user} = Users.get_user(user.id)
 
-      assert {:ok, %User{} = updated_user} = Users.update_last_login_at(user)
-      assert updated_user.last_login_at != nil
-      assert updated_user.updated_at == user.updated_at
+      assert {:ok, %User{} = logged_user} = Users.update_last_login_at(user)
+      assert logged_user.last_login_at != nil
+      assert logged_user.updated_at == user.updated_at
+
+      assert {:ok, %User{} = relogged_user} = Users.update_last_login_at(logged_user)
+      assert DateTime.after?(relogged_user.last_login_at, logged_user.last_login_at)
+      assert logged_user.updated_at == user.updated_at
     end
   end
 
