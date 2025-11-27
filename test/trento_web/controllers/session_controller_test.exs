@@ -402,7 +402,7 @@ defmodule TrentoWeb.SessionControllerTest do
       |> json_response(200)
       |> assert_schema("CredentialsV1", api_spec)
 
-      {:ok, updated_user} = Trento.Users.get_user(user_id)
+      {:ok, updated_user} = Users.get_user(user_id)
       assert updated_user.last_login_at != nil
     end
 
@@ -418,7 +418,7 @@ defmodule TrentoWeb.SessionControllerTest do
       })
       |> json_response(401)
 
-      {:ok, updated_user} = Trento.Users.get_user(user_id)
+      {:ok, updated_user} = Users.get_user(user_id)
       assert updated_user.last_login_at == nil
     end
   end
