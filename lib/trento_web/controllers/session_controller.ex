@@ -26,6 +26,7 @@ defmodule TrentoWeb.SessionController do
   action_fallback TrentoWeb.FallbackController
 
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
+  plug TrentoWeb.Plugs.UpdateLastLoginAtPlug when action in [:create]
 
   require Logger
 
@@ -48,9 +49,7 @@ defmodule TrentoWeb.SessionController do
 
   def create(conn, credentials) do
     case authenticate_trento_user(conn, credentials) do
-      {:ok, %{assigns: %{current_user: logged_user}} = conn} ->
-        Users.update_last_login_at(logged_user)
-
+      {:ok, conn} ->
         render(conn, :logged,
           token: conn.private[:api_access_token],
           expiration: conn.private[:access_token_expiration],
