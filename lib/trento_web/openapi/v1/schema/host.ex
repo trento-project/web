@@ -181,6 +181,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
             nullable: true,
             format: :"date-time"
           },
+          time_zone: %Schema{
+            type: :string,
+            nullable: true,
+            description:
+              "The IANA time zone configured on the host, supporting time-sensitive operations and logging."
+          },
           inserted_at: %Schema{type: :string, format: :datetime},
           updated_at: %Schema{type: :string, format: :datetime, nullable: true}
         },
