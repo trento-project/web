@@ -392,6 +392,7 @@ describe('UserForm', () => {
 
       expect(screen.queryByText('Created')).not.toBeInTheDocument();
       expect(screen.queryByText('Updated')).not.toBeInTheDocument();
+      expect(screen.queryByText('Last Login')).not.toBeInTheDocument();
       expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
       expect(screen.getByText('Permissions')).toBeVisible();
       expect(screen.getByText('Enabled')).toBeVisible();

@@ -120,5 +120,10 @@ describe('Users', () => {
       renderWithRouter(<Users users={[]} singleSignOnEnabled />);
       expect(screen.queryByText('Create User')).not.toBeInTheDocument();
     });
+
+    it('should not display last login time information', () => {
+      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      expect(screen.queryByText('Last Login')).not.toBeInTheDocument();
+    });
   });
 });
