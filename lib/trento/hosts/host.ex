@@ -130,6 +130,7 @@ defmodule Trento.Hosts.Host do
     field :os_version, :string
     field :provider, Ecto.Enum, values: Provider.values()
     field :prometheus_targets, :map
+    field :time_zone, :string
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
@@ -179,7 +180,8 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       ) do
     [
@@ -197,7 +199,8 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
         heartbeat: :unknown,
-        systemd_units: systemd_units
+        systemd_units: systemd_units,
+        time_zone: time_zone
       }
     ] ++ maybe_emit_software_updates_discovery_events(host_id, nil, fully_qualified_domain_name)
   end
@@ -266,7 +269,8 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: new_fully_qualified_domain_name,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       )
       when not is_nil(deregistered_at) do
@@ -285,7 +289,8 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: new_fully_qualified_domain_name,
         installation_source: installation_source,
         prometheus_targets: prometheus_targets,
-        systemd_units: systemd_units
+        systemd_units: systemd_units,
+        time_zone: time_zone
       }
     ] ++
       maybe_emit_software_updates_discovery_events(host_id, nil, new_fully_qualified_domain_name)
@@ -323,7 +328,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         },
         %RegisterHost{
           hostname: hostname,
@@ -337,7 +343,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       ) do
     []
@@ -360,7 +367,8 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       ) do
     [
@@ -377,7 +385,8 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         installation_source: installation_source,
         prometheus_targets: prometheus_targets,
-        systemd_units: systemd_units
+        systemd_units: systemd_units,
+        time_zone: time_zone
       }
     ] ++
       maybe_emit_software_updates_discovery_events(
@@ -644,7 +653,8 @@ defmodule Trento.Hosts.Host do
           prometheus_targets: prometheus_targets,
           installation_source: installation_source,
           heartbeat: heartbeat,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       ) do
     %Host{
@@ -662,7 +672,8 @@ defmodule Trento.Hosts.Host do
         prometheus_targets: prometheus_targets,
         installation_source: installation_source,
         heartbeat: heartbeat,
-        systemd_units: systemd_units
+        systemd_units: systemd_units,
+        time_zone: time_zone
     }
   end
 
@@ -680,7 +691,8 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
           installation_source: installation_source,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          time_zone: time_zone
         }
       ) do
     %Host{
@@ -696,7 +708,8 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
         installation_source: installation_source,
-        systemd_units: systemd_units
+        systemd_units: systemd_units,
+        time_zone: time_zone
     }
   end
 
