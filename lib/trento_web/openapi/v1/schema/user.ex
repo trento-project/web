@@ -492,7 +492,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           last_login_at: %OpenApiSpex.Schema{
             type: :string,
             format: :"date-time",
-            description: "Date of user last login.",
+            description:
+              "Date of user last login. It is null if the user hasn't logged in yet or an external IDP is configured.",
             nullable: true,
             example: "2024-01-15T09:00:00Z"
           }
