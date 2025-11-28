@@ -42,6 +42,8 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
                installation_source: :unknown,
                prometheus_targets: nil,
+               # it's not present in the fixture
+               last_boot_timestamp: nil,
                systemd_units: [
                  %SystemdUnit{
                    name: "pacemaker.service",
@@ -362,6 +364,41 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              }
            } =
              "subscriptions_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host discovery with last_boot_timestamp is received" do
+    assert {
+             :ok,
+             %RegisterHost{
+               agent_version: "0.1.0",
+               arch: Architecture.x86_64(),
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               hostname: "suse",
+               ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
+               last_boot_timestamp: ~U[2024-06-10 12:34:56Z],
+               installation_source: :unknown,
+               prometheus_targets: nil,
+               systemd_units: [
+                 %SystemdUnit{
+                   name: "pacemaker.service",
+                   unit_file_state: "enabled"
+                 }
+               ]
+             }
+           } =
+             "host_discovery_with_last_boot_timestamp"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should fail the validation of the host discovery with last_boot_timestamp payload when the last_boot_timestamp is malformed" do
+    assert {
+             :error,
+             {:validation, %{last_boot_timestamp: ["is invalid"]}}
+           } =
+             "host_discovery_with_last_boot_timestamp_wrong"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end

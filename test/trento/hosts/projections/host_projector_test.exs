@@ -78,7 +78,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       netmasks: netmasks,
       provider: provider,
       provider_data: provider_data,
-      systemd_units: systemd_units
+      systemd_units: systemd_units,
+      last_boot_timestamp: last_boot_timestamp
     } = host_projection = Repo.get!(HostReadModel, event.host_id)
 
     assert event.host_id == host_projection.id
@@ -86,6 +87,7 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     assert event.fully_qualified_domain_name == host_projection.fully_qualified_domain_name
     assert event.prometheus_targets == host_projection.prometheus_targets
     assert event.arch == host_projection.arch
+    assert event.last_boot_timestamp == host_projection.last_boot_timestamp
 
     assert event.ip_addresses ==
              Enum.zip_with([ip_addresses, netmasks], fn [address, netmaks] ->
@@ -108,7 +110,8 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
                        netmasks: ^netmasks,
                        provider: ^provider,
                        provider_data: ^provider_data,
-                       systemd_units: ^systemd_units
+                       systemd_units: ^systemd_units,
+                       last_boot_timestamp: ^last_boot_timestamp
                      },
                      1000
   end

@@ -20,6 +20,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdated do
     field :socket_count, :integer
     field :os_version, :string
     field :prometheus_targets, :map
+    field :last_boot_timestamp, :utc_datetime
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :arch, Ecto.Enum, values: Architecture.values()

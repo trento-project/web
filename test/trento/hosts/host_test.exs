@@ -90,6 +90,7 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           fully_qualified_domain_name: nil,
           prometheus_targets: prometheus_targets,
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z],
           systemd_units: Enum.map(systemd_units, &Map.from_struct/1)
         }),
         %HostRegistered{
@@ -105,7 +106,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z]
         },
         %Host{
           host_id: host_id,
@@ -121,7 +123,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: systemd_units
+          systemd_units: systemd_units,
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z]
         }
       )
     end
@@ -492,7 +495,8 @@ defmodule Trento.Hosts.HostTest do
         build(:host_registered_event,
           host_id: host_id,
           arch: Architecture.unknown(),
-          fully_qualified_domain_name: fully_qualified_domain_name
+          fully_qualified_domain_name: fully_qualified_domain_name,
+          last_boot_timestamp: ~U[2023-12-31 00:00:00Z]
         ),
         RegisterHost.new!(%{
           host_id: host_id,
@@ -507,7 +511,8 @@ defmodule Trento.Hosts.HostTest do
           arch: new_arch,
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
-          systemd_units: Enum.map(new_systemd_units, &Map.from_struct/1)
+          systemd_units: Enum.map(new_systemd_units, &Map.from_struct/1),
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z]
         }),
         %HostDetailsUpdated{
           host_id: host_id,
@@ -522,7 +527,8 @@ defmodule Trento.Hosts.HostTest do
           arch: new_arch,
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
-          systemd_units: new_systemd_units
+          systemd_units: new_systemd_units,
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z]
         },
         %Host{
           host_id: host_id,
@@ -538,7 +544,8 @@ defmodule Trento.Hosts.HostTest do
           installation_source: new_installation_source,
           prometheus_targets: new_prometheus_targets,
           heartbeat: :unknown,
-          systemd_units: new_systemd_units
+          systemd_units: new_systemd_units,
+          last_boot_timestamp: ~U[2024-01-01 00:00:00Z]
         }
       )
     end
@@ -561,7 +568,8 @@ defmodule Trento.Hosts.HostTest do
           arch: host_registered_event.arch,
           installation_source: host_registered_event.installation_source,
           prometheus_targets: host_registered_event.prometheus_targets,
-          systemd_units: Enum.map(host_registered_event.systemd_units, &Map.from_struct/1)
+          systemd_units: Enum.map(host_registered_event.systemd_units, &Map.from_struct/1),
+          last_boot_timestamp: host_registered_event.last_boot_timestamp
         }),
         []
       )
@@ -1964,6 +1972,7 @@ defmodule Trento.Hosts.HostTest do
             installation_source: host_registered_event.installation_source,
             prometheus_targets: host_registered_event.prometheus_targets,
             systemd_units: host_registered_event.systemd_units,
+            last_boot_timestamp: host_registered_event.last_boot_timestamp,
             heartbeat: :unknown,
             rolling_up: false
           }
@@ -2141,7 +2150,8 @@ defmodule Trento.Hosts.HostTest do
             installation_source: restoration_command.installation_source,
             fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
             prometheus_targets: restoration_command.prometheus_targets,
-            systemd_units: restoration_command.systemd_units
+            systemd_units: restoration_command.systemd_units,
+            last_boot_timestamp: restoration_command.last_boot_timestamp
           }
         ],
         fn host ->
@@ -2246,7 +2256,8 @@ defmodule Trento.Hosts.HostTest do
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
               prometheus_targets: restoration_command.prometheus_targets,
-              systemd_units: restoration_command.systemd_units
+              systemd_units: restoration_command.systemd_units,
+              last_boot_timestamp: restoration_command.last_boot_timestamp
             },
             %SoftwareUpdatesDiscoveryRequested{
               host_id: host_id,
@@ -2309,7 +2320,8 @@ defmodule Trento.Hosts.HostTest do
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
               prometheus_targets: restoration_command.prometheus_targets,
-              systemd_units: restoration_command.systemd_units
+              systemd_units: restoration_command.systemd_units,
+              last_boot_timestamp: restoration_command.last_boot_timestamp
             }
           ],
           fn host ->

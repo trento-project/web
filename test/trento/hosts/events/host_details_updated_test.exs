@@ -30,6 +30,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
                arch: Architecture.unknown(),
                installation_source: :unknown,
                prometheus_targets: nil,
+               last_boot_timestamp: nil,
                systemd_units: []
              } ==
                %{

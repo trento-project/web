@@ -30,6 +30,7 @@ defmodule Trento.Hosts.Events.HostRegisteredTest do
                prometheus_targets: nil,
                heartbeat: :unknown,
                health: :unknown,
+               last_boot_timestamp: nil,
                systemd_units: []
              } ==
                %{

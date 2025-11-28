@@ -141,7 +141,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn,
            prometheus_targets: prometheus_targets,
-           systemd_units: systemd_units
+           systemd_units: systemd_units,
+           last_boot_timestamp: last_boot_timestamp
          } = payload
        ),
        do:
@@ -158,7 +159,8 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn,
            prometheus_targets: prometheus_targets,
-           systemd_units: systemd_units
+           systemd_units: systemd_units,
+           last_boot_timestamp: last_boot_timestamp
          })
 
   defp build_ip_addresses(%{ip_addresses: ip_addresses, netmasks: nil}) do

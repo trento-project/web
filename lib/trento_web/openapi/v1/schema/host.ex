@@ -181,6 +181,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
             nullable: true,
             format: :"date-time"
           },
+          last_boot_timestamp: %Schema{
+            description:
+              "The timestamp indicating the last boot time of the host, supporting system monitoring and management.",
+            type: :string,
+            nullable: true,
+            format: :"date-time"
+          },
           inserted_at: %Schema{type: :string, format: :datetime},
           updated_at: %Schema{type: :string, format: :datetime, nullable: true}
         },
@@ -221,6 +228,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           },
           deregistered_at: "2024-01-15T08:00:00Z",
           last_heartbeat_timestamp: "2024-01-15T12:45:00Z",
+          last_boot_timestamp: "2024-01-10T07:30:00Z",
           inserted_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T12:45:00Z"
         }
