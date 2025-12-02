@@ -15,11 +15,13 @@ defmodule TrentoWeb.Plugs.UpdateLastLoginAtPlug do
     register_before_send(conn, fn
       %{assigns: %{current_user: %User{} = logged_user}} = conn ->
         # running an async task to avoid any failure to affect the login itself
-        Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
-          Users.update_last_login_at(logged_user)
-        end)
+        task =
+          Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
+            Users.update_last_login_at(logged_user)
+          end)
 
-        conn
+        # add task to private to enable easy testing
+        put_private(conn, :trento_supervised_task, task)
 
       conn ->
         conn
