@@ -13,15 +13,12 @@ defmodule TrentoWeb.Plugs.UpdateLastLoginAtPlugTest do
   } do
     %{id: user_id} = user = insert(:user)
 
-    %{private: %{trento_supervised_task: {:ok, pid}}} =
-      conn
-      |> Pow.Plug.assign_current_user(user, [])
-      |> UpdateLastLoginAtPlug.call(nil)
-      |> send_resp(200, "")
+    conn
+    |> Pow.Plug.assign_current_user(user, [])
+    |> UpdateLastLoginAtPlug.call(nil)
+    |> send_resp(200, "")
 
-    # wait until the async task is finished
-    ref = Process.monitor(pid)
-    assert_receive {:DOWN, ^ref, _, _, _}
+    wait_for_tasks_completion()
 
     {:ok, updated_user} = Users.get_user(user_id)
     assert updated_user.last_login_at != nil
