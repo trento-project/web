@@ -20,6 +20,7 @@ export const userFactory = Factory.define(() => ({
   totp_enabled_at: formatISO(faker.date.past()),
   analytics_enabled: faker.datatype.boolean(),
   analytics_eula_enabled: faker.datatype.boolean(),
+  last_login_at: formatISO(faker.date.past()),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));

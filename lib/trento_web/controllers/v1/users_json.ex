@@ -18,6 +18,7 @@ defmodule TrentoWeb.V1.UsersJSON do
           user_identities: user_identities,
           totp_enabled_at: totp_enabled_at,
           analytics_enabled_at: analytics_enabled_at,
+          last_login_at: last_login_at,
           inserted_at: created_at,
           updated_at: updated_at
         }
@@ -35,6 +36,7 @@ defmodule TrentoWeb.V1.UsersJSON do
         password_change_requested_at: password_change_requested_at,
         totp_enabled_at: totp_enabled_at,
         analytics_enabled: analytics_enabled_at != nil,
+        last_login_at: last_login_at,
         created_at: created_at,
         updated_at: updated_at
       }

@@ -44,6 +44,7 @@ defmodule Trento.Users.User do
     field :totp_last_used_at, :utc_datetime_usec
     field :analytics_enabled_at, :utc_datetime_usec
     field :analytics_eula_accepted_at, :utc_datetime_usec
+    field :last_login_at, :utc_datetime_usec
     field :lock_version, :integer, default: 1
 
     many_to_many :abilities, Ability, join_through: UsersAbilities, unique: true
@@ -111,6 +112,13 @@ defmodule Trento.Users.User do
     |> validate_required(:deleted_at)
     |> put_change(:username, "#{username}__#{deleted_at}")
     |> put_change(:email, "#{email}__#{deleted_at}")
+  end
+
+  def last_login_changeset(%{updated_at: updated_at} = user, attrs) do
+    # forcing the usage of the current updated_at. otherwise it is automatically updated
+    user
+    |> cast(attrs, [:last_login_at])
+    |> force_change(:updated_at, updated_at)
   end
 
   @spec with_polished_username(%__MODULE__{}) :: %__MODULE__{}
