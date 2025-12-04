@@ -92,6 +92,7 @@ const getResourceTableConfig = (
             menuPosition="bottom end"
             transparent
             operations={getResourceOperations(item)}
+            dataTour="resource-operations"
           />
         </div>
       ),
@@ -127,7 +128,7 @@ function Resources({
   return (
     <>
       <h2 className="mt-8 mb-2 text-2xl font-bold">Resources</h2>
-      <div className="mt-2">
+      <div data-tour="resources" className="mt-2">
         <Table
           config={getResourceTableConfig(userAbilities, getResourceOperations)}
           data={groupedResources}

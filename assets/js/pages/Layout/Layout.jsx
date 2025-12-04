@@ -220,6 +220,9 @@ function Layout() {
                     case '/settings':
                       setSteps(settingsSteps);
                       break;
+                    case '/clusters/7965f822-0254-5858-abca-f6e8b4c27714':
+                      setSteps(clusterSteps(navigate, setIsOpen));
+                      break;
                   }
 
                   setCurrentStep(0);

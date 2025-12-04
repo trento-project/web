@@ -27,6 +27,7 @@ function Accordion({
   return (
     <Disclosure
       as="div"
+      data-tour="checks-results"
       defaultOpen={defaultOpen}
       className={classNames(
         'bg-white shadow overflow-hidden',

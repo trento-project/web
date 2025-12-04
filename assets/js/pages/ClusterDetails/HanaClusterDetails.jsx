@@ -62,7 +62,10 @@ function HanaClusterDetails({
   return (
     <>
       <div className="flex xl:flex-row flex-col">
-        <div className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4">
+        <div
+          data-tour="hana-cluster-details"
+          className="tn-cluster-details mt-4 bg-white shadow rounded-lg py-8 px-8 xl:w-3/4 w-full mr-4"
+        >
           <ListView
             className="grid-rows-3"
             titleClassName="text-lg"
@@ -118,6 +121,9 @@ function HanaClusterDetails({
               {
                 title: 'HANA secondary sync state',
                 content: details && details.secondary_sync_state,
+                render: (content) => (
+                  <span data-tour="hana-sync-state">{content}</span>
+                ),
               },
               {
                 title: 'HANA log operation mode',
@@ -126,7 +132,10 @@ function HanaClusterDetails({
             ]}
           />
         </div>
-        <div className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full">
+        <div
+          data-tour="checks-results"
+          className="tn-cluster-checks-overview mt-4 bg-white shadow rounded-lg py-4 xl:w-1/4 w-full"
+        >
           <CheckResultsOverview
             data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
@@ -142,7 +151,7 @@ function HanaClusterDetails({
       </div>
 
       <h2 className="mt-8 text-2xl font-bold">Site details</h2>
-      <div className="mt-2 tn-site-details">
+      <div data-tour="hana-site-details" className="mt-2 tn-site-details">
         {sortBy(details.sites, 'name').map(
           ({ name: siteName, state, sr_health_state: srHealthState }) => (
             <HanaClusterSite

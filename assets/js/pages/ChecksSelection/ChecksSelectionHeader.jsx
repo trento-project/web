@@ -32,7 +32,10 @@ function ChecksSelectionHeader({
     <div className="w-full px-2 sm:px-0">
       {backTo}
       <div className="flex flex-wrap">
-        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+        <div
+          data-tour="cluster-settings"
+          className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words"
+        >
           {pageHeader}
         </div>
         <div className="flex w-1/2 justify-end">
@@ -42,6 +45,7 @@ function ChecksSelectionHeader({
               permitted={checkSelectionPermittedFor}
             >
               <Button
+                data-tour="save-checks"
                 type="primary-white"
                 className="mx-1 border-green-500 border"
                 onClick={() => onSaveSelection(selection, targetID, targetName)}
@@ -62,6 +66,7 @@ function ChecksSelectionHeader({
                 wrap={false}
               >
                 <Button
+                  data-tour="execute-checks"
                   type="primary"
                   className="mx-1"
                   onClick={onStartExecution}

@@ -75,6 +75,7 @@ const getSiteDetailsTableConfig = (
               menuPosition="bottom"
               transparent
               operations={getHostOperations(item)}
+              dataTour="node-operations"
             />
             <AttributesDetails title="Node Details" attributes={attributes} />
           </div>

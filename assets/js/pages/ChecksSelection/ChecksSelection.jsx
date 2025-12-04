@@ -99,7 +99,7 @@ function ChecksSelection({
       catalogError={catalogError}
       loading={loading}
     >
-      <div className="pb-4">
+      <div data-tour="checks-selection-container" className="pb-4">
         {groupedChecks?.map(({ group, checks, groupSelected }) => (
           <ChecksSelectionGroup
             key={group}

@@ -177,7 +177,10 @@ function ClusterDetails({
       )}
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap">
-        <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
+        <div
+          data-tour="cluster-title"
+          className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words"
+        >
           <PageHeader className="whitespace-normal">
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>
@@ -187,11 +190,13 @@ function ClusterDetails({
           <div className="flex w-fit whitespace-nowrap">
             {operationsEnabled && (
               <OperationsButton
+                dataTour="cluster-operations"
                 userAbilities={userAbilities}
                 operations={clusterOperations}
               />
             )}
             <Button
+              data-tour="checks-selection-button"
               type="primary-white"
               className="inline-block mx-0.5 border-green-500 border"
               size="small"

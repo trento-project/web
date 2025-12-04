@@ -45,6 +45,7 @@ function OperationsButton({
   menuPosition = 'bottom start',
   transparent = false,
   disabled,
+  dataTour,
 }) {
   const ref = useRef(null);
   const someRunning = some(operations, { running: true });
@@ -54,6 +55,7 @@ function OperationsButton({
       <MenuButton disabled={disabled} as={Fragment}>
         <div className="flex" ref={ref}>
           <Button
+            data-tour={dataTour}
             type={transparent ? 'transparent' : 'primary-white'}
             className={classNames(
               'inline-block mx-0.5 border-green-500',
@@ -72,6 +74,7 @@ function OperationsButton({
         anchor={{ to: menuPosition, gap: '5px' }}
         as="div"
         className="rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 px-3 py-3 focus:outline-none"
+        data-tour="operation-items"
       >
         {operations.map(
           ({ value, running, disabled: itemDisabled, permitted, onClick }) => (

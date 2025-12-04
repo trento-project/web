@@ -18,6 +18,7 @@ function AttributesDetails({ attributes, title }) {
     <>
       <Button
         type="transparent"
+        data-tour="hana-site-node-details"
         className="text-jungle-green-500"
         size="fit"
         onClick={() => setModalOpen(true)}
