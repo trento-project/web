@@ -138,7 +138,10 @@ function SettingsPage() {
     <>
       <PageHeader className="font-bold">Settings</PageHeader>
       <section>
-        <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+        <div
+          data-tour="api-key"
+          className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg"
+        >
           <div className="flex flex-wrap -mx-8">
             <div className="w-full lg:w-1/2 px-8">
               <div className="mb-12 lg:mb-0 pb-12 lg:pb-0 border-b lg:border-b-0">
@@ -154,7 +157,10 @@ function SettingsPage() {
                   or to add new ones.
                 </p>
                 <Transition show={Boolean(apiKey)}>
-                  <div className="transition duration-100 ease-out data-[closed]:opacity-0">
+                  <div
+                    data-tour="copy-api-key"
+                    className="transition duration-100 ease-out data-[closed]:opacity-0"
+                  >
                     {hasApiKey ? (
                       <div className="flex">
                         <ApiKeyBox apiKey={apiKey} className="!w-11/12" />
@@ -182,6 +188,7 @@ function SettingsPage() {
                   permitted={apiKeySettingsPermittedFor}
                 >
                   <Button
+                    data-tour="generate-api-key"
                     onClick={() => setApiKeySettingsModalOpen(true)}
                     type="primary-white"
                   >

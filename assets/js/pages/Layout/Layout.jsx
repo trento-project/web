@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { NavLink, Outlet } from 'react-router';
+import { NavLink, Outlet, useNavigate } from 'react-router';
+import { useTour } from '@reactour/tour';
 
 import { clearCredentialsFromStore } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
@@ -20,6 +21,7 @@ import {
   EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
   EOS_ASSIGNMENT,
   EOS_MENU_BOOK,
+  EOS_STAR,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
@@ -28,6 +30,8 @@ import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
+
+import { clusterSteps, settingsSteps } from '@common/Tour/Tour';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -102,6 +106,9 @@ function Layout() {
     email,
     analytics_enabled: analyticsEnabled,
   } = useSelector(getUserProfile);
+
+  const navigate = useNavigate();
+  const { setIsOpen, setCurrentStep, setSteps } = useTour();
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -196,6 +203,33 @@ function Layout() {
                 ))}
               </div>
             </nav>
+            <div className="flex mb-2 pl-6">
+              <button
+                target="_blank"
+                className={classNames(
+                  'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md cursor-pointer hover:opacity-75',
+                  {
+                    'px-2 ml-1': isCollapsed,
+                    'px-4': !isCollapsed,
+                  }
+                )}
+                rel="noreferrer"
+                onClick={() => {
+                  // navigate('/settings');
+                  switch (window.location.pathname) {
+                    case '/settings':
+                      setSteps(settingsSteps);
+                      break;
+                  }
+
+                  setCurrentStep(0);
+                  setIsOpen(true);
+                }}
+              >
+                <EOS_STAR className="fill-green-800" />
+                {!isCollapsed ? <span>Start tour!</span> : null}
+              </button>
+            </div>
             <div className="flex justify-center">
               <a
                 href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"

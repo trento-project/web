@@ -65,7 +65,10 @@ export default function AlertingSettingsConfig({
   ];
 
   return (
-    <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+    <div
+      data-tour="email-alerts-settings"
+      className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg"
+    >
       <div>
         <h2 className="text-2xl font-bold inline-block">Email Alerts</h2>
 
@@ -80,6 +83,7 @@ export default function AlertingSettingsConfig({
               place="bottom"
             >
               <Button
+                data-tour="configure-email-alerts-settings"
                 type="primary-white-fit"
                 size="small"
                 aria-label="alerting-edit-button"

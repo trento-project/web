@@ -34,7 +34,10 @@ function SuseManagerConfig({
         onClearSettings={onClearSettings}
         onCancel={onCancel}
       />
-      <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
+      <div
+        data-tour="suse-manager-settings"
+        className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg"
+      >
         <div>
           <h2 className="text-2xl font-bold inline-block">
             {SUMA_PRODUCT_LABEL} Config
@@ -56,6 +59,7 @@ function SuseManagerConfig({
             >
               <Button
                 className="mr-2"
+                data-tour="configure-suse-manager-settings"
                 type="primary-white-fit"
                 size="small"
                 onClick={onEditClick}

@@ -11,6 +11,7 @@ import {
 
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
+import { TourProvider } from '@reactour/tour';
 
 import AboutPage from '@pages/AboutPage';
 import CheckResultDetailPage from '@pages/ExecutionResults/CheckResultDetail';
@@ -51,6 +52,7 @@ import {
 import { networkClient } from '@lib/network';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import PostHogPageView from '@lib/analytics/pageview';
+//import Tour, { steps} from '@common/Tour';
 
 import { createStore } from './state';
 
@@ -150,6 +152,7 @@ function RoutesWrapper() {
       <Toaster position="top-right" containerStyle={{ top: 50, zIndex: 99 }} />
       <Outlet />
       <PostHogPageView />
+      {/* <Tour /> */}
     </>
   );
 }
@@ -160,9 +163,11 @@ const store = createStore(router);
 
 function App() {
   return (
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
+    <TourProvider disableInteraction>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </TourProvider>
   );
 }
 
