@@ -48,6 +48,7 @@
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
+    "@reactour/tour": "^3.8.0",
     "@reduxjs/toolkit": "^2.9.1",
     "axios": "^1.12.2",
     "axios-auth-refresh": "^3.3.6",
