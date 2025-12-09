@@ -19,6 +19,7 @@ const createUserButton = 'button:contains("Create User")';
 const adminUserName = 'tbody tr:nth-child(1) a';
 const newUserName = 'tbody tr:nth-child(2) a:nth-child(1)';
 const newUserEmail = 'tbody tr:nth-child(2) p:nth-child(1)';
+const newUserLastLogin = 'tbody tr:nth-child(2) td:nth-child(6)';
 const newUserDeleteButton =
   'tbody tr:nth-child(2) td button:contains("Delete")';
 const confirmDeleteUserButton =
@@ -63,6 +64,7 @@ const tokenNameField = 'input[aria-label="token-name"]';
 const newAccessTokenField = 'code';
 const modalCopyAccessTokenButton = 'button[aria-label="copy to clipboard"]';
 const accessTokenName = 'p[class*="font-semibold"]';
+const userViewLastLoginField = 'label:contains("Last Login") + span';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -361,6 +363,30 @@ export const newAccessTokenIsDisplayed = () => {
 
 export const modalCopyAccessTokenButtonIsDisplayed = () =>
   cy.get(modalCopyAccessTokenButton).should('be.visible');
+
+export const lastLoginShouldBeEmpty = () => {
+  cy.get(newUserLastLogin).should('contain', '-');
+};
+
+export const lastLoginShouldNotBeEmpty = () => {
+  cy.get(newUserLastLogin).should('not.contain', '-');
+};
+
+export const lastLoginUserViewShouldBeEmpty = () => {
+  cy.get(userViewLastLoginField).should('contain', '-');
+};
+
+export const lastLoginUserViewShouldHaveUpdatedDate = () => {
+  cy.get(userViewLastLoginField)
+    .invoke('text')
+    .then((dateText) => {
+      const date = Number(new Date(dateText));
+      const today = Number(new Date());
+
+      // 5 seconds delta
+      expect(date).to.be.closeTo(today, 5000);
+    });
+};
 
 // API
 
