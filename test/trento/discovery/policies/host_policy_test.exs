@@ -42,6 +42,8 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
                installation_source: :unknown,
                prometheus_targets: nil,
+               # it's not present in the fixture
+               time_zone: nil,
                systemd_units: [
                  %SystemdUnit{
                    name: "pacemaker.service",
@@ -362,6 +364,31 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              }
            } =
              "subscriptions_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host discovery with time_zone is received" do
+    assert {
+             :ok,
+             %RegisterHost{
+               agent_version: "0.1.0",
+               arch: Architecture.x86_64(),
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               hostname: "suse",
+               ip_addresses: ["10.1.1.4/16", "10.1.1.5/24", "10.1.1.6/32"],
+               time_zone: "Europe/Rome",
+               installation_source: :unknown,
+               prometheus_targets: nil,
+               systemd_units: [
+                 %SystemdUnit{
+                   name: "pacemaker.service",
+                   unit_file_state: "enabled"
+                 }
+               ]
+             }
+           } =
+             "host_discovery_with_time_zone"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
