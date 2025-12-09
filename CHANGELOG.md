@@ -170,7 +170,7 @@
 * Cluster maintenance operation frontend (#3529) @arbulu89
 * Update host saptune status on SAP instances de/registration (#3514) @arbulu89
 * Add `forwardRef` to button component (#3528) @arbulu89
-* Add fixed witdh to relevant patches synopsis (#3521) @arbulu89
+* Add fixed width to relevant patches synopsis (#3521) @arbulu89
 * Add CODEOWNERS (#3518) @nelsonkopliku
 * Analytics Settings UI with Collection to Posthog (#3449) @jagabomb
 * Add the ability to request a saptune solution change (#3488) @nelsonkopliku
