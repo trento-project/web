@@ -35,7 +35,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: mix-cache
         with:
           path: |
@@ -65,7 +65,7 @@ jobs:
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm-cache
         with:
           path: |
@@ -91,7 +91,7 @@ jobs:
         uses: endorama/asdf-parse-tool-versions@v1.3.4
         id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm-e2e-cache
         with:
           path: |
@@ -147,7 +147,7 @@ jobs:
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: mix-cache
         with:
           path: |
@@ -156,14 +156,14 @@ jobs:
             priv/plts
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: npm-e2e-cache
         with:
           path: |
