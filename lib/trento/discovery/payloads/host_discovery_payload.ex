@@ -29,6 +29,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
     field :systemd_units, {:array, :map}, default: []
+    field :last_boot_timestamp, :utc_datetime, default: nil
 
     field :installation_source, Ecto.Enum,
       values: [:community, :suse, :unknown],
