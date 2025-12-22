@@ -204,13 +204,13 @@ jobs:
           wait-on-timeout: 30
       - name: Upload cypress test junit reports
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
       - name: Upload cypress test screenshots
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: e2e-screenshots-${{ matrix.container }}
           path: test/e2e/cypress/screenshots/**/*.png
