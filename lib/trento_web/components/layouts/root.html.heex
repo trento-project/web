@@ -9,18 +9,16 @@
       <%= assigns[:page_title] || "Trento" %>
     </.live_title>
 
-    <script>
-      window.basePath = '<%= case @conn.script_name do [] -> ""; segments -> "/" <> Enum.join(segments, "/") end %>';
-    </script>
-    <% script_name_prefix =
-      case @conn.script_name do
-        [] -> ""
-        segments -> "/" <> Enum.join(segments, "/")
-      end
+    <% base_path =
+      if @conn.script_name == [], do: "", else: "/" <> Enum.join(@conn.script_name, "/")
 
-    css_path = script_name_prefix <> "/assets/app.css"
-    js_path = script_name_prefix <> "/assets/app.js"
-    favicon_path = script_name_prefix <> "/favicon.ico" %>
+    css_path = base_path <> "/assets/app.css"
+    js_path = base_path <> "/assets/app.js"
+    favicon_path = base_path <> "/favicon.ico" %>
+
+    <script>
+      window.basePath = '<%= base_path %>';
+    </script>
 
     <link rel="icon" type="image/x-icon" href={favicon_path} />
     <link phx-track-static rel="stylesheet" href={css_path} />

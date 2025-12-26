@@ -1,5 +1,4 @@
 <div id="trento" data-ph-capture-attribute-webversion={@version} />
-
 <script>
   const config = {
       checksServiceBaseUrl: '<%= @check_service_base_url %>',
@@ -19,13 +18,7 @@
   };
 </script>
 
-<% script_name_prefix =
-  case @conn.script_name do
-    [] -> ""
-    segments -> "/" <> Enum.join(segments, "/")
-  end
-
-  trento_js_path = script_name_prefix <> "/assets/trento.js"
-%>
+<% base_path = if @conn.script_name == [], do: "", else: "/" <> Enum.join(@conn.script_name, "/")
+trento_js_path = base_path <> "/assets/trento.js" %>
 <script defer phx-track-static type="text/javascript" src={trento_js_path}>
 </script>
