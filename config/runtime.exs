@@ -87,7 +87,10 @@ if config_env() in [:prod, :demo] do
       ip: ip,
       port: String.to_integer(System.get_env("PORT") || "4000")
     ],
-    check_origin: true,
+    check_origin: [
+      "https://#{trento_origin}",
+      "http://#{trento_origin}"
+    ],
     url: [host: trento_origin],
     secret_key_base: secret_key_base
 

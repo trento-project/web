@@ -16,8 +16,6 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   """
   @behaviour Plug
 
-  alias Phoenix.Controller
-
   alias TrentoWeb.ErrorJSON
 
   import Plug.Conn
@@ -57,8 +55,8 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   end
 
   # Find first available versioned path. If none is found nil is returned.
-  defp find_versioned_path(router, available_api_vesions, path_parts, method) do
-    available_api_vesions
+  defp find_versioned_path(router, available_api_versions, path_parts, method) do
+    available_api_versions
     |> Enum.map(fn version ->
       ["/api", version]
       |> Enum.concat(path_parts)
@@ -69,8 +67,15 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     end)
   end
 
+  # Prepend script_name for subpath support and perform a manual redirect.
   defp redirect(conn, to) do
-    Controller.redirect(conn, to: maybe_add_query_string(to, conn.query_string))
+    script_name = Enum.join(conn.script_name, "")
+    location = script_name <> maybe_add_query_string(to, conn.query_string)
+
+    conn
+    # Using Temporary Redirect to preserve the original API method
+    |> put_status(307)
+    |> put_resp_header("location", location)
   end
 
   defp route_exists?(router, path, verb) do

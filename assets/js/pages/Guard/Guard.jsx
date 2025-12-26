@@ -32,8 +32,21 @@ export default function Guard({ redirectPath, getUser }) {
 
   useEffect(() => {
     if (!userLoading && !user) {
+      const basePath = window.basePath || '';
+      let requestPath = window.location.pathname;
+
+      // Strip basePath only when the current pathname equals it or is nested under it.
+      const shouldStripBasePath =
+        !!basePath &&
+        (requestPath === basePath || requestPath.startsWith(`${basePath}/`));
+
+      // Strip basePath from the pathname to get the relative path to avoid double-prefixing.
+      if (shouldStripBasePath) {
+        requestPath = requestPath.slice(basePath.length) || '/';
+      }
+
       const currentLocationPath = new URLSearchParams();
-      currentLocationPath.append('request_path', window.location.pathname);
+      currentLocationPath.append('request_path', requestPath);
       navigate(`${redirectPath}?${currentLocationPath.toString()}`, {
         replace: true,
       });
