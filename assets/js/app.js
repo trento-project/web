@@ -31,7 +31,8 @@ import topbar from '../vendor/topbar';
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute('content');
-const liveSocket = new LiveSocket('/live', Socket, {
+const basePath = window.basePath || '';
+const liveSocket = new LiveSocket(`${basePath}/live`, Socket, {
   params: { _csrf_token: csrfToken },
 });
 

@@ -81,7 +81,8 @@ const logout = (e) => {
   clearCredentialsFromStore();
   optinCapturing(false);
   reset();
-  window.location.href = '/session/new';
+  const basePath = window.basePath || '';
+  window.location.href = `${basePath}/session/new`;
 };
 
 function Layout() {

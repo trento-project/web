@@ -121,7 +121,8 @@ export function* performSAMLEnrollment() {
 export function* clearUserAndLogout() {
   yield call(reset);
   yield call(clearCredentialsFromStore);
-  window.location.href = '/session/new';
+  const basePath = window.basePath || '';
+  window.location.href = `${basePath}/session/new`;
 }
 
 export function* userUpdated() {
