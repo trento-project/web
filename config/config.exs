@@ -231,7 +231,8 @@ config :trento,
   api_key_authentication_enabled: true,
   jwt_authentication_enabled: true,
   operations_enabled: true,
-  oas_server_url: nil
+  oas_server_url: nil,
+  ai_assistant_ws_url: ""
 
 config :trento, :analytics,
   enabled: false,
