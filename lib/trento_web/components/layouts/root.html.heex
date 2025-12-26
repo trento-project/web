@@ -8,8 +8,23 @@
     <.live_title>
       <%= assigns[:page_title] || "Trento" %>
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+
+    <script>
+      window.basePath = '<%= case @conn.script_name do [] -> ""; segments -> "/" <> Enum.join(segments, "/") end %>';
+    </script>
+    <% script_name_prefix =
+      case @conn.script_name do
+        [] -> ""
+        segments -> "/" <> Enum.join(segments, "/")
+      end
+
+    css_path = script_name_prefix <> "/assets/app.css"
+    js_path = script_name_prefix <> "/assets/app.js"
+    favicon_path = script_name_prefix <> "/favicon.ico" %>
+
+    <link rel="icon" type="image/x-icon" href={favicon_path} />
+    <link phx-track-static rel="stylesheet" href={css_path} />
+    <script defer phx-track-static type="text/javascript" src={js_path}>
     </script>
   </head>
   <body>
