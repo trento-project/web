@@ -39,8 +39,21 @@ export default function Login() {
 
   useEffect(() => {
     if (loggedIn) {
-      const destinationURL = searchParams.get('request_path');
-      navigate(destinationURL || '/');
+      const basePath = window.basePath || '';
+      let destinationURL = searchParams.get('request_path') || '/';
+
+      // Strip basePath only when the current pathname equals it or is nested under it.
+      const shouldStripBasePath =
+        !!basePath &&
+        (destinationURL === basePath ||
+          destinationURL.startsWith(`${basePath}/`));
+
+      // Strip basePath from the pathname to get the relative path to avoid double-prefixing.
+      if (shouldStripBasePath) {
+        destinationURL = destinationURL.slice(basePath.length) || '/';
+      }
+
+      navigate(destinationURL);
     }
   }, [loggedIn]);
 
