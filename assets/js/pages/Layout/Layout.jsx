@@ -29,6 +29,7 @@ import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
 import AIAssistant from '@pages/AIAssistant';
+import { AIAssistantProvider } from '../../contexts/AIAssistantContext';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -115,147 +116,152 @@ function Layout() {
   }, [analyticsEnabled]);
 
   return (
-    <main className="bg-gray-100 dark:bg-gray-800 relative">
-      <AnalyticsEula />
-      <div className="flex flex-col h-screen items-start justify-between">
-        <div
-          className={classNames(
-            'h-screen flex shadow-lg fixed flex-shrink-0 z-20',
-            { 'w-16': isCollapsed, 'w-64': !isCollapsed }
-          )}
-        >
+    <AIAssistantProvider>
+      <main className="bg-gray-100 dark:bg-gray-800 relative">
+        <AnalyticsEula />
+        <div className="flex flex-col h-screen items-start justify-between">
           <div
-            className={classNames('block absolute mt-4', {
-              'ml-64': !isCollapsed,
-              'ml-16': isCollapsed,
-            })}
+            className={classNames(
+              'h-screen flex shadow-lg fixed flex-shrink-0 z-20',
+              { 'w-16': isCollapsed, 'w-64': !isCollapsed }
+            )}
           >
-            <button
-              type="button"
-              className="flex p-2 items-center rounded-r bg-white text-gray-500 text-md"
-              onClick={handleSidebar}
-              title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            <div
+              className={classNames('block absolute mt-4', {
+                'ml-64': !isCollapsed,
+                'ml-16': isCollapsed,
+              })}
             >
-              {isCollapsed ? (
-                <EOS_KEYBOARD_DOUBLE_ARROW_RIGHT
-                  size={sidebarIconSize}
-                  color={sidebarIconColor}
-                  className={sidebarIconClassName}
-                />
-              ) : (
-                <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
-                  size={sidebarIconSize}
-                  color={sidebarIconColor}
-                  className={sidebarIconClassName}
-                />
-              )}
-            </button>
-          </div>
-          <div className="flex flex-1 flex-col bg-white pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
-            <div className="flex items-center justify-center pt-6">
-              <img
-                className={classNames('h-auto transition-scale duration-100', {
-                  'w-12 ml-1': isCollapsed,
-                  'w-24': !isCollapsed,
-                })}
-                alt="trento project logo"
-                src={TrentoLogo}
-              />{' '}
-            </div>
-            <nav className="mt-6 flex flex-col flex-1">
-              <div>
-                {navigation.map((item) => (
-                  <ForbiddenGuard
-                    key={item.name}
-                    disabled={!item.permittedFor}
-                    permitted={item.permittedFor}
-                  >
-                    <NavLink
-                      className={({ isActive }) =>
-                        `tn-menu-item w-full text-gray-800 dark:text-white flex items-center my-2 transition-colors duration-200 justify-start border-l-4 ${
-                          isActive
-                            ? 'border-l-4 border-jungle-green-500'
-                            : 'border-white hover:border-l-4 hover:border-jungle-green-300'
-                        }
-                        ${isCollapsed ? 'justify-center py-2' : 'pl-6 p-2'}`
-                      }
-                      to={item.href}
-                      end={item.href === '/'}
-                      title={item.name}
-                    >
-                      <span className="text-left">
-                        <item.icon />
-                      </span>
-                      <span
-                        className={classNames('mx-2 text-sm font-normal', {
-                          hidden: isCollapsed,
-                        })}
-                      >
-                        {item.name}
-                      </span>
-                    </NavLink>
-                  </ForbiddenGuard>
-                ))}
-              </div>
-            </nav>
-            <div className="flex justify-center">
-              <a
-                href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
-                target="_blank"
-                className={classNames(
-                  'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
-                  {
-                    'px-2 ml-1': isCollapsed,
-                    'px-4': !isCollapsed,
-                  }
-                )}
-                rel="noreferrer"
+              <button
+                type="button"
+                className="flex p-2 items-center rounded-r bg-white text-gray-500 text-md"
+                onClick={handleSidebar}
+                title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
               >
-                <EOS_MENU_BOOK className="fill-green-800" />
-                {!isCollapsed ? <span>Read the Trento docs</span> : null}
-              </a>
+                {isCollapsed ? (
+                  <EOS_KEYBOARD_DOUBLE_ARROW_RIGHT
+                    size={sidebarIconSize}
+                    color={sidebarIconColor}
+                    className={sidebarIconClassName}
+                  />
+                ) : (
+                  <EOS_KEYBOARD_DOUBLE_ARROW_LEFT
+                    size={sidebarIconSize}
+                    color={sidebarIconColor}
+                    className={sidebarIconClassName}
+                  />
+                )}
+              </button>
             </div>
-          </div>
-        </div>
-        <div className="flex flex-col w-full md:space-y-4">
-          <header className="w-full h-16 flex items-center justify-between">
-            <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
-              <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
-                <ProfileMenu
-                  username={username}
-                  email={email}
-                  logout={logout}
-                />
+            <div className="flex flex-1 flex-col bg-white pb-24 dark:bg-gray-700 overflow-y-auto scrollbar [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400">
+              <div className="flex items-center justify-center pt-6">
+                <img
+                  className={classNames(
+                    'h-auto transition-scale duration-100',
+                    {
+                      'w-12 ml-1': isCollapsed,
+                      'w-24': !isCollapsed,
+                    }
+                  )}
+                  alt="trento project logo"
+                  src={TrentoLogo}
+                />{' '}
+              </div>
+              <nav className="mt-6 flex flex-col flex-1">
+                <div>
+                  {navigation.map((item) => (
+                    <ForbiddenGuard
+                      key={item.name}
+                      disabled={!item.permittedFor}
+                      permitted={item.permittedFor}
+                    >
+                      <NavLink
+                        className={({ isActive }) =>
+                          `tn-menu-item w-full text-gray-800 dark:text-white flex items-center my-2 transition-colors duration-200 justify-start border-l-4 ${
+                            isActive
+                              ? 'border-l-4 border-jungle-green-500'
+                              : 'border-white hover:border-l-4 hover:border-jungle-green-300'
+                          }
+                        ${isCollapsed ? 'justify-center py-2' : 'pl-6 p-2'}`
+                        }
+                        to={item.href}
+                        end={item.href === '/'}
+                        title={item.name}
+                      >
+                        <span className="text-left">
+                          <item.icon />
+                        </span>
+                        <span
+                          className={classNames('mx-2 text-sm font-normal', {
+                            hidden: isCollapsed,
+                          })}
+                        >
+                          {item.name}
+                        </span>
+                      </NavLink>
+                    </ForbiddenGuard>
+                  ))}
+                </div>
+              </nav>
+              <div className="flex justify-center">
+                <a
+                  href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
+                  target="_blank"
+                  className={classNames(
+                    'flex w-max gap-2 items-center text-green-800 font-bold bg-jungle-green-100 py-2 rounded-md hover:opacity-75',
+                    {
+                      'px-2 ml-1': isCollapsed,
+                      'px-4': !isCollapsed,
+                    }
+                  )}
+                  rel="noreferrer"
+                >
+                  <EOS_MENU_BOOK className="fill-green-800" />
+                  {!isCollapsed ? <span>Read the Trento docs</span> : null}
+                </a>
               </div>
             </div>
-          </header>
-          <div
-            className={classNames('pb-24 inset-x-0 bottom-0 px-4 md:px-6', {
-              'ml-64': !isCollapsed,
-              'ml-16': isCollapsed,
-            })}
-          >
-            <div>
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-                <div className="py-4">
-                  <Outlet />
+          </div>
+          <div className="flex flex-col w-full md:space-y-4">
+            <header className="w-full h-16 flex items-center justify-between">
+              <div className="relative flex flex-col justify-end h-full px-8 md:w-full">
+                <div className="relative p-5 flex items-center w-full space-x-8 justify-end mr-20">
+                  <ProfileMenu
+                    username={username}
+                    email={email}
+                    logout={logout}
+                  />
+                </div>
+              </div>
+            </header>
+            <div
+              className={classNames('pb-24 inset-x-0 bottom-0 px-4 md:px-6', {
+                'ml-64': !isCollapsed,
+                'ml-16': isCollapsed,
+              })}
+            >
+              <div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                  <div className="py-4">
+                    <Outlet />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <footer className="p-4 z-30 relative bottom-0 w-full bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
+            <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+              © 2020-2025 SUSE LLC
+            </span>
+            <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
+              This tool is free software released under the Apache License,
+              Version 2.0
+            </span>
+            <AIAssistant />
+          </footer>
         </div>
-        <footer className="p-4 z-30 relative bottom-0 w-full bg-white shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800">
-          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-            © 2020-2025 SUSE LLC
-          </span>
-          <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-            This tool is free software released under the Apache License,
-            Version 2.0
-          </span>
-          <AIAssistant />
-        </footer>
-      </div>
-    </main>
+      </main>
+    </AIAssistantProvider>
   );
 }
 

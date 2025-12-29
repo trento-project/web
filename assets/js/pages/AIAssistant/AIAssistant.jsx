@@ -1,12 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { EOS_CHAT, EOS_KEYBOARD_ARROW_DOWN } from 'eos-icons-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Button from '@common/Button';
+import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
 import { getFromConfig } from '@lib/config';
 
 function AIAssistant() {
+  const { context } = useAIAssistantContext();
+  const fallbackContext = useMemo(() => {
+    return {
+      page: 'Global Overview',
+      description: 'Derived context when page-specific data is unavailable',
+      data: {
+        totalSystems: 0,
+        totalHosts: 0,
+        totalDatabases: 0,
+        note: 'No systems, hosts, or databases found.',
+      },
+    };
+  }, []);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [ws, setWs] = useState(null);
@@ -158,6 +172,7 @@ function AIAssistant() {
     if (inputValue && ws && isConnected) {
       const messagePayload = {
         message: inputValue,
+        context: context || fallbackContext,
       };
       ws.send(JSON.stringify(messagePayload));
       setMessages((prev) => [...prev, { type: 'user', text: inputValue }]);
