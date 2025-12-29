@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
+
+import useAIContext from '@hooks/useAIContext';
 
 import { getFromConfig } from '@lib/config';
 import { APPLICATION_TYPE } from '@lib/model/sapSystems';
@@ -33,6 +35,37 @@ function SapSystemDetails() {
   const dispatch = useDispatch();
 
   const runningOperations = useSelector(getRunningOperationsList);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(() => {
+    if (!sapSystem) return null;
+    return {
+      page: 'SAP System Details',
+      description: `Details for SAP system ${sapSystem.sid || id}`,
+      data: {
+        system: {
+          id: sapSystem.id,
+          sid: sapSystem.sid,
+          tenant: sapSystem.tenant,
+          health: sapSystem.health,
+          applicationInstances: sapSystem.application_instances?.length || 0,
+          databaseInstances: sapSystem.database_instances?.length || 0,
+        },
+        databases:
+          sapSystem.databases?.map((db) => ({
+            id: db.id,
+            sid: db.sid,
+            health: db.health,
+          })) || [],
+        hosts:
+          sapSystem.hosts?.map((h) => ({
+            hostname: h.hostname,
+            health: h.health,
+          })) || [],
+      },
+    };
+  }, [sapSystem, id]);
+  useAIContext(aiContext);
 
   useEffect(() => {
     operationsEnabled && dispatch(updateRunningOperations());

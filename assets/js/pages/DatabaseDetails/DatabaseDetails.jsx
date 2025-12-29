@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -24,6 +24,8 @@ import {
   getDatabaseSiteOperations,
 } from './databaseOperations';
 
+import useAIContext from '@hooks/useAIContext';
+
 const operationsEnabled = getFromConfig('operationsEnabled');
 
 function DatabaseDetails() {
@@ -39,6 +41,38 @@ function DatabaseDetails() {
   useEffect(() => {
     operationsEnabled && dispatch(updateRunningOperations());
   }, [dispatch]);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(() => {
+    if (!database) return null;
+    return {
+      page: 'Database Details',
+      description: `HANA database ${database.sid}`,
+      data: {
+        database: {
+          id: database.id,
+          sid: database.sid,
+          health: database.health,
+          systemReplication: (database.instances || []).some(
+            (i) => i.system_replication
+          )
+            ? 'enabled'
+            : 'disabled',
+          instancesCount: (database.instances || []).length,
+        },
+        hosts: {
+          count: (database.hosts || []).length,
+          names: (database.hosts || []).map((h) => h.hostname),
+          clusters: Array.from(
+            new Set(
+              (database.hosts || []).map((h) => h.cluster?.name).filter(Boolean)
+            )
+          ),
+        },
+      },
+    };
+  }, [database]);
+  useAIContext(aiContext);
 
   if (!database) {
     return <div>Not Found</div>;

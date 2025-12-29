@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 
 import BackButton from '@common/BackButton';
 import PageHeader from '@common/PageHeader';
 import NotFound from '@pages/NotFound';
+import useAIContext from '@hooks/useAIContext';
 
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 import { listAbilities } from '@lib/api/abilities';
@@ -36,6 +37,21 @@ function CreateUserPage() {
   useEffect(() => {
     fetchAbilities(setAbilities);
   }, []);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Create User',
+      description: 'Form for creating a new user.',
+      data: {
+        saving: savingState,
+        errors: errorsState,
+        availableAbilities: abilitiesState,
+      },
+    }),
+    [savingState, errorsState, abilitiesState]
+  );
+  useAIContext(aiContext);
 
   const onCreateUser = (payload) => {
     setSaving(true);

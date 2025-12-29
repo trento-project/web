@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 
 import LoadingBox from '@common/LoadingBox';
+import useAIContext from '@hooks/useAIContext';
 
 import { TARGET_HOST } from '@lib/model';
 
@@ -41,6 +42,23 @@ function HostSettingsPage() {
   } = useChecksSelection();
 
   const saving = useSelector(isSaving(TARGET_HOST, hostID));
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Host Settings',
+      description: `Settings and checks selection for host ${host?.hostname || 'unknown'}.`,
+      data: {
+        hostID,
+        hostname: host?.hostname,
+        saving,
+        customizationStatus,
+      },
+    }),
+    [hostID, host?.hostname, saving, customizationStatus]
+  );
+
+  useAIContext(aiContext);
 
   useEffect(() => {
     setSelection(selectedChecks);
