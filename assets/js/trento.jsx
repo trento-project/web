@@ -41,6 +41,7 @@ import SomethingWentWrong from '@pages/SomethingWentWrong';
 import UsersPage, { CreateUserPage, EditUserPage } from '@pages/Users';
 import ProfilePage from '@pages/Profile';
 import ActivityLogPage from '@pages/ActivityLogPage';
+import ChatPage from '@pages/ChatPage';
 import SSOCallback from '@pages/SSOCallback';
 
 import { profile } from '@lib/auth';
@@ -127,6 +128,7 @@ const createRouter = ({ getUser }) =>
                 element={<AdvisoryDetailsPage />}
               />
               <Route path="activity_log" element={<ActivityLogPage />} />
+              <Route path="chat" element={<ChatPage />} />
               <Route
                 element={
                   <ForbiddenGuard permitted={['all:users']} outletMode />

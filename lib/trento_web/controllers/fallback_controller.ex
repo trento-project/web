@@ -277,6 +277,27 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"422", reason: "Activity Log Settings must be set up before being updated.")
   end
 
+  def call(conn, {:error, :chat_timeout}) do
+    conn
+    |> put_status(:request_timeout)
+    |> put_view(json: ErrorJSON)
+    |> render(:"408", reason: "Chat request timed out. Please try again.")
+  end
+
+  def call(conn, {:error, :chat_processing_error}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Unable to process chat request. AI service may be unavailable.")
+  end
+
+  def call(conn, {:error, :ollama_unavailable}) do
+    conn
+    |> put_status(:service_unavailable)
+    |> put_view(json: ErrorJSON)
+    |> render(:"503", reason: "Ollama LLM service is unavailable.")
+  end
+
   def call(conn, {:error, [error | _]}), do: call(conn, {:error, error})
 
   def call(conn, {:error, _}) do

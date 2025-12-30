@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
 
   def ram_total(host_id, from, to) do
     query = "node_memory_MemTotal_bytes{agentID=\"#{host_id}\"}"
-
+6
     perform_query_range(query, from, to)
   end
 

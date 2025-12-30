@@ -131,6 +131,25 @@ if config_env() in [:prod, :demo] do
   config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
     url: System.get_env("PROMETHEUS_URL") || "http://localhost:9090"
 
+  # Ollama LLM configuration
+  ollama_url = System.get_env("OLLAMA_URL", "http://localhost:11434")
+
+  config :trento, Trento.Infrastructure.Ollama.OllamaApi,
+    url: ollama_url
+
+  ollama_model = System.get_env("OLLAMA_MODEL", "qwen2.5:7b")
+  ollama_timeout = String.to_integer(System.get_env("OLLAMA_TIMEOUT", "30000"))
+
+  config :trento, Trento.Chat.ChatService,
+    default_model: ollama_model,
+    timeout: ollama_timeout
+
+  # MCP Server configuration
+  mcp_url = System.get_env("TRENTO_MCP_URL", "http://localhost:5000")
+
+  config :trento, Trento.Infrastructure.Mcp.McpClient,
+    url: mcp_url
+
   config :trento, Trento.Charts, enabled: System.get_env("CHARTS_ENABLED", "true") == "true"
 
   # ## Using releases

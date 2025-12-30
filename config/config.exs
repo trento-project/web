@@ -211,6 +211,25 @@ config :trento, Trento.Infrastructure.Prometheus,
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
 
+# Ollama LLM configuration
+config :trento, Trento.Infrastructure.Ollama,
+  adapter: Trento.Infrastructure.Ollama.OllamaApi
+
+config :trento, Trento.Infrastructure.Ollama.OllamaApi,
+  url: "http://localhost:11434"
+
+# MCP Server configuration
+config :trento, Trento.Infrastructure.Mcp,
+  adapter: Trento.Infrastructure.Mcp.McpClient
+
+config :trento, Trento.Infrastructure.Mcp.McpClient,
+  url: "http://localhost:5000"
+
+# Chat service configuration
+config :trento, Trento.Chat.ChatService,
+  default_model: "qwen2.5:7b",
+  timeout: 30_000
+
 config :trento, Trento.Charts,
   enabled: true,
   host_data_fetcher: Trento.Infrastructure.Prometheus.PrometheusApi
@@ -223,9 +242,9 @@ config :trento, :jwt_authentication,
   app_audience: "trento_app",
   api_key_audience: "trento_api_key",
   # Seconds, 3 minutes
-  access_token_expiration: 180,
+  access_token_expiration: 180000,
   # Seconds, 6 hours
-  refresh_token_expiration: 21600
+  refresh_token_expiration: 2160000
 
 config :trento,
   api_key_authentication_enabled: true,

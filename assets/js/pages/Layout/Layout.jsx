@@ -20,6 +20,7 @@ import {
   EOS_SUPERVISED_USER_CIRCLE_OUTLINED,
   EOS_ASSIGNMENT,
   EOS_MENU_BOOK,
+  EOS_CHAT,
 } from 'eos-icons-react';
 
 import TrentoLogo from '@static/trento-logo-stacked.svg';
@@ -66,6 +67,11 @@ const navigation = [
     name: 'Activity Log',
     href: '/activity_log?severity=info&severity=warning&severity=critical',
     icon: EOS_ASSIGNMENT,
+  },
+  {
+    name: 'AI Chat',
+    href: '/chat',
+    icon: EOS_CHAT,
   },
   {
     name: 'Settings',

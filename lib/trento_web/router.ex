@@ -242,6 +242,8 @@ defmodule TrentoWeb.Router do
         get "/hosts/:id/cpu", ChartController, :host_cpu
         get "/hosts/:id/memory", ChartController, :host_memory
       end
+
+      post "/chat", ChatController, :chat
     end
 
     scope "/v2", TrentoWeb.V2 do

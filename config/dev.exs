@@ -160,6 +160,26 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
+# Ollama/MCP configuration for development
+# Use mock adapters if Ollama/MCP services are not running
+# Uncomment the lines below to use mocks:
+# config :trento, Trento.Infrastructure.Ollama,
+#   adapter: Trento.Infrastructure.Ollama.MockOllamaApi
+#
+# config :trento, Trento.Infrastructure.Mcp,
+#   adapter: Trento.Infrastructure.Mcp.MockMcpClient
+
+# Override URLs for dev (uses real services by default)
+config :trento, Trento.Infrastructure.Ollama.OllamaApi, url: "http://localhost:11434"
+
+config :trento, Trento.Infrastructure.Mcp.McpClient, url: "http://localhost:5000"
+
+# Ollama timeout for local development (2 minutes for slower machines)
+# Can be overridden with OLLAMA_TIMEOUT env var (in milliseconds)
+config :trento, Trento.Chat.ChatService,
+  default_model: "qwen2.5:7b8k",
+  timeout: 120_000
+
 config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
   relevant_patches_system_ids: [
     # vmdrbddev01
@@ -177,7 +197,8 @@ config :phoenix, :stacktrace_depth, 20
 config :phoenix, :plug_init_mode, :runtime
 
 config :trento,
-  api_key_authentication_enabled: false
+  api_key_authentication_enabled: false,
+  jwt_authentication_enabled: false
 
 config :joken,
   access_token_signer: "s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k",
