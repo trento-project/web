@@ -58,10 +58,10 @@ defmodule TrentoWeb.Endpoint do
   plug TrentoWeb.Router
 
   # Sets the phoenix script_name from x-forwarded-prefix header for subpath support.
-  defp set_script_name(conn, _opts) do
+  def set_script_name(conn, _opts) do
     case Plug.Conn.get_req_header(conn, "x-forwarded-prefix") do
       [header_value] when is_binary(header_value) and byte_size(header_value) > 0 ->
-        # Convert "/trento" to ["trento"]
+        # Convert "/trento/foo/" to ["trento","foo"]
         script_name =
           header_value
           |> String.trim_leading("/")
