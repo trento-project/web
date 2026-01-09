@@ -39,6 +39,48 @@ describe('Guard component', () => {
     expect(window.location.search).toEqual('?request_path=%2F');
   });
 
+  it('stripBasePath helper works as expected', () => {
+    const { stripBasePath } = require('./Guard');
+
+    expect(stripBasePath('/trento', '/trento')).toEqual('/');
+    expect(stripBasePath('/trento/other', '/trento')).toEqual('/other');
+    expect(stripBasePath('/something', '/trento')).toEqual('/something');
+    expect(stripBasePath('/asd', undefined)).toEqual('/asd');
+  });
+
+  it('should strip basePath when pathname equals basePath', async () => {
+    const badGetUser = () => Promise.reject(Error('the reason is you'));
+    const [StatefulGuard] = withState(
+      <Routes>
+        <Route path="/session/new" element={<div>Login</div>} />
+        <Route
+          element={<Guard redirectPath="/session/new" getUser={badGetUser} />}
+        >
+          <Route
+            path="/"
+            element={<div data-testid="inner-component"> test </div>}
+          />
+        </Route>
+      </Routes>,
+      {
+        user: {
+          loggedIn: false,
+        },
+      }
+    );
+
+    global.window.basePath = '/trento';
+
+    renderWithRouter(StatefulGuard, '/trento');
+
+    await act(() => {});
+
+    expect(window.location.pathname).toEqual('/session/new');
+    expect(window.location.search).toEqual('?request_path=%2F');
+
+    delete global.window.basePath;
+  });
+
   it('should redirect to the redirectPath prop when the user cannot be loaded', async () => {
     const badGetUser = () => Promise.reject(Error('the reason is you'));
     const [StatefulGuard] = withState(

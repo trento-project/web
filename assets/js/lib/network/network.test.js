@@ -185,4 +185,23 @@ describe('networkClient', () => {
       }
     });
   });
+
+  describe('networkClient basePath support', () => {
+    beforeEach(() => {
+      jest.resetModules();
+      // ensure clean window
+      global.window = global.window || {};
+    });
+
+    afterEach(() => {
+      delete global.window.basePath;
+    });
+
+    it('should include window.basePath in default baseURL when set before import', async () => {
+      global.window.basePath = '/trento';
+      const { networkClient: newNetworkClient } = await import('./index');
+
+      expect(newNetworkClient.defaults.baseURL).toBe('/trento/api/v1');
+    });
+  });
 });

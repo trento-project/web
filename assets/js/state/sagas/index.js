@@ -92,7 +92,7 @@ function* loadSapSystemsHealthSummary() {
   yield put(stopHealthSummaryLoading());
 }
 
-function* initialDataFetch() {
+export function* initialDataFetch() {
   yield loadSapSystemsHealthSummary();
 
   yield fork(checkApiKeyExpiration);

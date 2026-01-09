@@ -56,6 +56,22 @@ describe('user actions saga', () => {
     expect(getAccessTokenFromStore()).toEqual(null);
     expect(getRefreshTokenFromStore()).toEqual(null);
   });
+
+  it('getLogoutPath should include basePath when present', () => {
+    global.window.basePath = '/trento';
+    const { getLogoutPath } = require('./user');
+
+    expect(getLogoutPath()).toEqual('/trento/session/new');
+
+    delete global.window.basePath;
+  });
+
+  it('getLogoutPath should return /session/new when basePath is not present', () => {
+    delete global.window.basePath;
+    const { getLogoutPath } = require('./user');
+
+    expect(getLogoutPath()).toEqual('/session/new');
+  });
 });
 
 describe('user login saga', () => {

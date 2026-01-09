@@ -108,11 +108,12 @@ export function ClusterDetailsPage() {
   if (!cluster) {
     return <div>Loading...</div>;
   }
-  const hasSelectedChecks = cluster.selected_checks.length > 0;
 
   if (!isValidClusterType(type)) {
     return <div>Unknown cluster type</div>;
   }
+
+  const hasSelectedChecks = cluster.selected_checks?.length ?? 0 > 0;
 
   return (
     <ClusterDetails
