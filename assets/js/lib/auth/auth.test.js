@@ -1,11 +1,5 @@
-import {
-  authClient,
-  clearCredentialsFromStore,
-  profile
-} from '@lib/auth';
-import {
-  networkClient
-} from '@lib/network';
+import { authClient, clearCredentialsFromStore, profile } from '@lib/auth';
+import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
 
 const axiosMock = new MockAdapter(networkClient);
@@ -40,7 +34,6 @@ describe('auth module', () => {
 
     expect(data).toEqual({ user: 'network' });
   });
-
 
   it('includes window.basePath in authClient baseURL when set before import', async () => {
     jest.resetModules();

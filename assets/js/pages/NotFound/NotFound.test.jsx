@@ -46,8 +46,12 @@ describe('NotFound', () => {
 
     expect(screen.getByText('Go back home')).toBeTruthy();
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => fireEvent.click(screen.getByText('Go back home'))).not.toThrow();
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(() =>
+      fireEvent.click(screen.getByText('Go back home'))
+    ).not.toThrow();
     consoleErrorSpy.mockRestore();
 
     delete global.window.basePath;

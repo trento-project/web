@@ -70,8 +70,7 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
 
       versioned_path ->
         # Redirect using the helper
-        redirect(conn, versioned_path)
-        |> halt()
+        halt(redirect(conn, versioned_path))
     end
   end
 

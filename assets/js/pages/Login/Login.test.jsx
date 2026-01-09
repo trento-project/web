@@ -58,7 +58,11 @@ describe('Login component', () => {
     const rr = require('react-router');
     const navigateMock = jest.fn();
     jest.spyOn(rr, 'useNavigate').mockImplementation(() => navigateMock);
-    jest.spyOn(rr, 'useSearchParams').mockImplementation(() => [new URLSearchParams('?request_path=/something')]);
+    jest
+      .spyOn(rr, 'useSearchParams')
+      .mockImplementation(() => [
+        new URLSearchParams('?request_path=/something'),
+      ]);
 
     const [StatefulLogin] = withState(<Login />, {
       user: {
