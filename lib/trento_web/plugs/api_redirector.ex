@@ -8,6 +8,9 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
       only if the /api/<latest version>/test exists, otherwise, it will continue with the next available version.
       If the route doesn't match with any of the available versions, it returns a not found error.
 
+    In deployments where Trento is served under a subpath (e.g. /trento), the plug strips the script_name (if present) and the initial "api" segment,
+    it later re-prepends the prefix when building the Location header for the redirect (so the client is redirected to /trento/api/vX)
+
     router and available_api_versions options should be provided.
 
     `available_api_versions` option should be a list with the available version from newest to oldest.
@@ -35,9 +38,28 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   end
 
   @impl true
-  def call(%Plug.Conn{path_info: [_ | path_parts], method: method} = conn, opts) do
+  def call(
+        %Plug.Conn{path_info: path_info, method: method, script_name: script_name} = conn,
+        opts
+      ) do
     router = Keyword.get(opts, :router)
     available_api_versions = Keyword.get(opts, :available_api_versions)
+
+    # Normalize path by removing the script_name prefix when present.
+    path_without_script =
+      if script_name != [] and Enum.take(path_info, length(script_name)) == script_name do
+        Enum.drop(path_info, length(script_name))
+      else
+        path_info
+      end
+
+    # Drop the leading "api" segment if present; otherwise drop the first segment as a fallback
+    path_parts =
+      case path_without_script do
+        ["api" | rest] -> rest
+        [_ | rest] -> rest
+        [] -> []
+      end
 
     case find_versioned_path(router, available_api_versions, path_parts, method) do
       nil ->
@@ -47,9 +69,8 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
         |> halt()
 
       versioned_path ->
-        conn
-        |> put_status(307)
-        |> redirect(versioned_path)
+        # Redirect using the helper
+        redirect(conn, versioned_path)
         |> halt()
     end
   end
@@ -69,8 +90,14 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
 
   # Prepend script_name for subpath support and perform a manual redirect.
   defp redirect(conn, to) do
-    script_name = Enum.join(conn.script_name, "")
-    location = script_name <> maybe_add_query_string(to, conn.query_string)
+    # check if conn.path_info starts with conn.script_name
+    script_applied =
+      conn.script_name != [] and
+        Enum.take(conn.path_info, length(conn.script_name)) == conn.script_name
+
+    script_prefix = if script_applied, do: "/" <> Enum.join(conn.script_name, "/"), else: ""
+
+    location = script_prefix <> maybe_add_query_string(to, conn.query_string)
 
     conn
     # Using Temporary Redirect to preserve the original API method
