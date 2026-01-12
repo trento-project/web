@@ -12,7 +12,7 @@ export const sapSystemsListSlice = createSlice({
   name: 'sapSystemsList',
   initialState,
   reducers: {
-    // Here the payload comes from /api/sap_systems API when the application loads
+    // Here the payload comes from /api/v1/sap_systems API when the application loads
     // Note that each sap system item has an application_instances
     setSapSystems: (state, { payload: sapSystems }) => {
       state.sapSystems = sapSystems;
