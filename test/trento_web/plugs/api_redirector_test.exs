@@ -154,6 +154,18 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
       assert ["/trento/api/v2/test"] == location_header
     end
 
+    test "should redirect correctly when path has a subpath but `script_name` is not set",
+         %{conn: conn} do
+      conn =
+        conn
+        |> Map.put(:path_info, ["trento", "api", "test"])
+        |> Map.put(:method, "POST")
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
+
+      assert 307 == conn.status
+      assert ["/api/v2/test"] == get_resp_header(conn, "location")
+    end
+
     test "should redirect to the correctly versioned path with a query string when served under a subpath",
          %{conn: conn} do
       conn =
@@ -277,6 +289,32 @@ defmodule TrentoWeb.Plugs.ApiRedirectorTest do
                  %{"title" => "Not Found", "detail" => "The requested resource cannot be found."}
                ]
              } == resp
+    end
+
+    test "should send a proper redirect response with status and location header", %{conn: conn} do
+      conn =
+        conn
+        |> Map.put(:path_info, ["api", "test"])
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
+
+      assert conn.status == 307
+      assert conn.state == :sent
+      assert "" == conn.resp_body
+      assert ["/api/v2/test"] == get_resp_header(conn, "location")
+    end
+
+    test "should send a proper redirect response when served under a subpath", %{conn: conn} do
+      conn =
+        conn
+        |> Map.put(:path_info, ["trento", "api", "test"])
+        |> Map.put(:script_name, ["trento"])
+        |> Map.put(:request_path, "/trento/api/test")
+        |> ApiRedirector.call(available_api_versions: ["v2", "v1"], router: FoundRouter)
+
+      assert conn.status == 307
+      assert conn.state == :sent
+      assert "" == conn.resp_body
+      assert ["/trento/api/v2/test"] == get_resp_header(conn, "location")
     end
   end
 end

@@ -53,12 +53,18 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
         path_info
       end
 
-    # Drop the leading "api" segment if present; otherwise drop the first segment as a fallback
+    # Find the first "api" segment and use the tail after it.
+    # Otherwise, fall back to dropping the first segment.
     path_parts =
-      case path_without_script do
-        ["api" | rest] -> rest
-        [_ | rest] -> rest
-        [] -> []
+      case Enum.find_index(path_without_script, &(&1 == "api")) do
+        nil ->
+          case path_without_script do
+            [] -> []
+            [_ | rest] -> rest
+          end
+
+        idx ->
+          Enum.drop(path_without_script, idx + 1)
       end
 
     case find_versioned_path(router, available_api_versions, path_parts, method) do
@@ -96,12 +102,23 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
 
     script_prefix = if script_applied, do: "/" <> Enum.join(conn.script_name, "/"), else: ""
 
-    location = script_prefix <> maybe_add_query_string(to, conn.query_string)
+    # Preserve trailing slash from the original request path
+    has_trailing_slash =
+      conn.request_path not in [nil, "/"] and String.ends_with?(conn.request_path, "/")
+
+    normalized_to =
+      case {has_trailing_slash, String.ends_with?(to, "/")} do
+        {true, true} -> to
+        {true, false} -> to <> "/"
+        {false, _} -> String.trim_trailing(to, "/")
+      end
+
+    location = script_prefix <> maybe_add_query_string(normalized_to, conn.query_string)
 
     conn
     # Using Temporary Redirect to preserve the original API method
-    |> put_status(307)
     |> put_resp_header("location", location)
+    |> send_resp(307, "")
   end
 
   defp route_exists?(router, path, verb) do
