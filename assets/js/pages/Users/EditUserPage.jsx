@@ -110,6 +110,7 @@ function EditUserPage() {
     created_at: createdAt,
     updated_at: updatedAt,
     totp_enabled_at: totpEnabledAt,
+    last_login_at: lastLoginAt,
     analytics_enabled: analyticsEnabled,
   } = userState;
 
@@ -137,6 +138,7 @@ function EditUserPage() {
         createdAt={createdAt}
         updatedAt={updatedAt}
         totpEnabledAt={totpEnabledAt}
+        lastLoginAt={lastLoginAt}
         analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
         saveEnabled={!isAdmin(userState)}

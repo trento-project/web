@@ -488,6 +488,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Date of TOTP enrollment.",
             nullable: true,
             example: "2024-01-15T09:00:00Z"
+          },
+          last_login_at: %OpenApiSpex.Schema{
+            type: :string,
+            format: :"date-time",
+            description:
+              "Date of user last login. It is null if the user hasn't logged in yet or an external IDP is configured.",
+            nullable: true,
+            example: "2024-01-15T09:00:00Z"
           }
         },
         required: [:username, :id, :fullname, :email, :created_at, :personal_access_tokens],
@@ -503,7 +511,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           created_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T10:30:00Z",
           analytics_enabled: false,
-          totp_enabled_at: "2024-01-15T09:00:00Z"
+          totp_enabled_at: "2024-01-15T09:00:00Z",
+          last_login_at: "2024-01-15T09:00:00Z"
         }
       },
       struct?: false
@@ -530,6 +539,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             password_change_requested_at: "2024-01-14T08:00:00Z",
             created_at: "2024-01-15T09:00:00Z",
             updated_at: "2024-01-15T10:30:00Z",
+            last_login_at: "2024-01-15T09:00:00Z",
             abilities: [],
             personal_access_tokens: []
           }
