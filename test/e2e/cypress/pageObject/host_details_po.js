@@ -382,12 +382,8 @@ export const validateSaptuneStatus = (installationStatus) => {
   const { packageVersion, configuredVersion, tuningStatus } = installationData;
   cy.get(saptuneSummaryLabel).should('be.visible');
   cy.get(saptuneInstallationStatus).should('have.text', packageVersion);
-  cy.get(saptuneConfiguredVersion).then((configuredVersionElement) =>
-    cy.wrap(configuredVersionElement).should('have.text', configuredVersion)
-  );
-  cy.get(saptuneTuningLabel).then((tuningElement) =>
-    cy.wrap(tuningElement).should('have.text', tuningStatus)
-  );
+  cy.get(saptuneConfiguredVersion).should('have.text', configuredVersion);
+  cy.get(saptuneTuningLabel).should('have.text', tuningStatus);
 };
 
 export const notRecognizedProviderIsDisplayed = () =>
