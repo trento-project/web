@@ -81,7 +81,7 @@ function SaptuneSolutionOperationModal({
     <OperationModal
       title={title}
       description="Select Saptune tuning solution"
-      operationText="Saptune solution"
+      operationText={title}
       applyDisabled={
         !checked || solution === NOT_SELECTED || solution === currentlyApplied
       }
