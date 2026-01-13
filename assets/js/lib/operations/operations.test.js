@@ -9,7 +9,7 @@ import {
   getOperationTitle,
 } from '.';
 
-describe('operationsxxx', () => {
+describe('operations', () => {
   it.each`
     operation                       | label
     ${'unknown'}                    | ${'unknown'}
@@ -98,20 +98,12 @@ describe('operationsxxx', () => {
     }
   );
 
-  it.each([
-    {
-      operation: 'unknown',
-      message: null,
-    },
-    {
-      operation: 'saptune_solution_apply',
-      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-    },
-    {
-      operation: 'saptune_solution_change',
-      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-    },
-  ])(
+  it.each`
+    operation                    | message
+    ${'unknown'}                 | ${null}
+    ${'saptune_solution_apply'}  | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
+    ${'saptune_solution_change'} | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
+  `(
     `should return the operation $operation forbidden message`,
     ({ operation, message }) => {
       expect(getOperationForbiddenMessage(operation)).toBe(message);
