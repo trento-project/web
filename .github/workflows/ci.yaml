@@ -198,7 +198,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   codespell:
     name: Check common misspellings
@@ -478,7 +478,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
-        run: cd test/e2e && npm install
+        run: cd test/e2e && npm ci
 
   test-e2e:
     name: E2E Tests
