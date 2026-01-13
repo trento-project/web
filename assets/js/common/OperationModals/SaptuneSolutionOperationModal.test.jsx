@@ -2,13 +2,21 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  SAPTUNE_SOLUTION_CHANGE,
+} from '@lib/operations';
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
 describe('SaptuneSolutionOperationModal', () => {
-  it.each(['Apply Saptune Solution', 'Change Saptune Solution'])(
+  it.each`
+    operation                  | title
+    ${SAPTUNE_SOLUTION_APPLY}  | ${'Apply Saptune solution'}
+    ${SAPTUNE_SOLUTION_CHANGE} | ${'Change Saptune solution'}
+  `(
     'should show correct title and description',
-    async (title) => {
-      render(<SaptuneSolutionOperationModal isOpen title={title} />);
+    async ({ operation, title }) => {
+      render(<SaptuneSolutionOperationModal operation={operation} isOpen />);
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(
@@ -20,7 +28,12 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should forbid selecting a solution until accepting liability disclaimer', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+      />
+    );
 
     expect(screen.getByText('Apply')).toBeDisabled();
     expect(screen.getByText('Select a saptune solution')).toBeDisabled();
@@ -34,7 +47,13 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should forbid applying a solution until one is actually selected', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isAppRunning
+      />
+    );
 
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
@@ -47,7 +66,13 @@ describe('SaptuneSolutionOperationModal', () => {
     const user = userEvent.setup();
 
     const { rerender } = await act(async () =>
-      render(<SaptuneSolutionOperationModal isOpen isAppRunning />)
+      render(
+        <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
+          isOpen
+          isAppRunning
+        />
+      )
     );
 
     await user.click(screen.getByRole('checkbox'));
@@ -57,7 +82,13 @@ describe('SaptuneSolutionOperationModal', () => {
     await user.click(screen.getByText('Cancel'));
 
     await act(async () =>
-      rerender(<SaptuneSolutionOperationModal isOpen isAppRunning />)
+      rerender(
+        <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
+          isOpen
+          isAppRunning
+        />
+      )
     );
 
     await waitFor(() => {
@@ -73,6 +104,7 @@ describe('SaptuneSolutionOperationModal', () => {
     await act(async () =>
       render(
         <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
           isOpen
           isAppRunning
           onCancel={onCancel}
@@ -91,6 +123,7 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
         isOpen
         isHanaRunning
         onRequest={mockOnRequest}
@@ -114,7 +147,13 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render Application solutions', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isAppRunning
+      />
+    );
 
     await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
@@ -126,7 +165,14 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render HANA and Application solutions', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isHanaRunning isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isHanaRunning
+        isAppRunning
+      />
+    );
 
     await waitFor(async () => {
       await user.click(screen.getByRole('checkbox'));
@@ -142,6 +188,7 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
         isOpen
         isHanaRunning
         currentlyApplied="HANA"
@@ -163,6 +210,7 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
         isOpen
         isHanaRunning
         currentlyApplied="HANA"

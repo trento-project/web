@@ -54,6 +54,8 @@ const OPERATION_TITLES = {
   [SAP_INSTANCE_STOP]: 'Stop SAP instance',
   [SAP_SYSTEM_START]: 'Start SAP system',
   [SAP_SYSTEM_STOP]: 'Stop SAP system',
+  [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
+  [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
 };
 
 const OPERATION_INTERNAL_NAMES = {

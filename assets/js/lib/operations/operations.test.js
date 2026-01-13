@@ -40,6 +40,8 @@ describe('operations', () => {
     ${'sap_system_stop'}            | ${'Stop SAP system'}
     ${'sap_instance_start'}         | ${'Start SAP instance'}
     ${'sap_instance_stop'}          | ${'Stop SAP instance'}
+    ${'saptune_solution_apply'}     | ${'Apply Saptune solution'}
+    ${'saptune_solution_change'}    | ${'Change Saptune solution'}
     ${'pacemaker_enable'}           | ${'Enable Pacemaker'}
     ${'pacemaker_disable'}          | ${'Disable Pacemaker'}
     ${'cluster_maintenance_change'} | ${'Maintenance change'}
