@@ -62,6 +62,19 @@ function Users({
           <span>{format(parseISO(item.created_at), 'MMMM dd, yyyy')}</span>
         ),
       },
+      ...(!singleSignOnEnabled
+        ? [
+            {
+              title: 'Last Login',
+              key: 'last_login_at',
+              render: (content) => (
+                <span>
+                  {content ? format(parseISO(content), 'MMMM dd, yyyy') : '-'}
+                </span>
+              ),
+            },
+          ]
+        : []),
       {
         title: 'Actions',
         key: 'actions',

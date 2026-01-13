@@ -458,4 +458,28 @@ describe('Users', () => {
         });
     });
   });
+
+  describe('Last login', () => {
+    beforeEach(() => {
+      usersPage.apiDeleteAllUsers();
+      usersPage.apiCreateUser();
+    });
+
+    it('should have an empty last login field if the user has not logged in yet', () => {
+      usersPage.visit();
+      usersPage.lastLoginShouldBeEmpty();
+      usersPage.clickNewUser();
+      usersPage.lastLoginUserViewShouldBeEmpty();
+    });
+
+    it('should update the last login field with the current time when the user logs in', () => {
+      // Login with the new user without changing current session
+      usersPage.apiLogin(usersPage.USER.username, usersPage.PASSWORD);
+
+      usersPage.visit();
+      usersPage.lastLoginShouldNotBeEmpty();
+      usersPage.clickNewUser();
+      usersPage.lastLoginUserViewShouldHaveUpdatedDate();
+    });
+  });
 });

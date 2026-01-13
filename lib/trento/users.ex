@@ -237,6 +237,12 @@ defmodule Trento.Users do
     end
   end
 
+  def update_last_login_at(%User{} = user) do
+    user
+    |> User.last_login_changeset(%{last_login_at: DateTime.utc_now()})
+    |> Repo.update()
+  end
+
   defp admin_username, do: Application.fetch_env!(:trento, :admin_user)
 
   defp maybe_set_locked_at(%{enabled: false} = attrs) do
