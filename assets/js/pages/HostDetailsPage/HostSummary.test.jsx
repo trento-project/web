@@ -4,6 +4,8 @@ import { renderWithRouter } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
+import { format } from 'date-fns';
+import { utc } from '@date-fns/utc';
 import { clusterFactory } from '@lib/test-utils/factories';
 import HostSummary from './HostSummary';
 
@@ -71,5 +73,69 @@ describe('HostSummary', () => {
         expect(tooltipContentDiv).toHaveTextContent(ipAddress);
       })
     );
+  });
+
+  it('should display last boot timestamp in GMT format', () => {
+    const cluster = clusterFactory.build();
+    const agentVersion = faker.system.semver();
+    const ipAddresses = [faker.internet.ipv4()];
+    const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
+    const lastBootTimestamp = '2024-01-10T07:30:00Z';
+    const expectedLastBoot = `${format(
+      new Date(lastBootTimestamp),
+      'dd MMM yyyy, HH:mm:ss',
+      { in: utc }
+    )} GMT`;
+
+    renderWithRouter(
+      <HostSummary
+        arch={arch}
+        agentVersion={agentVersion}
+        cluster={cluster}
+        ipAddresses={ipAddresses}
+        lastBootTimestamp={lastBootTimestamp}
+      />
+    );
+
+    expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
+      expectedLastBoot
+    );
+  });
+
+  it('should display N/A when last boot timestamp is not provided', () => {
+    const cluster = clusterFactory.build();
+    const agentVersion = faker.system.semver();
+    const ipAddresses = [faker.internet.ipv4()];
+    const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
+
+    renderWithRouter(
+      <HostSummary
+        arch={arch}
+        agentVersion={agentVersion}
+        cluster={cluster}
+        ipAddresses={ipAddresses}
+        lastBootTimestamp={null}
+      />
+    );
+
+    expect(screen.getByText('Last Boot').nextSibling.textContent).toBe('N/A');
+  });
+
+  it('should display N/A when last boot timestamp is undefined', () => {
+    const cluster = clusterFactory.build();
+    const agentVersion = faker.system.semver();
+    const ipAddresses = [faker.internet.ipv4()];
+    const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
+
+    renderWithRouter(
+      <HostSummary
+        arch={arch}
+        agentVersion={agentVersion}
+        cluster={cluster}
+        ipAddresses={ipAddresses}
+      />
+    );
+
+    expect(screen.getByText('Last Boot').nextSibling.textContent).toBe('N/A');
   });
 });
