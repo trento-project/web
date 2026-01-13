@@ -27,6 +27,7 @@
         "name": "pacemaker.service",
         "unit_file_state": "enabled"
       }
-    ]
+    ],
+    "last_boot_timestamp": "2024-05-15T08:12:34Z"
   }
 }
