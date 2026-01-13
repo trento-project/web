@@ -42,18 +42,18 @@ const OPERATION_LABELS = {
 };
 
 const OPERATION_TITLES = {
-  [DATABASE_START]: 'Start database',
-  [DATABASE_STOP]: 'Stop database',
-  [SAP_SYSTEM_START]: 'Start SAP system',
-  [SAP_SYSTEM_STOP]: 'Stop SAP system',
-  [SAP_INSTANCE_START]: 'Start SAP instance',
-  [SAP_INSTANCE_STOP]: 'Stop SAP instance',
-  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
-  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
-  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
   [CLUSTER_HOST_START]: 'Start cluster host',
   [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
+  [DATABASE_START]: 'Start database',
+  [DATABASE_STOP]: 'Stop database',
   [HOST_REBOOT]: 'Reboot host',
+  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
+  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
+  [SAP_INSTANCE_START]: 'Start SAP instance',
+  [SAP_INSTANCE_STOP]: 'Stop SAP instance',
+  [SAP_SYSTEM_START]: 'Start SAP system',
+  [SAP_SYSTEM_STOP]: 'Stop SAP system',
 };
 
 const OPERATION_INTERNAL_NAMES = {
