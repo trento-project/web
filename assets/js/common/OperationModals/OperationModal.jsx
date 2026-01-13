@@ -28,8 +28,7 @@ function OperationModal({
         {description}
       </p>
       <CheckableWarningMessage checked={checked} onChecked={onChecked}>
-        Trento & SUSE cannot be held liable for damages if system is unable to
-        function due applying {operationText}
+        I confirm I want to request operation &quot;{operationText}&quot;
       </CheckableWarningMessage>
       {children}
       <div className="flex justify-start gap-2 mt-4">
