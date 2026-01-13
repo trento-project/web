@@ -134,6 +134,7 @@ function HostDetailsPage() {
       hostID={host.id}
       hostname={host.hostname}
       ipAddresses={host.ip_addresses}
+      lastBootTimestamp={host.last_boot_timestamp}
       netmasks={host.netmasks}
       provider={host.provider}
       providerData={host.provider_data}

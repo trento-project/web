@@ -198,7 +198,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   codespell:
     name: Check common misspellings
@@ -395,7 +395,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.2
+        uses: isbang/compose-action@v2.4.3
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -478,7 +478,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
-        run: cd test/e2e && npm install
+        run: cd test/e2e && npm ci
 
   test-e2e:
     name: E2E Tests
@@ -536,7 +536,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.2
+        uses: isbang/compose-action@v2.4.3
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -629,7 +629,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.2
+        uses: isbang/compose-action@v2.4.3
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -796,7 +796,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.2
+        uses: isbang/compose-action@v2.4.3
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
@@ -1116,7 +1116,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Push data
         run: |
-          photofinish run demo -u "http://$TRENTO_DEMO_IP/api/collect" "$TRENTO_API_KEY"
+          photofinish run demo -u "http://$TRENTO_DEMO_IP/api/v1/collect" "$TRENTO_API_KEY"
 
   obs-sync:
     name: Update obs packages

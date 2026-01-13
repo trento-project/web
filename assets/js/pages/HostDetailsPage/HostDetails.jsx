@@ -81,6 +81,7 @@ function HostDetails({
   hostID,
   hostname,
   ipAddresses = [],
+  lastBootTimestamp,
   netmasks = [],
   provider,
   providerData,
@@ -336,6 +337,7 @@ function HostDetails({
             agentVersion={agentVersion}
             cluster={cluster}
             ipAddresses={buildCidrNotation(ipAddresses, netmasks)}
+            lastBootTimestamp={lastBootTimestamp}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary

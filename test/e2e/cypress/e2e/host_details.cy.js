@@ -55,15 +55,12 @@ context('Host Details', () => {
   });
 
   describe('Cloud details for this host should be displayed', () => {
-    beforeEach(() => {
-      hostDetailsPage.visitSelectedHost();
-    });
-
     after(() => {
       hostDetailsPage.restoreHost('azure');
     });
 
     it('should show Azure cloud details correctly', () => {
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('azure');
       hostDetailsPage.expectedVmNameIsDisplayed('azure');
       hostDetailsPage.expectedResourceGroupIsDisplayed('azure');
@@ -76,6 +73,7 @@ context('Host Details', () => {
 
     it('should show AWS cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-aws');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('aws');
       hostDetailsPage.expectedInstanceIdIsDisplayed('aws');
       hostDetailsPage.expectedAccountIdIsDisplayed('aws');
@@ -88,11 +86,13 @@ context('Host Details', () => {
 
     it('should show AWS cloud details correctly when no metadata are available', () => {
       hostDetailsPage.loadScenario('host-details-aws-no-metadata');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('aws');
     });
 
     it('should show GCP cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-gcp');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('gcp');
       hostDetailsPage.expectedInstanceNameIsDisplayed('gcp');
       hostDetailsPage.expectedProjectIdIsDisplayed('gcp');
@@ -105,21 +105,25 @@ context('Host Details', () => {
 
     it('should show KVM cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-kvm');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('kvm');
     });
 
     it('should show vmware cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-vmware');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('vmware');
     });
 
     it('should show Nutanix cloud details correctly', () => {
       hostDetailsPage.loadScenario('host-details-nutanix');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.expectedProviderIsDisplayed('nutanix');
     });
 
     it('should display provider not recognized message', () => {
       hostDetailsPage.loadScenario('host-details-unknown');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.notRecognizedProviderIsDisplayed();
     });
   });
@@ -159,20 +163,21 @@ context('Host Details', () => {
   });
 
   describe('Saptune Summary for this host should be displayed', () => {
-    beforeEach(() => hostDetailsPage.visitSelectedHost());
-
     it('should show saptune not installed status', () => {
       hostDetailsPage.loadSaptuneScenario('uninstalled');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('uninstalled');
     });
 
     it('should show saptune unsupported status', () => {
       hostDetailsPage.loadSaptuneScenario('unsupported');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('unsupported');
     });
 
     it('should show saptune compliant status', () => {
       hostDetailsPage.loadSaptuneScenario('compliant');
+      hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('compliant');
     });
   });

@@ -7,7 +7,7 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/js": "^9.38.0",
     "@faker-js/faker": "^9.4.0",
-    "@storybook/addon-docs": "^10.0.8",
+    "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-webpack5-compiler-babel": "^3.0.6",
     "@storybook/react": "^10.0.8",
     "@storybook/react-webpack5": "^10.0.8",
@@ -41,7 +41,7 @@
     "postcss-import": "^16.1.1",
     "prettier-eslint-cli": "^8.0.1",
     "redux-mock-store": "^1.5.5",
-    "storybook": "^10.0.8",
+    "storybook": "^10.1.11",
     "tailwindcss": "^3.4.18"
   },
   "dependencies": {
@@ -74,7 +74,7 @@
     "react-hot-toast": "^2.6.0",
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
-    "react-router": "^7.11.0",
+    "react-router": "^7.12.0",
     "react-select": "^5.10.2",
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",

@@ -1,5 +1,7 @@
 import React from 'react';
 import { chunk } from 'lodash';
+import { format } from 'date-fns';
+import { utc } from '@date-fns/utc';
 
 import HealthIcon from '@common/HealthIcon';
 import ListView from '@common/ListView';
@@ -31,7 +33,19 @@ const renderIpAddresses = (ipAddresses) => {
   );
 };
 
-function HostSummary({ agentVersion, arch, cluster, ipAddresses }) {
+function HostSummary({
+  agentVersion,
+  arch,
+  cluster,
+  ipAddresses,
+  lastBootTimestamp,
+}) {
+  const formattedLastBoot = lastBootTimestamp
+    ? `${format(new Date(lastBootTimestamp), 'dd MMM yyyy, HH:mm:ss', {
+        in: utc,
+      })} GMT`
+    : 'N/A';
+
   return (
     <div className="mt-4 bg-white shadow rounded-lg py-4 px-8 xl:w-2/5 mr-4">
       <ListView
@@ -43,19 +57,23 @@ function HostSummary({ agentVersion, arch, cluster, ipAddresses }) {
             content: arch,
           },
           {
+            title: 'IP Addresses',
+            render: renderIpAddresses,
+            className: 'overflow-hidden overflow-ellipsis',
+            content: ipAddresses,
+          },
+          {
             title: 'Agent Version',
             className: 'col-span-2',
             content: agentVersion,
           },
           {
-            title: 'IP Addresses',
-            render: renderIpAddresses,
-            className: 'overflow-hidden overflow-ellipsis col-span-2',
-            content: ipAddresses,
-          },
-          {
             title: 'Cluster',
             content: <ClusterLink cluster={cluster} />,
+          },
+          {
+            title: 'Last Boot',
+            content: formattedLastBoot,
           },
         ]}
       />

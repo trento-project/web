@@ -200,7 +200,7 @@ export const apiSetTagsHanaCluster1 = () => {
 
 const apiRequestChecksExecution = (clusterId) => {
   return basePage.apiLogin().then(({ accessToken }) => {
-    const url = `/api/clusters/${clusterId}/checks/request_execution`;
+    const url = `/api/v1/clusters/${clusterId}/checks/request_execution`;
     cy.request({
       method: 'POST',
       url: url,
