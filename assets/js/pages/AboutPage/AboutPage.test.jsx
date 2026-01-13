@@ -22,7 +22,7 @@ describe('AboutPage component', () => {
 
   it('should render the about page with default values if api get request fails', async () => {
     const stateValues = { subscriptions: 0, version: 'v0.0.0' };
-    const errorMessage = { messages: "Get request '/api/about' failed" };
+    const errorMessage = { messages: "Get request '/api/v1/about' failed" };
     jest.spyOn(console, 'error').mockImplementation(() => null);
 
     await act(async () => {

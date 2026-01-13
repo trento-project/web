@@ -258,7 +258,7 @@ export const loadScenario = (scenario) => {
   if (photofinishBinary) {
     cy.log(`Loading scenario "${scenario}"...`);
     cy.exec(
-      `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/collect" ${scenario}`
+      `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`
     );
   } else {
     cy.log(`Photofinish is not used.`);
@@ -379,7 +379,7 @@ export const apiSelectChecks = (clusterId, checks) => {
   };
 
   return apiLogin().then(({ accessToken }) => {
-    const url = `/api/clusters/${clusterId}/checks`;
+    const url = `/api/v1/clusters/${clusterId}/checks`;
     cy.request({
       method: 'POST',
       url: url,
