@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { pipe, filter, map } from 'lodash/fp';
 import { noop } from 'lodash';
 import Select from '@common/Select';
+import { getOperationTitle } from '@lib/operations';
 import OperationModal from './OperationModal';
 
 const NOT_SELECTED = 'Select a saptune solution';
@@ -61,7 +62,7 @@ const markOptionDisabled = (currentlyApplied) => (option) => ({
 });
 
 function SaptuneSolutionOperationModal({
-  title,
+  operation,
   currentlyApplied,
   isHanaRunning,
   isAppRunning,
@@ -72,6 +73,8 @@ function SaptuneSolutionOperationModal({
   const [checked, setChecked] = useState(false);
   const [solution, setSolution] = useState(currentlyApplied || NOT_SELECTED);
 
+  const title = getOperationTitle(operation);
+
   const availableSolutions = pipe(
     filter(availableOptions(isHanaRunning, isAppRunning, currentlyApplied)),
     map(markOptionDisabled(currentlyApplied))
@@ -81,7 +84,7 @@ function SaptuneSolutionOperationModal({
     <OperationModal
       title={title}
       description="Select Saptune tuning solution"
-      operationText="Saptune solution"
+      operationText={title}
       applyDisabled={
         !checked || solution === NOT_SELECTED || solution === currentlyApplied
       }

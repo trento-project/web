@@ -9,23 +9,10 @@ import {
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   HOST_REBOOT,
+  getOperationTitle,
 } from '@lib/operations';
 
 import OperationModal from './OperationModal';
-
-const TITLES = {
-  [SAP_INSTANCE_START]: 'Start SAP instance',
-  [SAP_INSTANCE_STOP]: 'Stop SAP instance',
-  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
-  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
-  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
-  [CLUSTER_HOST_START]: 'Start cluster host',
-  [CLUSTER_HOST_STOP]: 'Stop cluster host',
-  [HOST_REBOOT]: 'Reboot host',
-};
-
-const getOperationTitle = (operation) =>
-  get(TITLES, operation, 'unknown operation');
 
 const getSapInstanceStartStopDescription = (
   operation,

@@ -1,11 +1,13 @@
+import { saptuneOperation } from '@lib/test-utils/factories/operations';
+
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
 export default {
   title: 'Components/SaptuneSolutionOperationModal',
   component: SaptuneSolutionOperationModal,
   argTypes: {
-    title: {
-      description: 'Modal title',
+    operation: {
+      description: 'Operation to request',
       control: 'text',
     },
     currentlyApplied: {
@@ -32,7 +34,7 @@ export default {
     },
   },
   args: {
-    title: 'Apply/Change Saptune Solution',
+    operation: saptuneOperation(),
     isHanaRunning: false,
     isAppRunning: false,
     isOpen: true,

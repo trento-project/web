@@ -28,8 +28,8 @@ function OperationModal({
         {description}
       </p>
       <CheckableWarningMessage checked={checked} onChecked={onChecked}>
-        Trento & SUSE cannot be held liable for damages if system is unable to
-        function due applying {operationText}
+        I confirm I am aware of the impact that executing operation &quot;
+        {operationText}&quot; will have in my environment
       </CheckableWarningMessage>
       {children}
       <div className="flex justify-start gap-2 mt-4">

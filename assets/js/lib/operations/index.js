@@ -41,6 +41,23 @@ const OPERATION_LABELS = {
   [HOST_REBOOT]: 'Reboot host',
 };
 
+const OPERATION_TITLES = {
+  [CLUSTER_HOST_START]: 'Start cluster host',
+  [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
+  [DATABASE_START]: 'Start database',
+  [DATABASE_STOP]: 'Stop database',
+  [HOST_REBOOT]: 'Reboot host',
+  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
+  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
+  [SAP_INSTANCE_START]: 'Start SAP instance',
+  [SAP_INSTANCE_STOP]: 'Stop SAP instance',
+  [SAP_SYSTEM_START]: 'Start SAP system',
+  [SAP_SYSTEM_STOP]: 'Stop SAP system',
+  [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
+  [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
+};
+
 const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
   'saptunechangesolution@v1': SAPTUNE_SOLUTION_CHANGE,
@@ -82,6 +99,9 @@ const OPERATION_FORBIDDEN_MESSAGES = {
 
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
+
+export const getOperationTitle = (operation) =>
+  get(OPERATION_TITLES, operation, 'unknown operation');
 
 export const getOperationInternalName = (operation) =>
   get(OPERATION_INTERNAL_NAMES, operation, 'unknown');
