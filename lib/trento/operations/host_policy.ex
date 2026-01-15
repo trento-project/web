@@ -15,9 +15,6 @@ defmodule Trento.Operations.HostPolicy do
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
-  alias Trento.Operations.ApplicationInstancePolicy
-  alias Trento.Operations.DatabaseInstancePolicy
-
   # saptune_solution_apply and saptune_solution_change operation authorized when:
   # - the sap workload is not running
   def authorize_operation(
@@ -30,12 +27,16 @@ defmodule Trento.Operations.HostPolicy do
         _
       )
       when operation in [:saptune_solution_apply, :saptune_solution_change] do
-    authorize_saptune_solution_operation(
-      operation,
-      saptune_status,
-      application_instances,
-      database_instances
-    )
+    [
+      authorize_saptune_solution_operation(
+        operation,
+        saptune_status
+      ),
+      ensure_all_instances_stopped(application_instances),
+      ensure_all_instances_stopped(database_instances)
+    ]
+    |> List.flatten()
+    |> OperationsHelper.reduce_operation_authorizations()
   end
 
   # based on the maintenance procedures for HANA clusters:
@@ -96,39 +97,25 @@ defmodule Trento.Operations.HostPolicy do
 
   defp authorize_saptune_solution_operation(
          :saptune_solution_apply,
-         saptune_status,
-         application_instances,
-         database_instances
-       ) do
-    [
-      or_error(
-        can_apply_solution?(saptune_status),
-        "Cannot apply the requested solution because there is an already applied one on this host"
-      ),
-      authorize_on_application_instances_stopped(application_instances),
-      authorize_on_database_instances_stopped(database_instances)
-    ]
-    |> List.flatten()
-    |> OperationsHelper.reduce_operation_authorizations()
-  end
+         saptune_status
+       ),
+       do:
+         saptune_status
+         |> can_apply_solution?()
+         |> or_error(
+           "Cannot apply the requested solution because there is an already applied one on this host"
+         )
 
   defp authorize_saptune_solution_operation(
          :saptune_solution_change,
-         saptune_status,
-         application_instances,
-         database_instances
-       ) do
-    [
-      or_error(
-        can_change_solution?(saptune_status),
-        "Cannot change the requested solution because there is no currently applied one on this host"
-      ),
-      authorize_on_application_instances_stopped(application_instances),
-      authorize_on_database_instances_stopped(database_instances)
-    ]
-    |> List.flatten()
-    |> OperationsHelper.reduce_operation_authorizations()
-  end
+         saptune_status
+       ),
+       do:
+         saptune_status
+         |> can_change_solution?()
+         |> or_error(
+           "Cannot change the requested solution because there is no currently applied one on this host"
+         )
 
   defp can_apply_solution?(nil = _saptune_status), do: true
   defp can_apply_solution?(%{applied_solution: nil} = _saptune_status), do: true
@@ -178,9 +165,28 @@ defmodule Trento.Operations.HostPolicy do
   defp instance_stopped?(%DatabaseInstanceReadModel{health: Health.unknown()}), do: true
   defp instance_stopped?(_), do: false
 
-  defp authorize_on_application_instances_stopped(application_instances),
-    do: Enum.map(application_instances, &ApplicationInstancePolicy.ensure_instance_stopped/1)
+  defp ensure_all_instances_stopped(instances),
+    do: Enum.map(instances, &ensure_instance_stopped/1)
 
-  defp authorize_on_database_instances_stopped(database_instances),
-    do: Enum.map(database_instances, &DatabaseInstancePolicy.ensure_instance_stopped/1)
+  defp ensure_instance_stopped(%ApplicationInstanceReadModel{
+         sid: sid,
+         instance_number: instance_number,
+         health: health
+       })
+       when health != Health.unknown(),
+       do: {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]}
+
+  defp ensure_instance_stopped(%DatabaseInstanceReadModel{
+         sid: sid,
+         instance_number: instance_number,
+         health: health
+       })
+       when health != Health.unknown(),
+       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
+
+  defp ensure_instance_stopped(%instance_module{})
+       when instance_module in [ApplicationInstanceReadModel, DatabaseInstanceReadModel],
+       do: :ok
+
+  defp ensure_instance_stopped(_), do: {:error, ["Unknown instance type"]}
 end

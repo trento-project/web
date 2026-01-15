@@ -61,7 +61,7 @@ defmodule Trento.Operations.HostPolicyTest do
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should forbid operation '#{operation}' if an database instance is not stopped. Scenario: #{name}" do
+      test "should forbid operation '#{operation}' if a database instance is not stopped. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
 
         database_instances = [
@@ -139,20 +139,34 @@ defmodule Trento.Operations.HostPolicyTest do
         assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should authorize operation '#{operation}' if all instances are stopped and cluster is in maintenance. Scenario: #{name}" do
+      test "should authorize operation '#{operation}' if all instances are stopped. Scenario: #{name}" do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
         database_instances = build_list(2, :database_instance, health: Health.unknown())
-        cluster = build(:cluster, details: build(:hana_cluster_details, maintenance_mode: true))
 
-        host =
+        maintenance_cluster =
+          build(:cluster, details: build(:hana_cluster_details, maintenance_mode: true))
+
+        non_maintenance_cluster =
+          build(:cluster, details: build(:hana_cluster_details, maintenance_mode: false))
+
+        hosts = [
           build(:host,
             application_instances: application_instances,
             database_instances: database_instances,
-            cluster: cluster,
+            cluster: maintenance_cluster,
+            saptune_status: @saptune_status
+          ),
+          build(:host,
+            application_instances: application_instances,
+            database_instances: database_instances,
+            cluster: non_maintenance_cluster,
             saptune_status: @saptune_status
           )
+        ]
 
-        assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+        for host <- hosts do
+          assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+        end
       end
     end
 
