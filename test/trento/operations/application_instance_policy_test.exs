@@ -457,4 +457,23 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
                %{}
              )
   end
+
+  test "should ensure application instance is stopped" do
+    for health <- Health.values() do
+      %{sid: sid, instance_number: instance_number} =
+        instance =
+        build(:application_instance,
+          health: health
+        )
+
+      instance_status_assertion = ApplicationInstancePolicy.ensure_instance_stopped(instance)
+
+      if health != Health.unknown() do
+        assert {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]} ==
+                 instance_status_assertion
+      else
+        assert :ok == instance_status_assertion
+      end
+    end
+  end
 end

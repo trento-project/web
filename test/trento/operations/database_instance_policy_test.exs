@@ -213,4 +213,23 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
       assert result == DatabaseInstancePolicy.authorize_operation(:maintenance, instance, %{})
     end
   end
+
+  test "should ensure database instance is stopped" do
+    for health <- Health.values() do
+      %{sid: sid, instance_number: instance_number} =
+        instance =
+        build(:database_instance,
+          health: health
+        )
+
+      instance_status_assertion = DatabaseInstancePolicy.ensure_instance_stopped(instance)
+
+      if health != Health.unknown() do
+        assert {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]} ==
+                 instance_status_assertion
+      else
+        assert :ok == instance_status_assertion
+      end
+    end
+  end
 end

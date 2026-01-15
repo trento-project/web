@@ -54,7 +54,7 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         _params
       ) do
     OperationsHelper.reduce_operation_authorizations([
-      instance_running(application_instance),
+      ensure_instance_stopped(application_instance),
       authorize_operation(:cluster_maintenance, application_instance, %{})
     ])
   end
@@ -91,15 +91,15 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
-  defp instance_running(%ApplicationInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         health: health
-       })
-       when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]}
+  def ensure_instance_stopped(%ApplicationInstanceReadModel{
+        sid: sid,
+        instance_number: instance_number,
+        health: health
+      })
+      when health != Health.unknown(),
+      do: {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]}
 
-  defp instance_running(_), do: :ok
+  def ensure_instance_stopped(_), do: :ok
 
   # Message Server, start without depending on other instances
   defp other_instances_started(%ApplicationInstanceReadModel{

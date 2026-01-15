@@ -55,22 +55,22 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
         _params
       ) do
     OperationsHelper.reduce_operation_authorizations([
-      instance_running(database_instance),
+      ensure_instance_stopped(database_instance),
       authorize_operation(:cluster_maintenance, database_instance, %{})
     ])
   end
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
-  defp instance_running(%DatabaseInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         health: health
-       })
-       when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
+  def ensure_instance_stopped(%DatabaseInstanceReadModel{
+        sid: sid,
+        instance_number: instance_number,
+        health: health
+      })
+      when health != Health.unknown(),
+      do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
 
-  defp instance_running(_), do: :ok
+  def ensure_instance_stopped(_), do: :ok
 
   defp get_cluster_resource_id(%ClusterReadModel{
          details: %{resources: resources}
