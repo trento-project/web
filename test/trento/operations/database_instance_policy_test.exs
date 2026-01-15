@@ -2,8 +2,6 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  require Trento.Enums.Health, as: Health
-
   alias Trento.Operations.DatabaseInstancePolicy
 
   import Trento.Factory

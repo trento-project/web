@@ -5,8 +5,6 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
-  require Trento.Enums.Health, as: Health
-
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
