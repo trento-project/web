@@ -45,42 +45,19 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:application_instance, health: Health.passing())
         ]
 
-        [%{id: resource_id}] =
-          resources =
-          build_list(1, :cluster_resource,
-            type: "ocf::heartbeat:SAPInstance",
-            managed: true,
-            sid: sid
-          )
-
-        clustered_sap_instances =
-          build_list(1, :clustered_sap_instance,
-            sid: sid,
-            instance_number: instance_number,
-            resource_id: resource_id
-          )
-
         database_instances = build_list(2, :database_instance, health: Health.unknown())
-
-        %{name: cluster_name} =
-          cluster =
-          build(:cluster,
-            sap_instances: clustered_sap_instances,
-            details: build(:ascs_ers_cluster_details, resources: resources)
-          )
 
         host =
           build(:host,
             application_instances: application_instances,
             database_instances: database_instances,
-            cluster: cluster,
+            cluster: build(:cluster),
             saptune_status: @saptune_status
           )
 
         assert {:error,
                 [
-                  "Instance #{instance_number} of SAP system #{sid} is not stopped",
-                  "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
+                  "Instance #{instance_number} of SAP system #{sid} is not stopped"
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
@@ -93,28 +70,17 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:database_instance, health: Health.passing())
         ]
 
-        clustered_sap_instances =
-          build_list(1, :clustered_sap_instance, sid: sid, instance_number: instance_number)
-
-        %{name: cluster_name} =
-          cluster =
-          build(:cluster,
-            sap_instances: clustered_sap_instances,
-            details: build(:hana_cluster_details)
-          )
-
         host =
           build(:host,
             application_instances: application_instances,
             database_instances: database_instances,
-            cluster: cluster,
+            cluster: build(:cluster),
             saptune_status: @saptune_status
           )
 
         assert {:error,
                 [
-                  "Instance #{instance_number} of HANA database #{sid} is not stopped",
-                  "Cluster #{cluster_name} operating this host is not in maintenance mode"
+                  "Instance #{instance_number} of HANA database #{sid} is not stopped"
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
@@ -131,45 +97,22 @@ defmodule Trento.Operations.HostPolicyTest do
             build(:database_instance, health: Health.passing())
         ]
 
-        [%{id: resource_id}] =
-          resources =
-          build_list(1, :cluster_resource,
-            type: "ocf::heartbeat:SAPInstance",
-            managed: true,
-            sid: app_sid
-          )
-
-        clustered_sap_instances =
-          build_list(1, :clustered_sap_instance,
-            sid: app_sid,
-            instance_number: app_instance_number,
-            resource_id: resource_id
-          )
-
-        %{name: cluster_name} =
-          cluster =
-          build(:cluster,
-            sap_instances: clustered_sap_instances,
-            details: build(:hana_cluster_details, resources: resources)
-          )
-
         host =
           build(:host,
             application_instances: application_instances,
             database_instances: database_instances,
-            cluster: cluster,
+            cluster: build(:cluster),
             saptune_status: @saptune_status
           )
 
         assert {:error,
                 [
                   "Instance #{app_instance_number} of SAP system #{app_sid} is not stopped",
-                  "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode",
                   "Instance #{db_instance_number} of HANA database #{db_sid} is not stopped"
                 ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should forbid operation '#{operation}' if an application instance cluster resource is managed. Scenario: #{name}" do
+      test "should allow operation '#{operation}' if an application instance cluster resource is managed. Scenario: #{name}" do
         application_instances = [
           %{sid: sid, instance_number: instance_number} =
             build(:application_instance, health: Health.unknown())
@@ -195,8 +138,7 @@ defmodule Trento.Operations.HostPolicyTest do
             resource_id: resource_id
           )
 
-        %{name: cluster_name} =
-          cluster =
+        cluster =
           build(:cluster,
             type: :ascs_ers,
             sap_instances: clustered_sap_instances,
@@ -211,13 +153,10 @@ defmodule Trento.Operations.HostPolicyTest do
             saptune_status: @saptune_status
           )
 
-        assert {:error,
-                [
-                  "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
-                ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+        assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
       end
 
-      test "should forbid operation '#{operation}' if a database instance cluster resource is managed. Scenario: #{name}" do
+      test "should allow operation '#{operation}' if a database instance cluster resource is managed. Scenario: #{name}" do
         scenarios = [
           %{cluster_resource_type: "ocf::suse:SAPHana"},
           %{cluster_resource_type: "ocf::suse:SAPHanaController"}
@@ -237,7 +176,7 @@ defmodule Trento.Operations.HostPolicyTest do
         application_instances = build_list(2, :application_instance, health: Health.unknown())
 
         for %{cluster_resource_type: cluster_resource_type} <- scenarios do
-          %{id: resource_id} = parent = build(:cluster_resource_parent, managed: true)
+          parent = build(:cluster_resource_parent, managed: true)
 
           cluster_resource =
             build(:cluster_resource, type: cluster_resource_type, parent: parent)
@@ -245,8 +184,7 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster_details =
             build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
 
-          %{name: cluster_name} =
-            cluster =
+          cluster =
             build(:cluster, sap_instances: clustered_sap_instances, details: cluster_details)
 
           host =
@@ -257,10 +195,7 @@ defmodule Trento.Operations.HostPolicyTest do
               saptune_status: @saptune_status
             )
 
-          assert {:error,
-                  [
-                    "Cluster #{cluster_name} or resource #{resource_id} operating this host are not in maintenance mode"
-                  ]} == HostPolicy.authorize_operation(@saptune_operation, host, %{})
+          assert :ok == HostPolicy.authorize_operation(@saptune_operation, host, %{})
         end
       end
 
@@ -319,7 +254,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
       assert {:error,
               [
-                "Cannot apply the requested solution because there is an already applied on this host"
+                "Cannot apply the requested solution because there is an already applied one on this host"
               ]} == HostPolicy.authorize_operation(:saptune_solution_apply, host, %{})
     end
 

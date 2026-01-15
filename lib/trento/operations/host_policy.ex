@@ -15,43 +15,27 @@ defmodule Trento.Operations.HostPolicy do
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
+  alias Trento.Operations.ApplicationInstancePolicy
+  alias Trento.Operations.DatabaseInstancePolicy
+
   # saptune_solution_apply and saptune_solution_change operation authorized when:
-  # - all SAP instances are authorized for maintenance
+  # - the sap workload is not running
   def authorize_operation(
         operation,
         %HostReadModel{
           application_instances: application_instances,
           database_instances: database_instances,
           saptune_status: saptune_status
-        } = host,
+        },
         _
       )
       when operation in [:saptune_solution_apply, :saptune_solution_change] do
-    applications_maintenance_authorized =
-      application_instances
-      |> Enum.map(fn application_instance ->
-        %ApplicationInstanceReadModel{application_instance | host: host}
-      end)
-      |> OperationsHelper.reduce_operation_authorizations(:ok, fn application_instance ->
-        ApplicationInstanceReadModel.authorize_operation(:maintenance, application_instance, %{})
-      end)
-
-    databases_authorized =
+    authorize_saptune_solution_operation(
+      operation,
+      saptune_status,
+      application_instances,
       database_instances
-      |> Enum.map(fn database_instances ->
-        %DatabaseInstanceReadModel{database_instances | host: host}
-      end)
-      |> OperationsHelper.reduce_operation_authorizations(
-        applications_maintenance_authorized,
-        fn database_instances ->
-          DatabaseInstanceReadModel.authorize_operation(:maintenance, database_instances, %{})
-        end
-      )
-
-    operation
-    |> authorize_saptune_solution_operation(saptune_status)
-    |> List.wrap()
-    |> OperationsHelper.reduce_operation_authorizations(databases_authorized)
+    )
   end
 
   # based on the maintenance procedures for HANA clusters:
@@ -110,28 +94,51 @@ defmodule Trento.Operations.HostPolicy do
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
-  defp authorize_saptune_solution_operation(:saptune_solution_apply, nil), do: :ok
+  defp authorize_saptune_solution_operation(
+         :saptune_solution_apply,
+         saptune_status,
+         application_instances,
+         database_instances
+       ) do
+    [
+      or_error(
+        can_apply_solution?(saptune_status),
+        "Cannot apply the requested solution because there is an already applied one on this host"
+      ),
+      authorize_on_application_instances_stopped(application_instances),
+      authorize_on_database_instances_stopped(database_instances)
+    ]
+    |> List.flatten()
+    |> OperationsHelper.reduce_operation_authorizations()
+  end
 
-  defp authorize_saptune_solution_operation(:saptune_solution_apply, %{applied_solution: nil}),
-    do: :ok
+  defp authorize_saptune_solution_operation(
+         :saptune_solution_change,
+         saptune_status,
+         application_instances,
+         database_instances
+       ) do
+    [
+      or_error(
+        can_change_solution?(saptune_status),
+        "Cannot change the requested solution because there is no currently applied one on this host"
+      ),
+      authorize_on_application_instances_stopped(application_instances),
+      authorize_on_database_instances_stopped(database_instances)
+    ]
+    |> List.flatten()
+    |> OperationsHelper.reduce_operation_authorizations()
+  end
 
-  defp authorize_saptune_solution_operation(:saptune_solution_apply, _),
-    do:
-      {:error,
-       ["Cannot apply the requested solution because there is an already applied on this host"]}
+  defp can_apply_solution?(nil = _saptune_status), do: true
+  defp can_apply_solution?(%{applied_solution: nil} = _saptune_status), do: true
+  defp can_apply_solution?(_), do: false
 
-  defp authorize_saptune_solution_operation(:saptune_solution_change, %{
-         applied_solution: applied_solution
-       })
+  defp can_change_solution?(%{applied_solution: applied_solution})
        when not is_nil(applied_solution),
-       do: :ok
+       do: true
 
-  defp authorize_saptune_solution_operation(:saptune_solution_change, _),
-    do:
-      {:error,
-       [
-         "Cannot change the requested solution because there is no currently applied one on this host"
-       ]}
+  defp can_change_solution?(_), do: false
 
   defp authorize_reboot_operation(
          pacemaker_disabled,
@@ -170,4 +177,10 @@ defmodule Trento.Operations.HostPolicy do
   defp instance_stopped?(%ApplicationInstanceReadModel{health: Health.unknown()}), do: true
   defp instance_stopped?(%DatabaseInstanceReadModel{health: Health.unknown()}), do: true
   defp instance_stopped?(_), do: false
+
+  defp authorize_on_application_instances_stopped(application_instances),
+    do: Enum.map(application_instances, &ApplicationInstancePolicy.ensure_instance_stopped/1)
+
+  defp authorize_on_database_instances_stopped(database_instances),
+    do: Enum.map(database_instances, &DatabaseInstancePolicy.ensure_instance_stopped/1)
 end
