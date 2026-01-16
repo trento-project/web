@@ -8,6 +8,9 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
       only if the /api/<latest version>/test exists, otherwise, it will continue with the next available version.
       If the route doesn't match with any of the available versions, it returns a not found error.
 
+    In deployments where Trento is served under a subpath (e.g. /trento), the plug strips the script_name (if present) and the initial "api" segment,
+    it later re-prepends the prefix when building the Location header for the redirect (so the client is redirected to /trento/api/vX)
+
     router and available_api_versions options should be provided.
 
     `available_api_versions` option should be a list with the available version from newest to oldest.
@@ -15,8 +18,6 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     For example: ["v3", "v2", "v1"]
   """
   @behaviour Plug
-
-  alias Phoenix.Controller
 
   alias TrentoWeb.ErrorJSON
 
@@ -37,9 +38,34 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
   end
 
   @impl true
-  def call(%Plug.Conn{path_info: [_ | path_parts], method: method} = conn, opts) do
+  def call(
+        %Plug.Conn{path_info: path_info, method: method, script_name: script_name} = conn,
+        opts
+      ) do
     router = Keyword.get(opts, :router)
     available_api_versions = Keyword.get(opts, :available_api_versions)
+
+    # Normalize path by removing the script_name prefix when present.
+    path_without_script =
+      if script_name != [] and Enum.take(path_info, length(script_name)) == script_name do
+        Enum.drop(path_info, length(script_name))
+      else
+        path_info
+      end
+
+    # Find the first "api" segment and use the tail after it.
+    # Otherwise, fall back to dropping the first segment.
+    path_parts =
+      case Enum.find_index(path_without_script, &(&1 == "api")) do
+        nil ->
+          case path_without_script do
+            [] -> []
+            [_ | rest] -> rest
+          end
+
+        idx ->
+          Enum.drop(path_without_script, idx + 1)
+      end
 
     case find_versioned_path(router, available_api_versions, path_parts, method) do
       nil ->
@@ -49,16 +75,14 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
         |> halt()
 
       versioned_path ->
-        conn
-        |> put_status(307)
-        |> redirect(versioned_path)
-        |> halt()
+        # Redirect using the helper
+        halt(redirect(conn, versioned_path))
     end
   end
 
   # Find first available versioned path. If none is found nil is returned.
-  defp find_versioned_path(router, available_api_vesions, path_parts, method) do
-    available_api_vesions
+  defp find_versioned_path(router, available_api_versions, path_parts, method) do
+    available_api_versions
     |> Enum.map(fn version ->
       ["/api", version]
       |> Enum.concat(path_parts)
@@ -69,8 +93,32 @@ defmodule TrentoWeb.Plugs.ApiRedirector do
     end)
   end
 
+  # Prepend script_name for subpath support and perform a manual redirect.
   defp redirect(conn, to) do
-    Controller.redirect(conn, to: maybe_add_query_string(to, conn.query_string))
+    # check if conn.path_info starts with conn.script_name
+    script_applied =
+      conn.script_name != [] and
+        Enum.take(conn.path_info, length(conn.script_name)) == conn.script_name
+
+    script_prefix = if script_applied, do: "/" <> Enum.join(conn.script_name, "/"), else: ""
+
+    # Preserve trailing slash from the original request path
+    has_trailing_slash =
+      conn.request_path not in [nil, "/"] and String.ends_with?(conn.request_path, "/")
+
+    normalized_to =
+      case {has_trailing_slash, String.ends_with?(to, "/")} do
+        {true, true} -> to
+        {true, false} -> to <> "/"
+        {false, _} -> String.trim_trailing(to, "/")
+      end
+
+    location = script_prefix <> maybe_add_query_string(normalized_to, conn.query_string)
+
+    conn
+    # Using Temporary Redirect to preserve the original API method
+    |> put_resp_header("location", location)
+    |> send_resp(307, "")
   end
 
   defp route_exists?(router, path, verb) do
