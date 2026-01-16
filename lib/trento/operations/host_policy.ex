@@ -55,8 +55,8 @@ defmodule Trento.Operations.HostPolicy do
       do:
         authorize_reboot_operation(
           true,
-          all_instances_stopped?(application_instances),
-          all_instances_stopped?(database_instances),
+          application_instances,
+          database_instances,
           true
         )
 
@@ -88,8 +88,8 @@ defmodule Trento.Operations.HostPolicy do
       do:
         authorize_reboot_operation(
           systemd_unit_enabled?(systemd_units, "pacemaker.service") == false,
-          all_instances_stopped?(application_instances),
-          all_instances_stopped?(database_instances),
+          application_instances,
+          database_instances,
           cluster_host_status == ClusterHostStatus.offline()
         )
 
@@ -129,21 +129,18 @@ defmodule Trento.Operations.HostPolicy do
 
   defp authorize_reboot_operation(
          pacemaker_disabled,
-         application_instances_stopped,
-         database_instances_stopped,
+         application_instances,
+         database_instances,
          cluster_host_offline
        ) do
-    authorizations = [
+    [
       or_error(pacemaker_disabled, "Pacemaker service is enabled in the host"),
-      or_error(
-        application_instances_stopped,
-        "There are running application instances on the host"
-      ),
-      or_error(database_instances_stopped, "There are running database instances on the host"),
+      ensure_all_instances_stopped(application_instances),
+      ensure_all_instances_stopped(database_instances),
       or_error(cluster_host_offline, "Cluster is running in the host")
     ]
-
-    OperationsHelper.reduce_operation_authorizations(authorizations)
+    |> List.flatten()
+    |> OperationsHelper.reduce_operation_authorizations()
   end
 
   defp or_error(true, _), do: :ok
@@ -156,16 +153,9 @@ defmodule Trento.Operations.HostPolicy do
     end)
   end
 
-  defp all_instances_stopped?([]), do: true
+  defp ensure_all_instances_stopped([]), do: :ok
 
-  defp all_instances_stopped?(instances) when is_list(instances),
-    do: Enum.all?(instances, &instance_stopped?/1)
-
-  defp instance_stopped?(%ApplicationInstanceReadModel{health: Health.unknown()}), do: true
-  defp instance_stopped?(%DatabaseInstanceReadModel{health: Health.unknown()}), do: true
-  defp instance_stopped?(_), do: false
-
-  defp ensure_all_instances_stopped(instances),
+  defp ensure_all_instances_stopped(instances) when is_list(instances),
     do: Enum.map(instances, &ensure_instance_stopped/1)
 
   defp ensure_instance_stopped(%ApplicationInstanceReadModel{

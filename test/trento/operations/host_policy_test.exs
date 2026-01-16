@@ -282,26 +282,31 @@ defmodule Trento.Operations.HostPolicyTest do
     end
 
     test "should forbid host reboot if not all application instances are stopped" do
+      application_instances = [
+        build(:application_instance, health: Health.unknown()),
+        %{sid: sid1, instance_number: instance_number1} =
+          build(:application_instance, health: Health.passing())
+      ]
+
+      database_instances = [
+        build(:database_instance, health: Health.unknown()),
+        %{sid: sid2, instance_number: instance_number2} =
+          build(:database_instance, health: Health.passing())
+      ]
+
       host =
         build(:host,
           cluster: nil,
           cluster_id: nil,
-          application_instances: [
-            build(:application_instance, health: Health.unknown()),
-            build(:application_instance, health: Health.passing())
-          ],
-          database_instances: [
-            build(:database_instance, health: Health.unknown()),
-            build(:database_instance, health: Health.passing())
-          ]
+          application_instances: application_instances,
+          database_instances: database_instances
         )
 
-      {:error,
-       [
-         "There are running application instances on the host",
-         "There are running database instances on the host"
-       ]} =
-        HostPolicy.authorize_operation(:reboot, host, %{})
+      assert {:error,
+              [
+                "Instance #{instance_number1} of SAP system #{sid1} is not stopped",
+                "Instance #{instance_number2} of HANA database #{sid2} is not stopped"
+              ]} == HostPolicy.authorize_operation(:reboot, host, %{})
     end
 
     test "should forbid host reboot if not all database instances are stopped" do
