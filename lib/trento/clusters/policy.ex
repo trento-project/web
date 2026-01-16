@@ -35,5 +35,6 @@ defmodule Trento.Clusters.Policy do
   # usually the operation name is the same as the ability name
   # for those operations that are not, we need to map them
   defp to_ability_name("cluster_maintenance_change"), do: "maintenance_change"
+  defp to_ability_name("cluster_resource_refresh"), do: "resource_refresh"
   defp to_ability_name(operation), do: operation
 end

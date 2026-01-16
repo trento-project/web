@@ -7,6 +7,7 @@ defmodule Trento.Operations.ClusterPolicy do
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
 
   alias Trento.Clusters
 
@@ -48,10 +49,11 @@ defmodule Trento.Operations.ClusterPolicy do
   end
 
   def authorize_operation(
-        :cluster_maintenance_change,
+        operation,
         %ClusterReadModel{name: name, hosts: hosts},
         _
-      ) do
+      )
+      when operation in ClusterOperations.values() do
     if Enum.any?(hosts, fn %{cluster_host_status: status} ->
          status == ClusterHostStatus.online()
        end) do

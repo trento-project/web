@@ -48,6 +48,7 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation_type("saptuneapplysolution@v1"), do: :saptune_solution_apply
   def map_operation_type("saptunechangesolution@v1"), do: :saptune_solution_change
   def map_operation_type("clustermaintenancechange@v1"), do: :cluster_maintenance_change
+  def map_operation_type("clusterresourcerefresh@v1"), do: :cluster_resource_refresh
   def map_operation_type("sapinstancestart@v1"), do: :sap_instance_start
   def map_operation_type("sapinstancestop@v1"), do: :sap_instance_stop
   def map_operation_type("sapsystemstart@v1"), do: :sap_system_start
@@ -64,6 +65,7 @@ defmodule Trento.Infrastructure.Operations do
   def map_operation(:saptune_solution_apply), do: "saptuneapplysolution@v1"
   def map_operation(:saptune_solution_change), do: "saptunechangesolution@v1"
   def map_operation(:cluster_maintenance_change), do: "clustermaintenancechange@v1"
+  def map_operation(:cluster_resource_refresh), do: "clusterresourcerefresh@v1"
   def map_operation(:cluster_host_start), do: "crmclusterstart@v1"
   def map_operation(:cluster_host_stop), do: "crmclusterstop@v1"
   def map_operation(:sap_instance_start), do: "sapinstancestart@v1"
