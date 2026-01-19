@@ -209,7 +209,9 @@ defmodule Trento.Clusters do
     targets =
       cluster_id
       |> get_cluster_hosts()
-      |> filter_online_hosts(operation)
+      |> Enum.filter(fn %{cluster_host_status: status} ->
+        status == ClusterHostStatus.online()
+      end)
       |> Enum.with_index()
       |> Enum.map(fn {%{id: host_id}, index} ->
         arguments = Map.put(params, :is_dc, index == 0)
@@ -423,10 +425,4 @@ defmodule Trento.Clusters do
     do: HanaScenario.cost_optimized()
 
   defp parse_hana_scenario(_), do: HanaScenario.unknown()
-
-  defp filter_online_hosts(hosts, :cluster_maintenance_change) do
-    Enum.filter(hosts, fn %{cluster_host_status: status} ->
-      status == ClusterHostStatus.online()
-    end)
-  end
 end

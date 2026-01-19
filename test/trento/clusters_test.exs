@@ -1160,45 +1160,62 @@ defmodule Trento.ClustersTest do
   end
 
   describe "request_operation/3" do
-    test "should request cluster_maintenance_change operation on online node" do
-      %{id: cluster_id} = insert(:cluster)
-      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.offline())
-      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+    operations = [
+      %{
+        operation: :cluster_maintenance_change,
+        operator: "clustermaintenancechange@v1"
+      },
+      %{
+        operation: :cluster_resource_refresh,
+        operator: "clusterresourcerefresh@v1"
+      }
+    ]
 
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        1,
-        fn OperationsPublisher,
-           "requests",
-           %OperationRequested{
-             group_id: ^cluster_id,
-             operation_type: "clustermaintenancechange@v1",
-             targets: [
-               %OperationTarget{
-                 agent_id: ^host_id_1,
-                 arguments: %{
-                   "maintenance" => %ProtobufValue{kind: {:bool_value, true}},
-                   "is_dc" => %ProtobufValue{kind: {:bool_value, true}}
-                 }
-               },
-               %OperationTarget{
-                 agent_id: ^host_id_2,
-                 arguments: %{
-                   "maintenance" => %ProtobufValue{kind: {:bool_value, true}},
-                   "is_dc" => %ProtobufValue{kind: {:bool_value, false}}
-                 }
-               }
-             ]
-           } ->
-          :ok
-        end
-      )
+    for %{operation: operation, operator: operator} <- operations do
+      @operation operation
+      @operator operator
 
-      assert {:ok, _} =
-               Clusters.request_operation(:cluster_maintenance_change, cluster_id, %{
-                 maintenance: true
-               })
+      test "should request #{@operation} operation on online node" do
+        argument = UUID.uuid4()
+        %{id: cluster_id} = insert(:cluster)
+        insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.offline())
+        [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^cluster_id,
+               operation_type: @operator,
+               targets: [
+                 %OperationTarget{
+                   agent_id: ^host_id_1,
+                   arguments: %{
+                     "argument" => %ProtobufValue{kind: {:string_value, ^argument}},
+                     "is_dc" => %ProtobufValue{kind: {:bool_value, true}}
+                   }
+                 },
+                 %OperationTarget{
+                   agent_id: ^host_id_2,
+                   arguments: %{
+                     "argument" => %ProtobufValue{kind: {:string_value, ^argument}},
+                     "is_dc" => %ProtobufValue{kind: {:bool_value, false}}
+                   }
+                 }
+               ]
+             } ->
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 Clusters.request_operation(@operation, cluster_id, %{
+                   argument: argument
+                 })
+      end
     end
 
     test "should return operation_not_found if the given operation does not exist" do
