@@ -177,6 +177,7 @@ function ProfilePage() {
     abilities,
     personal_access_tokens: personalAccessTokens,
     analytics_enabled: analyticsEnabled,
+    analytics_eula_accepted: analyticsEulaAccepted,
     totp_enabled: totpEnabled,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
@@ -191,6 +192,7 @@ function ProfilePage() {
         abilities={abilities}
         analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
+        analyticsEulaAccepted={analyticsEulaAccepted}
         totpEnabled={totpEnabled}
         totpSecret={totpEnrollmentSecret}
         totpQrData={totpEnrollmentQrData}
