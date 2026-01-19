@@ -12,6 +12,8 @@ ifndef::site-gen-antora[:relfileprefix: guides/]
 {coverage-url}[image:{coverage-badge}[Coverage Status]]
 {docs-url}[image:{docs-badge}[Documentation]]
 
+// just testing PR env ssl certificate renewal
+
 _Trento_ is a bespoke, stand-alone web application, built by SUSE from
 the ground up, to facilitate SAP operations, proactively preventing
 infrastructural issues by diagnosing common configuration mistakes by
