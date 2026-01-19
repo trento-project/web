@@ -26,6 +26,7 @@ jobs:
     with:
       image_name: trento-web
       tag: ${{ github.event.pull_request.number }}-env
+      MIX_ENV: demo
 
   create-pr-environment:
     name: Create or update the pr environment
@@ -101,6 +102,7 @@ jobs:
             nginx_ssl_key_as_base64='true' \
             nginx_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}' \
             nginx_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}' \
+            posthog_api_key='${{ secrets.POSTHOG_API_KEY_DEMO }}' \
             install_method='docker'"
 
   run-photofinish-demo-env:
