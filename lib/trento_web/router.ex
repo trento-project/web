@@ -3,6 +3,9 @@ defmodule TrentoWeb.Router do
   use Pow.Phoenix.Router
   use PowAssent.Phoenix.Router
 
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+
   # From newest to oldest
   @available_api_versions ["v2", "v1"]
 
@@ -179,13 +182,23 @@ defmodule TrentoWeb.Router do
 
       if Application.compile_env!(:trento, :operations_enabled) do
         post "/hosts/:id/operations/:operation", HostController, :request_operation
-        post "/clusters/:id/operations/:operation", ClusterController, :request_operation
+
+        # The operation endpoints are created using the operation Enums.
+        # Every entry has a new path in the router
+        for cluster_operation <- ClusterOperations.values() do
+          post "/clusters/:id/operations/#{cluster_operation}",
+               ClusterController,
+               cluster_operation
+        end
+
         post "/sap_systems/:id/operations/:operation", SapSystemController, :request_operation
         post "/databases/:id/operations/:operation", DatabaseController, :request_operation
 
-        post "/clusters/:id/hosts/:host_id/operations/:operation",
-             ClusterController,
-             :request_host_operation
+        for cluster_host_operation <- ClusterHostOperations.values() do
+          post "/clusters/:id/hosts/:host_id/operations/#{cluster_host_operation}",
+               ClusterController,
+               cluster_host_operation
+        end
 
         post "/sap_systems/:id/hosts/:host_id/instances/:instance_number/operations/:operation",
              SapSystemController,

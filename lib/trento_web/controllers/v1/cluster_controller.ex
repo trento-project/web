@@ -12,13 +12,18 @@ defmodule TrentoWeb.V1.ClusterController do
     BadRequest,
     Checks,
     Cluster,
-    ClusterOperationParams,
     Forbidden,
     NotFound,
     OperationAccepted,
     UnprocessableEntity
   }
 
+  alias TrentoWeb.OpenApi.V1.Schema.Operations.{
+    ClusterMaintenanceChangeParams,
+    ClusterResourceRefreshParams
+  }
+
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -36,11 +41,11 @@ defmodule TrentoWeb.V1.ClusterController do
        [
          policy: Trento.Operations.ClusterPolicy,
          resource: &__MODULE__.get_operation_cluster/1,
-         operation: &__MODULE__.get_operation/1,
+         operation: &Phoenix.Controller.action_name/1,
          assigns_to: :cluster,
          params: &__MODULE__.get_operation_params/1
        ]
-       when action in [:request_operation, :request_host_operation]
+       when action in ClusterOperations.values() or action in ClusterHostOperations.values()
 
   action_fallback TrentoWeb.FallbackController
 
@@ -132,129 +137,152 @@ defmodule TrentoWeb.V1.ClusterController do
     end
   end
 
-  operation :request_operation,
-    summary: "Request operation for a Cluster.",
-    tags: ["Operations"],
-    description:
-      "Submits a request to perform a specific operation on a cluster, such as maintenance or configuration changes, supporting automated infrastructure management.",
-    parameters: [
-      id: [
-        in: :path,
-        description:
-          "Unique identifier of the cluster on which the operation will be performed. This value must be a valid UUID string.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          format: :uuid,
-          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
-        }
+  @operations [
+    %{
+      operation: ClusterOperations.cluster_maintenance_change(),
+      summary: "Request cluster maintenance change operation",
+      description:
+        "Request cluster maintenance change operation on a cluster to change maintenance state of the whole cluster or specifics resource/nodes.",
+      request_body: ClusterMaintenanceChangeParams
+    },
+    %{
+      operation: ClusterOperations.cluster_resource_refresh(),
+      summary: "Request cluster resource refresh operation",
+      description:
+        "Request cluster resource refresh operation on a cluster to refresh specific or all the resources in the cluster.",
+      request_body: ClusterResourceRefreshParams
+    }
+  ]
+
+  for %{
+        operation: cluster_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @operations do
+    @op cluster_operation
+
+    operation @op,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      parameters: [
+        id: [
+          in: :path,
+          description:
+            "Unique identifier of the cluster on which the operation will be performed. This value must be a valid UUID string.",
+          required: true,
+          schema: %OpenApiSpex.Schema{
+            type: :string,
+            format: :uuid,
+            example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+          }
+        ]
       ],
-      operation: [
-        in: :path,
-        description:
-          "Specifies the type of operation to be performed on the cluster, such as maintenance or configuration change.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          example: "cluster_maintenance_change"
-        }
+      request_body:
+        {"Request containing parameters for the specified cluster operation.", "application/json",
+         request_body},
+      responses: [
+        accepted: OperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
       ]
-    ],
-    request_body:
-      {"Request containing parameters for the specified cluster operation.", "application/json",
-       ClusterOperationParams},
-    responses: [
-      accepted: OperationAccepted.response(),
-      not_found: NotFound.response(),
-      forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
-    ]
 
-  def request_operation(%{assigns: %{cluster: cluster, operation: operation}} = conn, _) do
-    %{id: cluster_id} = cluster
-    params = OpenApiSpex.body_params(conn)
-
-    with {:ok, operation_id} <- Clusters.request_operation(operation, cluster_id, params) do
-      conn
-      |> put_status(:accepted)
-      |> json(%{operation_id: operation_id})
+    def unquote(cluster_operation)(conn, params) do
+      request_operation(conn, params)
     end
   end
 
-  operation :request_host_operation,
-    summary: "Request operation for a Cluster host.",
-    tags: ["Operations"],
-    description:
-      "Submits a request to perform a specific operation on a host within a cluster, supporting targeted maintenance or configuration changes for individual hosts.",
-    parameters: [
-      id: [
-        in: :path,
-        required: true,
-        description:
-          "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          format: :uuid,
-          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
-        }
-      ],
-      host_id: [
-        in: :path,
-        required: true,
-        description:
-          "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          format: :uuid,
-          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
-        }
-      ],
-      operation: [
-        in: :path,
-        required: true,
-        description:
-          "Specifies the type of operation to be performed on the cluster's host, such as enabling or disabling pacemaker services.",
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          example: "pacemaker_enable"
-        }
-      ]
-    ],
-    responses: [
-      accepted: OperationAccepted.response(),
-      not_found: NotFound.response(),
-      forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
-    ]
+  @host_operations [
+    %{
+      operation: ClusterHostOperations.pacemaker_enable(),
+      summary: "Request pacemaker enable operation",
+      description:
+        "Request cluster maintenance change operation on a cluster to change maintenance state of the whole cluster or specifics resource/nodes.",
+      request_body: nil
+    },
+    %{
+      operation: ClusterHostOperations.pacemaker_disable(),
+      summary: "Request pacemaker disable operation",
+      description:
+        "Request cluster resource refresh operation on a cluster to refresh specific or all the resources in the cluster.",
+      request_body: nil
+    },
+    %{
+      operation: ClusterHostOperations.cluster_host_start(),
+      summary: "Request cluster start in host operation",
+      description:
+        "Request cluster start in host operation to start all cluster components such us Pacemaker and Corosync.",
+      request_body: nil
+    },
+    %{
+      operation: ClusterHostOperations.cluster_host_stop(),
+      summary: "Request cluster stop in host operation",
+      description:
+        "Request cluster stop in host operation to stop all cluster components such us Pacemaker and Corosync.",
+      request_body: nil
+    }
+  ]
 
-  def request_host_operation(
-        %{assigns: %{cluster: %{id: cluster_id}, operation: operation}} = conn,
-        %{
-          id: cluster_id,
-          host_id: host_id
-        }
-      ) do
-    with {:ok, operation_id} <-
-           Clusters.request_host_operation(operation, cluster_id, host_id) do
-      conn
-      |> put_status(:accepted)
-      |> json(%{operation_id: operation_id})
+  for %{
+        operation: cluster_host_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @host_operations do
+    @host_op cluster_host_operation
+
+    operation @host_op,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      parameters: [
+        id: [
+          in: :path,
+          required: true,
+          description:
+            "Unique identifier of the cluster containing the host. This value must be a valid UUID string.",
+          schema: %OpenApiSpex.Schema{
+            type: :string,
+            format: :uuid,
+            example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+          }
+        ],
+        host_id: [
+          in: :path,
+          required: true,
+          description:
+            "Unique identifier of the host within the cluster on which the operation will be performed. This value must be a valid UUID string.",
+          schema: %OpenApiSpex.Schema{
+            type: :string,
+            format: :uuid,
+            example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+          }
+        ]
+      ],
+      request_body:
+        {"Request containing parameters for the specified cluster host operation.",
+         "application/json", request_body},
+      responses: [
+        accepted: OperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
+      ]
+
+    def unquote(cluster_host_operation)(conn, params) do
+      request_host_operation(conn, params)
     end
   end
-
-  def get_policy_resource(%{
-        private: %{phoenix_action: action},
-        path_params: %{"operation" => operation}
-      })
-      when action in [:request_operation, :request_host_operation],
-      do: %{operation: operation}
 
   def get_policy_resource(_), do: ClusterReadModel
 
   def get_operation_cluster(%{
-        assigns: %{operation: :cluster_maintenance_change},
+        assigns: %{operation: operation},
         params: %{id: id}
-      }) do
+      })
+      when operation in ClusterOperations.values() do
     id
     |> Clusters.get_cluster_by_id()
     |> Repo.preload(:hosts)
@@ -284,23 +312,6 @@ defmodule TrentoWeb.V1.ClusterController do
 
   def get_operation_cluster(_), do: nil
 
-  def get_operation(%{params: %{operation: "cluster_maintenance_change"}}),
-    do: :cluster_maintenance_change
-
-  def get_operation(%{params: %{operation: "pacemaker_enable"}}),
-    do: :pacemaker_enable
-
-  def get_operation(%{params: %{operation: "pacemaker_disable"}}),
-    do: :pacemaker_disable
-
-  def get_operation(%{params: %{operation: "cluster_host_start"}}),
-    do: :cluster_host_start
-
-  def get_operation(%{params: %{operation: "cluster_host_stop"}}),
-    do: :cluster_host_stop
-
-  def get_operation(_), do: nil
-
   def get_operation_params(%{assigns: %{operation: operation}, params: %{host_id: host_id}})
       when operation in ClusterHostOperations.values() do
     %{
@@ -309,4 +320,30 @@ defmodule TrentoWeb.V1.ClusterController do
   end
 
   def get_operation_params(_), do: %{}
+
+  defp request_operation(%{assigns: %{cluster: cluster, operation: operation}} = conn, _) do
+    %{id: cluster_id} = cluster
+    params = OpenApiSpex.body_params(conn)
+
+    with {:ok, operation_id} <- Clusters.request_operation(operation, cluster_id, params) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
+
+  defp request_host_operation(
+         %{assigns: %{cluster: %{id: cluster_id}, operation: operation}} = conn,
+         %{
+           id: cluster_id,
+           host_id: host_id
+         }
+       ) do
+    with {:ok, operation_id} <-
+           Clusters.request_host_operation(operation, cluster_id, host_id) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
 end

@@ -21,7 +21,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
          params: &__MODULE__.get_params/1
          assigns_to: :resource
        ]
-       when action == :request_operation
+       when action in HostOperations.values()
 
   def get_resource(conn) do
     # return the resource to be authorized
