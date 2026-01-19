@@ -36,6 +36,48 @@ describe('Login component', () => {
     expect(window.location.pathname).toEqual('/');
   });
 
+  it('should redirect to the / path, when the user is already logged in and using a subpath', async () => {
+    global.window.basePath = '/trento';
+
+    const [StatefulLogin] = withState(<Login />, {
+      user: {
+        loggedIn: true,
+      },
+    });
+
+    renderWithRouter(StatefulLogin, '/?request_path=/trento');
+
+    expect(window.location.pathname).toEqual('/');
+
+    delete global.window.basePath;
+  });
+
+  it('should navigate to the request_path, when the user is already logged in and using a subpath', async () => {
+    delete global.window.basePath;
+
+    const rr = require('react-router');
+    const navigateMock = jest.fn();
+    jest.spyOn(rr, 'useNavigate').mockImplementation(() => navigateMock);
+    jest
+      .spyOn(rr, 'useSearchParams')
+      .mockImplementation(() => [
+        new URLSearchParams('?request_path=/something'),
+      ]);
+
+    const [StatefulLogin] = withState(<Login />, {
+      user: {
+        loggedIn: true,
+      },
+    });
+
+    renderWithRouter(StatefulLogin);
+
+    expect(navigateMock).toHaveBeenCalledWith('/something');
+
+    rr.useNavigate.mockRestore();
+    rr.useSearchParams.mockRestore();
+  });
+
   it('should show a message if the authentication request returns a 401', async () => {
     const [StatefulLogin] = withState(<Login />, {
       user: {
