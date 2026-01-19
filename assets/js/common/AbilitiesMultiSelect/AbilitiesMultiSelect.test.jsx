@@ -43,6 +43,7 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 23, name: 'stop', resource: 'sap_system' },
       { id: 24, name: 'start', resource: 'database' },
       { id: 25, name: 'stop', resource: 'database' },
+      { id: 26, name: 'resource_refresh', resource: 'cluster' },
     ];
 
     render(
@@ -121,6 +122,7 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 15, name: 'cluster_host_start', resource: 'cluster' },
           { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
           { id: 17, name: 'reboot', resource: 'host' },
+          { id: 18, name: 'resource_refresh', resource: 'cluster' },
         ]}
         userAbilities={[
           { id: 1, name: 'all', resource: 'all' },
@@ -140,6 +142,7 @@ describe('AbilitiesMultiSelect Component', () => {
           { id: 15, name: 'cluster_host_start', resource: 'cluster' },
           { id: 16, name: 'cluster_host_stop', resource: 'cluster' },
           { id: 17, name: 'reboot', resource: 'host' },
+          { id: 18, name: 'resource_refresh', resource: 'cluster' },
         ]}
         setAbilities={noop}
         operationsEnabled
@@ -187,6 +190,9 @@ describe('AbilitiesMultiSelect Component', () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText('cluster_host_stop:cluster')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('resource_refresh:cluster')
     ).not.toBeInTheDocument();
 
     await user.click(screen.getByLabelText('permissions'));
