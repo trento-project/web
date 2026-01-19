@@ -14,6 +14,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
 
   @excluded_events [
     Trento.Hosts.Events.HostChecksSelected,
@@ -23,7 +27,13 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   @operation_activities [
     {TrentoWeb.V1.ClusterController, ClusterOperations.values(), :cluster_operation_requested},
     {TrentoWeb.V1.ClusterController, ClusterHostOperations.values(),
-     :cluster_host_operation_requested}
+     :cluster_host_operation_requested},
+    {TrentoWeb.V1.DatabaseController, DatabaseOperations.values(), :database_operation_requested},
+    {TrentoWeb.V1.HostController, HostOperations.values(), :host_operation_requested},
+    {TrentoWeb.V1.SapSystemController, SapInstanceOperations.values(),
+     :application_instance_operation_requested},
+    {TrentoWeb.V1.SapSystemController, SapSystemOperations.values(),
+     :sap_system_operation_requested}
   ]
 
   @type activity_type :: atom()
@@ -204,17 +214,6 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
         {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
           {:activity_log_settings_update, 200},
-        {TrentoWeb.V1.HostController, :request_operation} => {:host_operation_requested, 202},
-        {TrentoWeb.V1.ClusterController, :cluster_maintenance_change} =>
-          {:cluster_operation_requested, 202},
-        # {TrentoWeb.V1.ClusterController, :request_host_operation} =>
-        #   {:cluster_host_operation_requested, 202},
-        {TrentoWeb.V1.SapSystemController, :request_operation} =>
-          {:sap_system_operation_requested, 202},
-        {TrentoWeb.V1.SapSystemController, :request_instance_operation} =>
-          {:application_instance_operation_requested, 202},
-        {TrentoWeb.V1.DatabaseController, :request_operation} =>
-          {:database_operation_requested, 202},
         {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
         {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
           {:sap_system_cleanup_requested, 204},
