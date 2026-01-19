@@ -11,12 +11,15 @@ defmodule TrentoWeb.V1.DatabaseController do
   alias TrentoWeb.OpenApi.V1.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.{
-    DatabaseOperationParams,
     Forbidden,
     NotFound,
     OperationAccepted,
     UnprocessableEntity
   }
+
+  alias TrentoWeb.OpenApi.V1.Schema.Operations.DatabaseStartStopParams
+
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
 
   plug TrentoWeb.Plugs.LoadUserPlug
 
@@ -33,11 +36,11 @@ defmodule TrentoWeb.V1.DatabaseController do
        [
          policy: Trento.Operations.DatabasePolicy,
          resource: &__MODULE__.get_operation_database/1,
-         operation: &__MODULE__.get_operation/1,
+         operation: &Phoenix.Controller.action_name/1,
          assigns_to: :database,
          params: &__MODULE__.get_operation_params/1
        ]
-       when action == :request_operation
+       when action in DatabaseOperations.values()
 
   action_fallback TrentoWeb.FallbackController
 
@@ -114,67 +117,58 @@ defmodule TrentoWeb.V1.DatabaseController do
     end
   end
 
-  operation :request_operation,
-    summary: "Request operation for a Database",
-    tags: ["Operations"],
-    description:
-      "Initiates a specific operation on a database instance, such as starting or stopping the database. This endpoint supports operational management and allows administrators to control database lifecycle.",
-    parameters: [
-      id: [
-        in: :path,
-        description:
-          "Unique identifier of the database for which the operation is requested. This value must be a valid UUID string.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          format: :uuid,
-          example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
-        }
+  @operations [
+    %{
+      operation: DatabaseOperations.database_start(),
+      summary: "Request database start operation",
+      description: "Request database start operation on a database to trigger a start action.",
+      request_body: DatabaseStartStopParams
+    },
+    %{
+      operation: DatabaseOperations.database_stop(),
+      summary: "Request database stop operation",
+      description: "Request database stop operation on a database to trigger a stop action.",
+      request_body: DatabaseStartStopParams
+    }
+  ]
+
+  for %{
+        operation: database_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @operations do
+    @op database_operation
+
+    operation @op,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      parameters: [
+        id: [
+          in: :path,
+          description:
+            "Unique identifier of the database for which the operation is requested. This value must be a valid UUID string.",
+          required: true,
+          schema: %OpenApiSpex.Schema{
+            type: :string,
+            format: :uuid,
+            example: "d1a2b3c4-d5e6-7890-abcd-ef1234567890"
+          }
+        ]
       ],
-      operation: [
-        in: :path,
-        description:
-          "The type of operation to perform on the database. Supported operations include 'database_start' and 'database_stop' for controlling database lifecycle.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          example: "database_start"
-        }
+      request_body: {"Operation parameters", "application/json", request_body},
+      responses: [
+        accepted: OperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
       ]
-    ],
-    request_body: {"Operation parameters", "application/json", DatabaseOperationParams},
-    responses: [
-      accepted: OperationAccepted.response(),
-      not_found: NotFound.response(),
-      forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
-    ]
 
-  def request_operation(
-        %{
-          assigns: %{database: %{id: database_id}, operation: operation}
-        } = conn,
-        _
-      ) do
-    params = OpenApiSpex.body_params(conn)
-
-    with {:ok, operation_id} <-
-           Databases.request_operation(
-             operation,
-             database_id,
-             params
-           ) do
-      conn
-      |> put_status(:accepted)
-      |> json(%{operation_id: operation_id})
+    def unquote(database_operation)(conn, params) do
+      request_operation(conn, params)
     end
   end
-
-  def get_policy_resource(%{
-        private: %{phoenix_action: :request_operation},
-        path_params: %{"operation" => operation}
-      }),
-      do: %{operation: operation}
 
   def get_policy_resource(_), do: DatabaseReadModel
 
@@ -213,11 +207,23 @@ defmodule TrentoWeb.V1.DatabaseController do
     body_params
   end
 
-  def get_operation(%{params: %{operation: "database_start"}}),
-    do: :database_start
+  defp request_operation(
+         %{
+           assigns: %{database: %{id: database_id}, operation: operation}
+         } = conn,
+         _
+       ) do
+    params = OpenApiSpex.body_params(conn)
 
-  def get_operation(%{params: %{operation: "database_stop"}}),
-    do: :database_stop
-
-  def get_operation(_), do: nil
+    with {:ok, operation_id} <-
+           Databases.request_operation(
+             operation,
+             database_id,
+             params
+           ) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
 end
