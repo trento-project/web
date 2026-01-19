@@ -13,13 +13,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.ClusterResourceRefreshParams do
       },
       oneOf: [
         %Schema{
-          title: "RefreshAll",
           description: "Refresh all resources.",
           type: :object,
-          additionalProperties: false
+          additionalProperties: false,
+          example: %{}
         },
         %Schema{
-          title: "RefreshResource",
           description: "Refresh a resource.",
           type: :object,
           additionalProperties: false,
@@ -29,10 +28,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.ClusterResourceRefreshParams do
               description: "Unique identifier of the cluster resource to refresh."
             }
           },
-          required: [:resource_id]
+          required: [:resource_id],
+          example: %{
+            resource_id: "resource_1"
+          }
         },
         %Schema{
-          title: "RefreshResourceInNode",
           description: "Refresh a resource in a node.",
           type: :object,
           additionalProperties: false,
@@ -47,7 +48,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.ClusterResourceRefreshParams do
                 "Unique identifier of the cluster node where the resource with resource_id to refresh."
             }
           },
-          required: [:resource_id, :node_id]
+          required: [:resource_id, :node_id],
+          example: %{
+            resource_id: "resource_1",
+            node_id: "node_1"
+          }
         }
       ]
     },
