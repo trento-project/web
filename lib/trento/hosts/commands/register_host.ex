@@ -30,6 +30,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
     field :os_version, :string, default: "Unknown"
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
+    field :prometheus_mode, Ecto.Enum, values: [:push, :pull]
     field :last_boot_timestamp, :utc_datetime
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]

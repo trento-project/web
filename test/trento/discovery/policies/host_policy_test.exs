@@ -121,6 +121,47 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should default prometheus_mode to pull when not provided in host_discovery payload" do
+    assert {
+             :ok,
+             %RegisterHost{
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               prometheus_mode: :pull
+             }
+           } =
+             "host_discovery"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return prometheus_mode pull when explicitly set in host_discovery payload" do
+    assert {
+             :ok,
+             %RegisterHost{
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               prometheus_mode: :pull
+             }
+           } =
+             "host_discovery"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "prometheus_mode"], "pull")
+             |> HostPolicy.handle()
+  end
+
+  test "should return prometheus_mode push when set in host_discovery payload" do
+    assert {
+             :ok,
+             %RegisterHost{
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               prometheus_mode: :push
+             }
+           } =
+             "host_discovery"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "prometheus_mode"], "push")
+             |> HostPolicy.handle()
+  end
+
   test "should return the expected commands when a host_discovery payload with empty/incorrect systemd_units is handled" do
     scenarios = [
       %{
