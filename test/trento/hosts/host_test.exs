@@ -568,6 +568,7 @@ defmodule Trento.Hosts.HostTest do
           arch: host_registered_event.arch,
           installation_source: host_registered_event.installation_source,
           prometheus_targets: host_registered_event.prometheus_targets,
+          prometheus_mode: host_registered_event.prometheus_mode,
           systemd_units: Enum.map(host_registered_event.systemd_units, &Map.from_struct/1),
           last_boot_timestamp: host_registered_event.last_boot_timestamp
         }),
@@ -1971,6 +1972,7 @@ defmodule Trento.Hosts.HostTest do
             arch: host_registered_event.arch,
             installation_source: host_registered_event.installation_source,
             prometheus_targets: host_registered_event.prometheus_targets,
+            prometheus_mode: host_registered_event.prometheus_mode,
             systemd_units: host_registered_event.systemd_units,
             last_boot_timestamp: host_registered_event.last_boot_timestamp,
             heartbeat: :unknown,
@@ -2150,6 +2152,7 @@ defmodule Trento.Hosts.HostTest do
             installation_source: restoration_command.installation_source,
             fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
             prometheus_targets: restoration_command.prometheus_targets,
+            prometheus_mode: restoration_command.prometheus_mode,
             systemd_units: restoration_command.systemd_units,
             last_boot_timestamp: restoration_command.last_boot_timestamp
           }
@@ -2256,6 +2259,7 @@ defmodule Trento.Hosts.HostTest do
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
               prometheus_targets: restoration_command.prometheus_targets,
+              prometheus_mode: restoration_command.prometheus_mode,
               systemd_units: restoration_command.systemd_units,
               last_boot_timestamp: restoration_command.last_boot_timestamp
             },
@@ -2320,6 +2324,7 @@ defmodule Trento.Hosts.HostTest do
               installation_source: restoration_command.installation_source,
               fully_qualified_domain_name: restoration_command.fully_qualified_domain_name,
               prometheus_targets: restoration_command.prometheus_targets,
+              prometheus_mode: restoration_command.prometheus_mode,
               systemd_units: restoration_command.systemd_units,
               last_boot_timestamp: restoration_command.last_boot_timestamp
             }
