@@ -43,6 +43,23 @@ defmodule Trento.Hosts do
     |> Repo.preload([:sles_subscriptions, :tags])
   end
 
+  @doc """
+  Returns all hosts that are configured for Prometheus pull mode.
+  Hosts with prometheus_mode set to :push are excluded as they push metrics directly.
+  """
+  @spec get_hosts_for_prometheus_targets :: [HostReadModel.t()]
+  def get_hosts_for_prometheus_targets do
+    HostReadModel
+    |> where(
+      [h],
+      not is_nil(h.hostname) and is_nil(h.deregistered_at) and h.prometheus_mode == :pull
+    )
+    |> order_by(asc: :hostname)
+    |> enrich_host_read_model_query()
+    |> Repo.all()
+    |> Repo.preload([:sles_subscriptions, :tags])
+  end
+
   @spec by_id(String.t()) :: {:ok, HostReadModel.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(HostReadModel, id) do

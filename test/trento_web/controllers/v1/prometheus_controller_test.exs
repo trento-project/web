@@ -24,6 +24,49 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
     assert_schema(response, "HttpSTDTargetListV1", api_spec)
   end
 
+  test "should only return hosts with prometheus_mode pull", %{conn: conn} do
+    %{id: pull_host_id} = insert(:host, prometheus_mode: :pull)
+    insert(:host, prometheus_mode: :push)
+
+    response =
+      conn
+      |> get("/api/v1/prometheus/targets")
+      |> json_response(200)
+
+    targets_ids = Enum.map(response, &Map.get(&1, "labels")["agentID"])
+
+    assert length(targets_ids) == 1
+    assert pull_host_id in targets_ids
+  end
+
+  test "should exclude push mode hosts from targets", %{conn: conn} do
+    insert_list(2, :host, prometheus_mode: :push)
+
+    response =
+      conn
+      |> get("/api/v1/prometheus/targets")
+      |> json_response(200)
+
+    assert response == []
+  end
+
+  test "should filter out both deregistered and push mode hosts from targets", %{conn: conn} do
+    %{id: active_pull_host_id} = insert(:host, prometheus_mode: :pull)
+    insert(:host, prometheus_mode: :pull, deregistered_at: DateTime.utc_now())
+    insert(:host, prometheus_mode: :push)
+    insert(:host, prometheus_mode: :push, deregistered_at: DateTime.utc_now())
+
+    response =
+      conn
+      |> get("/api/v1/prometheus/targets")
+      |> json_response(200)
+
+    targets_ids = Enum.map(response, &Map.get(&1, "labels")["agentID"])
+
+    assert length(targets_ids) == 1
+    assert active_pull_host_id in targets_ids
+  end
+
   test "should return the exporters status", %{conn: conn} do
     expect(Trento.Infrastructure.Prometheus.Mock, :get_exporters_status, fn _ ->
       {:ok, %{"Node Exporter" => :passing}}

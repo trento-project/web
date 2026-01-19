@@ -10,6 +10,7 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.put(:sles_subscriptions, sles_subscriptions)
     |> Map.delete(:fully_qualified_domain_name)
     |> Map.delete(:prometheus_targets)
+    |> Map.delete(:prometheus_mode)
     |> Map.delete(:cluster)
     |> Map.delete(:application_instances)
     |> Map.delete(:database_instances)
@@ -32,6 +33,8 @@ defmodule TrentoWeb.V1.HostJSON do
     |> Map.delete(:cluster)
     |> Map.delete(:application_instances)
     |> Map.delete(:database_instances)
+    |> Map.delete(:prometheus_targets)
+    |> Map.delete(:prometheus_mode)
     |> Map.delete(:__meta__)
   end
 
