@@ -66,7 +66,7 @@ describe('ProfileForm', () => {
   });
 
   it('should send the form values when correctly filled', async () => {
-    const { username, fullname, email, abilities, analytics_enabled } =
+    const { username, fullname, email, abilities, analytics_enabled, analytics_eula_accepted } =
       profileFactory.build();
     const mockOnSave = jest.fn();
 
@@ -89,6 +89,7 @@ describe('ProfileForm', () => {
       fullname,
       email,
       analytics_enabled,
+      ...(analytics_enabled && !analytics_eula_accepted) && {analytics_eula_accepted: true},
     });
   });
 
