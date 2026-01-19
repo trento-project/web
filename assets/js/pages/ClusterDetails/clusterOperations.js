@@ -7,6 +7,7 @@ import {
 } from '@lib/model/hosts';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
   CLUSTER_HOST_START,
@@ -28,13 +29,13 @@ const matchesHostIdOrTarget = (hostID) => (runningOperation) =>
   matchesHostId(hostID, runningOperation) ||
   matchesTarget(hostID, runningOperation);
 
-const matchesClusterMaintenance = ({ metadata }) =>
+const matchesClusterOperation = ({ metadata }) =>
   flow(
     (meta) => getLocalOrTargetParams(meta),
     (params) => !has(params, 'resource_id') && !has(params, 'node_id')
   )(metadata);
 
-const matchesNodeMaintenance =
+const matchesNodeOperation =
   (nodeID) =>
   ({ metadata }) =>
     flow(
@@ -42,7 +43,7 @@ const matchesNodeMaintenance =
       (params) => get(params, 'node_id') === nodeID
     )(metadata);
 
-const matchesResourceMaintenance =
+const matchesResourceOperation =
   (resourceID) =>
   ({ metadata }) =>
     flow(
@@ -53,7 +54,7 @@ const matchesResourceMaintenance =
 export const getClusterOperations = (
   clusterID,
   runningOperation,
-  setMaintenanceOperationParams,
+  setOperationParams,
   setOperationModelOpen,
   details,
   someHostOnline
@@ -64,17 +65,35 @@ export const getClusterOperations = (
       [runningOperation],
       clusterID,
       CLUSTER_MAINTENANCE_CHANGE,
-      matchesClusterMaintenance
+      matchesClusterOperation
     ),
     disabled: !!runningOperation || !someHostOnline,
     permitted: ['maintenance_change:cluster'],
     onClick: () => {
-      setMaintenanceOperationParams({
+      setOperationParams({
         maintenance: !details.maintenance_mode,
       });
       setOperationModelOpen({
         open: true,
         operation: CLUSTER_MAINTENANCE_CHANGE,
+      });
+    },
+  },
+  {
+    value: 'Refresh resources',
+    running: isOperationRunning(
+      [runningOperation],
+      clusterID,
+      CLUSTER_RESOURCE_REFRESH,
+      matchesClusterOperation
+    ),
+    disabled: !!runningOperation || !someHostOnline,
+    permitted: ['resource_refresh:cluster'],
+    onClick: () => {
+      setOperationParams({});
+      setOperationModelOpen({
+        open: true,
+        operation: CLUSTER_RESOURCE_REFRESH,
       });
     },
   },
@@ -85,7 +104,7 @@ export const getClusterHostOperations = curry(
     clusterID,
     runningOperation,
     setCurrentOperationHost,
-    setMaintenanceOperationParams,
+    setOperationParams,
     setOperationModelOpen,
     host
   ) => [
@@ -95,12 +114,12 @@ export const getClusterHostOperations = curry(
         [runningOperation],
         clusterID,
         CLUSTER_MAINTENANCE_CHANGE,
-        matchesNodeMaintenance(host.name)
+        matchesNodeOperation(host.name)
       ),
       disabled: !!runningOperation || !isOnlineInCluster(host),
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
-        setMaintenanceOperationParams({
+        setOperationParams({
           maintenance: host.status !== NODE_MAINTENANCE_STATE,
           node_id: host.name,
         });
@@ -184,7 +203,7 @@ export const getResourceOperations = curry(
   (
     clusterID,
     runningOperation,
-    setMaintenanceOperationParams,
+    setOperationParams,
     setOperationModelOpen,
     someHostOnline,
     resource
@@ -195,18 +214,38 @@ export const getResourceOperations = curry(
         [runningOperation],
         clusterID,
         CLUSTER_MAINTENANCE_CHANGE,
-        matchesResourceMaintenance(resource.id)
+        matchesResourceOperation(resource.id)
       ),
       disabled: !!runningOperation || !someHostOnline,
       permitted: ['maintenance_change:cluster'],
       onClick: () => {
-        setMaintenanceOperationParams({
+        setOperationParams({
           maintenance: resource.managed,
           resource_id: resource.id,
         });
         setOperationModelOpen({
           open: true,
           operation: CLUSTER_MAINTENANCE_CHANGE,
+        });
+      },
+    },
+    {
+      value: 'Refresh resource',
+      running: isOperationRunning(
+        [runningOperation],
+        clusterID,
+        CLUSTER_RESOURCE_REFRESH,
+        matchesResourceOperation(resource.id)
+      ),
+      disabled: !!runningOperation || !someHostOnline,
+      permitted: ['resource_refresh:cluster'],
+      onClick: () => {
+        setOperationParams({
+          resource_id: resource.id,
+        });
+        setOperationModelOpen({
+          open: true,
+          operation: CLUSTER_RESOURCE_REFRESH,
         });
       },
     },
