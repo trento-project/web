@@ -198,8 +198,9 @@ defmodule TrentoWeb.V1.SapSystemController do
         ]
       ],
       request_body:
-        {"Request containing parameters for the specified SAP application instance operation.",
-         "application/json", request_body},
+        request_body &&
+          {"Request containing parameters for the specified SAP application instance operation.",
+           "application/json", request_body},
       responses: [
         accepted: OperationAccepted.response(),
         not_found: NotFound.response(),
@@ -254,8 +255,9 @@ defmodule TrentoWeb.V1.SapSystemController do
         ]
       ],
       request_body:
-        {"Request containing parameters for the specified SAP system operation, such as restart or configuration change.",
-         "application/json", request_body},
+        request_body &&
+          {"Request containing parameters for the specified SAP system operation.",
+           "application/json", request_body},
       responses: [
         accepted: OperationAccepted.response(),
         not_found: NotFound.response(),

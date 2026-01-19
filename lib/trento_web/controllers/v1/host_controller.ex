@@ -248,8 +248,9 @@ defmodule TrentoWeb.V1.HostController do
         ]
       ],
       request_body:
-        {"Request containing parameters for the specified host operation.", "application/json",
-         request_body},
+        request_body &&
+          {"Request containing parameters for the specified host operation.", "application/json",
+           request_body},
       responses: [
         accepted: OperationAccepted.response(),
         not_found: NotFound.response(),
