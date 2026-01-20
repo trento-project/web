@@ -3,7 +3,12 @@ defmodule Trento.SapSystems.PolicyTest do
 
   alias Trento.Abilities.Ability
   alias Trento.SapSystems.Policy
-  alias Trento.SapSystems.Projections.SapSystemReadModel
+
+  alias Trento.SapSystems.Projections.{
+    ApplicationInstanceReadModel,
+    SapSystemReadModel
+  }
+
   alias Trento.Users.User
 
   test "should allow delete_application_instance action if the user has cleanup:application_instance ability" do
@@ -27,11 +32,11 @@ defmodule Trento.SapSystems.PolicyTest do
   describe "request_instance_operation" do
     operations = [
       %{
-        operation: "sap_instance_start",
+        operation: :sap_instance_start,
         ability: "start"
       },
       %{
-        operation: "sap_instance_stop",
+        operation: :sap_instance_stop,
         ability: "stop"
       }
     ]
@@ -43,25 +48,19 @@ defmodule Trento.SapSystems.PolicyTest do
       test "should allow #{operation} operation if the user has #{ability}:application_instance ability" do
         user = %User{abilities: [%Ability{name: @ability, resource: "application_instance"}]}
 
-        assert Policy.authorize(:request_instance_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, ApplicationInstanceReadModel)
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_instance_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, ApplicationInstanceReadModel)
       end
 
       test "should disallow #{operation} operation if the user does not have #{ability}:application_instance ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
 
-        refute Policy.authorize(:request_instance_operation, user, %{
-                 operation: @operation
-               })
+        refute Policy.authorize(@operation, user, ApplicationInstanceReadModel)
       end
     end
   end
@@ -69,11 +68,11 @@ defmodule Trento.SapSystems.PolicyTest do
   describe "request_operation" do
     operations = [
       %{
-        operation: "sap_system_start",
+        operation: :sap_system_start,
         ability: "start"
       },
       %{
-        operation: "sap_system_stop",
+        operation: :sap_system_stop,
         ability: "stop"
       }
     ]
@@ -85,25 +84,19 @@ defmodule Trento.SapSystems.PolicyTest do
       test "should allow #{operation} operation if the user has #{ability}:sap_system ability" do
         user = %User{abilities: [%Ability{name: @ability, resource: "sap_system"}]}
 
-        assert Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, SapSystemReadModel)
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, SapSystemReadModel)
       end
 
       test "should disallow #{operation} operation if the user does not have #{ability}:sap_system ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
 
-        refute Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        refute Policy.authorize(@operation, user, SapSystemReadModel)
       end
     end
   end

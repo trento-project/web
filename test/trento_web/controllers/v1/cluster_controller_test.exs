@@ -13,6 +13,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
   alias Trento.Operations.V1.OperationRequested
 
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -145,17 +146,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
     end
   end
 
-  describe "cluster maintenance operations" do
-    test "should fallback to not found if the resource is not found", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      conn
-      |> post("/api/v1/clusters/#{UUID.uuid4()}/operations/cluster_maintenance_change")
-      |> json_response(:not_found)
-      |> assert_schema("NotFoundV1", api_spec)
-    end
-
+  describe "cluster operations" do
     test "should fallback to operation not found if the operation is not found", %{
       conn: conn,
       api_spec: api_spec
@@ -168,11 +159,119 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       |> assert_schema("NotFoundV1", api_spec)
     end
 
+    operation_scenarios = [
+      %{
+        operation: "cluster_maintenance_change",
+        arguments: %{
+          "maintenance" => true
+        },
+        ability: "maintenance_change"
+      },
+      %{
+        operation: "cluster_resource_refresh",
+        arguments: %{
+          "resource_id" => UUID.uuid4()
+        },
+        ability: "resource_refresh"
+      }
+    ]
+
+    for %{operation: operation, arguments: arguments, ability: ability} <- operation_scenarios do
+      @operation operation
+      @arguments arguments
+      @ability ability
+
+      test "should fallback to not found if the cluster is not found for operation #{@operation}",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> post("/api/v1/clusters/#{UUID.uuid4()}/operations/#{@operation}")
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
+      end
+
+      test "should respond with 500 on messaging error for operation #{@operation}", %{conn: conn} do
+        %{id: cluster_id} = insert(:cluster)
+        insert(:host, cluster_id: cluster_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            {:error, :amqp_error}
+          end
+        )
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/clusters/#{cluster_id}/operations/#{@operation}", @arguments)
+          |> json_response(:internal_server_error)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Something went wrong.",
+                     "title" => "Internal Server Error"
+                   }
+                 ]
+               } = resp
+      end
+
+      test "should perform #{@operation} operation when the user has #{@ability}:cluster ability",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        %{id: cluster_id} = insert(:cluster)
+        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+
+        %{id: user_id} = insert(:user)
+
+        %{id: ability_id} = insert(:ability, name: @ability, resource: "cluster")
+        insert(:users_abilities, user_id: user_id, ability_id: ability_id)
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          fn OperationsPublisher, _, _ ->
+            :ok
+          end
+        )
+
+        posted_conn =
+          conn
+          |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/clusters/#{cluster_id}/operations/#{@operation}", @arguments)
+
+        posted_conn
+        |> json_response(:accepted)
+        |> assert_schema("OperationAcceptedV1", api_spec)
+
+        assert %{
+                 assigns: %{
+                   cluster: %{
+                     id: ^cluster_id,
+                     hosts: [
+                       %{
+                         id: ^host_id
+                       }
+                     ]
+                   }
+                 }
+               } = posted_conn
+      end
+    end
+
     test "should respond with 422 if cluster maintenance change does not receive needed params",
          %{
            conn: conn
          } do
       %{id: cluster_id} = insert(:cluster)
+      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.online())
 
       resp =
         conn
@@ -183,11 +282,6 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
       assert %{
                "errors" => [
                  %{
-                   "detail" => "Failed to cast value to one of: no schemas validate",
-                   "source" => %{"pointer" => "/"},
-                   "title" => "Invalid value"
-                 },
-                 %{
                    "detail" => "Missing field: maintenance",
                    "source" => %{"pointer" => "/maintenance"},
                    "title" => "Invalid value"
@@ -196,81 +290,27 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
              } == resp
     end
 
-    test "should respond with 500 on messaging error", %{conn: conn} do
-      %{id: cluster_id} = insert(:cluster)
-      insert(:host, cluster_id: cluster_id)
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn OperationsPublisher, _, _ ->
-          {:error, :amqp_error}
-        end
-      )
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{
-          "maintenance" => true
-        })
-        |> json_response(:internal_server_error)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Something went wrong.",
-                   "title" => "Internal Server Error"
-                 }
-               ]
-             } = resp
-    end
-
-    test "should perform cluster maintenance change operation when the user has maintenance_change:cluster ability",
+    test "should respond with 422 if cluster refresh resources receives invalid params",
          %{
-           conn: conn,
-           api_spec: api_spec
+           conn: conn
          } do
       %{id: cluster_id} = insert(:cluster)
-      %{id: host_id} = insert(:host, cluster_id: cluster_id)
+      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.online())
 
-      %{id: user_id} = insert(:user)
+      for invalid_args <- [%{"other" => "value"}, %{"node_id" => UUID.uuid4()}] do
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post(
+            "/api/v1/clusters/#{cluster_id}/operations/cluster_resource_refresh",
+            invalid_args
+          )
+          |> json_response(:unprocessable_entity)
 
-      %{id: ability_id} = insert(:ability, name: "maintenance_change", resource: "cluster")
-      insert(:users_abilities, user_id: user_id, ability_id: ability_id)
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        fn OperationsPublisher, _, _ ->
-          :ok
-        end
-      )
-
-      posted_conn =
-        conn
-        |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{
-          "maintenance" => true
-        })
-
-      posted_conn
-      |> json_response(:accepted)
-      |> assert_schema("OperationAcceptedV1", api_spec)
-
-      assert %{
-               assigns: %{
-                 cluster: %{
-                   id: ^cluster_id,
-                   hosts: [
-                     %{
-                       id: ^host_id
-                     }
-                   ]
-                 }
-               }
-             } = posted_conn
+        assert %{
+                 "errors" => _
+               } = resp
+      end
     end
   end
 
@@ -893,7 +933,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         [
           post(conn, "/api/v1/clusters/#{cluster_id}/checks", %{}),
           post(conn, "/api/v1/clusters/#{cluster_id}/checks/request_execution", %{}),
-          post(conn, "/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{}),
+          post(conn, "/api/v1/clusters/#{cluster_id}/operations/cluster_maintenance_change", %{
+            "maintenance" => true
+          }),
+          post(conn, "/api/v1/clusters/#{cluster_id}/operations/cluster_resource_refresh", %{}),
           post(
             conn,
             "/api/v1/clusters/#{cluster_id}/hosts/#{UUID.uuid4()}/operations/pacemaker_enable"

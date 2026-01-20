@@ -3,6 +3,13 @@ defmodule TrentoWeb.Router do
   use Pow.Phoenix.Router
   use PowAssent.Phoenix.Router
 
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+
   # From newest to oldest
   @available_api_versions ["v2", "v1"]
 
@@ -178,18 +185,41 @@ defmodule TrentoWeb.Router do
              :delete_database_instance
 
       if Application.compile_env!(:trento, :operations_enabled) do
-        post "/hosts/:id/operations/:operation", HostController, :request_operation
-        post "/clusters/:id/operations/:operation", ClusterController, :request_operation
-        post "/sap_systems/:id/operations/:operation", SapSystemController, :request_operation
-        post "/databases/:id/operations/:operation", DatabaseController, :request_operation
+        # The operation endpoints are created using the operation Enums.
+        # Every entry has a new path in the router
+        for host_operation <- HostOperations.values() do
+          post "/hosts/:id/operations/#{host_operation}", HostController, host_operation
+        end
 
-        post "/clusters/:id/hosts/:host_id/operations/:operation",
-             ClusterController,
-             :request_host_operation
+        for cluster_operation <- ClusterOperations.values() do
+          post "/clusters/:id/operations/#{cluster_operation}",
+               ClusterController,
+               cluster_operation
+        end
 
-        post "/sap_systems/:id/hosts/:host_id/instances/:instance_number/operations/:operation",
-             SapSystemController,
-             :request_instance_operation
+        for sap_system_operation <- SapSystemOperations.values() do
+          post "/sap_systems/:id/operations/#{sap_system_operation}",
+               SapSystemController,
+               sap_system_operation
+        end
+
+        for database_operations <- DatabaseOperations.values() do
+          post "/databases/:id/operations/#{database_operations}",
+               DatabaseController,
+               database_operations
+        end
+
+        for cluster_host_operation <- ClusterHostOperations.values() do
+          post "/clusters/:id/hosts/:host_id/operations/#{cluster_host_operation}",
+               ClusterController,
+               cluster_host_operation
+        end
+
+        for sap_instance_operation <- SapInstanceOperations.values() do
+          post "/sap_systems/:id/hosts/:host_id/instances/:instance_number/operations/#{sap_instance_operation}",
+               SapSystemController,
+               sap_instance_operation
+        end
       end
 
       resources "/users", UsersController, except: [:new, :edit, :update]

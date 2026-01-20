@@ -240,7 +240,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         %Plug.Conn{
           params: params,
           body_params: body_params,
-          resp_body: resp_body
+          resp_body: resp_body,
+          assigns: %{operation: operation}
         } = conn
       )
       when activity in [
@@ -255,7 +256,7 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
 
     %{
       correlation_id: operation_id,
-      operation: params |> Map.get(:operation) |> String.to_existing_atom(),
+      operation: operation,
       operation_id: operation_id,
       params: body_params
     }

@@ -12,9 +12,28 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   alias Trento.Operations.V1.OperationCompleted
 
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+
   @excluded_events [
     Trento.Hosts.Events.HostChecksSelected,
     Trento.Clusters.Events.ChecksSelected
+  ]
+
+  @operation_activities [
+    {TrentoWeb.V1.ClusterController, ClusterOperations.values(), :cluster_operation_requested},
+    {TrentoWeb.V1.ClusterController, ClusterHostOperations.values(),
+     :cluster_host_operation_requested},
+    {TrentoWeb.V1.DatabaseController, DatabaseOperations.values(), :database_operation_requested},
+    {TrentoWeb.V1.HostController, HostOperations.values(), :host_operation_requested},
+    {TrentoWeb.V1.SapSystemController, SapInstanceOperations.values(),
+     :application_instance_operation_requested},
+    {TrentoWeb.V1.SapSystemController, SapSystemOperations.values(),
+     :sap_system_operation_requested}
   ]
 
   @type activity_type :: atom()
@@ -152,64 +171,66 @@ defmodule Trento.ActivityLog.ActivityCatalog do
   end
 
   defp get_connection_activities do
-    %{
-      {TrentoWeb.SessionController, :create} => {:login_attempt, :always},
-      {TrentoWeb.V1.TagsController, :add_tag_to_host} => {:resource_tagging, 201},
-      {TrentoWeb.V1.TagsController, :add_tag_to_cluster} => {:resource_tagging, 201},
-      {TrentoWeb.V1.TagsController, :add_tag_to_sap_system} => {:resource_tagging, 201},
-      {TrentoWeb.V1.TagsController, :add_tag_to_database} => {:resource_tagging, 201},
-      {TrentoWeb.V1.TagsController, :remove_tag_from_host} => {:resource_untagging, 204},
-      {TrentoWeb.V1.TagsController, :remove_tag_from_cluster} => {:resource_untagging, 204},
-      {TrentoWeb.V1.TagsController, :remove_tag_from_sap_system} => {:resource_untagging, 204},
-      {TrentoWeb.V1.TagsController, :remove_tag_from_database} => {:resource_untagging, 204},
-      {TrentoWeb.V1.SettingsController, :update_api_key_settings} => {:api_key_generation, 200},
-      {TrentoWeb.V1.SettingsController, :save_suse_manager_settings} =>
-        {:saving_suma_settings, 201},
-      {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings} =>
-        {:changing_suma_settings, 200},
-      {TrentoWeb.V1.SettingsController, :put_suse_manager_settings} =>
-        {:changing_suma_settings, 200},
-      {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings} =>
-        {:clearing_suma_settings, 204},
-      {TrentoWeb.V1.SettingsController, :create_alerting_settings} =>
-        {:saving_alerting_settings, 201},
-      {TrentoWeb.V1.SettingsController, :update_alerting_settings} =>
-        {:changing_alerting_settings, 200},
-      {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
-      {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
-      {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
-      {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},
-      {TrentoWeb.V1.UsersController, :revoke_personal_access_token} =>
-        {:personal_access_token_admin_deletion, 204},
-      {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
-      {TrentoWeb.V1.PersonalAccessTokensController, :create_personal_access_token} =>
-        {:personal_access_token_creation, 201},
-      {TrentoWeb.V1.PersonalAccessTokensController, :revoke_personal_access_token} =>
-        {:personal_access_token_deletion, 204},
-      {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
-        {:cluster_checks_execution_request, 202},
-      {TrentoWeb.V1.ClusterController, :select_checks} => {:cluster_checks_selected, 202},
-      {TrentoWeb.V1.HostController, :request_checks_execution} =>
-        {:host_checks_execution_request, 202},
-      {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
-      {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
-        {:activity_log_settings_update, 200},
-      {TrentoWeb.V1.HostController, :request_operation} => {:host_operation_requested, 202},
-      {TrentoWeb.V1.ClusterController, :request_operation} => {:cluster_operation_requested, 202},
-      {TrentoWeb.V1.ClusterController, :request_host_operation} =>
-        {:cluster_host_operation_requested, 202},
-      {TrentoWeb.V1.SapSystemController, :request_operation} =>
-        {:sap_system_operation_requested, 202},
-      {TrentoWeb.V1.SapSystemController, :request_instance_operation} =>
-        {:application_instance_operation_requested, 202},
-      {TrentoWeb.V1.DatabaseController, :request_operation} =>
-        {:database_operation_requested, 202},
-      {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
-      {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
-        {:sap_system_cleanup_requested, 204},
-      {TrentoWeb.V1.DatabaseController, :delete_database_instance} =>
-        {:database_cleanup_requested, 204}
-    }
+    Map.merge(
+      %{
+        {TrentoWeb.SessionController, :create} => {:login_attempt, :always},
+        {TrentoWeb.V1.TagsController, :add_tag_to_host} => {:resource_tagging, 201},
+        {TrentoWeb.V1.TagsController, :add_tag_to_cluster} => {:resource_tagging, 201},
+        {TrentoWeb.V1.TagsController, :add_tag_to_sap_system} => {:resource_tagging, 201},
+        {TrentoWeb.V1.TagsController, :add_tag_to_database} => {:resource_tagging, 201},
+        {TrentoWeb.V1.TagsController, :remove_tag_from_host} => {:resource_untagging, 204},
+        {TrentoWeb.V1.TagsController, :remove_tag_from_cluster} => {:resource_untagging, 204},
+        {TrentoWeb.V1.TagsController, :remove_tag_from_sap_system} => {:resource_untagging, 204},
+        {TrentoWeb.V1.TagsController, :remove_tag_from_database} => {:resource_untagging, 204},
+        {TrentoWeb.V1.SettingsController, :update_api_key_settings} => {:api_key_generation, 200},
+        {TrentoWeb.V1.SettingsController, :save_suse_manager_settings} =>
+          {:saving_suma_settings, 201},
+        {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings} =>
+          {:changing_suma_settings, 200},
+        {TrentoWeb.V1.SettingsController, :put_suse_manager_settings} =>
+          {:changing_suma_settings, 200},
+        {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings} =>
+          {:clearing_suma_settings, 204},
+        {TrentoWeb.V1.SettingsController, :create_alerting_settings} =>
+          {:saving_alerting_settings, 201},
+        {TrentoWeb.V1.SettingsController, :update_alerting_settings} =>
+          {:changing_alerting_settings, 200},
+        {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
+        {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
+        {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
+        {TrentoWeb.V1.UsersController, :delete} => {:user_deletion, 204},
+        {TrentoWeb.V1.UsersController, :revoke_personal_access_token} =>
+          {:personal_access_token_admin_deletion, 204},
+        {TrentoWeb.V1.ProfileController, :update} => {:profile_update, 200},
+        {TrentoWeb.V1.PersonalAccessTokensController, :create_personal_access_token} =>
+          {:personal_access_token_creation, 201},
+        {TrentoWeb.V1.PersonalAccessTokensController, :revoke_personal_access_token} =>
+          {:personal_access_token_deletion, 204},
+        {TrentoWeb.V1.ClusterController, :request_checks_execution} =>
+          {:cluster_checks_execution_request, 202},
+        {TrentoWeb.V1.ClusterController, :select_checks} => {:cluster_checks_selected, 202},
+        {TrentoWeb.V1.HostController, :request_checks_execution} =>
+          {:host_checks_execution_request, 202},
+        {TrentoWeb.V1.HostController, :select_checks} => {:host_checks_selected, 202},
+        {TrentoWeb.V1.SettingsController, :update_activity_log_settings} =>
+          {:activity_log_settings_update, 200},
+        {TrentoWeb.V1.HostController, :delete} => {:host_cleanup_requested, 204},
+        {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
+          {:sap_system_cleanup_requested, 204},
+        {TrentoWeb.V1.DatabaseController, :delete_database_instance} =>
+          {:database_cleanup_requested, 204}
+      },
+      get_connection_operation_activities()
+    )
+  end
+
+  # Create connection activities from different operation lists
+  defp get_connection_operation_activities do
+    for {controller, ops, event} <- @operation_activities,
+        op <- ops,
+        into: %{} do
+      {{controller, op}, {event, 202}}
+    end
   end
 
   defp get_queue_events_activities do

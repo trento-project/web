@@ -13,6 +13,8 @@ defmodule Trento.Hosts.Policy do
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Users.User
 
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
+
   def authorize(:select_checks, %User{} = user, HostReadModel),
     do:
       has_global_ability?(user) or
@@ -26,10 +28,11 @@ defmodule Trento.Hosts.Policy do
   def authorize(:delete, %User{} = user, HostReadModel),
     do: has_global_ability?(user) or user_has_ability?(user, %{name: "cleanup", resource: "host"})
 
-  def authorize(:request_operation, %User{} = user, %{operation: operation})
-      when operation in ["saptune_solution_change", "saptune_solution_apply", "reboot"],
+  def authorize(operation, %User{} = user, HostReadModel)
+      when operation in HostOperations.values(),
       do:
-        has_global_ability?(user) or user_has_ability?(user, %{name: operation, resource: "host"})
+        has_global_ability?(user) or
+          user_has_ability?(user, %{name: Atom.to_string(operation), resource: "host"})
 
   def authorize(_, _, _), do: true
 end

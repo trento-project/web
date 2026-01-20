@@ -337,37 +337,37 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :host_operation_requested,
-        connection_info: {TrentoWeb.V1.HostController, :request_operation},
+        connection_info: {TrentoWeb.V1.HostController, :saptune_solution_apply},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :cluster_operation_requested,
-        connection_info: {TrentoWeb.V1.ClusterController, :request_operation},
+        connection_info: {TrentoWeb.V1.ClusterController, :cluster_maintenance_change},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :cluster_host_operation_requested,
-        connection_info: {TrentoWeb.V1.ClusterController, :request_host_operation},
+        connection_info: {TrentoWeb.V1.ClusterController, :pacemaker_enable},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :application_instance_operation_requested,
-        connection_info: {TrentoWeb.V1.SapSystemController, :request_instance_operation},
+        connection_info: {TrentoWeb.V1.SapSystemController, :sap_instance_start},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :sap_system_operation_requested,
-        connection_info: {TrentoWeb.V1.SapSystemController, :request_operation},
+        connection_info: {TrentoWeb.V1.SapSystemController, :sap_system_start},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :database_operation_requested,
-        connection_info: {TrentoWeb.V1.DatabaseController, :request_operation},
+        connection_info: {TrentoWeb.V1.DatabaseController, :database_start},
         interesting_statuses: 202,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       }

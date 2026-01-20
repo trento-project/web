@@ -252,8 +252,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       scenarios = [
         %{
           action: :application_instance_operation_requested,
-          operation: "sap_instance_start",
-          atom_operation: :sap_instance_start,
+          operation: :sap_instance_start,
           resource_field: :sap_system_id,
           additional_params: %{
             host_id: host_id,
@@ -262,22 +261,19 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         },
         %{
           action: :cluster_operation_requested,
-          operation: "cluster_maintenance_change",
-          atom_operation: :cluster_maintenance_change,
+          operation: :cluster_maintenance_change,
           resource_field: :cluster_id,
           additional_params: %{}
         },
         %{
           action: :host_operation_requested,
-          operation: "saptune_solution_apply",
-          atom_operation: :saptune_solution_apply,
+          operation: :saptune_solution_apply,
           resource_field: :host_id,
           additional_params: %{}
         },
         %{
           action: :cluster_host_operation_requested,
-          operation: "pacemaker_enable",
-          atom_operation: :pacemaker_enable,
+          operation: :pacemaker_enable,
           resource_field: :cluster_id,
           additional_params: %{
             host_id: host_id
@@ -285,8 +281,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         },
         %{
           action: :cluster_host_operation_requested,
-          operation: "pacemaker_disable",
-          atom_operation: :pacemaker_disable,
+          operation: :pacemaker_disable,
           resource_field: :cluster_id,
           additional_params: %{
             host_id: host_id
@@ -294,8 +289,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         },
         %{
           action: :cluster_host_operation_requested,
-          operation: "cluster_host_start",
-          atom_operation: :cluster_host_start,
+          operation: :cluster_host_start,
           resource_field: :cluster_id,
           additional_params: %{
             host_id: host_id
@@ -303,8 +297,7 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         },
         %{
           action: :cluster_host_operation_requested,
-          operation: "cluster_host_stop",
-          atom_operation: :cluster_host_stop,
+          operation: :cluster_host_stop,
           resource_field: :cluster_id,
           additional_params: %{
             host_id: host_id
@@ -312,15 +305,13 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
         },
         %{
           action: :sap_system_operation_requested,
-          operation: "sap_system_start",
-          atom_operation: :sap_system_start,
+          operation: :sap_system_start,
           resource_field: :sap_system_id,
           additional_params: %{}
         },
         %{
           action: :database_operation_requested,
-          operation: "database_start",
-          atom_operation: :database_start,
+          operation: :database_start,
           resource_field: :database_id,
           additional_params: %{}
         }
@@ -329,17 +320,16 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
       for %{
             action: action,
             operation: operation,
-            atom_operation: atom_operation,
             resource_field: resource_field,
             additional_params: additional_params
           } <- scenarios do
-        params = Map.merge(%{id: resource_id, operation: operation}, additional_params)
+        params = Map.merge(%{id: resource_id}, additional_params)
 
         expected_metadata =
           Map.merge(
             %{
               resource_field => resource_id,
-              :operation => atom_operation,
+              :operation => operation,
               :operation_id => operation_id,
               :params => body_params,
               :correlation_id => operation_id
@@ -352,7 +342,8 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                    conn
                    | params: params,
                      body_params: body_params,
-                     resp_body: Jason.encode!(%{operation_id: operation_id})
+                     resp_body: Jason.encode!(%{operation_id: operation_id}),
+                     assigns: %{operation: operation}
                  })
       end
     end
