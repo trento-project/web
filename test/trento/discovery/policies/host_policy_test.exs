@@ -105,7 +105,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
-  test "should return the expected commands when a host_discovery payload with prometheus_targets is handled" do
+  test "should return the expected commands when a host_discovery payload with prometheus in pull mode" do
     assert {
              :ok,
              %RegisterHost{
@@ -113,10 +113,37 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
                prometheus_targets: %{
                  "node_exporter" => "10.0.0.1:9100",
                  "ha_cluster_exporter" => "10.0.0.1:9664"
-               }
+               },
+               prometheus_mode: :pull
              }
            } =
-             "host_discovery_with_prometheus_targets"
+             "host_discovery_with_prometheus_mode_pull"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a host_discovery payload with prometheus in push mode" do
+    assert {
+             :ok,
+             %RegisterHost{
+               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+               prometheus_targets: %{
+                 "prometheus_url" => "http://10.1.1.4:9090"
+               },
+               prometheus_mode: :push
+             }
+           } =
+             "host_discovery_with_prometheus_mode_push"
+             |> load_discovery_event_fixture()
+             |> HostPolicy.handle()
+  end
+
+  test "should fail when a host_discovery payload with prometheus mode is invalid" do
+    assert {
+             :error,
+             _
+           } =
+             "host_discovery_with_prometheus_mode_invalid"
              |> load_discovery_event_fixture()
              |> HostPolicy.handle()
   end
@@ -131,20 +158,6 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
            } =
              "host_discovery"
              |> load_discovery_event_fixture()
-             |> HostPolicy.handle()
-  end
-
-  test "should return prometheus_mode pull when explicitly set in host_discovery payload" do
-    assert {
-             :ok,
-             %RegisterHost{
-               host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
-               prometheus_mode: :pull
-             }
-           } =
-             "host_discovery"
-             |> load_discovery_event_fixture()
-             |> put_in(["payload", "prometheus_mode"], "pull")
              |> HostPolicy.handle()
   end
 
