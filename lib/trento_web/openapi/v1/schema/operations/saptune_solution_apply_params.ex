@@ -6,7 +6,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.SaptuneSolutionApplyParams do
   OpenApiSpex.schema(
     %{
       title: "SaptuneSolutionApplyParamsV1",
-      description: "Represents the parameters for applying a Saptune solution to a host.",
+      description:
+        "Represents the parameters for applying or changing a Saptune solution to a host.",
       type: :object,
       additionalProperties: false,
       properties: %{

@@ -139,14 +139,14 @@ defmodule TrentoWeb.V1.SapSystemController do
       operation: SapInstanceOperations.sap_instance_start(),
       summary: "Request SAP instance start operation",
       description:
-        "Request SAP instance start operation on a SAP system to trigger a specific instance start action.",
+        "Request SAP instance start operation to start a specific instance of a SAP system.",
       request_body: SapInstanceStartStopParams
     },
     %{
       operation: SapInstanceOperations.sap_instance_stop(),
       summary: "Request SAP instance stop operation",
       description:
-        "Request SAP instance stop operation on a SAP system to trigger a specific instance stop action.",
+        "Request SAP instance stop operation to stop a specific instance of a SAP system.",
       request_body: SapInstanceStartStopParams
     }
   ]
@@ -217,14 +217,13 @@ defmodule TrentoWeb.V1.SapSystemController do
     %{
       operation: SapSystemOperations.sap_system_start(),
       summary: "Request SAP system start operation",
-      description:
-        "Request SAP system start operation on a SAP system to trigger a start action.",
+      description: "Request SAP system start operation to start a SAP system.",
       request_body: SapSystemStartStopParams
     },
     %{
       operation: SapSystemOperations.sap_system_stop(),
       summary: "Request SAP system stop operation",
-      description: "Request SAP system stop operation on a SAP system to trigger a stop action.",
+      description: "Request SAP system stop operation to stop a SAP system.",
       request_body: SapSystemStartStopParams
     }
   ]

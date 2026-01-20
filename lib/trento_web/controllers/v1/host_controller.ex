@@ -217,7 +217,7 @@ defmodule TrentoWeb.V1.HostController do
     %{
       operation: HostOperations.reboot(),
       summary: "Request host reboot operation",
-      description: "Request reboot operation on a host to schedule a reboot.",
+      description: "Request reboot operation to reboot a host.",
       request_body: nil
     }
   ]

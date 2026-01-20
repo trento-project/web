@@ -142,14 +142,14 @@ defmodule TrentoWeb.V1.ClusterController do
       operation: ClusterOperations.cluster_maintenance_change(),
       summary: "Request cluster maintenance change operation",
       description:
-        "Request cluster maintenance change operation on a cluster to change maintenance state of the whole cluster or specifics resource/nodes.",
+        "Request maintenance change operation to change maintenance state of the whole cluster or specific resource/node.",
       request_body: ClusterMaintenanceChangeParams
     },
     %{
       operation: ClusterOperations.cluster_resource_refresh(),
       summary: "Request cluster resource refresh operation",
       description:
-        "Request cluster resource refresh operation on a cluster to refresh specific or all the resources in the cluster.",
+        "Request resource refresh operation to refresh specific or all the resources in the cluster.",
       request_body: ClusterResourceRefreshParams
     }
   ]
@@ -199,29 +199,27 @@ defmodule TrentoWeb.V1.ClusterController do
     %{
       operation: ClusterHostOperations.pacemaker_enable(),
       summary: "Request pacemaker enable operation",
-      description:
-        "Request cluster maintenance change operation on a cluster to change maintenance state of the whole cluster or specifics resource/nodes.",
+      description: "Request pacemaker enable operation to enable pacemaker service on a host.",
       request_body: nil
     },
     %{
       operation: ClusterHostOperations.pacemaker_disable(),
       summary: "Request pacemaker disable operation",
-      description:
-        "Request cluster resource refresh operation on a cluster to refresh specific or all the resources in the cluster.",
+      description: "Request pacemaker disable operation to disable pacemaker service on a host.",
       request_body: nil
     },
     %{
       operation: ClusterHostOperations.cluster_host_start(),
       summary: "Request cluster start in host operation",
       description:
-        "Request cluster start in host operation to start all cluster components such us Pacemaker and Corosync.",
+        "Request cluster start operation to start all cluster components such us Pacemaker and Corosync on a host.",
       request_body: nil
     },
     %{
       operation: ClusterHostOperations.cluster_host_stop(),
       summary: "Request cluster stop in host operation",
       description:
-        "Request cluster stop in host operation to stop all cluster components such us Pacemaker and Corosync.",
+        "Request cluster stop operation to stop all cluster components such us Pacemaker and Corosync on a host.",
       request_body: nil
     }
   ]
