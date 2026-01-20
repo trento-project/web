@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-46985AC2.js"></script>
+    <script src="dist/sidebar_items-D2C83505.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -153,7 +153,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete_database_instance/2" data-no-tooltip translate="no">delete_database_instance(conn, map)</a>
+        <a href="#database_start/2" data-no-tooltip translate="no">database_start(conn, params)</a>
 
       </div>
 
@@ -161,7 +161,15 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_operation/1" data-no-tooltip translate="no">get_operation(arg1)</a>
+        <a href="#database_stop/2" data-no-tooltip translate="no">database_stop(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#delete_database_instance/2" data-no-tooltip translate="no">delete_database_instance(conn, map)</a>
 
       </div>
 
@@ -185,7 +193,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(arg1)</a>
+        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(_)</a>
 
       </div>
 
@@ -202,14 +210,6 @@ Info
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#open_api_operation/1" data-no-tooltip translate="no">open_api_operation(action)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#request_operation/2" data-no-tooltip translate="no">request_operation(conn, _)</a>
 
       </div>
 
@@ -244,6 +244,50 @@ Info
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
+<section class="detail" id="database_start/2">
+
+  <div class="detail-header">
+    <a href="#database_start/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">database_start(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L171" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="database_stop/2">
+
+  <div class="detail-header">
+    <a href="#database_stop/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">database_stop(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L171" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="delete_database_instance/2">
 
   <div class="detail-header">
@@ -253,7 +297,7 @@ Info
     </a>
     <h1 class="signature" translate="no">delete_database_instance(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L107" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L110" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -273,28 +317,6 @@ Info
 
   </section>
 </section>
-<section class="detail" id="get_operation/1">
-
-  <div class="detail-header">
-    <a href="#get_operation/1" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_operation(arg1)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L216" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
 <section class="detail" id="get_operation_database/1">
 
   <div class="detail-header">
@@ -304,7 +326,7 @@ Info
     </a>
     <h1 class="signature" translate="no">get_operation_database(arg1)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L181" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L178" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -326,7 +348,7 @@ Info
     </a>
     <h1 class="signature" translate="no">get_operation_params(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L210" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L207" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -346,9 +368,9 @@ Info
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_policy_resource(arg1)</h1>
+    <h1 class="signature" translate="no">get_policy_resource(_)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L173" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L176" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -370,7 +392,7 @@ Info
     </a>
     <h1 class="signature" translate="no">list_databases(conn, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L55" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L58" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -392,7 +414,7 @@ Info
     </a>
     <h1 class="signature" translate="no">open_api_operation(action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L44" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L47" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -407,28 +429,6 @@ Info
           <pre translate="no"><span class="attribute">@spec</span> open_api_operation(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()) :: <a href="https://hexdocs.pm/open_api_spex/3.19.1/OpenApiSpex.Operation.html#t:t/0">OpenApiSpex.Operation.t</a>()</pre>
 
       </div>
-
-
-  </section>
-</section>
-<section class="detail" id="request_operation/2">
-
-  <div class="detail-header">
-    <a href="#request_operation/2" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">request_operation(conn, _)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/database_controller.ex#L153" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
 
 
   </section>

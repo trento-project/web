@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-46985AC2.js"></script>
+    <script src="dist/sidebar_items-D2C83505.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -161,14 +161,6 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_operation/1" data-no-tooltip translate="no">get_operation(arg1)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
         <a href="#get_operation_host/1" data-no-tooltip translate="no">get_operation_host(map)</a>
 
       </div>
@@ -177,7 +169,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(arg1)</a>
+        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(_)</a>
 
       </div>
 
@@ -209,6 +201,14 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#reboot/2" data-no-tooltip translate="no">reboot(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#request_checks_execution/2" data-no-tooltip translate="no">request_checks_execution(conn, map)</a>
 
       </div>
@@ -217,7 +217,15 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#request_operation/2" data-no-tooltip translate="no">request_operation(conn, _)</a>
+        <a href="#saptune_solution_apply/2" data-no-tooltip translate="no">saptune_solution_apply(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#saptune_solution_change/2" data-no-tooltip translate="no">saptune_solution_change(conn, params)</a>
 
       </div>
 
@@ -269,7 +277,7 @@ Info
     </a>
     <h1 class="signature" translate="no">delete(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L93" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L94" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -288,28 +296,6 @@ Info
 
   </section>
 </section>
-<section class="detail" id="get_operation/1">
-
-  <div class="detail-header">
-    <a href="#get_operation/1" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">get_operation(arg1)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L265" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
 <section class="detail" id="get_operation_host/1">
 
   <div class="detail-header">
@@ -319,7 +305,7 @@ Info
     </a>
     <h1 class="signature" translate="no">get_operation_host(map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L259" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L268" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -339,9 +325,9 @@ Info
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_policy_resource(arg1)</h1>
+    <h1 class="signature" translate="no">get_policy_resource(_)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L251" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L266" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -363,7 +349,7 @@ Info
     </a>
     <h1 class="signature" translate="no">heartbeat(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L126" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L127" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -385,7 +371,7 @@ Info
     </a>
     <h1 class="signature" translate="no">list(conn, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L63" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L64" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -413,7 +399,7 @@ Info
     </a>
     <h1 class="signature" translate="no">open_api_operation(action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L51" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -432,16 +418,16 @@ Info
 
   </section>
 </section>
-<section class="detail" id="request_checks_execution/2">
+<section class="detail" id="reboot/2">
 
   <div class="detail-header">
-    <a href="#request_checks_execution/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#reboot/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">request_checks_execution(conn, map)</h1>
+    <h1 class="signature" translate="no">reboot(conn, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L193" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L261" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -454,16 +440,60 @@ Info
 
   </section>
 </section>
-<section class="detail" id="request_operation/2">
+<section class="detail" id="request_checks_execution/2">
 
   <div class="detail-header">
-    <a href="#request_operation/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#request_checks_execution/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">request_operation(conn, _)</h1>
+    <h1 class="signature" translate="no">request_checks_execution(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L239" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L194" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="saptune_solution_apply/2">
+
+  <div class="detail-header">
+    <a href="#saptune_solution_apply/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">saptune_solution_apply(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L261" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="saptune_solution_change/2">
+
+  <div class="detail-header">
+    <a href="#saptune_solution_change/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">saptune_solution_change(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L261" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -485,7 +515,7 @@ Info
     </a>
     <h1 class="signature" translate="no">select_checks(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L158" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/host_controller.ex#L159" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

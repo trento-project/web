@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-46985AC2.js"></script>
+    <script src="dist/sidebar_items-D2C83505.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -153,7 +153,31 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_operation/1" data-no-tooltip translate="no">get_operation(arg1)</a>
+        <a href="#cluster_host_start/2" data-no-tooltip translate="no">cluster_host_start(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_host_stop/2" data-no-tooltip translate="no">cluster_host_stop(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_maintenance_change/2" data-no-tooltip translate="no">cluster_maintenance_change(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#cluster_resource_refresh/2" data-no-tooltip translate="no">cluster_resource_refresh(conn, params)</a>
 
       </div>
 
@@ -177,7 +201,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(arg1)</a>
+        <a href="#get_policy_resource/1" data-no-tooltip translate="no">get_policy_resource(_)</a>
 
       </div>
 
@@ -201,23 +225,23 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#pacemaker_disable/2" data-no-tooltip translate="no">pacemaker_disable(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#pacemaker_enable/2" data-no-tooltip translate="no">pacemaker_enable(conn, params)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#request_checks_execution/2" data-no-tooltip translate="no">request_checks_execution(conn, map)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#request_host_operation/2" data-no-tooltip translate="no">request_host_operation(conn, map)</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#request_operation/2" data-no-tooltip translate="no">request_operation(conn, _)</a>
 
       </div>
 
@@ -260,16 +284,82 @@ Info
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="get_operation/1">
+<section class="detail" id="cluster_host_start/2">
 
   <div class="detail-header">
-    <a href="#get_operation/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cluster_host_start/2" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_operation(arg1)</h1>
+    <h1 class="signature" translate="no">cluster_host_start(conn, params)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L287" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L274" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_host_stop/2">
+
+  <div class="detail-header">
+    <a href="#cluster_host_stop/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_host_stop(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L274" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_maintenance_change/2">
+
+  <div class="detail-header">
+    <a href="#cluster_maintenance_change/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_maintenance_change(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L193" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="cluster_resource_refresh/2">
+
+  <div class="detail-header">
+    <a href="#cluster_resource_refresh/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">cluster_resource_refresh(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L193" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -291,7 +381,7 @@ Info
     </a>
     <h1 class="signature" translate="no">get_operation_cluster(arg1)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L254" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L281" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -313,7 +403,7 @@ Info
     </a>
     <h1 class="signature" translate="no">get_operation_params(arg1)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L304" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L315" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -333,9 +423,9 @@ Info
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_policy_resource(arg1)</h1>
+    <h1 class="signature" translate="no">get_policy_resource(_)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L245" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L279" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -357,7 +447,7 @@ Info
     </a>
     <h1 class="signature" translate="no">list(conn, _)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L59" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L64" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -379,7 +469,7 @@ Info
     </a>
     <h1 class="signature" translate="no">open_api_operation(action)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L47" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L52" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -398,6 +488,50 @@ Info
 
   </section>
 </section>
+<section class="detail" id="pacemaker_disable/2">
+
+  <div class="detail-header">
+    <a href="#pacemaker_disable/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pacemaker_disable(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L274" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="pacemaker_enable/2">
+
+  <div class="detail-header">
+    <a href="#pacemaker_enable/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">pacemaker_enable(conn, params)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L274" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
 <section class="detail" id="request_checks_execution/2">
 
   <div class="detail-header">
@@ -407,51 +541,7 @@ Info
     </a>
     <h1 class="signature" translate="no">request_checks_execution(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L91" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="request_host_operation/2">
-
-  <div class="detail-header">
-    <a href="#request_host_operation/2" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">request_host_operation(conn, map)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L230" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
-
-
-  </div>
-
-  <section class="docstring">
-
-
-  </section>
-</section>
-<section class="detail" id="request_operation/2">
-
-  <div class="detail-header">
-    <a href="#request_operation/2" class="detail-link" data-no-tooltip title="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature" translate="no">request_operation(conn, _)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L173" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L96" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -473,7 +563,7 @@ Info
     </a>
     <h1 class="signature" translate="no">select_checks(conn, map)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L125" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/cluster_controller.ex#L130" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
