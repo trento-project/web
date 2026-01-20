@@ -34,16 +34,20 @@ defmodule Trento.Hosts do
   require Logger
 
   @spec get_all_hosts(keyword()) :: [HostReadModel.t()]
-  def get_all_hosts(opts \\ []) do
-    extra_clauses = Keyword.get(opts, :where, [])
+  def get_all_hosts(opts \\ [])
 
+  def get_all_hosts(where: where_clauses) do
     HostReadModel
     |> where([h], not is_nil(h.hostname) and is_nil(h.deregistered_at))
-    |> where(^extra_clauses)
+    |> where(^where_clauses)
     |> order_by(asc: :hostname)
     |> enrich_host_read_model_query()
     |> Repo.all()
     |> Repo.preload([:sles_subscriptions, :tags])
+  end
+
+  def get_all_hosts([]) do
+    get_all_hosts(where: [])
   end
 
   @doc """
