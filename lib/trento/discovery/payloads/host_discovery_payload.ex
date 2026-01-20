@@ -51,7 +51,6 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
       attrs
       |> installation_source_to_downcase()
       |> arch_to_downcase()
-      |> prometheus_mode_to_downcase()
       |> handle_systemd_units()
 
     host
@@ -68,12 +67,6 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     do: %{attrs | "arch" => String.downcase(arch)}
 
   defp arch_to_downcase(attrs), do: attrs
-
-  defp prometheus_mode_to_downcase(%{"prometheus_mode" => prometheus_mode} = attrs)
-       when is_binary(prometheus_mode),
-       do: %{attrs | "prometheus_mode" => String.downcase(prometheus_mode)}
-
-  defp prometheus_mode_to_downcase(attrs), do: attrs
 
   defp handle_systemd_units(%{"systemd_units" => nil} = attrs),
     do: %{attrs | "systemd_units" => []}
