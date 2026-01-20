@@ -18,6 +18,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
   use Trento.Support.Command
 
   require Trento.Hosts.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.PrometheusMode, as: PrometheusMode
 
   defcommand do
     field :host_id, Ecto.UUID
@@ -30,7 +31,7 @@ defmodule Trento.Hosts.Commands.RegisterHost do
     field :os_version, :string, default: "Unknown"
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
-    field :prometheus_mode, Ecto.Enum, values: [:push, :pull]
+    field :prometheus_mode, Ecto.Enum, values: PrometheusMode.values()
     field :last_boot_timestamp, :utc_datetime
 
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]

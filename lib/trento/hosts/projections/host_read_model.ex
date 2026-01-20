@@ -8,6 +8,7 @@ defmodule Trento.Hosts.Projections.HostReadModel do
   import Ecto.Changeset
 
   require Trento.Hosts.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.PrometheusMode, as: PrometheusMode
   require Trento.Enums.Health, as: Health
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
@@ -42,7 +43,11 @@ defmodule Trento.Hosts.Projections.HostReadModel do
     field :provider_data, :map
     field :saptune_status, Trento.Support.Ecto.Payload, keys_as_atoms: true
     field :prometheus_targets, :map
-    field :prometheus_mode, Ecto.Enum, values: [:push, :pull]
+
+    field :prometheus_mode, Ecto.Enum,
+      values: PrometheusMode.values(),
+      default: PrometheusMode.pull()
+
     field :last_boot_timestamp, :utc_datetime
 
     has_many :tags, Tag, foreign_key: :resource_id
