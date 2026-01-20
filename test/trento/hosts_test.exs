@@ -73,6 +73,60 @@ defmodule Trento.HostsTest do
 
       refute deregistered_host.id in hosts_ids
     end
+
+    test "should support filtering hosts with extra clauses" do
+      %{id: pull_host_id} = insert(:host, prometheus_mode: :pull)
+      %{id: push_host_id} = insert(:host, prometheus_mode: :push)
+
+      pull_hosts = Hosts.get_all_hosts(where: [prometheus_mode: :pull])
+      pull_hosts_ids = Enum.map(pull_hosts, & &1.id)
+
+      push_hosts = Hosts.get_all_hosts(where: [prometheus_mode: :push])
+      push_hosts_ids = Enum.map(push_hosts, & &1.id)
+
+      assert pull_host_id in pull_hosts_ids
+      refute push_host_id in pull_hosts_ids
+
+      assert push_host_id in push_hosts_ids
+      refute pull_host_id in push_hosts_ids
+    end
+  end
+
+  describe "get_hosts_for_prometheus_targets/0" do
+    test "should only return hosts with prometheus_mode pull" do
+      %{id: pull_host_id_1} = insert(:host, prometheus_mode: :pull)
+      %{id: pull_host_id_2} = insert(:host, prometheus_mode: :pull)
+      %{id: push_host_id} = insert(:host, prometheus_mode: :push)
+
+      hosts = Hosts.get_hosts_for_prometheus_targets()
+      hosts_ids = Enum.map(hosts, & &1.id)
+
+      assert length(hosts_ids) == 2
+      assert pull_host_id_1 in hosts_ids
+      assert pull_host_id_2 in hosts_ids
+      refute push_host_id in hosts_ids
+    end
+
+    test "should exclude both deregistered and push mode hosts" do
+      %{id: active_pull_host_id} = insert(:host, prometheus_mode: :pull)
+      insert(:host, prometheus_mode: :pull, deregistered_at: DateTime.utc_now())
+      insert(:host, prometheus_mode: :push)
+      insert(:host, prometheus_mode: :push, deregistered_at: DateTime.utc_now())
+
+      hosts = Hosts.get_hosts_for_prometheus_targets()
+      hosts_ids = Enum.map(hosts, & &1.id)
+
+      assert length(hosts_ids) == 1
+      assert active_pull_host_id in hosts_ids
+    end
+
+    test "should return empty list when all hosts are push mode" do
+      insert_list(3, :host, prometheus_mode: :push)
+
+      hosts = Hosts.get_hosts_for_prometheus_targets()
+
+      assert hosts == []
+    end
   end
 
   describe "get_host_by_id/1" do

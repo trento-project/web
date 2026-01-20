@@ -43,6 +43,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       fully_qualified_domain_name: fully_qualified_domain_name,
       heartbeat: heartbeat,
       prometheus_targets: prometheus_targets,
+      prometheus_mode: prometheus_mode,
       systemd_units: systemd_units,
       last_boot_timestamp: last_boot_timestamp
     },
@@ -59,6 +60,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           fully_qualified_domain_name: fully_qualified_domain_name,
           heartbeat: heartbeat,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: map_list_from_struct_list(systemd_units),
           last_boot_timestamp: last_boot_timestamp
         })
@@ -177,6 +179,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       agent_version: agent_version,
       arch: arch,
       prometheus_targets: prometheus_targets,
+      prometheus_mode: prometheus_mode,
       systemd_units: systemd_units,
       last_boot_timestamp: last_boot_timestamp
     },
@@ -194,6 +197,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
           agent_version: agent_version,
           arch: arch,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: map_list_from_struct_list(systemd_units),
           last_boot_timestamp: last_boot_timestamp
         })

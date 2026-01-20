@@ -7,7 +7,7 @@ defmodule Trento.Infrastructure.Prometheus do
 
   @spec get_targets :: [map]
   def get_targets do
-    Hosts.get_all_hosts()
+    Hosts.get_hosts_for_prometheus_targets()
   end
 
   @spec get_exporters_status(String.t()) :: {:ok, map} | {:error, any}

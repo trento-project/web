@@ -130,6 +130,7 @@ defmodule Trento.Hosts.Host do
     field :os_version, :string
     field :provider, Ecto.Enum, values: Provider.values()
     field :prometheus_targets, :map
+    field :prometheus_mode, Ecto.Enum, values: [:push, :pull]
     field :last_boot_timestamp, :utc_datetime
     field :installation_source, Ecto.Enum, values: [:community, :suse, :unknown]
     field :heartbeat, Ecto.Enum, values: [:passing, :critical, :unknown]
@@ -180,6 +181,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: fully_qualified_domain_name,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
         }
@@ -198,6 +200,7 @@ defmodule Trento.Hosts.Host do
         installation_source: installation_source,
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
+        prometheus_mode: prometheus_mode,
         heartbeat: :unknown,
         systemd_units: systemd_units,
         last_boot_timestamp: last_boot_timestamp
@@ -227,6 +230,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           installation_source: installation_source,
           deregistered_at: deregistered_at,
           systemd_units: systemd_units
@@ -242,6 +246,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           installation_source: installation_source,
           systemd_units: systemd_units
         }
@@ -269,6 +274,7 @@ defmodule Trento.Hosts.Host do
           fully_qualified_domain_name: new_fully_qualified_domain_name,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
         }
@@ -289,6 +295,7 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: new_fully_qualified_domain_name,
         installation_source: installation_source,
         prometheus_targets: prometheus_targets,
+        prometheus_mode: prometheus_mode,
         systemd_units: systemd_units,
         last_boot_timestamp: last_boot_timestamp
       }
@@ -328,6 +335,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
         },
@@ -343,6 +351,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
         }
@@ -367,6 +376,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           installation_source: installation_source,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
         }
@@ -385,6 +395,7 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         installation_source: installation_source,
         prometheus_targets: prometheus_targets,
+        prometheus_mode: prometheus_mode,
         systemd_units: systemd_units,
         last_boot_timestamp: last_boot_timestamp
       }
@@ -651,6 +662,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           installation_source: installation_source,
           heartbeat: heartbeat,
           systemd_units: systemd_units,
@@ -670,6 +682,7 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
+        prometheus_mode: prometheus_mode,
         installation_source: installation_source,
         heartbeat: heartbeat,
         systemd_units: systemd_units,
@@ -690,6 +703,7 @@ defmodule Trento.Hosts.Host do
           os_version: os_version,
           fully_qualified_domain_name: fully_qualified_domain_name,
           prometheus_targets: prometheus_targets,
+          prometheus_mode: prometheus_mode,
           installation_source: installation_source,
           systemd_units: systemd_units,
           last_boot_timestamp: last_boot_timestamp
@@ -707,6 +721,7 @@ defmodule Trento.Hosts.Host do
         os_version: os_version,
         fully_qualified_domain_name: fully_qualified_domain_name,
         prometheus_targets: prometheus_targets,
+        prometheus_mode: prometheus_mode,
         installation_source: installation_source,
         systemd_units: systemd_units,
         last_boot_timestamp: last_boot_timestamp

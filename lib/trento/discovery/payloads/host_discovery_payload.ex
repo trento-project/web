@@ -16,6 +16,7 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
   use Trento.Support.Type
 
   require Trento.Hosts.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.PrometheusMode, as: PrometheusMode
 
   deftype do
     field :hostname, :string
@@ -28,6 +29,11 @@ defmodule Trento.Discovery.Payloads.HostDiscoveryPayload do
     field :os_version, :string
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
+
+    field :prometheus_mode, Ecto.Enum,
+      values: PrometheusMode.values(),
+      default: PrometheusMode.pull()
+
     field :systemd_units, {:array, :map}, default: []
     field :last_boot_timestamp, :utc_datetime, default: nil
 

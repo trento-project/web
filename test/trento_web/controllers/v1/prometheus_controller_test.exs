@@ -7,7 +7,7 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
   import Mox
   import Trento.Factory
 
-  test "should return the expected targets", %{conn: conn} do
+  test "should return the expected targets excluding deregistered hosts", %{conn: conn} do
     insert(:host, deregistered_at: DateTime.utc_now())
     insert_list(2, :host)
 
@@ -22,6 +22,22 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
 
     assert length(targets_ids) == 2
     assert_schema(response, "HttpSTDTargetListV1", api_spec)
+  end
+
+  test "should only return pull mode hosts and exclude push mode hosts", %{conn: conn} do
+    %{id: pull_host_id} = insert(:host, prometheus_mode: :pull)
+    insert(:host, prometheus_mode: :push)
+    insert(:host, prometheus_mode: :pull, deregistered_at: DateTime.utc_now())
+
+    response =
+      conn
+      |> get("/api/v1/prometheus/targets")
+      |> json_response(200)
+
+    targets_ids = Enum.map(response, &Map.get(&1, "labels")["agentID"])
+
+    assert length(targets_ids) == 1
+    assert pull_host_id in targets_ids
   end
 
   test "should return the exporters status", %{conn: conn} do
