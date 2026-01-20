@@ -33,10 +33,13 @@ defmodule Trento.Hosts do
 
   require Logger
 
-  @spec get_all_hosts :: [HostReadModel.t()]
-  def get_all_hosts do
+  @spec get_all_hosts(keyword()) :: [HostReadModel.t()]
+  def get_all_hosts(opts \\ []) do
+    extra_clauses = Keyword.get(opts, :where, [])
+
     HostReadModel
     |> where([h], not is_nil(h.hostname) and is_nil(h.deregistered_at))
+    |> where(^extra_clauses)
     |> order_by(asc: :hostname)
     |> enrich_host_read_model_query()
     |> Repo.all()
@@ -49,15 +52,7 @@ defmodule Trento.Hosts do
   """
   @spec get_hosts_for_prometheus_targets :: [HostReadModel.t()]
   def get_hosts_for_prometheus_targets do
-    HostReadModel
-    |> where(
-      [h],
-      not is_nil(h.hostname) and is_nil(h.deregistered_at) and h.prometheus_mode == :pull
-    )
-    |> order_by(asc: :hostname)
-    |> enrich_host_read_model_query()
-    |> Repo.all()
-    |> Repo.preload([:sles_subscriptions, :tags])
+    get_all_hosts(where: [prometheus_mode: :pull])
   end
 
   @spec by_id(String.t()) :: {:ok, HostReadModel.t()} | {:error, :not_found}
