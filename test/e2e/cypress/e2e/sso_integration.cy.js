@@ -27,7 +27,13 @@ describe('SSO integration', () => {
   });
 
   describe('Plain user', () => {
-    beforeEach(() => loginPage.ssoLoginPlainUser());
+    beforeEach(() => {
+      loginPage.ssoLoginPlainUser();
+      usersPage.ifAnalyticsModalIsDisplayed(
+        usersPage.clickContinueWithoutAnalytics,
+        false
+      );
+    });
 
     it('should have a read only profile view and empty list of permissions', () => {
       usersPage.visit('/profile');

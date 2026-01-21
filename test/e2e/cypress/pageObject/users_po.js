@@ -39,7 +39,8 @@ const generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
 const submitUserCreationButton = 'button:contains("Create")';
 const cancelUserCreationButton = 'button:contains("Cancel")';
 const saveChangesButton = 'button:contains("Save")';
-const authenticatorAppSwitch = 'button[role="switch"]';
+const authenticatorAppSwitch =
+  'label:contains("Authenticator App") + div button[role="switch"]';
 const newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
 const totpSecret = `${newTotpCodeIssuedMessage} + div[class*="bold"]`;
 const newTotpCodeInputField = 'input[placeholder="TOTP code"]';
@@ -71,7 +72,7 @@ const enableAnalyticsButton = 'button:contains("Enable Analytics Collection")';
 const continueWithoutAnalyticsButton =
   'button:contains("Continue without Analytics")';
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
-const analyticsOptInSwitch = 'button[role="switch"]';
+const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -114,7 +115,7 @@ export const clickSaveNewPasswordButton = () =>
   cy.get(saveNewPasswordButton).click();
 
 export const clickAuthenticatorAppSwitch = () =>
-  cy.get(authenticatorAppSwitch).eq(0).click();
+  cy.get(authenticatorAppSwitch).click();
 
 export const clickGeneratePassword = () =>
   cy.get(generatePasswordButton).click();
@@ -343,7 +344,7 @@ export const selectDisabledStatus = () =>
   basePage.selectFromDropdown(statusDropdown, 'Disabled');
 
 export const selectEnabledStatus = () =>
-  basePage.selectFromDropdown(statusDropdown, 'Disabled');
+  basePage.selectFromDropdown(statusDropdown, 'Enabled');
 
 export const adminUserPermissionsAreDisplayed = () =>
   cy
@@ -395,6 +396,11 @@ export const lastLoginUserViewShouldHaveUpdatedDate = () => {
     });
 };
 
+export const ifAnalyticsModalIsDisplayed = (callback, neverShowAgain) =>
+  cy.get('body').then(($body) => {
+    if ($body.find(analyticsModal).length > 0) callback(neverShowAgain);
+  });
+
 export const analyticsModalIsDisplayed = () =>
   cy.get(analyticsModal).should('be.visible');
 
@@ -423,7 +429,7 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 };
 
 export const clickAnalyticsOptInSwitch = () =>
-  cy.get(analyticsOptInSwitch).eq(1).click();
+  cy.get(analyticsOptInSwitch).click();
 
 // API
 
