@@ -231,6 +231,7 @@ context('Settings page', () => {
     it('should enable settings buttons if the user has the correct abilities', () => {
       settingsPage.saveDefaultSUMAsettings();
       settingsPage.apiCreateUserWithSettingsAbilities();
+      settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.generateApiKeyButtonIsEnabled();
@@ -242,6 +243,7 @@ context('Settings page', () => {
 
     it('should disable settings buttons if the user has no abilities', () => {
       settingsPage.apiCreateUserWithoutAbilities();
+      settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.generateApiKeyButtonIsDisabled();

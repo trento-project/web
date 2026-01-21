@@ -86,6 +86,7 @@ context('SAP system details', () => {
 
       it('should forbid application instance cleanup', () => {
         sapSystemDetailsPage.apiCreateUserWithoutAbilities();
+        sapSystemDetailsPage.apiAcceptAnalyticsEula();
         sapSystemDetailsPage.loginWithoutAbilities();
         sapSystemDetailsPage.visit();
         sapSystemDetailsPage.cleanUpButtonIsDisabled();
@@ -93,6 +94,7 @@ context('SAP system details', () => {
 
       it('should allow application instance clenaup', () => {
         sapSystemDetailsPage.apiCreateUserWithApplicationCleanupAbility();
+        sapSystemDetailsPage.apiAcceptAnalyticsEula();
         sapSystemDetailsPage.loginWithAbilities();
         sapSystemDetailsPage.visit();
         sapSystemDetailsPage.cleanUpButtonIsEnabled();
