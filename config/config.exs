@@ -234,8 +234,8 @@ config :trento,
   oas_server_url: nil
 
 config :trento, :analytics,
-  enabled: false,
-  gtm_id: ""
+  enabled: true,
+  gtm_id: System.get_env("GTM_ID", "")
 
 config :trento, Trento.Vault,
   ciphers: [
