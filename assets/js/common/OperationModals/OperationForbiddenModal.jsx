@@ -3,7 +3,7 @@ import { noop } from 'lodash';
 
 import Modal from '@common/Modal';
 import Button from '@common/Button';
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 
 function OperationForbiddenModal({
   operation,

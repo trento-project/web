@@ -23,7 +23,7 @@ import CleanUpButton from '@common/CleanUpButton';
 import PageHeader from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 import ChartsFeatureWrapper from '@common/ChartsFeatureWrapper';
 import AvailableSoftwareUpdates from '@common/AvailableSoftwareUpdates';
 import DisabledGuard from '@common/DisabledGuard';

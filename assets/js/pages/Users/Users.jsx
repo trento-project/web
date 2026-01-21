@@ -5,7 +5,7 @@ import { format, parseISO } from 'date-fns';
 
 import { isAdmin } from '@lib/model/users';
 
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import PageHeader from '@common/PageHeader';

@@ -23,7 +23,7 @@ import BackButton from '@common/BackButton';
 import ClusterInfoBox from '@common/ClusterInfoBox';
 import LoadingBox from '@common/LoadingBox';
 import PageHeader from '@common/PageHeader';
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
