@@ -305,6 +305,20 @@ export const apiCreateUserWithAbilities = (abilities) => {
   );
 };
 
+export const apiAcceptAnalyticsEula = (
+  username = user.username,
+  pass = password
+) => {
+  return apiLogin(username, pass).then(({ accessToken }) => {
+    return cy.request({
+      url: '/api/v1/profile',
+      method: 'PATCH',
+      auth: { bearer: accessToken },
+      body: { analytics_eula_accepted: true },
+    });
+  });
+};
+
 export const apiDeregisterHost = (hostId) => {
   return isHostRegistered(hostId).then((isRegistered) => {
     if (isRegistered) {

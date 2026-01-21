@@ -13,6 +13,7 @@ export const DEFAULT_TOKEN_NAME = 'test token';
 export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
+const profileEndpointAlias = 'analyticsClosed';
 
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
@@ -65,6 +66,12 @@ const newAccessTokenField = 'code';
 const modalCopyAccessTokenButton = 'button[aria-label="copy to clipboard"]';
 const accessTokenName = 'p[class*="font-semibold"]';
 const userViewLastLoginField = 'label:contains("Last Login") + span';
+const analyticsModal = 'h2:contains("Collection of Anonymous Metrics")';
+const enableAnalyticsButton = 'button:contains("Enable Analytics Collection")';
+const continueWithoutAnalyticsButton =
+  'button:contains("Continue without Analytics")';
+const neverShowAgainCheckbox = 'div input[type="checkbox"]';
+const analyticsOptInSwitch = 'button[role="switch"]';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -107,7 +114,7 @@ export const clickSaveNewPasswordButton = () =>
   cy.get(saveNewPasswordButton).click();
 
 export const clickAuthenticatorAppSwitch = () =>
-  cy.get(authenticatorAppSwitch).click();
+  cy.get(authenticatorAppSwitch).eq(0).click();
 
 export const clickGeneratePassword = () =>
   cy.get(generatePasswordButton).click();
@@ -387,6 +394,36 @@ export const lastLoginUserViewShouldHaveUpdatedDate = () => {
       expect(date).to.be.closeTo(today, 5000);
     });
 };
+
+export const analyticsModalIsDisplayed = () =>
+  cy.get(analyticsModal).should('be.visible');
+
+export const analyticsModalIsNotDisplayed = () => {
+  // the intercept is needed to wait until the page is loaded
+  cy.intercept('GET', '/api/v1/profile').as(profileEndpointAlias);
+  basePage.waitForRequest(profileEndpointAlias);
+  cy.get(analyticsModal).should('not.exist');
+};
+
+export const clickEnableAnalytics = () => {
+  cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
+  cy.get(enableAnalyticsButton).click();
+  basePage.waitForRequest(profileEndpointAlias);
+};
+
+export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
+  if (neverShowAgain) {
+    cy.get(neverShowAgainCheckbox).click();
+    cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
+  }
+  cy.get(continueWithoutAnalyticsButton).click();
+  if (neverShowAgain) {
+    basePage.waitForRequest(profileEndpointAlias);
+  }
+};
+
+export const clickAnalyticsOptInSwitch = () =>
+  cy.get(analyticsOptInSwitch).eq(1).click();
 
 // API
 
