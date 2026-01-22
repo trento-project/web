@@ -555,7 +555,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
@@ -661,7 +661,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
@@ -808,7 +808,7 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)

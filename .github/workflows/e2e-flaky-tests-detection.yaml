@@ -192,7 +192,7 @@ jobs:
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_db_host: postgres
