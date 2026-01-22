@@ -68,6 +68,8 @@ jobs:
                 trento_rabbitmq_username: '${{ env.PR_NUMBER }}rabbitusr'
                 trento_rabbitmq_password: 'trento'
                 trento_rabbitmq_vhost: '${{ env.PR_NUMBER }}'
+                rproxy_web_upstream_name: '${{ env.PR_NUMBER }}web'
+                rproxy_wanda_upstream_name: '${{ env.PR_NUMBER }}wanda'
                 rproxy_vhost_filename: '${{ env.PR_NUMBER }}'
                 rproxy_ssl_cert: '${{ secrets.PR_ENV_SSL_CERT }}'
                 rproxy_ssl_key: '${{ secrets.PR_ENV_SSL_CERT_KEY }}'
@@ -90,19 +92,17 @@ jobs:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
           options: |
             --extra-vars "install_method='docker' \
-            web_container_name='${{ env.PR_NUMBER }}web' \
+            trento_docker_network_name='${{ env.PR_NUMBER }}net' \
+            trento_force_pull_images='true' \
+            trento_web_container_name='${{ env.PR_NUMBER }}web' \
             web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
-            web_upstream_name='${{ env.PR_NUMBER }}web' \
-            force_recreate_web_container='true' \
+            web_force_recreate_web_container='true' \
             web_enable_api_key='false' \
             wanda_container_image='ghcr.io/trento-project/trento-wanda:demo' \
             wanda_container_name='${{ env.PR_NUMBER }}wanda' \
-            wanda_upstream_name='${{ env.PR_NUMBER }}wanda' \
-            force_recreate_wanda_container='true' \
-            checks_container_name='${{ env.PR_NUMBER }}checks' \
-            force_recreate_checks_container='true' \
-            trento_docker_network_name='${{ env.PR_NUMBER }}net' \
-            force_pull_images='true'"
+            wanda_force_recreate_wanda_container='true' \
+            wanda_checks_container_name='${{ env.PR_NUMBER }}checks' \
+            wanda_force_recreate_checks_container='true'"
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the pr environment
