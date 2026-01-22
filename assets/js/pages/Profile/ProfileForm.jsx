@@ -37,6 +37,7 @@ function ProfileForm({
   abilities = [],
   analyticsEnabledConfig = false,
   analyticsEnabled = false,
+  analyticsEulaAccepted = false,
   errors,
   loading,
   disableForm,
@@ -81,6 +82,8 @@ function ProfileForm({
       fullname: fullNameState,
       email: emailAddressState,
       analytics_enabled: analyticsEnabledState,
+      ...(analyticsEnabledState &&
+        !analyticsEulaAccepted && { analytics_eula_accepted: true }),
     };
 
     onSave(user);
