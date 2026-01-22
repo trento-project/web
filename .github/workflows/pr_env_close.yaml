@@ -130,6 +130,6 @@ jobs:
             web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
             wanda_container_name='${{ env.PR_NUMBER }}wanda' \
             checks_container_name='${{ env.PR_NUMBER }}checks' \
-            docker_network_name='${{ env.PR_NUMBER }}net' \
+            trento_docker_network_name='${{ env.PR_NUMBER }}net' \
             remove_wanda_container_image=false \
             remove_checks_container_image=false"
