@@ -66,8 +66,14 @@ describe('ProfileForm', () => {
   });
 
   it('should send the form values when correctly filled', async () => {
-    const { username, fullname, email, abilities, analytics_enabled, analytics_eula_accepted } =
-      profileFactory.build({analytics_eula_accepted: true});
+    const {
+      username,
+      fullname,
+      email,
+      abilities,
+      analytics_enabled,
+      analytics_eula_accepted,
+    } = profileFactory.build({ analytics_eula_accepted: true });
     const mockOnSave = jest.fn();
 
     render(
@@ -89,7 +95,7 @@ describe('ProfileForm', () => {
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {
       fullname,
       email,
-      analytics_enabled
+      analytics_enabled,
     });
   });
 
@@ -149,38 +155,58 @@ describe('ProfileForm', () => {
   });
 
   it.each([
-    {analyticsEnabled: true, analyticsEulaAccepted: true, updateValue: false},
-    {analyticsEnabled: true, analyticsEulaAccepted: false, updateValue: true},
-    {analyticsEnabled: false, analyticsEulaAccepted: true, updateValue: false},
-    {analyticsEnabled: false, analyticsEulaAccepted: false, updateValue: false}
-  ])('analytics eula accepted value is updated properly when the profile is saved', async ({analyticsEnabled, analyticsEulaAccepted, updateValue}) => {
-    const {username, fullname, email, analytics_enabled, analytics_eula_accepted, abilities} = profileFactory.build({analytics_enabled: analyticsEnabled, analytics_eula_accepted: analyticsEulaAccepted})
-    const mockOnSave = jest.fn();
-    
-    render(
-      <ProfileForm
-        fullName={fullname}
-        emailAddress={email}
-        username={username}
-        abilities={abilities}
-        analyticsEnabled={analytics_enabled}
-        analyticsEulaAccepted={analytics_eula_accepted}
-        onSave={mockOnSave}
-      />
-    );
+    { analyticsEnabled: true, analyticsEulaAccepted: true, updateValue: false },
+    { analyticsEnabled: true, analyticsEulaAccepted: false, updateValue: true },
+    {
+      analyticsEnabled: false,
+      analyticsEulaAccepted: true,
+      updateValue: false,
+    },
+    {
+      analyticsEnabled: false,
+      analyticsEulaAccepted: false,
+      updateValue: false,
+    },
+  ])(
+    'analytics eula accepted value is updated properly when the profile is saved',
+    async ({ analyticsEnabled, analyticsEulaAccepted, updateValue }) => {
+      const {
+        username,
+        fullname,
+        email,
+        analytics_enabled,
+        analytics_eula_accepted,
+        abilities,
+      } = profileFactory.build({
+        analytics_enabled: analyticsEnabled,
+        analytics_eula_accepted: analyticsEulaAccepted,
+      });
+      const mockOnSave = jest.fn();
 
-    const user = userEvent.setup();
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          analyticsEnabled={analytics_enabled}
+          analyticsEulaAccepted={analytics_eula_accepted}
+          onSave={mockOnSave}
+        />
+      );
 
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+      const user = userEvent.setup();
 
-    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
-      fullname,
-      email,
-      analytics_enabled: analyticsEnabled,
-      ...(updateValue) && {analytics_eula_accepted: true},
-    });
+      await user.click(screen.getByRole('button', { name: 'Save' }));
 
-  });
+      expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+        fullname,
+        email,
+        analytics_enabled: analyticsEnabled,
+        ...(updateValue && { analytics_eula_accepted: true }),
+      });
+    }
+  );
 
   it('should not set the authenticator app switch when totpEnabled is false', async () => {
     const { username, fullname, email, abilities } = profileFactory.build();

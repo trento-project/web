@@ -82,7 +82,8 @@ function ProfileForm({
       fullname: fullNameState,
       email: emailAddressState,
       analytics_enabled: analyticsEnabledState,
-      ...(analyticsEnabledState && !analyticsEulaAccepted) && {analytics_eula_accepted: true},
+      ...(analyticsEnabledState &&
+        !analyticsEulaAccepted && { analytics_eula_accepted: true }),
     };
 
     onSave(user);
