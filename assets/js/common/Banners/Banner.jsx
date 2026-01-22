@@ -25,7 +25,7 @@ const getIcon = (type, size) => {
   return iconMap[type];
 };
 
-function Banner({ type = INFO, iconSize, truncate = true, children }) {
+function Banner({ type = INFO, iconSize = 'm', truncate = true, children }) {
   return (
     <div
       className={classNames('rounded-lg mt-2 mb-2 p-3 border', {

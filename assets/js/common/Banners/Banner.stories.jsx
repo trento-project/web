@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import Banner from './Banner';
 
 export default {
@@ -17,15 +18,14 @@ export default {
       description: 'The size of the icon in the banner',
       control: { type: 'radio' },
       options: ['s', 'm', 'l', 'xl', 'xxl', 16, 24, 32, 48, 64],
-      defaultValue: 'm',
       table: {
         type: { summary: 'string|number' },
+        defaultValue: { summary: 'm' },
       },
     },
     truncate: {
       description: 'Whether to truncate the banner text',
       control: { type: 'boolean' },
-      defaultValue: true,
       table: {
         type: { summary: 'boolean' },
         defaultValue: { summary: true },
@@ -42,8 +42,7 @@ export const Default = {
 
 export const WithTruncatedContent = {
   args: {
-    children:
-      'This is a very long banner content that should be truncated when it exceeds the container width. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    children: faker.lorem.sentences(20),
     truncate: true,
   },
 };
