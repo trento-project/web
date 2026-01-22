@@ -7,6 +7,10 @@ import {
   getOperationForbiddenMessage,
   operationSucceeded,
   getOperationTitle,
+  shouldShowOperationDisclaimer,
+  STORAGE_OPERATION_DISCLAIMER_KEY,
+  waiveOperationDisclaimer,
+  resetOperationDisclaimer,
 } from '.';
 
 describe('operations', () => {
@@ -120,5 +124,25 @@ describe('operations', () => {
     expect(operationSucceeded('UPDATED')).toBeTruthy();
     expect(operationSucceeded('NOT_UPDATED')).toBeTruthy();
     expect(operationSucceeded('FAILED')).toBeFalsy();
+  });
+});
+
+describe('operations disclaimer', () => {
+  beforeEach(() => {
+    resetOperationDisclaimer();
+  });
+
+  afterEach(() => {
+    window.localStorage.removeItem(STORAGE_OPERATION_DISCLAIMER_KEY);
+  });
+
+  test('should detect whether the operation disclaimer should be shown', () => {
+    expect(shouldShowOperationDisclaimer()).toBe(true);
+  });
+
+  test('should waive the operation disclaimer', () => {
+    expect(shouldShowOperationDisclaimer()).toBe(true);
+    waiveOperationDisclaimer();
+    expect(shouldShowOperationDisclaimer()).toBe(false);
   });
 });

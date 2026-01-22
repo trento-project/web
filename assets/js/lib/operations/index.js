@@ -119,3 +119,27 @@ export const getOperationForbiddenMessage = (operation) =>
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);
+
+export const STORAGE_OPERATION_DISCLAIMER_KEY = 'operation-disclaimer';
+
+const SHOW_DISCLAIMER = 'show';
+const WAIVED_DISCLAIMER = 'waived';
+
+export const shouldShowOperationDisclaimer = () => {
+  const showDisclaimer = window.localStorage.getItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY
+  );
+  return SHOW_DISCLAIMER === showDisclaimer || showDisclaimer === null;
+};
+
+export const waiveOperationDisclaimer = () =>
+  window.localStorage.setItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY,
+    WAIVED_DISCLAIMER
+  );
+
+export const resetOperationDisclaimer = () =>
+  window.localStorage.setItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY,
+    SHOW_DISCLAIMER
+  );
