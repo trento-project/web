@@ -13,17 +13,22 @@ const SUCCESS = 'success';
 const WARNING = 'warning';
 const ERROR = 'error';
 
-const iconMap = {
-  [INFO]: <EOS_INFO_OUTLINED className="fill-gray-500" />,
-  [SUCCESS]: <EOS_CHECK_CIRCLE_OUTLINED className="fill-green-500" />,
-  [WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500" />,
-  [ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500" />,
+const getIcon = (type, size) => {
+  const iconMap = {
+    [INFO]: <EOS_INFO_OUTLINED className="fill-gray-500" size={size} />,
+    [SUCCESS]: (
+      <EOS_CHECK_CIRCLE_OUTLINED className="fill-green-500" size={size} />
+    ),
+    [WARNING]: <EOS_WARNING_OUTLINED className="fill-yellow-500" size={size} />,
+    [ERROR]: <EOS_ERROR_OUTLINED className="fill-red-500" size={size} />,
+  };
+  return iconMap[type];
 };
 
-function Banner({ type = INFO, children }) {
+function Banner({ type = INFO, iconSize = 'm', truncate = true, children }) {
   return (
     <div
-      className={classNames('rounded-lg mt-2 mb-2 p-3 border-2', {
+      className={classNames('rounded-lg mt-2 mb-2 p-3 border', {
         'bg-gray-50 border-gray-500': type === INFO,
         'bg-green-50 border-green-500': type === SUCCESS,
         'bg-yellow-50 border-yellow-500': type === WARNING,
@@ -32,8 +37,8 @@ function Banner({ type = INFO, children }) {
     >
       <div className="flex flex-wrap items-center justify-between">
         <div className="flex w-0 flex-1 items-center">
-          {iconMap[type]}
-          <p className="ml-3 truncate font-medium">
+          {getIcon(type, iconSize)}
+          <p className={classNames('ml-3 font-medium', { truncate })}>
             <span
               data-testid="banner"
               className={classNames('md:inline', {

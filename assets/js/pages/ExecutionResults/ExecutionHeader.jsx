@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
 import ChecksResultFilters from '@pages/ExecutionResults/ChecksResultFilters';

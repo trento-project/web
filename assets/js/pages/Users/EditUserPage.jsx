@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import { toast } from 'react-hot-toast';
 
 import BackButton from '@common/BackButton';
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 import PageHeader from '@common/PageHeader';
 import PersonalAccessTokens from '@common/PersonalAccessTokens';
 

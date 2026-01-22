@@ -1,7 +1,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 
-import Banner from '@common/Banners/Banner';
+import Banner from '@common/Banners';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import ApiKeyBox from '@common/ApiKeyBox';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { capitalize, get, noop } from 'lodash';
 import {
   SAP_INSTANCE_START,
@@ -83,7 +83,6 @@ function SimpleAcceptanceOperationModal({
   onRequest = noop,
   onCancel = noop,
 }) {
-  const [checked, setChecked] = useState(false);
   const operationTitle = getOperationTitle(operation);
 
   const descriptionResolver = get(
@@ -97,18 +96,9 @@ function SimpleAcceptanceOperationModal({
       title={operationTitle}
       description={descriptionResolver(operation, descriptionResolverArgs)}
       operationText={operationTitle}
-      applyDisabled={!checked}
-      checked={checked}
       isOpen={isOpen}
-      onChecked={() => setChecked((prev) => !prev)}
-      onRequest={() => {
-        onRequest({});
-        setChecked(false);
-      }}
-      onCancel={() => {
-        onCancel();
-        setChecked(false);
-      }}
+      onRequest={() => onRequest({})}
+      onCancel={onCancel}
     />
   );
 }

@@ -11,7 +11,7 @@ import Select from '@common/Select';
 import Switch from '@common/Switch';
 import CopyButton from '@common/CopyButton';
 import ApiKeyBox from '@common/ApiKeyBox';
-import Banner from '../Banners/Banner';
+import Banner from '@common/Banners';
 
 function ApiKeySettingsModal({
   open = false,

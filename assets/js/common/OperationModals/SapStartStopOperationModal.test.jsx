@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
+import { waiveOperationDisclaimer } from '@lib/operations';
 import { sapSystemFactory } from '@lib/test-utils/factories';
 import {
   DATABASE_START,
@@ -20,6 +21,8 @@ const { sid } = sapSystemFactory.build();
 const systemReplicationSite = faker.animal.bear();
 
 describe('SapStartStopOperationModal', () => {
+  beforeAll(() => waiveOperationDisclaimer());
+
   it.each([
     {
       operation: DATABASE_START,
@@ -101,11 +104,10 @@ describe('SapStartStopOperationModal', () => {
         />
       );
 
-      expect(screen.getByText('Apply')).toBeDisabled();
-      await user.click(screen.getByRole('checkbox'));
+      expect(screen.getByText('Request')).toBeEnabled();
       await user.click(screen.getByText('All instances'));
       await user.click(screen.getByRole('option', { name: option }));
-      await user.click(screen.getByText('Apply'));
+      await user.click(screen.getByText('Request'));
 
       expect(onRequest).toHaveBeenCalledWith({
         instance_type: instanceType,
@@ -129,9 +131,8 @@ describe('SapStartStopOperationModal', () => {
       />
     );
 
-    expect(screen.getByText('Apply')).toBeDisabled();
-    await user.click(screen.getByRole('checkbox'));
-    await user.click(screen.getByText('Apply'));
+    expect(screen.getByText('Request')).toBeEnabled();
+    await user.click(screen.getByText('Request'));
 
     expect(onRequest).toHaveBeenCalledWith({
       timeout: 300,

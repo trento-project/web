@@ -10,6 +10,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import {
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_RESOURCE_REFRESH,
+  waiveOperationDisclaimer,
 } from '@lib/operations';
 
 import {
@@ -241,6 +242,8 @@ describe('ClusterDetails ClusterDetails component', () => {
     'operation $operation',
     ({ operation, menuItemText, title, errorMessage }) => {
       it('should open modal', async () => {
+        waiveOperationDisclaimer();
+
         const user = userEvent.setup();
         const { id, name, details } = clusterFactory.build();
         const hosts = hostFactory.buildList(2, {
