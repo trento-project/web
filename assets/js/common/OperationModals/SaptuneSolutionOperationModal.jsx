@@ -70,7 +70,6 @@ function SaptuneSolutionOperationModal({
   onRequest = noop,
   onCancel = noop,
 }) {
-  const [checked, setChecked] = useState(false);
   const [solution, setSolution] = useState(currentlyApplied || NOT_SELECTED);
 
   const title = getOperationTitle(operation);
@@ -85,20 +84,14 @@ function SaptuneSolutionOperationModal({
       title={title}
       description="Select Saptune tuning solution"
       operationText={title}
-      applyDisabled={
-        !checked || solution === NOT_SELECTED || solution === currentlyApplied
+      requestDisabled={
+        solution === NOT_SELECTED || solution === currentlyApplied
       }
-      checked={checked}
       isOpen={isOpen}
-      onChecked={() => setChecked((prev) => !prev)}
-      onRequest={() => {
-        onRequest(solution);
-        setChecked(false);
-      }}
+      onRequest={() => onRequest(solution)}
       onCancel={() => {
         onCancel();
         setSolution(currentlyApplied || NOT_SELECTED);
-        setChecked(false);
       }}
     >
       <div className="flex items-center justify-start gap-2 mt-4">
@@ -111,7 +104,6 @@ function SaptuneSolutionOperationModal({
           options={availableSolutions}
           value={solution}
           onChange={(value) => setSolution(value)}
-          disabled={!checked}
         />
       </div>
     </OperationModal>

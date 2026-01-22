@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { waiveOperationDisclaimer } from '@lib/operations';
 
 import {
   sapSystemApplicationInstanceFactory,
@@ -29,6 +30,8 @@ const { hostname: hostName } = hostFactory.build();
 const resourceID = 'rsc_ip_PRD_HDB00';
 
 describe('SimpleAcceptanceOperationModal', () => {
+  beforeAll(() => waiveOperationDisclaimer());
+
   it.each([
     {
       operation: SAP_INSTANCE_START,
@@ -147,9 +150,8 @@ describe('SimpleAcceptanceOperationModal', () => {
       />
     );
 
-    expect(screen.getByText('Apply')).toBeDisabled();
-    await user.click(screen.getByRole('checkbox'));
-    await user.click(screen.getByText('Apply'));
+    expect(screen.getByText('Request')).toBeEnabled();
+    await user.click(screen.getByText('Request'));
 
     expect(onRequest).toHaveBeenCalledWith({});
   });

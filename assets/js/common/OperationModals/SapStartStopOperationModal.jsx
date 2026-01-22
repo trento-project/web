@@ -47,7 +47,6 @@ function SapStartStopOperationModal({
   onRequest = noop,
   onCancel = noop,
 }) {
-  const [checked, setChecked] = useState(false);
   const [instanceType, setInstanceType] = useState(ALL_SELECTED);
   const [timeout, setTimeout] = useState(DEFAULT_TIMEOUT);
 
@@ -58,21 +57,16 @@ function SapStartStopOperationModal({
       title={operationTitle}
       description={`${operationTitle} ${sid}${site ? ` on ${site} site` : ''}`}
       operationText={operationTitle}
-      applyDisabled={!checked}
-      checked={checked}
       isOpen={isOpen}
-      onChecked={() => setChecked((prev) => !prev)}
       onRequest={() => {
         onRequest({
           timeout: timeout * 60,
           ...(type === APPLICATION_TYPE && { instance_type: instanceType }),
           ...(type === DATABASE_TYPE && site && { site }),
         });
-        setChecked(false);
       }}
       onCancel={() => {
         onCancel();
-        setChecked(false);
         setInstanceType(ALL_SELECTED);
         setTimeout(DEFAULT_TIMEOUT);
       }}
@@ -89,7 +83,6 @@ function SapStartStopOperationModal({
               options={instanceTypes}
               value={instanceType}
               onChange={(value) => setInstanceType(value)}
-              disabled={!checked}
               renderOption={(item) => item.key}
             />
           </div>
@@ -108,7 +101,6 @@ function SapStartStopOperationModal({
             onChange={(value) => {
               setTimeout(value);
             }}
-            disabled={!checked}
           />
         </div>
       </div>
