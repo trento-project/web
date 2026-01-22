@@ -101,7 +101,7 @@ jobs:
             force_recreate_wanda_container='true' \
             checks_container_name='${{ env.PR_NUMBER }}checks' \
             force_recreate_checks_container='true' \
-            docker_network_name='${{ env.PR_NUMBER }}net' \
+            trento_docker_network_name='${{ env.PR_NUMBER }}net' \
             force_pull_images='true'"
 
   run-photofinish-demo-env:
