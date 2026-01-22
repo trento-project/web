@@ -55,25 +55,25 @@ jobs:
                 ansible_user: ec2-user
                 ansible_python_interpreter: /usr/bin/python3
 
-                trento_server_name='${{ env.PR_BASE_URL }}'
-                trento_web_admin_password='adminpassword'
-                trento_web_postgres_username='${{ env.PR_NUMBER }}web'
-                trento_web_postgres_password='trento'
-                trento_web_postgres_db='${{ env.PR_NUMBER }}db'
-                trento_web_postgres_event_store='${{ env.PR_NUMBER }}edb'
-                web_prometheus_url='http://localhost'
-                trento_wanda_postgres_username='${{ env.PR_NUMBER }}wanda'
-                trento_wanda_postgres_password='wanda'
-                trento_wanda_postgres_db='${{ env.PR_NUMBER }}wandadb'
-                trento_rabbitmq_username='${{ env.PR_NUMBER }}rabbitusr'
-                trento_rabbitmq_password='trento'
-                trento_rabbitmq_vhost='${{ env.PR_NUMBER }}'
-                rproxy_vhost_filename='${{ env.PR_NUMBER }}'
-                rproxy_ssl_cert='${{ secrets.PR_ENV_SSL_CERT }}'
-                rproxy_ssl_key='${{ secrets.PR_ENV_SSL_CERT_KEY }}'
-                rproxy_ssl_cert_as_base64=true
-                rproxy_ssl_key_as_base64=true
-                trento_server_url='http://${{ env.PR_BASE_URL }}'
+                trento_server_name: '${{ env.PR_BASE_URL }}'
+                trento_web_admin_password: 'adminpassword'
+                trento_web_postgres_username: '${{ env.PR_NUMBER }}web'
+                trento_web_postgres_password: 'trento'
+                trento_web_postgres_db: '${{ env.PR_NUMBER }}db'
+                trento_web_postgres_event_store: '${{ env.PR_NUMBER }}edb'
+                web_prometheus_url: 'http://localhost'
+                trento_wanda_postgres_username: '${{ env.PR_NUMBER }}wanda'
+                trento_wanda_postgres_password: 'wanda'
+                trento_wanda_postgres_db: '${{ env.PR_NUMBER }}wandadb'
+                trento_rabbitmq_username: '${{ env.PR_NUMBER }}rabbitusr'
+                trento_rabbitmq_password: 'trento'
+                trento_rabbitmq_vhost: '${{ env.PR_NUMBER }}'
+                rproxy_vhost_filename: '${{ env.PR_NUMBER }}'
+                rproxy_ssl_cert: '${{ secrets.PR_ENV_SSL_CERT }}'
+                rproxy_ssl_key: '${{ secrets.PR_ENV_SSL_CERT_KEY }}'
+                rproxy_ssl_cert_as_base64: true
+                rproxy_ssl_key_as_base64: true
+                trento_server_url: 'http://${{ env.PR_BASE_URL }}'
 
               children:
                 trento_server:
