@@ -15,6 +15,7 @@ import {
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   HOST_REBOOT,
 } from '@lib/operations';
 
@@ -74,6 +75,20 @@ describe('SimpleAcceptanceOperationModal', () => {
       expectedDescription: new RegExp(
         `Change maintenance state to.*on resource ${resourceID}`
       ),
+    },
+    {
+      operation: CLUSTER_RESOURCE_REFRESH,
+      descriptionResolverArgs: {},
+      title: 'Refresh resources',
+      expectedDescription: 'Refresh all cluster resources',
+    },
+    {
+      operation: CLUSTER_RESOURCE_REFRESH,
+      descriptionResolverArgs: { resource_id: resourceID },
+      title: 'Refresh resources',
+      expectedDescription: (_content, element) => {
+        return element.textContent === `Refresh cluster resource ${resourceID}`;
+      },
     },
     {
       operation: CLUSTER_HOST_START,

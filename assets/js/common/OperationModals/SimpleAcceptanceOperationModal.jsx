@@ -6,6 +6,7 @@ import {
   PACEMAKER_DISABLE,
   PACEMAKER_ENABLE,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   HOST_REBOOT,
@@ -42,6 +43,21 @@ const getClusterMaintenanceDescription = (
   );
 };
 
+const getClusterResourceRefreshDescription = (
+  _operation,
+  { resource_id: resourceID }
+) => {
+  if (resourceID) {
+    return (
+      <>
+        Refresh cluster resource <b>{resourceID}</b>
+      </>
+    );
+  }
+
+  return <>Refresh all cluster resources</>;
+};
+
 const getHostRebootDescription = (operation, { hostName }) =>
   `${getOperationTitle(operation)} ${hostName}`;
 
@@ -54,6 +70,7 @@ const DESCRIPTION_RESOLVERS = {
   [PACEMAKER_ENABLE]: getPacemakerEnableDisableDescription,
   [PACEMAKER_DISABLE]: getPacemakerEnableDisableDescription,
   [CLUSTER_MAINTENANCE_CHANGE]: getClusterMaintenanceDescription,
+  [CLUSTER_RESOURCE_REFRESH]: getClusterResourceRefreshDescription,
   [CLUSTER_HOST_START]: getClusterHostStartStopDescription,
   [CLUSTER_HOST_STOP]: getClusterHostStartStopDescription,
   [HOST_REBOOT]: getHostRebootDescription,

@@ -9,7 +9,10 @@ import { capitalize, concat, noop } from 'lodash';
 import { renderWithRouter } from '@lib/test-utils';
 import { clusterResourceFactory, hostFactory } from '@lib/test-utils/factories';
 
-import { CLUSTER_MAINTENANCE_CHANGE } from '@lib/operations';
+import {
+  CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
+} from '@lib/operations';
 import { getResourceOperations } from './clusterOperations';
 import Resources from './Resources';
 
@@ -113,7 +116,7 @@ describe('Resources', () => {
   });
 
   describe('cluster resource operations', () => {
-    it.each(['Resource maintenance'])(
+    it.each(['Resource maintenance', 'Refresh resource'])(
       'should show cluster resource operations: %s',
       async (name) => {
         const user = userEvent.setup();
@@ -218,6 +221,15 @@ describe('Resources', () => {
         }),
         runningItem: 'Resource maintenance',
       },
+      {
+        name: 'refresh_resource running',
+        runningOperation: (clusterID, { id }) => ({
+          groupID: clusterID,
+          operation: CLUSTER_RESOURCE_REFRESH,
+          metadata: { params: { resource_id: id } },
+        }),
+        runningItem: 'Refresh resource',
+      },
     ];
 
     it.each(runningOperationsScenarios)(
@@ -273,6 +285,18 @@ describe('Resources', () => {
         name: 'cannot change resource maintenance',
         userAbilities: [],
         menuItem: 'Resource maintenance',
+        enabled: false,
+      },
+      {
+        name: 'can refresh resource',
+        userAbilities: [{ name: 'resource_refresh', resource: 'cluster' }],
+        menuItem: 'Refresh resource',
+        enabled: true,
+      },
+      {
+        name: 'cannot refresh resource',
+        userAbilities: [],
+        menuItem: 'Refresh resource',
         enabled: false,
       },
     ];
