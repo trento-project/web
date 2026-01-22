@@ -542,7 +542,7 @@ describe('Users', () => {
     });
 
     it('should not display eula if analytics is enabled in the profile view', () => {
-      cy.visit('/profile');
+      basePage.visit('/profile');
       usersPage.analyticsModalIsDisplayed();
       usersPage.clickContinueWithoutAnalytics(false);
       usersPage.clickAnalyticsOptInSwitch();
