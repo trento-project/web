@@ -67,7 +67,7 @@ describe('ProfileForm', () => {
 
   it('should send the form values when correctly filled', async () => {
     const { username, fullname, email, abilities, analytics_enabled, analytics_eula_accepted } =
-      profileFactory.build();
+      profileFactory.build({analytics_eula_accepted: true});
     const mockOnSave = jest.fn();
 
     render(
@@ -77,6 +77,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         analyticsEnabled={analytics_enabled}
+        analyticsEulaAccepted={analytics_eula_accepted}
         onSave={mockOnSave}
       />
     );
@@ -88,8 +89,7 @@ describe('ProfileForm', () => {
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {
       fullname,
       email,
-      analytics_enabled,
-      ...(analytics_enabled && !analytics_eula_accepted) && {analytics_eula_accepted: true},
+      analytics_enabled
     });
   });
 
