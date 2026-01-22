@@ -91,7 +91,7 @@ jobs:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
           options: |
-            --extra-vars "install_method='docker' \
+            --extra-vars "trento_install_method='docker' \
             trento_docker_network_name='${{ env.PR_NUMBER }}net' \
             trento_force_pull_images='true' \
             trento_web_container_name='${{ env.PR_NUMBER }}web' \
