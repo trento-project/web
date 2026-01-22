@@ -122,8 +122,8 @@ export const operationSucceeded = (result) =>
 
 export const STORAGE_OPERATION_DISCLAIMER_KEY = 'operation-disclaimer';
 
-const SHOW_DISCLAIMER = 'show';
-const WAIVED_DISCLAIMER = 'waived';
+export const SHOW_DISCLAIMER = 'show';
+export const WAIVED_DISCLAIMER = 'waived';
 
 export const shouldShowOperationDisclaimer = () => {
   const showDisclaimer = window.localStorage.getItem(
