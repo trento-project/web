@@ -18,7 +18,7 @@ function DisclaimerContent({
 }) {
   return (
     <>
-      <Banner type="warning" iconSize="l" truncate={false}>
+      <Banner type="warning" iconSize="xl" truncate={false}>
         By proceeding I confirm to be aware of the impact that executing
         operation &quot;{operationText}&quot; will have in my environment
       </Banner>
