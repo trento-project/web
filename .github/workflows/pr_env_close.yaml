@@ -97,11 +97,25 @@ jobs:
               vars:
                 ansible_user: ec2-user
                 ansible_python_interpreter: /usr/bin/python3
+
+                trento_server_name: '${{ env.PR_BASE_URL }}'
+                trento_web_postgres_username: '${{ env.PR_NUMBER }}web'
+                trento_web_postgres_password: 'trento'
+                trento_web_postgres_db: '${{ env.PR_NUMBER }}db'
+                trento_web_postgres_event_store: '${{ env.PR_NUMBER }}edb'
+                trento_wanda_postgres_username: '${{ env.PR_NUMBER }}wanda'
+                trento_wanda_postgres_password: 'wanda'
+                trento_wanda_postgres_db: '${{ env.PR_NUMBER }}wandadb'
+                trento_rabbitmq_username: '${{ env.PR_NUMBER }}rabbitusr'
+                trento_rabbitmq_password: 'trento'
+                trento_rabbitmq_vhost: '${{ env.PR_NUMBER }}'
+                rproxy_vhost_filename: '${{ env.PR_NUMBER }}'
+
               children:
                 trento_server:
                   hosts:
                     server:
-                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }} 
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
                 postgres_hosts:
                   hosts:
                     server:
@@ -111,23 +125,11 @@ jobs:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
           options: |
-            --extra-vars "web_postgres_db='${{ env.PR_NUMBER }}db' \
-            web_postgres_event_store='${{ env.PR_NUMBER }}edb' \
-            wanda_postgres_db='${{ env.PR_NUMBER }}wandadb' \
-            web_postgres_user='${{ env.PR_NUMBER }}web' \
-            wanda_postgres_user='${{ env.PR_NUMBER }}wanda' \
+            --extra-vars "install_method='docker' \
             web_container_name='${{ env.PR_NUMBER }}web' \
             web_container_image='ghcr.io/trento-project/trento-web:${{ env.PR_NUMBER }}-env' \
             wanda_container_name='${{ env.PR_NUMBER }}wanda' \
             checks_container_name='${{ env.PR_NUMBER }}checks' \
             docker_network_name='${{ env.PR_NUMBER }}net' \
-            nginx_vhost_filename='${{ env.PR_NUMBER }}' \
-            trento_server_name='${{ env.PR_BASE_URL }}' \
-            web_postgres_password='trento' \
-            wanda_postgres_password='wanda' \
-            rabbitmq_vhost='${{ env.PR_NUMBER }}' \
-            rabbitmq_password='trento' \
-            rabbitmq_username='${{ env.PR_NUMBER }}rabbitusr' \
-            remove_wanda_container_image='false' \
-            remove_checks_container_image='false' \
-            install_method='docker'"
+            remove_wanda_container_image=false \
+            remove_checks_container_image=false"
