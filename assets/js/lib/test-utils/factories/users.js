@@ -34,7 +34,7 @@ export const profileFactory = Factory.define(() => ({
   password_change_requested: false,
   totp_enabled: faker.datatype.boolean(),
   analytics_enabled: faker.datatype.boolean(),
-  analytics_eula_enabled: faker.datatype.boolean(),
+  analytics_eula_accepted: faker.datatype.boolean(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));
