@@ -10,6 +10,7 @@ const {
   created_at: createdAt,
   updated_at: updatedAt,
   abilities,
+  analytics_enabled: analyticsEnabled
 } = userFactory.build();
 
 function ContainerWrapper({ children }) {
@@ -78,6 +79,14 @@ export default {
       description: 'Single sign on login is enabled',
       control: { type: 'boolean' },
     },
+    analyticsEnabledConfig: {
+      description: 'Toggles visibility of Analytics switch. Analytics config is enabled',
+      control: { type: 'boolean' },
+    },
+    analyticsEnabled: {
+      description: 'Toggles tracking user analytics',
+      control: { type: 'boolean' },
+    }
   },
   render: (args) => (
     <ContainerWrapper>
@@ -93,6 +102,8 @@ export const Default = {
     totpSecret: 'HKJDFHJKHDIU379847HJKDJKH',
     totpQrData:
       'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
+    analyticsEnabledConfig: true,
+    analyticsEnabled,
   },
 };
 
@@ -104,6 +115,7 @@ export const Loading = {
     createdAt,
     abilities,
     updatedAt,
+    analyticsEnabledConfig: true,
     loading: true,
   },
 };
