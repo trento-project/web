@@ -13,6 +13,7 @@ export const DEFAULT_TOKEN_NAME = 'test token';
 export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
+const profileEndpointAlias = 'analyticsClosed';
 
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
@@ -38,7 +39,8 @@ const generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
 const submitUserCreationButton = 'button:contains("Create")';
 const cancelUserCreationButton = 'button:contains("Cancel")';
 const saveChangesButton = 'button:contains("Save")';
-const authenticatorAppSwitch = 'button[role="switch"]';
+const authenticatorAppSwitch =
+  'label:contains("Authenticator App") + div button[role="switch"]';
 const newTotpCodeIssuedMessage = 'div:contains("Your new TOTP secret is:")';
 const totpSecret = `${newTotpCodeIssuedMessage} + div[class*="bold"]`;
 const newTotpCodeInputField = 'input[placeholder="TOTP code"]';
@@ -65,6 +67,12 @@ const newAccessTokenField = 'code';
 const modalCopyAccessTokenButton = 'button[aria-label="copy to clipboard"]';
 const accessTokenName = 'p[class*="font-semibold"]';
 const userViewLastLoginField = 'label:contains("Last Login") + span';
+const analyticsModal = 'h2:contains("Collection of Anonymous Metrics")';
+const enableAnalyticsButton = 'button:contains("Enable Analytics Collection")';
+const continueWithoutAnalyticsButton =
+  'button:contains("Continue without Analytics")';
+const neverShowAgainCheckbox = 'div input[type="checkbox"]';
+const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -336,7 +344,7 @@ export const selectDisabledStatus = () =>
   basePage.selectFromDropdown(statusDropdown, 'Disabled');
 
 export const selectEnabledStatus = () =>
-  basePage.selectFromDropdown(statusDropdown, 'Disabled');
+  basePage.selectFromDropdown(statusDropdown, 'Enabled');
 
 export const adminUserPermissionsAreDisplayed = () =>
   cy
@@ -387,6 +395,41 @@ export const lastLoginUserViewShouldHaveUpdatedDate = () => {
       expect(date).to.be.closeTo(today, 5000);
     });
 };
+
+export const ifAnalyticsModalIsDisplayed = (callback, neverShowAgain) =>
+  cy.get('body').then(($body) => {
+    if ($body.find(analyticsModal).length > 0) callback(neverShowAgain);
+  });
+
+export const analyticsModalIsDisplayed = () =>
+  cy.get(analyticsModal).should('be.visible');
+
+export const analyticsModalIsNotDisplayed = () => {
+  // the intercept is needed to wait until the page is loaded
+  cy.intercept('GET', '/api/v1/profile').as(profileEndpointAlias);
+  basePage.waitForRequest(profileEndpointAlias);
+  cy.get(analyticsModal).should('not.exist');
+};
+
+export const clickEnableAnalytics = () => {
+  cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
+  cy.get(enableAnalyticsButton).click();
+  basePage.waitForRequest(profileEndpointAlias);
+};
+
+export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
+  if (neverShowAgain) {
+    cy.get(neverShowAgainCheckbox).click();
+    cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
+  }
+  cy.get(continueWithoutAnalyticsButton).click();
+  if (neverShowAgain) {
+    basePage.waitForRequest(profileEndpointAlias);
+  }
+};
+
+export const clickAnalyticsOptInSwitch = () =>
+  cy.get(analyticsOptInSwitch).click();
 
 // API
 

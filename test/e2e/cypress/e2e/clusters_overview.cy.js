@@ -100,6 +100,7 @@ context('Clusters Overview', () => {
 
       it('should prevent a tag update when the user abilities are not compliant', () => {
         clustersOverviewPage.apiCreateUserWithoutAbilities();
+        clustersOverviewPage.apiAcceptAnalyticsEula();
         clustersOverviewPage.loginWithoutAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreDisabled();
@@ -108,6 +109,7 @@ context('Clusters Overview', () => {
 
       it('should allow a tag update when the user abilities are compliant', () => {
         clustersOverviewPage.apiCreateUserWithClusterTagsAbilities();
+        clustersOverviewPage.apiAcceptAnalyticsEula();
         clustersOverviewPage.loginWithAbilities();
         clustersOverviewPage.visit();
         clustersOverviewPage.addTagButtonsAreNotDisabled();

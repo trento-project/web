@@ -193,6 +193,7 @@ context('SAP Systems Overview', () => {
     describe('Tag creation', () => {
       it('it should prevent a tag update when the user abilities are not compliant', () => {
         sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithoutAbilities();
         sapSystemsOverviewPage.visit();
         sapSystemsOverviewPage.addTagButtonIsDisabled();
@@ -201,6 +202,7 @@ context('SAP Systems Overview', () => {
 
       it('it should allow a tag update when the user abilities are compliant', () => {
         sapSystemsOverviewPage.apiCreateUserWithSapSystemTagsAbility();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithAbilities();
         sapSystemsOverviewPage.visit();
         sapSystemsOverviewPage.addTagButtonIsEnabled();
@@ -215,6 +217,7 @@ context('SAP Systems Overview', () => {
 
       it('should forbid application instance clean up', () => {
         sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithoutAbilities();
         sapSystemsOverviewPage.visit();
         sapSystemsOverviewPage.cleanUpButonIsDisabled();
@@ -222,6 +225,7 @@ context('SAP Systems Overview', () => {
 
       it('should allow application instance clean up', () => {
         sapSystemsOverviewPage.apiCreateUserWithAppInstanceCleanUpAbility();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithAbilities();
         sapSystemsOverviewPage.visit();
         sapSystemsOverviewPage.cleanUpButonIsEnabled();
@@ -235,6 +239,7 @@ context('SAP Systems Overview', () => {
 
       it('should forbid database instance cleanUp', () => {
         sapSystemsOverviewPage.apiCreateUserWithoutAbilities();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithoutAbilities();
 
         sapSystemsOverviewPage.visit();
@@ -243,6 +248,7 @@ context('SAP Systems Overview', () => {
 
       it('should allow database instance clean up', () => {
         sapSystemsOverviewPage.apiCreateUserWithDatabaseCleanUpAbility();
+        sapSystemsOverviewPage.apiAcceptAnalyticsEula();
         sapSystemsOverviewPage.loginWithAbilities();
         sapSystemsOverviewPage.visit();
         sapSystemsOverviewPage.cleanUpButonIsEnabled();

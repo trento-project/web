@@ -83,6 +83,7 @@ describe('Alerting settings from DB', () => {
 
     it('should enable edit button if the user has the correct abilities', () => {
       settingsPage.apiCreateUserWithSettingsAbilities();
+      settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.alertingEditButtonIsEnabled();
@@ -90,6 +91,7 @@ describe('Alerting settings from DB', () => {
 
     it('should disable edit button if the user has no abilities', () => {
       settingsPage.apiCreateUserWithoutAbilities();
+      settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.alertingEditButtonIsDisabled();
