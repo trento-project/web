@@ -2,12 +2,16 @@ defmodule TrentoWeb.V1.ProfileController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  import Trento.Infrastructure.SSO.SSO, only: [sso_enabled?: 0]
+
+  alias OpenApiSpex.Operation
+
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug
-       when action in [:update, :reset_totp, :get_totp_enrollment_data, :confirm_totp_enrollment]
+       when action in [:reset_totp, :get_totp_enrollment_data, :confirm_totp_enrollment]
 
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
 
@@ -30,27 +34,48 @@ defmodule TrentoWeb.V1.ProfileController do
     render(conn, :profile, user: user)
   end
 
-  operation :update,
-    summary: "Update the current user profile.",
-    description:
-      "Updates the profile of the currently authenticated user with new information, supporting account management and personalization features.",
-    tags: ["Profile"],
-    request_body:
-      {"Request containing updated profile information for the currently authenticated user.",
-       "application/json", Schema.User.UserProfileUpdateRequest},
-    responses: [
-      ok:
-        {"Profile update was successful, returning the updated user profile information for account management.",
-         "application/json", Schema.User.UserProfile},
-      unprocessable_entity: Schema.UnprocessableEntity.response(),
-      forbidden: Schema.Forbidden.response()
-    ]
+  # open_api_operation is used instead of the operation macro as sso_enabled()? function
+  # uses a runtime value which cannot be obtained during compile time with the macro
+  def open_api_operation(:update) do
+    %Operation{
+      summary: "Update the current user profile.",
+      description:
+        "Updates the profile of the currently authenticated user with new information, supporting account management and personalization features.",
+      tags: ["Profile"],
+      operationId: "TrentoWeb.V1.ProfileController.update",
+      requestBody:
+        if sso_enabled?() do
+          Operation.request_body(
+            "Request containing updated profile information for the currently authenticated user. As SSO is enabled only certain fields can be updated.",
+            "application/json",
+            Schema.User.UserProfileUpdateSSOEnabledRequest
+          )
+        else
+          Operation.request_body(
+            "Request containing updated profile information for the currently authenticated user.",
+            "application/json",
+            Schema.User.UserProfileUpdateRequest
+          )
+        end,
+      responses: %{
+        200 =>
+          Operation.response(
+            "Profile update was successful, returning the updated user profile information for account management.",
+            "application/json",
+            Schema.User.UserProfile
+          ),
+        422 => Schema.UnprocessableEntity.response(),
+        403 => Schema.Forbidden.response()
+      }
+    }
+  end
 
   def update(conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)
     profile_params = OpenApiSpex.body_params(conn)
 
-    with {:ok, %User{} = updated_user} <- Users.update_user_profile(user, profile_params) do
+    with {:ok, %User{} = updated_user} <-
+           update_user_profile(sso_enabled?(), user, profile_params) do
       render(conn, :profile, user: updated_user)
     end
   end
@@ -120,4 +145,10 @@ defmodule TrentoWeb.V1.ProfileController do
       render(conn, :totp_enrollment_completed, %{totp_enabled_at: totp_enabled_at})
     end
   end
+
+  defp update_user_profile(false, user, profile_params),
+    do: Users.update_user_profile(user, profile_params)
+
+  defp update_user_profile(true, user, profile_params),
+    do: Users.update_user_profile_sso_enabled(user, profile_params)
 end
