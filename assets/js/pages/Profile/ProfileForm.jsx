@@ -58,6 +58,8 @@ function ProfileForm({
   const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
   const [analyticsEnabledState, setAnalyticsState] = useState(analyticsEnabled);
 
+  const saveButtonVisible = !singleSignOnEnabled || analyticsEnabledConfig;
+
   const validateRequired = () => {
     let error = false;
     if (!fullNameState) {
@@ -79,8 +81,10 @@ function ProfileForm({
     }
 
     const user = {
-      fullname: fullNameState,
-      email: emailAddressState,
+      ...(!singleSignOnEnabled && {
+        fullname: fullNameState,
+        email: emailAddressState,
+      }),
       analytics_enabled: analyticsEnabledState,
       ...(analyticsEnabledState &&
         !analyticsEulaAccepted && { analytics_eula_accepted: true }),
@@ -224,7 +228,7 @@ function ProfileForm({
             </>
           )}
         </div>
-        {!singleSignOnEnabled && (
+        {saveButtonVisible && (
           <div className="flex flex-row w-80 space-x-2 mt-5">
             <Button
               disabled={loading || disableForm}
