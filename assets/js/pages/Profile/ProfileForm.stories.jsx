@@ -11,7 +11,7 @@ const {
   created_at: createdAt,
   updated_at: updatedAt,
   abilities,
-  analytics_enabled: analyticsEnabled
+  analytics_enabled: analyticsEnabled,
 } = userFactory.build();
 
 function ContainerWrapper({ children }) {
@@ -81,13 +81,14 @@ export default {
       control: { type: 'boolean' },
     },
     analyticsEnabledConfig: {
-      description: 'Toggles visibility of Analytics switch. Analytics config is enabled',
+      description:
+        'Toggles visibility of Analytics switch. Analytics config is enabled',
       control: { type: 'boolean' },
     },
     analyticsEnabled: {
       description: 'Toggles tracking user analytics',
       control: { type: 'boolean' },
-    }
+    },
   },
   render: (args) => (
     <ContainerWrapper>
