@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from './ProfileForm';
@@ -90,7 +91,9 @@ export default {
   },
   render: (args) => (
     <ContainerWrapper>
-      <ProfileForm {...args} />
+      <MemoryRouter>
+        <ProfileForm {...args} />
+      </MemoryRouter>
     </ContainerWrapper>
   ),
 };
