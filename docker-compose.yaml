@@ -21,7 +21,7 @@ services:
     ports:
       - 8081:8080
     volumes:
-      - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+      - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro,z
   node_exporter:
     image: docker.io/prom/node-exporter:v1.7.0
     volumes:
@@ -37,9 +37,9 @@ services:
     image: docker.io/prom/prometheus:v2.48.1
     user: "0:0"
     volumes:
-      - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml
-      - ./container_fixtures/prometheus:/container_init
-      - prometheus_data:/prometheus
+      - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml:z
+      - ./container_fixtures/prometheus:/container_init:z
+      - prometheus_data:/prometheus:z
     entrypoint: "/container_init/prometheus_entrypoint.sh"
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -64,15 +64,15 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh
-      - ./container_fixtures/postgres/init_wanda_db.sh:/docker-entrypoint-initdb.d/init_wanda_db.sh:ro
+      - pg_data:/var/lib/postgresql/data:z
+      - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh:z
+      - ./container_fixtures/postgres/init_wanda_db.sh:/docker-entrypoint-initdb.d/init_wanda_db.sh:ro,z
   rabbitmq:
     volumes:
-      - ./container_fixtures/rabbitmq/certs/ca_certificate.pem:/etc/ssl/certs/ca_certificate.pem
-      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_key.pem:/var/lib/rabbitmq/server_rabbit.trento.local_key.pem
-      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_certificate.pem:/var/lib/rabbitmq/server_rabbit.trento.local_certificate.pem
-      - ./container_fixtures/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./container_fixtures/rabbitmq/certs/ca_certificate.pem:/etc/ssl/certs/ca_certificate.pem:z
+      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_key.pem:/var/lib/rabbitmq/server_rabbit.trento.local_key.pem:z
+      - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_certificate.pem:/var/lib/rabbitmq/server_rabbit.trento.local_certificate.pem:z
+      - ./container_fixtures/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:z
     image: docker.io/rabbitmq:3.12.6-management-alpine
     ports:
       - 5671:5671
@@ -86,7 +86,7 @@ services:
     profiles: [wanda]
     image: ghcr.io/trento-project/checks:rolling
     volumes:
-      - trento-checks:/usr/share/trento/checks
+      - trento-checks:/usr/share/trento/checks:z
 
   wanda:
     profiles: [wanda]
@@ -105,14 +105,14 @@ services:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
     volumes:
-      - trento-checks:/usr/share/trento/checks
+      - trento-checks:/usr/share/trento/checks:z
     extra_hosts:
       - host.docker.internal:host-gateway
 
   mailpit:
     image: ghcr.io/axllent/mailpit:v1.24
     volumes:
-      - mailpit:/data
+      - mailpit:/data:z
     ports:
       - 1025:1025
       - 8025:8025
