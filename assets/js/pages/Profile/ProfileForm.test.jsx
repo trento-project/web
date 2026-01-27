@@ -428,8 +428,10 @@ describe('ProfileForm', () => {
       expect(screen.getByText('Permissions')).toBeVisible();
     });
 
-    it('should remove save button', () => {
+    it('should show save button if analytics configuration is enabled', async () => {
       const { username, fullname, email, abilities } = profileFactory.build();
+
+      const mockOnSave = jest.fn();
 
       render(
         <ProfileForm
@@ -437,11 +439,21 @@ describe('ProfileForm', () => {
           emailAddress={email}
           username={username}
           abilities={abilities}
+          onSave={mockOnSave}
           singleSignOnEnabled
+          analyticsEnabledConfig
         />
       );
 
-      expect(screen.queryByText('Save')).not.toBeInTheDocument();
+      expect(screen.queryByText('Save')).toBeInTheDocument();
+
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+        analytics_enabled: false,
+      });
     });
   });
 });

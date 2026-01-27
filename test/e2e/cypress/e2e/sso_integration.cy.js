@@ -48,6 +48,22 @@ describe('SSO integration', () => {
       dashboardPage.loadingMessageIsDisplayed();
       dashboardPage.dashboardPageIsDisplayed();
     });
+
+    it('should be able to accept analytics eula', () => {
+      usersPage.ifAnalyticsModalIsDisplayed(() => {
+        usersPage.visit('/profile');
+        usersPage.analyticsModalIsDisplayed();
+        usersPage.clickEnableAnalytics();
+        usersPage.visit('/profile');
+        usersPage.analyticsModalIsNotDisplayed();
+      }, false);
+    });
+
+    it('should be able to change allowed profile fields when SSO is enabled', () => {
+      usersPage.visit('/profile');
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickSaveUserButton();
+    });
   });
 
   describe('Admin user', () => {
