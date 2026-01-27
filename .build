@@ -319,6 +319,8 @@ Trento.Infrastructure.Prometheus.MockPrometheusApi.html
 Trento.Infrastructure.Prometheus.PrometheusApi.html
 Trento.Infrastructure.Prometheus.PrometheusSamples.html
 Trento.Infrastructure.Prometheus.html
+Trento.Infrastructure.SSO.Config.html
+Trento.Infrastructure.SSO.html
 Trento.Infrastructure.SoftwareUpdates.Auth.Gen.html
 Trento.Infrastructure.SoftwareUpdates.Auth.State.html
 Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth.html
@@ -546,7 +548,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-A35824D4.js
-dist/sidebar_items-28D5F08B.js
+dist/search_data-C0F1680F.js
+dist/sidebar_items-DCBCEEFA.js
 index.html
 search.html
