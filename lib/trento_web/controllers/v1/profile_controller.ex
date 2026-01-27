@@ -2,10 +2,9 @@ defmodule TrentoWeb.V1.ProfileController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
-  import Trento.Infrastructure.SSO.SSO, only: [sso_enabled?: 0]
-
   alias OpenApiSpex.Operation
 
+  alias Trento.Infrastructure.SSO
   alias Trento.Users
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
@@ -44,7 +43,7 @@ defmodule TrentoWeb.V1.ProfileController do
       tags: ["Profile"],
       operationId: "TrentoWeb.V1.ProfileController.update",
       requestBody:
-        if sso_enabled?() do
+        if SSO.enabled?() do
           Operation.request_body(
             "Request containing updated profile information for the currently authenticated user. As SSO is enabled only certain fields can be updated.",
             "application/json",
@@ -75,7 +74,7 @@ defmodule TrentoWeb.V1.ProfileController do
     profile_params = OpenApiSpex.body_params(conn)
 
     with {:ok, %User{} = updated_user} <-
-           update_user_profile(sso_enabled?(), user, profile_params) do
+           update_user_profile(SSO.enabled?(), user, profile_params) do
       render(conn, :profile, user: updated_user)
     end
   end

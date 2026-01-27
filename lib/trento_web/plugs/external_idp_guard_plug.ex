@@ -4,15 +4,15 @@ defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
   """
   @behaviour Plug
 
+  alias Trento.Infrastructure.SSO
+
   alias TrentoWeb.ErrorJSON
 
   import Plug.Conn
 
-  import Trento.Infrastructure.SSO.SSO, only: [sso_enabled?: 0]
-
   @impl true
   def init(opts) do
-    Keyword.put(opts, :external_idp_enabled, sso_enabled?())
+    Keyword.put(opts, :external_idp_enabled, SSO.enabled?())
   end
 
   @impl true

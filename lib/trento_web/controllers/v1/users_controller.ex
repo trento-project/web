@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Infrastructure.SSO
   alias Trento.PersonalAccessTokens
   alias Trento.Users
   alias Trento.Users.User
@@ -16,8 +17,6 @@ defmodule TrentoWeb.V1.UsersController do
   }
 
   import Plug.Conn
-
-  import Trento.Infrastructure.SSO.SSO, only: [sso_enabled?: 0]
 
   plug TrentoWeb.Plugs.ExternalIdpGuardPlug when action in [:create]
 
@@ -247,7 +246,7 @@ defmodule TrentoWeb.V1.UsersController do
     with {:ok, user} <- Users.get_user(id),
          {:ok, lock_version} <- user_version_from_if_match_header(conn),
          body_params <-
-           clean_params_for_sso_integration(body_params, sso_enabled?()),
+           clean_params_for_sso_integration(body_params, SSO.enabled?()),
          update_params <- Map.put(body_params, :lock_version, lock_version),
          {:ok, %User{} = user} <- Users.update_user(user, update_params),
          :ok <- broadcast_update_or_locked_user(user),
