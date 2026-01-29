@@ -23,6 +23,7 @@ ENV MIX_HOME=/usr/bin
 ENV MIX_REBAR3=/usr/bin/rebar3
 ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 ENV VERSION=%%VERSION%%
+ENV GTM_ID=%%GTM_ID%%
 RUN mix phx.digest
 RUN mix release
 

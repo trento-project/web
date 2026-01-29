@@ -21,6 +21,10 @@ on:
         type: string
         default: ghcr.io
         description: "The container registry FQDN. Extracted here for clarity, just leave it to default."
+    secrets:
+      GTM_ID:
+        required: true
+        description: "The GTM_ID build environment variable. It configures the Google Tag Manager that is used for analytics."
 
 jobs:
   build-and-push:
@@ -62,3 +66,4 @@ jobs:
           build-args: |
             VERSION=${{ steps.get_version_from_git.outputs.version }}
             MIX_ENV=${{ inputs.MIX_ENV }}
+            GTM_ID=${{ secrets.GTM_ID }}

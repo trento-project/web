@@ -1009,6 +1009,7 @@ jobs:
         (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo')
       )
     uses: ./.github/workflows/build-containers.yaml
+    secrets: inherit
     strategy:
       matrix:
         include:
