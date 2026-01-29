@@ -92,6 +92,42 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
              |> SapSystemPolicy.handle([], [])
   end
 
+  test "should return the expected commands when a sap_system payload of type database with multiple secondaries is handled" do
+    assert {:ok,
+            [
+              %RegisterDatabaseInstance{
+                features: "HDB|HDB_WORKER",
+                host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+                instance_number: "00",
+                database_id: "97c4127a-29bc-5315-82bd-8f154bee626f",
+                sid: "PRD",
+                tenants: [%Tenant{name: "PRD"}],
+                system_replication: "Secondary",
+                system_replication_status: nil,
+                system_replication_site: "Site2",
+                system_replication_source_site: "Site1",
+                system_replication_mode: "sync",
+                system_replication_operation_mode: "logreplay",
+                system_replication_tier: 2,
+                health: :passing
+              }
+            ]} =
+             "sap_system_discovery_database_secondary"
+             |> load_discovery_event_fixture()
+             |> put_in(
+               [
+                 "payload",
+                 Access.at(0),
+                 "Instances",
+                 Access.at(0),
+                 "HdbnsutilSRstate",
+                 "siteMapping/Site1"
+               ],
+               ["Site2", "Site3"]
+             )
+             |> SapSystemPolicy.handle([], [])
+  end
+
   test "should return the expected commands when a sap_system payload of type database is handled in the event of a stopped instance" do
     assert {:ok,
             [

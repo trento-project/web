@@ -371,6 +371,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
         |> Enum.filter(fn {key, _value} ->
           String.starts_with?(key, "siteMapping")
         end)
+        |> Enum.flat_map(&ungroup_mapping/1)
         |> Enum.into(%{}, fn {key, value} ->
           {value, key |> String.split("/") |> Enum.at(1)}
         end)
@@ -390,5 +391,14 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> put_change(:tier_mapping, tier_mapping)
       |> validate_required_fields(@required_fields)
     end
+
+    defp ungroup_mapping({key, values}) when is_list(values) do
+      Enum.zip(
+        List.duplicate(key, length(values)),
+        values
+      )
+    end
+
+    defp ungroup_mapping(pair), do: [pair]
   end
 end
