@@ -58,7 +58,7 @@
     "copy-to-clipboard": "^3.3.3",
     "date-fns": "^4.1.0",
     "eos-icons-react": "^2.4.0",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "papaparse": "^5.5.3",
     "postcss-import": "^16.1.1",
     "posthog-js": "^1.309.1",

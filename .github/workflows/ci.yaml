@@ -24,7 +24,7 @@ env:
   MIX_ENV: test
   ELIXIR_BC: "1.15.7-otp-26"
   ERLANG_BC: "26.2.1"
-  NODEJS_BC: "20.14.0"
+  NODEJS_BC: "20.20.0"
 
 jobs:
   # job to detect changed paths

@@ -8,7 +8,7 @@ be installed:
 [arabic]
 . link:https://elixir-lang.org/[Elixir] - 1.15.7 preferred
 . link:https://www.erlang.org/[Erlang OTP] - 26.1.2 preferred
-. link:https://nodejs.org/en/[Node.js] - 20.14.0 preferred
+. link:https://nodejs.org/en/[Node.js] - 20.20.0 preferred
 . link:https://docs.docker.com/get-docker/[Docker]
 . link:https://docs.docker.com/compose/install/[Docker Compose]
 
