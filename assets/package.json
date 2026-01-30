@@ -42,7 +42,7 @@
     "prettier-eslint-cli": "^8.0.1",
     "redux-mock-store": "^1.5.5",
     "storybook": "^10.1.11",
-    "tailwindcss": "^3.4.18"
+    "tailwindcss": "^3.4.19"
   },
   "dependencies": {
     "@date-fns/utc": "^2.1.1",
