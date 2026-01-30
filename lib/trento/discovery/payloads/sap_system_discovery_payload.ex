@@ -393,10 +393,9 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     end
 
     defp ungroup_mapping({key, values}) when is_list(values) do
-      Enum.zip(
-        List.duplicate(key, length(values)),
-        values
-      )
+      key
+      |> List.duplicate(length(values))
+      |> Enum.zip(values)
     end
 
     defp ungroup_mapping(pair), do: [pair]
