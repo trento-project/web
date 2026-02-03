@@ -77,7 +77,7 @@ jobs:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   npm-e2e-deps:
     name: Npm E2E dependencies
@@ -103,7 +103,7 @@ jobs:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
-        run: cd test/e2e && npm install
+        run: cd test/e2e && npm ci
 
   generate-matrix:
     runs-on: ubuntu-24.04

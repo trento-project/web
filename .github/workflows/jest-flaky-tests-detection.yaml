@@ -62,7 +62,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   generate-matrix:
     runs-on: ubuntu-24.04
