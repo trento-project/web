@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import useAIContext from '@hooks/useAIContext';
 import { get, zipWith, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
@@ -150,6 +151,40 @@ function HostDetails({
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
   const timeNow = new Date();
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Host Details',
+      description: `Details for host ${hostname}`,
+      data: {
+        host: {
+          id: hostID,
+          hostname,
+          provider,
+          cluster: cluster
+            ? { id: cluster.id, name: cluster.name, type: cluster.type }
+            : null,
+          sapInstancesCount: sapInstances?.length || 0,
+        },
+        agentHeartbeat: !!heartbeat,
+        exporters: Object.keys(exportersStatus || {}),
+        network: buildCidrNotation(ipAddresses, netmasks),
+      },
+    }),
+    [
+      hostID,
+      hostname,
+      provider,
+      cluster,
+      sapInstances,
+      heartbeat,
+      exportersStatus,
+      ipAddresses,
+      netmasks,
+    ]
+  );
+  useAIContext(aiContext);
 
   const openOperationModal = (operation) => () => {
     setCurrentOperation(operation);

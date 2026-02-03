@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
+import useAIContext from '@hooks/useAIContext';
 
 import { getEnrichedDatabaseInstances } from '@state/selectors/sapSystem';
 import { getUserProfile } from '@state/selectors/user';
@@ -30,6 +32,24 @@ function DatabasesOverviewPage() {
   );
   const dispatch = useDispatch();
   const { abilities } = useSelector(getUserProfile);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'HANA Databases',
+      description: 'Overview of SAP HANA database instances',
+      data: {
+        totalDatabases: databases?.length || 0,
+        totalInstances: enrichedDatabaseInstances?.length || 0,
+        healthSummary: databases.reduce((acc, db) => {
+          acc[db.health] = (acc[db.health] || 0) + 1;
+          return acc;
+        }, {}),
+      },
+    }),
+    [databases, enrichedDatabaseInstances]
+  );
+  useAIContext(aiContext);
 
   return (
     <DatabasesOverview

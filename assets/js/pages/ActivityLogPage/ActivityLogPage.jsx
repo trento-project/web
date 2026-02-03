@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { noop } from 'lodash';
 import { useSearchParams } from 'react-router';
 import { useSelector } from 'react-redux';
+import useAIContext from '@hooks/useAIContext';
 import {
   EOS_REFRESH,
   EOS_UPDATE_FILLED,
@@ -304,6 +305,36 @@ function ActivityLogPage() {
   }, [isFirstPage, searchParams]);
 
   const currentRefreshRate = searchParams.get('refreshRate');
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Activity Log',
+      description: 'System activity and audit log with filters',
+      data: {
+        filters: {
+          search: searchParams.get('search') || null,
+          type: searchParams.getAll('type'),
+          severity: searchParams.getAll('severity'),
+          actor: searchParams.getAll('actor'),
+        },
+        entriesCount:
+          activityLogRequest.status === 'success'
+            ? activityLogRequest.response?.data?.length || 0
+            : 0,
+        autoRefreshEnabled: !!currentRefreshRate,
+        isFirstPage,
+      },
+    }),
+    [
+      searchParams,
+      activityLogRequest.status,
+      activityLogRequest.response,
+      currentRefreshRate,
+      isFirstPage,
+    ]
+  );
+  useAIContext(aiContext);
 
   return (
     <>

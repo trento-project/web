@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { setSelectedFilters } from '@state/checksResultsFilters';
 import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
+import useAIContext from '@hooks/useAIContext';
 
 import {
   REQUESTED_EXECUTION_STATE,
@@ -40,6 +41,24 @@ function ExecutionResultsPage({ targetType }) {
   const cloudProvider = target?.provider;
   const clusterType = isCluster ? target?.type : null;
   const hostArch = target?.arch;
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Execution Results',
+      description: `Execution results for ${getTargetName(target, targetType)}.`,
+      data: {
+        targetID,
+        targetType,
+        targetName: getTargetName(target, targetType),
+        executionRunning: RUNNING_STATES.includes(executionData?.status),
+        executionLoading,
+      },
+    }),
+    [targetID, targetType, target, executionLoading, executionData?.status]
+  );
+
+  useAIContext(aiContext);
 
   useEffect(() => {
     if (cloudProvider) {

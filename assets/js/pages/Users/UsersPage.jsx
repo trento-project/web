@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-hot-toast';
 
 import { listUsers, deleteUser } from '@lib/api/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
+import useAIContext from '@hooks/useAIContext';
 
 import Users from './Users';
 
@@ -56,6 +57,21 @@ function UsersPage() {
       setError(null);
     }
   }, [error]);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Users',
+      description: 'User management page',
+      data: {
+        totalUsers: users.length,
+        singleSignOnEnabled: isSingleSignOnEnabled(),
+        loading,
+      },
+    }),
+    [users.length, loading]
+  );
+  useAIContext(aiContext);
 
   return (
     <Users

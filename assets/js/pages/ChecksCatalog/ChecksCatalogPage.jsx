@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { pickBy, values } from 'lodash';
@@ -8,6 +8,7 @@ import { updateCatalog } from '@state/catalog';
 import { OPTION_ALL } from '@common/Select';
 
 import ChecksCatalog from './ChecksCatalog';
+import useAIContext from '@hooks/useAIContext';
 
 const isSomeFilter = (value) => value !== OPTION_ALL;
 
@@ -29,6 +30,21 @@ function ChecksCatalogPage() {
     error: catalogError,
     loading,
   } = useSelector(getCatalog());
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Checks Catalog',
+      description: 'Overview of available checks with current filters applied',
+      data: {
+        totalChecks: completeCatalog?.length || 0,
+        filteredChecks: filteredCatalog?.length || 0,
+        hasFilters: !!filteredCatalog,
+      },
+    }),
+    [completeCatalog, filteredCatalog]
+  );
+  useAIContext(aiContext);
 
   return (
     <ChecksCatalog

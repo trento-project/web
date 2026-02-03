@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
 import Papa from 'papaparse';
 
@@ -7,6 +7,7 @@ import PatchList from '@common/PatchList';
 import Input from '@common/Input';
 import Select from '@common/Select';
 import Button from '@common/Button';
+import useAIContext from '@hooks/useAIContext';
 
 import { containsSubstring } from '@lib/filter';
 
@@ -27,6 +28,22 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
   const [displayedPatches, setDisplayedPatches] = useState(patches);
 
   const [csvURL, setCsvURL] = useState(null);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Host Relevant Patches',
+      description: `Relevant patches for host ${hostName}.`,
+      data: {
+        hostName,
+        patches,
+        displayedAdvisories,
+      },
+    }),
+    [hostName, patches, displayedAdvisories]
+  );
+
+  useAIContext(aiContext);
 
   useEffect(() => {
     setCsvURL(

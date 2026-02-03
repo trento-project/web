@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router';
 
 import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
 import GenericError from '@common/GenericError';
+import useAIContext from '@hooks/useAIContext';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
@@ -26,6 +27,24 @@ function AdvisoryDetailsPage() {
         setIsLoading(false);
       });
   }, []);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Advisory Details',
+      description: `Details for advisory ${advisoryID} on host ${hostID}.`,
+      data: {
+        hostID,
+        advisoryID,
+        advisory: advisoryErrata,
+        loading: isLoading,
+        error,
+      },
+    }),
+    [hostID, advisoryID, advisoryErrata, isLoading, error]
+  );
+
+  useAIContext(aiContext);
 
   return (
     <>

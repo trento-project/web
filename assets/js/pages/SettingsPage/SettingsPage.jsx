@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
+import useAIContext from '@hooks/useAIContext';
 
 import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
 
@@ -133,6 +134,23 @@ function SettingsPage() {
   useEffect(() => {
     setAlertingSettingsModalOpen(false);
   }, [alertingSettings]);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Settings',
+      description: 'Application settings and configuration page.',
+      data: {
+        apiKeyLoading,
+        suseManagerSettingsLoading,
+        activityLogsSettingsLoading,
+        alertingFetchLoading,
+      },
+    }),
+    [apiKeyLoading, suseManagerSettingsLoading, activityLogsSettingsLoading, alertingFetchLoading]
+  );
+
+  useAIContext(aiContext);
 
   return (
     <>
