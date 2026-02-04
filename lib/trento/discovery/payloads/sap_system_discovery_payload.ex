@@ -392,11 +392,8 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> validate_required_fields(@required_fields)
     end
 
-    defp ungroup_mapping({key, values}) when is_list(values) do
-      key
-      |> List.duplicate(length(values))
-      |> Enum.zip(values)
-    end
+    defp ungroup_mapping({key, state_values}) when is_list(state_values),
+      do: Enum.map(state_values, &{key, &1})
 
     defp ungroup_mapping(pair), do: [pair]
   end
