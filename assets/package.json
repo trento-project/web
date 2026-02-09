@@ -66,7 +66,7 @@
     "rc-input": "^1.8.0",
     "rc-input-number": "^9.5.0",
     "rc-tooltip": "^6.4.0",
-    "react": "19.2.3",
+    "react": "^19.2.4",
     "react-accessible-treeview": "^2.11.2",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "19.2.4",
