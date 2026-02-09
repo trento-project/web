@@ -1,0 +1,8 @@
+{
+  "payload" : {
+    "Metadata" : null,
+    "Provider" : "vmware"
+  },
+  "discovery_type" : "cloud_discovery",
+  "agent_id" : "db213de4-42b9-4581-be28-3ca9d06bfdbe"
+}

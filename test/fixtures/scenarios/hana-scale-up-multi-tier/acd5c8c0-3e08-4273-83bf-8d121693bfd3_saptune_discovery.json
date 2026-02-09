@@ -1,0 +1,76 @@
+{
+  "payload" : {
+    "package_version" : "3.2.1",
+    "saptune_installed" : true,
+    "status" : {
+      "$schema" : "file:///usr/share/saptune/schemas/1.1/saptune_status.schema.json",
+      "argv" : "saptune --format json status",
+      "command" : "status",
+      "exit code" : 0,
+      "messages" : [ {
+        "message" : "sysctl.go:85: Parameter 'fs.aio-max-nr' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(18446744073709551615).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'vm.max_map_count' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(2147483647).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "ini.go:310: block device related section settings detected: Traversing all block devices can take a considerable amount of time.\n",
+        "priority" : "NOTICE"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'net.ipv4.tcp_max_syn_backlog' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(8192).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'net.ipv4.tcp_slow_start_after_idle' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(0).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'net.ipv4.tcp_window_scaling' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(1).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'net.core.somaxconn' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(4096).\n",
+        "priority" : "WARNING"
+      }, {
+        "message" : "sysctl.go:85: Parameter 'kernel.shmmni' additional defined in the following sysctl config file /usr/lib/sysctl.d/99-sysctl.conf(32768).\n",
+        "priority" : "WARNING"
+      } ],
+      "pid" : 214212,
+      "publish time" : "2026-01-16 17:59:37.681",
+      "result" : {
+        "Notes enabled" : [ "941735", "1771258", "1868829", "1980196", "2578899", "2684254", "2382421", "2534844", "2993054", "1656250" ],
+        "package version" : "3.2.1",
+        "Notes applied" : [ "941735", "1771258", "1868829", "1980196", "2578899", "2684254", "2382421", "2534844", "2993054", "1656250" ],
+        "virtualization" : "vmware",
+        "tuning state" : "compliant",
+        "remember message" : "\nThe systemd system state is NOT ok.\nPlease call 'saptune check' to get guidance to resolve the issues!\n\n",
+        "Notes applied by Solution" : [ {
+          "Note list" : [ "941735", "1771258", "1868829", "1980196", "2578899", "2684254", "2382421", "2534844", "2993054", "1656250" ],
+          "Solution ID" : "HANA"
+        } ],
+        "Solution enabled" : [ "HANA" ],
+        "Notes enabled additionally" : [ ],
+        "orphaned Overrides" : [ ],
+        "staging" : {
+          "Notes staged" : [ ],
+          "Solutions staged" : [ ],
+          "staging enabled" : false
+        },
+        "systemd system state" : "degraded",
+        "Solution applied" : [ {
+          "Solution ID" : "HANA",
+          "applied partially" : false
+        } ],
+        "configured version" : "3",
+        "Notes enabled by Solution" : [ {
+          "Note list" : [ "941735", "1771258", "1868829", "1980196", "2578899", "2684254", "2382421", "2534844", "2993054", "1656250" ],
+          "Solution ID" : "HANA"
+        } ],
+        "services" : {
+          "sapconf" : [ ],
+          "saptune" : [ "enabled", "active" ],
+          "tuned" : [ ]
+        }
+      }
+    }
+  },
+  "discovery_type" : "saptune_discovery",
+  "agent_id" : "acd5c8c0-3e08-4273-83bf-8d121693bfd3"
+}
