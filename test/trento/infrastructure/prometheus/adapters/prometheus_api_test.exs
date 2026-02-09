@@ -8,7 +8,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
   alias Trento.Charts.ChartTimeSeriesSample
   alias Trento.Infrastructure.Prometheus.Adapter.HttpClient.Mock
   alias Trento.Infrastructure.Prometheus.PrometheusApi
-  alias Trento.Repo
 
   setup_all do
     Mox.verify_on_exit!()
@@ -37,18 +36,13 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     test "expected exporters not present in query results are reported as critical" do
-      host_id = Faker.UUID.v4()
-
-      host =
-        build(:host,
-          id: host_id,
+      %{id: host_id} =
+        insert(:host,
           prometheus_targets: %{
             "node_exporter" => "10.0.0.1:9100",
             "ha_cluster_exporter" => "10.0.0.1:9664"
           }
         )
-
-      Repo.insert!(host)
 
       expect(Mock, :get, fn _url ->
         body =
@@ -69,18 +63,13 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     test "expected exporters present in query results use the queried status" do
-      host_id = Faker.UUID.v4()
-
-      host =
-        build(:host,
-          id: host_id,
+      %{id: host_id} =
+        insert(:host,
           prometheus_targets: %{
             "node_exporter" => "10.0.0.1:9100",
             "ha_cluster_exporter" => "10.0.0.1:9664"
           }
         )
-
-      Repo.insert!(host)
 
       expect(Mock, :get, fn _url ->
         body =
@@ -110,19 +99,14 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     test "missing expected exporters are critical while queried ones retain parsed status" do
-      host_id = Faker.UUID.v4()
-
-      host =
-        build(:host,
-          id: host_id,
+      %{id: host_id} =
+        insert(:host,
           prometheus_targets: %{
             "node_exporter" => "10.0.0.1:9100",
             "ha_cluster_exporter" => "10.0.0.1:9664",
             "sap_hana_exporter" => "10.0.0.1:9950"
           }
         )
-
-      Repo.insert!(host)
 
       expect(Mock, :get, fn _url ->
         body =
@@ -153,10 +137,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     test "host with nil prometheus_targets behaves as before without expected exporters" do
-      host_id = Faker.UUID.v4()
-
-      host = build(:host, id: host_id, prometheus_targets: nil)
-      Repo.insert!(host)
+      %{id: host_id} = insert(:host, prometheus_targets: nil)
 
       expect(Mock, :get, fn _url ->
         body =
@@ -179,17 +160,12 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
 
     test "unexpected exporters from query results are included alongside expected ones" do
-      host_id = Faker.UUID.v4()
-
-      host =
-        build(:host,
-          id: host_id,
+      %{id: host_id} =
+        insert(:host,
           prometheus_targets: %{
             "node_exporter" => "10.0.0.1:9100"
           }
         )
-
-      Repo.insert!(host)
 
       expect(Mock, :get, fn _url ->
         body =
