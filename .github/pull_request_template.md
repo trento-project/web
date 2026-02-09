@@ -14,13 +14,13 @@ Remember to add the right labels to this PR.
 
 Describe the tests that have been added/changed for this new behavior.
 - [ ] **DONE**
+
 ## Did you update the documentation?
 
 Remember to ask yourself if your PR requires changes to the following documentation:
 
-- [Manual installation guide](https://github.com/trento-project/docs/blob/main/guides/manual-installation.md)
-- [Trento Ansible guide](https://github.com/trento-project/ansible/blob/main/README.md)
-- [Trento Web guides](https://github.com/trento-project/web/tree/main/guides)
+- [User Documentation](https://github.com/trento-project/docs/tree/main/trento/adoc)
+- [Developer Documentation](https://github.com/trento-project/docs/tree/main/content)
+- [Trento Web Documentation](https://github.com/trento-project/web/tree/main/guides)
 
-Add a documentation PR or write that no changes are required for the documentation.
 - [ ] **DONE**
