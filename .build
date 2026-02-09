@@ -313,6 +313,7 @@ Trento.Infrastructure.Operations.AMQP.Consumer.html
 Trento.Infrastructure.Operations.AMQP.Processor.html
 Trento.Infrastructure.Operations.AMQP.Publisher.html
 Trento.Infrastructure.Operations.html
+Trento.Infrastructure.Prometheus.Adapter.HttpClient.html
 Trento.Infrastructure.Prometheus.ChartIntegration.html
 Trento.Infrastructure.Prometheus.Gen.html
 Trento.Infrastructure.Prometheus.MockPrometheusApi.html
@@ -548,7 +549,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-C0F1680F.js
-dist/sidebar_items-DCBCEEFA.js
+dist/search_data-019D52D5.js
+dist/sidebar_items-3F220671.js
 index.html
 search.html
