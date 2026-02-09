@@ -110,9 +110,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
       queried_exporters =
         results
         |> Enum.map(&parse_exporter_status/1)
-        |> Enum.into(%{})
+        |> Enum.into(expected_exporters)
 
-      {:ok, Map.merge(expected_exporters, queried_exporters)}
+      {:ok, queried_exporters}
     else
       nil ->
         {:error, :not_found}
@@ -194,11 +194,5 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
 
   defp extract_query_values_from_result(_), do: []
 
-  defp http_client do
-    Keyword.get(
-      Application.get_env(:trento, __MODULE__, []),
-      :http_client,
-      Trento.Infrastructure.Prometheus.Adapter.HttpClient
-    )
-  end
+  defp http_client, do: Application.fetch_env!(:trento, __MODULE__)[:http_client]
 end
