@@ -7,7 +7,7 @@
     <.live_title>
       <%= assigns[:page_title] || "Trento" %>
     </.live_title>
-     <% base_path =
+    <% base_path =
       if @conn.script_name == [], do: "", else: "/" <> Enum.join(@conn.script_name, "/")
 
     css_path = base_path <> "/assets/app.css"
@@ -16,7 +16,7 @@
     <script>
       window.basePath = '<%= base_path %>';
     </script>
-     <link rel="icon" type="image/x-icon" href={favicon_path} />
+    <link rel="icon" type="image/x-icon" href={favicon_path} />
     <link phx-track-static rel="stylesheet" href={css_path} />
     <%= if analytics_enabled?() do %>
       <!-- Google Tag Manager -->
@@ -29,11 +29,11 @@
       </script>
       <!-- End Google Tag Manager -->
     <% end %>
-    
+
     <script defer phx-track-static type="text/javascript" src={js_path}>
     </script>
   </head>
-  
+
   <body>
     <%= if analytics_enabled?() do %>
       <!-- Google Tag Manager (noscript) -->
@@ -48,6 +48,6 @@
       </noscript>
       <!-- End Google Tag Manager (noscript) -->
     <% end %>
-     <%= @inner_content %>
+    <%= @inner_content %>
   </body>
 </html>
