@@ -13,10 +13,10 @@ defmodule Trento.Databases.Policy do
   def authorize(:delete_database_instance, %User{} = user, DatabaseReadModel),
     do: has_global_ability?(user) or has_cleanup_ability?(user)
 
-  def authorize(:request_operation, %User{} = user, %{operation: "database_start"}),
+  def authorize(:database_start, %User{} = user, DatabaseReadModel),
     do: has_global_ability?(user) or has_database_start_ability?(user)
 
-  def authorize(:request_operation, %User{} = user, %{operation: "database_stop"}),
+  def authorize(:database_stop, %User{} = user, DatabaseReadModel),
     do: has_global_ability?(user) or has_database_stop_ability?(user)
 
   def authorize(_, _, _), do: true

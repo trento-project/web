@@ -48,19 +48,32 @@ defmodule Trento.Users.UsersTest do
                {"is invalid", [validation: :inclusion, enum: [nil]]}
     end
 
-    test "changeset/2 validates analytics_enabled_at field is cast properly" do
+    test "profile_update_changeset/2 validates analytics_enabled_at field is cast properly" do
       changeset =
         User.profile_update_changeset(%User{}, %{"analytics_enabled_at" => DateTime.utc_now()})
 
       assert changeset.changes[:analytics_enabled_at]
     end
 
-    test "changeset/2 validates analytics_eula_accepted_at field is cast properly" do
+    test "profile_update_changeset/2 validates analytics_eula_accepted_at field is cast properly" do
       changeset =
         User.profile_update_changeset(%User{}, %{
           "analytics_eula_accepted_at" => DateTime.utc_now()
         })
 
+      assert changeset.changes[:analytics_eula_accepted_at]
+    end
+
+    test "profile_update_sso_enabled_changeset/2 validates analytics fields are cast properly" do
+      changeset =
+        User.profile_update_sso_enabled_changeset(%User{}, %{
+          "fullname" => "name",
+          "analytics_enabled_at" => DateTime.utc_now(),
+          "analytics_eula_accepted_at" => DateTime.utc_now()
+        })
+
+      refute changeset.changes[:fullname]
+      assert changeset.changes[:analytics_enabled_at]
       assert changeset.changes[:analytics_eula_accepted_at]
     end
   end

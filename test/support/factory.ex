@@ -10,6 +10,7 @@ defmodule Trento.Factory do
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
   require Trento.Hosts.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.PrometheusMode, as: PrometheusMode
   require Trento.SoftwareUpdates.Enums.AdvisoryType, as: AdvisoryType
   require Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth, as: SoftwareUpdatesHealth
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
@@ -193,6 +194,7 @@ defmodule Trento.Factory do
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
       prometheus_targets: build(:host_prometheus_targets),
+      prometheus_mode: PrometheusMode.pull(),
       heartbeat: :unknown,
       systemd_units: build_list(2, :host_systemd_unit),
       last_boot_timestamp:
@@ -214,6 +216,7 @@ defmodule Trento.Factory do
       os_version: Faker.App.semver(),
       installation_source: Enum.random([:community, :suse, :unknown]),
       prometheus_targets: build(:host_prometheus_targets),
+      prometheus_mode: PrometheusMode.pull(),
       last_boot_timestamp:
         Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     }
@@ -238,6 +241,7 @@ defmodule Trento.Factory do
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       saptune_status: nil,
       prometheus_targets: build(:host_prometheus_targets),
+      prometheus_mode: PrometheusMode.pull(),
       systemd_units: build_list(2, :host_systemd_unit)
     }
   end
@@ -972,6 +976,7 @@ defmodule Trento.Factory do
       installation_source: Enum.random([:community, :suse, :unknown]),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       prometheus_targets: build(:host_prometheus_targets),
+      prometheus_mode: PrometheusMode.pull(),
       last_boot_timestamp:
         Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     })

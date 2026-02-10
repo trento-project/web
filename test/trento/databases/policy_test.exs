@@ -35,11 +35,11 @@ defmodule Trento.Databases.PolicyTest do
   describe "request_operation" do
     operations = [
       %{
-        operation: "database_start",
+        operation: :database_start,
         ability: "start"
       },
       %{
-        operation: "database_stop",
+        operation: :database_stop,
         ability: "stop"
       }
     ]
@@ -51,25 +51,19 @@ defmodule Trento.Databases.PolicyTest do
       test "should allow #{operation} operation if the user has #{ability}:database ability" do
         user = %User{abilities: [%Ability{name: @ability, resource: "database"}]}
 
-        assert Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, DatabaseReadModel)
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, DatabaseReadModel)
       end
 
       test "should disallow #{operation} operation if the user does not have #{ability}:database ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
 
-        refute Policy.authorize(:request_operation, user, %{
-                 operation: @operation
-               })
+        refute Policy.authorize(@operation, user, DatabaseReadModel)
       end
     end
   end

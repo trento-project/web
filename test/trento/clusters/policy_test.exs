@@ -33,22 +33,38 @@ defmodule Trento.Clusters.PolicyTest do
   end
 
   describe "request_operation" do
-    test "should allow cluster_maintenance_change operation if the user has maintenance_change:cluster ability" do
-      user = %User{abilities: [%Ability{name: "maintenance_change", resource: "cluster"}]}
+    operations = [
+      %{
+        operation: :cluster_maintenance_change,
+        ability: "maintenance_change"
+      },
+      %{
+        operation: :cluster_resource_refresh,
+        ability: "resource_refresh"
+      }
+    ]
 
-      assert Policy.authorize(:request_operation, user, %{operation: "cluster_maintenance_change"})
-    end
+    for %{operation: operation, ability: ability} <- operations do
+      @operation operation
+      @ability ability
 
-    test "should allow cluster_maintenance_change operation if the user has all:all ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+      test "should allow #{@operation} operation if the user has #{@ability}:cluster ability" do
+        user = %User{abilities: [%Ability{name: @ability, resource: "cluster"}]}
 
-      assert Policy.authorize(:request_operation, user, %{operation: "cluster_maintenance_change"})
-    end
+        assert Policy.authorize(@operation, user, ClusterReadModel)
+      end
 
-    test "should disallow cluster_maintenance_change operation if the user does not have maintenance_change:cluster ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
+      test "should allow #{@operation} operation if the user has all:all ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-      refute Policy.authorize(:request_operation, user, %{operation: "cluster_maintenance_change"})
+        assert Policy.authorize(@operation, user, ClusterReadModel)
+      end
+
+      test "should disallow #{@operation} operation if the user does not have #{@ability}:cluster ability" do
+        user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
+
+        refute Policy.authorize(@operation, user, ClusterReadModel)
+      end
     end
   end
 
@@ -57,17 +73,15 @@ defmodule Trento.Clusters.PolicyTest do
       @operation operation
 
       test "should allow #{operation} operation if the user has #{operation}:cluster ability" do
-        user = %User{abilities: [%Ability{name: @operation, resource: "cluster"}]}
+        user = %User{abilities: [%Ability{name: Atom.to_string(@operation), resource: "cluster"}]}
 
-        assert Policy.authorize(:request_host_operation, user, %{
-                 operation: @operation
-               })
+        assert Policy.authorize(@operation, user, ClusterReadModel)
       end
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-        assert Policy.authorize(:request_host_operation, user, %{operation: @operation})
+        assert Policy.authorize(@operation, user, ClusterReadModel)
       end
 
       test "should disallow #{operation} operation if the user does not have #{operation}:cluster ability" do
@@ -76,9 +90,7 @@ defmodule Trento.Clusters.PolicyTest do
         user3 = %User{abilities: []}
 
         for user <- [user1, user2, user3] do
-          refute Policy.authorize(:request_host_operation, user, %{
-                   operation: "#{@operation}"
-                 })
+          refute Policy.authorize(@operation, user, ClusterReadModel)
         end
       end
     end

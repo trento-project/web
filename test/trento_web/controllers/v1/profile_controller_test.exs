@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
      conn: put_req_header(conn, "accept", "application/json"), api_spec: api_spec, user: user}
   end
 
-  test "should disable write profile action when external IDP integration is enabled", %{
+  test "should disable certain actions when external IDP integration is enabled", %{
     conn: conn
   } do
     Application.put_env(:trento, :oidc, enabled: true)
@@ -34,7 +34,6 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     Enum.each(
       [
-        patch(conn, "/api/v1/profile", %{}),
         get(conn, "/api/v1/profile/totp_enrollment"),
         post(conn, "/api/v1/profile/totp_enrollment", %{}),
         delete(conn, "/api/v1/profile/totp_enrollment")
@@ -84,6 +83,62 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> assert_schema("UserProfileV1", api_spec)
 
     assert %{id: ^user_id, fullname: ^fullname, email: ^email} = resp
+  end
+
+  test "should update the profile with allowed fields when SSO is enabled", %{
+    conn: conn,
+    api_spec: api_spec,
+    user: %{id: user_id}
+  } do
+    valid_params = %{
+      analytics_enabled: true,
+      analytics_eula_accepted: true
+    }
+
+    Application.put_env(:trento, :oidc, enabled: true)
+
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", valid_params)
+      |> json_response(:ok)
+      |> assert_schema("UserProfileV1", api_spec)
+
+    Application.put_env(:trento, :oidc, enabled: false)
+
+    assert %{id: ^user_id, analytics_enabled: true, analytics_eula_accepted: true} = resp
+  end
+
+  test "should get an error updating profile when SSO is enabled and invalid fields are sent", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    invalid_params = %{
+      fullname: Faker.Person.name(),
+      analytics_enabled: true,
+      analytics_eula_accepted: true
+    }
+
+    Application.put_env(:trento, :oidc, enabled: true)
+
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", invalid_params)
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
+
+    Application.put_env(:trento, :oidc, enabled: false)
+
+    assert %{
+             errors: [
+               %{
+                 title: "Invalid value",
+                 source: %{pointer: "/fullname"},
+                 detail: "Unexpected field: fullname"
+               }
+             ]
+           } == resp
   end
 
   test "should get totp enrollment data when totp is not configured for the user", %{

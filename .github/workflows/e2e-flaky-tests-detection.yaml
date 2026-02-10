@@ -77,7 +77,7 @@ jobs:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   npm-e2e-deps:
     name: Npm E2E dependencies
@@ -103,7 +103,7 @@ jobs:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
-        run: cd test/e2e && npm install
+        run: cd test/e2e && npm ci
 
   generate-matrix:
     runs-on: ubuntu-24.04
@@ -170,7 +170,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.3
+        uses: isbang/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -192,7 +192,7 @@ jobs:
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_db_host: postgres

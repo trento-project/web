@@ -141,6 +141,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn,
            prometheus_targets: prometheus_targets,
+           prometheus_mode: prometheus_mode,
            systemd_units: systemd_units,
            last_boot_timestamp: last_boot_timestamp
          } = payload
@@ -159,6 +160,7 @@ defmodule Trento.Discovery.Policies.HostPolicy do
            installation_source: installation_source,
            fully_qualified_domain_name: fqdn,
            prometheus_targets: prometheus_targets,
+           prometheus_mode: prometheus_mode,
            systemd_units: systemd_units,
            last_boot_timestamp: last_boot_timestamp
          })

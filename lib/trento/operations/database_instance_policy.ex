@@ -5,10 +5,6 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
-  require Trento.Enums.Health, as: Health
-
-  alias Trento.Support.OperationsHelper
-
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
@@ -46,31 +42,7 @@ defmodule Trento.Operations.DatabaseInstancePolicy do
     end
   end
 
-  # maintenance operation authorized when:
-  # - instance is not running
-  # - cluster is in maintenance
-  def authorize_operation(
-        :maintenance,
-        %DatabaseInstanceReadModel{} = database_instance,
-        _params
-      ) do
-    OperationsHelper.reduce_operation_authorizations([
-      instance_running(database_instance),
-      authorize_operation(:cluster_maintenance, database_instance, %{})
-    ])
-  end
-
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
-
-  defp instance_running(%DatabaseInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         health: health
-       })
-       when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
-
-  defp instance_running(_), do: :ok
 
   defp get_cluster_resource_id(%ClusterReadModel{
          details: %{resources: resources}

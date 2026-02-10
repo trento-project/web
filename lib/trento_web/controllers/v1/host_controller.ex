@@ -18,11 +18,12 @@ defmodule TrentoWeb.V1.HostController do
   alias TrentoWeb.OpenApi.V1.Schema.{
     BadRequest,
     Forbidden,
-    HostOperationParams,
     NotFound,
     OperationAccepted,
     UnprocessableEntity
   }
+
+  alias TrentoWeb.OpenApi.V1.Schema.Operations.SaptuneSolutionApplyParams
 
   require Logger
 
@@ -41,10 +42,10 @@ defmodule TrentoWeb.V1.HostController do
        [
          policy: Trento.Operations.HostPolicy,
          resource: &__MODULE__.get_operation_host/1,
-         operation: &__MODULE__.get_operation/1,
+         operation: &Phoenix.Controller.action_name/1,
          assigns_to: :host
        ]
-       when action == :request_operation
+       when action in HostOperations.values()
 
   action_fallback TrentoWeb.FallbackController
 
@@ -198,61 +199,69 @@ defmodule TrentoWeb.V1.HostController do
     end
   end
 
-  operation :request_operation,
-    summary: "Request operation for a Host.",
-    tags: ["Operations"],
-    description:
-      "Submits a request to perform a specific operation on a host, such as restart or configuration change, supporting automated infrastructure management.",
-    parameters: [
-      id: [
-        in: :path,
-        description:
-          "Unique identifier of the host on which the operation will be performed. This value must be a valid UUID string.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          format: :uuid,
-          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
-        }
+  @host_operations [
+    %{
+      operation: HostOperations.saptune_solution_apply(),
+      summary: "Request saptune solution apply operation",
+      description:
+        "Request saptune solution apply operation on a host without already applied solution.",
+      request_body: SaptuneSolutionApplyParams
+    },
+    %{
+      operation: HostOperations.saptune_solution_change(),
+      summary: "Request saptune solution change operation",
+      description:
+        "Request saptune solution change operation on a host to change an already existing solution by a new one.",
+      request_body: SaptuneSolutionApplyParams
+    },
+    %{
+      operation: HostOperations.reboot(),
+      summary: "Request host reboot operation",
+      description: "Request reboot operation to reboot a host.",
+      request_body: nil
+    }
+  ]
+
+  for %{
+        operation: host_operation,
+        summary: summary,
+        description: description,
+        request_body: request_body
+      } <- @host_operations do
+    @host_op host_operation
+
+    operation @host_op,
+      summary: summary,
+      tags: ["Operations"],
+      description: description,
+      parameters: [
+        id: [
+          in: :path,
+          description:
+            "Unique identifier of the host on which the operation will be performed. This value must be a valid UUID string.",
+          required: true,
+          schema: %OpenApiSpex.Schema{
+            type: :string,
+            format: :uuid,
+            example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+          }
+        ]
       ],
-      operation: [
-        in: :path,
-        description:
-          "Specifies the type of operation to be performed on the host, such as restart or configuration change.",
-        required: true,
-        schema: %OpenApiSpex.Schema{
-          type: :string,
-          example: "restart"
-        }
+      request_body:
+        request_body &&
+          {"Request containing parameters for the specified host operation.", "application/json",
+           request_body},
+      responses: [
+        accepted: OperationAccepted.response(),
+        not_found: NotFound.response(),
+        forbidden: Forbidden.response(),
+        unprocessable_entity: UnprocessableEntity.response()
       ]
-    ],
-    request_body:
-      {"Request containing parameters for the specified host operation.", "application/json",
-       HostOperationParams},
-    responses: [
-      accepted: OperationAccepted.response(),
-      not_found: NotFound.response(),
-      forbidden: Forbidden.response(),
-      unprocessable_entity: UnprocessableEntity.response()
-    ]
 
-  def request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)
-      when operation in HostOperations.values() do
-    %{id: host_id} = host
-    body = OpenApiSpex.body_params(conn)
-
-    with {:ok, operation_id} <- Hosts.request_operation(operation, host_id, body) do
-      conn
-      |> put_status(:accepted)
-      |> json(%{operation_id: operation_id})
+    def unquote(host_operation)(conn, params) do
+      request_operation(conn, params)
     end
   end
-
-  def get_policy_resource(%{
-        private: %{phoenix_action: :request_operation},
-        path_params: %{"operation" => operation}
-      }),
-      do: %{operation: operation}
 
   def get_policy_resource(_), do: HostReadModel
 
@@ -262,13 +271,15 @@ defmodule TrentoWeb.V1.HostController do
     |> Repo.preload([:cluster, :application_instances, :database_instances])
   end
 
-  def get_operation(%{params: %{operation: "saptune_solution_apply"}}),
-    do: :saptune_solution_apply
+  defp request_operation(%{assigns: %{host: host, operation: operation}} = conn, _)
+       when operation in HostOperations.values() do
+    %{id: host_id} = host
+    body = OpenApiSpex.body_params(conn)
 
-  def get_operation(%{params: %{operation: "saptune_solution_change"}}),
-    do: :saptune_solution_change
-
-  def get_operation(%{params: %{operation: "reboot"}}), do: :reboot
-
-  def get_operation(_), do: nil
+    with {:ok, operation_id} <- Hosts.request_operation(operation, host_id, body) do
+      conn
+      |> put_status(:accepted)
+      |> json(%{operation_id: operation_id})
+    end
+  end
 end

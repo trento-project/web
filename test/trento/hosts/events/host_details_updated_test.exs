@@ -17,7 +17,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
       os_version = Faker.App.version()
 
       assert %HostDetailsUpdated{
-               version: 6,
+               version: 7,
                host_id: host_id,
                hostname: hostname,
                fully_qualified_domain_name: nil,
@@ -30,6 +30,7 @@ defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
                arch: Architecture.unknown(),
                installation_source: :unknown,
                prometheus_targets: nil,
+               prometheus_mode: :pull,
                last_boot_timestamp: nil,
                systemd_units: []
              } ==

@@ -412,6 +412,7 @@ context('HANA cluster details', () => {
     describe('Check Execution', () => {
       it('should forbid check execution when the correct user abilities are missing in details and settings', () => {
         hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.apiAcceptAnalyticsEula();
         hanaClusterDetailsPage.loginWithoutAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.startExecutionButtonIsDisabled();
@@ -427,6 +428,7 @@ context('HANA cluster details', () => {
 
       it('should enable check execution button when the correct user abilities are present', () => {
         hanaClusterDetailsPage.apiCreateUserWithChecksExecutionAbility();
+        hanaClusterDetailsPage.apiAcceptAnalyticsEula();
         hanaClusterDetailsPage.loginWithAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.clickCheckSelectionButton();
@@ -438,6 +440,7 @@ context('HANA cluster details', () => {
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
         hanaClusterDetailsPage.apiCreateUserWithoutAbilities();
+        hanaClusterDetailsPage.apiAcceptAnalyticsEula();
         hanaClusterDetailsPage.loginWithoutAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.clickCheckSelectionButton();
@@ -446,6 +449,7 @@ context('HANA cluster details', () => {
 
       it('should allow check selection saving', () => {
         hanaClusterDetailsPage.apiCreateUserWithChecksSelectionAbility();
+        hanaClusterDetailsPage.apiAcceptAnalyticsEula();
         hanaClusterDetailsPage.loginWithAbilities();
         hanaClusterDetailsPage.visitAvailableHanaCluster();
         hanaClusterDetailsPage.clickCheckSelectionButton();

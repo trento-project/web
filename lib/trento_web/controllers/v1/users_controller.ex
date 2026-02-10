@@ -2,6 +2,7 @@ defmodule TrentoWeb.V1.UsersController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
 
+  alias Trento.Infrastructure.SSO
   alias Trento.PersonalAccessTokens
   alias Trento.Users
   alias Trento.Users.User
@@ -245,7 +246,7 @@ defmodule TrentoWeb.V1.UsersController do
     with {:ok, user} <- Users.get_user(id),
          {:ok, lock_version} <- user_version_from_if_match_header(conn),
          body_params <-
-           clean_params_for_sso_integration(body_params, sso_enabled?()),
+           clean_params_for_sso_integration(body_params, SSO.enabled?()),
          update_params <- Map.put(body_params, :lock_version, lock_version),
          {:ok, %User{} = user} <- Users.update_user(user, update_params),
          :ok <- broadcast_update_or_locked_user(user),
@@ -274,10 +275,4 @@ defmodule TrentoWeb.V1.UsersController do
   # when sso is enabled, we only allow abilities and enabled as parameters
   defp clean_params_for_sso_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
   defp clean_params_for_sso_integration(attrs, _), do: attrs
-
-  defp oidc_enabled?, do: Application.fetch_env!(:trento, :oidc)[:enabled]
-  defp oauth2_enabled?, do: Application.fetch_env!(:trento, :oauth2)[:enabled]
-  defp saml_enabled?, do: Application.fetch_env!(:trento, :saml)[:enabled]
-
-  defp sso_enabled?, do: oidc_enabled?() or oauth2_enabled?() or saml_enabled?()
 end

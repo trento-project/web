@@ -21,6 +21,10 @@ on:
         type: string
         default: ghcr.io
         description: "The container registry FQDN. Extracted here for clarity, just leave it to default."
+    secrets:
+      GTM_ID:
+        required: true
+        description: "The GTM_ID build environment variable. It configures the Google Tag Manager that is used for analytics."
 
 jobs:
   build-and-push:
@@ -37,7 +41,7 @@ jobs:
           fetch-depth: 0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to the Container registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
         with:
           registry: ${{ inputs.registry }}
           username: ${{ github.actor }}
@@ -62,3 +66,4 @@ jobs:
           build-args: |
             VERSION=${{ steps.get_version_from_git.outputs.version }}
             MIX_ENV=${{ inputs.MIX_ENV }}
+            GTM_ID=${{ secrets.GTM_ID }}

@@ -205,6 +205,7 @@ context('Hosts Overview', () => {
     describe('Tag creation', () => {
       it('it should prevent a tag update when the user abilities are not compliant', () => {
         hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.apiAcceptAnalyticsEula();
         hostsOverviewPage.loginWithoutAbilities();
         hostsOverviewPage.visit();
         hostsOverviewPage.addTagButtonIsDisabled();
@@ -213,6 +214,7 @@ context('Hosts Overview', () => {
 
       it('it should allow a tag update when the user abilities are compliant', () => {
         hostsOverviewPage.apiCreateUserWithHostTagsAbility();
+        hostsOverviewPage.apiAcceptAnalyticsEula();
         hostsOverviewPage.loginWithAbilities();
         hostsOverviewPage.visit();
         hostsOverviewPage.addTagButtonIsEnabled();
@@ -223,6 +225,7 @@ context('Hosts Overview', () => {
     describe('Clean up', () => {
       it('should forbid host clean up', () => {
         hostsOverviewPage.apiCreateUserWithoutAbilities();
+        hostsOverviewPage.apiAcceptAnalyticsEula();
         hostsOverviewPage.loginWithoutAbilities();
         hostsOverviewPage.visit();
         hostsOverviewPage.cleanupButtonsAreDisabled();
@@ -230,6 +233,7 @@ context('Hosts Overview', () => {
 
       it('should allow host clean up', () => {
         hostsOverviewPage.apiCreateUserWithHostCleanupAbility();
+        hostsOverviewPage.apiAcceptAnalyticsEula();
         hostsOverviewPage.loginWithAbilities();
         hostsOverviewPage.visit();
         hostsOverviewPage.cleanupButtonsAreEnabled();

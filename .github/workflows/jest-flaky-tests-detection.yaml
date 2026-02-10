@@ -31,7 +31,7 @@ jobs:
       - name: Compute matrix
         id: compute-matrix
         run: |
-          echo "NODEJS_BC=20.14.0" >> $GITHUB_OUTPUT
+          echo "NODEJS_BC=20.20.0" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
 
   npm-deps:
@@ -62,7 +62,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: cd assets && npm install
+        run: cd assets && npm ci
 
   generate-matrix:
     runs-on: ubuntu-24.04

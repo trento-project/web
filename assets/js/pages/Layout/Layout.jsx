@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router';
 
 import { clearCredentialsFromStore } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
-import { identify, optinCapturing, reset } from '@lib/analytics';
+import { optinCapturing, reset } from '@lib/analytics';
 
 import {
   EOS_HOME_OUTLINED,
@@ -97,21 +97,11 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const {
-    id,
-    username,
-    email,
-    analytics_enabled: analyticsEnabled,
-  } = useSelector(getUserProfile);
+  const { username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
   const sidebarIconSize = '24';
-
-  useEffect(() => {
-    identify(analyticsEnabled, id);
-    optinCapturing(analyticsEnabled);
-  }, [analyticsEnabled]);
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">

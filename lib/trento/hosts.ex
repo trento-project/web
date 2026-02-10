@@ -33,14 +33,30 @@ defmodule Trento.Hosts do
 
   require Logger
 
-  @spec get_all_hosts :: [HostReadModel.t()]
-  def get_all_hosts do
+  @spec get_all_hosts(keyword()) :: [HostReadModel.t()]
+  def get_all_hosts(opts \\ [])
+
+  def get_all_hosts(where: where_clauses) do
     HostReadModel
     |> where([h], not is_nil(h.hostname) and is_nil(h.deregistered_at))
+    |> where(^where_clauses)
     |> order_by(asc: :hostname)
     |> enrich_host_read_model_query()
     |> Repo.all()
     |> Repo.preload([:sles_subscriptions, :tags])
+  end
+
+  def get_all_hosts([]) do
+    get_all_hosts(where: [])
+  end
+
+  @doc """
+  Returns all hosts that are configured for Prometheus pull mode.
+  Hosts with prometheus_mode set to :push are excluded as they push metrics directly.
+  """
+  @spec get_hosts_for_prometheus_targets :: [HostReadModel.t()]
+  def get_hosts_for_prometheus_targets do
+    get_all_hosts(where: [prometheus_mode: :pull])
   end
 
   @spec by_id(String.t()) :: {:ok, HostReadModel.t()} | {:error, :not_found}

@@ -5,8 +5,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
-  require Trento.Enums.Health, as: Health
-
   alias Trento.Support.OperationsHelper
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -45,20 +43,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
     end
   end
 
-  # maintenance operation authorized when:
-  # - instance is not running
-  # - cluster is in maintenance
-  def authorize_operation(
-        :maintenance,
-        %ApplicationInstanceReadModel{} = application_instance,
-        _params
-      ) do
-    OperationsHelper.reduce_operation_authorizations([
-      instance_running(application_instance),
-      authorize_operation(:cluster_maintenance, application_instance, %{})
-    ])
-  end
-
   # instance start operation authorized when:
   # - other instances in the system are started
   # - database is started
@@ -90,16 +74,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
   end
 
   def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
-
-  defp instance_running(%ApplicationInstanceReadModel{
-         sid: sid,
-         instance_number: instance_number,
-         health: health
-       })
-       when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]}
-
-  defp instance_running(_), do: :ok
 
   # Message Server, start without depending on other instances
   defp other_instances_started(%ApplicationInstanceReadModel{

@@ -100,14 +100,19 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   def get_exporters_status(host_id) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
-    with %HostReadModel{} <- Repo.get(HostReadModel, host_id),
+    with %HostReadModel{prometheus_targets: prometheus_targets} <-
+           Repo.get(HostReadModel, host_id),
          {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HTTPoison.get("#{prometheus_url}/api/v1/query?query=up{agentID='#{host_id}'}"),
+           http_client().get("#{prometheus_url}/api/v1/query?query=up{agentID='#{host_id}'}"),
          {:ok, %{"data" => %{"result" => results}}} <- Jason.decode(body) do
-      {:ok,
-       results
-       |> Enum.map(&parse_exporter_status/1)
-       |> Enum.into(%{})}
+      expected_exporters = build_expected_exporters(prometheus_targets)
+
+      queried_exporters =
+        results
+        |> Enum.map(&parse_exporter_status/1)
+        |> Enum.into(expected_exporters)
+
+      {:ok, queried_exporters}
     else
       nil ->
         {:error, :not_found}
@@ -124,6 +129,14 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
 
         error
     end
+  end
+
+  defp build_expected_exporters(nil), do: %{}
+
+  defp build_expected_exporters(prometheus_targets) do
+    Enum.into(prometheus_targets, %{}, fn {exporter_name, _target} ->
+      {exporter_name, :critical}
+    end)
   end
 
   defp parse_exporter_status(%{
@@ -180,4 +193,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     do: query_values
 
   defp extract_query_values_from_result(_), do: []
+
+  defp http_client, do: Application.fetch_env!(:trento, __MODULE__)[:http_client]
 end

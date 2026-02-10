@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
-import { get, noop } from 'lodash';
-import {
-  DATABASE_START,
-  DATABASE_STOP,
-  SAP_SYSTEM_START,
-  SAP_SYSTEM_STOP,
-} from '@lib/operations';
+import { noop } from 'lodash';
+import { getOperationTitle } from '@lib/operations';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
@@ -13,13 +8,6 @@ import { InputNumber } from '@common/Input';
 import Select from '@common/Select';
 
 import OperationModal from './OperationModal';
-
-const TITLES = {
-  [DATABASE_START]: 'Start database',
-  [DATABASE_STOP]: 'Stop database',
-  [SAP_SYSTEM_START]: 'Start SAP system',
-  [SAP_SYSTEM_STOP]: 'Stop SAP system',
-};
 
 const ALL_SELECTED = 'all';
 
@@ -50,9 +38,6 @@ const DEFAULT_TIMEOUT = 5;
 const MIN_TIMEOUT = 1;
 const MAX_TIMEOUT = 720; // 12 hours
 
-const getOperationTitle = (operation) =>
-  get(TITLES, operation, 'unknown operation');
-
 function SapStartStopOperationModal({
   operation,
   type,
@@ -62,7 +47,6 @@ function SapStartStopOperationModal({
   onRequest = noop,
   onCancel = noop,
 }) {
-  const [checked, setChecked] = useState(false);
   const [instanceType, setInstanceType] = useState(ALL_SELECTED);
   const [timeout, setTimeout] = useState(DEFAULT_TIMEOUT);
 
@@ -73,21 +57,16 @@ function SapStartStopOperationModal({
       title={operationTitle}
       description={`${operationTitle} ${sid}${site ? ` on ${site} site` : ''}`}
       operationText={operationTitle}
-      applyDisabled={!checked}
-      checked={checked}
       isOpen={isOpen}
-      onChecked={() => setChecked((prev) => !prev)}
       onRequest={() => {
         onRequest({
           timeout: timeout * 60,
           ...(type === APPLICATION_TYPE && { instance_type: instanceType }),
           ...(type === DATABASE_TYPE && site && { site }),
         });
-        setChecked(false);
       }}
       onCancel={() => {
         onCancel();
-        setChecked(false);
         setInstanceType(ALL_SELECTED);
         setTimeout(DEFAULT_TIMEOUT);
       }}
@@ -104,7 +83,6 @@ function SapStartStopOperationModal({
               options={instanceTypes}
               value={instanceType}
               onChange={(value) => setInstanceType(value)}
-              disabled={!checked}
               renderOption={(item) => item.key}
             />
           </div>
@@ -123,7 +101,6 @@ function SapStartStopOperationModal({
             onChange={(value) => {
               setTimeout(value);
             }}
-            disabled={!checked}
           />
         </div>
       </div>

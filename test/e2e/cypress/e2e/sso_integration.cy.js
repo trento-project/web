@@ -27,7 +27,13 @@ describe('SSO integration', () => {
   });
 
   describe('Plain user', () => {
-    beforeEach(() => loginPage.ssoLoginPlainUser());
+    beforeEach(() => {
+      loginPage.ssoLoginPlainUser();
+      usersPage.ifAnalyticsModalIsDisplayed(
+        usersPage.clickContinueWithoutAnalytics,
+        false
+      );
+    });
 
     it('should have a read only profile view and empty list of permissions', () => {
       usersPage.visit('/profile');
@@ -41,6 +47,22 @@ describe('SSO integration', () => {
       loginPage.clickLoginWithSsoButton();
       dashboardPage.loadingMessageIsDisplayed();
       dashboardPage.dashboardPageIsDisplayed();
+    });
+
+    it('should be able to accept analytics eula', () => {
+      usersPage.ifAnalyticsModalIsDisplayed(() => {
+        usersPage.visit('/profile');
+        usersPage.analyticsModalIsDisplayed();
+        usersPage.clickEnableAnalytics();
+        usersPage.visit('/profile');
+        usersPage.analyticsModalIsNotDisplayed();
+      }, false);
+    });
+
+    it('should be able to change allowed profile fields when SSO is enabled', () => {
+      usersPage.visit('/profile');
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickSaveUserButton();
     });
   });
 

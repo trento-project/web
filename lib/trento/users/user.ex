@@ -99,6 +99,10 @@ defmodule Trento.Users.User do
     ])
   end
 
+  def profile_update_sso_enabled_changeset(user, attrs) do
+    cast(user, attrs, [:analytics_enabled_at, :analytics_eula_accepted_at])
+  end
+
   def totp_update_changeset(user, attrs) do
     cast(user, attrs, [:totp_enabled_at, :totp_secret, :totp_last_used_at])
   end

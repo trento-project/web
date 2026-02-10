@@ -222,6 +222,7 @@ context('Host Details', () => {
     describe('Check Execution', () => {
       it('should forbid check execution when the correct user abilities are not present in both settings and details', () => {
         hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithoutAbilities();
 
         hostDetailsPage.visitHostSettings();
@@ -235,6 +236,7 @@ context('Host Details', () => {
 
       it('should enable check execution button when the correct user abilities are present', () => {
         hostDetailsPage.apiCreateUserWithHostChecksExecutionAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithAbilities();
 
         hostDetailsPage.visitHostSettings();
@@ -246,6 +248,7 @@ context('Host Details', () => {
     describe('Check Selection', () => {
       it('should forbid check selection saving', () => {
         hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithoutAbilities();
         hostDetailsPage.visitHostSettings();
         hostDetailsPage.saveChecksSelectionButtonIsDisabled();
@@ -253,6 +256,7 @@ context('Host Details', () => {
 
       it('should allow check selection saving', () => {
         hostDetailsPage.apiCreateUserWithChecksSelectionAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithAbilities();
         hostDetailsPage.visitHostSettings();
         hostDetailsPage.saveChecksSelectionButtonIsEnabled();
@@ -263,6 +267,7 @@ context('Host Details', () => {
       it('should forbid host clean up', () => {
         hostDetailsPage.stopAgentsHeartbeat();
         hostDetailsPage.apiCreateUserWithoutAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithoutAbilities();
         hostDetailsPage.visitSelectedHost();
         hostDetailsPage.cleanUpUnhealthyHostButtonIsDisabled();
@@ -271,6 +276,7 @@ context('Host Details', () => {
       it('should allow host clean up', () => {
         hostDetailsPage.stopAgentsHeartbeat();
         hostDetailsPage.apiCreateUserWithHostCleanupAbilities();
+        hostDetailsPage.apiAcceptAnalyticsEula();
         hostDetailsPage.loginWithAbilities();
         hostDetailsPage.visitSelectedHost();
         hostDetailsPage.cleanUpUnhealthyHostButtonIsEnabled();

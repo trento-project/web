@@ -6,6 +6,7 @@ import {
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
 } from '@lib/operations';
 
 import {
@@ -27,6 +28,10 @@ export default {
         SAP_INSTANCE_STOP,
         PACEMAKER_ENABLE,
         PACEMAKER_DISABLE,
+        CLUSTER_HOST_START,
+        CLUSTER_HOST_STOP,
+        CLUSTER_MAINTENANCE_CHANGE,
+        CLUSTER_RESOURCE_REFRESH,
       ],
     },
     descriptionResolverArgs: {
@@ -116,6 +121,22 @@ export const ResourceMaintenanceChange = {
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: {
       maintenance: true,
+      resource_id: 'rsc_ip_PRD_HDB00',
+    },
+  },
+};
+
+export const ClusterResourcesRefresh = {
+  args: {
+    operation: CLUSTER_RESOURCE_REFRESH,
+    descriptionResolverArgs: {},
+  },
+};
+
+export const ResourceRefresh = {
+  args: {
+    operation: CLUSTER_RESOURCE_REFRESH,
+    descriptionResolverArgs: {
       resource_id: 'rsc_ip_PRD_HDB00',
     },
   },

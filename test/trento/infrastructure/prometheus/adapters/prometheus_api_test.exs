@@ -2,11 +2,197 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Mox
+  import Trento.Factory
+
   alias Trento.Charts.ChartTimeSeriesSample
+  alias Trento.Infrastructure.Prometheus.Adapter.HttpClient.Mock
   alias Trento.Infrastructure.Prometheus.PrometheusApi
+
+  setup_all do
+    Mox.verify_on_exit!()
+  end
 
   test "should return not found is the host is not registered" do
     assert {:error, :not_found} == PrometheusApi.get_exporters_status(Faker.UUID.v4())
+  end
+
+  describe "get_exporters_status with expected exporters" do
+    setup do
+      Application.put_env(
+        :trento,
+        Trento.Infrastructure.Prometheus.PrometheusApi,
+        url: "http://localhost:9090",
+        http_client: Mock
+      )
+
+      on_exit(fn ->
+        Application.put_env(
+          :trento,
+          Trento.Infrastructure.Prometheus.PrometheusApi,
+          url: "http://localhost:9090"
+        )
+      end)
+    end
+
+    test "expected exporters not present in query results are reported as critical" do
+      %{id: host_id} =
+        insert(:host,
+          prometheus_targets: %{
+            "node_exporter" => "10.0.0.1:9100",
+            "ha_cluster_exporter" => "10.0.0.1:9664"
+          }
+        )
+
+      expect(Mock, :get, fn _url ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "result" => []
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                "node_exporter" => :critical,
+                "ha_cluster_exporter" => :critical
+              }} == PrometheusApi.get_exporters_status(host_id)
+    end
+
+    test "expected exporters present in query results use the queried status" do
+      %{id: host_id} =
+        insert(:host,
+          prometheus_targets: %{
+            "node_exporter" => "10.0.0.1:9100",
+            "ha_cluster_exporter" => "10.0.0.1:9664"
+          }
+        )
+
+      expect(Mock, :get, fn _url ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "result" => [
+                %{
+                  "metric" => %{"exporter_name" => "node_exporter"},
+                  "value" => ["1234567890", "1"]
+                },
+                %{
+                  "metric" => %{"exporter_name" => "ha_cluster_exporter"},
+                  "value" => ["1234567890", "1"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                "node_exporter" => :passing,
+                "ha_cluster_exporter" => :passing
+              }} == PrometheusApi.get_exporters_status(host_id)
+    end
+
+    test "missing expected exporters are critical while queried ones retain parsed status" do
+      %{id: host_id} =
+        insert(:host,
+          prometheus_targets: %{
+            "node_exporter" => "10.0.0.1:9100",
+            "ha_cluster_exporter" => "10.0.0.1:9664",
+            "sap_hana_exporter" => "10.0.0.1:9950"
+          }
+        )
+
+      expect(Mock, :get, fn _url ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "result" => [
+                %{
+                  "metric" => %{"exporter_name" => "node_exporter"},
+                  "value" => ["1234567890", "1"]
+                },
+                %{
+                  "metric" => %{"exporter_name" => "ha_cluster_exporter"},
+                  "value" => ["1234567890", "0"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                "node_exporter" => :passing,
+                "ha_cluster_exporter" => :critical,
+                "sap_hana_exporter" => :critical
+              }} == PrometheusApi.get_exporters_status(host_id)
+    end
+
+    test "host with nil prometheus_targets behaves as before without expected exporters" do
+      %{id: host_id} = insert(:host, prometheus_targets: nil)
+
+      expect(Mock, :get, fn _url ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "result" => [
+                %{
+                  "metric" => %{"exporter_name" => "node_exporter"},
+                  "value" => ["1234567890", "1"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok, %{"node_exporter" => :passing}} ==
+               PrometheusApi.get_exporters_status(host_id)
+    end
+
+    test "unexpected exporters from query results are included alongside expected ones" do
+      %{id: host_id} =
+        insert(:host,
+          prometheus_targets: %{
+            "node_exporter" => "10.0.0.1:9100"
+          }
+        )
+
+      expect(Mock, :get, fn _url ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "result" => [
+                %{
+                  "metric" => %{"exporter_name" => "node_exporter"},
+                  "value" => ["1234567890", "1"]
+                },
+                %{
+                  "metric" => %{"exporter_name" => "extra_exporter"},
+                  "value" => ["1234567890", "0"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                "node_exporter" => :passing,
+                "extra_exporter" => :critical
+              }} == PrometheusApi.get_exporters_status(host_id)
+    end
   end
 
   describe "host chart fetching" do

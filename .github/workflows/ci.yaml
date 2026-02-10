@@ -24,7 +24,7 @@ env:
   MIX_ENV: test
   ELIXIR_BC: "1.15.7-otp-26"
   ERLANG_BC: "26.2.1"
-  NODEJS_BC: "20.14.0"
+  NODEJS_BC: "20.20.0"
 
 jobs:
   # job to detect changed paths
@@ -395,7 +395,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.3
+        uses: isbang/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -448,7 +448,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@v13.3.5
+        uses: chromaui/action@v15.0.0
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -536,7 +536,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.3
+        uses: isbang/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -555,7 +555,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
@@ -629,7 +629,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.3
+        uses: isbang/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -661,7 +661,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
@@ -796,7 +796,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.4.3
+        uses: isbang/compose-action@v2.5.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
@@ -808,7 +808,7 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         env:
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
@@ -1009,6 +1009,7 @@ jobs:
         (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo')
       )
     uses: ./.github/workflows/build-containers.yaml
+    secrets: inherit
     strategy:
       matrix:
         include:

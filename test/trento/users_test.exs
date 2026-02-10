@@ -98,7 +98,7 @@ defmodule Trento.UsersTest do
       assert user.password_change_requested_at == nil
     end
 
-    test "update user profile sets analytics enabled value with current time" do
+    test "update_user_profile sets analytics enabled value with current time" do
       user = insert(:user)
 
       assert {:ok,
@@ -118,7 +118,7 @@ defmodule Trento.UsersTest do
       assert analytics_enabled_at == nil
     end
 
-    test "update user profile sets analytics eula value with current time" do
+    test "update_user_profile sets analytics eula value with current time" do
       user = insert(:user)
 
       assert {:ok,
@@ -143,6 +143,53 @@ defmodule Trento.UsersTest do
               }} =
                Users.update_user_profile(user, %{})
 
+      assert analytics_eula_accepted_at == nil
+    end
+
+    test "update_user_profile_sso_enabled does not update user with id 1" do
+      assert {:error, :forbidden} =
+               Users.update_user_profile_sso_enabled(%User{username: admin_username()}, %{
+                 analytics_enabled: true
+               })
+    end
+
+    test "update_user_profile_sso_enabled sets analytics values with current time" do
+      user = insert(:user)
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at,
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile_sso_enabled(user, %{
+                 analytics_enabled: true,
+                 analytics_eula_accepted: true
+               })
+
+      refute analytics_enabled_at == nil
+      refute analytics_eula_accepted_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at,
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile_sso_enabled(user, %{
+                 analytics_enabled: false,
+                 analytics_eula_accepted: false
+               })
+
+      assert analytics_enabled_at == nil
+      assert analytics_eula_accepted_at == nil
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at,
+                analytics_eula_accepted_at: analytics_eula_accepted_at
+              }} =
+               Users.update_user_profile_sso_enabled(user, %{})
+
+      assert analytics_enabled_at == nil
       assert analytics_eula_accepted_at == nil
     end
   end

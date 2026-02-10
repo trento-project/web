@@ -7,7 +7,11 @@ import '@testing-library/jest-dom';
 
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
-import { CLUSTER_MAINTENANCE_CHANGE } from '@lib/operations';
+import {
+  CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
+  waiveOperationDisclaimer,
+} from '@lib/operations';
 
 import {
   COMPLETED_EXECUTION_STATE,
@@ -221,151 +225,171 @@ describe('ClusterDetails ClusterDetails component', () => {
     }
   );
 
-  describe('operations', () => {
-    it('should open cluster maintenance change modal', async () => {
-      const user = userEvent.setup();
-      const { id, name, details } = clusterFactory.build();
-      const hosts = hostFactory.buildList(2, { cluster_host_status: 'online' });
+  describe.each([
+    {
+      operation: CLUSTER_MAINTENANCE_CHANGE,
+      menuItemText: 'Cluster Maintenance',
+      title: 'Maintenance change',
+      errorMessage: 'Cluster maintenance change',
+    },
+    {
+      operation: CLUSTER_RESOURCE_REFRESH,
+      menuItemText: 'Refresh resources',
+      title: 'Refresh resources',
+      errorMessage: 'Refresh cluster resources',
+    },
+  ])(
+    'operation $operation',
+    ({ operation, menuItemText, title, errorMessage }) => {
+      it('should open modal', async () => {
+        waiveOperationDisclaimer();
 
-      renderWithRouter(
-        <ClusterDetails
-          clusterID={id}
-          clusterName={name}
-          details={details}
-          hasSelectedChecks
-          hosts={hosts}
-          selectedChecks={[]}
-          userAbilities={userAbilities}
-          onStartExecution={noop}
-          navigate={noop}
-          operationsEnabled
-        />
-      );
+        const user = userEvent.setup();
+        const { id, name, details } = clusterFactory.build();
+        const hosts = hostFactory.buildList(2, {
+          cluster_host_status: 'online',
+        });
 
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
+        renderWithRouter(
+          <ClusterDetails
+            clusterID={id}
+            clusterName={name}
+            details={details}
+            hasSelectedChecks
+            hosts={hosts}
+            selectedChecks={[]}
+            userAbilities={userAbilities}
+            onStartExecution={noop}
+            navigate={noop}
+            operationsEnabled
+          />
+        );
 
-      const menuItem = screen.getByRole('menuitem', {
-        name: 'Cluster Maintenance',
-      });
-      expect(menuItem).toBeEnabled();
-      await user.click(menuItem);
+        const operationsButton = screen.getByRole('button', {
+          name: 'Operations',
+        });
+        await user.click(operationsButton);
 
-      expect(
-        screen.getByRole('heading', { name: 'Maintenance change' })
-      ).toBeInTheDocument();
-    });
+        const menuItem = screen.getByRole('menuitem', {
+          name: menuItemText,
+        });
+        expect(menuItem).toBeEnabled();
+        await user.click(menuItem);
 
-    it('should show cluster maintenance change operation running', async () => {
-      const user = userEvent.setup();
-      const { id, name, details } = clusterFactory.build();
-
-      renderWithRouter(
-        <ClusterDetails
-          clusterID={id}
-          clusterName={name}
-          details={details}
-          hasSelectedChecks
-          hosts={[]}
-          runningOperation={{
-            groupID: id,
-            operation: CLUSTER_MAINTENANCE_CHANGE,
-            metadata: { params: {} },
-          }}
-          selectedChecks={[]}
-          userAbilities={userAbilities}
-          operationsEnabled
-        />
-      );
-
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
-
-      const menuItem = screen.getByRole('menuitem', {
-        name: 'Cluster Maintenance',
-      });
-      expect(menuItem).toBeDisabled();
-
-      const { getByTestId } = within(menuItem);
-
-      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
-    });
-
-    it('should show cluster maintenance change operation forbidden message', async () => {
-      const user = userEvent.setup();
-      const { id, name, details } = clusterFactory.build();
-      const mockCleanForbiddenOperation = jest.fn();
-
-      renderWithRouter(
-        <ClusterDetails
-          clusterID={id}
-          clusterName={name}
-          details={details}
-          hasSelectedChecks
-          hosts={[]}
-          runningOperation={{
-            operation: CLUSTER_MAINTENANCE_CHANGE,
-            forbidden: true,
-            errors: ['error1', 'error2'],
-          }}
-          selectedChecks={[]}
-          userAbilities={userAbilities}
-          onCleanForbiddenOperation={mockCleanForbiddenOperation}
-          operationsEnabled
-        />
-      );
-
-      expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
-      expect(
-        screen.getByText('Unable to run Cluster maintenance change operation', {
-          exact: false,
-        })
-      ).toBeInTheDocument();
-      expect(screen.getByText('error1')).toBeInTheDocument();
-      expect(screen.getByText('error2')).toBeInTheDocument();
-
-      const closeButton = screen.getByRole('button', {
-        name: 'Close',
-      });
-      await user.click(closeButton);
-      expect(mockCleanForbiddenOperation).toHaveBeenCalled();
-    });
-
-    it('should disable cluster maintenance change operation when none of the hosts is online', async () => {
-      const user = userEvent.setup();
-      const { id, name, details } = clusterFactory.build();
-      const hosts = hostFactory.buildList(2, {
-        cluster_host_status: 'offline',
+        expect(
+          screen.getByRole('heading', { name: title })
+        ).toBeInTheDocument();
       });
 
-      renderWithRouter(
-        <ClusterDetails
-          clusterID={id}
-          clusterName={name}
-          details={details}
-          hasSelectedChecks
-          hosts={hosts}
-          selectedChecks={[]}
-          userAbilities={userAbilities}
-          operationsEnabled
-        />
-      );
+      it('should show operation running', async () => {
+        const user = userEvent.setup();
+        const { id, name, details } = clusterFactory.build();
 
-      const operationsButton = screen.getByRole('button', {
-        name: 'Operations',
-      });
-      await user.click(operationsButton);
+        renderWithRouter(
+          <ClusterDetails
+            clusterID={id}
+            clusterName={name}
+            details={details}
+            hasSelectedChecks
+            hosts={[]}
+            runningOperation={{
+              groupID: id,
+              operation,
+              metadata: { params: {} },
+            }}
+            selectedChecks={[]}
+            userAbilities={userAbilities}
+            operationsEnabled
+          />
+        );
 
-      const menuItem = screen.getByRole('menuitem', {
-        name: 'Cluster Maintenance',
+        const operationsButton = screen.getByRole('button', {
+          name: 'Operations',
+        });
+        await user.click(operationsButton);
+
+        const menuItem = screen.getByRole('menuitem', {
+          name: menuItemText,
+        });
+        expect(menuItem).toBeDisabled();
+
+        const { getByTestId } = within(menuItem);
+
+        expect(getByTestId('eos-svg-component')).toBeInTheDocument();
       });
-      expect(menuItem).toBeDisabled();
-    });
-  });
+
+      it('should show operation forbidden message', async () => {
+        const user = userEvent.setup();
+        const { id, name, details } = clusterFactory.build();
+        const mockCleanForbiddenOperation = jest.fn();
+
+        renderWithRouter(
+          <ClusterDetails
+            clusterID={id}
+            clusterName={name}
+            details={details}
+            hasSelectedChecks
+            hosts={[]}
+            runningOperation={{
+              operation,
+              forbidden: true,
+              errors: ['error1', 'error2'],
+            }}
+            selectedChecks={[]}
+            userAbilities={userAbilities}
+            onCleanForbiddenOperation={mockCleanForbiddenOperation}
+            operationsEnabled
+          />
+        );
+
+        expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
+        expect(
+          screen.getByText(`Unable to run ${errorMessage} operation`, {
+            exact: false,
+          })
+        ).toBeInTheDocument();
+        expect(screen.getByText('error1')).toBeInTheDocument();
+        expect(screen.getByText('error2')).toBeInTheDocument();
+
+        const closeButton = screen.getByRole('button', {
+          name: 'Close',
+        });
+        await user.click(closeButton);
+        expect(mockCleanForbiddenOperation).toHaveBeenCalled();
+      });
+
+      it('should disable operation when none of the hosts is online', async () => {
+        const user = userEvent.setup();
+        const { id, name, details } = clusterFactory.build();
+        const hosts = hostFactory.buildList(2, {
+          cluster_host_status: 'offline',
+        });
+
+        renderWithRouter(
+          <ClusterDetails
+            clusterID={id}
+            clusterName={name}
+            details={details}
+            hasSelectedChecks
+            hosts={hosts}
+            selectedChecks={[]}
+            userAbilities={userAbilities}
+            operationsEnabled
+          />
+        );
+
+        const operationsButton = screen.getByRole('button', {
+          name: 'Operations',
+        });
+        await user.click(operationsButton);
+
+        const menuItem = screen.getByRole('menuitem', {
+          name: menuItemText,
+        });
+        expect(menuItem).toBeDisabled();
+      });
+    }
+  );
 
   describe('forbidden actions', () => {
     it('should disable check execution button when the user abilities are not compatible', async () => {
@@ -432,6 +456,18 @@ describe('ClusterDetails ClusterDetails component', () => {
         operation: CLUSTER_MAINTENANCE_CHANGE,
         label: 'Cluster Maintenance',
         abilities: [{ name: 'maintenance_change', resource: 'cluster' }],
+      },
+      {
+        forbidden: true,
+        operation: CLUSTER_RESOURCE_REFRESH,
+        label: 'Refresh resources',
+        abilities: [],
+      },
+      {
+        forbidden: false,
+        operation: CLUSTER_RESOURCE_REFRESH,
+        label: 'Refresh resources',
+        abilities: [{ name: 'resource_refresh', resource: 'cluster' }],
       },
     ])(
       'should forbid/authorize $operation operation',

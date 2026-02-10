@@ -1,31 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" /> <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title>
       <%= assigns[:page_title] || "Trento" %>
     </.live_title>
-
-    <% base_path =
+     <% base_path =
       if @conn.script_name == [], do: "", else: "/" <> Enum.join(@conn.script_name, "/")
 
     css_path = base_path <> "/assets/app.css"
     js_path = base_path <> "/assets/app.js"
     favicon_path = base_path <> "/favicon.ico" %>
-
     <script>
       window.basePath = '<%= base_path %>';
     </script>
-
-    <link rel="icon" type="image/x-icon" href={favicon_path} />
+     <link rel="icon" type="image/x-icon" href={favicon_path} />
     <link phx-track-static rel="stylesheet" href={css_path} />
+    <%= if analytics_enabled?() do %>
+      <!-- Google Tag Manager -->
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','<%= get_gtm_id() %>');
+      </script>
+      <!-- End Google Tag Manager -->
+    <% end %>
+    
     <script defer phx-track-static type="text/javascript" src={js_path}>
     </script>
   </head>
+  
   <body>
-    <%= @inner_content %>
+    <%= if analytics_enabled?() do %>
+      <!-- Google Tag Manager (noscript) -->
+      <noscript>
+        <iframe
+          src={"https://www.googletagmanager.com/ns.html?id=#{get_gtm_id()}"}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        >
+        </iframe>
+      </noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    <% end %>
+     <%= @inner_content %>
   </body>
 </html>

@@ -427,41 +427,30 @@ defmodule TrentoWeb.V1.HostControllerTest do
   end
 
   describe "request operation" do
-    # generic test for operations
-    test "should respond with 422 if operation receives an unsupported params payload",
-         %{
-           conn: conn
-         } do
-      %{id: host_id} = insert(:host)
+    for operation <- [:saptune_solution_apply, :saptune_solution_change] do
+      @op operation
+      test "should respond with 422 if operation #{@op} receives an unsupported params payload",
+           %{
+             conn: conn
+           } do
+        %{id: host_id} = insert(:host)
 
-      unsupported_params = %{"unsupported_param" => "value"}
-      operation = "any_operation"
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/hosts/#{host_id}/operations/#{@op}", %{})
+          |> json_response(:unprocessable_entity)
 
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/operations/#{operation}", unsupported_params)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Failed to cast value to one of: no schemas validate",
-                   "source" => %{"pointer" => "/"},
-                   "title" => "Invalid value"
-                 },
-                 %{
-                   "detail" => "Unexpected field: unsupported_param",
-                   "source" => %{"pointer" => "/unsupported_param"},
-                   "title" => "Invalid value"
-                 },
-                 %{
-                   "detail" => "Unexpected field: unsupported_param",
-                   "source" => %{"pointer" => "/unsupported_param"},
-                   "title" => "Invalid value"
-                 }
-               ]
-             } == resp
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Missing field: solution",
+                     "source" => %{"pointer" => "/solution"},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
     end
 
     # test all common responses for the requested operations

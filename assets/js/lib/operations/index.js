@@ -14,6 +14,7 @@ export const SAPTUNE_SOLUTION_CHANGE = 'saptune_solution_change';
 export const CLUSTER_MAINTENANCE_CHANGE = 'cluster_maintenance_change';
 export const CLUSTER_HOST_START = 'cluster_host_start';
 export const CLUSTER_HOST_STOP = 'cluster_host_stop';
+export const CLUSTER_RESOURCE_REFRESH = 'cluster_resource_refresh';
 export const SAP_INSTANCE_START = 'sap_instance_start';
 export const SAP_INSTANCE_STOP = 'sap_instance_stop';
 export const SAP_SYSTEM_START = 'sap_system_start';
@@ -30,6 +31,7 @@ const OPERATION_LABELS = {
   [CLUSTER_HOST_START]: 'Start cluster host',
   [CLUSTER_HOST_STOP]: 'Stop cluster host',
   [CLUSTER_MAINTENANCE_CHANGE]: 'Cluster maintenance change',
+  [CLUSTER_RESOURCE_REFRESH]: 'Refresh cluster resources',
   [SAP_INSTANCE_START]: 'SAP instance start',
   [SAP_INSTANCE_STOP]: 'SAP instance stop',
   [SAP_SYSTEM_START]: 'SAP system start',
@@ -41,12 +43,31 @@ const OPERATION_LABELS = {
   [HOST_REBOOT]: 'Reboot host',
 };
 
+const OPERATION_TITLES = {
+  [CLUSTER_HOST_START]: 'Start cluster host',
+  [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
+  [CLUSTER_RESOURCE_REFRESH]: 'Refresh resources',
+  [DATABASE_START]: 'Start database',
+  [DATABASE_STOP]: 'Stop database',
+  [HOST_REBOOT]: 'Reboot host',
+  [PACEMAKER_DISABLE]: 'Disable Pacemaker',
+  [PACEMAKER_ENABLE]: 'Enable Pacemaker',
+  [SAP_INSTANCE_START]: 'Start SAP instance',
+  [SAP_INSTANCE_STOP]: 'Stop SAP instance',
+  [SAP_SYSTEM_START]: 'Start SAP system',
+  [SAP_SYSTEM_STOP]: 'Stop SAP system',
+  [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
+  [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
+};
+
 const OPERATION_INTERNAL_NAMES = {
   'saptuneapplysolution@v1': SAPTUNE_SOLUTION_APPLY,
   'saptunechangesolution@v1': SAPTUNE_SOLUTION_CHANGE,
   'crmclusterstart@v1': CLUSTER_HOST_START,
   'crmclusterstop@v1': CLUSTER_HOST_STOP,
   'clustermaintenancechange@v1': CLUSTER_MAINTENANCE_CHANGE,
+  'clusterresourcerefresh@v1': CLUSTER_RESOURCE_REFRESH,
   'sapinstancestart@v1': SAP_INSTANCE_START,
   'sapinstancestop@v1': SAP_INSTANCE_STOP,
   'sapsystemstart@v1': SAP_SYSTEM_START,
@@ -64,6 +85,7 @@ const OPERATION_RESOURCE_TYPES = {
   [CLUSTER_HOST_START]: CLUSTER_HOST_OPERATION,
   [CLUSTER_HOST_STOP]: CLUSTER_HOST_OPERATION,
   [CLUSTER_MAINTENANCE_CHANGE]: CLUSTER_OPERATION,
+  [CLUSTER_RESOURCE_REFRESH]: CLUSTER_OPERATION,
   [SAP_INSTANCE_START]: APPLICATION_INSTANCE_OPERATION,
   [SAP_INSTANCE_STOP]: APPLICATION_INSTANCE_OPERATION,
   [SAP_SYSTEM_START]: SAP_SYSTEM_OPERATION,
@@ -83,6 +105,9 @@ const OPERATION_FORBIDDEN_MESSAGES = {
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 
+export const getOperationTitle = (operation) =>
+  get(OPERATION_TITLES, operation, 'unknown operation');
+
 export const getOperationInternalName = (operation) =>
   get(OPERATION_INTERNAL_NAMES, operation, 'unknown');
 
@@ -94,3 +119,27 @@ export const getOperationForbiddenMessage = (operation) =>
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);
+
+export const STORAGE_OPERATION_DISCLAIMER_KEY = 'operation-disclaimer';
+
+export const SHOW_DISCLAIMER = 'show';
+export const WAIVED_DISCLAIMER = 'waived';
+
+export const shouldShowOperationDisclaimer = () => {
+  const showDisclaimer = window.localStorage.getItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY
+  );
+  return SHOW_DISCLAIMER === showDisclaimer || showDisclaimer === null;
+};
+
+export const waiveOperationDisclaimer = () =>
+  window.localStorage.setItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY,
+    WAIVED_DISCLAIMER
+  );
+
+export const resetOperationDisclaimer = () =>
+  window.localStorage.setItem(
+    STORAGE_OPERATION_DISCLAIMER_KEY,
+    SHOW_DISCLAIMER
+  );

@@ -107,6 +107,21 @@ defmodule Trento.Users do
     end
   end
 
+  def update_user_profile_sso_enabled(%User{username: username} = user, attrs) do
+    if username == admin_username() do
+      {:error, :forbidden}
+    else
+      updated_attrs =
+        attrs
+        |> maybe_enable_analytics()
+        |> maybe_accept_analytics_eula()
+
+      user
+      |> User.profile_update_sso_enabled_changeset(updated_attrs)
+      |> Repo.update()
+    end
+  end
+
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
     updated_attrs =
       attrs

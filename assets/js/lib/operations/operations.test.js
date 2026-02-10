@@ -6,224 +6,114 @@ import {
   getOperationResourceType,
   getOperationForbiddenMessage,
   operationSucceeded,
+  getOperationTitle,
+  shouldShowOperationDisclaimer,
+  STORAGE_OPERATION_DISCLAIMER_KEY,
+  waiveOperationDisclaimer,
+  resetOperationDisclaimer,
 } from '.';
 
 describe('operations', () => {
-  it.each([
-    {
-      operation: 'unknown',
-      label: 'unknown',
-    },
-    {
-      operation: 'saptune_solution_apply',
-      label: 'Apply Saptune solution',
-    },
-    {
-      operation: 'saptune_solution_change',
-      label: 'Change Saptune solution',
-    },
-    {
-      operation: 'cluster_maintenance_change',
-      label: 'Cluster maintenance change',
-    },
-    {
-      operation: 'sap_instance_start',
-      label: 'SAP instance start',
-    },
-    {
-      operation: 'sap_instance_stop',
-      label: 'SAP instance stop',
-    },
-    {
-      operation: 'sap_system_start',
-      label: 'SAP system start',
-    },
-    {
-      operation: 'sap_system_stop',
-      label: 'SAP system stop',
-    },
-    {
-      operation: 'pacemaker_enable',
-      label: 'Enable Pacemaker',
-    },
-    {
-      operation: 'pacemaker_disable',
-      label: 'Disable Pacemaker',
-    },
-    {
-      operation: 'database_start',
-      label: 'Database start',
-    },
-    {
-      operation: 'database_stop',
-      label: 'Database stop',
-    },
-    {
-      operation: 'cluster_host_start',
-      label: 'Start cluster host',
-    },
-    {
-      operation: 'cluster_host_stop',
-      label: 'Stop cluster host',
-    },
-    {
-      operation: 'reboot',
-      label: 'Reboot host',
-    },
-  ])(`should return the operation $operation label`, ({ operation, label }) => {
+  it.each`
+    operation                       | label
+    ${'unknown'}                    | ${'unknown'}
+    ${'saptune_solution_apply'}     | ${'Apply Saptune solution'}
+    ${'saptune_solution_change'}    | ${'Change Saptune solution'}
+    ${'cluster_maintenance_change'} | ${'Cluster maintenance change'}
+    ${'cluster_resource_refresh'}   | ${'Refresh cluster resources'}
+    ${'sap_instance_start'}         | ${'SAP instance start'}
+    ${'sap_instance_stop'}          | ${'SAP instance stop'}
+    ${'sap_system_start'}           | ${'SAP system start'}
+    ${'sap_system_stop'}            | ${'SAP system stop'}
+    ${'pacemaker_enable'}           | ${'Enable Pacemaker'}
+    ${'pacemaker_disable'}          | ${'Disable Pacemaker'}
+    ${'database_start'}             | ${'Database start'}
+    ${'database_stop'}              | ${'Database stop'}
+    ${'cluster_host_start'}         | ${'Start cluster host'}
+    ${'cluster_host_stop'}          | ${'Stop cluster host'}
+    ${'reboot'}                     | ${'Reboot host'}
+  `(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
   });
 
-  it.each([
-    {
-      operation: 'unknown',
-      name: 'unknown',
-    },
-    {
-      operation: 'saptuneapplysolution@v1',
-      name: 'saptune_solution_apply',
-    },
-    {
-      operation: 'saptunechangesolution@v1',
-      name: 'saptune_solution_change',
-    },
-    {
-      operation: 'clustermaintenancechange@v1',
-      name: 'cluster_maintenance_change',
-    },
-    {
-      operation: 'sapinstancestart@v1',
-      name: 'sap_instance_start',
-    },
-    {
-      operation: 'sapinstancestop@v1',
-      name: 'sap_instance_stop',
-    },
-    {
-      operation: 'sapsystemstart@v1',
-      name: 'sap_system_start',
-    },
-    {
-      operation: 'sapsystemstop@v1',
-      name: 'sap_system_stop',
-    },
-    {
-      operation: 'pacemakerenable@v1',
-      name: 'pacemaker_enable',
-    },
-    {
-      operation: 'pacemakerdisable@v1',
-      name: 'pacemaker_disable',
-    },
-    {
-      operation: 'databasestart@v1',
-      name: 'database_start',
-    },
-    {
-      operation: 'databasestop@v1',
-      name: 'database_stop',
-    },
-    {
-      operation: 'crmclusterstart@v1',
-      name: 'cluster_host_start',
-    },
-    {
-      operation: 'crmclusterstop@v1',
-      name: 'cluster_host_stop',
-    },
-    {
-      operation: 'hostreboot@v1',
-      name: 'reboot',
-    },
-  ])(
+  it.each`
+    operation                       | title
+    ${'unknown'}                    | ${'unknown operation'}
+    ${'database_start'}             | ${'Start database'}
+    ${'database_stop'}              | ${'Stop database'}
+    ${'sap_system_start'}           | ${'Start SAP system'}
+    ${'sap_system_stop'}            | ${'Stop SAP system'}
+    ${'sap_instance_start'}         | ${'Start SAP instance'}
+    ${'sap_instance_stop'}          | ${'Stop SAP instance'}
+    ${'saptune_solution_apply'}     | ${'Apply Saptune solution'}
+    ${'saptune_solution_change'}    | ${'Change Saptune solution'}
+    ${'pacemaker_enable'}           | ${'Enable Pacemaker'}
+    ${'pacemaker_disable'}          | ${'Disable Pacemaker'}
+    ${'cluster_maintenance_change'} | ${'Maintenance change'}
+    ${'cluster_host_start'}         | ${'Start cluster host'}
+    ${'cluster_host_stop'}          | ${'Stop cluster host'}
+    ${'cluster_resource_refresh'}   | ${'Refresh resources'}
+    ${'reboot'}                     | ${'Reboot host'}
+  `(`should return the operation $operation title`, ({ operation, title }) => {
+    expect(getOperationTitle(operation)).toBe(title);
+  });
+
+  it.each`
+    operation                        | name
+    ${'unknown'}                     | ${'unknown'}
+    ${'saptuneapplysolution@v1'}     | ${'saptune_solution_apply'}
+    ${'saptunechangesolution@v1'}    | ${'saptune_solution_change'}
+    ${'clustermaintenancechange@v1'} | ${'cluster_maintenance_change'}
+    ${'clusterresourcerefresh@v1'}   | ${'cluster_resource_refresh'}
+    ${'sapinstancestart@v1'}         | ${'sap_instance_start'}
+    ${'sapinstancestop@v1'}          | ${'sap_instance_stop'}
+    ${'sapsystemstart@v1'}           | ${'sap_system_start'}
+    ${'sapsystemstop@v1'}            | ${'sap_system_stop'}
+    ${'pacemakerenable@v1'}          | ${'pacemaker_enable'}
+    ${'pacemakerdisable@v1'}         | ${'pacemaker_disable'}
+    ${'databasestart@v1'}            | ${'database_start'}
+    ${'databasestop@v1'}             | ${'database_stop'}
+    ${'crmclusterstart@v1'}          | ${'cluster_host_start'}
+    ${'crmclusterstop@v1'}           | ${'cluster_host_stop'}
+    ${'hostreboot@v1'}               | ${'reboot'}
+  `(
     `should return the operation $operation internal name`,
     ({ operation, name }) => {
       expect(getOperationInternalName(operation)).toBe(name);
     }
   );
 
-  it.each([
-    {
-      operation: 'unknown',
-      resourceType: 'unknown',
-    },
-    {
-      operation: 'saptune_solution_apply',
-      resourceType: 'host',
-    },
-    {
-      operation: 'saptune_solution_change',
-      resourceType: 'host',
-    },
-    {
-      operation: 'cluster_maintenance_change',
-      resourceType: 'cluster',
-    },
-    {
-      operation: 'sap_instance_start',
-      resourceType: 'application_instance',
-    },
-    {
-      operation: 'sap_instance_stop',
-      resourceType: 'application_instance',
-    },
-    {
-      operation: 'sap_system_start',
-      resourceType: 'sap_system',
-    },
-    {
-      operation: 'sap_system_stop',
-      resourceType: 'sap_system',
-    },
-    {
-      operation: 'pacemaker_enable',
-      resourceType: 'cluster_host',
-    },
-    {
-      operation: 'pacemaker_disable',
-      resourceType: 'cluster_host',
-    },
-    {
-      operation: 'database_start',
-      resourceType: 'database',
-    },
-    {
-      operation: 'database_stop',
-      resourceType: 'database',
-    },
-    {
-      operation: 'cluster_host_start',
-      resourceType: 'cluster_host',
-    },
-    {
-      operation: 'cluster_host_stop',
-      resourceType: 'cluster_host',
-    },
-    {
-      operation: 'reboot',
-      resourceType: 'host',
-    },
-  ])(
+  it.each`
+    operation                       | resourceType
+    ${'unknown'}                    | ${'unknown'}
+    ${'saptune_solution_apply'}     | ${'host'}
+    ${'saptune_solution_change'}    | ${'host'}
+    ${'cluster_maintenance_change'} | ${'cluster'}
+    ${'cluster_resource_refresh'}   | ${'cluster'}
+    ${'sap_instance_start'}         | ${'application_instance'}
+    ${'sap_instance_stop'}          | ${'application_instance'}
+    ${'sap_system_start'}           | ${'sap_system'}
+    ${'sap_system_stop'}            | ${'sap_system'}
+    ${'pacemaker_enable'}           | ${'cluster_host'}
+    ${'pacemaker_disable'}          | ${'cluster_host'}
+    ${'database_start'}             | ${'database'}
+    ${'database_stop'}              | ${'database'}
+    ${'cluster_host_start'}         | ${'cluster_host'}
+    ${'cluster_host_stop'}          | ${'cluster_host'}
+    ${'reboot'}                     | ${'host'}
+  `(
     `should return the operation $operation resource type`,
     ({ operation, resourceType }) => {
       expect(getOperationResourceType(operation)).toBe(resourceType);
     }
   );
 
-  it.each([
-    {
-      operation: 'unknown',
-      message: null,
-    },
-    {
-      operation: 'saptune_solution_apply',
-      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-    },
-    {
-      operation: 'saptune_solution_change',
-      message: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-    },
-  ])(
+  it.each`
+    operation                    | message
+    ${'unknown'}                 | ${null}
+    ${'saptune_solution_apply'}  | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
+    ${'saptune_solution_change'} | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
+  `(
     `should return the operation $operation forbidden message`,
     ({ operation, message }) => {
       expect(getOperationForbiddenMessage(operation)).toBe(message);
@@ -234,5 +124,25 @@ describe('operations', () => {
     expect(operationSucceeded('UPDATED')).toBeTruthy();
     expect(operationSucceeded('NOT_UPDATED')).toBeTruthy();
     expect(operationSucceeded('FAILED')).toBeFalsy();
+  });
+});
+
+describe('operations disclaimer', () => {
+  beforeEach(() => {
+    resetOperationDisclaimer();
+  });
+
+  afterEach(() => {
+    window.localStorage.removeItem(STORAGE_OPERATION_DISCLAIMER_KEY);
+  });
+
+  test('should detect whether the operation disclaimer should be shown', () => {
+    expect(shouldShowOperationDisclaimer()).toBe(true);
+  });
+
+  test('should waive the operation disclaimer', () => {
+    expect(shouldShowOperationDisclaimer()).toBe(true);
+    waiveOperationDisclaimer();
+    expect(shouldShowOperationDisclaimer()).toBe(false);
   });
 });

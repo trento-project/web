@@ -11,7 +11,7 @@ WORKDIR /build/web/assets
 RUN npm run tailwind:build
 RUN npm run build
 
-FROM registry.suse.com/bci/bci-base:15.6 AS release
+FROM registry.suse.com/bci/bci-base:15.7 AS release
 RUN zypper -n in make gcc git-core elixir==1.15 elixir-hex erlang==26 erlang-rebar3
 COPY --from=assets-build /build /build
 WORKDIR /build/web/
@@ -23,10 +23,11 @@ ENV MIX_HOME=/usr/bin
 ENV MIX_REBAR3=/usr/bin/rebar3
 ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 ENV VERSION=%%VERSION%%
+ENV GTM_ID=%%GTM_ID%%
 RUN mix phx.digest
 RUN mix release
 
-FROM registry.suse.com/bci/bci-base:15.6
+FROM registry.suse.com/bci/bci-base:15.7
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.trento
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
@@ -34,7 +35,7 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 # Erlang runtime dependencies
-RUN zypper -n in libsystemd0 libopenssl1_1
+RUN zypper -n in libsystemd0 libopenssl3
 WORKDIR /app
 COPY --from=release /build/web/_build/prod/rel/trento .
 EXPOSE 4000/tcp

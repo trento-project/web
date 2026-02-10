@@ -68,6 +68,7 @@ const groupedAbilities = [
       'stop:sap_system',
       'start:database',
       'stop:database',
+      'resource_refresh:cluster',
     ],
   },
 ];

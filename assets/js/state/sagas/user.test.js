@@ -18,6 +18,12 @@ import { networkClient } from '@lib/network';
 import { profileFactory } from '@lib/test-utils/factories/users';
 import * as authConfig from '@lib/auth/config';
 import {
+  SHOW_DISCLAIMER,
+  WAIVED_DISCLAIMER,
+  STORAGE_OPERATION_DISCLAIMER_KEY,
+  shouldShowOperationDisclaimer,
+} from '@lib/operations';
+import {
   performLogin,
   clearUserAndLogout,
   checkUserPasswordChangeRequested,
@@ -34,6 +40,40 @@ const credentialResponse = {
   expires_in: 600,
   refresh_token:
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ0cmVudG8tcHJvamVjdCIsImV4cCI6MTY3MTY0MDY1NiwiaWF0IjoxNjcxNjQwNTk2LCJpc3MiOiJodHRwczovL2dpdGh1Yi5jb20vdHJlbnRvLXByb2plY3Qvd2ViIiwianRpIjoiMnNwZG9ndmxtZWhmbG1kdm1nMDAwbmMxIiwibmJmIjoxNjcxNjQwNTk2LCJzdWIiOjEsInR5cCI6IlJlZnJlc2gifQ.AW6-iV1XHWdzQKBVadhf7o7gUdidYg6mEyyuDke_zlA',
+};
+
+const performSuccessfulLogin = async ({
+  username,
+  id,
+  email,
+  fullname,
+  abilities,
+  password_change_requested,
+  created_at,
+  updated_at,
+}) => {
+  axiosMock
+    .onPost('/api/session', { username, password: 'good', totp_code: 'code' })
+    .reply(200, credentialResponse);
+
+  networkClientAxiosMock.onGet('/api/v1/profile').reply(200, {
+    username,
+    id,
+    email,
+    fullname,
+    abilities,
+    password_change_requested,
+    created_at,
+    updated_at,
+  });
+
+  return await recordSaga(performLogin, {
+    payload: {
+      username,
+      password: 'good',
+      totpCode: 'code',
+    },
+  });
 };
 
 describe('user actions saga', () => {
@@ -111,6 +151,8 @@ describe('user login saga', () => {
   });
 
   it('should set the username in the store and set the user as logged when login is successful, persisting the information in the local storage', async () => {
+    const user = profileFactory.build();
+
     const {
       email,
       username,
@@ -120,30 +162,9 @@ describe('user login saga', () => {
       password_change_requested,
       created_at,
       updated_at,
-    } = profileFactory.build();
+    } = user;
 
-    axiosMock
-      .onPost('/api/session', { username, password: 'good', totp_code: 'code' })
-      .reply(200, credentialResponse);
-
-    networkClientAxiosMock.onGet('/api/v1/profile').reply(200, {
-      username,
-      id,
-      email,
-      fullname,
-      abilities,
-      password_change_requested,
-      created_at,
-      updated_at,
-    });
-
-    const dispatched = await recordSaga(performLogin, {
-      payload: {
-        username,
-        password: 'good',
-        totpCode: 'code',
-      },
-    });
+    const dispatched = await performSuccessfulLogin(user);
 
     expect(dispatched).toContainEqual(setAuthInProgress());
     expect(dispatched).toContainEqual(
@@ -371,5 +392,25 @@ describe('user login saga', () => {
       expect(getAccessTokenFromStore()).toEqual(null);
       expect(getRefreshTokenFromStore()).toEqual(null);
     });
+  });
+});
+
+describe('operation disclaimer reset', () => {
+  it.each`
+    initialState
+    ${null}
+    ${SHOW_DISCLAIMER}
+    ${WAIVED_DISCLAIMER}
+    ${''}
+    ${'foo'}
+    ${'bar'}
+  `('should reset operation disclaimer on login', async ({ initialState }) => {
+    window.localStorage.setItem(STORAGE_OPERATION_DISCLAIMER_KEY, initialState);
+
+    const user = profileFactory.build();
+
+    await performSuccessfulLogin(user);
+
+    expect(shouldShowOperationDisclaimer()).toBe(true);
   });
 });

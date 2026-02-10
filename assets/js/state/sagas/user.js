@@ -26,6 +26,7 @@ import {
 import { networkClient } from '@lib/network';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 import { identify, optinCapturing, reset } from '@lib/analytics';
+import { resetOperationDisclaimer } from '@lib/operations';
 
 export function* performLogin({ payload: { username, password, totpCode } }) {
   yield put(setAuthInProgress());
@@ -64,6 +65,7 @@ export function* performLogin({ payload: { username, password, totpCode } }) {
     );
     yield call(identify, analytics_enabled, id);
     yield call(optinCapturing, analytics_enabled);
+    yield call(resetOperationDisclaimer);
     yield put(setUserAsLogged());
   } catch (error) {
     yield put(

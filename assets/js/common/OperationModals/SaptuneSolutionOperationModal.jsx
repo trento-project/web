@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { pipe, filter, map } from 'lodash/fp';
 import { noop } from 'lodash';
 import Select from '@common/Select';
+import { getOperationTitle } from '@lib/operations';
 import OperationModal from './OperationModal';
 
 const NOT_SELECTED = 'Select a saptune solution';
@@ -61,7 +62,7 @@ const markOptionDisabled = (currentlyApplied) => (option) => ({
 });
 
 function SaptuneSolutionOperationModal({
-  title,
+  operation,
   currentlyApplied,
   isHanaRunning,
   isAppRunning,
@@ -69,8 +70,9 @@ function SaptuneSolutionOperationModal({
   onRequest = noop,
   onCancel = noop,
 }) {
-  const [checked, setChecked] = useState(false);
   const [solution, setSolution] = useState(currentlyApplied || NOT_SELECTED);
+
+  const title = getOperationTitle(operation);
 
   const availableSolutions = pipe(
     filter(availableOptions(isHanaRunning, isAppRunning, currentlyApplied)),
@@ -81,21 +83,15 @@ function SaptuneSolutionOperationModal({
     <OperationModal
       title={title}
       description="Select Saptune tuning solution"
-      operationText="Saptune solution"
-      applyDisabled={
-        !checked || solution === NOT_SELECTED || solution === currentlyApplied
+      operationText={title}
+      requestDisabled={
+        solution === NOT_SELECTED || solution === currentlyApplied
       }
-      checked={checked}
       isOpen={isOpen}
-      onChecked={() => setChecked((prev) => !prev)}
-      onRequest={() => {
-        onRequest(solution);
-        setChecked(false);
-      }}
+      onRequest={() => onRequest(solution)}
       onCancel={() => {
         onCancel();
         setSolution(currentlyApplied || NOT_SELECTED);
-        setChecked(false);
       }}
     >
       <div className="flex items-center justify-start gap-2 mt-4">
@@ -108,7 +104,6 @@ function SaptuneSolutionOperationModal({
           options={availableSolutions}
           value={solution}
           onChange={(value) => setSolution(value)}
-          disabled={!checked}
         />
       </div>
     </OperationModal>

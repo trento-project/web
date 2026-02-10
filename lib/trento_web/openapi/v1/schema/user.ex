@@ -267,6 +267,37 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     )
   end
 
+  defmodule UserProfileUpdateSSOEnabledRequest do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "UserProfileUpdateSSOEnabledRequestV1",
+        description: "Request body to update a user profile when SSO is enabled.",
+        additionalProperties: false,
+        type: :object,
+        properties: %{
+          analytics_enabled: %Schema{
+            type: :boolean,
+            description: "Whether user analytics collection is enabled.",
+            nullable: false,
+            example: true
+          },
+          analytics_eula_accepted: %Schema{
+            type: :boolean,
+            description: "Whether user analytics EULA is accepted.",
+            nullable: false,
+            example: false
+          }
+        },
+        example: %{
+          analytics_enabled: true
+        }
+      },
+      struct?: false
+    )
+  end
+
   defmodule UserCreationRequest do
     @moduledoc false
 

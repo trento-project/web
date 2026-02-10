@@ -6,10 +6,11 @@ defmodule Trento.Hosts.Events.HostRegistered do
   use Trento.Support.Event
 
   require Trento.Hosts.Enums.Architecture, as: Architecture
+  require Trento.Hosts.Enums.PrometheusMode, as: PrometheusMode
 
   alias Trento.Hosts.ValueObjects.SystemdUnit
 
-  defevent version: 7 do
+  defevent version: 8 do
     field :host_id, Ecto.UUID
     field :hostname, :string
     field :ip_addresses, {:array, :string}
@@ -20,6 +21,7 @@ defmodule Trento.Hosts.Events.HostRegistered do
     field :os_version, :string
     field :fully_qualified_domain_name, :string
     field :prometheus_targets, :map
+    field :prometheus_mode, Ecto.Enum, values: PrometheusMode.values()
     field :last_boot_timestamp, :utc_datetime
     embeds_many :systemd_units, SystemdUnit
 
@@ -36,4 +38,5 @@ defmodule Trento.Hosts.Events.HostRegistered do
   def upcast(params, _, 5), do: Map.put(params, "prometheus_targets", nil)
   def upcast(params, _, 6), do: Map.put(params, "arch", Architecture.unknown())
   def upcast(params, _, 7), do: Map.put(params, "systemd_units", [])
+  def upcast(params, _, 8), do: Map.put(params, "prometheus_mode", PrometheusMode.pull())
 end

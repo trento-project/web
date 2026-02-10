@@ -2,13 +2,24 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { waiveOperationDisclaimer } from '@lib/operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  SAPTUNE_SOLUTION_CHANGE,
+} from '@lib/operations';
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
 describe('SaptuneSolutionOperationModal', () => {
-  it.each(['Apply Saptune Solution', 'Change Saptune Solution'])(
+  beforeAll(() => waiveOperationDisclaimer());
+
+  it.each`
+    operation                  | title
+    ${SAPTUNE_SOLUTION_APPLY}  | ${'Apply Saptune solution'}
+    ${SAPTUNE_SOLUTION_CHANGE} | ${'Change Saptune solution'}
+  `(
     'should show correct title and description',
-    async (title) => {
-      render(<SaptuneSolutionOperationModal isOpen title={title} />);
+    async ({ operation, title }) => {
+      render(<SaptuneSolutionOperationModal operation={operation} isOpen />);
 
       expect(screen.getByText(title)).toBeInTheDocument();
       expect(
@@ -17,52 +28,56 @@ describe('SaptuneSolutionOperationModal', () => {
     }
   );
 
-  it('should forbid selecting a solution until accepting liability disclaimer', async () => {
-    const user = userEvent.setup();
-
-    render(<SaptuneSolutionOperationModal isOpen />);
-
-    expect(screen.getByText('Apply')).toBeDisabled();
-    expect(screen.getByText('Select a saptune solution')).toBeDisabled();
-
-    await user.click(screen.getByRole('checkbox'));
-
-    expect(screen.getByText('Select a saptune solution')).toBeEnabled();
-    expect(screen.getByText('Apply')).toBeDisabled();
-  });
-
   it('should forbid applying a solution until one is actually selected', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isAppRunning
+      />
+    );
 
-    await user.click(screen.getByRole('checkbox'));
+    expect(screen.getByText('Request')).toBeDisabled();
+
     await user.click(screen.getByText('Select a saptune solution'));
     await user.click(screen.getByText('NETWEAVER'));
 
-    expect(screen.getByText('Apply')).toBeEnabled();
+    expect(screen.getByText('Request')).toBeEnabled();
   });
 
   it('should reset internal state when closing the modal', async () => {
     const user = userEvent.setup();
 
     const { rerender } = await act(async () =>
-      render(<SaptuneSolutionOperationModal isOpen isAppRunning />)
+      render(
+        <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
+          isOpen
+          isAppRunning
+        />
+      )
     );
 
-    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
     await user.click(screen.getByText('NETWEAVER'));
 
     await user.click(screen.getByText('Cancel'));
 
     await act(async () =>
-      rerender(<SaptuneSolutionOperationModal isOpen isAppRunning />)
+      rerender(
+        <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
+          isOpen
+          isAppRunning
+        />
+      )
     );
 
     await waitFor(() => {
-      expect(screen.getByText('Apply')).toBeDisabled();
-      expect(screen.getByText('Select a saptune solution')).toBeDisabled();
+      expect(screen.getByText('Request')).toBeDisabled();
+      expect(screen.getByText('Select a saptune solution')).toBeEnabled();
     });
   });
 
@@ -73,6 +88,7 @@ describe('SaptuneSolutionOperationModal', () => {
     await act(async () =>
       render(
         <SaptuneSolutionOperationModal
+          operation={SAPTUNE_SOLUTION_APPLY}
           isOpen
           isAppRunning
           onCancel={onCancel}
@@ -91,14 +107,14 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
         isOpen
         isHanaRunning
         onRequest={mockOnRequest}
       />
     );
 
-    await user.click(screen.getByRole('checkbox'));
-    expect(screen.getByText('Apply')).toBeDisabled();
+    expect(screen.getByText('Request')).toBeDisabled();
 
     await user.click(screen.getByText('Select a saptune solution'));
 
@@ -106,7 +122,7 @@ describe('SaptuneSolutionOperationModal', () => {
     expect(screen.getByText('S4HANA-DBSERVER')).toBeInTheDocument();
 
     await user.click(screen.getByText('HANA'));
-    await user.click(screen.getByText('Apply'));
+    await user.click(screen.getByText('Request'));
 
     expect(mockOnRequest).toHaveBeenCalledWith('HANA');
   });
@@ -114,9 +130,14 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render Application solutions', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isAppRunning
+      />
+    );
 
-    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByText('Select a saptune solution'));
 
     expect(screen.getByText('NETWEAVER')).toBeInTheDocument();
@@ -126,10 +147,16 @@ describe('SaptuneSolutionOperationModal', () => {
   it('should render HANA and Application solutions', async () => {
     const user = userEvent.setup();
 
-    render(<SaptuneSolutionOperationModal isOpen isHanaRunning isAppRunning />);
+    render(
+      <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_APPLY}
+        isOpen
+        isHanaRunning
+        isAppRunning
+      />
+    );
 
     await waitFor(async () => {
-      await user.click(screen.getByRole('checkbox'));
       await user.click(screen.getByText('Select a saptune solution'));
 
       expect(screen.getByText('S4HANA-APP+DB')).toBeInTheDocument();
@@ -142,6 +169,7 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_CHANGE}
         isOpen
         isHanaRunning
         currentlyApplied="HANA"
@@ -150,7 +178,6 @@ describe('SaptuneSolutionOperationModal', () => {
 
     expect(screen.getByRole('button', { name: 'HANA' })).toBeInTheDocument();
 
-    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'HANA' }));
 
     expect(
@@ -163,13 +190,13 @@ describe('SaptuneSolutionOperationModal', () => {
 
     render(
       <SaptuneSolutionOperationModal
+        operation={SAPTUNE_SOLUTION_CHANGE}
         isOpen
         isHanaRunning
         currentlyApplied="HANA"
       />
     );
 
-    await user.click(screen.getByRole('checkbox'));
     await user.click(screen.getByRole('button', { name: 'HANA' }));
 
     expect(screen.getByRole('option', { name: 'HANA' })).toHaveAttribute(

@@ -130,6 +130,10 @@ describe('Users', () => {
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       usersPage.apiLoginAndCreateSession();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       basePage.visit();
     });
 
@@ -199,6 +203,10 @@ describe('Users', () => {
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       usersPage.apiLoginAndCreateSession();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       basePage.visit();
       basePage.clickUserDropdownProfileButton();
       basePage.validateUrl('/profile');
@@ -301,6 +309,10 @@ describe('Users', () => {
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       usersPage.apiLoginAndCreateSession();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       usersPage.visit('/profile');
       usersPage.pageTitleIsCorrectlyDisplayed('Profile');
       usersPage.apiDisableUser();
@@ -321,6 +333,10 @@ describe('Users', () => {
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       basePage.apiLoginAndCreateSession();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       usersPage.visit();
       usersPage.clickNewUserDeleteButton();
       usersPage.clickConfirmDeleteUserButton();
@@ -355,6 +371,10 @@ describe('Users', () => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
       basePage.visit();
       loginPage.login(usersPage.USER.username, usersPage.PASSWORD);
       basePage.clickUserDropdownProfileButton();
@@ -429,6 +449,10 @@ describe('Users', () => {
       usersPage.apiDeleteAllUsers();
       usersPage.apiCreateUser();
       basePage.apiLoginAndCreateSession();
+      usersPage.apiAcceptAnalyticsEula(
+        usersPage.USER.username,
+        usersPage.PASSWORD
+      );
     });
 
     it('should show an empty list of personal access tokens', () => {
@@ -480,6 +504,51 @@ describe('Users', () => {
       usersPage.lastLoginShouldNotBeEmpty();
       usersPage.clickNewUser();
       usersPage.lastLoginUserViewShouldHaveUpdatedDate();
+    });
+  });
+
+  describe('Analytics eula', () => {
+    beforeEach(() => {
+      basePage.logout();
+      usersPage.apiDeleteAllUsers();
+      usersPage.apiCreateUser();
+      usersPage.apiLoginAndCreateSession();
+      basePage.visit();
+    });
+
+    it('should display eula in first login', () => {
+      usersPage.analyticsModalIsDisplayed();
+    });
+
+    it('should display eula again when it is rejected without the no show again option', () => {
+      usersPage.analyticsModalIsDisplayed();
+      usersPage.clickContinueWithoutAnalytics(false);
+      basePage.visit();
+      usersPage.analyticsModalIsDisplayed();
+    });
+
+    it('should not display eula once it is accepted', () => {
+      usersPage.analyticsModalIsDisplayed();
+      usersPage.clickEnableAnalytics();
+      basePage.visit();
+      usersPage.analyticsModalIsNotDisplayed();
+    });
+
+    it('should not display eula once it is rejected with the no show again option', () => {
+      usersPage.analyticsModalIsDisplayed();
+      usersPage.clickContinueWithoutAnalytics();
+      basePage.visit();
+      usersPage.analyticsModalIsNotDisplayed();
+    });
+
+    it('should not display eula if analytics is enabled in the profile view', () => {
+      basePage.visit('/profile');
+      usersPage.analyticsModalIsDisplayed();
+      usersPage.clickContinueWithoutAnalytics(false);
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickEditUserSaveButton();
+      basePage.visit();
+      usersPage.analyticsModalIsNotDisplayed();
     });
   });
 });

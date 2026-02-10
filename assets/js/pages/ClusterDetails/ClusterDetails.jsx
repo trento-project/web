@@ -15,6 +15,7 @@ import { isSomeHostOnline } from '@lib/model/clusters';
 
 import {
   CLUSTER_MAINTENANCE_CHANGE,
+  CLUSTER_RESOURCE_REFRESH,
   PACEMAKER_ENABLE,
   PACEMAKER_DISABLE,
   CLUSTER_HOST_START,
@@ -65,8 +66,7 @@ function ClusterDetails({
   const [operationModalOpen, setOperationModalOpen] =
     useState(operationModalState);
   const [currentOperationHost, setCurrentOperationHost] = useState(undefined);
-  const [maintenanceOperationParams, setMaintenanceOperationParams] =
-    useState(undefined);
+  const [operationParams, setOperationParams] = useState(undefined);
 
   const closeOperationModal = () =>
     setOperationModalOpen((prevState) => ({ ...prevState, open: false }));
@@ -88,7 +88,7 @@ function ClusterDetails({
   const clusterOperations = getClusterOperations(
     clusterID,
     runningOperation,
-    setMaintenanceOperationParams,
+    setOperationParams,
     setOperationModalOpen,
     details,
     someHostOnline
@@ -97,7 +97,7 @@ function ClusterDetails({
   const curriedGetResourceOperations = getResourceOperations(
     clusterID,
     runningOperation,
-    setMaintenanceOperationParams,
+    setOperationParams,
     setOperationModalOpen,
     someHostOnline
   );
@@ -112,7 +112,8 @@ function ClusterDetails({
           hostName: currentOperationHost?.name,
         };
       case CLUSTER_MAINTENANCE_CHANGE:
-        return maintenanceOperationParams;
+      case CLUSTER_RESOURCE_REFRESH:
+        return operationParams;
       default:
         return {};
     }
@@ -130,7 +131,8 @@ function ClusterDetails({
         });
         break;
       case CLUSTER_MAINTENANCE_CHANGE:
-        onRequestOperation(operation, maintenanceOperationParams);
+      case CLUSTER_RESOURCE_REFRESH:
+        onRequestOperation(operation, operationParams);
         break;
       default:
         noop();
@@ -143,7 +145,7 @@ function ClusterDetails({
           clusterID,
           runningOperation,
           setCurrentOperationHost,
-          setMaintenanceOperationParams,
+          setOperationParams,
           setOperationModalOpen
         ),
       })
