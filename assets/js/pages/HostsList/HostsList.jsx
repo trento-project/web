@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import { useSearchParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
+
+import useAIContext from '@hooks/useAIContext';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -54,6 +56,25 @@ function HostsList() {
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
   const dispatch = useDispatch();
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Hosts List',
+      description: 'Overview of all SAP HANA hosts in the system',
+      data: {
+        totalHosts: hosts?.length || 0,
+        healthSummary: hosts.reduce((acc, host) => {
+          acc[host.health] = (acc[host.health] || 0) + 1;
+          return acc;
+        }, {}),
+        providers: [...new Set(hosts?.map((h) => h.provider) || [])],
+        totalClusters: clusters?.length || 0,
+      },
+    }),
+    [hosts, clusters]
+  );
+  useAIContext(aiContext);
 
   const openDeregistrationModal = (host) => {
     setHostToDeregister(host);

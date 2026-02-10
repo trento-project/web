@@ -1,0 +1,251 @@
+/* Liz Markdown Styling */
+.ai-assistant-message {
+  color: #1f2937;
+  word-wrap: break-word;
+  line-height: 1.6;
+}
+
+.ai-assistant-message h1,
+.ai-assistant-message h2,
+.ai-assistant-message h3,
+.ai-assistant-message h4 {
+  margin: 24px 0 14px 0;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.ai-assistant-message h1:first-child,
+.ai-assistant-message h2:first-child,
+.ai-assistant-message h3:first-child,
+.ai-assistant-message h4:first-child {
+  margin-top: 0;
+}
+
+.ai-assistant-message h1 {
+  font-size: 1.25rem;
+}
+
+.ai-assistant-message h2 {
+  font-size: 1.125rem;
+}
+
+.ai-assistant-message h3 {
+  font-size: 1rem;
+}
+
+.ai-assistant-message h4 {
+  font-size: 0.9375rem;
+}
+
+.ai-assistant-message p {
+  margin: 0 0 16px 0;
+  line-height: 1.7;
+  color: #1f2937;
+}
+
+.ai-assistant-message p:first-child {
+  margin-top: 0;
+}
+
+.ai-assistant-message p:last-child {
+  margin-bottom: 0;
+}
+
+.ai-assistant-message code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #dc2626;
+  border: 1px solid #e5e7eb;
+}
+
+.ai-assistant-message pre {
+  background: #1f2937;
+  color: #f9fafb;
+  padding: 14px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 16px 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ai-assistant-message pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ai-assistant-message ul,
+.ai-assistant-message ol {
+  margin: 16px 0;
+  padding-left: 28px;
+}
+
+.ai-assistant-message ul li,
+.ai-assistant-message ol li {
+  margin: 12px 0;
+  padding-left: 12px;
+  line-height: 1.8;
+  color: #374151;
+}
+
+.ai-assistant-message li:first-child {
+  margin-top: 0;
+}
+
+.ai-assistant-message li:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested lists */
+.ai-assistant-message ul ul,
+.ai-assistant-message ol ol,
+.ai-assistant-message ul ol,
+.ai-assistant-message ol ul {
+  margin: 10px 0;
+  padding-left: 24px;
+}
+
+.ai-assistant-message ul {
+  list-style-type: disc;
+}
+
+.ai-assistant-message ul ul {
+  list-style-type: circle;
+}
+
+.ai-assistant-message ul ul ul {
+  list-style-type: square;
+}
+
+.ai-assistant-message ol {
+  list-style-type: decimal;
+}
+
+.ai-assistant-message ol ol {
+  list-style-type: lower-alpha;
+}
+
+.ai-assistant-message ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.ai-assistant-message ul li::marker,
+.ai-assistant-message ol li::marker {
+  color: #059669;
+  font-weight: 600;
+}
+
+.ai-assistant-message blockquote {
+  border-left: 4px solid #059669;
+  padding: 14px 16px;
+  margin: 16px 0;
+  background: rgba(5, 150, 105, 0.05);
+  border-radius: 4px;
+  color: #374151;
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.ai-assistant-message a {
+  color: #059669;
+  text-decoration: underline;
+  text-decoration-color: rgba(5, 150, 105, 0.3);
+  text-underline-offset: 2px;
+  transition: all 0.2s;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.ai-assistant-message a:hover {
+  text-decoration-color: #059669;
+  color: #047857;
+}
+
+.ai-assistant-message strong {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ai-assistant-message em {
+  font-style: italic;
+  color: #374151;
+}
+
+/* Section spacing - add more space between major sections */
+.ai-assistant-message h2 + p,
+.ai-assistant-message h2 + ul,
+.ai-assistant-message h2 + ol {
+  margin-top: 12px;
+}
+
+.ai-assistant-message p + h2,
+.ai-assistant-message ul + h2,
+.ai-assistant-message ol + h2,
+.ai-assistant-message p + p {
+  margin-top: 0;
+}
+
+.ai-assistant-message p + h3,
+.ai-assistant-message ul + h3,
+.ai-assistant-message ol + h3 {
+  margin-top: 20px;
+}
+
+.ai-assistant-message p + ul,
+.ai-assistant-message p + ol {
+  margin-top: 12px;
+}
+
+/* Tables */
+.ai-assistant-message table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 14px 0;
+  font-size: 13px;
+}
+
+.ai-assistant-message table th,
+.ai-assistant-message table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.ai-assistant-message table th {
+  background: #f9fafb;
+  font-weight: 600;
+  color: #111827;
+}
+
+.ai-assistant-message table tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+/* Horizontal rule */
+.ai-assistant-message hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 16px 0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-in;
+}

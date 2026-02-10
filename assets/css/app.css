@@ -3,6 +3,7 @@
 @import './tooltip.scss';
 @import './input.scss';
 @import './input-number.css';
+@import '../js/pages/AIAssistant/AIAssistant.css';
 
 @tailwind base;
 

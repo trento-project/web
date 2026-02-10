@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router';
 
@@ -26,6 +26,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 import HealthSummary from '@pages/HealthSummary';
 
 import ClusterLink from './ClusterLink';
+import useAIContext from '@hooks/useAIContext';
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);
@@ -46,6 +47,27 @@ function ClustersList() {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { abilities } = useSelector(getUserProfile);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Clusters',
+      description: 'Overview of all clusters',
+      data: {
+        totalClusters: clusters?.length || 0,
+        byType: clusters.reduce((acc, c) => {
+          acc[c.type] = (acc[c.type] || 0) + 1;
+          return acc;
+        }, {}),
+        healthSummary: clusters.reduce((acc, c) => {
+          acc[c.health] = (acc[c.health] || 0) + 1;
+          return acc;
+        }, {}),
+      },
+    }),
+    [clusters]
+  );
+  useAIContext(aiContext);
 
   const config = {
     pagination: true,

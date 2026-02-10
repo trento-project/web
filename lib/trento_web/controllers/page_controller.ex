@@ -13,6 +13,7 @@ defmodule TrentoWeb.PageController do
     installation_id = Settings.get_installation_id()
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
+    ai_assistant_ws_url = Application.fetch_env!(:trento, :ai_assistant_ws_url)
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
@@ -28,6 +29,7 @@ defmodule TrentoWeb.PageController do
       sso_callback_url: callback_url,
       sso_enrollment_url: enrollment_url,
       operations_enabled: operations_enabled,
+      ai_assistant_ws_url: ai_assistant_ws_url,
       version: @version,
       layout: false
     )

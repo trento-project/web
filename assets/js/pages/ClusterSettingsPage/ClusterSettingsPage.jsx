@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { get } from 'lodash';
@@ -18,6 +18,7 @@ import { executionRequested } from '@state/lastExecutions';
 
 import { buildEnv } from '@lib/checks';
 import { UNKNOWN_PROVIDER, TARGET_CLUSTER } from '@lib/model';
+import useAIContext from '@hooks/useAIContext';
 
 import BackButton from '@common/BackButton';
 import ClusterInfoBox from '@common/ClusterInfoBox';
@@ -74,6 +75,37 @@ function ClusterSettingsPage() {
   useEffect(() => {
     setSelection(selectedChecks);
   }, [selectedChecks]);
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Cluster Settings',
+      description: `Checks selection and execution for cluster ${clusterName}.`,
+      data: {
+        clusterID,
+        clusterName,
+        provider: cluster?.provider,
+        clusterType: cluster?.type,
+        hanaScenario: cluster?.details?.hana_scenario,
+        architectureType: cluster?.details?.architecture_type,
+        selectedChecks: selection,
+        saving,
+        loading: checksSelectionLoading,
+        error: checksSelectionFetchError,
+      },
+    }),
+    [
+      cluster,
+      clusterID,
+      clusterName,
+      selection,
+      saving,
+      checksSelectionLoading,
+      checksSelectionFetchError,
+    ]
+  );
+
+  useAIContext(aiContext);
 
   if (!cluster) {
     return <LoadingBox text="Loading..." />;

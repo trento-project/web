@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
+import useAIContext from '@hooks/useAIContext';
 
 import LoadingBox from '@common/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
@@ -70,6 +71,24 @@ function CheckResultDetailPage({ targetType }) {
   const { targetID, checkID, resultTargetType, resultTargetName } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // Provide context for AI assistant
+  const aiContext = useMemo(
+    () => ({
+      page: 'Check Result Detail',
+      description: `Detailed results for check execution on ${targetType}.`,
+      data: {
+        targetID,
+        targetType,
+        checkID,
+        resultTargetType,
+        resultTargetName,
+      },
+    }),
+    [targetID, targetType, checkID, resultTargetType, resultTargetName]
+  );
+
+  useAIContext(aiContext);
 
   const {
     targetHosts,
