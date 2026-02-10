@@ -133,6 +133,9 @@ if config_env() in [:prod, :demo] do
 
   config :trento, Trento.Charts, enabled: System.get_env("CHARTS_ENABLED", "true") == "true"
 
+  config :trento,
+    ai_assistant_ws_url: System.get_env("AI_ASSISTANT_WS_URL") || ""
+
   # ## Using releases
   #
   # If you are doing OTP releases, you need to instruct Phoenix

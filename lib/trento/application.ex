@@ -33,10 +33,13 @@ defmodule Trento.Application do
         Trento.Vault,
         Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
         {Samly.Provider, []}
+        # Supervisor.child_spec({Trento.AI.MCP, transport: {:streamable_http, base_url: "http://localhost:4002"}}, id: Trento.AI.MCP, restart: :permanent),
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++
         Application.get_env(:trento, :extra_children, [])
+
+    # Supervisor.start_link([{Trento.AI.MCP, transport: {:streamable_http, base_url: "http://localhost:4002"}}], strategy: :one_for_one)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
