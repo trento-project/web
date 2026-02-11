@@ -35,6 +35,7 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
     field :hosts_number, :integer
     field :discovered_health, Ecto.Enum, values: Health.values()
     field :cib_last_written, :string
+    field :state, :string
 
     polymorphic_embeds_one(:details,
       types: [
