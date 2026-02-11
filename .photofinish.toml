@@ -8,6 +8,7 @@ directories = [
     "./test/fixtures/scenarios/hana-scale-up-angi",
     "./test/fixtures/scenarios/sap-system-java",
     "./test/fixtures/scenarios/hana-scale-up-cost-opt",
+    "./test/fixtures/scenarios/hana-scale-up-multi-tier",
 ]
 
 [healthy-27-node-SAP-cluster]
