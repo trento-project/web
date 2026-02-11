@@ -28,6 +28,7 @@ const {
   sap_instances: [{ sid }],
   cib_last_written: cibLastWritten,
   details,
+  state,
 } = clusterFactory.build({
   type: 'hana_scale_up',
   details: {
@@ -159,6 +160,7 @@ export const Hana = {
     provider,
     sapSystems,
     details,
+    state,
     lastExecution,
     catalog,
     userAbilities,
