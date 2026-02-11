@@ -6,8 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       num_containers:
-        description: "Number of containers to use (Max: 200) (Default: 10)"
+        description: "Number of containers to use (Max: 200)"
         required: false
+        default: "10"
 
 concurrency:
   group: ${{ github.workflow }}
@@ -122,27 +123,9 @@ jobs:
           path: junit-reports/*.xml
 
   flaky-tests-analysis:
-    name: Flaky Tests Analysis
     needs: test-backend
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Download JUnit reports artifacts
-        uses: actions/download-artifact@v7
-        with:
-          path: junit-reports
-          merge-multiple: true
-      - name: Analyze
-        run: |
-          make venv-create
-          source .venv/bin/activate
-          make install-deps
-          make PATH-TO-JUNIT-FILES=../../junit-reports analyze-files 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
-        working-directory: hack/flaky_tests_analysis
-      - name: Delete Artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: backend-junit-reports
+    uses: ./.github/workflows/flaky-tests-analysis.yaml
+    with:
+      suite-name: Backend
+      junit-artifact-pattern: junit-reports-*
+      total-runs: ${{ github.event.inputs.num_containers || '10' }}

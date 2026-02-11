@@ -6,8 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       num_containers:
-        description: "Number of containers to use (Max: 200) (Default: 100)"
+        description: "Number of containers to use (Max: 200)"
         required: false
+        default: "100"
       spec_pattern:
         description: "Spec files pattern (Default: **/*.cy.js)"
         required: false
@@ -217,72 +218,10 @@ jobs:
           retention-days: 7
 
   flaky-tests-analysis:
-    name: Flaky Tests Analysis
     needs: test-e2e
-    runs-on: ubuntu-24.04
     if: always()
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Download JUnit reports artifacts
-        uses: actions/download-artifact@v7
-        with:
-          path: junit-reports
-          pattern: e2e-junit-reports-*
-          merge-multiple: true
-      - name: Download screenshot artifacts
-        uses: actions/download-artifact@v7
-        with:
-          path: screenshot-artifacts
-          pattern: e2e-screenshots-*
-          if-no-files-found: ignore
-      - name: Analyze Flaky Tests and Generate Summary
-        id: analyze
-        env:
-          TOTAL_CONTAINERS: ${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}
-        run: |
-          REPORTS_PATH="../../junit-reports"
-          TOTAL_CONTAINERS=${{ env.TOTAL_CONTAINERS }}
-          
-          FAILED_RUNS=$(find ../../screenshot-artifacts -mindepth 1 -maxdepth 1 -type d | wc -l)
-          echo $FAILED_RUNS
-          if [ "$TOTAL_CONTAINERS" -gt 0 ]; then
-            FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_CONTAINERS" | bc)
-          else
-            FAILURE_PERCENTAGE=0
-          fi
-          
-          echo "### 📊 Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Failure rate:** ${FAILURE_PERCENTAGE}%" >> $GITHUB_STEP_SUMMARY
-          echo "*Calculated: (Failing threads / Total threads)*" >> $GITHUB_STEP_SUMMARY
-          
-          make venv-create
-          source .venv/bin/activate
-          make install-deps
-
-          FLAKY_TEST_LIST=$(make PATH-TO-JUNIT-FILES=$REPORTS_PATH analyze-files 2>&1 | tail -n +2)
-
-          NUM_FLAKY_TESTS=$(( $(echo -n "$FLAKY_TEST_LIST" | grep -c . || true) - 1 ))
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "---" >> $GITHUB_STEP_SUMMARY
-          echo "### Flaky Tests Analysis" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Unique flaky tests reported:** **$NUM_FLAKY_TESTS**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ "$NUM_FLAKY_TESTS" -gt 0 ]; then
-            echo "<details><summary>Click to see the full list of flaky tests</summary>" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "$FLAKY_TEST_LIST" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            echo "</details>" >> $GITHUB_STEP_SUMMARY
-          fi
-        working-directory: hack/flaky_tests_analysis
-      - name: Delete Artifacts
-        uses: geekyeggo/delete-artifact@v5
-        with:
-          name: e2e-junit-reports-*
+    uses: ./.github/workflows/flaky-tests-analysis.yaml
+    with:
+      suite-name: E2E
+      junit-artifact-pattern: e2e-junit-reports-*
+      total-runs: ${{ github.event.inputs.num_containers || '100' }}
