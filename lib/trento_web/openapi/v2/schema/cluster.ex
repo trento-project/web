@@ -759,6 +759,12 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             nullable: true,
             example: "2024-01-15T10:30:00Z"
           },
+          state: %Schema{
+            type: :string,
+            description: "The current state of the Pacemaker cluster.",
+            nullable: true,
+            example: "idle"
+          },
           details: Details,
           tags: Tags,
           inserted_at: %Schema{
@@ -804,6 +810,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               resource_type: "cluster"
             }
           ],
+          state: "idle",
           inserted_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T10:30:00Z"
         }
@@ -835,6 +842,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             resources_number: 10,
             hosts_number: 2,
             cib_last_written: "2024-01-15T10:30:00Z",
+            state: "idle",
             inserted_at: "2024-01-15T09:00:00Z",
             updated_at: "2024-01-15T10:30:00Z"
           }
