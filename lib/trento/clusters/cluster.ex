@@ -124,6 +124,7 @@ defmodule Trento.Clusters.Cluster do
     field :discovered_health, Ecto.Enum, values: Health.values()
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :state, :string
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
@@ -161,6 +162,7 @@ defmodule Trento.Clusters.Cluster do
           hosts_number: hosts_number,
           details: details,
           discovered_health: health,
+          state: state,
           designated_controller: true
         }
       ) do
@@ -174,7 +176,8 @@ defmodule Trento.Clusters.Cluster do
         resources_number: resources_number,
         hosts_number: hosts_number,
         details: details,
-        health: health
+        health: health,
+        state: state
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -202,7 +205,8 @@ defmodule Trento.Clusters.Cluster do
         resources_number: nil,
         hosts_number: nil,
         details: nil,
-        health: :unknown
+        health: :unknown,
+        state: "unknown"
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -229,7 +233,8 @@ defmodule Trento.Clusters.Cluster do
         resources_number: nil,
         hosts_number: nil,
         details: nil,
-        health: :unknown
+        health: :unknown,
+        state: "unknown"
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -332,9 +337,17 @@ defmodule Trento.Clusters.Cluster do
         %Cluster{} = cluster,
         %RegisterOfflineClusterHost{
           host_id: host_id
-        }
+        } = command
       ) do
-    maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.offline())
+    cluster
+    |> Multi.new()
+    |> Multi.execute(fn cluster ->
+      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.offline())
+    end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_details_updated_event(cluster, command)
+    end)
+    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
   # When a DC node is discovered, if the cluster is already registered,
@@ -409,7 +422,8 @@ defmodule Trento.Clusters.Cluster do
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
-          health: health
+          health: health,
+          state: state
         }
       ) do
     %Cluster{
@@ -423,7 +437,8 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: hosts_number,
         details: details,
         discovered_health: health,
-        health: health
+        health: health,
+        state: state
     }
   end
 
@@ -454,6 +469,7 @@ defmodule Trento.Clusters.Cluster do
           provider: provider,
           resources_number: resources_number,
           hosts_number: hosts_number,
+          state: state,
           details: details
         }
       ) do
@@ -465,6 +481,7 @@ defmodule Trento.Clusters.Cluster do
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
+        state: state,
         details: details
     }
   end
@@ -627,6 +644,7 @@ defmodule Trento.Clusters.Cluster do
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
+           state: state,
            details: details
          },
          %RegisterOnlineClusterHost{
@@ -636,6 +654,7 @@ defmodule Trento.Clusters.Cluster do
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
+           state: state,
            details: details
          }
        ) do
@@ -652,6 +671,7 @@ defmodule Trento.Clusters.Cluster do
            provider: provider,
            resources_number: resources_number,
            hosts_number: hosts_number,
+           state: state,
            details: details
          }
        ) do
@@ -663,9 +683,59 @@ defmodule Trento.Clusters.Cluster do
       provider: provider,
       resources_number: resources_number,
       hosts_number: hosts_number,
+      state: state,
       details: details
     }
   end
+
+  defp maybe_emit_cluster_details_updated_event(
+         %Cluster{
+           state: "stopped"
+         },
+         %RegisterOfflineClusterHost{}
+       ),
+       do: nil
+
+  defp maybe_emit_cluster_details_updated_event(
+         %Cluster{
+           cluster_id: cluster_id,
+           name: name,
+           type: type,
+           sap_instances: sap_instances,
+           provider: provider,
+           resources_number: resources_number,
+           hosts_number: hosts_number,
+           hosts: hosts,
+           offline_hosts: offline_hosts,
+           details: details
+         },
+         %RegisterOfflineClusterHost{}
+       )
+       when length(hosts) == length(offline_hosts) do
+    [
+      %ClusterDetailsUpdated{
+        cluster_id: cluster_id,
+        name: name,
+        type: type,
+        sap_instances: sap_instances,
+        provider: provider,
+        resources_number: resources_number,
+        hosts_number: hosts_number,
+        state: "stopped",
+        details: details
+      },
+      %ClusterDiscoveredHealthChanged{
+        cluster_id: cluster_id,
+        discovered_health: :unknown
+      }
+    ]
+  end
+
+  defp maybe_emit_cluster_details_updated_event(
+         %Cluster{},
+         %RegisterOfflineClusterHost{}
+       ),
+       do: nil
 
   defp maybe_emit_cluster_discovered_health_changed_event(
          %Cluster{discovered_health: discovered_health},
