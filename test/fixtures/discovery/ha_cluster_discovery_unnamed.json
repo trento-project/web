@@ -922,6 +922,7 @@
     "Online": true,
     "Name": "",
     "DC": true,
-    "Provider": "azure"
+    "Provider": "azure",
+    "State": "idle"
   }
 }

@@ -101,7 +101,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            dc: designated_controller,
            provider: provider,
            cluster_type: cluster_type,
-           cluster_host_status: ClusterHostStatus.online()
+           cluster_host_status: ClusterHostStatus.online(),
+           state: state
          } = payload
        ) do
     sap_instances = get_sap_instances(payload)
@@ -121,7 +122,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       details: cluster_details,
       discovered_health: parse_cluster_health(cluster_details, cluster_type),
       cib_last_written: parse_cib_last_written(payload),
-      provider: provider
+      provider: provider,
+      state: state
     })
   end
 

@@ -695,6 +695,7 @@
     "Name": "hana_cluster",
     "Online": true,
     "Provider": "azure",
+    "State": "idle",
     "SBD": {
       "Config": {
         "SBD_DELAY_START": "54",
