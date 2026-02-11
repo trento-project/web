@@ -68,12 +68,14 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
+      total-runs: ${{ steps.generate.outputs.total-runs }}
     steps:
       - name: Generate Matrix
         id: generate
         run: |
           echo "{\"run\": [$(seq -s, 1 ${{ env.NUM_RUNS }})]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+          echo "total-runs=$(( ${{ env.NUM_RUNS }} * 2 ))" >> $GITHUB_OUTPUT
         shell: bash
 
   test-javascript:
@@ -120,10 +122,10 @@ jobs:
           path: /tmp/*.xml
 
   flaky-tests-analysis:
-    needs: [test-javascript, setup-matrix-env]
+    needs: [test-javascript, setup-matrix-env, generate-matrix]
     if: always()
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: Jest
       junit-artifact-pattern: jest-junit-reports-*
-      total-runs: "${{ (github.event.inputs.num_runs || 50) * 2 }}"
+      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
