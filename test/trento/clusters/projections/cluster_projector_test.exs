@@ -52,6 +52,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert event.hosts_number == cluster_projection.hosts_number
     assert StructHelper.to_map(event.details) == StructHelper.to_map(cluster_projection.details)
     assert event.health == cluster_projection.health
+    assert event.state == cluster_projection.state
 
     cluster_id = event.cluster_id
 
@@ -106,6 +107,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         sid: _,
         additional_sids: _,
         selected_checks: [],
+        state: "idle",
         type: :hana_scale_up
       },
       1000
@@ -123,6 +125,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       type: :hana_scale_up,
       resources_number: 8,
       hosts_number: 2,
+      state: "idle",
       details: build(:hana_cluster_details)
     }
 
@@ -142,6 +145,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert event.resources_number == cluster_projection.resources_number
     assert event.hosts_number == cluster_projection.hosts_number
     assert StructHelper.to_map(event.details) == StructHelper.to_map(cluster_projection.details)
+    assert event.state == cluster_projection.state
 
     assert_broadcast(
       "cluster_details_updated",
@@ -191,6 +195,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         resources_number: 8,
         sid: _,
         additional_sids: _,
+        state: "idle",
         type: :hana_scale_up
       },
       1000
