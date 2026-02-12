@@ -32,6 +32,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :cluster_host_status, Ecto.Enum, values: ClusterHostStatus.values()
     field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
+    field :state, :string, default: "unknown"
 
     embeds_one :cib, CibDiscoveryPayload
     embeds_one :sbd, SbdDiscoveryPayload
