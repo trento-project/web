@@ -120,10 +120,15 @@ export function* performSAMLEnrollment() {
   yield call(completeSSOEnrollment, samlEnrollment, {});
 }
 
+export function getLogoutPath() {
+  const basePath = window.basePath || '';
+  return `${basePath}/session/new`;
+}
+
 export function* clearUserAndLogout() {
   yield call(reset);
   yield call(clearCredentialsFromStore);
-  window.location.href = '/session/new';
+  window.location.href = getLogoutPath();
 }
 
 export function* userUpdated() {

@@ -34,4 +34,26 @@ describe('NotFound', () => {
     fireEvent.click(screen.getByText(buttonText));
     expect(navigate).toHaveBeenCalledWith(url);
   });
+
+  it('should render NotFound component correctly with default parameter values when using a subpath', () => {
+    global.window.basePath = '/trento';
+
+    render(<NotFound />);
+
+    expect(
+      screen.getByText(/Sorry,.*the page is in another castle/)
+    ).toBeTruthy();
+
+    expect(screen.getByText('Go back home')).toBeTruthy();
+
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    expect(() =>
+      fireEvent.click(screen.getByText('Go back home'))
+    ).not.toThrow();
+    consoleErrorSpy.mockRestore();
+
+    delete global.window.basePath;
+  });
 });

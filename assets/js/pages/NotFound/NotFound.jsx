@@ -19,7 +19,8 @@ function NotFound({ onNavigate, buttonText = 'Go back home' }) {
                 if (onNavigate) {
                   onNavigate();
                 } else {
-                  window.location.href = '/';
+                  const basePath = window.basePath || '';
+                  window.location.href = basePath || '/';
                 }
               }}
             >

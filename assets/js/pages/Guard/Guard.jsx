@@ -4,6 +4,20 @@ import { Outlet, useNavigate } from 'react-router';
 import { setUserAsLogged, setUser as setUserInState } from '@state/user';
 import { clearCredentialsFromStore } from '@lib/auth';
 
+export function stripBasePath(requestPath, basePath = '') {
+  let result = requestPath;
+
+  const shouldStripBasePath =
+    !!basePath &&
+    (requestPath === basePath || requestPath.startsWith(`${basePath}/`));
+
+  if (shouldStripBasePath) {
+    result = requestPath.slice(basePath.length) || '/';
+  }
+
+  return result;
+}
+
 export default function Guard({ redirectPath, getUser }) {
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
@@ -32,8 +46,13 @@ export default function Guard({ redirectPath, getUser }) {
 
   useEffect(() => {
     if (!userLoading && !user) {
+      const requestPath = stripBasePath(
+        window.location.pathname,
+        window.basePath
+      );
+
       const currentLocationPath = new URLSearchParams();
-      currentLocationPath.append('request_path', window.location.pathname);
+      currentLocationPath.append('request_path', requestPath);
       navigate(`${redirectPath}?${currentLocationPath.toString()}`, {
         replace: true,
       });

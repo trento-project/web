@@ -13,6 +13,9 @@ defmodule TrentoWeb.Endpoint do
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
   socket "/socket", TrentoWeb.UserSocket, websocket: true, longpoll: false
 
+  # Set script name from x-forwarded-prefix header for subpath support before asset paths are generated.
+  plug :set_script_name
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
@@ -53,4 +56,23 @@ defmodule TrentoWeb.Endpoint do
   # TODO: change to something better than a Cookie
   plug PowPersistentSession.Plug.Cookie
   plug TrentoWeb.Router
+
+  # Sets the phoenix script_name from x-forwarded-prefix header for subpath support.
+  def set_script_name(conn, _opts) do
+    case Plug.Conn.get_req_header(conn, "x-forwarded-prefix") do
+      [header_value] when is_binary(header_value) and byte_size(header_value) > 0 ->
+        # Convert "/trento/foo/" to ["trento","foo"]
+        script_name =
+          header_value
+          |> String.trim_leading("/")
+          |> String.trim_trailing("/")
+          |> String.split("/")
+          |> Enum.filter(&(&1 != ""))
+
+        %{conn | script_name: script_name}
+
+      _ ->
+        conn
+    end
+  end
 end

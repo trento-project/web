@@ -145,7 +145,10 @@ const createRouter = ({ getUser }) =>
         </Route>
         <Route path="*" element={<NotFound />} />
       </Route>
-    )
+    ),
+    {
+      basename: window.basePath || '',
+    }
   );
 
 function RoutesWrapper() {
@@ -163,6 +166,9 @@ function RoutesWrapper() {
 const getUser = () => profile(networkClient);
 const router = createRouter({ getUser });
 const store = createStore(router);
+
+// Update network client base URL for subpath support
+networkClient.defaults.baseURL = `${window.basePath || ''}/api/v1`;
 
 function App() {
   return (
