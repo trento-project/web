@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { noop } from 'lodash';
 import { useSearchParams } from 'react-router';
 import { useSelector } from 'react-redux';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import {
   EOS_REFRESH,
   EOS_UPDATE_FILLED,
@@ -309,22 +309,18 @@ function ActivityLogPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Activity Log',
-      description: 'System activity and audit log with filters',
-      data: {
-        filters: {
-          search: searchParams.get('search') || null,
-          type: searchParams.getAll('type'),
-          severity: searchParams.getAll('severity'),
-          actor: searchParams.getAll('actor'),
-        },
-        entriesCount:
-          activityLogRequest.status === 'success'
-            ? activityLogRequest.response?.data?.length || 0
-            : 0,
-        autoRefreshEnabled: !!currentRefreshRate,
-        isFirstPage,
+      filters: {
+        search: searchParams.get('search') || null,
+        type: searchParams.getAll('type'),
+        severity: searchParams.getAll('severity'),
+        actor: searchParams.getAll('actor'),
       },
+      entriesCount:
+        activityLogRequest.status === 'success'
+          ? activityLogRequest.response?.data?.length || 0
+          : 0,
+      autoRefreshEnabled: !!currentRefreshRate,
+      isFirstPage,
     }),
     [
       searchParams,
@@ -334,7 +330,7 @@ function ActivityLogPage() {
       isFirstPage,
     ]
   );
-  useAIContext(aiContext);
+  useAssistantContext('Activity Log: System activity and audit log with filters', aiContext);
 
   return (
     <>
@@ -363,9 +359,9 @@ function ActivityLogPage() {
                   newRefreshRate === 'off'
                     ? removeRefreshRateFromSearchParams(searchParams)
                     : addRefreshRateToSearchParams(
-                        searchParams,
-                        newRefreshRate
-                      ),
+                      searchParams,
+                      newRefreshRate
+                    ),
                 setSearchParams
               )}
             />

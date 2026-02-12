@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
 import { getHost } from '@state/selectors/host';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import {
   getUpgradablePackages,
   getPatchesLoading,
@@ -47,19 +47,15 @@ function UpgradablePackagesPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Upgradable Packages',
-      description: `Upgradable packages for host ${hostname}.`,
-      data: {
-        hostID,
-        hostname,
-        upgradablePackages,
-        loading: patchesLoading,
-      },
+      hostID,
+      hostname,
+      upgradablePackages,
+      loading: patchesLoading,
     }),
     [hostID, hostname, upgradablePackages, patchesLoading]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Upgradable Packages: Upgradable packages for host ${hostname}.`, aiContext);
 
   return (
     <>

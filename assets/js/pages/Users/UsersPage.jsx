@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 
 import { listUsers, deleteUser } from '@lib/api/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import Users from './Users';
 
@@ -61,17 +61,13 @@ function UsersPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Users',
-      description: 'User management page',
-      data: {
-        totalUsers: users.length,
-        singleSignOnEnabled: isSingleSignOnEnabled(),
-        loading,
-      },
+      totalUsers: users.length,
+      singleSignOnEnabled: isSingleSignOnEnabled(),
+      loading,
     }),
     [users.length, loading]
   );
-  useAIContext(aiContext);
+  useAssistantContext("Users: User management page.", aiContext);
 
   return (
     <Users

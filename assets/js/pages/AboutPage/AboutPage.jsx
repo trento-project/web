@@ -4,7 +4,7 @@ import { logError } from '@lib/log';
 import { getAboutData } from '@lib/api/about';
 
 import ListView from '@common/ListView';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import Pill from '@common/Pill';
 
 import AboutPageLogo from './AboutPageLogo';
@@ -30,20 +30,15 @@ function AboutPage({ onFetch = getAboutData }) {
   }, []);
 
   // Provide context for AI assistant
-  const aiContext = useMemo(
+  const contextData = useMemo(
     () => ({
-      page: 'About',
-      description:
-        'Information about the Trento Console application, including version and SLES for SAP subscription details.',
-      data: {
-        version,
-        slesSubscriptions: subscriptions,
-        loading,
-      },
+      version,
+      slesSubscriptions: subscriptions,
+      loading,
     }),
     [version, subscriptions, loading]
   );
-  useAIContext(aiContext);
+  useAssistantContext("About Page: Overview of application version and subscription details", contextData);
 
   // TODO: check if the data is off now
   const listViewData = [

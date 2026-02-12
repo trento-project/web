@@ -8,7 +8,7 @@ import { updateCatalog } from '@state/catalog';
 import { OPTION_ALL } from '@common/Select';
 
 import ChecksCatalog from './ChecksCatalog';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 const isSomeFilter = (value) => value !== OPTION_ALL;
 
@@ -34,17 +34,13 @@ function ChecksCatalogPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Checks Catalog',
-      description: 'Overview of available checks with current filters applied',
-      data: {
-        totalChecks: completeCatalog?.length || 0,
-        filteredChecks: filteredCatalog?.length || 0,
-        hasFilters: !!filteredCatalog,
-      },
+      totalChecks: completeCatalog?.length || 0,
+      filteredChecks: filteredCatalog?.length || 0,
+      hasFilters: !!filteredCatalog,
     }),
     [completeCatalog, filteredCatalog]
   );
-  useAIContext(aiContext);
+  useAssistantContext(`Checks Catalog: Overview of available checks with current filters applied`, aiContext);
 
   return (
     <ChecksCatalog

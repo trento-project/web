@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Transition } from '@headlessui/react';
 import { format, isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
 
@@ -138,19 +138,15 @@ function SettingsPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Settings',
-      description: 'Application settings and configuration page.',
-      data: {
-        apiKeyLoading,
-        suseManagerSettingsLoading,
-        activityLogsSettingsLoading,
-        alertingFetchLoading,
-      },
+      apiKeyLoading,
+      suseManagerSettingsLoading,
+      activityLogsSettingsLoading,
+      alertingFetchLoading,
     }),
     [apiKeyLoading, suseManagerSettingsLoading, activityLogsSettingsLoading, alertingFetchLoading]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext("Settings: Application settings and configuration page.", aiContext);
 
   return (
     <>

@@ -7,7 +7,7 @@ import PatchList from '@common/PatchList';
 import Input from '@common/Input';
 import Select from '@common/Select';
 import Button from '@common/Button';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import { containsSubstring } from '@lib/filter';
 
@@ -32,42 +32,38 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Host Relevant Patches',
-      description: `Relevant patches for host ${hostName}.`,
-      data: {
-        hostName,
-        patches,
-        displayedAdvisories,
-      },
+      hostName,
+      patches,
+      displayedAdvisories,
     }),
     [hostName, patches, displayedAdvisories]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Host Relevant Patches: Relevant patches for host ${hostName}.`, aiContext);
 
   useEffect(() => {
     setCsvURL(
       patches.length > 0
         ? URL.createObjectURL?.(
-            new File(
-              [
-                Papa.unparse(
-                  {
-                    fields: [
-                      'advisory_type',
-                      'advisory_name',
-                      'advisory_synopsis',
-                      'update_date',
-                    ],
-                    data: patches,
-                  },
-                  { header: true }
-                ),
-              ],
-              `${hostName}-patches.csv`,
-              { type: 'text/csv' }
-            )
+          new File(
+            [
+              Papa.unparse(
+                {
+                  fields: [
+                    'advisory_type',
+                    'advisory_name',
+                    'advisory_synopsis',
+                    'update_date',
+                  ],
+                  data: patches,
+                },
+                { header: true }
+              ),
+            ],
+            `${hostName}-patches.csv`,
+            { type: 'text/csv' }
           )
+        )
         : null
     );
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { useParams } from 'react-router';
+import { data, useParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { getFromConfig } from '@lib/config';
@@ -24,7 +24,7 @@ import {
   getDatabaseSiteOperations,
 } from './databaseOperations';
 
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 const operationsEnabled = getFromConfig('operationsEnabled');
 
@@ -46,33 +46,29 @@ function DatabaseDetails() {
   const aiContext = useMemo(() => {
     if (!database) return null;
     return {
-      page: 'Database Details',
-      description: `HANA database ${database.sid}`,
-      data: {
-        database: {
-          id: database.id,
-          sid: database.sid,
-          health: database.health,
-          systemReplication: (database.instances || []).some(
-            (i) => i.system_replication
+      database: {
+        id: database.id,
+        sid: database.sid,
+        health: database.health,
+        systemReplication: (database.instances || []).some(
+          (i) => i.system_replication
+        )
+          ? 'enabled'
+          : 'disabled',
+        instancesCount: (database.instances || []).length,
+      },
+      hosts: {
+        count: (database.hosts || []).length,
+        names: (database.hosts || []).map((h) => h.hostname),
+        clusters: Array.from(
+          new Set(
+            (database.hosts || []).map((h) => h.cluster?.name).filter(Boolean)
           )
-            ? 'enabled'
-            : 'disabled',
-          instancesCount: (database.instances || []).length,
-        },
-        hosts: {
-          count: (database.hosts || []).length,
-          names: (database.hosts || []).map((h) => h.hostname),
-          clusters: Array.from(
-            new Set(
-              (database.hosts || []).map((h) => h.cluster?.name).filter(Boolean)
-            )
-          ),
-        },
+        ),
       },
     };
-  }, [database]);
-  useAIContext(aiContext);
+  }, [database,runningOperations]);
+  useAssistantContext(`Database Details: Information and operations for database ${database?.sid}.`, aiContext);
 
   if (!database) {
     return <div>Not Found</div>;

@@ -28,6 +28,7 @@ import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
+import { AssistantChatWidget } from '@common/AssistantChat/AssistantChatWidget';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -241,6 +242,9 @@ function Layout() {
             Version 2.0
           </span>
         </footer>
+
+        {/* AI Assistant Chat Widget */}
+        <AssistantChatWidget />
       </div>
     </main>
   );

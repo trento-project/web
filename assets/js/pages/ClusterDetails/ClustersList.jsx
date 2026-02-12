@@ -26,7 +26,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 import HealthSummary from '@pages/HealthSummary';
 
 import ClusterLink from './ClusterLink';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);
@@ -51,9 +51,6 @@ function ClustersList() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Clusters',
-      description: 'Overview of all clusters',
-      data: {
         totalClusters: clusters?.length || 0,
         byType: clusters.reduce((acc, c) => {
           acc[c.type] = (acc[c.type] || 0) + 1;
@@ -63,11 +60,10 @@ function ClustersList() {
           acc[c.health] = (acc[c.health] || 0) + 1;
           return acc;
         }, {}),
-      },
     }),
     [clusters]
   );
-  useAIContext(aiContext);
+  useAssistantContext("Clusters List: Overview of all clusters", aiContext);
 
   const config = {
     pagination: true,

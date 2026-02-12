@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import LoadingBox from '@common/LoadingBox';
 import { TARGET_CLUSTER, TARGET_HOST, isValidTargetType } from '@lib/model';
@@ -75,20 +75,16 @@ function CheckResultDetailPage({ targetType }) {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Check Result Detail',
-      description: `Detailed results for check execution on ${targetType}.`,
-      data: {
-        targetID,
-        targetType,
-        checkID,
-        resultTargetType,
-        resultTargetName,
-      },
+      targetID,
+      targetType,
+      checkID,
+      resultTargetType,
+      resultTargetName,
     }),
     [targetID, targetType, checkID, resultTargetType, resultTargetName]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Check Result Detail: Detailed results for check execution on ${targetType}.`, aiContext);
 
   const {
     targetHosts,

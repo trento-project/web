@@ -18,7 +18,7 @@ import { executionRequested } from '@state/lastExecutions';
 
 import { buildEnv } from '@lib/checks';
 import { UNKNOWN_PROVIDER, TARGET_CLUSTER } from '@lib/model';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import BackButton from '@common/BackButton';
 import ClusterInfoBox from '@common/ClusterInfoBox';
@@ -79,20 +79,16 @@ function ClusterSettingsPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Cluster Settings',
-      description: `Checks selection and execution for cluster ${clusterName}.`,
-      data: {
-        clusterID,
-        clusterName,
-        provider: cluster?.provider,
-        clusterType: cluster?.type,
-        hanaScenario: cluster?.details?.hana_scenario,
-        architectureType: cluster?.details?.architecture_type,
-        selectedChecks: selection,
-        saving,
-        loading: checksSelectionLoading,
-        error: checksSelectionFetchError,
-      },
+      clusterID,
+      clusterName,
+      provider: cluster?.provider,
+      clusterType: cluster?.type,
+      hanaScenario: cluster?.details?.hana_scenario,
+      architectureType: cluster?.details?.architecture_type,
+      selectedChecks: selection,
+      saving,
+      loading: checksSelectionLoading,
+      error: checksSelectionFetchError,
     }),
     [
       cluster,
@@ -105,7 +101,7 @@ function ClusterSettingsPage() {
     ]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Cluster Settings: Checks selection and execution for cluster ${clusterName}.`, aiContext);
 
   if (!cluster) {
     return <LoadingBox text="Loading..." />;

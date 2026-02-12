@@ -5,7 +5,7 @@ import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
 import GenericError from '@common/GenericError';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
@@ -31,20 +31,15 @@ function AdvisoryDetailsPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Advisory Details',
-      description: `Details for advisory ${advisoryID} on host ${hostID}.`,
-      data: {
-        hostID,
-        advisoryID,
-        advisory: advisoryErrata,
-        loading: isLoading,
-        error,
-      },
+      hostID,
+      advisoryID,
+      advisory: advisoryErrata,
+      loading: isLoading,
+      error,
     }),
     [hostID, advisoryID, advisoryErrata, isLoading, error]
   );
-
-  useAIContext(aiContext);
+  useAssistantContext(`Advisory Details: Details for advisory ${advisoryID} on host ${hostID}.`, aiContext);
 
   return (
     <>

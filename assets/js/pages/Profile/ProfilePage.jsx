@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
 import PersonalAccessTokens from '@common/PersonalAccessTokens';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 import ProfileForm from '@pages/Profile/ProfileForm';
@@ -43,7 +43,7 @@ function ProfilePage() {
       .then(({ data: user }) => {
         setUser(user);
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => {
         setLoading(false);
       });
@@ -55,18 +55,14 @@ function ProfilePage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Profile',
-      description: `User profile page for ${userState?.username || 'user'}.`,
-      data: {
-        user: userState,
-        loading,
-        totpEnabled: userState?.totp_enabled,
-      },
+      user: userState,
+      loading,
+      totpEnabled: userState?.totp_enabled,
     }),
     [userState, loading]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Profile: User profile page for ${userState?.username || 'user'}.`, aiContext);
 
   const passwordModalToggle = () => {
     setPasswordModalOpen((modalState) => !modalState);

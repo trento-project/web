@@ -5,7 +5,7 @@ import { setSelectedFilters } from '@state/checksResultsFilters';
 import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import {
   REQUESTED_EXECUTION_STATE,
@@ -45,20 +45,16 @@ function ExecutionResultsPage({ targetType }) {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Execution Results',
-      description: `Execution results for ${getTargetName(target, targetType)}.`,
-      data: {
-        targetID,
-        targetType,
-        targetName: getTargetName(target, targetType),
-        executionRunning: RUNNING_STATES.includes(executionData?.status),
-        executionLoading,
-      },
+      targetID,
+      targetType,
+      targetName: getTargetName(target, targetType),
+      executionRunning: RUNNING_STATES.includes(executionData?.status),
+      executionLoading,
     }),
     [targetID, targetType, target, executionLoading, executionData?.status]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Check Execution Results: Execution results for ${getTargetName(target, targetType)}.`, aiContext);
 
   useEffect(() => {
     if (cloudProvider) {

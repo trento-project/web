@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 
 import BackButton from '@common/BackButton';
 import Banner from '@common/Banners/Banner';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import PageHeader from '@common/PageHeader';
 import PersonalAccessTokens from '@common/PersonalAccessTokens';
 
@@ -54,18 +54,14 @@ function EditUserPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Edit User',
-      description: `Edit user profile for ${userState?.username || 'user'}.`,
-      data: {
-        userID,
-        user: userState,
-        loading,
-      },
+      userID,
+      user: userState,
+      loading,
     }),
     [userID, userState, loading]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Edit User: Edit user profile for ${userState?.username || 'user'}.`, aiContext);
 
   const onEditUser = (payload) => {
     setSaving(true);

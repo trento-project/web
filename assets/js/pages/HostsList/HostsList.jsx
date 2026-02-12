@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
 
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -60,21 +60,17 @@ function HostsList() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Hosts List',
-      description: 'Overview of all SAP HANA hosts in the system',
-      data: {
-        totalHosts: hosts?.length || 0,
-        healthSummary: hosts.reduce((acc, host) => {
-          acc[host.health] = (acc[host.health] || 0) + 1;
-          return acc;
-        }, {}),
-        providers: [...new Set(hosts?.map((h) => h.provider) || [])],
-        totalClusters: clusters?.length || 0,
-      },
+      totalHosts: hosts?.length || 0,
+      healthSummary: hosts.reduce((acc, host) => {
+        acc[host.health] = (acc[host.health] || 0) + 1;
+        return acc;
+      }, {}),
+      providers: [...new Set(hosts?.map((h) => h.provider) || [])],
+      totalClusters: clusters?.length || 0,
     }),
     [hosts, clusters]
   );
-  useAIContext(aiContext);
+  useAssistantContext(`Hosts List: Overview of all SAP HANA hosts in the system.`, aiContext);
 
   const openDeregistrationModal = (host) => {
     setHostToDeregister(host);
@@ -200,7 +196,7 @@ function HostsList() {
             tagDeletionPermittedFor={['all:host_tags']}
             tags={content}
             resourceId={item.id}
-            onChange={() => {}}
+            onChange={() => { }}
             onAdd={(tag) => {
               addTag(tag, item.id);
               dispatch(addTagToHost({ tags: [{ value: tag }], id: item.id }));

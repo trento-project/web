@@ -16,7 +16,7 @@ import {
 import { deregisterDatabaseInstance } from '@state/databases';
 
 import SapSystemsOverview from './SapSystemsOverview';
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 
 const addTag = (tag, sapSystemID) => {
   post(`/sap_systems/${sapSystemID}/tags`, {
@@ -42,21 +42,17 @@ function SapSystemOverviewPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'SAP Systems',
-      description: 'Overview of SAP systems, application & database instances',
-      data: {
-        totalSystems: sapSystems?.length || 0,
-        totalApplicationInstances: enrichedApplicationInstances?.length || 0,
-        totalDatabaseInstances: enrichedDatabaseInstances?.length || 0,
-        healthSummary: sapSystems.reduce((acc, s) => {
-          acc[s.health] = (acc[s.health] || 0) + 1;
-          return acc;
-        }, {}),
-      },
+      totalSystems: sapSystems?.length || 0,
+      totalApplicationInstances: enrichedApplicationInstances?.length || 0,
+      totalDatabaseInstances: enrichedDatabaseInstances?.length || 0,
+      healthSummary: sapSystems.reduce((acc, s) => {
+        acc[s.health] = (acc[s.health] || 0) + 1;
+        return acc;
+      }, {}),
     }),
     [sapSystems, enrichedApplicationInstances, enrichedDatabaseInstances]
   );
-  useAIContext(aiContext);
+  useAssistantContext(`SAP Systems Overview: Overview of SAP systems, application and database instances.`, aiContext);
 
   return (
     <SapSystemsOverview

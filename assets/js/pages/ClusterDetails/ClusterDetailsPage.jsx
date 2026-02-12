@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { get } from 'lodash';
 
-import useAIContext from '@hooks/useAIContext';
+import { useAssistantContext } from '@common/AssistantChat/useAssistantContext';
 import { getFromConfig } from '@lib/config';
 
 import {
@@ -109,27 +109,23 @@ export function ClusterDetailsPage() {
   // Provide context for AI assistant
   const aiContext = useMemo(
     () => ({
-      page: 'Cluster Details',
-      description: `Details for ${cluster?.type || 'unknown'} cluster: ${cluster?.name || clusterID}.`,
-      data: {
-        clusterID,
-        cluster: cluster
-          ? {
-              name: cluster.name,
-              type: cluster.type,
-              health: cluster.health,
-              provider: cluster.provider,
-            }
-          : null,
-        hosts: clusterHosts?.length || 0,
-        sapSystems: clusterSapSystems?.length || 0,
-        lastExecution: lastExecution?.status,
-      },
+      clusterID,
+      cluster: cluster
+        ? {
+          name: cluster.name,
+          type: cluster.type,
+          health: cluster.health,
+          provider: cluster.provider,
+        }
+        : null,
+      hosts: clusterHosts?.length || 0,
+      sapSystems: clusterSapSystems?.length || 0,
+      lastExecution: lastExecution?.status,
     }),
     [clusterID, cluster, clusterHosts, clusterSapSystems, lastExecution]
   );
 
-  useAIContext(aiContext);
+  useAssistantContext(`Cluster Details: Details for ${cluster?.type || 'unknown'} cluster: ${cluster?.name || clusterID}.`, aiContext);
 
   if (!cluster) {
     return <div>Loading...</div>;
