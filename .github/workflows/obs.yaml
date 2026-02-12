@@ -65,7 +65,7 @@ jobs:
             assets/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Install assets
-        run: cd assets && npm install
+        run: cd assets && npm ci
       - name: Get mix deps
         run: mix local.hex --force && mix deps.clean --all && mix deps.get
       - name: Configure OSC

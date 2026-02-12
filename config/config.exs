@@ -209,7 +209,9 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
-config :trento, Trento.Infrastructure.Prometheus.PrometheusApi, url: "http://localhost:9090"
+config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
+  url: "http://localhost:9090",
+  http_client: Trento.Infrastructure.Prometheus.Adapter.HttpClient
 
 config :trento, Trento.Charts,
   enabled: true,

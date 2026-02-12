@@ -14,7 +14,7 @@ config :trento, Trento.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   queue_target: 200,
   queue_interval: 2000,
-  pool_size: 10
+  pool_size: 20
 
 config :trento, Trento.EventStore,
   username: "postgres",

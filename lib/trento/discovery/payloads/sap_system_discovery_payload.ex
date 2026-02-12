@@ -339,28 +339,12 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     embedded_schema do
       field :local_site_id, :string
       field :overall_replication_status, :string
-      field :"site/1/REPLICATION_MODE", :string
-      field :"site/2/REPLICATION_MODE", :string
     end
 
     def changeset(system_replication, attrs) do
-      local_site_id = parse_local_site_id(attrs)
-
       system_replication
       |> cast(attrs, __MODULE__.__schema__(:fields))
       |> validate_required(@required_fields)
-      |> maybe_validate_replication_mode(local_site_id)
-    end
-
-    defp parse_local_site_id(%{"local_site_id" => local_site_id}), do: local_site_id
-    defp parse_local_site_id(_), do: 1
-
-    defp maybe_validate_replication_mode(changeset, "0") do
-      changeset
-    end
-
-    defp maybe_validate_replication_mode(changeset, local_site_id) do
-      validate_required(changeset, [:"site/#{local_site_id}/REPLICATION_MODE"])
     end
   end
 
@@ -387,6 +371,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
         |> Enum.filter(fn {key, _value} ->
           String.starts_with?(key, "siteMapping")
         end)
+        |> Enum.flat_map(&ungroup_mapping/1)
         |> Enum.into(%{}, fn {key, value} ->
           {value, key |> String.split("/") |> Enum.at(1)}
         end)
@@ -406,5 +391,10 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> put_change(:tier_mapping, tier_mapping)
       |> validate_required_fields(@required_fields)
     end
+
+    defp ungroup_mapping({key, state_values}) when is_list(state_values),
+      do: Enum.map(state_values, &{key, &1})
+
+    defp ungroup_mapping(pair), do: [pair]
   end
 end
