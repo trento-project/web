@@ -39,7 +39,7 @@ services:
     volumes:
       - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml:z
       - ./container_fixtures/prometheus:/container_init:z
-      - prometheus_data:/prometheus:z
+      - prometheus_data:/prometheus
     entrypoint: "/container_init/prometheus_entrypoint.sh"
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -64,7 +64,7 @@ services:
     ports:
       - 5433:5432
     volumes:
-      - pg_data:/var/lib/postgresql/data:z
+      - pg_data:/var/lib/postgresql/data
       - ./container_fixtures/keycloak/init_keycloak_db.sh:/docker-entrypoint-initdb.d/init_keycloak_db.sh:z
       - ./container_fixtures/postgres/init_wanda_db.sh:/docker-entrypoint-initdb.d/init_wanda_db.sh:ro,z
   rabbitmq:
@@ -86,7 +86,7 @@ services:
     profiles: [wanda]
     image: ghcr.io/trento-project/checks:rolling
     volumes:
-      - trento-checks:/usr/share/trento/checks:z
+      - trento-checks:/usr/share/trento/checks
 
   wanda:
     profiles: [wanda]
@@ -105,14 +105,14 @@ services:
       - 4001:4000
     entrypoint: /bin/sh -c "/app/bin/wanda eval 'Wanda.Release.init()' && /app/bin/wanda start"
     volumes:
-      - trento-checks:/usr/share/trento/checks:z
+      - trento-checks:/usr/share/trento/checks
     extra_hosts:
       - host.docker.internal:host-gateway
 
   mailpit:
     image: ghcr.io/axllent/mailpit:v1.24
     volumes:
-      - mailpit:/data:z
+      - mailpit:/data
     ports:
       - 1025:1025
       - 8025:8025
