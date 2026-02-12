@@ -1,0 +1,244 @@
+{
+  "discovery_type" : "sap_system_discovery",
+  "agent_id" : "42f15836-de3e-4bda-936f-1af85f683c08",
+  "payload" : [
+    {
+      "DBAddress" : "",
+      "Databases" : [
+        {
+          "Active" : "yes",
+          "Container" : "",
+          "Database" : "TG5",
+          "Group" : "",
+          "GroupId" : "",
+          "Host" : "hana3",
+          "SqlPort" : "33015",
+          "User" : "",
+          "UserId" : ""
+        }
+      ],
+      "Id" : "4a83c55d23de12aef4ba55c77ba61b64",
+      "Instances" : [
+        {
+          "HdbnsutilSRstate" : {
+            "active_primary_site" : "2",
+            "hasConsumers" : "false",
+            "hintBasedRoutingSite" : "",
+            "isConsumer" : "true",
+            "isPrimarySuspended" : "false",
+            "isSource" : "false",
+            "isTakeoverActive" : "false",
+            "isTimetravelEnabled" : "false",
+            "mapping/hana3" : [
+              "SITEC/hana3",
+              "SITEB/hana2",
+              "SITEA/hana1"
+            ],
+            "mode" : "async",
+            "online" : "true",
+            "operation_mode" : "logreplay",
+            "primary_masters" : "hana2",
+            "replayMode" : "auto",
+            "siteMapping/SITEB" : [
+              "SITEC",
+              "SITEA"
+            ],
+            "siteOperationMode/SITEA" : "logreplay",
+            "siteOperationMode/SITEB" : "primary",
+            "siteOperationMode/SITEC" : "logreplay",
+            "siteReplicationMode/SITEA" : "sync",
+            "siteReplicationMode/SITEB" : "primary",
+            "siteReplicationMode/SITEC" : "async",
+            "siteTier/SITEA" : "2",
+            "siteTier/SITEB" : "1",
+            "siteTier/SITEC" : "2",
+            "site_id" : "3",
+            "site_name" : "SITEC"
+          },
+          "Host" : "hana3",
+          "HostConfiguration" : {
+            "failoverActualGroup" : "default",
+            "failoverConfigGroup" : "default",
+            "failoverStatus" : "",
+            "host" : "hana3",
+            "hostActive" : "yes",
+            "hostActualRoles" : "worker",
+            "hostConfigRoles" : "worker",
+            "hostStatus" : "ok",
+            "indexServerActualRole" : "master",
+            "indexServerConfigRole" : "worker",
+            "nameServerActualRole" : "master",
+            "nameServerConfigRole" : "master 1",
+            "removeStatus" : "",
+            "storageActualPartition" : "1",
+            "storageConfigPartition" : "1",
+            "storagePartition" : "1",
+            "workerActualGroups" : "default",
+            "workerConfigGroups" : "default"
+          },
+          "Name" : "HDB30",
+          "SAPControl" : {
+            "Instances" : [
+              {
+                "currentInstance" : true,
+                "dispstatus" : "SAPControl-GREEN",
+                "features" : "HDB|HDB_WORKER",
+                "hostname" : "hana3",
+                "httpPort" : 53013,
+                "httpsPort" : 53014,
+                "instanceNr" : 30,
+                "startPriority" : "0.3"
+              }
+            ],
+            "Processes" : [
+              {
+                "description" : "HDB Daemon",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:47",
+                "name" : "hdbdaemon",
+                "pid" : 31101,
+                "starttime" : "2026 01 27 17:11:53",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Compileserver",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:30",
+                "name" : "hdbcompileserver",
+                "pid" : 31418,
+                "starttime" : "2026 01 27 17:12:10",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Indexserver-TG5",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:30",
+                "name" : "hdbindexserver",
+                "pid" : 31460,
+                "starttime" : "2026 01 27 17:12:10",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Nameserver",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:46",
+                "name" : "hdbnameserver",
+                "pid" : 31126,
+                "starttime" : "2026 01 27 17:11:54",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Preprocessor",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:30",
+                "name" : "hdbpreprocessor",
+                "pid" : 31421,
+                "starttime" : "2026 01 27 17:12:10",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Web Dispatcher",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:04:56",
+                "name" : "hdbwebdispatcher",
+                "pid" : 32534,
+                "starttime" : "2026 01 27 17:12:44",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB XSEngine-TG5",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:05:30",
+                "name" : "hdbxsengine",
+                "pid" : 31463,
+                "starttime" : "2026 01 27 17:12:10",
+                "textstatus" : "Running"
+              }
+            ],
+            "Properties" : [
+              {
+                "property" : "Process List",
+                "propertytype" : "NodeWebmethod",
+                "value" : "GetProcessList"
+              },
+              {
+                "property" : "Access Points",
+                "propertytype" : "NodeWebmethod",
+                "value" : "GetAccessPointList"
+              },
+              {
+                "property" : "Parameter Documentation",
+                "propertytype" : "NodeURL",
+                "value" : "http://hana3:53013/sapparamEN.html"
+              },
+              {
+                "property" : "Protected Webmethods",
+                "propertytype" : "Attribute",
+                "value" : "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,ABAPSetServerInactive,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property" : "DBServices",
+                "propertytype" : "Attribute",
+                "value" : "YES"
+              },
+              {
+                "property" : "HANA Roles",
+                "propertytype" : "Attribute",
+                "value" : "worker"
+              },
+              {
+                "property" : "StartPriority",
+                "propertytype" : "Attribute",
+                "value" : "0.3"
+              },
+              {
+                "property" : "SAPSYSTEM",
+                "propertytype" : "Attribute",
+                "value" : "30"
+              },
+              {
+                "property" : "SAPSYSTEMNAME",
+                "propertytype" : "Attribute",
+                "value" : "TG5"
+              },
+              {
+                "property" : "SAPLOCALHOST",
+                "propertytype" : "Attribute",
+                "value" : "hana3"
+              },
+              {
+                "property" : "INSTANCE_NAME",
+                "propertytype" : "Attribute",
+                "value" : "HDB30"
+              },
+              {
+                "property" : "Webmethods",
+                "propertytype" : "Attribute",
+                "value" : "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ABAPSetServerInactive,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication" : {
+            "local_site_id" : "3",
+            "site/3/PRIMARY_MASTERS" : "hana2",
+            "site/3/REPLICATION_MODE" : "ASYNC",
+            "site/3/SITE_NAME" : "SITEC",
+            "site/3/SOURCE_SITE_ID" : "2"
+          },
+          "Type" : 1
+        }
+      ],
+      "Profile" : {
+        "HDB_LINKED_BINARIES" : "yes",
+        "HDB_SHARED_BINARIES" : "yes",
+        "SAPGLOBALHOST" : "hana3",
+        "SAPSYSTEMNAME" : "TG5",
+        "hdbConfigType" : "DEFAULT",
+        "ssl/ciphersuites" : "545:PFS:HIGH::EC_X25519:EC_P256:EC_HIGH",
+        "ssl/client_ciphersuites" : "150:PFS:HIGH::EC_X25519:EC_P256:EC_HIGH"
+      },
+      "SID" : "TG5",
+      "Type" : 1
+    }
+  ]
+}

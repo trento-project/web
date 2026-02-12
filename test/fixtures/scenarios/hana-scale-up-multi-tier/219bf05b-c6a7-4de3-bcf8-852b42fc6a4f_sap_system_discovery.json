@@ -1,0 +1,862 @@
+{
+  "discovery_type" : "sap_system_discovery",
+  "agent_id" : "219bf05b-c6a7-4de3-bcf8-852b42fc6a4f",
+  "payload" : [
+    {
+      "DBAddress" : "",
+      "Databases" : [
+        {
+          "Active" : "yes",
+          "Container" : "",
+          "Database" : "TG5",
+          "Group" : "",
+          "GroupId" : "",
+          "Host" : "hana2",
+          "SqlPort" : "33015",
+          "User" : "",
+          "UserId" : ""
+        }
+      ],
+      "Id" : "4a83c55d23de12aef4ba55c77ba61b64",
+      "Instances" : [
+        {
+          "HdbnsutilSRstate" : {
+            "hasConsumers" : "true",
+            "hintBasedRoutingSite" : "",
+            "isConsumer" : "false",
+            "isPrimarySuspended" : "false",
+            "isSource" : "true",
+            "isTakeoverActive" : "false",
+            "mapping/hana2" : [
+              "SITEC/hana3",
+              "SITEB/hana2",
+              "SITEA/hana1"
+            ],
+            "mode" : "primary",
+            "online" : "true",
+            "operation_mode" : "primary",
+            "siteMapping/SITEB" : [
+              "SITEC",
+              "SITEA"
+            ],
+            "siteOperationMode/SITEA" : "logreplay",
+            "siteOperationMode/SITEB" : "primary",
+            "siteOperationMode/SITEC" : "logreplay",
+            "siteReplicationMode/SITEA" : "sync",
+            "siteReplicationMode/SITEB" : "primary",
+            "siteReplicationMode/SITEC" : "async",
+            "siteTier/SITEA" : "2",
+            "siteTier/SITEB" : "1",
+            "siteTier/SITEC" : "2",
+            "site_id" : "2",
+            "site_name" : "SITEB"
+          },
+          "Host" : "hana2",
+          "HostConfiguration" : {
+            "failoverActualGroup" : "default",
+            "failoverConfigGroup" : "default",
+            "failoverStatus" : "",
+            "host" : "hana2",
+            "hostActive" : "yes",
+            "hostActualRoles" : "worker",
+            "hostConfigRoles" : "worker",
+            "hostStatus" : "ok",
+            "indexServerActualRole" : "master",
+            "indexServerConfigRole" : "worker",
+            "nameServerActualRole" : "master",
+            "nameServerConfigRole" : "master 1",
+            "removeStatus" : "",
+            "storageActualPartition" : "1",
+            "storageConfigPartition" : "1",
+            "storagePartition" : "1",
+            "workerActualGroups" : "default",
+            "workerConfigGroups" : "default"
+          },
+          "Name" : "HDB30",
+          "SAPControl" : {
+            "Instances" : [
+              {
+                "currentInstance" : true,
+                "dispstatus" : "SAPControl-GREEN",
+                "features" : "HDB|HDB_WORKER",
+                "hostname" : "hana2",
+                "httpPort" : 53013,
+                "httpsPort" : 53014,
+                "instanceNr" : 30,
+                "startPriority" : "0.3"
+              }
+            ],
+            "Processes" : [
+              {
+                "description" : "HDB Daemon",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:08:04",
+                "name" : "hdbdaemon",
+                "pid" : 31474,
+                "starttime" : "2026 01 27 17:09:41",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Compileserver",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:07:54",
+                "name" : "hdbcompileserver",
+                "pid" : 31875,
+                "starttime" : "2026 01 27 17:09:51",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Indexserver-TG5",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:07:54",
+                "name" : "hdbindexserver",
+                "pid" : 31917,
+                "starttime" : "2026 01 27 17:09:51",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Nameserver",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:08:03",
+                "name" : "hdbnameserver",
+                "pid" : 31499,
+                "starttime" : "2026 01 27 17:09:42",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Preprocessor",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:07:54",
+                "name" : "hdbpreprocessor",
+                "pid" : 31878,
+                "starttime" : "2026 01 27 17:09:51",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB Web Dispatcher",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:07:42",
+                "name" : "hdbwebdispatcher",
+                "pid" : 32347,
+                "starttime" : "2026 01 27 17:10:03",
+                "textstatus" : "Running"
+              },
+              {
+                "description" : "HDB XSEngine-TG5",
+                "dispstatus" : "SAPControl-GREEN",
+                "elapsedtime" : "0:07:54",
+                "name" : "hdbxsengine",
+                "pid" : 31920,
+                "starttime" : "2026 01 27 17:09:51",
+                "textstatus" : "Running"
+              }
+            ],
+            "Properties" : [
+              {
+                "property" : "Process List",
+                "propertytype" : "NodeWebmethod",
+                "value" : "GetProcessList"
+              },
+              {
+                "property" : "Access Points",
+                "propertytype" : "NodeWebmethod",
+                "value" : "GetAccessPointList"
+              },
+              {
+                "property" : "Parameter Documentation",
+                "propertytype" : "NodeURL",
+                "value" : "http://hana2:53013/sapparamEN.html"
+              },
+              {
+                "property" : "Protected Webmethods",
+                "propertytype" : "Attribute",
+                "value" : "ABAPAcknowledgeAlerts,ABAPCheckRFCDestinations,ABAPGetComponentList,ABAPGetSystemWPTable,ABAPGetWPTable,ABAPReadRawSyslog,ABAPReadSyslog,ABAPSetServerInactive,AnalyseLogFiles,Bootstrap,CheckParameter,CheckPSE,CheckUpdateSystem,ConfigureLogFileList,CreatePSECredential,CreateSnapshot,DeletePSE,DeleteSnapshots,EnqGetLockTable,EnqGetStatistic,EnqRemoveLocks,EnqRemoveUserLocks,GetAccessPointList,GetAlerts,GetAlertTree,GetCallstack,GetEnvironment,GetLogFileList,GetProcessParameter,GetQueueStatistic,GetStartProfile,GetSystemUpdateList,GetTraceFile,GetVersionInfo,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,HACheckConfig,HACheckFailoverConfig,HACheckMaintenanceMode,HAFailoverToNode,HAGetFailoverConfig,HASetMaintenanceMode,ICMGetCacheEntries,ICMGetConnectionList,ICMGetProxyConnectionList,ICMGetThreadList,InstanceStart,InstanceStop,J2EEControlCluster,J2EEControlComponents,J2EEControlProcess,J2EEDisableDbgSession,J2EEEnableDbgSession,J2EEGetApplicationAliasList,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetClusterMsgList,J2EEGetComponentList,J2EEGetEJBSessionList,J2EEGetProcessList,J2EEGetProcessList2,J2EEGetRemoteObjectList,J2EEGetSessionList,J2EEGetSharedTableInfo,J2EEGetThreadCallStack,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadTaskStack,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetWebSessionList,J2EEGetWebSessionList2,ListConfigFiles,ListDeveloperTraces,ListLogFiles,ListSnapshots,OSExecute,ParameterValue,ReadConfigFile,ReadDeveloperTrace,ReadLogFile,ReadSnapshot,RestartInstance,RestartService,RestartSystem,SendSignal,SetProcessParameter,SetProcessParameter2,ShmDetach,Shutdown,Start,StartBypassHA,StartSystem,Stop,StopBypassHA,StopService,StopSystem,StorePSE,UpdateInstancePSE,UpdateSCSInstance,UpdateSystem,UpdateSystemPKI,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,GetAgentConfig,GetListOfMaByCusGrp,GetMcInLocalMs,GetMtesByRequestTable,GetMtListByMtclass,InfoGetTree,MscCustomizeWrite,MscDeleteLines,MscReadCache,MsGetLocalMsInfo,MsGetMteclsInLocalMs,MtChangeStatus,MtCustomizeWrite,MtDbsetToWpsetByTid,MtDestroyMarkNTry,MteGetByToolRunstatus,MtGetAllToCust,MtGetAllToolsToSet,MtGetMteinfo,MtGetTidByName,MtRead,MtReset,PerfCustomizeWrite,PerfRead,PerfReadSmoothData,ReadDirectory,ReadFile,ReadProfileParameters,ReferenceRead,Register,RequestLogonFile,SnglmgsCustomizeWrite,SystemObjectSetValue,TextAttrRead,ToolGetEffective,ToolSet,ToolSetRuntimeStatus,TriggerDataCollection,Unregister,UtilAlChangeStatus,UtilMtGetAidByTid,UtilMtGetTreeLocal,UtilMtReadAll,UtilReadRawalertByAid,UtilSnglmsgReadRawdata"
+              },
+              {
+                "property" : "DBServices",
+                "propertytype" : "Attribute",
+                "value" : "YES"
+              },
+              {
+                "property" : "HANA Roles",
+                "propertytype" : "Attribute",
+                "value" : "worker"
+              },
+              {
+                "property" : "StartPriority",
+                "propertytype" : "Attribute",
+                "value" : "0.3"
+              },
+              {
+                "property" : "SAPSYSTEM",
+                "propertytype" : "Attribute",
+                "value" : "30"
+              },
+              {
+                "property" : "SAPSYSTEMNAME",
+                "propertytype" : "Attribute",
+                "value" : "TG5"
+              },
+              {
+                "property" : "SAPLOCALHOST",
+                "propertytype" : "Attribute",
+                "value" : "hana2"
+              },
+              {
+                "property" : "INSTANCE_NAME",
+                "propertytype" : "Attribute",
+                "value" : "HDB30"
+              },
+              {
+                "property" : "Webmethods",
+                "propertytype" : "Attribute",
+                "value" : "Start,InstanceStart,StartBypassHA,Bootstrap,Stop,InstanceStop,StopBypassHA,Shutdown,ParameterValue,GetProcessList,GetStartProfile,GetTraceFile,GetAlertTree,GetAlerts,RestartService,StopService,GetEnvironment,ListDeveloperTraces,ReadDeveloperTrace,RestartInstance,SendSignal,GetVersionInfo,GetQueueStatistic,GetInstanceProperties,OSExecute,ReadLogFile,AnalyseLogFiles,ListLogFiles,GetAccessPointList,GetSystemInstanceList,GetSystemUpdateList,StartSystem,StopSystem,RestartSystem,UpdateSystem,UpdateSCSInstance,CheckUpdateSystem,AccessCheck,GetProcessParameter,SetProcessParameter,SetProcessParameter2,CheckParameter,ShmDetach,GetNetworkId,GetSecNetworkId,RequestLogonFile,CreateSnapshot,ReadSnapshot,ListSnapshots,DeleteSnapshots,GetCallstack,ABAPReadSyslog,ABAPReadRawSyslog,ABAPGetWPTable,ABAPAcknowledgeAlerts,ABAPGetComponentList,ABAPCheckRFCDestinations,ABAPGetSystemWPTable,ABAPSetServerInactive,J2EEGetProcessList,J2EEGetProcessList2,J2EEControlProcess,J2EEGetThreadList,J2EEGetThreadList2,J2EEGetThreadCallStack,J2EEGetThreadTaskStack,J2EEGetSessionList,J2EEGetWebSessionList,J2EEGetWebSessionList2,J2EEGetCacheStatistic,J2EEGetCacheStatistic2,J2EEGetApplicationAliasList,J2EEGetVMGCHistory,J2EEGetVMGCHistory2,J2EEGetVMHeapInfo,J2EEGetEJBSessionList,J2EEGetRemoteObjectList,J2EEGetClusterMsgList,J2EEGetSharedTableInfo,J2EEGetComponentList,J2EEControlComponents,ICMGetThreadList,ICMGetConnectionList,ICMGetCacheEntries,ICMGetProxyConnectionList,WebDispGetServerList,WebDispGetGroupList,WebDispGetVirtHostList,WebDispGetUrlPrefixList,EnqGetLockTable,EnqRemoveLocks,EnqRemoveUserLocks,EnqGetStatistic,GWCancelConnections,GWDeleteClients,GWDeleteConnections,GWGetConnectionList,GWGetClientList,UpdateSystemPKI,UpdateInstancePSE,StorePSE,DeletePSE,CheckPSE,HACheckConfig,HACheckFailoverConfig,HAGetFailoverConfig,HAFailoverToNode,HASetMaintenanceMode,HACheckMaintenanceMode,ListConfigFiles,ReadConfigFile"
+              }
+            ]
+          },
+          "SystemReplication" : {
+            "service/hana2/33001/REPLICATION_STATUS" : [
+              "ACTIVE",
+              "ACTIVE"
+            ],
+            "service/hana2/33007/HOST" : [
+              "hana2",
+              "hana2"
+            ],
+            "service/hana2/33003/SECONDARY_FULLY_SYNCED" : [
+              "True",
+              "True"
+            ],
+            "service/hana2/33001/PORT" : [
+              "33001",
+              "33001"
+            ],
+            "service/hana2/33003/SHIPPED_LOG_POSITION" : [
+              "30888128",
+              "30888128"
+            ],
+            "service/hana2/33001/SECONDARY_SITE_ID" : [
+              "3",
+              "1"
+            ],
+            "service/hana2/33007/LAST_LOG_POSITION" : [
+              "3692416",
+              "3692416"
+            ],
+            "service/hana2/33003/SECONDARY_ACTIVE_STATUS" : [
+              "YES",
+              "YES"
+            ],
+            "service/hana2/33003/SHIPPED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:38.743779",
+              "2026-01-27 17:17:38.743779"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/LAST_RESET_TIME" : [
+              "2026-01-27 17:09:51.064787",
+              "2026-01-27 17:09:51.065436"
+            ],
+            "service/hana2/33007/SHIPPED_SAVEPOINT_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33007/SHIPPED_DELTA_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/LAST_SAVEPOINT_LOG_POSITION" : [
+              "30864898",
+              "30864898"
+            ],
+            "service/hana2/33001/OPERATION_MODE" : [
+              "logreplay",
+              "logreplay"
+            ],
+            "service/hana2/33007/SHIPPED_LOG_POSITION" : [
+              "3692416",
+              "3692416"
+            ],
+            "service/hana2/33007/REPLICATION_MODE" : [
+              "ASYNC",
+              "SYNC"
+            ],
+            "service/hana2/33003/SHIPPED_LOG_BUFFERS_SIZE" : [
+              "1511424",
+              "2002944"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_DELTA_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33007/SHIPPED_LOG_BUFFERS_COUNT" : [
+              "114",
+              "86"
+            ],
+            "service/hana2/33001/SECONDARY_CONNECT_TIME" : [
+              "2026-01-27 17:12:09.271065",
+              "2026-01-27 17:10:37.382406"
+            ],
+            "service/hana2/33001/REPLAYED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:27.109302",
+              "2026-01-27 17:17:27.109302"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_DELTA_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33007/SHIPPED_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SHIPPED_DELTA_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/REPLICATION_STATUS_DETAILS" : [
+              "",
+              ""
+            ],
+            "site/1/REPLICATION_STATUS" : "ACTIVE",
+            "service/hana2/33003/SHIPPED_FULL_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SHIPPED_LOG_POSITION" : [
+              "68150592",
+              "68150592"
+            ],
+            "service/hana2/33003/SECONDARY_SITE_NAME" : [
+              "SITEC",
+              "SITEA"
+            ],
+            "site/3/SECONDARY_FULLY_SYNCED" : "True",
+            "service/hana2/33003/REPLAYED_LOG_POSITION" : [
+              "30888128",
+              "30888128"
+            ],
+            "service/hana2/33007/SITE_ID" : [
+              "2",
+              "2"
+            ],
+            "service/hana2/33003/REPLICATION_MODE" : [
+              "ASYNC",
+              "SYNC"
+            ],
+            "service/hana2/33001/SHIPPED_LOG_BUFFERS_SIZE" : [
+              "471040",
+              "724992"
+            ],
+            "service/hana2/33007/RESET_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/LAST_SAVEPOINT_VERSION" : [
+              "1124",
+              "1124"
+            ],
+            "site/2/SITE_NAME" : "SITEB",
+            "service/hana2/33001/SECONDARY_PORT" : [
+              "33001",
+              "33001"
+            ],
+            "service/hana2/33001/LAST_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:27.109302",
+              "2026-01-27 17:17:27.109302"
+            ],
+            "service/hana2/33001/SHIPPED_FULL_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SHIPPED_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/DATABASE" : [
+              "TG5",
+              "TG5"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/SECONDARY_CONNECT_TIME" : [
+              "2026-01-27 17:12:33.962586",
+              "2026-01-27 17:11:00.633850"
+            ],
+            "service/hana2/33007/SHIPPED_SAVEPOINT_LOG_POSITION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SHIPPED_LOG_BUFFERS_DURATION" : [
+              "28312",
+              "282694"
+            ],
+            "service/hana2/33007/REPLAYED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:28.738535",
+              "2026-01-27 17:17:28.738535"
+            ],
+            "service/hana2/33007/LAST_SAVEPOINT_VERSION" : [
+              "1077",
+              "1077"
+            ],
+            "service/hana2/33001/FULL_SYNC" : [
+              "DISABLED",
+              "DISABLED"
+            ],
+            "service/hana2/33001/LAST_LOG_POSITION" : [
+              "68150592",
+              "68150592"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SECONDARY_PORT" : [
+              "33007",
+              "33007"
+            ],
+            "service/hana2/33007/OPERATION_MODE" : [
+              "logreplay",
+              "logreplay"
+            ],
+            "service/hana2/33003/SHIPPED_SAVEPOINT_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "site/3/SOURCE_SITE_ID" : "2",
+            "service/hana2/33001/SECONDARY_HOST" : [
+              "hana3",
+              "hana1"
+            ],
+            "service/hana2/33001/LAST_SAVEPOINT_START_TIME" : [
+              "2026-01-27 17:17:14.513107",
+              "2026-01-27 17:17:14.513107"
+            ],
+            "service/hana2/33003/SHIPPED_LOG_BUFFERS_COUNT" : [
+              "439",
+              "456"
+            ],
+            "service/hana2/33003/RESET_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SHIPPED_LOG_BUFFERS_COUNT" : [
+              "150",
+              "162"
+            ],
+            "service/hana2/33007/SHIPPED_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "local_site_id" : "2",
+            "service/hana2/33003/SHIPPED_DELTA_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ],
+            "site/1/REPLICATION_MODE" : "SYNC",
+            "service/hana2/33007/SHIPPED_FULL_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SITE_NAME" : [
+              "SITEB",
+              "SITEB"
+            ],
+            "overall_in_sync_status" : "SYSTEM_IN_SYNC",
+            "service/hana2/33001/SECONDARY_SITE_NAME" : [
+              "SITEC",
+              "SITEA"
+            ],
+            "service/hana2/33007/LAST_SAVEPOINT_LOG_POSITION" : [
+              "3688643",
+              "3688643"
+            ],
+            "service/hana2/33003/LAST_LOG_POSITION" : [
+              "30888128",
+              "30888128"
+            ],
+            "service/hana2/33003/SHIPPED_SAVEPOINT_VERSION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SITE_NAME" : [
+              "SITEB",
+              "SITEB"
+            ],
+            "service/hana2/33001/LAST_SAVEPOINT_LOG_POSITION" : [
+              "68150466",
+              "68150466"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/SECONDARY_SITE_ID" : [
+              "3",
+              "1"
+            ],
+            "service/hana2/33007/SECONDARY_FAILOVER_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SHIPPED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:27.109302",
+              "2026-01-27 17:17:27.109302"
+            ],
+            "service/hana2/33007/SECONDARY_FULLY_SYNCED" : [
+              "True",
+              "True"
+            ],
+            "service/hana2/33007/SHIPPED_FULL_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/SECONDARY_ACTIVE_STATUS" : [
+              "YES",
+              "YES"
+            ],
+            "service/hana2/33007/SECONDARY_SITE_ID" : [
+              "3",
+              "1"
+            ],
+            "overall_replication_status" : "ACTIVE",
+            "service/hana2/33001/SHIPPED_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_FULL_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33007/SECONDARY_RECONNECT_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/REPLICATION_MODE" : [
+              "ASYNC",
+              "SYNC"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_FULL_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33001/SHIPPED_FULL_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/LAST_SAVEPOINT_VERSION" : [
+              "1133",
+              "1133"
+            ],
+            "service/hana2/33007/SECONDARY_ACTIVE_STATUS" : [
+              "YES",
+              "YES"
+            ],
+            "service/hana2/33003/LAST_SAVEPOINT_START_TIME" : [
+              "2026-01-27 17:12:48.550187",
+              "2026-01-27 17:12:48.550187"
+            ],
+            "service/hana2/33003/SHIPPED_SAVEPOINT_LOG_POSITION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SECONDARY_HOST" : [
+              "hana3",
+              "hana1"
+            ],
+            "service/hana2/33001/SECONDARY_FAILOVER_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/REPLICATION_STATUS" : [
+              "ACTIVE",
+              "ACTIVE"
+            ],
+            "service/hana2/33003/SECONDARY_FAILOVER_COUNT" : [
+              "0",
+              "0"
+            ],
+            "site/3/REPLICATION_MODE" : "ASYNC",
+            "service/hana2/33001/SHIPPED_DELTA_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_DELTA_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33003/SERVICE_NAME" : [
+              "indexserver",
+              "indexserver"
+            ],
+            "service/hana2/33001/SHIPPED_SAVEPOINT_LOG_POSITION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SECONDARY_SITE_NAME" : [
+              "SITEC",
+              "SITEA"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/CREATION_TIME" : [
+              "2026-01-27 17:09:51.064787",
+              "2026-01-27 17:09:51.065436"
+            ],
+            "service/hana2/33003/LAST_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:38.743779",
+              "2026-01-27 17:17:38.743779"
+            ],
+            "service/hana2/33001/SHIPPED_SAVEPOINT_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33007/REPLICATION_STATUS" : [
+              "ACTIVE",
+              "ACTIVE"
+            ],
+            "service/hana2/33003/SHIPPED_FULL_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "site/3/REPLICATION_STATUS" : "ACTIVE",
+            "service/hana2/33007/SECONDARY_CONNECT_TIME" : [
+              "2026-01-27 17:12:33.902281",
+              "2026-01-27 17:11:00.972418"
+            ],
+            "service/hana2/33003/FULL_SYNC" : [
+              "DISABLED",
+              "DISABLED"
+            ],
+            "service/hana2/33007/SHIPPED_SAVEPOINT_VERSION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/SITE_NAME" : [
+              "SITEB",
+              "SITEB"
+            ],
+            "service/hana2/33003/SECONDARY_HOST" : [
+              "hana3",
+              "hana1"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_FULL_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33003/LAST_RESET_TIME" : [
+              "2026-01-27 17:09:59.749423",
+              "2026-01-27 17:09:59.749795"
+            ],
+            "service/hana2/33003/OPERATION_MODE" : [
+              "logreplay",
+              "logreplay"
+            ],
+            "service/hana2/33007/CREATION_TIME" : [
+              "2026-01-27 17:10:03.053547",
+              "2026-01-27 17:10:03.055341"
+            ],
+            "service/hana2/33007/LAST_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:28.738535",
+              "2026-01-27 17:17:28.738535"
+            ],
+            "service/hana2/33003/SECONDARY_RECONNECT_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/VOLUME_ID" : [
+              "2",
+              "2"
+            ],
+            "service/hana2/33001/SECONDARY_FULLY_SYNCED" : [
+              "True",
+              "True"
+            ],
+            "service/hana2/33007/LAST_RESET_TIME" : [
+              "2026-01-27 17:10:03.053547",
+              "2026-01-27 17:10:03.055341"
+            ],
+            "site/1/SOURCE_SITE_ID" : "2",
+            "service/hana2/33001/REPLICATION_STATUS_DETAILS" : [
+              "",
+              ""
+            ],
+            "service/hana2/33003/PORT" : [
+              "33003",
+              "33003"
+            ],
+            "service/hana2/33003/REPLICATION_STATUS_DETAILS" : [
+              "",
+              ""
+            ],
+            "service/hana2/33007/REPLAYED_LOG_POSITION" : [
+              "3692357",
+              "3692357"
+            ],
+            "service/hana2/33003/SECONDARY_PORT" : [
+              "33003",
+              "33003"
+            ],
+            "service/hana2/33003/SHIPPED_FULL_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SERVICE_NAME" : [
+              "xsengine",
+              "xsengine"
+            ],
+            "service/hana2/33001/VOLUME_ID" : [
+              "1",
+              "1"
+            ],
+            "service/hana2/33007/SHIPPED_LAST_DELTA_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33001/SERVICE_NAME" : [
+              "nameserver",
+              "nameserver"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_FULL_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_DELTA_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33001/RESET_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/DATABASE" : [
+              "SYSTEMDB",
+              "SYSTEMDB"
+            ],
+            "service/hana2/33003/SITE_ID" : [
+              "2",
+              "2"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_DELTA_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33001/SECONDARY_RECONNECT_COUNT" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33003/SHIPPED_LAST_FULL_REPLICA_START_TIME" : [
+              "-",
+              "-"
+            ],
+            "service/hana2/33003/HOST" : [
+              "hana2",
+              "hana2"
+            ],
+            "service/hana2/33001/SHIPPED_LAST_FULL_REPLICA_END_TIME" : [
+              "-",
+              "-"
+            ],
+            "site/3/SITE_NAME" : "SITEC",
+            "service/hana2/33001/SITE_ID" : [
+              "2",
+              "2"
+            ],
+            "service/hana2/33003/CREATION_TIME" : [
+              "2026-01-27 17:09:59.749423",
+              "2026-01-27 17:09:59.749795"
+            ],
+            "service/hana2/33003/SHIPPED_DELTA_REPLICA_SIZE" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/DATABASE" : [
+              "TG5",
+              "TG5"
+            ],
+            "service/hana2/33007/PORT" : [
+              "33007",
+              "33007"
+            ],
+            "service/hana2/33003/VOLUME_ID" : [
+              "3",
+              "3"
+            ],
+            "service/hana2/33003/REPLAYED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:38.743779",
+              "2026-01-27 17:17:38.743779"
+            ],
+            "service/hana2/33007/SHIPPED_LOG_BUFFERS_DURATION" : [
+              "14845",
+              "174791"
+            ],
+            "service/hana2/33003/SHIPPED_LOG_BUFFERS_DURATION" : [
+              "95422",
+              "822066"
+            ],
+            "service/hana2/33007/LAST_SAVEPOINT_START_TIME" : [
+              "2026-01-27 17:12:48.549410",
+              "2026-01-27 17:12:48.549410"
+            ],
+            "service/hana2/33007/SHIPPED_LOG_BUFFERS_SIZE" : [
+              "262144",
+              "352256"
+            ],
+            "site/1/SITE_NAME" : "SITEA",
+            "service/hana2/33001/SHIPPED_SAVEPOINT_VERSION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33007/SHIPPED_LOG_POSITION_TIME" : [
+              "2026-01-27 17:17:28.738535",
+              "2026-01-27 17:17:28.738535"
+            ],
+            "site/1/SECONDARY_FULLY_SYNCED" : "True",
+            "service/hana2/33007/FULL_SYNC" : [
+              "DISABLED",
+              "DISABLED"
+            ],
+            "service/hana2/33001/REPLAYED_LOG_POSITION" : [
+              "68150592",
+              "68150592"
+            ],
+            "site/2/REPLICATION_MODE" : "PRIMARY",
+            "service/hana2/33003/SHIPPED_DELTA_REPLICA_DURATION" : [
+              "0",
+              "0"
+            ],
+            "service/hana2/33001/HOST" : [
+              "hana2",
+              "hana2"
+            ],
+            "service/hana2/33001/SHIPPED_DELTA_REPLICA_COUNT" : [
+              "0",
+              "0"
+            ]
+          },
+          "Type" : 1
+        }
+      ],
+      "Profile" : {
+        "HDB_LINKED_BINARIES" : "yes",
+        "HDB_SHARED_BINARIES" : "yes",
+        "SAPGLOBALHOST" : "hana2",
+        "SAPSYSTEMNAME" : "TG5",
+        "hdbConfigType" : "DEFAULT",
+        "ssl/ciphersuites" : "545:PFS:HIGH::EC_X25519:EC_P256:EC_HIGH",
+        "ssl/client_ciphersuites" : "150:PFS:HIGH::EC_X25519:EC_P256:EC_HIGH"
+      },
+      "SID" : "TG5",
+      "Type" : 1
+    }
+  ]
+}

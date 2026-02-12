@@ -1,0 +1,32 @@
+{
+  "discovery_type" : "host_discovery",
+  "agent_id" : "2b64f956-a49c-4652-ae03-3c24b570eb17",
+  "payload" : {
+    "agent_version" : "3.0.0",
+    "arch" : "x86_64",
+    "cpu_count" : 4,
+    "fully_qualified_domain_name" : "hana1.home.com",
+    "hostname" : "hana1",
+    "installation_source" : "Suse",
+    "ip_addresses" : [
+      "127.0.0.1",
+      "192.168.244.129"
+    ],
+    "netmasks" : [
+      8,
+      24
+    ],
+    "os_version" : "15-SP6",
+    "prometheus_targets" : {
+      "node_exporter" : "trento.home.com:9100"
+    },
+    "socket_count" : 2,
+    "systemd_units" : [
+      {
+        "name" : "pacemaker.service",
+        "unit_file_state" : "disabled"
+      }
+    ],
+    "total_memory_mb" : 15341
+  }
+}
