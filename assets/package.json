@@ -45,6 +45,10 @@
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
+    "@ag-ui/client": "^0.0.43",
+    "@assistant-ui/react": "^0.12.3",
+    "@assistant-ui/react-ag-ui": "^0.0.13",
+    "@assistant-ui/react-markdown": "^0.12.1",
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
@@ -59,6 +63,7 @@
     "date-fns": "^4.1.0",
     "eos-icons-react": "^2.4.0",
     "lodash": "^4.17.23",
+    "lucide-react": "^0.563.0",
     "papaparse": "^5.5.3",
     "postcss-import": "^16.1.1",
     "posthog-js": "^1.336.4",
@@ -79,7 +84,8 @@
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.3",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zustand": "^5.0.10"
   },
   "overrides": {
     "eos-icons-react": {
