@@ -50,7 +50,7 @@ defmodule Trento.PersonalAccessTokens do
     |> apply_validation()
   end
 
-  defp load(token) do
+  def load(token) do
     Repo.get_by(PersonalAccessToken,
       hashed_token: PersonalAccessToken.hash_token(token)
     )

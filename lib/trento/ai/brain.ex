@@ -85,7 +85,7 @@ defmodule Trento.AI.Brain do
             # model: "gemini-2.5-pro",
             # model: "gemini-3-flash-preview",
             # model: "gemini-3-pro-preview",
-            api_key: System.get_env("GOOGLE_GEMINI_SECRET_KEY"),
+            api_key: System.get_env("GEMINI_API_KEY", ""),
             temperature: 0.1
             # temperature: 2.0
           })
@@ -108,7 +108,6 @@ defmodule Trento.AI.Brain do
     {:ok, updated_chain} =
       current_chain
       |> LLMChain.update_custom_context(%{foo2: 1})
-      |> LLMChain.add_tools(list_mcp_functions())
       |> LLMChain.add_message(Message.new_user!(prompt))
       |> LLMChain.run(mode: :while_needs_response)
 
