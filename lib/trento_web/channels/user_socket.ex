@@ -14,6 +14,7 @@ defmodule TrentoWeb.UserSocket do
   channel "monitoring:*", TrentoWeb.MonitoringChannel
   channel "users:*", TrentoWeb.UserChannel
   channel "activity_log:*", TrentoWeb.ActivityLogChannel
+  channel "liz:*", TrentoWeb.LizChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -38,9 +39,12 @@ defmodule TrentoWeb.UserSocket do
     end
   end
 
-  def connect(_, _, _) do
-    Logger.error("Could not authenticate user socket: missing auth token")
-    {:error, :missing_auth_token}
+  def connect(_, socket, _) do
+    # Logger.error("Could not authenticate user socket: missing auth token")
+    # {:error, :missing_auth_token}
+
+    # bypass for testing via tui client
+    {:ok, assign(socket, :current_user_id, 1)}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

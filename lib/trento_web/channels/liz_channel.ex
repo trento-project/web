@@ -4,6 +4,8 @@ defmodule TrentoWeb.LizChannel do
   require Logger
   use TrentoWeb, :channel
   alias Trento.Users
+  alias TrentoWeb.Auth.PersonalAccessToken
+  alias Trento.PersonalAccessTokens
 
   @impl true
   def join(
@@ -13,21 +15,30 @@ defmodule TrentoWeb.LizChannel do
       ) do
     if allowed?(user_id, current_user_id) do
       user = load_current_user(current_user_id)
-      # most recent pat
-      pat = "some_pat"
+      plain_pat = PersonalAccessToken.generate()
+      now = DateTime.utc_now()
+      expires_at = DateTime.add(now, 2, :hour)
+      attrs = %{name: "liz_autogen_#{now}", token: plain_pat, expires_at: expires_at}
 
-      Logger.warning(pat)
+      Logger.warning(plain_pat)
 
-      case pat do
-        nil ->
-          Logger.error("Could not join liz channel, PAT is nil.")
-
-          {:error, :unauthorized}
-
-        some_pat ->
-          Cachex.put(:liz, current_user_id, %{pat: some_pat})
+      case PersonalAccessTokens.load(plain_pat) do
+        pat when not is_nil(pat) ->
+          Cachex.put(:liz, current_user_id, %{pat: plain_pat})
           send(self(), :after_join)
           {:ok, assign(socket, :current_user, load_current_user(current_user_id))}
+
+        nil ->
+          case PersonalAccessTokens.create_personal_access_token(user, attrs) do
+            {:error, reason} ->
+              Logger.error(inspect(reason))
+              {:error, :unauthorized}
+
+            {:ok, pat} ->
+              Cachex.put(:liz, current_user_id, %{pat: plain_pat})
+              send(self(), :after_join)
+              {:ok, assign(socket, :current_user, load_current_user(current_user_id))}
+          end
       end
     else
       Logger.error(
@@ -38,7 +49,7 @@ defmodule TrentoWeb.LizChannel do
     end
   end
 
-  def join("activity_log:" <> _user_id, _payload, _socket) do
+  def join("liz:" <> _user_id, _payload, _socket) do
     {:error, :user_not_logged}
   end
 
@@ -47,19 +58,20 @@ defmodule TrentoWeb.LizChannel do
         :after_join,
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
+    Logger.warning("after_join")
     {:ok, %{pat: pat}} = Cachex.get(:liz, current_user_id)
 
     {:ok, mcp_client_pid} =
       Trento.AI.MCP.start_link(
         transport:
           {:streamable_http,
-           base_url: "http://localhost:5000", headers: %{"Authorization" => pat}}
+           base_url: "http://localhost:5000", headers: %{"Authorization" => "Bearer #{pat}"}}
       )
 
     {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
 
     Cachex.get_and_update(:liz, current_user_id, fn val ->
-      %{val | chain: updated_chain}
+      Map.merge(val, %{chain: updated_chain})
     end)
 
     push(socket, "liz_pushed", %{liz_response: "4222"})
@@ -68,17 +80,35 @@ defmodule TrentoWeb.LizChannel do
 
   def handle_info(:after_join, socket), do: {:noreply, socket}
 
-  def handle_in("user_prompt", payload, %{current_user_id: current_user_id} = socket) do
-    %{chain: current_chain} = Cachex.get(:liz, current_user_id)
+  def handle_in("user_prompt", payload, socket) do
+    Logger.warning(inspect(payload))
+    current_user_id = 1
+    {:ok, state} = Cachex.get(:liz, current_user_id)
 
-    {:ok, updated_chain, string_response} =
-      Trento.AI.Brain.exec_user_prompt(payload, current_chain)
+    case state[:chain] do
+      nil ->
+        Logger.warning("branch nil chain")
+        {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
 
-    Cachex.get_and_update(:liz, current_user_id, fn val ->
-      %{val | chain: updated_chain}
-    end)
+        Cachex.get_and_update(:liz, current_user_id, fn val ->
+          Map.merge(val, %{chain: updated_chain})
+        end)
 
-    {:reply, string_response, socket}
+        {:reply, {:ok, string_response}, socket}
+
+      current_chain ->
+        Logger.warning("branch not nil chain")
+        {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
+
+        {:ok, updated_chain, {:ok, string_response}} =
+          Trento.AI.Brain.exec_user_prompt(payload, current_chain)
+
+        Cachex.get_and_update(:liz, current_user_id, fn val ->
+          Map.merge(val, %{chain: updated_chain})
+        end)
+
+        {:reply, {:ok, string_response}, socket}
+    end
   end
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
