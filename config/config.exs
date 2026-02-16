@@ -234,7 +234,7 @@ config :trento,
   jwt_authentication_enabled: true,
   operations_enabled: true,
   oas_server_url: nil,
-  ai_assistant_ws_url: "http://localhost:3000/agent/ws"
+  ai_assistant_ws_url: nil
 
 config :trento, :analytics,
   enabled: true,

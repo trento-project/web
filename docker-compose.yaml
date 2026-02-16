@@ -124,27 +124,27 @@ services:
       # STARTTLS/TLS.
       MP_SMTP_AUTH_ALLOW_INSECURE: ${TRENTO_SMTP_INSECURE:-false}
 
-  mcp-server:
-    image: registry.opensuse.org/devel/sap/trento/factory/containers/trento/mcp-server-trento:latest
-    container_name: mcp-server-trento
-    # network_mode: "host"
-    platform: linux/amd64
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:4000/api/healthz"]
-    #   interval: 45s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 40s
-    #   start_interval: 5s
-    # restart: on-failure:20
-    ports:
-      - 4002:5000
-    environment:
-      TRENTO_MCP_TRENTO_URL: "http://host.docker.internal:4000"
-      TRENTO_MCP_TAG_FILTER: "MCP"
-      TRENTO_MCP_AUTODISCOVERY_PATHS: "/api/all/openapi"
-    depends_on:
-      - postgres
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    entrypoint: ["/mcp-server-trento", "-v", "debug"]
+  # mcp-server:
+  #   image: registry.opensuse.org/devel/sap/trento/factory/containers/trento/mcp-server-trento:latest
+  #   container_name: mcp-server-trento
+  #   # network_mode: "host"
+  #   platform: linux/amd64
+  #   # healthcheck:
+  #   #   test: ["CMD", "curl", "-f", "http://localhost:4000/api/healthz"]
+  #   #   interval: 45s
+  #   #   timeout: 5s
+  #   #   retries: 5
+  #   #   start_period: 40s
+  #   #   start_interval: 5s
+  #   # restart: on-failure:20
+  #   ports:
+  #     - 4002:5000
+  #   environment:
+  #     TRENTO_MCP_TRENTO_URL: "http://host.docker.internal:4000"
+  #     TRENTO_MCP_TAG_FILTER: "MCP"
+  #     TRENTO_MCP_AUTODISCOVERY_PATHS: "/api/all/openapi"
+  #   depends_on:
+  #     - postgres
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
+  #   entrypoint: ["/mcp-server-trento", "-v", "debug"]

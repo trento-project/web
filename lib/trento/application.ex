@@ -16,6 +16,7 @@ defmodule Trento.Application do
         # Start the PubSub system
         {Phoenix.PubSub, name: Trento.PubSub},
         {Cachex, [:activity_correlations]},
+        Supervisor.child_spec({Cachex, [:liz]}, id: AICachex),
         {Task.Supervisor, name: Trento.TasksSupervisor},
         # Start the Endpoint (http/https)
         TrentoWeb.Endpoint,
