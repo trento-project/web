@@ -62,10 +62,6 @@ defmodule Trento.AI.Brain do
   """
 
   def list_mcp_functions do
-    # Supervisor.start_link([{Trento.AI.MCP, transport: {:streamable_http, base_url: "http://localhost:4002"}}], strategy: :one_for_one)
-
-    # add patch to deps/langchain_mcp/lib/langchain_mcp/adapter.ex:210
-
     adapter =
       Adapter.new(
         client: Trento.AI.MCP,
@@ -76,7 +72,6 @@ defmodule Trento.AI.Brain do
   end
 
   def exec_system_prompt() do
-    # Use in chain
     {:ok, updated_chain} =
       LLMChain.new!(%{
         llm:
@@ -85,7 +80,7 @@ defmodule Trento.AI.Brain do
             # model: "gemini-2.5-pro",
             # model: "gemini-3-flash-preview",
             # model: "gemini-3-pro-preview",
-            api_key: System.get_env("GEMINI_API_KEY", ""),
+            api_key: System.get_env("GEMINI_API_KEY"),
             temperature: 0.1
             # temperature: 2.0
           })
@@ -94,13 +89,7 @@ defmodule Trento.AI.Brain do
       |> LLMChain.add_message(Message.new_system!(@system_prompt))
       |> LLMChain.run(mode: :while_needs_response)
 
-    # |> IO.inspect(label: "LLMChain with MCP tools intermediate result")
-    # |> LLMChain.run()
-
-    # ChainResult.to_string(updated_chain)}
-    {:ok, updated_chain, "42"}
-
-    # |> IO.inspect(label: "LLMChain with MCP tools response")
+    {:ok, updated_chain}
   end
 
   def exec_user_prompt(prompt, current_chain) do
@@ -111,13 +100,9 @@ defmodule Trento.AI.Brain do
       |> LLMChain.add_message(Message.new_user!(prompt))
       |> LLMChain.run(mode: :while_needs_response)
 
-    {:ok, updated_chain, ChainResult.to_string(updated_chain)}
-    # |> IO.inspect(label: "LLMChain with MCP tools intermediate result")
-    # |> LLMChain.run()
+    {:ok, string_response} = ChainResult.to_string(updated_chain)
 
-    # {:ok, updated_chain, ChainResult.to_string(updated_chain)}
-
-    # |> IO.inspect(label: "LLMChain with MCP tools response")
+    {:ok, updated_chain, string_response}
   end
 
   def user_prompt() do

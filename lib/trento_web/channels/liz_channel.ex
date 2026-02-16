@@ -34,7 +34,7 @@ defmodule TrentoWeb.LizChannel do
               Logger.error(inspect(reason))
               {:error, :unauthorized}
 
-            {:ok, pat} ->
+            {:ok, _pat} ->
               Cachex.put(:liz, current_user_id, %{pat: plain_pat})
               send(self(), :after_join)
               {:ok, assign(socket, :current_user, load_current_user(current_user_id))}
@@ -61,25 +61,29 @@ defmodule TrentoWeb.LizChannel do
     Logger.warning("after_join")
     {:ok, %{pat: pat}} = Cachex.get(:liz, current_user_id)
 
-    {:ok, mcp_client_pid} =
+    {:ok, _mcp_client_pid} =
       Trento.AI.MCP.start_link(
         transport:
           {:streamable_http,
-           base_url: "http://localhost:5000", headers: %{"Authorization" => "Bearer #{pat}"}}
+           base_url: "http://localhost:5000", headers: %{"Authorization" => pat}}
       )
 
-    {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
+    {:ok, updated_chain} = Trento.AI.Brain.exec_system_prompt()
+
+    {:ok, final_chain, string_response} =
+      Trento.AI.Brain.exec_user_prompt("Who are you ?", updated_chain)
 
     Cachex.get_and_update(:liz, current_user_id, fn val ->
-      Map.merge(val, %{chain: updated_chain})
+      Map.merge(val, %{chain: final_chain})
     end)
 
-    push(socket, "liz_pushed", %{liz_response: "4222"})
+    push(socket, "liz_pushed", %{liz_response: string_response})
     {:noreply, socket}
   end
 
   def handle_info(:after_join, socket), do: {:noreply, socket}
 
+  @impl true
   def handle_in("user_prompt", payload, socket) do
     Logger.warning(inspect(payload))
     current_user_id = 1
@@ -98,9 +102,8 @@ defmodule TrentoWeb.LizChannel do
 
       current_chain ->
         Logger.warning("branch not nil chain")
-        {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
 
-        {:ok, updated_chain, {:ok, string_response}} =
+        {:ok, updated_chain, string_response} =
           Trento.AI.Brain.exec_user_prompt(payload, current_chain)
 
         Cachex.get_and_update(:liz, current_user_id, fn val ->
