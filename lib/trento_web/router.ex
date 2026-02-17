@@ -2,6 +2,7 @@ defmodule TrentoWeb.Router do
   use TrentoWeb, :router
   use Pow.Phoenix.Router
   use PowAssent.Phoenix.Router
+  import ArcanaWeb.Router
 
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
@@ -65,6 +66,12 @@ defmodule TrentoWeb.Router do
     plug Unplug,
       if: TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabled,
       do: TrentoWeb.Plugs.ChartsDisabledPlug
+  end
+
+  scope "/" do
+    pipe_through [:browser]
+
+    arcana_dashboard("/arcana")
   end
 
   scope "/sso" do

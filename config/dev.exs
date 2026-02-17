@@ -19,6 +19,16 @@ config :trento, Trento.EventStore,
   port: 5433,
   pool_size: 5
 
+config :trento, Trento.RAGRepo,
+  username: "postgres",
+  password: "postgres",
+  database: "trento_rag_dev",
+  hostname: "localhost",
+  port: 5434,
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 5,
+  log: false
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

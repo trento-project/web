@@ -8,7 +8,7 @@
 import Config
 
 config :trento,
-  ecto_repos: [Trento.Repo]
+  ecto_repos: [Trento.Repo, Trento.RAGRepo]
 
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
@@ -271,6 +271,18 @@ config :trento,
 config :trento, :activity_log, refresh_interval: 60_000
 
 config :trento, Trento.Repo, types: Trento.Postgrex.Types
+config :trento, Trento.RAGRepo, types: Trento.PostgrexTypes
+
+config :arcana,
+  embedder: {:local, model: "BAAI/bge-large-en-v1.5"},
+  llm: "google:gemini-2.5-flash",
+  repo: Trento.RAGRepo
+
+config :req_llm, google_api_key: System.get_env("GEMINI_API_KEY")
+
+config :nx,
+  default_backend: EXLA.Backend,
+  default_defn_options: [compiler: EXLA]
 
 config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelations
 

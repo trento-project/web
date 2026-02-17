@@ -54,6 +54,8 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:arcana, "~> 1.0"},
+      {:igniter, "~> 0.6", only: [:dev, :test]},
       {:cachex, "~> 4.1"},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
@@ -70,6 +72,7 @@ defmodule Trento.MixProject do
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.7.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
+      {:exla, "~> 0.9"},
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:flop, "~> 0.25.0"},
       {:floki, ">= 0.36.2", only: :test},
@@ -90,7 +93,7 @@ defmodule Trento.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.4"},
       {:phoenix_live_reload, "~> 1.2", only: [:dev, :wanda]},
-      {:phoenix_live_view, "~> 0.20.17"},
+      {:phoenix_live_view, "~> 1.0"},
       {:phoenix_swoosh, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},

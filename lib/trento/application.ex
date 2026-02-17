@@ -11,6 +11,10 @@ defmodule Trento.Application do
       [
         # Start the Ecto repository
         Trento.Repo,
+        Trento.RAGRepo,
+        # Required for dashboard async operations
+        Arcana.TaskSupervisor,
+        {Arcana.Embedder.Local, model: "BAAI/bge-large-en-v1.5"},
         # Start the Telemetry supervisor
         TrentoWeb.Telemetry,
         # Start the PubSub system
