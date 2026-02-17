@@ -212,7 +212,7 @@ jobs:
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }} / OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
       junit-artifact-pattern: backend-junit-reports-dev-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
 
@@ -221,6 +221,6 @@ jobs:
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }} / OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
       junit-artifact-pattern: backend-junit-reports-bc-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
