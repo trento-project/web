@@ -10,6 +10,7 @@ import {
 } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from "@assistant-ui/react-markdown";
 import '@assistant-ui/react-markdown/styles/dot.css';
+import remarkGfm from 'remark-gfm';
 import { TooltipIconButton } from '@common/AssistantChat/TooltipIconButton';
 import Button from '@common/Button';
 import {
@@ -25,6 +26,16 @@ import {
   UserIcon
 } from 'lucide-react';
 import { ToolFallback } from './ToolFallback';
+
+function CustomMarkdownText(props) {
+  return (
+    <MarkdownTextPrimitive
+      remarkPlugins={[remarkGfm]}
+      className="aui-md"
+      {...props}
+    />
+  );
+}
 
 export function AssistantThread() {
   return (
@@ -243,8 +254,8 @@ function AssistantMessage() {
           <div className="break-words leading-relaxed text-foreground">
             <MessagePrimitive.Parts
               components={{
-                Text: MarkdownTextPrimitive,
-                tools: { Fallback: ToolFallback },
+                Text: CustomMarkdownText,
+                // tools: { Fallback: ToolFallback },
               }}
             />
 
@@ -273,7 +284,7 @@ function AssistantMessage() {
 function ThreadSuggestions() {
   return (
     <AuiIf condition={({ thread }) => !thread.isRunning && !thread.isEmpty}>
-      <div className="mx-auto mt-4 flex w-full max-w-[var(--thread-max-width)] flex-wrap gap-2 px-2">
+      <div className="mx-auto mt-4 flex w-full max-w-[var(--thread-max-width)] flex-wrap gap-2 px-2 mb-2">
         <ThreadPrimitive.Suggestion prompt="Tell me more" asChild>
           <button className="rounded-full bg-green-100 px-3 py-1 text-sm hover:bg-green-200 cursor-pointer transition-colors">
             Tell me more

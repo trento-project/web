@@ -1,11 +1,12 @@
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
+import Button from '@common/Button';
 
-export const ToolFallback = ({
+export function ToolFallback({
     toolName,
     argsText,
     result,
-}) => {
+}) {
     const [isCollapsed, setIsCollapsed] = useState(true);
     return (
         <div className="mb-4 flex w-full flex-col gap-3 rounded-lg border py-3">
@@ -38,4 +39,4 @@ export const ToolFallback = ({
             )}
         </div>
     );
-};
+}

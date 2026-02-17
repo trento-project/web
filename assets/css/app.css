@@ -4,6 +4,11 @@
 @import './input.scss';
 @import './input-number.css';
 
+/* Custom styles for assistant-ui markdown */
+.aui-md p {
+  margin-bottom: 1em;
+}
+
 @tailwind base;
 
 @tailwind components;

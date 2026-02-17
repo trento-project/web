@@ -16,6 +16,7 @@
   }
   p {
     line-height: 1.5em;
+    margin-bottom: 1em;
   }
   table {
     font-size: inherit;
@@ -194,4 +195,36 @@
       word-wrap: break-word;
     }
   }
+}
+
+/* Prevent markdown content from causing horizontal overflow inside the assistant UI */
+.aui-md {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.aui-md p {
+  margin-bottom: 1em;
+}
+
+.aui-md pre,
+.aui-md code {
+  white-space: pre-wrap; /* wrap long lines in code blocks */
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.aui-md img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make links in assistant-ui markdown use the thread accent color for visibility */
+.aui-md a {
+  color: var(--accent-color, #30ba78);
+  text-decoration: none;
+  font-weight: 600;
+}
+.aui-md a:hover {
+  text-decoration: underline;
 }
