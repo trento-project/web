@@ -99,7 +99,6 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
         run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
     timeout-minutes: 10
@@ -157,7 +156,6 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      max-parallel: 1
       matrix:
         run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
     timeout-minutes: 10
