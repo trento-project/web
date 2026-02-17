@@ -123,7 +123,7 @@ jobs:
 
   flaky-tests-analysis:
     needs: [test-javascript, setup-matrix-env, generate-matrix]
-    if: always()
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: Jest

@@ -25,4 +25,9 @@ describe('User account page', () => {
   it('should display number of SLES subscriptions found', () => {
     aboutPage.expectedSlesForSapSubscriptionsAreDisplayed();
   });
+
+  // TODO: Remove this test, it is only for testing the flaky test analysis workflow
+  it('should be a flaky test', () => {
+    expect(Math.random() > 0.5).to.equal(true);
+  });
 });
