@@ -132,7 +132,7 @@ jobs:
       - name: Run backend tests
         env:
           WRITE_JUNIT: 1
-        run: mix test
+        run: mix coveralls --warnings-as-errors --trace
       - name: Copy and sanitize JUnit reports
         if: always()
         run: |
@@ -189,7 +189,7 @@ jobs:
       - name: Run backend tests
         env:
           WRITE_JUNIT: 1
-        run: mix test
+        run: mix coveralls --warnings-as-errors --trace
       - name: Copy and sanitize JUnit reports
         if: always()
         run: |
