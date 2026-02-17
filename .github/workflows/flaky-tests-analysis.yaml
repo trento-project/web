@@ -104,6 +104,7 @@ jobs:
         uses: geekyeggo/delete-artifact@v5
         with:
           name: ${{ inputs.junit-artifact-pattern }}
+          failOnError: false
       - name: Upload failed JUnit reports
         if: steps.analyze.outputs.has-failed-reports == 'true'
         uses: actions/upload-artifact@v6

@@ -208,19 +208,19 @@ jobs:
           path: junit-reports/*.xml
 
   flaky-tests-analysis-dev:
-    needs: [test-backend-dev, generate-matrix]
+    needs: [setup-matrix-env, test-backend-dev, generate-matrix]
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: Backend (DEV)
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }} / OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
       junit-artifact-pattern: backend-junit-reports-dev-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
 
   flaky-tests-analysis-bc:
-    needs: [test-backend-bc, generate-matrix]
+    needs: [setup-matrix-env, test-backend-bc, generate-matrix]
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: Backend (BC)
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }} / OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
       junit-artifact-pattern: backend-junit-reports-bc-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
