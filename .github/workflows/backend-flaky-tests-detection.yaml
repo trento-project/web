@@ -105,12 +105,22 @@ jobs:
         env:
           WRITE_JUNIT: 1
         run: mix test
+      - name: Copy and sanitize JUnit reports
+        if: always()
+        run: |
+          mkdir -p ./junit-reports
+          for file in /tmp/*.xml; do
+            if [ -f "$file" ]; then
+              base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
+              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
+            fi
+          done
       - name: Upload backend test junit reports
         if: always()
         uses: actions/upload-artifact@v6
         with:
           name: backend-junit-reports-run${{ matrix.run }}
-          path: /tmp/*.xml
+          path: junit-reports/*.xml
 
   flaky-tests-analysis:
     needs: [test-backend, generate-matrix]
