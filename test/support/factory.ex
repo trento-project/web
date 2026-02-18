@@ -6,6 +6,7 @@ defmodule Trento.Factory do
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
   require Trento.Enums.Health, as: Health
@@ -267,7 +268,7 @@ defmodule Trento.Factory do
       discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0)),
-      state: "idle"
+      state: ClusterState.idle()
     }
   end
 
@@ -319,7 +320,7 @@ defmodule Trento.Factory do
       details: build(:hana_cluster_details),
       health: Health.passing(),
       type: ClusterType.hana_scale_up(),
-      state: "idle"
+      state: ClusterState.idle()
     }
   end
 
@@ -333,7 +334,7 @@ defmodule Trento.Factory do
       resources_number: 8,
       hosts_number: 2,
       details: build(:hana_cluster_details),
-      state: "idle"
+      state: ClusterState.idle()
     }
   end
 
@@ -441,7 +442,7 @@ defmodule Trento.Factory do
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       details: %{},
-      state: "idle"
+      state: ClusterState.idle()
     }
   end
 

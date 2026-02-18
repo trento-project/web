@@ -57,6 +57,7 @@ defmodule Trento.Clusters.Cluster do
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Enums.Health, as: Health
 
   alias Commanded.Aggregate.Multi
@@ -124,7 +125,7 @@ defmodule Trento.Clusters.Cluster do
     field :discovered_health, Ecto.Enum, values: Health.values()
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    field :state, :string
+    field :state, Ecto.Enum, values: ClusterState.values()
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
@@ -206,7 +207,7 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: nil,
         details: nil,
         health: :unknown,
-        state: "unknown"
+        state: ClusterState.unknown()
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -234,7 +235,7 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: nil,
         details: nil,
         health: :unknown,
-        state: "unknown"
+        state: ClusterState.unknown()
       },
       %HostAddedToCluster{
         cluster_id: cluster_id,
@@ -690,7 +691,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_details_updated_event(
          %Cluster{
-           state: "stopped"
+           state: ClusterState.stopped()
          },
          %RegisterOfflineClusterHost{}
        ),
@@ -721,7 +722,7 @@ defmodule Trento.Clusters.Cluster do
         provider: provider,
         resources_number: resources_number,
         hosts_number: hosts_number,
-        state: "stopped",
+        state: ClusterState.stopped(),
         details: details
       },
       %ClusterDiscoveredHealthChanged{

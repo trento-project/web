@@ -3,6 +3,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   require OpenApiSpex
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
@@ -763,10 +764,10 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             type: :string,
             description:
               "The current state of the Pacemaker cluster. " <>
-                "Find the available values here: https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa.h#L23. " <>
-                "The value is stripped of the initial `S_` prefix and downcased. " <>
+                "Find additional information here: https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa.h#L23. " <>
                 "Value is set to 'stopped' when all hosts in the cluster go offline and 'unknown' if the value could not be obtained.",
             nullable: true,
+            enum: ClusterState.values(),
             example: "idle"
           },
           details: Details,

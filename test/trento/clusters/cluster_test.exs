@@ -2,6 +2,7 @@ defmodule Trento.ClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Clusters.Cluster, async: true
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
 
   import Trento.Factory
 
@@ -51,7 +52,7 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       type = :hana_scale_up
       sap_instances = build_list(2, :clustered_sap_instance)
-      state = "idle"
+      state = ClusterState.idle()
 
       assert_events_and_state(
         [],
@@ -102,7 +103,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      state = "idle"
+      state = ClusterState.idle()
 
       assert_events_and_state(
         [],
@@ -125,7 +126,7 @@ defmodule Trento.ClusterTest do
             type: :unknown,
             health: :unknown,
             details: nil,
-            state: "unknown"
+            state: ClusterState.unknown()
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
@@ -143,7 +144,7 @@ defmodule Trento.ClusterTest do
           offline_hosts: [],
           discovered_health: :unknown,
           health: :unknown,
-          state: "unknown"
+          state: ClusterState.unknown()
         }
       )
     end
@@ -169,7 +170,7 @@ defmodule Trento.ClusterTest do
             type: :unknown,
             health: :unknown,
             details: nil,
-            state: "unknown"
+            state: ClusterState.unknown()
           },
           %HostAddedToCluster{
             cluster_id: cluster_id,
@@ -187,7 +188,7 @@ defmodule Trento.ClusterTest do
           offline_hosts: [host_id],
           discovered_health: :unknown,
           health: :unknown,
-          state: "unknown"
+          state: ClusterState.unknown()
         }
       )
     end
@@ -309,7 +310,7 @@ defmodule Trento.ClusterTest do
             resources_number: registered_cluster.resources_number,
             hosts_number: registered_cluster.hosts_number,
             details: registered_cluster.details,
-            state: "stopped"
+            state: ClusterState.stopped()
           },
           %ClusterDiscoveredHealthChanged{
             cluster_id: cluster_id,
@@ -322,7 +323,7 @@ defmodule Trento.ClusterTest do
         ],
         fn cluster ->
           assert %Cluster{
-                   state: "stopped"
+                   state: ClusterState.stopped()
                  } = cluster
         end
       )
@@ -335,7 +336,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, state: "stopped"),
+          build(:cluster_registered_event, cluster_id: cluster_id, state: ClusterState.stopped()),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
@@ -350,7 +351,7 @@ defmodule Trento.ClusterTest do
         [],
         fn cluster ->
           assert %Cluster{
-                   state: "stopped"
+                   state: ClusterState.stopped()
                  } = cluster
         end
       )
@@ -453,7 +454,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       sap_instances = build_list(2, :clustered_sap_instance)
-      state = "idle"
+      state = ClusterState.idle()
 
       assert_events_and_state(
         [
@@ -503,7 +504,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       new_name = Faker.StarWars.character()
       new_sap_instances = build_list(2, :clustered_sap_instance)
-      state = "idle"
+      state = ClusterState.idle()
 
       initial_events = [
         build(:cluster_registered_event, cluster_id: cluster_id),
@@ -563,7 +564,7 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       sap_instances = build_list(2, :clustered_sap_instance)
       host_id = Faker.UUID.v4()
-      state = "idle"
+      state = ClusterState.idle()
 
       initial_events = [
         build(:cluster_registered_event,

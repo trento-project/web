@@ -9,6 +9,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Enums.Health, as: Health
 
   alias Trento.Hosts.Projections.HostReadModel
@@ -34,7 +35,7 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :health, Ecto.Enum, values: Health.values()
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :state, :string
+    field :state, Ecto.Enum, values: ClusterState.values()
     field :details, Trento.Support.Ecto.Payload, keys_as_atoms: true
 
     has_many :tags, Tag, foreign_key: :resource_id

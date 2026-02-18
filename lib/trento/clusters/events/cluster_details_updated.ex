@@ -7,6 +7,7 @@ defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
@@ -21,7 +22,7 @@ defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :state, :string
+    field :state, Ecto.Enum, values: ClusterState.values()
 
     polymorphic_embeds_one(:details,
       types: [
@@ -37,5 +38,5 @@ defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
     embeds_many :sap_instances, SapInstance
   end
 
-  def upcast(params, _, 2), do: Map.put(params, "state", "unknown")
+  def upcast(params, _, 2), do: Map.put(params, "state", ClusterState.unknown())
 end

@@ -16,6 +16,7 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{
@@ -35,7 +36,7 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
     field :hosts_number, :integer
     field :discovered_health, Ecto.Enum, values: Health.values()
     field :cib_last_written, :string
-    field :state, :string
+    field :state, Ecto.Enum, values: ClusterState.values()
 
     polymorphic_embeds_one(:details,
       types: [
