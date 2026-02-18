@@ -101,6 +101,10 @@ jobs:
                   hosts:
                     server:
                       ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
+                prometheus_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
                 agents:
                   hosts:
                     hana01:
