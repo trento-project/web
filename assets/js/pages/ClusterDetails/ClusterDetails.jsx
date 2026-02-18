@@ -104,6 +104,8 @@ function ClusterDetails({
 
   const someHostOnline = isSomeHostOnline(hosts);
 
+  const clusterState = state || 'unknown';
+
   const clusterOperations = getClusterOperations(
     clusterID,
     runningOperation,
@@ -266,8 +268,8 @@ function ClusterDetails({
         <div className="pb-3">
           <Pill className="self-center items-center shadow bg-gray-200 text-gray-500">
             State:
-            {getStateIcon(state)}
-            {startCase(state)}
+            {getStateIcon(clusterState)}
+            {startCase(clusterState)}
           </Pill>
         </div>
       </div>
