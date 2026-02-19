@@ -1,6 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { noop, startCase } from 'lodash';
+import { noop } from 'lodash';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -224,35 +224,6 @@ describe('ClusterDetails ClusterDetails component', () => {
       );
     }
   );
-
-  it.each([
-    { state: 'idle', iconClass: 'fill-jungle-green-500' },
-    { state: 'transition_engine', iconClass: 'fill-red-500' },
-    { state: 'stopped', iconClass: 'fill-gray-500' },
-    { state: 'unknown', iconClass: 'fill-gray-500' },
-    { state: 'other', iconClass: 'fill-yellow-500' },
-  ])('should display cluster state $state', ({ state, iconClass }) => {
-    const { id, name, details } = clusterFactory.build();
-
-    renderWithRouter(
-      <ClusterDetails
-        clusterID={id}
-        clusterName={name}
-        details={details}
-        hosts={[]}
-        state={state}
-        selectedChecks={[]}
-        userAbilities={userAbilities}
-        onStartExecution={noop}
-        navigate={noop}
-      />
-    );
-
-    const containerSpan = screen.getByText(/State:/i).closest('span');
-    expect(containerSpan).toHaveTextContent(startCase(state));
-    const icon = within(containerSpan).getByTestId('eos-svg-component');
-    expect(icon).toHaveClass(iconClass);
-  });
 
   describe.each([
     {

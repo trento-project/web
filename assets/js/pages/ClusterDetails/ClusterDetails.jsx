@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 
-import { get, noop, startCase } from 'lodash';
+import { get, noop } from 'lodash';
 
 import classNames from 'classnames';
 import {
   EOS_PLAYLIST_ADD_CHECK_FILLED,
   EOS_CLEAR_ALL,
   EOS_PLAY_CIRCLE,
-  EOS_LENS_FILLED,
 } from 'eos-icons-react';
 
 import { RUNNING_STATES } from '@state/lastExecutions';
@@ -35,10 +34,10 @@ import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
 } from '@common/OperationModals';
-import Pill from '@common/Pill';
 
 import Resources from './Resources';
 import SBDDetails from './SBDDetails';
+import ClusterStatePill from './ClusterStatePill';
 import {
   getClusterOperations,
   getClusterHostOperations,
@@ -46,22 +45,6 @@ import {
 } from './clusterOperations';
 
 const operationModalState = { open: false, operation: '' };
-
-const getStateIcon = (state) => {
-  switch (state) {
-    case 'idle':
-      return (
-        <EOS_LENS_FILLED size="base" className="fill-jungle-green-500 mx-1" />
-      );
-    case 'transition_engine':
-      return <EOS_LENS_FILLED size="base" className="fill-red-500 mx-1" />;
-    case 'unknown':
-    case 'stopped':
-      return <EOS_LENS_FILLED size="base" className="fill-gray-500 mx-1" />;
-    default:
-      return <EOS_LENS_FILLED size="base" className="fill-yellow-500 mx-1" />;
-  }
-};
 
 function ClusterDetails({
   clusterID,
@@ -266,11 +249,7 @@ function ClusterDetails({
           </div>
         </div>
         <div className="pb-3">
-          <Pill className="self-center items-center shadow bg-gray-200 text-gray-500">
-            State:
-            {getStateIcon(clusterState)}
-            {startCase(clusterState)}
-          </Pill>
+          <ClusterStatePill state={clusterState} />
         </div>
       </div>
       {detailComponent}

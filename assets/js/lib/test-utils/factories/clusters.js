@@ -29,7 +29,7 @@ const hanaScenarioTypeEnum = () =>
   ]);
 
 const stateEnum = () =>
-  faker.helpers.arrayElement(['idle', 'transition_engine', 'stopped']);
+  faker.helpers.arrayElement(['S_IDLE', 'S_TRANSITION_ENGINE', 'stopped']);
 
 export const sbdDevicesFactory = Factory.define(() => ({
   device: faker.system.filePath(),
