@@ -110,6 +110,7 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
+      total-runs: ${{ steps.generate.outputs.total-runs }}
     steps:
       - name: Set environment variable for NUM_CONTAINERS
         run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
@@ -118,6 +119,7 @@ jobs:
         run: |
           echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+          echo "total-runs=$NUM_CONTAINERS" >> $GITHUB_OUTPUT
         shell: bash
 
   test-e2e:
@@ -209,6 +211,7 @@ jobs:
         with:
           name: e2e-junit-reports-${{ matrix.container }}
           path: /tmp/*.xml
+          retention-days: 1
       - name: Upload cypress test screenshots
         if: failure()
         uses: actions/upload-artifact@v6
@@ -218,10 +221,10 @@ jobs:
           retention-days: 7
 
   flaky-tests-analysis:
-    needs: test-e2e
-    if: always()
+    needs: [test-e2e, generate-matrix]
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: E2E
       junit-artifact-pattern: e2e-junit-reports-*
-      total-runs: ${{ github.event.inputs.num_containers || '100' }}
+      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
