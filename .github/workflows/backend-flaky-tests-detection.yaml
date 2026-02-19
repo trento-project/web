@@ -8,14 +8,14 @@ on:
       num_runs:
         description: "Number of times to run tests"
         required: false
-        default: "10"
+        default: "50"
 
 concurrency:
   group: ${{ github.workflow }}
 
 env:
   MIX_ENV: test
-  NUM_RUNS: ${{ github.event.inputs.num_runs || 10 }}
+  NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
 
 jobs:
   setup-matrix-env:
@@ -149,6 +149,7 @@ jobs:
         with:
           name: backend-junit-reports-dev-run${{ matrix.run }}
           path: junit-reports/*.xml
+          retention-days: 1
 
   test-backend-bc:
     name: Backend Tests BC (Run ${{ matrix.run }})
@@ -206,6 +207,7 @@ jobs:
         with:
           name: backend-junit-reports-bc-run${{ matrix.run }}
           path: junit-reports/*.xml
+          retention-days: 1
 
   flaky-tests-analysis-dev:
     needs: [setup-matrix-env, test-backend-dev, generate-matrix]

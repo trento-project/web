@@ -75,7 +75,7 @@ jobs:
         run: |
           echo "{\"run\": [$(seq -s, 1 ${{ env.NUM_RUNS }})]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
-          echo "total-runs=$(( ${{ env.NUM_RUNS }} * 2 ))" >> $GITHUB_OUTPUT
+          echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
         shell: bash
 
   test-javascript:
@@ -120,12 +120,22 @@ jobs:
         with:
           name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
           path: /tmp/*.xml
+          retention-days: 1
 
-  flaky-tests-analysis:
+  flaky-tests-analysis-dev:
     needs: [test-javascript, setup-matrix-env, generate-matrix]
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: Jest
-      junit-artifact-pattern: jest-junit-reports-*
+      suite-name: "Jest — Node ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}"
+      junit-artifact-pattern: jest-junit-reports-node${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-*
+      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
+
+  flaky-tests-analysis-bc:
+    needs: [test-javascript, setup-matrix-env, generate-matrix]
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/flaky-tests-analysis.yaml
+    with:
+      suite-name: "Jest — Node ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}"
+      junit-artifact-pattern: jest-junit-reports-node${{ needs.setup-matrix-env.outputs.NODEJS_BC }}-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
