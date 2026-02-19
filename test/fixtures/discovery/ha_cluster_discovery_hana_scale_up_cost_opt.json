@@ -746,7 +746,7 @@
       "Id": "81237d528fa520f993b5d6e1cd8e7138",
       "Name": "hana_cluster",
       "Provider": "azure",
-      "State": "idle",
+      "State": "S_IDLE",
       "SBD": {
         "Config": {
           "SBD_DELAY_START": "216",

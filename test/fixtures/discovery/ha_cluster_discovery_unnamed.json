@@ -923,6 +923,6 @@
     "Name": "",
     "DC": true,
     "Provider": "azure",
-    "State": "idle"
+    "State": "S_IDLE"
   }
 }

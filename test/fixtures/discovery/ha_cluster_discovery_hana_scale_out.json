@@ -1138,7 +1138,7 @@
     "Online": true,
     "Name": "hana_cluster",
     "Provider": "kvm",
-    "State": "idle",
+    "State": "S_IDLE",
     "SBD": {
       "Config": {
         "SBD_DELAY_START": "yes",

@@ -52,7 +52,7 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       type = :hana_scale_up
       sap_instances = build_list(2, :clustered_sap_instance)
-      state = ClusterState.idle()
+      state = :S_IDLE
 
       assert_events_and_state(
         [],
@@ -103,7 +103,7 @@ defmodule Trento.ClusterTest do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
-      state = ClusterState.idle()
+      state = :S_IDLE
 
       assert_events_and_state(
         [],
@@ -454,7 +454,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       name = Faker.StarWars.character()
       sap_instances = build_list(2, :clustered_sap_instance)
-      state = ClusterState.idle()
+      state = :S_IDLE
 
       assert_events_and_state(
         [
@@ -504,7 +504,7 @@ defmodule Trento.ClusterTest do
       host_id = Faker.UUID.v4()
       new_name = Faker.StarWars.character()
       new_sap_instances = build_list(2, :clustered_sap_instance)
-      state = ClusterState.idle()
+      state = :S_IDLE
 
       initial_events = [
         build(:cluster_registered_event, cluster_id: cluster_id),
@@ -564,7 +564,7 @@ defmodule Trento.ClusterTest do
       name = Faker.StarWars.character()
       sap_instances = build_list(2, :clustered_sap_instance)
       host_id = Faker.UUID.v4()
-      state = ClusterState.idle()
+      state = :S_IDLE
 
       initial_events = [
         build(:cluster_registered_event,

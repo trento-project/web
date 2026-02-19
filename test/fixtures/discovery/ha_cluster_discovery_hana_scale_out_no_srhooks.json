@@ -1155,7 +1155,7 @@
     "Id": "9379d9d590876eae02a63616181c5374",
     "Name": "hacluster",
     "Provider": "azure",
-    "State": "idle",
+    "State": "S_IDLE",
     "SBD": {
       "Config": {
         "SBD_DELAY_START": "186",

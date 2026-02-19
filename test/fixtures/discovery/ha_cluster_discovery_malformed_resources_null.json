@@ -1794,7 +1794,7 @@
     "Id": "d541b3029265844c4dd85d82afcd6dca",
     "Name": "hacluster",
     "Provider": "",
-    "State": "idle",
+    "State": "S_IDLE",
     "SBD": {
       "Config": {
         "SBD_DELAY_START": "71",

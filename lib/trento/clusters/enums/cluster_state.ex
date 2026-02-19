@@ -4,26 +4,25 @@ defmodule Trento.Clusters.Enums.ClusterState do
   Values are coming from pacemaker directly:
   https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa.h#L23
 
-  The value sent by the agent has the `S_` removed and it is downcased.
   :stopped and :unknown are custom Trento values.
   """
 
   use Trento.Support.Enum,
     values: [
-      :idle,
-      :election,
-      :integration,
-      :finalize_join,
-      :not_dc,
-      :policy_engine,
-      :recovery,
-      :release_dc,
-      :starting,
-      :pending,
-      :stopping,
-      :terminate,
-      :transition_engine,
-      :s_max,
+      :S_IDLE,
+      :S_ELECTION,
+      :S_INTEGRATION,
+      :S_FINALIZE_JOIN,
+      :S_NOT_DC,
+      :S_POLICY_ENGINE,
+      :S_RECOVERY,
+      :S_RELEASE_DC,
+      :S_STARTING,
+      :S_PENDING,
+      :S_STOPPING,
+      :S_TERMINATE,
+      :S_TRANSITION_ENGINE,
+      :S_MAX,
       :stopped,
       :unknown
     ]

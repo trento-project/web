@@ -107,7 +107,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         sid: _,
         additional_sids: _,
         selected_checks: [],
-        state: :idle,
+        state: :S_IDLE,
         type: :hana_scale_up
       },
       1000
@@ -125,7 +125,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
       type: :hana_scale_up,
       resources_number: 8,
       hosts_number: 2,
-      state: :idle,
+      state: :S_IDLE,
       details: build(:hana_cluster_details)
     }
 
@@ -195,7 +195,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         resources_number: 8,
         sid: _,
         additional_sids: _,
-        state: :idle,
+        state: :S_IDLE,
         type: :hana_scale_up
       },
       1000
