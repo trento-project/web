@@ -109,6 +109,6 @@ jobs:
         if: steps.analyze.outputs.has-failed-reports == 'true'
         uses: actions/upload-artifact@v6
         with:
-          name: failed-${{ inputs.suite-name }}-junit-reports
+          name: failed-${{ replace(inputs.junit-artifact-pattern, '-*', '') }}
           path: failed-junit-reports/
           retention-days: 2
