@@ -7,6 +7,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
 
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{
@@ -15,7 +16,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     SapInstance
   }
 
-  defevent do
+  defevent version: 2 do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
@@ -23,6 +24,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     field :resources_number, :integer
     field :hosts_number, :integer
     field :health, Ecto.Enum, values: Health.values()
+    field :state, Ecto.Enum, values: ClusterState.values()
 
     polymorphic_embeds_one(:details,
       types: [
@@ -37,4 +39,6 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
 
     embeds_many :sap_instances, SapInstance
   end
+
+  def upcast(params, _, 2), do: Map.put(params, "state", ClusterState.unknown())
 end

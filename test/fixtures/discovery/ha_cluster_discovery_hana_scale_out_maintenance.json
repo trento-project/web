@@ -1137,6 +1137,7 @@
       "Id": "d0a0d4caff6a5f4cba70d47e9cd12889",
       "Name": "hana_cluster",
       "Provider": "kvm",
+      "State": "S_IDLE",
       "SBD": {
         "Config": {
           "SBD_DELAY_START": "yes",

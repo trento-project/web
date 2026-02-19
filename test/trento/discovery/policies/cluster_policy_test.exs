@@ -8,6 +8,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
 
   require Trento.Enums.Provider, as: Provider
 
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
@@ -434,7 +435,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_hana_scale_up"
@@ -846,7 +848,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_hana_scale_up_maintenance"
@@ -1175,7 +1178,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_hana_scale_up_cost_opt"
@@ -1494,7 +1498,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 9,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_ascs_ers"
@@ -1813,7 +1818,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 9,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_ascs_ers_maintenance"
@@ -1897,7 +1903,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 5,
                 discovered_health: :unknown,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_ascs_ers_invalid"
@@ -2485,7 +2492,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 17,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_ascs_ers_multi_sid"
@@ -2706,6 +2714,37 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
     Enum.each(resources, fn %{fail_count: fail_count} ->
       assert fail_count == 0
     end)
+  end
+
+  test "should set state to unknown if the coming state is not recognized in the ClusterState enum" do
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{
+                 state: ClusterState.unknown()
+               }
+             ]
+           } =
+             "ha_cluster_discovery_hana_scale_up"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "State"], "other")
+             |> ClusterPolicy.handle(nil)
+  end
+
+  test "should set state to unknown if it is not coming from legacy agents" do
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{
+                 state: ClusterState.unknown()
+               }
+             ]
+           } =
+             "ha_cluster_discovery_hana_scale_up"
+             |> load_discovery_event_fixture()
+             |> pop_in(["payload", "State"])
+             |> elem(1)
+             |> ClusterPolicy.handle(nil)
   end
 
   describe "ascs/ers clusters health" do
@@ -3114,6 +3153,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     resource_type: SapInstanceResourceType.sap_hana_topology()
                   }
                 ],
+                state: :S_IDLE,
                 type: :hana_scale_up
               }
             ]} ==
@@ -3445,6 +3485,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     resource_type: SapInstanceResourceType.sap_hana_topology()
                   }
                 ],
+                state: :S_IDLE,
                 type: :hana_scale_up
               }
             ]} ==
@@ -3857,7 +3898,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_unnamed"
@@ -4095,7 +4137,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 hosts_number: 2,
                 resources_number: 8,
                 discovered_health: :passing,
-                provider: Provider.azure()
+                provider: Provider.azure(),
+                state: :S_IDLE
               }
             ]} ==
              "ha_cluster_discovery_hana_scale_up_diskless_sbd"
@@ -4134,6 +4177,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   cluster_id: "751fb16d-62e3-5411-aa33-0100012453c7",
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
+                  state: :S_IDLE,
                   type: :hana_scale_out,
                   sap_instances: [
                     %SapInstance{
@@ -4693,6 +4737,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   cluster_id: "f343beb7-f474-57d9-bec6-60215e5a4fbc",
                   host_id: "9abb22d6-716a-4321-bb1e-175f179e7bb6",
                   name: "hana_cluster",
+                  state: :S_IDLE,
                   type: :hana_scale_out,
                   sap_instances: [
                     %SapInstance{
@@ -5184,6 +5229,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   cluster_id: "751fb16d-62e3-5411-aa33-0100012453c7",
                   host_id: "286808a7-01bf-420d-af50-10846a7d7868",
                   name: "hana_cluster",
+                  state: :S_IDLE,
                   type: :hana_scale_out,
                   sap_instances: [
                     %SapInstance{
@@ -6334,10 +6380,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       resource_type: SapInstanceResourceType.sap_hana_topology()
                     }
                   ],
+                  state: :S_IDLE,
                   type: :hana_scale_out
                 }
               ]} ==
-               "hana_cluster_discovery_hana_scale_out_no_srhooks"
+               "ha_cluster_discovery_hana_scale_out_no_srhooks"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end
@@ -6579,6 +6626,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        resource_type: SapInstanceResourceType.sap_hana_topology()
                      }
                    ],
+                   state: :S_IDLE,
                    type: :hana_scale_up
                  }
                ]
@@ -6821,6 +6869,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        resource_type: SapInstanceResourceType.sap_hana_topology()
                      }
                    ],
+                   state: :S_IDLE,
                    type: :hana_scale_up
                  }
                ]
@@ -6874,6 +6923,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        mounted: true
                      }
                    ],
+                   state: :S_IDLE,
                    type: :hana_ascs_ers
                  }
                ]

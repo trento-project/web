@@ -13,6 +13,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
 
   alias Trento.Discovery.Payloads.Cluster.{
     CibDiscoveryPayload,
@@ -32,6 +33,7 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     field :cluster_type, Ecto.Enum, values: ClusterType.values()
     field :cluster_host_status, Ecto.Enum, values: ClusterHostStatus.values()
     field :hana_architecture_type, Ecto.Enum, values: HanaArchitectureType.values()
+    field :state, Ecto.Enum, values: ClusterState.values(), default: ClusterState.unknown()
 
     embeds_one :cib, CibDiscoveryPayload
     embeds_one :sbd, SbdDiscoveryPayload
@@ -50,9 +52,11 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
   defp offline?(_), do: false
 
   defp changeset_online(cluster, attrs) do
+    modified_attrs = maybe_set_unknown_cluster_state(attrs)
+
     casted_cluster =
       cluster
-      |> cast(attrs, fields())
+      |> cast(modified_attrs, fields())
       |> cast_embed(:cib, required: true)
       |> cast_embed(:sbd)
       |> cast_embed(:crmmon, required: true)
@@ -76,6 +80,18 @@ defmodule Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload do
     |> cast(attrs, [:id, :name])
     |> validate_required_fields(@required_fields_offline)
     |> put_change(:cluster_host_status, ClusterHostStatus.offline())
+  end
+
+  defp maybe_set_unknown_cluster_state(attrs) do
+    Map.update(attrs, "state", "unknown", fn current_state ->
+      known_values = ClusterState.values()
+
+      if Enum.any?(known_values, &(to_string(&1) == current_state)) do
+        current_state
+      else
+        "unknown"
+      end
+    end)
   end
 
   defp parse_hana_glob_topology(%{
