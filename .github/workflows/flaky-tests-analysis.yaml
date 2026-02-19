@@ -15,7 +15,7 @@ on:
         description: "Expected number of test runs; 0 uses the actual completed count"
         type: string
         required: false
-        default: '0'
+        default: "0"
 
 jobs:
   flaky-tests-analysis:
@@ -114,4 +114,4 @@ jobs:
         with:
           name: ${{ steps.artifact-name.outputs.value }}
           path: failed-junit-reports/
-          retention-days: 2
+          retention-days: 7
