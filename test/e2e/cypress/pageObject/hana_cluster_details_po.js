@@ -30,6 +30,13 @@ const hostToDeregister = {
 
 const catalog = catalogCheckFactory.buildList(5);
 
+const clusterStates = {
+  idle: { displayedText: 'Idle', icon: 'jungle-green' },
+  stopped: { displayedText: 'Stopped', icon: 'gray' },
+  'transition-engine': { displayedText: 'Transition Engine', icon: 'red' },
+  'policy-engine': { displayedText: 'Policy Engine', icon: 'yellow' },
+};
+
 //Attributes
 
 const url = '/clusters';
@@ -87,6 +94,8 @@ const checkName = (checkNameText) =>
   `div[aria-label="accordion-header"] h3:contains("${checkNameText}")`;
 const resourcesTable = 'tbody:eq(2)';
 const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
+const clusterStateLabel = 'span:contains("State:")';
+const clusterStateBadge = `${clusterStateLabel} svg`;
 
 // UI Interactions
 
@@ -385,6 +394,16 @@ export const expectedResourcesDisplayed = () => {
       .eq(7)
       .should('contain', resource.type);
   });
+};
+
+export const expectedClusterStateIsDisplayed = (state) => {
+  const { displayedText, icon } = clusterStates[state];
+  cy.get(clusterStateLabel).contains(displayedText);
+  cy.get(clusterStateBadge)
+    .invoke('attr', 'class')
+    .then((classAttr) => {
+      expect(classAttr).to.contain(icon);
+    });
 };
 
 export const sbdClusterHasExpectedNameAndStatus = () => {
