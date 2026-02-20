@@ -2,7 +2,7 @@ name: Backend Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: "0 0 * * 1" # Runs every monday at 00:00 AM UTC
+    - cron: "0 1 * * *" # Runs every day at 1:00 AM UTC
   workflow_dispatch:
     inputs:
       num_runs:
@@ -139,6 +139,7 @@ jobs:
           mkdir -p ./junit-reports
           for file in /tmp/*.xml; do
             if [ -f "$file" ]; then
+              # Sanitize filename: GitHub Actions artifact names cannot contain colons
               base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
               awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
             fi
@@ -197,6 +198,7 @@ jobs:
           mkdir -p ./junit-reports
           for file in /tmp/*.xml; do
             if [ -f "$file" ]; then
+              # Sanitize filename: GitHub Actions artifact names cannot contain colons
               base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
               awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
             fi

@@ -12,15 +12,15 @@ on:
         type: string
         required: true
       total-runs:
-        description: "Expected number of test runs; 0 uses the actual completed count"
+        description: "Expected number of test runs"
         type: string
-        required: false
-        default: "0"
+        required: true
 
 jobs:
   flaky-tests-analysis:
     name: Flaky Tests Analysis
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -55,9 +55,6 @@ jobs:
           fi
 
           EXPECTED_RUNS=${{ inputs.total-runs }}
-          if [ "$EXPECTED_RUNS" -eq 0 ]; then
-            EXPECTED_RUNS=$TOTAL_COMPLETED
-          fi
 
           if [ "$TOTAL_COMPLETED" -gt 0 ]; then
             FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_COMPLETED" | bc)
