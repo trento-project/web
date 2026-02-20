@@ -2,24 +2,53 @@ name: Backend Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: "0 0 * * 1" # Runs every monday at 00:00 AM UTC
+    - cron: "0 1 * * *" # Runs every day at 1:00 AM UTC
   workflow_dispatch:
     inputs:
-      num_containers:
-        description: "Number of containers to use (Max: 200) (Default: 10)"
+      num_runs:
+        description: "Number of times to run tests"
         required: false
+        default: "50"
 
 concurrency:
   group: ${{ github.workflow }}
 
 env:
   MIX_ENV: test
-  DEFAULT_NUM_CONTAINERS: 10
+  NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
 
 jobs:
-  elixir-deps:
-    name: Elixir test dependencies
+  setup-matrix-env:
     runs-on: ubuntu-24.04
+    outputs:
+      ELIXIR_BC: ${{ steps.compute-matrix.outputs.ELIXIR_BC }}
+      ERLANG_BC: ${{ steps.compute-matrix.outputs.ERLANG_BC }}
+      ELIXIR_DEV: ${{ steps.compute-matrix.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.compute-matrix.outputs.ERLANG_DEV }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: gather versions
+        uses: endorama/asdf-parse-tool-versions@v1
+      - name: Compute matrix
+        id: compute-matrix
+        run: |
+          echo "ELIXIR_BC=1.15.7-otp-26" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=26.2.1" >> $GITHUB_OUTPUT
+          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+
+  elixir-deps:
+    name: Elixir test dependencies (Elixir ${{ matrix.elixir }})
+    needs: [setup-matrix-env]
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -29,8 +58,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v5
         id: mix-cache
@@ -54,24 +83,25 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       matrix: ${{ steps.generate.outputs.matrix }}
+      total-runs: ${{ steps.generate.outputs.total-runs }}
     steps:
-      - name: Set environment variable for NUM_CONTAINERS
-        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
       - name: Generate Matrix
         id: generate
         run: |
-          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
+          echo "{\"run\": [$(seq -s, 1 ${{ env.NUM_RUNS }})]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+          echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
         shell: bash
 
-  test-backend:
-    name: Backend Tests Run
-    needs: [elixir-deps, generate-matrix]
+  test-backend-dev:
+    name: Backend Tests DEV (Run ${{ matrix.run }})
+    needs: [setup-matrix-env, elixir-deps, generate-matrix]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
+        run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -81,8 +111,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v5
         id: mix-cache
@@ -100,49 +130,101 @@ jobs:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
       - name: Run backend tests
-        working-directory: hack/flaky_tests_analysis
-        run: make gen-test-data-be N-TIMES=10
-      - name: Copy and sanitize .xml files from /tmp to ./junit-reports
         env:
-          CONTAINER: ${{ matrix.container }}
+          WRITE_JUNIT: 1
+        run: mix test --warnings-as-errors --max-cases 1
+      - name: Copy and sanitize JUnit reports
+        if: always()
         run: |
           mkdir -p ./junit-reports
           for file in /tmp/*.xml; do
             if [ -f "$file" ]; then
-              # Sanitize filename: replace colons ':' with hyphens '-'
-              base=$(basename "$file" | tr ':' '-')
-              sanitized_name="${CONTAINER}-${base}"
-              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$sanitized_name"
+              # Sanitize filename: GitHub Actions artifact names cannot contain colons
+              base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
+              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
             fi
           done
-      - name: Upload backend tests junit reports
+      - name: Upload backend test junit reports
+        if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: junit-reports-${{ matrix.container }}
+          name: backend-junit-reports-dev-run${{ matrix.run }}
           path: junit-reports/*.xml
+          retention-days: 1
 
-  flaky-tests-analysis:
-    name: Flaky Tests Analysis
-    needs: test-backend
+  test-backend-bc:
+    name: Backend Tests BC (Run ${{ matrix.run }})
+    needs: [setup-matrix-env, elixir-deps, generate-matrix]
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Download JUnit reports artifacts
-        uses: actions/download-artifact@v7
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
         with:
-          path: junit-reports
-          merge-multiple: true
-      - name: Analyze
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+      - name: Retrieve Elixir Cached Dependencies
+        uses: actions/cache@v5
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Compile
+        run: mix compile --warnings-as-errors
+      - name: "Docker compose dependencies"
+        uses: isbang/compose-action@v2.5.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          down-flags: "--volumes"
+      - name: Run backend tests
+        env:
+          WRITE_JUNIT: 1
+        run: mix test --warnings-as-errors --max-cases 1
+      - name: Copy and sanitize JUnit reports
+        if: always()
         run: |
-          make venv-create
-          source .venv/bin/activate
-          make install-deps
-          make PATH-TO-JUNIT-FILES=../../junit-reports analyze-files 2>&1 | tail -n +2 >> $GITHUB_STEP_SUMMARY
-        working-directory: hack/flaky_tests_analysis
-      - name: Delete Artifacts
-        uses: geekyeggo/delete-artifact@v5
+          mkdir -p ./junit-reports
+          for file in /tmp/*.xml; do
+            if [ -f "$file" ]; then
+              # Sanitize filename: GitHub Actions artifact names cannot contain colons
+              base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
+              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
+            fi
+          done
+      - name: Upload backend test junit reports
+        if: always()
+        uses: actions/upload-artifact@v6
         with:
-          name: backend-junit-reports
+          name: backend-junit-reports-bc-run${{ matrix.run }}
+          path: junit-reports/*.xml
+          retention-days: 1
+
+  flaky-tests-analysis-dev:
+    needs: [setup-matrix-env, test-backend-dev, generate-matrix]
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/flaky-tests-analysis.yaml
+    with:
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
+      junit-artifact-pattern: backend-junit-reports-dev-*
+      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
+
+  flaky-tests-analysis-bc:
+    needs: [setup-matrix-env, test-backend-bc, generate-matrix]
+    if: ${{ !cancelled() }}
+    uses: ./.github/workflows/flaky-tests-analysis.yaml
+    with:
+      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
+      junit-artifact-pattern: backend-junit-reports-bc-*
+      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}

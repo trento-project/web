@@ -1,0 +1,114 @@
+name: Flaky Tests Analysis
+
+on:
+  workflow_call:
+    inputs:
+      suite-name:
+        description: "Summary heading (e.g., E2E, Jest, Backend)"
+        type: string
+        required: true
+      junit-artifact-pattern:
+        description: "Download pattern for JUnit reports"
+        type: string
+        required: true
+      total-runs:
+        description: "Expected number of test runs"
+        type: string
+        required: true
+
+jobs:
+  flaky-tests-analysis:
+    name: Flaky Tests Analysis
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download JUnit reports artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: junit-reports
+          pattern: ${{ inputs.junit-artifact-pattern }}
+      - name: Analyze Flaky Tests and Generate Summary
+        id: analyze
+        run: |
+          REPORTS_DIR="../../junit-reports"
+
+          # Count completed runs (dirs with XML files) and failed runs (dirs with test failures)
+          TOTAL_COMPLETED=0
+          FAILED_RUNS=0
+          mkdir -p ../../failed-junit-reports
+          for dir in $REPORTS_DIR/*/; do
+            if [ -d "$dir" ] && ls "$dir"/*.xml >/dev/null 2>&1; then
+              TOTAL_COMPLETED=$((TOTAL_COMPLETED + 1))
+              if grep -ql 'failures="[1-9]' "$dir"/*.xml 2>/dev/null; then
+                FAILED_RUNS=$((FAILED_RUNS + 1))
+                cp "$dir"/*.xml ../../failed-junit-reports/
+              fi
+            fi
+          done
+
+          if [ "$(ls -A ../../failed-junit-reports 2>/dev/null)" ]; then
+            echo "has-failed-reports=true" >> $GITHUB_OUTPUT
+          fi
+
+          EXPECTED_RUNS=${{ inputs.total-runs }}
+
+          if [ "$TOTAL_COMPLETED" -gt 0 ]; then
+            FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_COMPLETED" | bc)
+
+            echo "### 📊 ${{ inputs.suite-name }} Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Failure rate:** ${FAILURE_PERCENTAGE}% (${FAILED_RUNS}/${TOTAL_COMPLETED} completed runs had failures)" >> $GITHUB_STEP_SUMMARY
+            MISSING_RUNS=$((EXPECTED_RUNS - TOTAL_COMPLETED))
+            if [ "$MISSING_RUNS" -gt 0 ]; then
+              echo "**Runners without results:** ${MISSING_RUNS}/${EXPECTED_RUNS}" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "---" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Flatten XML files into a single directory for the analysis tool
+          REPORTS_PATH="../../junit-reports-flat"
+          mkdir -p "$REPORTS_PATH"
+          find "$REPORTS_DIR" -name '*.xml' -exec cp {} "$REPORTS_PATH/" \;
+
+          make venv-create
+          source .venv/bin/activate
+          make install-deps
+
+          FLAKY_TEST_LIST=$(make PATH-TO-JUNIT-FILES=$REPORTS_PATH analyze-files 2>&1 | tail -n +2)
+
+          NUM_FLAKY_TESTS=$(( $(echo -n "$FLAKY_TEST_LIST" | grep -c . || true) - 1 ))
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Flaky Tests Analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Unique flaky tests reported:** **$NUM_FLAKY_TESTS**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$NUM_FLAKY_TESTS" -gt 0 ]; then
+            echo "<details><summary>Click to see the full list of flaky tests</summary>" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$FLAKY_TEST_LIST" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "</details>" >> $GITHUB_STEP_SUMMARY
+          fi
+        working-directory: hack/flaky_tests_analysis
+      - name: Compute artifact name
+        id: artifact-name
+        run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: ${{ inputs.junit-artifact-pattern }}
+          failOnError: false
+      - name: Upload failed JUnit reports
+        if: steps.analyze.outputs.has-failed-reports == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.artifact-name.outputs.value }}
+          path: failed-junit-reports/
+          retention-days: 7
