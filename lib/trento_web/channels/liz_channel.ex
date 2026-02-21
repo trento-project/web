@@ -88,14 +88,19 @@ defmodule TrentoWeb.LizChannel do
     Logger.warning(inspect(payload))
     current_user_id = 1
     {:ok, state} = Cachex.get(:liz, current_user_id)
+    message = payload["message"]
+    context = payload["context"]
 
     case state[:chain] do
       nil ->
         Logger.warning("branch nil chain")
-        {:ok, updated_chain, string_response} = Trento.AI.Brain.exec_system_prompt()
+        {:ok, updated_chain, _string_response} = Trento.AI.Brain.exec_system_prompt()
+
+        {:ok, final_chain, string_response} =
+          Trento.AI.Brain.exec_user_prompt(message, updated_chain, context)
 
         Cachex.get_and_update(:liz, current_user_id, fn val ->
-          Map.merge(val, %{chain: updated_chain})
+          Map.merge(val, %{chain: final_chain})
         end)
 
         {:reply, {:ok, string_response}, socket}
@@ -104,7 +109,7 @@ defmodule TrentoWeb.LizChannel do
         Logger.warning("branch not nil chain")
 
         {:ok, updated_chain, string_response} =
-          Trento.AI.Brain.exec_user_prompt(payload, current_chain)
+          Trento.AI.Brain.exec_user_prompt(message, current_chain, context)
 
         Cachex.get_and_update(:liz, current_user_id, fn val ->
           Map.merge(val, %{chain: updated_chain})

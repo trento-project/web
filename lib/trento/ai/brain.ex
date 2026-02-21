@@ -92,11 +92,11 @@ defmodule Trento.AI.Brain do
     {:ok, updated_chain}
   end
 
-  def exec_user_prompt(prompt, current_chain) do
+  def exec_user_prompt(prompt, current_chain, context \\ %{foo: "42"}) do
     # Use in chain
     {:ok, updated_chain} =
       current_chain
-      |> LLMChain.update_custom_context(%{foo2: 1})
+      |> LLMChain.update_custom_context(context)
       |> LLMChain.add_message(Message.new_user!(prompt))
       |> LLMChain.run(mode: :while_needs_response)
 
