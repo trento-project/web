@@ -6,6 +6,9 @@ import remarkGfm from 'remark-gfm';
 import Button from '@common/Button';
 import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
 import { getFromConfig } from '@lib/config';
+import { Socket } from 'phoenix';
+import { getUserProfile } from '@state/selectors/user';
+import { useSelector } from 'react-redux';
 
 function AIAssistant() {
   const { context } = useAIAssistantContext();
@@ -83,101 +86,71 @@ function AIAssistant() {
       if (ro && footerEl) ro.unobserve(footerEl);
     };
   }, []);
+  const [socket, setSocket] = useState(null);
+  const [channel, setChannel] = useState(null);
+
+  const { id: userID } = useSelector(getUserProfile);
+  useEffect(() => {
+    if (userID) {
+      const newSocket = new Socket('/socket', {});
+      newSocket.connect();
+      setSocket(newSocket);
+    }
+  }, [userID]);
 
   useEffect(() => {
-    const wsUrl = getFromConfig('aiAssistantWsUrl');
-    if (!wsUrl) return;
-    const websocket = new window.WebSocket(wsUrl);
+    if (socket) {
+      const lizChannel = socket.channel(`liz:${userID}`, {});
 
-    websocket.onopen = () => {
-      setIsConnected(true);
-      setMessages((prev) => [
-        ...prev,
-        { type: 'system', text: 'Ready to answer any questions you have!' },
-      ]);
-    };
-
-    websocket.onmessage = (event) => {
-      const data = event.data;
-
-      if (data.startsWith('<error>')) {
-        window.alert(data.substring(7));
-        return;
-      }
-
-      if (data === '<message>') {
-        currentMessageRef.current = { content: '', isNew: true };
-      } else if (data === '</message>') {
-        currentMessageRef.current = { content: '', isNew: false };
-      } else if (currentMessageRef.current.isNew) {
-        currentMessageRef.current.content += data;
-        setMessages((prev) => {
-          const newMessages = [...prev];
-          if (
-            newMessages.length > 0 &&
-            newMessages[newMessages.length - 1].type === 'assistant' &&
-            newMessages[newMessages.length - 1].isStreaming
-          ) {
-            newMessages[newMessages.length - 1] = {
-              type: 'assistant',
-              text: currentMessageRef.current.content,
-              isMarkdown: true,
-              isStreaming: true,
-            };
-          } else {
-            newMessages.push({
-              type: 'assistant',
-              text: currentMessageRef.current.content,
-              isMarkdown: true,
-              isStreaming: true,
-            });
-          }
-          return newMessages;
-        });
-      }
-    };
-
-    websocket.onclose = () => {
-      setIsConnected(false);
-      if (!suppressCloseNoticeRef.current) {
+      lizChannel.join().receive('ok', (msg) => {
+        setIsConnected(true);
+        setChannel(lizChannel);
+      });
+      lizChannel.on('liz_pushed', (msg) => {
         setMessages((prev) => [
           ...prev,
-          { type: 'system', text: 'Connection closed.' },
+          { type: 'system', text: msg.liz_response },
         ]);
-      } else {
-        // consume the suppression just once
-        suppressCloseNoticeRef.current = false;
-      }
-    };
+      });
+      return () => {
+        lizChannel.leave();
+      };
+    }
+  }, [socket, sessionId]);
 
-    websocket.onerror = () => {};
-
-    setWs(websocket);
-
-    return () => {
-      websocket.close();
-    };
-  }, [sessionId]);
-
+  const sendMessage = (e) => {
+    e.preventDefault();
+    setInputValue('');
+    setMessages((prev) => [...prev, { type: 'user', text: inputValue }]);
+    if (channel) {
+      channel
+        .push('user_prompt', {
+          message: inputValue,
+          type: 'user',
+          context: context,
+        })
+        .receive('ok', (msg) => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              type: 'assistant',
+              text: msg,
+              isMarkdown: true,
+              isStreaming: true,
+            },
+          ]);
+        })
+        .receive('error', (error) => {
+          console.error('Liz Error', error);
+        });
+    }
+  };
   const startNewSession = () => {
     suppressCloseNoticeRef.current = true;
     currentMessageRef.current = { li: null, content: '' };
     setMessages([]);
     setInputValue('');
     setSessionId((prev) => prev + 1);
-  };
-
-  const sendMessage = (e) => {
-    e.preventDefault();
-    if (inputValue && ws && isConnected) {
-      const messagePayload = {
-        message: inputValue,
-        context: context || fallbackContext,
-      };
-      ws.send(JSON.stringify(messagePayload));
-      setMessages((prev) => [...prev, { type: 'user', text: inputValue }]);
-      setInputValue('');
-    }
   };
 
   const renderMessage = (message, index) => {
