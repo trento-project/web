@@ -5,6 +5,7 @@
     "DC": true,
     "Provider": "azure",
     "Id": "04b8f8c21f9fd8991224478e8c4362f8",
+    "State": "S_TRANSITION_ENGINE",
     "Cib": {
       "Configuration": {
         "Nodes": [
