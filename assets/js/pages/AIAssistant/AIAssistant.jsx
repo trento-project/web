@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm';
 import Button from '@common/Button';
 import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
 import { getFromConfig } from '@lib/config';
-import { Socket } from 'phoenix';
+import { initSocketConnection } from '@lib/network/socket';
 import { getUserProfile } from '@state/selectors/user';
 import { useSelector } from 'react-redux';
 
@@ -92,19 +92,16 @@ function AIAssistant() {
   const { id: userID } = useSelector(getUserProfile);
   useEffect(() => {
     if (userID) {
-      const newSocket = new Socket('/socket', {});
-      newSocket.connect();
-      setSocket(newSocket);
+      setSocket(initSocketConnection());
     }
   }, [userID]);
-
   useEffect(() => {
     if (socket) {
       const lizChannel = socket.channel(`liz:${userID}`, {});
 
       lizChannel.join().receive('ok', (msg) => {
-        setIsConnected(true);
         setChannel(lizChannel);
+        setIsConnected(true);
       });
       lizChannel.on('liz_pushed', (msg) => {
         setMessages((prev) => [
@@ -114,9 +111,11 @@ function AIAssistant() {
       });
       return () => {
         lizChannel.leave();
+        setIsConnected(false);
       };
     }
-  }, [socket, sessionId]);
+
+  }, [userID, socket, sessionId]);
 
   const sendMessage = (e) => {
     e.preventDefault();

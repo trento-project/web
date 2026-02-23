@@ -39,12 +39,9 @@ defmodule TrentoWeb.UserSocket do
     end
   end
 
-  def connect(_, socket, _) do
-    # Logger.error("Could not authenticate user socket: missing auth token")
-    # {:error, :missing_auth_token}
-
-    # bypass for testing via tui client
-    {:ok, assign(socket, :current_user_id, 1)}
+  def connect(_, _, _) do
+    Logger.error("Could not authenticate user socket: missing auth token")
+    {:error, :missing_auth_token}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
