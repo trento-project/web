@@ -93,14 +93,22 @@ jobs:
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
         shell: bash
 
-  test-backend-dev:
-    name: Backend Tests DEV (Run ${{ matrix.run }})
+  test-backend:
+    name: Backend Tests (Elixir ${{ matrix.elixir }}, Run ${{ matrix.run }})
     needs: [setup-matrix-env, elixir-deps, generate-matrix]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
+        elixir:
+          - ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+          - ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -111,8 +119,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@v5
         id: mix-cache
@@ -148,83 +156,24 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: backend-junit-reports-dev-run${{ matrix.run }}
-          path: junit-reports/*.xml
-          retention-days: 1
-
-  test-backend-bc:
-    name: Backend Tests BC (Run ${{ matrix.run }})
-    needs: [setup-matrix-env, elixir-deps, generate-matrix]
-    runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-      - name: Setup
-        id: setup-elixir
-        uses: erlef/setup-beam@v1
-        with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-      - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@v5
-        id: mix-cache
-        with:
-          path: |
-            deps
-            _build/${{ env.MIX_ENV }}
-            priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
-      - name: Compile
-        run: mix compile --warnings-as-errors
-      - name: "Docker compose dependencies"
-        uses: isbang/compose-action@v2.5.0
-        with:
-          compose-file: "./docker-compose.yaml"
-          down-flags: "--volumes"
-      - name: Run backend tests
-        env:
-          WRITE_JUNIT: 1
-        run: mix test --warnings-as-errors --max-cases 1
-      - name: Copy and sanitize JUnit reports
-        if: always()
-        run: |
-          mkdir -p ./junit-reports
-          for file in /tmp/*.xml; do
-            if [ -f "$file" ]; then
-              # Sanitize filename: GitHub Actions artifact names cannot contain colons
-              base=$(basename "$file" | tr ':' '-' | tr ' ' '_')
-              awk '{gsub(/:/, "-"); print}' "$file" > "./junit-reports/$base"
-            fi
-          done
-      - name: Upload backend test junit reports
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: backend-junit-reports-bc-run${{ matrix.run }}
+          name: backend-junit-reports-elixir${{ matrix.elixir }}-run${{ matrix.run }}
           path: junit-reports/*.xml
           retention-days: 1
 
   flaky-tests-analysis-dev:
-    needs: [setup-matrix-env, test-backend-dev, generate-matrix]
+    needs: [setup-matrix-env, test-backend, generate-matrix]
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
-      junit-artifact-pattern: backend-junit-reports-dev-*
+      junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
 
   flaky-tests-analysis-bc:
-    needs: [setup-matrix-env, test-backend-bc, generate-matrix]
+    needs: [setup-matrix-env, test-backend, generate-matrix]
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
-      junit-artifact-pattern: backend-junit-reports-bc-*
+      junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
