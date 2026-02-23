@@ -2,10 +2,10 @@
   "agent_id": "b767b3e9-e802-587e-a442-541d093b86b9",
   "discovery_type": "ha_cluster_discovery",
   "payload": {
-    "DC": false,
+    "DC": true,
     "Provider": "azure",
     "Id": "9c832998801e28cd70ad77380e82a5c0",
-    "State": "S_IDLE",
+    "State": "S_POLICY_ENGINE",
     "Cib": {
       "Configuration": {
         "Nodes": [
