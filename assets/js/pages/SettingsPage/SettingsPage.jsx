@@ -147,7 +147,12 @@ function SettingsPage() {
         alertingFetchLoading,
       },
     }),
-    [apiKeyLoading, suseManagerSettingsLoading, activityLogsSettingsLoading, alertingFetchLoading]
+    [
+      apiKeyLoading,
+      suseManagerSettingsLoading,
+      activityLogsSettingsLoading,
+      alertingFetchLoading,
+    ]
   );
 
   useAIContext(aiContext);
