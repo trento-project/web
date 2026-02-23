@@ -28,6 +28,9 @@ const hanaScenarioTypeEnum = () =>
     'unknown',
   ]);
 
+const stateEnum = () =>
+  faker.helpers.arrayElement(['S_IDLE', 'S_TRANSITION_ENGINE', 'stopped']);
+
 export const sbdDevicesFactory = Factory.define(() => ({
   device: faker.system.filePath(),
   status: faker.helpers.arrayElement(['healthy', 'unhealthy']),
@@ -168,6 +171,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     selected_checks: [],
     provider: cloudProviderEnum(),
     cib_last_written: format(faker.date.recent(), 'EEE MMM d h:mm:ss yyyy'),
+    state: stateEnum(),
     details,
   };
 });

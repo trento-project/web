@@ -37,6 +37,7 @@ import {
 
 import Resources from './Resources';
 import SBDDetails from './SBDDetails';
+import ClusterStatePill from './ClusterStatePill';
 import {
   getClusterOperations,
   getClusterHostOperations,
@@ -51,6 +52,7 @@ function ClusterDetails({
   details,
   hasSelectedChecks,
   hosts,
+  state,
   lastExecution = {},
   operationsEnabled = false,
   runningOperation,
@@ -84,6 +86,8 @@ function ClusterDetails({
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
   const someHostOnline = isSomeHostOnline(hosts);
+
+  const clusterState = state || 'unknown';
 
   const clusterOperations = getClusterOperations(
     clusterID,
@@ -243,6 +247,9 @@ function ClusterDetails({
               </Tooltip>
             </DisabledGuard>
           </div>
+        </div>
+        <div className="pb-3">
+          <ClusterStatePill state={clusterState} />
         </div>
       </div>
       {detailComponent}

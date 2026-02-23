@@ -266,7 +266,8 @@ defmodule Trento.Factory do
       type: ClusterType.hana_scale_up(),
       discovered_health: Health.passing(),
       designated_controller: true,
-      cib_last_written: Date.to_string(Faker.Date.forward(0))
+      cib_last_written: Date.to_string(Faker.Date.forward(0)),
+      state: :S_IDLE
     }
   end
 
@@ -317,7 +318,8 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      type: ClusterType.hana_scale_up()
+      type: ClusterType.hana_scale_up(),
+      state: :S_IDLE
     }
   end
 
@@ -330,7 +332,8 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: build(:hana_cluster_details)
+      details: build(:hana_cluster_details),
+      state: :S_IDLE
     }
   end
 
@@ -437,7 +440,8 @@ defmodule Trento.Factory do
       type: ClusterType.hana_scale_up(),
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      details: %{}
+      details: %{},
+      state: :S_IDLE
     }
   end
 

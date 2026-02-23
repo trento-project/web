@@ -35,7 +35,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       resources_number: resources_number,
       hosts_number: hosts_number,
       details: details,
-      health: health
+      health: health,
+      state: state
     },
     fn multi ->
       changeset =
@@ -48,7 +49,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           resources_number: resources_number,
           hosts_number: hosts_number,
           details: details,
-          health: health
+          health: health,
+          state: state
         })
 
       Ecto.Multi.insert(multi, :cluster, changeset)
@@ -97,7 +99,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       type: type,
       resources_number: resources_number,
       hosts_number: hosts_number,
-      details: details
+      details: details,
+      state: state
     },
     fn multi ->
       changeset =
@@ -110,7 +113,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
           type: type,
           resources_number: resources_number,
           hosts_number: hosts_number,
-          details: details
+          details: details,
+          state: state
         })
 
       Ecto.Multi.update(multi, :cluster, changeset)
