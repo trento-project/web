@@ -885,6 +885,7 @@
             "SBD_OPTS": "-C 600 -Z"
           },
           "Devices": null
-        }
+        },
+        "State": "S_IDLE"
       }
     }

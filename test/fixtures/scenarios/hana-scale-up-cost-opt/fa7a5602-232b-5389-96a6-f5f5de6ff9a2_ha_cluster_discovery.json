@@ -906,6 +906,7 @@
                     "Status": "healthy"
                 }
             ]
-        }
+        },
+        "State": "S_IDLE"
     }
 }
