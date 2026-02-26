@@ -18,13 +18,15 @@ env:
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
 
 jobs:
-  setup-matrix-env:
+  setup-matrix:
     runs-on: ubuntu-24.04
     outputs:
       ELIXIR_BC: ${{ steps.compute-matrix.outputs.ELIXIR_BC }}
       ERLANG_BC: ${{ steps.compute-matrix.outputs.ERLANG_BC }}
       ELIXIR_DEV: ${{ steps.compute-matrix.outputs.ELIXIR_DEV }}
       ERLANG_DEV: ${{ steps.compute-matrix.outputs.ERLANG_DEV }}
+      run_range: ${{ steps.compute-matrix.outputs.run_range }}
+      total-runs: ${{ steps.compute-matrix.outputs.total-runs }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -37,18 +39,20 @@ jobs:
           echo "ERLANG_BC=26.2.1" >> $GITHUB_OUTPUT
           echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
           echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+          echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
+          echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
 
   elixir-deps:
     name: Elixir test dependencies (Elixir ${{ matrix.elixir }})
-    needs: [setup-matrix-env]
+    needs: [setup-matrix]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -79,36 +83,22 @@ jobs:
           mix deps.compile --warnings-as-errors
           mix dialyzer --plt
 
-  generate-matrix:
-    runs-on: ubuntu-24.04
-    outputs:
-      matrix: ${{ steps.generate.outputs.matrix }}
-      total-runs: ${{ steps.generate.outputs.total-runs }}
-    steps:
-      - name: Generate Matrix
-        id: generate
-        run: |
-          echo "{\"run\": [$(seq -s, 1 ${{ env.NUM_RUNS }})]}" > matrix.json
-          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
-          echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
-        shell: bash
-
   test-backend:
     name: Backend Tests (Elixir ${{ matrix.elixir }}, Run ${{ matrix.run }})
-    needs: [setup-matrix-env, elixir-deps, generate-matrix]
+    needs: [setup-matrix, elixir-deps]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        run: ${{ fromJson(needs.generate-matrix.outputs.matrix).run }}
+        run: ${{ fromJson(needs.setup-matrix.outputs.run_range) }}
         elixir:
-          - ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-          - ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
         include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -160,20 +150,18 @@ jobs:
           path: junit-reports/*.xml
           retention-days: 1
 
-  flaky-tests-analysis-dev:
-    needs: [setup-matrix-env, test-backend, generate-matrix]
+  flaky-tests-analysis:
+    needs: [setup-matrix, test-backend]
     if: ${{ !cancelled() }}
+    strategy:
+      matrix:
+        include:
+          - suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_DEV }}"
+            junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-*
+          - suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_BC }}"
+            junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_BC }}-*
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}"
-      junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-*
-      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
-
-  flaky-tests-analysis-bc:
-    needs: [setup-matrix-env, test-backend, generate-matrix]
-    if: ${{ !cancelled() }}
-    uses: ./.github/workflows/flaky-tests-analysis.yaml
-    with:
-      suite-name: "Backend — Elixir ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}"
-      junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}-*
-      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
+      suite-name: ${{ matrix.suite-name }}
+      junit-artifact-pattern: ${{ matrix.junit-artifact-pattern }}
+      total-runs: ${{ needs.setup-matrix.outputs.total-runs }}
