@@ -50,6 +50,7 @@ function ClustersList() {
   const config = {
     pagination: true,
     usePadding: false,
+    hideMobile: true,
     columns: [
       {
         title: 'Health',
