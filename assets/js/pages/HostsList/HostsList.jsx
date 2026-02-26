@@ -255,6 +255,7 @@ function HostsList() {
           data={data}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
+          className="bg-gray-50 overflow-x-auto scrollbar [&::-webkit-scrollbar]:h-3 [&::-webkit-scrollbar-thumb]:border-4 [&::-webkit-scrollbar-thumb]:border-gray-50 [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb:hover]:bg-gray-400"
         />
       </div>
     </>
