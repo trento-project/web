@@ -172,7 +172,10 @@ defmodule Trento.Factory do
   alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias Trento.Users.User
 
-  alias Trento.Operations.V1.OperationCompleted
+  alias Trento.Operations.V1.{
+    OperationCompleted,
+    OperationErrorDetails
+  }
 
   alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
 
@@ -1376,7 +1379,33 @@ defmodule Trento.Factory do
       operation_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
       operation_type: Faker.Pokemon.name(),
-      result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED])
+      result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED]),
+      details: nil
+    }
+  end
+
+  def operation_completed_with_errors_v1_factory(attrs) do
+    operation_completed =
+      build(
+        :operation_completed_v1,
+        Map.drop(attrs, [:step, :target_errors])
+      )
+
+    step = Map.get(attrs, :step, Faker.Pokemon.name())
+
+    target_errors =
+      Map.get(attrs, :target_errors, %{
+        Faker.UUID.v4() => Faker.Lorem.sentence()
+      })
+
+    %OperationCompleted{
+      operation_completed
+      | details:
+          {:error_details,
+           %OperationErrorDetails{
+             step: step,
+             target_errors: target_errors
+           }}
     }
   end
 

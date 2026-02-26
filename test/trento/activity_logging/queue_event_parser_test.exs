@@ -87,6 +87,56 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                  queue_event: operation_completed
                })
     end
+
+    test "should add error details if the operation failed" do
+      %{
+        operation_id: operation_id,
+        group_id: group_id,
+        result: result,
+        details: {:error_details, %{step: failed_step, target_errors: target_errors}}
+      } =
+        operation_completed =
+        build(:operation_completed_with_errors_v1, operation_type: "saptuneapplysolution@v1")
+
+      assert %{
+               correlation_id: operation_id,
+               operation_id: operation_id,
+               resource_id: group_id,
+               operation: :saptune_solution_apply,
+               result: result,
+               failed_step: failed_step,
+               errors: target_errors
+             } ==
+               QueueEventParser.get_activity_metadata(:operation_completed, %{
+                 queue_event: operation_completed
+               })
+    end
+
+    test "should add only failed step if target errors are empty" do
+      %{
+        operation_id: operation_id,
+        group_id: group_id,
+        result: result,
+        details: {:error_details, %{step: failed_step}}
+      } =
+        operation_completed =
+        build(:operation_completed_with_errors_v1,
+          operation_type: "saptuneapplysolution@v1",
+          target_errors: %{}
+        )
+
+      assert %{
+               correlation_id: operation_id,
+               operation_id: operation_id,
+               resource_id: group_id,
+               operation: :saptune_solution_apply,
+               result: result,
+               failed_step: failed_step
+             } ==
+               QueueEventParser.get_activity_metadata(:operation_completed, %{
+                 queue_event: operation_completed
+               })
+    end
   end
 
   describe "checks customization" do

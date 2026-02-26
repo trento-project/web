@@ -6,12 +6,17 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   alias Trento.Users
   alias Trento.Users.User
 
+  alias Trento.Hosts
+
   alias Trento.Checks.V1.{
     CheckCustomizationApplied,
     CheckCustomizationReset
   }
 
-  alias Trento.Operations.V1.OperationCompleted
+  alias Trento.Operations.V1.{
+    OperationCompleted,
+    OperationErrorDetails
+  }
 
   alias Trento.Infrastructure.Operations
 
@@ -46,33 +51,37 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   def get_activity_metadata(
         :operation_completed,
         %{
-          queue_event: %OperationCompleted{
-            operation_id: operation_id,
-            group_id: group_id,
-            operation_type: operation_type,
-            result: result
-          }
+          queue_event:
+            %OperationCompleted{
+              operation_id: operation_id,
+              group_id: group_id,
+              operation_type: operation_type,
+              result: result
+            } = event
         }
       ) do
     operation = Operations.map_operation_type(operation_type)
 
-    case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
-      {:ok, [%{metadata: metadata}], _meta} ->
-        metadata
-        |> StructHelper.to_atomized_map()
-        |> Map.put(:operation, operation)
-        |> Map.put(:result, result)
-        |> Map.put(:correlation_id, operation_id)
+    metadata =
+      case ActivityLog.list_activity_log(%{type: "operation_requested", search: operation_id}) do
+        {:ok, [%{metadata: request_metadata}], _meta} ->
+          request_metadata
+          |> StructHelper.to_atomized_map()
+          |> Map.put(:operation, operation)
+          |> Map.put(:result, result)
+          |> Map.put(:correlation_id, operation_id)
 
-      _ ->
-        %{
-          correlation_id: operation_id,
-          resource_id: group_id,
-          operation: operation,
-          operation_id: operation_id,
-          result: result
-        }
-    end
+        _ ->
+          %{
+            correlation_id: operation_id,
+            resource_id: group_id,
+            operation: operation,
+            operation_id: operation_id,
+            result: result
+          }
+      end
+
+    maybe_put_error_details(metadata, event)
   end
 
   def get_activity_metadata(
@@ -115,4 +124,31 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   end
 
   def get_activity_metadata(_, _), do: %{}
+
+  defp maybe_put_error_details(metadata, %{
+         details:
+           {:error_details, %OperationErrorDetails{step: step, target_errors: target_errors}}
+       })
+       when map_size(target_errors) == 0 do
+    Map.put(metadata, :failed_step, step)
+  end
+
+  defp maybe_put_error_details(metadata, %{
+         details:
+           {:error_details, %OperationErrorDetails{step: step, target_errors: target_errors}}
+       }) do
+    errors =
+      Enum.into(target_errors, %{}, fn {host_id, error} ->
+        case Hosts.by_id(host_id) do
+          {:ok, %{hostname: name}} -> {name, error}
+          {:error, :not_found} -> {host_id, error}
+        end
+      end)
+
+    metadata
+    |> Map.put(:failed_step, step)
+    |> Map.put(:errors, errors)
+  end
+
+  defp maybe_put_error_details(metadata, _), do: metadata
 end
