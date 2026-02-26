@@ -84,12 +84,12 @@ defmodule TrentoWeb.LizChannel do
   def handle_info(:after_join, socket), do: {:noreply, socket}
 
   @impl true
-  def handle_in("user_prompt", payload, socket) do
+  def handle_in("user_prompt", payload, %{assigns: %{current_user: current_user}} = socket) do
     Logger.warning(inspect(payload))
-    current_user_id = 1
+    current_user_id = current_user.id
     {:ok, state} = Cachex.get(:liz, current_user_id)
     message = payload["message"]
-    context = payload["context"]
+    context = %{user_id: current_user_id}
 
     case state[:chain] do
       nil ->

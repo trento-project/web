@@ -4,6 +4,7 @@ defmodule Trento.AI.Brain do
   alias LangChain.Message
   alias LangChain.MCP.Adapter
   alias LangChain.Utils.ChainResult
+  alias Trento.AI.RAG
 
   @system_prompt """
   You are an expert AI assistant for SUSE Trento, a comprehensive solution for SAP applications management and monitoring.
@@ -86,6 +87,7 @@ defmodule Trento.AI.Brain do
           })
       })
       |> LLMChain.add_tools(list_mcp_functions())
+      |> LLMChain.add_tools(RAG.mcp_tool())
       |> LLMChain.add_message(Message.new_system!(@system_prompt))
       |> LLMChain.run(mode: :while_needs_response)
 
