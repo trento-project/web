@@ -268,45 +268,46 @@ function Table({
                 )}
               </tbody>
             </table>
-            {pagination && (
-              <Pagination
-                hasPrev={currentPage > 1}
-                hasNext={currentPage < totalPages}
-                currentItemsPerPage={currentItemsPerPage}
-                onSelect={(selection) => {
-                  switch (selection) {
-                    case 'prev':
-                      setCurrentPage(currentPage - 1);
-                      break;
-                    case 'next':
-                      setCurrentPage(currentPage + 1);
-                      break;
-                    case 'first':
-                      setCurrentPage(1);
-                      break;
-                    case 'last':
-                      setCurrentPage(totalPages);
-                      break;
-                    default:
-                  }
-                }}
-                onChangeItemsPerPage={(perPage) => {
-                  setCurrentItemsPerPage(perPage);
-                  setCurrentPage(1);
-                }}
-                pageStats={
-                  <PageStats
-                    selectedPage={Math.min(currentPage, totalPages)}
-                    itemsPresent={renderedData.length}
-                    itemsTotal={filteredData.length}
-                    currentItemsPerPage={currentItemsPerPage}
-                  />
-                }
-              />
-            )}
           </div>
         </div>
       </div>
+      {pagination && (
+        <Pagination
+          className="rounded-b"
+          hasPrev={currentPage > 1}
+          hasNext={currentPage < totalPages}
+          currentItemsPerPage={currentItemsPerPage}
+          onSelect={(selection) => {
+            switch (selection) {
+              case 'prev':
+                setCurrentPage(currentPage - 1);
+                break;
+              case 'next':
+                setCurrentPage(currentPage + 1);
+                break;
+              case 'first':
+                setCurrentPage(1);
+                break;
+              case 'last':
+                setCurrentPage(totalPages);
+                break;
+              default:
+            }
+          }}
+          onChangeItemsPerPage={(perPage) => {
+            setCurrentItemsPerPage(perPage);
+            setCurrentPage(1);
+          }}
+          pageStats={
+            <PageStats
+              selectedPage={Math.min(currentPage, totalPages)}
+              itemsPresent={renderedData.length}
+              itemsTotal={filteredData.length}
+              currentItemsPerPage={currentItemsPerPage}
+            />
+          }
+        />
+      )}
     </div>
   );
 }
