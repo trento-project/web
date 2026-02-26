@@ -79,12 +79,15 @@ jobs:
             find "$reports_dir" -name '*.xml' -exec cp {} "$flat_dir/" \;
           }
 
-          run_analysis() {
-            local reports_path="$1"
-
+          setup_analysis_env() {
             make venv-create
             source .venv/bin/activate
             make install-deps
+          }
+
+          run_analysis() {
+            local reports_path="$1"
+
             make PATH-TO-JUNIT-FILES="$reports_path" analyze-files 2>&1 | tail -n +2
           }
 
@@ -127,6 +130,7 @@ jobs:
 
           flatten_reports "$REPORTS_DIR" "$FLAT_DIR"
 
+          setup_analysis_env
           FLAKY_TEST_LIST=$(run_analysis "$FLAT_DIR")
 
           write_flaky_tests_summary "$FLAKY_TEST_LIST"
