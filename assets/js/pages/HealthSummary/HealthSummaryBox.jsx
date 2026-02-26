@@ -9,21 +9,21 @@ import React from 'react';
 const iconByHealth = {
   passing: () => (
     <EOS_CHECK_CIRCLE_OUTLINED
-      size={40}
+      size="100%"
       className="fill-green-600"
       style={{ opacity: 1 }}
     />
   ),
   warning: () => (
     <EOS_WARNING_OUTLINED
-      size={40}
+      size="100%"
       className="fill-yellow-400"
       style={{ opacity: 1 }}
     />
   ),
   critical: () => (
     <EOS_ERROR_OUTLINED
-      size={40}
+      size="100%"
       className="fill-red-600"
       style={{ opacity: 1 }}
     />
