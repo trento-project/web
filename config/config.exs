@@ -276,7 +276,12 @@ config :trento, Trento.RAGRepo, types: Trento.PostgrexTypes
 config :arcana,
   embedder: {:local, model: "BAAI/bge-large-en-v1.5"},
   llm: "google:gemini-2.5-flash",
-  repo: Trento.RAGRepo
+  repo: Trento.RAGRepo,
+  graph: [
+    enabled: true,
+    community_levels: 5,
+    resolution: 1.0
+  ]
 
 config :req_llm, google_api_key: System.get_env("GEMINI_API_KEY")
 

@@ -15,6 +15,7 @@ defmodule Trento.Application do
         # Required for dashboard async operations
         Arcana.TaskSupervisor,
         {Arcana.Embedder.Local, model: "BAAI/bge-large-en-v1.5"},
+        Arcana.Graph.NERServing,
         # Start the Telemetry supervisor
         TrentoWeb.Telemetry,
         # Start the PubSub system
