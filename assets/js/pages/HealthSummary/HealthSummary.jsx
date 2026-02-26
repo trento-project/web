@@ -18,7 +18,7 @@ function HealthSummary({
     <div
       className={classNames(
         className,
-        'tn-health-container flex flex-row justify-between space-x-4'
+        'tn-health-container flex flex-row justify-between space-x-2 lg:space-x-4'
       )}
     >
       <HealthSummaryBox
