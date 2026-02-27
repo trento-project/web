@@ -3,19 +3,12 @@ import { createPortal } from 'react-dom';
 import { EOS_CHAT, EOS_KEYBOARD_ARROW_DOWN } from 'eos-icons-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { v4 as uuidv4 } from 'uuid';
 import Button from '@common/Button';
 import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
 import { initSocketConnection } from '@lib/network/socket';
 import { getUserProfile } from '@state/selectors/user';
 import { useSelector } from 'react-redux';
-
-const createAssistantSessionSeed = () => {
-  if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
-    return window.crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-};
 
 const DEFAULT_GREETING_MESSAGE = {
   type: 'assistant',
@@ -148,7 +141,7 @@ function AIAssistant() {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
-  const assistantSessionSeedRef = useRef(createAssistantSessionSeed());
+  const [assistantSessionSeed] = useState(() => uuidv4());
   const shouldAnnounceReconnectRef = useRef(false);
   const [position, setPosition] = useState(() => {
     try {
@@ -202,7 +195,7 @@ function AIAssistant() {
   }, []);
   const [socket, setSocket] = useState(null);
   const [channel, setChannel] = useState(null);
-  const assistantSessionID = `${assistantSessionSeedRef.current}:${sessionId}`;
+  const assistantSessionID = `${assistantSessionSeed}:${sessionId}`;
 
   const { id: userID } = useSelector(getUserProfile);
   useEffect(() => {
