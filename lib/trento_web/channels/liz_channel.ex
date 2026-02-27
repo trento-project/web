@@ -89,6 +89,28 @@ defmodule TrentoWeb.LizChannel do
   end
 
   @impl true
+  def handle_in("assistant_status", _payload, %{assigns: %{liz_cache_key: cache_key}} = socket) do
+    with {:ok, state} <- get_session_state(cache_key),
+         {:ok, %{client_ref: mcp_client_ref, supervisor_pid: mcp_supervisor_pid}} <-
+           ensure_mcp_client(cache_key, state),
+         :ok <- Trento.AI.Brain.verify_mcp_connection(mcp_client_ref) do
+      put_session_state(
+        cache_key,
+        Map.merge(state, %{
+          mcp_client_ref: mcp_client_ref,
+          mcp_supervisor_pid: mcp_supervisor_pid,
+          channel_pid: self()
+        })
+      )
+
+      {:reply, {:ok, %{status: "online"}}, socket}
+    else
+      {:error, reason} ->
+        {:reply, {:ok, %{status: "offline", reason: assistant_error_reason(reason)}}, socket}
+    end
+  end
+
+  @impl true
   def terminate(_reason, %{assigns: %{liz_cache_key: cache_key}}) do
     cleanup_session(cache_key, self())
     :ok
@@ -102,45 +124,52 @@ defmodule TrentoWeb.LizChannel do
   end
 
   defp handle_user_prompt(socket, cache_key, state, message, context) do
-    case state[:chain] do
-      nil ->
-        with {:ok, %{client_ref: mcp_client_ref, supervisor_pid: mcp_supervisor_pid}} <-
-               ensure_mcp_client(cache_key, state),
-             {:ok, updated_chain} <- Trento.AI.Brain.exec_system_prompt(mcp_client_ref),
-             {:ok, final_chain, string_response} <-
-               Trento.AI.Brain.exec_user_prompt(message, updated_chain, context) do
-          put_session_state(
-            cache_key,
-            Map.merge(state, %{
-              chain: final_chain,
-              mcp_client_ref: mcp_client_ref,
-              mcp_supervisor_pid: mcp_supervisor_pid,
-              user_id: state[:user_id],
-              channel_pid: self()
-            })
-          )
+    with {:ok, %{client_ref: mcp_client_ref, supervisor_pid: mcp_supervisor_pid}} <-
+           ensure_mcp_client(cache_key, state),
+         :ok <- Trento.AI.Brain.verify_mcp_connection(mcp_client_ref) do
+      hydrated_state =
+        Map.merge(state, %{
+          mcp_client_ref: mcp_client_ref,
+          mcp_supervisor_pid: mcp_supervisor_pid,
+          channel_pid: self()
+        })
 
-          {:reply, {:ok, string_response}, socket}
-        else
-          {:error, reason} ->
-            Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
-            {:reply, {:error, assistant_error_payload(reason)}, socket}
-        end
-
-      current_chain ->
-        case Trento.AI.Brain.exec_user_prompt(message, current_chain, context) do
-          {:ok, updated_chain, string_response} ->
+      case hydrated_state[:chain] do
+        nil ->
+          with {:ok, updated_chain} <- Trento.AI.Brain.exec_system_prompt(mcp_client_ref),
+               {:ok, final_chain, string_response} <-
+                 Trento.AI.Brain.exec_user_prompt(message, updated_chain, context) do
             put_session_state(
               cache_key,
-              Map.merge(state, %{chain: updated_chain, channel_pid: self()})
+              Map.merge(hydrated_state, %{chain: final_chain})
             )
 
             {:reply, {:ok, string_response}, socket}
+          else
+            {:error, reason} ->
+              Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
+              {:reply, {:error, assistant_error_payload(reason)}, socket}
+          end
 
-          {:error, reason} ->
-            Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
-            {:reply, {:error, assistant_error_payload(reason)}, socket}
-        end
+        current_chain ->
+          case Trento.AI.Brain.exec_user_prompt(message, current_chain, context) do
+            {:ok, updated_chain, string_response} ->
+              put_session_state(
+                cache_key,
+                Map.merge(hydrated_state, %{chain: updated_chain})
+              )
+
+              {:reply, {:ok, string_response}, socket}
+
+            {:error, reason} ->
+              Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
+              {:reply, {:error, assistant_error_payload(reason)}, socket}
+          end
+      end
+    else
+      {:error, reason} ->
+        Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
+        {:reply, {:error, assistant_error_payload(reason)}, socket}
     end
   end
 

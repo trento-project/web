@@ -25,6 +25,8 @@ const DEFAULT_GREETING_MESSAGE = {
 };
 
 const USER_PROMPT_TIMEOUT_MS = 20000;
+const STATUS_POLL_INTERVAL_MS = 5000;
+const JOIN_RETRY_INTERVAL_MS = 5000;
 const BACK_ONLINE_MESSAGE = 'Liz is back online. You can continue chatting.';
 
 const getAssistantErrorMessage = (reason) => {
@@ -143,6 +145,7 @@ function AIAssistant() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [footerOffset, setFooterOffset] = useState(24);
   const [sessionId, setSessionId] = useState(0);
+  const [joinRetryNonce, setJoinRetryNonce] = useState(0);
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
@@ -276,7 +279,59 @@ function AIAssistant() {
       setIsConnected(false);
       setIsLoading(false);
     };
-  }, [assistantSessionID, socketUserID, socket]);
+  }, [assistantSessionID, socketUserID, socket, joinRetryNonce]);
+
+  useEffect(() => {
+    if (!socket || isConnected || !shouldAnnounceReconnectRef.current)
+      return undefined;
+
+    const intervalId = setInterval(() => {
+      setJoinRetryNonce((prev) => prev + 1);
+    }, JOIN_RETRY_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
+  }, [socket, isConnected]);
+
+  useEffect(() => {
+    if (!channel || isConnected) return undefined;
+
+    const intervalId = setInterval(() => {
+      channel
+        .push('assistant_status', {}, USER_PROMPT_TIMEOUT_MS)
+        .receive('ok', (response) => {
+          if (response?.status === 'online') {
+            setIsConnected(true);
+            setMessages((prev) => {
+              const restoredMessages = restoreGreetingOnReconnect(prev);
+              if (!shouldAnnounceReconnectRef.current) return restoredMessages;
+
+              shouldAnnounceReconnectRef.current = false;
+              return appendAssistantNotice(
+                restoredMessages,
+                BACK_ONLINE_MESSAGE,
+                'assistant_back_online'
+              );
+            });
+            return;
+          }
+
+          if (shouldArmReconnectAnnouncement(response?.reason)) {
+            shouldAnnounceReconnectRef.current = true;
+          }
+          setIsConnected(false);
+        })
+        .receive('error', () => {
+          shouldAnnounceReconnectRef.current = true;
+          setIsConnected(false);
+        })
+        .receive('timeout', () => {
+          shouldAnnounceReconnectRef.current = true;
+          setIsConnected(false);
+        });
+    }, STATUS_POLL_INTERVAL_MS);
+
+    return () => clearInterval(intervalId);
+  }, [channel, isConnected]);
 
   const sendMessage = (e) => {
     e.preventDefault();
