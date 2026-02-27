@@ -1,9 +1,7 @@
 defmodule Trento.AI.RAG do
   @moduledoc false
-  alias Trento.Users
+  alias Trento.AI.Policy
   alias LangChain.Function
-  import Trento.Support.AbilitiesHelper
-  @behaviour Bodyguard.Policy
   require Logger
 
   def ask(question_str) do
@@ -22,14 +20,13 @@ defmodule Trento.AI.RAG do
         properties: %{
           question: %{
             type: "string",
-            description: "A simple question that can be answered byreferring to the docs."
+            description: "A simple question that can be answered by referring to the docs."
           }
         },
         required: ["question"]
       },
       function: fn %{"question" => question_str} = _args, %{user_id: user_id} = _context ->
-        # This uses the user_id provided through the context to call our Elixir function.
-        case authorize(:ask, user_id) do
+        case Policy.is_authorized_call?(:ask, user_id) do
           true ->
             answer = ask(question_str)
             {:ok, Jason.encode!(answer)}
@@ -40,11 +37,4 @@ defmodule Trento.AI.RAG do
       end
     })
   end
-
-  def authorize(:ask, user_id) do
-    {:ok, user} = Users.get_user(user_id)
-    authorize(:ask, user, :ok)
-  end
-
-  def authorize(:ask, user, _), do: has_global_ability?(user)
 end
