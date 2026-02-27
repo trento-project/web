@@ -19,6 +19,7 @@ defmodule Trento.Application do
         TrentoWeb.Telemetry,
         # Start the PubSub system
         {Phoenix.PubSub, name: Trento.PubSub},
+        {Registry, keys: :unique, name: Trento.AI.Registry},
         {Cachex, [:activity_correlations]},
         Supervisor.child_spec({Cachex, [:liz]}, id: AICachex),
         {Task.Supervisor, name: Trento.TasksSupervisor},
