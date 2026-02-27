@@ -69,33 +69,6 @@ export const getAccessTokenFromStore = () =>
 export const getRefreshTokenFromStore = () =>
   getTokenFromStore(STORAGE_REFRESH_TOKEN_IDENTIFIER);
 
-const decodeBase64Url = (value) => {
-  const base64 = value.replace(/-/g, '+').replace(/_/g, '/');
-  const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
-  return atob(padded);
-};
-
-export const getAccessTokenSubject = () => {
-  const accessToken = getAccessTokenFromStore();
-  if (!accessToken) return undefined;
-
-  const parts = accessToken.split('.');
-  if (parts.length < 2) return undefined;
-
-  try {
-    const payload = JSON.parse(decodeBase64Url(parts[1]));
-    const sub = payload?.sub;
-    if (typeof sub === 'number') return sub;
-    if (typeof sub === 'string' && sub.length > 0) {
-      const numeric = Number(sub);
-      return Number.isNaN(numeric) ? sub : numeric;
-    }
-    return undefined;
-  } catch (_error) {
-    return undefined;
-  }
-};
-
 export const clearCredentialsFromStore = () => {
   window.sessionStorage.removeItem(STORAGE_ACCESS_TOKEN_IDENTIFIER);
   window.sessionStorage.removeItem(STORAGE_REFRESH_TOKEN_IDENTIFIER);

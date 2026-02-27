@@ -60,7 +60,6 @@ import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 
 import { getUserProfile } from '@state/selectors/user';
-import { getAccessTokenSubject } from '@lib/auth';
 
 const CLOSE_CHANNEL_EVENT = 'close';
 
@@ -297,8 +296,6 @@ function* watchChannelEvents(socket, channelName, events) {
 
 export function* watchSocketEvents(socket) {
   const { id: userID } = yield select(getUserProfile);
-  const tokenUserID = yield call(getAccessTokenSubject);
-  const effectiveUserID = tokenUserID || userID;
 
   yield all([
     fork(watchChannelEvents, socket, 'monitoring:hosts', hostEvents),
@@ -307,11 +304,11 @@ export function* watchSocketEvents(socket) {
     fork(watchChannelEvents, socket, 'monitoring:databases', databaseEvents),
     fork(watchChannelEvents, socket, 'monitoring:executions', executionEvents),
     fork(watchChannelEvents, socket, 'monitoring:operations', operationEvents),
-    fork(watchChannelEvents, socket, `users:${effectiveUserID}`, userEvents),
+    fork(watchChannelEvents, socket, `users:${userID}`, userEvents),
     fork(
       watchChannelEvents,
       socket,
-      `activity_log:${effectiveUserID}`,
+      `activity_log:${userID}`,
       activityLogEvents
     ),
   ]);

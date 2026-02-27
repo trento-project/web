@@ -6,7 +6,6 @@ import remarkGfm from 'remark-gfm';
 import Button from '@common/Button';
 import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
 import { initSocketConnection } from '@lib/network/socket';
-import { getAccessTokenSubject } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
 import { useSelector } from 'react-redux';
 
@@ -206,17 +205,16 @@ function AIAssistant() {
   const assistantSessionID = `${assistantSessionSeedRef.current}:${sessionId}`;
 
   const { id: userID } = useSelector(getUserProfile);
-  const socketUserID = getAccessTokenSubject() || userID;
   useEffect(() => {
-    if (socketUserID) {
+    if (userID) {
       setSocket(initSocketConnection());
     }
-  }, [socketUserID]);
+  }, [userID]);
 
   useEffect(() => {
     if (!socket) return undefined;
 
-    const lizChannel = socket.channel(`liz:${socketUserID}`, {
+    const lizChannel = socket.channel(`liz:${userID}`, {
       assistant_session_id: assistantSessionID,
     });
 
@@ -279,7 +277,7 @@ function AIAssistant() {
       setIsConnected(false);
       setIsLoading(false);
     };
-  }, [assistantSessionID, socketUserID, socket, joinRetryNonce]);
+  }, [assistantSessionID, userID, socket, joinRetryNonce]);
 
   useEffect(() => {
     if (!socket || isConnected || !shouldAnnounceReconnectRef.current)
@@ -380,7 +378,6 @@ function AIAssistant() {
           });
         })
         .receive('error', (error) => {
-          console.error('Liz Error', error);
           setIsLoading(false);
           if (shouldArmReconnectAnnouncement(error?.reason)) {
             setIsConnected(false);
