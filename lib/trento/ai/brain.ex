@@ -1,4 +1,5 @@
 defmodule Trento.AI.Brain do
+  @moduledoc false
   alias LangChain.Chains.LLMChain
   alias LangChain.ChatModels.ChatGoogleAI
   alias LangChain.Message
