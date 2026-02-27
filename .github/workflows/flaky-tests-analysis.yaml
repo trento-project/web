@@ -25,6 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Download JUnit reports artifacts
+        id: download-reports
         uses: actions/download-artifact@v7
         with:
           path: junit-reports
@@ -113,15 +114,18 @@ jobs:
             fi
           }
 
-          REPORTS_DIR="../../junit-reports"
-          FLAT_DIR="../../junit-reports-flat"
-          FAILED_DIR="../../failed-junit-reports"
+          REPORTS_DIR="${{ steps.download-reports.outputs.download-path }}"
+          FLAT_DIR="$RUNNER_TEMP/junit-reports-flat"
+          FAILED_DIR="$RUNNER_TEMP/failed-junit-reports"
           EXPECTED_RUNS=${{ inputs.total-runs }}
 
           process_runs "$REPORTS_DIR" "$FAILED_DIR"
 
           if [ "$(ls -A "$FAILED_DIR" 2>/dev/null)" ]; then
             echo "has-failed-reports=true" >> $GITHUB_OUTPUT
+            echo "failed-reports-dir=$FAILED_DIR" >> $GITHUB_OUTPUT
+          else
+            echo "has-failed-reports=false" >> $GITHUB_OUTPUT
           fi
 
           if [ "$TOTAL_COMPLETED" -gt 0 ]; then
@@ -144,9 +148,9 @@ jobs:
         id: artifact-name
         run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
-        if: steps.analyze.outputs.has-failed-reports == 'true'
+        if: fromJson(steps.analyze.outputs.has-failed-reports)
         uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact-name.outputs.value }}
-          path: failed-junit-reports/
+          path: ${{ steps.analyze.outputs.failed-reports-dir }}
           retention-days: 7

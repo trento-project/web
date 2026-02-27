@@ -5,7 +5,7 @@ on:
     - cron: "0 2 * * *" # Runs every day at 2:00 AM UTC
   workflow_dispatch:
     inputs:
-      num_containers:
+      num_runs:
         description: "Number of containers to use (Max: 200)"
         required: false
         default: "100"
@@ -113,7 +113,7 @@ jobs:
       total-runs: ${{ steps.generate.outputs.total-runs }}
     steps:
       - name: Set environment variable for NUM_CONTAINERS
-        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_containers || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
+        run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_runs || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
       - name: Generate Matrix
         id: generate
         run: |
