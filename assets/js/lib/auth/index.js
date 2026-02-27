@@ -14,9 +14,7 @@ const ensureSuccessfulResponse = (response) => {
 };
 
 export const login = (credentials) =>
-  authClient
-    .post('/api/session', credentials)
-    .then(ensureSuccessfulResponse);
+  authClient.post('/api/session', credentials).then(ensureSuccessfulResponse);
 
 export const ssoEnrollment = (credentials) =>
   authClient

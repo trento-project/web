@@ -67,7 +67,9 @@ const upsertAssistantNotice = (messages, text, noticeCode) => {
   if (hasSameNotice) return messages;
 
   const hasOnlyGreeting =
-    messages.length === 1 && messages[0].type === 'assistant' && messages[0].isGreeting;
+    messages.length === 1 &&
+    messages[0].type === 'assistant' &&
+    messages[0].isGreeting;
   if (hasOnlyGreeting) {
     return [buildAssistantNoticeMessage(text, noticeCode)];
   }
@@ -81,7 +83,9 @@ const isReconnectNoticeCode = (noticeCode = '') =>
   noticeCode.includes('assistant_backend_unavailable');
 
 const restoreGreetingOnReconnect = (messages) => {
-  const hasGreeting = messages.some((message) => message.type === 'assistant' && message.isGreeting);
+  const hasGreeting = messages.some(
+    (message) => message.type === 'assistant' && message.isGreeting
+  );
   if (hasGreeting) return messages;
 
   const hasReconnectNotice = messages.some(
@@ -260,7 +264,10 @@ function AIAssistant() {
       });
 
     lizChannel.on('liz_pushed', (msg) => {
-      setMessages((prev) => [...prev, { type: 'system', text: msg.liz_response }]);
+      setMessages((prev) => [
+        ...prev,
+        { type: 'system', text: msg.liz_response },
+      ]);
     });
 
     return () => {
