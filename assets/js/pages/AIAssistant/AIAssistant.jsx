@@ -21,6 +21,101 @@ const createAssistantSessionSeed = () => {
 const DEFAULT_GREETING_MESSAGE = {
   type: 'assistant',
   text: 'Hi, I am Liz. I can help with Trento health, hosts, clusters, SAP systems, and checks. What would you like to look at?',
+  isGreeting: true,
+};
+
+const USER_PROMPT_TIMEOUT_MS = 20000;
+const BACK_ONLINE_MESSAGE = 'Liz is back online. You can continue chatting.';
+
+const getAssistantErrorMessage = (reason) => {
+  if (reason === 'assistant_backend_unavailable') {
+    return 'Liz backend is unavailable right now. Please start the MCP service and try again.';
+  }
+
+  if (reason === 'assistant_session_not_initialized') {
+    return 'Assistant session is not ready yet. Please start a new session or retry in a moment.';
+  }
+
+  if (reason === 'assistant_request_failed') {
+    return 'Liz ran into an internal error while processing that request. Please try again.';
+  }
+
+  if (reason === 'empty_message') {
+    return 'Please type a message first.';
+  }
+
+  return 'Liz could not answer right now. Please verify the MCP service is running, then try again.';
+};
+
+const shouldArmReconnectAnnouncement = (reason) =>
+  !reason || reason === 'assistant_backend_unavailable';
+
+const buildAssistantNoticeMessage = (text, noticeCode) => ({
+  type: 'assistant',
+  text,
+  isNotice: true,
+  noticeCode,
+});
+
+const upsertAssistantNotice = (messages, text, noticeCode) => {
+  const hasSameNotice = messages.some(
+    (message) =>
+      message.type === 'assistant' &&
+      message.isNotice &&
+      (message.noticeCode === noticeCode || message.text === text)
+  );
+  if (hasSameNotice) return messages;
+
+  const hasOnlyGreeting =
+    messages.length === 1 && messages[0].type === 'assistant' && messages[0].isGreeting;
+  if (hasOnlyGreeting) {
+    return [buildAssistantNoticeMessage(text, noticeCode)];
+  }
+
+  return [...messages, buildAssistantNoticeMessage(text, noticeCode)];
+};
+
+const isReconnectNoticeCode = (noticeCode = '') =>
+  noticeCode === 'join_timeout' ||
+  noticeCode === 'prompt_timeout' ||
+  noticeCode.includes('assistant_backend_unavailable');
+
+const restoreGreetingOnReconnect = (messages) => {
+  const hasGreeting = messages.some((message) => message.type === 'assistant' && message.isGreeting);
+  if (hasGreeting) return messages;
+
+  const hasReconnectNotice = messages.some(
+    (message) =>
+      message.type === 'assistant' &&
+      message.isNotice &&
+      isReconnectNoticeCode(message.noticeCode || '')
+  );
+  if (!hasReconnectNotice) return messages;
+
+  const filteredMessages = messages.filter(
+    (message) =>
+      !(
+        message.type === 'assistant' &&
+        message.isNotice &&
+        isReconnectNoticeCode(message.noticeCode || '')
+      )
+  );
+
+  if (filteredMessages.length === 0) return [DEFAULT_GREETING_MESSAGE];
+
+  return [...filteredMessages, DEFAULT_GREETING_MESSAGE];
+};
+
+const appendAssistantNotice = (messages, text, noticeCode) => {
+  const hasSameNotice = messages.some(
+    (message) =>
+      message.type === 'assistant' &&
+      message.isNotice &&
+      (message.noticeCode === noticeCode || message.text === text)
+  );
+  if (hasSameNotice) return messages;
+
+  return [...messages, buildAssistantNoticeMessage(text, noticeCode)];
 };
 
 function AIAssistant() {
@@ -48,6 +143,7 @@ function AIAssistant() {
   const containerRef = useRef(null);
   const inputRef = useRef(null);
   const assistantSessionSeedRef = useRef(createAssistantSessionSeed());
+  const shouldAnnounceReconnectRef = useRef(false);
   const [position, setPosition] = useState(() => {
     try {
       const saved = localStorage.getItem('aiAssistantPosition');
@@ -122,10 +218,45 @@ function AIAssistant() {
       .receive('ok', () => {
         setChannel(lizChannel);
         setIsConnected(true);
+        setMessages((prev) => {
+          const restoredMessages = restoreGreetingOnReconnect(prev);
+          if (!shouldAnnounceReconnectRef.current) return restoredMessages;
+
+          shouldAnnounceReconnectRef.current = false;
+          return appendAssistantNotice(
+            restoredMessages,
+            BACK_ONLINE_MESSAGE,
+            'assistant_back_online'
+          );
+        });
       })
-      .receive('error', () => {
+      .receive('error', (error) => {
         setChannel(null);
         setIsConnected(false);
+        setIsLoading(false);
+        if (shouldArmReconnectAnnouncement(error?.reason)) {
+          shouldAnnounceReconnectRef.current = true;
+        }
+        setMessages((prev) =>
+          upsertAssistantNotice(
+            prev,
+            getAssistantErrorMessage(error?.reason),
+            `join_error:${error?.reason || 'unknown'}`
+          )
+        );
+      })
+      .receive('timeout', () => {
+        setChannel(null);
+        setIsConnected(false);
+        setIsLoading(false);
+        shouldAnnounceReconnectRef.current = true;
+        setMessages((prev) =>
+          upsertAssistantNotice(
+            prev,
+            'Connection to Liz timed out. Please check backend services and retry.',
+            'join_timeout'
+          )
+        );
       });
 
     lizChannel.on('liz_pushed', (msg) => {
@@ -151,33 +282,66 @@ function AIAssistant() {
     if (channel) {
       setIsLoading(true);
       channel
-        .push('user_prompt', {
-          message: userMessage,
-          type: 'user',
-          context: context || fallbackContext,
-        })
+        .push(
+          'user_prompt',
+          {
+            message: userMessage,
+            type: 'user',
+            context: context || fallbackContext,
+          },
+          USER_PROMPT_TIMEOUT_MS
+        )
         .receive('ok', (msg) => {
           setIsLoading(false);
-          setMessages((prev) => [
-            ...prev,
-            {
-              type: 'assistant',
-              text: msg,
-              isMarkdown: true,
-              isStreaming: true,
-            },
-          ]);
+          setIsConnected(true);
+          setMessages((prev) => {
+            let nextMessages = prev;
+
+            if (shouldAnnounceReconnectRef.current) {
+              shouldAnnounceReconnectRef.current = false;
+              nextMessages = appendAssistantNotice(
+                restoreGreetingOnReconnect(nextMessages),
+                BACK_ONLINE_MESSAGE,
+                'assistant_back_online'
+              );
+            }
+
+            return [
+              ...nextMessages,
+              {
+                type: 'assistant',
+                text: msg,
+                isMarkdown: true,
+                isStreaming: true,
+              },
+            ];
+          });
         })
         .receive('error', (error) => {
           console.error('Liz Error', error);
           setIsLoading(false);
-          setMessages((prev) => [
-            ...prev,
-            {
-              type: 'assistant',
-              text: 'I could not answer right now. Please try again in a few seconds.',
-            },
-          ]);
+          if (shouldArmReconnectAnnouncement(error?.reason)) {
+            setIsConnected(false);
+            shouldAnnounceReconnectRef.current = true;
+          }
+          setMessages((prev) =>
+            upsertAssistantNotice(
+              prev,
+              getAssistantErrorMessage(error?.reason),
+              `prompt_error:${error?.reason || 'unknown'}`
+            )
+          );
+        })
+        .receive('timeout', () => {
+          setIsLoading(false);
+          shouldAnnounceReconnectRef.current = true;
+          setMessages((prev) =>
+            upsertAssistantNotice(
+              prev,
+              'Liz did not respond in time. Please retry once services are healthy.',
+              'prompt_timeout'
+            )
+          );
         });
     } else {
       setIsLoading(false);

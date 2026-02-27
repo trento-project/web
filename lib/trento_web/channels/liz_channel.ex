@@ -21,22 +21,36 @@ defmodule TrentoWeb.LizChannel do
 
       case resolve_plain_pat(current_user_id, user) do
         {:ok, plain_pat} ->
-          Cachex.put(
-            :liz,
-            cache_key,
+          base_state =
             Map.merge(existing_state, %{
               pat: plain_pat,
               channel_pid: self(),
               user_id: current_user_id,
               assistant_session_id: assistant_session_id
             })
-          )
 
-          {:ok,
-           socket
-           |> assign(:current_user, user)
-           |> assign(:assistant_session_id, assistant_session_id)
-           |> assign(:liz_cache_key, cache_key)}
+          with {:ok, %{client_ref: mcp_client_ref, supervisor_pid: mcp_supervisor_pid}} <-
+                 ensure_mcp_client(cache_key, base_state),
+               :ok <- Trento.AI.Brain.verify_mcp_connection(mcp_client_ref) do
+            put_session_state(
+              cache_key,
+              Map.merge(base_state, %{
+                mcp_client_ref: mcp_client_ref,
+                mcp_supervisor_pid: mcp_supervisor_pid
+              })
+            )
+
+            {:ok,
+             %{assistant_ready: true},
+             socket
+             |> assign(:current_user, user)
+             |> assign(:assistant_session_id, assistant_session_id)
+             |> assign(:liz_cache_key, cache_key)}
+          else
+            {:error, reason} ->
+              Logger.error("Assistant backend unavailable for #{cache_key}: #{inspect(reason)}")
+              {:error, %{reason: assistant_error_reason(reason)}}
+          end
 
         {:error, reason} ->
           Logger.error("Could not resolve personal access token: #{inspect(reason)}")
@@ -110,7 +124,7 @@ defmodule TrentoWeb.LizChannel do
         else
           {:error, reason} ->
             Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
-            {:reply, {:error, %{reason: "assistant_request_failed"}}, socket}
+            {:reply, {:error, assistant_error_payload(reason)}, socket}
         end
 
       current_chain ->
@@ -125,7 +139,7 @@ defmodule TrentoWeb.LizChannel do
 
           {:error, reason} ->
             Logger.error("Could not process liz prompt for #{cache_key}: #{inspect(reason)}")
-            {:reply, {:error, %{reason: "assistant_request_failed"}}, socket}
+            {:reply, {:error, assistant_error_payload(reason)}, socket}
         end
     end
   end
@@ -262,6 +276,35 @@ defmodule TrentoWeb.LizChannel do
 
   defp state_key(current_user_id, assistant_session_id),
     do: "#{current_user_id}:#{assistant_session_id}"
+
+  defp assistant_error_payload(reason), do: %{reason: assistant_error_reason(reason)}
+
+  defp assistant_error_reason({:mcp_unavailable, _reason}), do: "assistant_backend_unavailable"
+
+  defp assistant_error_reason(reason) do
+    if backend_unavailable_reason?(reason) do
+      "assistant_backend_unavailable"
+    else
+      "assistant_request_failed"
+    end
+  end
+
+  defp backend_unavailable_reason?(reason) do
+    text =
+      reason
+      |> inspect()
+      |> String.downcase()
+
+    String.contains?(text, "econnrefused") or
+      String.contains?(text, "connection refused") or
+      String.contains?(text, "mcp_unavailable") or
+      String.contains?(text, "send_failure") or
+      String.contains?(text, "request_timeout") or
+      String.contains?(text, "http_request_failed") or
+      String.contains?(text, "transporterror") or
+      String.contains?(text, "session_expired") or
+      String.contains?(text, "client_call_exit")
+  end
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
