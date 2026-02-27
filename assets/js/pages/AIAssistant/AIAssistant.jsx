@@ -5,10 +5,23 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Button from '@common/Button';
 import { useAIAssistantContext } from '../../contexts/AIAssistantContext';
-import { getFromConfig } from '@lib/config';
 import { initSocketConnection } from '@lib/network/socket';
+import { getAccessTokenSubject } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
 import { useSelector } from 'react-redux';
+
+const createAssistantSessionSeed = () => {
+  if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
+const DEFAULT_GREETING_MESSAGE = {
+  type: 'assistant',
+  text: 'Hi, I am Liz. I can help with Trento health, hosts, clusters, SAP systems, and checks. What would you like to look at?',
+};
 
 function AIAssistant() {
   const { context } = useAIAssistantContext();
@@ -24,18 +37,17 @@ function AIAssistant() {
       },
     };
   }, []);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([DEFAULT_GREETING_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
-  const [ws, setWs] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [footerOffset, setFooterOffset] = useState(24);
   const [sessionId, setSessionId] = useState(0);
   const messagesEndRef = useRef(null);
-  const currentMessageRef = useRef({ li: null, content: '' });
-  const suppressCloseNoticeRef = useRef(false);
   const containerRef = useRef(null);
   const inputRef = useRef(null);
+  const assistantSessionSeedRef = useRef(createAssistantSessionSeed());
   const [position, setPosition] = useState(() => {
     try {
       const saved = localStorage.getItem('aiAssistantPosition');
@@ -88,47 +100,64 @@ function AIAssistant() {
   }, []);
   const [socket, setSocket] = useState(null);
   const [channel, setChannel] = useState(null);
+  const assistantSessionID = `${assistantSessionSeedRef.current}:${sessionId}`;
 
   const { id: userID } = useSelector(getUserProfile);
+  const socketUserID = getAccessTokenSubject() || userID;
   useEffect(() => {
-    if (userID) {
+    if (socketUserID) {
       setSocket(initSocketConnection());
     }
-  }, [userID]);
-  useEffect(() => {
-    if (socket) {
-      const lizChannel = socket.channel(`liz:${userID}`, {});
+  }, [socketUserID]);
 
-      lizChannel.join().receive('ok', (msg) => {
+  useEffect(() => {
+    if (!socket) return undefined;
+
+    const lizChannel = socket.channel(`liz:${socketUserID}`, {
+      assistant_session_id: assistantSessionID,
+    });
+
+    lizChannel
+      .join()
+      .receive('ok', () => {
         setChannel(lizChannel);
         setIsConnected(true);
-      });
-      lizChannel.on('liz_pushed', (msg) => {
-        setMessages((prev) => [
-          ...prev,
-          { type: 'system', text: msg.liz_response },
-        ]);
-      });
-      return () => {
-        lizChannel.leave();
+      })
+      .receive('error', () => {
+        setChannel(null);
         setIsConnected(false);
-      };
-    }
+      });
 
-  }, [userID, socket, sessionId]);
+    lizChannel.on('liz_pushed', (msg) => {
+      setMessages((prev) => [...prev, { type: 'system', text: msg.liz_response }]);
+    });
+
+    return () => {
+      lizChannel.leave();
+      setChannel(null);
+      setIsConnected(false);
+      setIsLoading(false);
+    };
+  }, [assistantSessionID, socketUserID, socket]);
 
   const sendMessage = (e) => {
     e.preventDefault();
+    const userMessage = inputValue.trim();
+    if (isLoading || !userMessage) return;
+
     setInputValue('');
-    setMessages((prev) => [...prev, { type: 'user', text: inputValue }]);
+    setMessages((prev) => [...prev, { type: 'user', text: userMessage }]);
+
     if (channel) {
+      setIsLoading(true);
       channel
         .push('user_prompt', {
-          message: inputValue,
+          message: userMessage,
           type: 'user',
-          context: context,
+          context: context || fallbackContext,
         })
         .receive('ok', (msg) => {
+          setIsLoading(false);
           setMessages((prev) => [
             ...prev,
             {
@@ -141,14 +170,31 @@ function AIAssistant() {
         })
         .receive('error', (error) => {
           console.error('Liz Error', error);
+          setIsLoading(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              type: 'assistant',
+              text: 'I could not answer right now. Please try again in a few seconds.',
+            },
+          ]);
         });
+    } else {
+      setIsLoading(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: 'assistant',
+          text: 'Assistant is not connected yet. Please retry in a moment.',
+        },
+      ]);
     }
   };
+
   const startNewSession = () => {
-    suppressCloseNoticeRef.current = true;
-    currentMessageRef.current = { li: null, content: '' };
-    setMessages([]);
+    setMessages([DEFAULT_GREETING_MESSAGE]);
     setInputValue('');
+    setIsLoading(false);
     setSessionId((prev) => prev + 1);
   };
 
@@ -399,6 +445,14 @@ function AIAssistant() {
                 </div>
               );
             })}
+            {isLoading && (
+              <div className="p-4 rounded-lg shadow-sm animate-fade-in text-sm bg-white border-l-4 border-jungle-green-600 text-gray-800 ai-assistant-message">
+                <span className="font-semibold text-jungle-green-700 text-xs block mb-1">
+                  Liz
+                </span>
+                <span className="animate-pulse">Liz is thinking...</span>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -418,10 +472,10 @@ function AIAssistant() {
             <Button
               type="default-fit"
               size="small"
-              disabled={!isConnected || !inputValue}
+              disabled={!isConnected || isLoading || !inputValue.trim()}
               asSubmit
             >
-              Send
+              {isLoading ? 'Sending...' : 'Send'}
             </Button>
           </form>
         </div>
