@@ -129,8 +129,9 @@ defmodule Trento.MixProject do
       {:phoenix_html_helpers, "~> 1.0"},
       {:pow_assent, "~> 0.4.18"},
       {:samly, "~> 1.0"},
-      {:langchain, "~> 0.4.0"},
-      {:langchain_mcp, "~> 0.1"}
+      {:langchain, "~> 0.6.0"},
+      {:langchain_mcp, github: "gagandeepb/langchain_mcp", ref: "0dc70de3aa5b5e062cdedecc9c23bc4d686533a2"},
+      {:sagents, "~> 0.2.1"}
     ]
   end
 
