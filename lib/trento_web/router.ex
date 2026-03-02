@@ -271,6 +271,7 @@ defmodule TrentoWeb.Router do
 
         get "/hosts/:id/cpu", ChartController, :host_cpu
         get "/hosts/:id/memory", ChartController, :host_memory
+        get "/hosts/:id/filesystem", ChartController, :host_filesystem
       end
     end
 

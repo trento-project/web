@@ -124,4 +124,31 @@ defmodule TrentoWeb.V1.ChartController do
       render(conn, :host_memory_chart, chart: chart)
     end
   end
+
+  operation :host_filesystem,
+    summary: "Get a Memory chart of a host.",
+    tags: ["Charts"],
+    description:
+      "Retrieves detailed memory usage statistics for a specific host over a defined time interval, supporting infrastructure monitoring and troubleshooting for system administrators.",
+    parameters: [
+      id: [
+        in: :path,
+        required: true,
+        description:
+          "Unique identifier of the host for which memory usage data is requested. This value must be a valid UUID string.",
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          description:
+            "Unique identifier of the host for which memory usage data is requested. This value must be a valid UUID string.",
+          example: "c1a2b3c4-d5e6-7890-abcd-ef1234567890"
+        }
+      ]
+    ]
+
+  def host_filesystem(conn, %{id: id}) do
+    with {:ok, chart} <- Charts.host_filesystem_chart(id) do
+      render(conn, :host_filesystem_chart, chart: chart)
+    end
+  end
 end

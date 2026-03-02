@@ -47,6 +47,7 @@ import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
 import HostChart from './HostChart';
+import DiskSpaceChart from './DiskSpaceChart';
 
 import {
   subscriptionsTableConfiguration,
@@ -391,6 +392,9 @@ function HostDetails({
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
             />
+          </div>
+          <div>
+            <DiskSpaceChart hostId={hostID}/>
           </div>
         </ChartsFeatureWrapper>
         <div className="mt-16">

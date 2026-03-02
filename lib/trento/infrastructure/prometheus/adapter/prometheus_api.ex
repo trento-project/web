@@ -97,6 +97,62 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
+  def filesystem_avail_bytes(host_id) do
+    # query = "(node_filesystem_size_bytes{fstype!~'tmpfs|vfat|fuse.*', agentID='#{host_id}'})"
+    query = "(node_filesystem_avail_bytes{agentID='#{host_id}'})"
+
+    with {:ok, [%{value: value} | _]} <- simple_query(host_id, query) do
+      {:ok, trunc(value)}
+    end
+  end
+
+  def filesystem_used_bytes(host_id) do
+    query =
+      "node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'}"
+
+    with {:ok, [%{value: value} | _]} <- simple_query(host_id, query) do
+      {:ok, trunc(value)}
+    end
+  end
+
+  def simple_query(host_id, query) do
+    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
+
+    request = %HTTPoison.Request{
+      method: :get,
+      url: "#{prometheus_url}/api/v1/query",
+      headers: [{"Accept", "application/json"}],
+      params: %{query: query}
+    }
+
+    with %HostReadModel{} <- Repo.get(HostReadModel, host_id),
+         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           HTTPoison.request(request),
+         {:ok, %{"data" => %{"result" => results}}} <- Jason.decode(body) do
+      {:ok,
+       results
+       |> Enum.map(fn %{"metric" => %{"mountpoint" => mountpoint}, "value" => [_, value]} ->
+         {mountpoint, value}
+       end)
+       |> Enum.into(%{})}
+    else
+      nil ->
+        {:error, :not_found}
+
+      %HTTPoison.Response{status_code: status_code, body: body} ->
+        Logger.error(
+          "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
+        )
+
+        {:error, :unexpected_response}
+
+      {:error, reason} = error ->
+        Logger.error("Error fetching exporters status from Prometheus API: #{inspect(reason)}")
+
+        error
+    end
+  end
+
   def get_exporters_status(host_id) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 

@@ -40,4 +40,10 @@ defmodule Trento.Charts.HostDataFetcher do
 
   @callback num_cpus(from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, integer()} | {:error, any}
+
+  @callback filesystem_avail_bytes(host_id :: String.t()) ::
+              {:ok, integer()} | {:error, any}
+
+  @callback filesystem_used_bytes(host_id :: String.t()) ::
+              {:ok, integer()} | {:error, any}
 end

@@ -35,6 +35,17 @@ defmodule TrentoWeb.V1.ChartJSON do
         swap_used: chart_time_series(swap_used)
       }
 
+  def host_filesystem_chart(%{
+        chart: %{
+          avail_size: avail_size,
+          used_size: used_size
+        }
+      }),
+      do:
+        Enum.into(avail_size, %{}, fn {device, size} ->
+          {device, %{"avail_size" => size, "used_size" => Map.get(used_size, device)}}
+        end)
+
   defp chart_time_series(%{label: label, series: series}),
     do: %{label: label, series: Enum.map(series, &chart_time_series_sample(%{sample: &1}))}
 

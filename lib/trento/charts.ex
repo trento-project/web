@@ -7,7 +7,8 @@ defmodule Trento.Charts do
 
   alias Trento.Charts.Hosts.{
     HostCpuChart,
-    HostMemoryChart
+    HostMemoryChart,
+    HostFilesystemChart
   }
 
   alias Trento.Charts.ChartTimeSeries
@@ -76,6 +77,20 @@ defmodule Trento.Charts do
          },
          ram_free: %ChartTimeSeries{label: "ram_free", series: ram_free_samples},
          swap_used: %ChartTimeSeries{label: "swap_used", series: swap_used_samples}
+       }}
+    end
+  end
+
+  @spec host_filesystem_chart(String.t()) ::
+          {:ok, HostMemoryChart.t()} | {:error, any}
+  def host_filesystem_chart(host_id) do
+    with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, avail_size} <- host_data_fetcher().filesystem_avail_bytes(host_id),
+         {:ok, used_size} <- host_data_fetcher().filesystem_used_bytes(host_id) do
+      {:ok,
+       %HostFilesystemChart{
+         avail_size: avail_size,
+         used_size: used_size
        }}
     end
   end
