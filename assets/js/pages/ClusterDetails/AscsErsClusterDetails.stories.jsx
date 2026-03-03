@@ -24,6 +24,7 @@ const {
   cib_last_written: cibLastWritten,
   selected_checks: selectedChecks,
   details,
+  state,
 } = clusterFactory.build({ type: 'ascs_ers' });
 
 const multiSidDetails = ascsErsClusterDetailsFactory.build({
@@ -100,6 +101,7 @@ export const Single = {
     hosts: buildHostsFromAscsErsClusterDetails(details),
     sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
     details,
+    state,
     lastExecution,
     catalog,
     userAbilities,

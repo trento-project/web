@@ -172,7 +172,10 @@ defmodule Trento.Factory do
   alias Trento.PersonalAccessTokens.PersonalAccessToken
   alias Trento.Users.User
 
-  alias Trento.Operations.V1.OperationCompleted
+  alias Trento.Operations.V1.{
+    OperationCompleted,
+    OperationErrorDetails
+  }
 
   alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
 
@@ -266,7 +269,8 @@ defmodule Trento.Factory do
       type: ClusterType.hana_scale_up(),
       discovered_health: Health.passing(),
       designated_controller: true,
-      cib_last_written: Date.to_string(Faker.Date.forward(0))
+      cib_last_written: Date.to_string(Faker.Date.forward(0)),
+      state: :S_IDLE
     }
   end
 
@@ -317,7 +321,8 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      type: ClusterType.hana_scale_up()
+      type: ClusterType.hana_scale_up(),
+      state: :S_IDLE
     }
   end
 
@@ -330,7 +335,8 @@ defmodule Trento.Factory do
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: build(:hana_cluster_details)
+      details: build(:hana_cluster_details),
+      state: :S_IDLE
     }
   end
 
@@ -437,7 +443,8 @@ defmodule Trento.Factory do
       type: ClusterType.hana_scale_up(),
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
-      details: %{}
+      details: %{},
+      state: :S_IDLE
     }
   end
 
@@ -1372,7 +1379,33 @@ defmodule Trento.Factory do
       operation_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
       operation_type: Faker.Pokemon.name(),
-      result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED])
+      result: Enum.random([:UPDATED, :NOT_UPDATED, :FAILED]),
+      details: nil
+    }
+  end
+
+  def operation_completed_with_errors_v1_factory(attrs) do
+    operation_completed =
+      build(
+        :operation_completed_v1,
+        Map.drop(attrs, [:step, :target_errors])
+      )
+
+    step = Map.get(attrs, :step, Faker.Pokemon.name())
+
+    target_errors =
+      Map.get(attrs, :target_errors, %{
+        Faker.UUID.v4() => Faker.Lorem.sentence()
+      })
+
+    %OperationCompleted{
+      operation_completed
+      | details:
+          {:error_details,
+           %OperationErrorDetails{
+             step: step,
+             target_errors: target_errors
+           }}
     }
   end
 

@@ -3,6 +3,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   require OpenApiSpex
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
@@ -759,6 +760,16 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             nullable: true,
             example: "2024-01-15T10:30:00Z"
           },
+          state: %Schema{
+            type: :string,
+            description:
+              "The current state of the Pacemaker cluster. " <>
+                "Find additional information here: https://github.com/ClusterLabs/pacemaker/blob/9f014f6e85ca2757da570542c16df089d9d09c3c/daemons/controld/controld_fsa.h#L23. " <>
+                "Value is set to 'stopped' when all hosts in the cluster go offline and 'unknown' if the value could not be obtained.",
+            nullable: true,
+            enum: ClusterState.values(),
+            example: "S_IDLE"
+          },
           details: Details,
           tags: Tags,
           inserted_at: %Schema{
@@ -804,6 +815,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               resource_type: "cluster"
             }
           ],
+          state: "S_IDLE",
           inserted_at: "2024-01-15T09:00:00Z",
           updated_at: "2024-01-15T10:30:00Z"
         }
@@ -835,6 +847,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             resources_number: 10,
             hosts_number: 2,
             cib_last_written: "2024-01-15T10:30:00Z",
+            state: "S_IDLE",
             inserted_at: "2024-01-15T09:00:00Z",
             updated_at: "2024-01-15T10:30:00Z"
           }

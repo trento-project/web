@@ -812,6 +812,7 @@
     "Online": true,
     "Name": "hana_cluster",
     "DC": true,
-    "Provider": "aws"
+    "Provider": "aws",
+    "State": "S_IDLE"
   }
 }

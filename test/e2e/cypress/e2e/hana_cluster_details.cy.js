@@ -84,6 +84,19 @@ context('HANA cluster details', () => {
     });
   });
 
+  describe('Cluster state', () => {
+    const states = ['stopped', 'transition-engine', 'policy-engine', 'idle'];
+
+    before(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
+
+    states.forEach((state) => {
+      it(`should show the expected cluster ${state} state`, () => {
+        hanaClusterDetailsPage.loadScenario(`cluster-state-${state}`);
+        hanaClusterDetailsPage.expectedClusterStateIsDisplayed(state);
+      });
+    });
+  });
+
   describe('Cluster sites should have the expected hosts', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.interceptLastExecutionRequestMocked();

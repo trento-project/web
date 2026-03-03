@@ -5,6 +5,7 @@
     "DC": false,
     "Provider": "gcp",
     "Id": "057f083c3be591f4398eed816d4c8cd7",
+    "State": "S_IDLE",
     "Cib": {
       "Configuration": {
         "Nodes": [

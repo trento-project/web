@@ -1,0 +1,9 @@
+{
+  "agent_id": "9cd46919-5f19-59aa-993e-cf3736c71053",
+  "discovery_type": "ha_cluster_discovery",
+  "payload": {
+    "Name": "hana_cluster_3",
+    "Id": "9c832998801e28cd70ad77380e82a5c0",
+    "Online": false
+  }
+}

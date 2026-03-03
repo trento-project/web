@@ -71,6 +71,7 @@ jobs:
                 trento_rabbitmq_vhost: '${{ env.PR_NUMBER }}'
                 rproxy_web_upstream_name: '${{ env.PR_NUMBER }}web'
                 rproxy_wanda_upstream_name: '${{ env.PR_NUMBER }}wanda'
+                rproxy_prometheus_upstream_name: '${{ env.PR_NUMBER }}prometheus'
                 rproxy_vhost_filename: '${{ env.PR_NUMBER }}'
                 rproxy_ssl_cert: '${{ secrets.PR_ENV_SSL_CERT }}'
                 rproxy_ssl_key: '${{ secrets.PR_ENV_SSL_CERT_KEY }}'
@@ -88,6 +89,10 @@ jobs:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
                 rabbitmq_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
+                prometheus_hosts:
                   hosts:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}

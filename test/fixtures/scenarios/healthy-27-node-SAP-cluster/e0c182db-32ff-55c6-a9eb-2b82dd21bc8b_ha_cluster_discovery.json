@@ -5,6 +5,7 @@
     "DC": false,
     "Provider": "azure",
     "Id": "4e905d706da85f5be14f85fa947c1e39",
+    "State": "S_IDLE",
     "Cib": {
       "Configuration": {
         "Nodes": [

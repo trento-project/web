@@ -124,6 +124,10 @@ jobs:
                   hosts:
                     server:
                       ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
+                prometheus_hosts:
+                  hosts:
+                    server:
+                      ansible_host: ${{ secrets.PR_ENV_MACHINE_IP }}
           options: |
             --extra-vars "trento_install_method='docker' \
             trento_docker_network_name='${{ env.PR_NUMBER }}net' \
