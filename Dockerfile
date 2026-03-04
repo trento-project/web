@@ -61,7 +61,7 @@ LABEL org.opensuse.reference="registry.suse.com/bci/bci-micro:${OS_VER}"
 LABEL org.openbuildservice.disturl="https://github.com/trento-project/web/pkgs/container/trento-web"
 LABEL com.suse.supportlevel="l3"
 LABEL com.suse.supportlevel.until=""
-LABEL com.suse.eula="sle-bci"
+LABEL com.suse.eula="sle-eula"
 LABEL com.suse.lifecycle-url="https://www.suse.com/lifecycle#suse-linux-enterprise-server-for-sap-applications-15"
 LABEL com.suse.release-stage="released"
 # endlabelprefix
