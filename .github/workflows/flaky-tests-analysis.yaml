@@ -139,6 +139,56 @@ jobs:
 
           write_flaky_tests_summary "$FLAKY_TEST_LIST"
 
+          generate_dashboard_json() {
+            local total_completed="$1" failed_runs="$2" expected_runs="$3"
+            local flaky_test_list="$4"
+            local output_file="suite-results.json"
+            
+            local num_flaky_tests
+            num_flaky_tests=$(( $(echo -n "$flaky_test_list" | grep -c . || true) - 1 ))
+            if [ "$num_flaky_tests" -lt 0 ]; then
+              num_flaky_tests=0
+            fi
+
+            local top_offenders_json="[]"
+            if [ "$num_flaky_tests" -gt 0 ]; then
+               top_offenders_json=$(echo "$flaky_test_list" | tail -n +2 | jq -R -s -c '
+                 split("\n") | map(select(length > 0)) | map(
+                   split(" --- score: ") | {name: .[0], score: (.[1] | tonumber)}
+                 )')
+            fi
+
+            jq -n \
+              --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+              --arg commit "${{ github.sha }}" \
+              --arg run_id "${{ github.run_id }}" \
+              --arg run_url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+              --arg suite "${{ inputs.suite-name }}" \
+              --argjson expected "$expected_runs" \
+              --argjson completed "$total_completed" \
+              --argjson failed "$failed_runs" \
+              --argjson flaky_count "$num_flaky_tests" \
+              --argjson offenders "$top_offenders_json" \
+              '{
+                timestamp: $timestamp,
+                commit: $commit,
+                run_id: $run_id,
+                run_url: $run_url,
+                suite: $suite,
+                metrics: {
+                  expected_runs: $expected,
+                  completed_runs: $completed,
+                  failed_runs: $failed,
+                  flaky_test_count: $flaky_count
+                },
+                top_offenders: $offenders
+              }' > "$output_file"
+          }
+
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+             generate_dashboard_json "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FLAKY_TEST_LIST"
+          fi
+
       - name: Delete artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
@@ -146,7 +196,10 @@ jobs:
           failOnError: false
       - name: Compute artifact name
         id: artifact-name
-        run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
+        run: |
+          base_name=$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')
+          echo "value=failed-$base_name" >> $GITHUB_OUTPUT
+          echo "dashboard-name=dashboard-data-$base_name" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
         if: fromJson(steps.analyze.outputs.has-failed-reports)
         uses: actions/upload-artifact@v6
@@ -154,3 +207,10 @@ jobs:
           name: ${{ steps.artifact-name.outputs.value }}
           path: ${{ steps.analyze.outputs.failed-reports-dir }}
           retention-days: 7
+      - name: Upload Dashboard Data Artifact
+        if: github.event_name == 'schedule'
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ steps.artifact-name.outputs.dashboard-name }}
+          path: hack/flaky_tests_analysis/suite-results.json
+          retention-days: 1
