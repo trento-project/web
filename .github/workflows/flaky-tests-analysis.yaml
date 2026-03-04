@@ -153,7 +153,7 @@ jobs:
             local top_offenders_json="[]"
             if [ "$num_flaky_tests" -gt 0 ]; then
                top_offenders_json=$(echo "$flaky_test_list" | tail -n +2 | jq -R -s -c '
-                 split("\n") | map(select(length > 0)) | map(
+                 split("\n") | map(select(contains(" --- score: "))) | map(
                    split(" --- score: ") | {name: .[0], score: (.[1] | tonumber)}
                  )')
             fi
