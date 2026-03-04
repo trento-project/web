@@ -105,7 +105,7 @@ jobs:
           JEST_JUNIT_OUTPUT_NAME: jest-junit-node${{ matrix.nodejs }}-run${{ matrix.run }}-${{ env.ENV_TS }}.xml
       - name: Upload jest test junit reports
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
           path: /tmp/*.xml

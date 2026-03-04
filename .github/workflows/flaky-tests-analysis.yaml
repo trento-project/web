@@ -149,7 +149,7 @@ jobs:
         run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
         if: fromJson(steps.analyze.outputs.has-failed-reports)
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.artifact-name.outputs.value }}
           path: ${{ steps.analyze.outputs.failed-reports-dir }}
