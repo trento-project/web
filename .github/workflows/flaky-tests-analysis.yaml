@@ -150,9 +150,9 @@ jobs:
               num_flaky_tests=0
             fi
 
-            local top_offenders_json="[]"
+            local flaky_tests_list_json="[]"
             if [ "$num_flaky_tests" -gt 0 ]; then
-               top_offenders_json=$(echo "$flaky_test_list" | tail -n +2 | jq -R -s -c '
+               flaky_tests_list_json=$(echo "$flaky_test_list" | tail -n +2 | jq -R -s -c '
                  split("\n") | map(select(contains(" --- score: "))) | map(
                    split(" --- score: ") | {name: .[0], score: (.[1] | tonumber)}
                  )')
@@ -162,26 +162,22 @@ jobs:
               --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
               --arg commit "${{ github.sha }}" \
               --arg run_id "${{ github.run_id }}" \
-              --arg run_url "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
               --arg suite "${{ inputs.suite-name }}" \
-              --argjson expected "$expected_runs" \
               --argjson completed "$total_completed" \
               --argjson failed "$failed_runs" \
               --argjson flaky_count "$num_flaky_tests" \
-              --argjson offenders "$top_offenders_json" \
+              --argjson flaky_tests_list "$flaky_tests_list_json" \
               '{
                 timestamp: $timestamp,
                 commit: $commit,
                 run_id: $run_id,
-                run_url: $run_url,
                 suite: $suite,
                 metrics: {
-                  expected_runs: $expected,
                   completed_runs: $completed,
                   failed_runs: $failed,
                   flaky_test_count: $flaky_count
                 },
-                top_offenders: $offenders
+                flaky_tests_list: $flaky_tests_list
               }' > "$output_file"
           }
 
