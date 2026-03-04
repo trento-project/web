@@ -23,7 +23,7 @@ services:
     volumes:
       - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro,z
   node_exporter:
-    image: docker.io/prom/node-exporter:v1.7.0
+    image: docker.io/prom/node-exporter:v1.9.1
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -34,7 +34,7 @@ services:
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
   prometheus:
-    image: docker.io/prom/prometheus:v2.48.1
+    image: docker.io/prom/prometheus:v2.53.4
     user: "0:0"
     volumes:
       - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml:z
@@ -50,6 +50,7 @@ services:
       - "--web.console.templates=/etc/prometheus/consoles"
       - "--web.enable-lifecycle"
       - "--web.enable-admin-api"
+      - "--web.enable-remote-write-receiver"
     ports:
       - 9090:9090
     extra_hosts:
