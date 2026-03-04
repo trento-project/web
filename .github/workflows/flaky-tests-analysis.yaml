@@ -208,7 +208,7 @@ jobs:
           path: ${{ steps.analyze.outputs.failed-reports-dir }}
           retention-days: 7
       - name: Upload Dashboard Data Artifact
-        if: github.event_name == 'schedule'
+        # if: github.event_name == 'schedule'
         uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact-name.outputs.dashboard-name }}
