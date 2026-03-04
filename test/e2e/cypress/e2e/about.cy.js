@@ -11,6 +11,8 @@ describe('User account page', () => {
   });
 
   it('should have the correct page title', () => {
+    // Generate flaky test data by randomly failing 50% of the time
+    expect(Math.random()).to.be.greaterThan(0.5, 'Randomly failing test for flaky test analysis');
     aboutPage.pageTitleIsDisplayed();
   });
 
