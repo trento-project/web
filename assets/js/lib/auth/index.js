@@ -4,7 +4,10 @@ import { getFromConfig } from '@lib/config';
 const STORAGE_ACCESS_TOKEN_IDENTIFIER = 'access_token';
 const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
 
-export const authClient = axios.create();
+const basePath = window.basePath || '';
+export const authClient = axios.create({
+  baseURL: basePath,
+});
 
 export const login = (credentials) =>
   authClient.post('/api/session', credentials).then((response) => {
@@ -42,13 +45,18 @@ export const refreshAccessToken = (refreshToken) =>
       return response;
     });
 
-export const profile = (apiClient = authClient) =>
-  apiClient.get('/api/v1/profile', { baseURL: '' }).then((response) => {
+export const profile = (apiClient = authClient) => {
+  // If using networkClient (which already includes /api/v1 in baseURL), use relative path
+  // Otherwise use full path /api/v1/profile for authClient
+  const endpoint = apiClient === authClient ? '/api/v1/profile' : '/profile';
+
+  return apiClient.get(endpoint).then((response) => {
     if (response.status !== 200) {
       throw Error('unauthorized', { cause: response.status });
     }
     return response.data;
   });
+};
 
 export const storeAccessToken = (accessToken) => {
   window.localStorage.setItem(STORAGE_ACCESS_TOKEN_IDENTIFIER, accessToken);
