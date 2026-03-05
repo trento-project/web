@@ -407,7 +407,13 @@
         }
 
         function updateDashboard(days) {
-            if (allEntries.length === 0) return;
+            if (allEntries.length === 0) {
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">📂</span>
+                    <p>No historical data found.</p>
+                </div>`;
+                return;
+            }
 
             // Capture which suites are currently hidden by the user in the legend
             const hiddenSuites = new Set();
@@ -427,6 +433,20 @@
             cutoffDate.setHours(0, 0, 0, 0);
 
             const filteredEntries = allEntries.filter(e => new Date(e.timestamp) >= cutoffDate);
+            
+            if (filteredEntries.length === 0) {
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">🗓️</span>
+                    <p>No data available for the last ${days} days.</p>
+                </div>`;
+                if (myChart) {
+                    myChart.data.labels = [];
+                    myChart.data.datasets = [];
+                    myChart.update();
+                }
+                return;
+            }
+
             const chartData = processEntries(filteredEntries);
 
             // Re-apply the hidden state to the new datasets
@@ -509,7 +529,7 @@
 
         fetch('data/history.json')
             .then(response => {
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Network response was not ok (File might be missing)');
                 return response.json();
             })
             .then(entries => {
