@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+    <title>Flaky Test Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #4a5568;
+            --border-color: #edf2f7;
+            --header-border: #eeeeee;
+            --grid-color: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a202c;
+            --card-bg: #2d3748;
+            --text-main: #f7fafc;
+            --text-secondary: #a0aec0;
+            --border-color: #4a5568;
+            --header-border: #4a5568;
+            --grid-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: var(--bg-color); 
+            color: var(--text-main);
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            height: 100vh; 
+            box-sizing: border-box; 
+            transition: background-color 0.3s, color 0.3s;
+            overflow: hidden;
+        }
+
+        /* Responsive Layout Logic */
+        .main-content { 
+            display: flex; 
+            gap: 20px; 
+            flex: 1; 
+            min-height: 0; 
+        }
+
+        /* Header Logic */
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid var(--header-border); 
+            padding-bottom: 10px; 
+        }
+        
+        h1 { margin: 0; font-size: 1.5rem; }
+
+        @media (max-width: 1100px) {
+            body { height: auto; overflow-y: auto; }
+            .main-content { flex-direction: column; flex: none; }
+            .header { flex-wrap: wrap; gap: 10px; }
+            .header h1 { flex: 1 1 100%; margin-bottom: 5px; }
+            .header > div { width: 100%; justify-content: flex-end; }
+            .chart-card { height: 500px; flex: none; }
+            .details-card { height: 500px; flex: none; min-width: 0; }
+        }
+
+        .chart-card { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            padding: 20px; 
+            flex: 1.6; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0;
+        }
+        .chart-container { position: relative; flex: 1; width: 100%; min-height: 0; }
+        .details-card { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            padding: 20px; 
+            flex: 1; 
+            min-width: 380px;
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+        }
+        
+        /* Styles */
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; background: var(--bg-color); border: 1px solid var(--border-color); margin-right: 5px; }
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        .metric-box { background: var(--bg-color); padding: 10px; border-radius: 6px; border-left: 3px solid #3498db; }
+        .metric-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-secondary); display: block; }
+        .metric-value { font-size: 1.1rem; font-weight: bold; }
+        
+        .test-list-header { font-size: 0.9rem; font-weight: bold; margin-top: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        .test-item { padding: 12px 0; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 5px; transition: transform 0.2s; }
+        .test-item:hover { transform: translateX(5px); }
+        .test-name { font-size: 0.85rem; color: var(--text-main); font-weight: 500; }
+        
+        .progress-container { width: 100%; height: 12px; background: var(--bg-color); border-radius: 6px; overflow: hidden; cursor: help; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #f1c40f, #e74c3c); border-radius: 6px; }
+        .score-label { font-size: 0.75rem; font-weight: bold; color: #e74c3c; align-self: flex-end; }
+        
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); text-align: center; gap: 10px; }
+        .empty-icon { font-size: 3rem; opacity: 0.3; }
+
+        a { color: #3182ce; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        code { background: rgba(0,0,0,0.05); padding: 2px 4px; border-radius: 4px; }
+        [data-theme="dark"] code { background: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧪 Trento Flaky Tests Dashboard</h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <select id="rangeSelect" class="theme-toggle" style="outline: none;">
+                <option value="7">Last 7 Days</option>
+                <option value="14">Last 14 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="45" selected>Last 45 Days</option>
+            </select>
+            <button class="theme-toggle" id="helpToggle">❓ How it works</button>
+            <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+        </div>
+    </div>
+
+    <div id="infoPanel" class="chart-card" style="display: none; position: absolute; top: 70px; left: 20px; right: 20px; z-index: 100; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid var(--border-color); padding: 15px; font-size: 0.85rem; line-height: 1.4;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div>
+                <h4 style="margin: 0 0 8px 0; color: #3498db;">🔢 Math</h4>
+                <code>Fliprate = Flips / Transitions</code>
+                <p style="margin: 5px 0;">5 runs (P,F,P,F,P) = 4 flips / 4 trans = <strong>1.0</strong>.</p>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 8px 0; color: #e67e22;">📈 Scores</h4>
+                <ul style="padding-left: 15px; margin: 0;">
+                    <li><strong>0.02-0.1:</strong> Mildly flaky</li>
+                    <li><strong>~0.50:</strong> Highly unstable</li>
+                    <li><strong>1.00:</strong> Theoretical max</li>
+                </ul>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 8px 0; color: #e74c3c;">🚫 Broken vs Flaky</h4>
+                <p style="margin: 0;">Consistent failure = <strong>0.0</strong>. Since it never "flips", it is <strong>Broken</strong> (a bug), not Flaky.</p>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 8px 0; color: #9b59b6;">⚖️ Significance</h4>
+                <p style="margin: 0;">Small sample sizes (e.g. 2 runs) can hit <strong>1.0</strong> easily. High repetition counts are needed for reliable data.</p>
+            </div>
+        </div>
+        <button onclick="document.getElementById('infoPanel').style.display='none'" style="position: absolute; top: 10px; right: 10px; border: none; background: none; cursor: pointer; opacity: 0.5;">✕</button>
+    </div>
+
+    <div class="main-content">
+        <div class="chart-card">
+            <h3>Failure Rate Trend (%)</h3>
+            <div class="chart-container">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+        <div class="details-card" id="details">
+            <div class="placeholder">Click a data point to see top flaky tests</div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('chart').getContext('2d');
+        const detailsContainer = document.getElementById('details');
+        const themeToggle = document.getElementById('themeToggle');
+        const rangeSelect = document.getElementById('rangeSelect');
+        const helpToggle = document.getElementById('helpToggle');
+        const infoPanel = document.getElementById('infoPanel');
+        let myChart;
+        let allEntries = [];
+
+        // Toggle Help Panel
+        helpToggle.addEventListener('click', () => {
+            const isHidden = infoPanel.style.display === 'none';
+            infoPanel.style.display = isHidden ? 'block' : 'none';
+            helpToggle.style.background = isHidden ? 'var(--border-color)' : 'var(--card-bg)';
+        });
+
+        // Theme management
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+            updateChartTheme(theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        }
+
+        // Initialize to Light theme by default
+        setTheme('light');
+
+        themeToggle.addEventListener('click', toggleTheme);
+        rangeSelect.addEventListener('change', () => updateDashboard(parseInt(rangeSelect.value)));
+
+        function updateChartTheme(theme) {
+            if (!myChart) return;
+            const isDark = theme === 'dark';
+            const color = isDark ? '#f7fafc' : '#333333';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+            myChart.options.scales.x.ticks.color = color;
+            myChart.options.scales.y.ticks.color = color;
+            myChart.options.scales.x.grid.color = gridColor;
+            myChart.options.scales.y.grid.color = gridColor;
+            myChart.options.scales.x.title.color = color;
+            myChart.options.scales.y.title.color = color;
+            myChart.options.plugins.legend.labels.color = color;
+            myChart.update();
+        }
+
+        const colors = ['#3498db', '#9b59b6', '#e67e22', '#2ecc71', '#e74c3c', '#f1c40f'];
+
+        function escapeHTML(str) {
+            if (typeof str !== 'string') return str;
+            const p = document.createElement('p');
+            p.textContent = str;
+            return p.innerHTML;
+        }
+
+        function showDetails(entry, previousEntry) {
+            if (!entry) return;
+            const repoUrl = "https://github.com/trento-project/web";
+            const failureRate = ((entry.metrics.failed_runs / entry.metrics.completed_runs) * 100).toFixed(1);
+            
+            // Sanitized dynamic values
+            const suiteName = escapeHTML(entry.suite);
+            const commitHash = escapeHTML(entry.commit);
+            const runId = escapeHTML(entry.run_id);
+            const prevCommitHash = previousEntry ? escapeHTML(previousEntry.commit) : null;
+            
+            let html = `<div style="margin-bottom: 10px;">
+                <button onclick="updateDashboard(parseInt(rangeSelect.value))" class="badge" style="cursor:pointer; border:none; background: var(--border-color); margin-bottom: 10px;">⬅️ Back to Overall Stats</button>
+            </div>`;
+
+            html += `<div style="display: flex; flex-direction: column; gap: 8px;">
+                <h3 style="margin:0; font-size: 1.1rem;">${suiteName}</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: center;">
+                    <span class="badge">Commit: <a href="${repoUrl}/commit/${commitHash}" target="_blank"><code>${commitHash.substring(0, 7)}</code></a></span>
+                    <span class="badge">Run: <a href="${repoUrl}/actions/runs/${runId}" target="_blank">#${runId}</a></span>
+                    ${previousEntry ? `<span class="badge" style="background: rgba(52, 152, 219, 0.1); border-color: rgba(52, 152, 219, 0.4);"><a href="${repoUrl}/compare/${prevCommitHash}...${commitHash}" target="_blank" style="text-decoration: none; display: flex; align-items: center; gap: 4px;">🔍 Compare Changes</a></span>` : ''}
+                </div>
+            </div>`;
+
+            html += `<div class="metrics-grid">
+                <div class="metric-box">
+                    <span class="metric-label">Failure Rate</span>
+                    <span class="metric-value">${failureRate}%</span>
+                </div>
+                <div class="metric-box" style="border-color: #9b59b6;">
+                    <span class="metric-label">Flaky Tests</span>
+                    <span class="metric-value">${entry.metrics.flaky_test_count || 0}</span>
+                </div>
+            </div>`;
+            
+            html += `<div class="test-list-header">Detected Flaky Tests</div>`;
+            
+            const tests = entry.flaky_tests_list || [];
+            if (tests.length > 0) {
+                // Fixed global scale (1.0 = 100% failure rate)
+                const GLOBAL_SCALE = 1.0;
+                
+                tests.forEach(test => {
+                    const testName = escapeHTML(test.name);
+                    const percentage = Math.max((test.score / GLOBAL_SCALE) * 100, 2);
+                    
+                    html += `<div class="test-item">
+                        <div class="test-name">${testName}</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <span class="score-label">${test.score.toFixed(4)}</span>
+                    </div>`;
+                });
+            } else {
+                html += `<div class="empty-state">
+                    <span class="empty-icon">✅</span>
+                    <p>No flaky tests detected in this run.</p>
+                </div>`;
+            }
+            
+            detailsContainer.innerHTML = html;
+        }
+
+        function showHistoricalLeaderboard(entries) {
+            const stats = {};
+            const suiteRunCounts = {};
+
+            // 1. Count total nightly runs per suite in this period
+            entries.forEach(e => {
+                suiteRunCounts[e.suite] = (suiteRunCounts[e.suite] || 0) + 1;
+            });
+
+            // 2. Aggregate test data (Unique by Test Name + Suite Name)
+            entries.forEach(entry => {
+                const tests = entry.flaky_tests_list || [];
+                tests.forEach(test => {
+                    const key = `${test.name}||${entry.suite}`;
+                    if (!stats[key]) {
+                        stats[key] = { 
+                            name: test.name, 
+                            suite: entry.suite, 
+                            count: 0, 
+                            max: 0 
+                        };
+                    }
+                    stats[key].count += 1;
+                    stats[key].max = Math.max(stats[key].max, test.score);
+                });
+            });
+
+            const sorted = Object.values(stats)
+                .map(data => {
+                    const totalRuns = suiteRunCounts[data.suite] || 1;
+                    return {
+                        ...data,
+                        totalRuns: totalRuns,
+                        frequency: data.count / totalRuns
+                    };
+                })
+                .sort((a, b) => b.frequency - a.frequency || b.max - a.max)
+                .slice(0, 10);
+
+            if (sorted.length === 0) {
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">📊</span>
+                    <p>No historical flaky data for this period.</p>
+                </div>`;
+                return;
+            }
+
+            let html = `<h3>🏆 Top Flaky Tests (Historical)</h3>`;
+            html += `<p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 15px;">Ranked by detection frequency in the selected period.</p>`;
+            
+            sorted.forEach(test => {
+                const percentage = (test.count / test.totalRuns) * 100;
+                
+                html += `<div class="test-item">
+                    <div class="test-name">${escapeHTML(test.name)}</div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4px; margin-bottom: 2px;">
+                        <span class="badge" style="font-size: 0.6rem; border-color: rgba(52, 152, 219, 0.3); opacity: 0.8; margin: 0;">${escapeHTML(test.suite)}</span>
+                        <span style="font-size: 0.7rem; color: var(--text-secondary);">Max: ${test.max.toFixed(3)}</span>
+                    </div>
+                    <div class="progress-container" title="Detected as flaky in ${percentage.toFixed(1)}% of the runs in this period">
+                        <div class="progress-bar" style="width: ${percentage}%; background: linear-gradient(90deg, #3498db, #9b59b6);" title="Detected as flaky in ${percentage.toFixed(1)}% of the runs in this period"></div>
+                    </div>
+                </div>`;
+            });
+            
+            html += `<div style="margin-top: 20px; text-align: center; font-size: 0.8rem; color: var(--text-secondary);">
+                Click a point on the chart for details of a specific run.
+            </div>`;
+
+            detailsContainer.innerHTML = html;
+        }
+
+        function processEntries(entries) {
+            entries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+            const suiteMap = {};
+            const uniqueDates = [...new Set(entries.map(e => e.timestamp.split('T')[0]))].sort();
+            
+            entries.forEach((entry) => {
+                if (!suiteMap[entry.suite]) {
+                    suiteMap[entry.suite] = {
+                        label: entry.suite,
+                        data: [],
+                        borderColor: colors[Object.keys(suiteMap).length % colors.length],
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        spanGaps: true
+                    };
+                }
+                const rate = (entry.metrics.failed_runs / entry.metrics.completed_runs) * 100;
+                
+                const suiteData = suiteMap[entry.suite].data;
+                const previousEntry = suiteData.length > 0 ? suiteData[suiteData.length - 1].entry : null;
+
+                suiteMap[entry.suite].data.push({
+                    x: entry.timestamp.split('T')[0],
+                    y: rate,
+                    entry: entry,
+                    previousEntry: previousEntry
+                });
+            });
+
+            return { labels: uniqueDates, datasets: Object.values(suiteMap) };
+        }
+
+        function updateDashboard(days) {
+            if (allEntries.length === 0) {
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">📂</span>
+                    <p>No historical data found.</p>
+                </div>`;
+                return;
+            }
+
+            // Capture which suites are currently hidden by the user in the legend
+            const hiddenSuites = new Set();
+            if (myChart) {
+                myChart.data.datasets.forEach((ds, index) => {
+                    if (myChart.getDatasetMeta(index).hidden) {
+                        hiddenSuites.add(ds.label);
+                    }
+                });
+            }
+
+            const latestTimestamp = Math.max(...allEntries.map(e => new Date(e.timestamp)));
+            const latestDate = new Date(latestTimestamp);
+            
+            const cutoffDate = new Date(latestDate);
+            cutoffDate.setDate(latestDate.getDate() - (days - 1));
+            cutoffDate.setHours(0, 0, 0, 0);
+
+            const filteredEntries = allEntries.filter(e => new Date(e.timestamp) >= cutoffDate);
+            
+            if (filteredEntries.length === 0) {
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">🗓️</span>
+                    <p>No data available for the last ${days} days.</p>
+                </div>`;
+                if (myChart) {
+                    myChart.data.labels = [];
+                    myChart.data.datasets = [];
+                    myChart.update();
+                }
+                return;
+            }
+
+            const chartData = processEntries(filteredEntries);
+
+            // Re-apply the hidden state to the new datasets
+            chartData.datasets.forEach(ds => {
+                if (hiddenSuites.has(ds.label)) {
+                    ds.hidden = true;
+                }
+            });
+
+            if (myChart) {
+                myChart.data = chartData;
+                myChart.update();
+            } else {
+                renderChart(chartData);
+            }
+            
+            showHistoricalLeaderboard(filteredEntries);
+        }
+
+        function renderChart(chartData) {
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            const datasetIdx = elements[0].datasetIndex;
+                            const dataIdx = elements[0].index;
+                            const point = myChart.data.datasets[datasetIdx].data[dataIdx];
+                            showDetails(point.entry, point.previousEntry);
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { 
+                                color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f7fafc' : '#333333',
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            mode: 'nearest',
+                            intersect: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const point = context.dataset.data[context.dataIndex];
+                                    const entry = point.entry;
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += point.y.toFixed(2) + '%';
+                                    if (entry) {
+                                        const time = new Date(entry.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                                        label += ` at ${time} (${entry.metrics.failed_runs}/${entry.metrics.completed_runs})`;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            title: { display: true, text: 'Failure Rate (%)', color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f7fafc' : '#333333' },
+                            ticks: { color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f7fafc' : '#333333' },
+                            grid: { color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }
+                        },
+                        x: { 
+                            title: { display: true, text: 'Date', color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f7fafc' : '#333333' },
+                            ticks: { color: document.documentElement.getAttribute('data-theme') === 'dark' ? '#f7fafc' : '#333333' },
+                            grid: { color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        fetch('data/history.json')
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok (File might be missing)');
+                return response.json();
+            })
+            .then(entries => {
+                if (!Array.isArray(entries)) throw new Error('Invalid data format: expected an array');
+                allEntries = entries;
+                updateDashboard(parseInt(rangeSelect.value));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                detailsContainer.innerHTML = `<div class="empty-state">
+                    <span class="empty-icon">⚠️</span>
+                    <p>Error loading dashboard data.<br><small>${escapeHTML(error.message)}</small></p>
+                </div>`;
+            });
+    </script>
+</body>
+</html>
