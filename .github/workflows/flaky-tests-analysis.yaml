@@ -181,7 +181,7 @@ jobs:
               }' > "$output_file"
           }
 
-          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
              generate_dashboard_json "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FLAKY_TEST_LIST"
           fi
 
@@ -195,7 +195,6 @@ jobs:
         run: |
           base_name=$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')
           echo "value=failed-$base_name" >> $GITHUB_OUTPUT
-          echo "dashboard-name=dashboard-data-$base_name" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
         if: fromJson(steps.analyze.outputs.has-failed-reports)
         uses: actions/upload-artifact@v6
@@ -205,14 +204,14 @@ jobs:
           retention-days: 7
 
       - name: Checkout gh-pages for update
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'schedule'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: dashboard-site
 
       - name: Update history.json
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'schedule'
         run: |
           HISTORY_FILE="dashboard-site/flaky-tests/data/history.json"
           NEW_DATA="hack/flaky_tests_analysis/suite-results.json"
@@ -233,7 +232,7 @@ jobs:
           fi
 
       - name: Commit and push changes
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'schedule'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           branch: gh-pages
