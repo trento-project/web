@@ -19,18 +19,22 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
 
   describe "get_exporters_status with expected exporters" do
     setup do
+      default_prometheus_config =
+        Application.get_env(:trento, Trento.Infrastructure.Prometheus.PrometheusApi)
+
+      test_prometheus_config = Keyword.put(default_prometheus_config, :http_client, Mock)
+
       Application.put_env(
         :trento,
         Trento.Infrastructure.Prometheus.PrometheusApi,
-        url: "http://localhost:9090",
-        http_client: Mock
+        test_prometheus_config
       )
 
       on_exit(fn ->
         Application.put_env(
           :trento,
           Trento.Infrastructure.Prometheus.PrometheusApi,
-          url: "http://localhost:9090"
+          default_prometheus_config
         )
       end)
     end
@@ -44,10 +48,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
           }
         )
 
-      expect(Mock, :get, fn _url ->
+      expect(Mock, :get, fn _url, _headers, _params ->
         body =
           Jason.encode!(%{
             "data" => %{
+              "resultType" => "vector",
               "result" => []
             }
           })
@@ -71,10 +76,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
           }
         )
 
-      expect(Mock, :get, fn _url ->
+      expect(Mock, :get, fn _url, _headers, _params ->
         body =
           Jason.encode!(%{
             "data" => %{
+              "resultType" => "vector",
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
@@ -108,10 +114,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
           }
         )
 
-      expect(Mock, :get, fn _url ->
+      expect(Mock, :get, fn _url, _headers, _params ->
         body =
           Jason.encode!(%{
             "data" => %{
+              "resultType" => "vector",
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
@@ -139,10 +146,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     test "host with nil prometheus_targets behaves as before without expected exporters" do
       %{id: host_id} = insert(:host, prometheus_targets: nil)
 
-      expect(Mock, :get, fn _url ->
+      expect(Mock, :get, fn _url, _headers, _params ->
         body =
           Jason.encode!(%{
             "data" => %{
+              "resultType" => "vector",
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
@@ -167,10 +175,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
           }
         )
 
-      expect(Mock, :get, fn _url ->
+      expect(Mock, :get, fn _url, _headers, _params ->
         body =
           Jason.encode!(%{
             "data" => %{
+              "resultType" => "vector",
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
