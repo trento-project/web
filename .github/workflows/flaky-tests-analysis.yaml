@@ -192,9 +192,7 @@ jobs:
           failOnError: false
       - name: Compute artifact name
         id: artifact-name
-        run: |
-          base_name=$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')
-          echo "value=failed-$base_name" >> $GITHUB_OUTPUT
+        run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
         if: fromJson(steps.analyze.outputs.has-failed-reports)
         uses: actions/upload-artifact@v6
@@ -215,7 +213,7 @@ jobs:
         run: |
           HISTORY_FILE="dashboard-site/flaky-tests/data/history.json"
           NEW_DATA="hack/flaky_tests_analysis/suite-results.json"
-          
+
           # Configuration for history retention
           DAYS_TO_KEEP=45
           SUITES_COUNT=5
@@ -238,4 +236,4 @@ jobs:
           branch: gh-pages
           repository: dashboard-site
           commit_message: "docs: update flaky tests history for ${{ inputs.suite-name }}"
-          file_pattern: 'flaky-tests/data/history.json'
+          file_pattern: "flaky-tests/data/history.json"
