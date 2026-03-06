@@ -272,7 +272,7 @@
             
             html += `<div class="test-list-header">Detected Flaky Tests</div>`;
             
-            const tests = entry.flaky_tests_list || [];
+            const tests = entry.top_flaky_tests || [];
             if (tests.length > 0) {
                 // Fixed global scale (1.0 = 100% failure rate)
                 const GLOBAL_SCALE = 1.0;
@@ -310,7 +310,7 @@
 
             // 2. Aggregate test data (Unique by Test Name + Suite Name)
             entries.forEach(entry => {
-                const tests = entry.flaky_tests_list || [];
+                const tests = entry.top_flaky_tests || [];
                 tests.forEach(test => {
                     const key = `${test.name}||${entry.suite}`;
                     if (!stats[key]) {
@@ -395,6 +395,7 @@
                 const suiteData = suiteMap[entry.suite].data;
                 const previousEntry = suiteData.length > 0 ? suiteData[suiteData.length - 1].entry : null;
 
+                // Store everything in the data point
                 suiteMap[entry.suite].data.push({
                     x: entry.timestamp.split('T')[0],
                     y: rate,
@@ -403,7 +404,9 @@
                 });
             });
 
-            return { labels: uniqueDates, datasets: Object.values(suiteMap) };
+            // Ensure stable order of suites so colors don't jump
+            const sortedDatasets = Object.values(suiteMap).sort((a, b) => a.label.localeCompare(b.label));
+            return { labels: uniqueDates, datasets: sortedDatasets };
         }
 
         function updateDashboard(days) {
@@ -415,7 +418,7 @@
                 return;
             }
 
-            // Capture which suites are currently hidden by the user in the legend
+            // Capture which suites are currently hidden
             const hiddenSuites = new Set();
             if (myChart) {
                 myChart.data.datasets.forEach((ds, index) => {
@@ -425,7 +428,7 @@
                 });
             }
 
-            const latestTimestamp = Math.max(...allEntries.map(e => new Date(e.timestamp)));
+            const latestTimestamp = Math.max(...allEntries.map(e => new Date(e.timestamp).getTime()));
             const latestDate = new Date(latestTimestamp);
             
             const cutoffDate = new Date(latestDate);
@@ -449,7 +452,7 @@
 
             const chartData = processEntries(filteredEntries);
 
-            // Re-apply the hidden state to the new datasets
+            // Re-apply hidden state
             chartData.datasets.forEach(ds => {
                 if (hiddenSuites.has(ds.label)) {
                     ds.hidden = true;
@@ -475,10 +478,13 @@
                     maintainAspectRatio: false,
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
-                            const datasetIdx = elements[0].datasetIndex;
-                            const dataIdx = elements[0].index;
-                            const point = myChart.data.datasets[datasetIdx].data[dataIdx];
-                            showDetails(point.entry, point.previousEntry);
+                            const element = elements[0];
+                            const pointData = myChart.data.datasets[element.datasetIndex].data[element.index];
+                            
+                            // In Chart.js v4, custom properties are preserved in the data object
+                            if (pointData && pointData.entry) {
+                                showDetails(pointData.entry, pointData.previousEntry);
+                            }
                         }
                     },
                     plugins: {
