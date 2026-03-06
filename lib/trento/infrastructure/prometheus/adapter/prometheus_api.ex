@@ -112,6 +112,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     else
       nil ->
         {:error, :not_found}
+
+      error ->
+        error
     end
   end
 
