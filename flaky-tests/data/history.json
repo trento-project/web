@@ -74,5 +74,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-06T12:24:43Z",
+    "commit": "d2d9ce1178e422e559b1154798e3130f788b7fa6",
+    "run_id": "22762866100",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.25
+      },
+      {
+        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.05001
+      }
+    ]
   }
 ]
