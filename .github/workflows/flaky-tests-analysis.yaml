@@ -202,7 +202,7 @@ jobs:
           retention-days: 7
 
       - name: Checkout gh-pages for update
-        if: github.event_name == 'schedule'
+        # if: github.event_name == 'schedule'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
