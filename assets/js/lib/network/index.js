@@ -40,7 +40,7 @@ const refreshAuthLogic = async (failedRequest) => {
     const { data } = await refreshAccessToken(refreshToken);
     const accessToken = data.access_token;
     storeAccessToken(accessToken);
-    // need the params reassing, the library works that way
+    // need the params reassign, the library works that way
 
     failedRequest.response.config.headers.Authorization = `Bearer ${accessToken}`;
   } catch (e) {

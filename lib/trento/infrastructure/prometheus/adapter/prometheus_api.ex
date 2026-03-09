@@ -98,13 +98,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   def get_exporters_status(host_id) do
-    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
-
     with %HostReadModel{prometheus_targets: prometheus_targets} <-
            Repo.get(HostReadModel, host_id),
-         {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           http_client().get("#{prometheus_url}/api/v1/query?query=up{agentID='#{host_id}'}"),
-         {:ok, %{"data" => %{"result" => results}}} <- Jason.decode(body) do
+         {:ok, results} <- perform_simple_query("up{agentID='#{host_id}'}") do
       expected_exporters = build_expected_exporters(prometheus_targets)
 
       queried_exporters =
@@ -117,16 +113,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
       nil ->
         {:error, :not_found}
 
-      %HTTPoison.Response{status_code: status_code, body: body} ->
-        Logger.error(
-          "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
-        )
-
-        {:error, :unexpected_response}
-
-      {:error, reason} = error ->
-        Logger.error("Error fetching exporters status from Prometheus API: #{inspect(reason)}")
-
+      error ->
         error
     end
   end
@@ -162,37 +149,72 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     start_parameter = DateTime.to_iso8601(from)
     end_parameter = DateTime.to_iso8601(to)
 
-    request = %HTTPoison.Request{
-      method: :get,
-      url: "#{prometheus_url}/api/v1/query_range",
-      headers: [{"Accept", "application/json"}],
-      params: %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
-    }
+    url = "#{prometheus_url}/api/v1/query_range"
+    headers = [{"Accept", "application/json"}]
+    params = %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
 
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- HTTPoison.request(request),
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           http_client().get(url, headers, params: params),
          {:ok, result_body} <- Jason.decode(body),
-         query_values <- extract_query_values_from_result(result_body),
+         query_values <- extract_results(result_body),
          {:ok, samples} <- ChartIntegration.query_values_to_samples(query_values) do
       {:ok, samples}
     else
-      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        Logger.error(
-          "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
-        )
-
-        {:error, :unexpected_response}
-
-      {:error, reason} = error ->
-        Logger.error("Error getting time series data from Prometheus API: #{inspect(reason)}")
-
-        error
+      error -> handle_unsuccessful_response(error)
     end
   end
 
-  defp extract_query_values_from_result(%{"data" => %{"result" => [%{"values" => query_values}]}}),
-    do: query_values
+  defp perform_simple_query(query) do
+    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
-  defp extract_query_values_from_result(_), do: []
+    url = "#{prometheus_url}/api/v1/query"
+    headers = [{"Accept", "application/json"}]
+    params = %{query: query}
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           http_client().get(url, headers, params: params),
+         {:ok, result_body} <- Jason.decode(body) do
+      {:ok, extract_results(result_body)}
+    else
+      error -> handle_unsuccessful_response(error)
+    end
+  end
+
+  defp handle_unsuccessful_response(
+         {:ok, %HTTPoison.Response{status_code: status_code, body: body}}
+       ) do
+    Logger.error(
+      "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
+    )
+
+    {:error, :unexpected_response}
+  end
+
+  defp handle_unsuccessful_response({:error, reason} = error) do
+    Logger.error("Error getting data from Prometheus API: #{inspect(reason)}")
+
+    error
+  end
+
+  defp handle_unsuccessful_response(error) do
+    Logger.error("Unexpected Error getting data from Prometheus API: #{inspect(error)}")
+
+    {:error, :unexpected_response}
+  end
+
+  defp extract_results(%{
+         "data" => %{"resultType" => "matrix", "result" => [%{"values" => result_values}]}
+       })
+       when is_list(result_values),
+       do: result_values
+
+  defp extract_results(%{
+         "data" => %{"resultType" => "vector", "result" => result_values}
+       })
+       when is_list(result_values),
+       do: result_values
+
+  defp extract_results(_), do: []
 
   defp http_client, do: Application.fetch_env!(:trento, __MODULE__)[:http_client]
 end
