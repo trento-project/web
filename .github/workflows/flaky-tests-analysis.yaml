@@ -21,6 +21,8 @@ jobs:
     name: Flaky Tests Analysis
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -139,6 +141,50 @@ jobs:
 
           write_flaky_tests_summary "$FLAKY_TEST_LIST"
 
+          generate_dashboard_json() {
+            local total_completed="$1" failed_runs="$2" expected_runs="$3"
+            local flaky_test_list="$4"
+            local output_file="suite-results.json"
+
+            local num_flaky_tests
+            num_flaky_tests=$(( $(echo -n "$flaky_test_list" | grep -c . || true) - 1 ))
+            if [ "$num_flaky_tests" -lt 0 ]; then
+              num_flaky_tests=0
+            fi
+
+            local top_flaky_tests="[]"
+            if [ "$num_flaky_tests" -gt 0 ]; then
+               top_flaky_tests=$(echo "$flaky_test_list" | tail -n +2 | jq -R -s -c '
+                 split("\n") | map(select(contains(" --- score: "))) | map(
+                   split(" --- score: ") | {name: .[0], score: (.[1] | tonumber)}
+                 )')
+            fi
+
+            jq -n \
+              --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+              --arg commit "${{ github.sha }}" \
+              --arg run_id "${{ github.run_id }}" \
+              --arg suite "${{ inputs.suite-name }}" \
+              --argjson completed "$total_completed" \
+              --argjson failed "$failed_runs" \
+              --argjson top_flaky_tests "$top_flaky_tests" \
+              '{
+                timestamp: $timestamp,
+                commit: $commit,
+                run_id: $run_id,
+                suite: $suite,
+                metrics: {
+                  completed_runs: $completed,
+                  failed_runs: $failed
+                },
+                top_flaky_tests: $top_flaky_tests
+              }' > "$output_file"
+          }
+
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+             generate_dashboard_json "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FLAKY_TEST_LIST"
+          fi
+
       - name: Delete artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
@@ -154,3 +200,40 @@ jobs:
           name: ${{ steps.artifact-name.outputs.value }}
           path: ${{ steps.analyze.outputs.failed-reports-dir }}
           retention-days: 7
+
+      - name: Checkout gh-pages for update
+        if: github.event_name == 'schedule'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: dashboard-site
+
+      - name: Update history.json
+        if: github.event_name == 'schedule'
+        run: |
+          HISTORY_FILE="dashboard-site/flaky-tests/data/history.json"
+          NEW_DATA="hack/flaky_tests_analysis/suite-results.json"
+
+          # Configuration for history retention
+          DAYS_TO_KEEP=45
+          SUITES_COUNT=5
+          MAX_ENTRIES=$((DAYS_TO_KEEP * SUITES_COUNT))
+
+          if [ -f "$NEW_DATA" ]; then
+            echo "Updating history with $NEW_DATA (Retention: last $MAX_ENTRIES entries)"
+            if [ ! -f "$HISTORY_FILE" ]; then echo "[]" > "$HISTORY_FILE"; fi
+            
+            # Append new data and keep only the last N entries
+            jq ". + [$(cat "$NEW_DATA")] | .[-$MAX_ENTRIES:]" "$HISTORY_FILE" > "$HISTORY_FILE.tmp" && mv "$HISTORY_FILE.tmp" "$HISTORY_FILE"
+          else
+            echo "No new data to update history with."
+          fi
+
+      - name: Commit and push changes
+        if: github.event_name == 'schedule'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: gh-pages
+          repository: dashboard-site
+          commit_message: "docs: update flaky tests history for ${{ inputs.suite-name }}"
+          file_pattern: "flaky-tests/data/history.json"
