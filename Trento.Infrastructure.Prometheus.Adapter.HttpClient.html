@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-155180B2.js"></script>
+    <script src="dist/sidebar_items-C471304F.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -157,7 +157,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#c:get/1" data-no-tooltip translate="no">get(url)</a>
+        <a href="#c:get/3" data-no-tooltip translate="no">get(url, headers, options)</a>
 
       </div>
 
@@ -176,14 +176,14 @@ Info
       <span class="text">Callbacks</span>
     </h1>
     <div class="callbacks-list">
-<section class="detail" id="c:get/1">
+<section class="detail" id="c:get/3">
 
   <div class="detail-header">
-    <a href="#c:get/1" class="detail-link" data-no-tooltip title="Link to this callback">
+    <a href="#c:get/3" class="detail-link" data-no-tooltip title="Link to this callback">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this callback</span>
     </a>
-    <h1 class="signature" translate="no">get(url)</h1>
+    <h1 class="signature" translate="no">get(url, headers, options)</h1>
 
       <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/http_client.ex#L6" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -197,7 +197,11 @@ Info
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> get(url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+          <pre translate="no"><span class="attribute">@callback</span> get(
+  url :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(),
+  headers :: <a href="https://hexdocs.pm/httpoison/2.2.3/HTTPoison.Request.html#t:headers/0">HTTPoison.Request.headers</a>(),
+  options :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()
+) ::
   {:ok, <a href="https://hexdocs.pm/httpoison/2.2.3/HTTPoison.Response.html#t:t/0">HTTPoison.Response.t</a>()} | {:error, <a href="https://hexdocs.pm/httpoison/2.2.3/HTTPoison.Error.html#t:t/0">HTTPoison.Error.t</a>()}</pre>
 
       </div>
