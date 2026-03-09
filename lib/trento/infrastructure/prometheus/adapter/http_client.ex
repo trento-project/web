@@ -3,7 +3,7 @@ defmodule Trento.Infrastructure.Prometheus.Adapter.HttpClient do
   HTTP client behaviour for Prometheus API calls.
   """
 
-  @callback get(url :: String.t(), headers :: list(), options :: keyword()) ::
+  @callback get(url :: String.t(), headers :: HTTPoison.Request.headers(), options :: keyword()) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
 
   @behaviour __MODULE__
