@@ -181,9 +181,9 @@ jobs:
               }' > "$output_file"
           }
 
-          if [ "${{ github.event_name }}" = "schedule" ]; then
+          # if [ "${{ github.event_name }}" = "schedule" ]; then
              generate_dashboard_json "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FLAKY_TEST_LIST"
-          fi
+          # fi
 
       - name: Delete artifacts
         uses: geekyeggo/delete-artifact@v5
@@ -209,7 +209,7 @@ jobs:
           path: dashboard-site
 
       - name: Update history.json
-        if: github.event_name == 'schedule'
+        # if: github.event_name == 'schedule'
         run: |
           HISTORY_FILE="dashboard-site/flaky-tests/data/history.json"
           NEW_DATA="hack/flaky_tests_analysis/suite-results.json"
