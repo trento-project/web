@@ -256,6 +256,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc
+          keep_files: true
 
   static-code-analysis-js:
     name: Static Code Analysis JS
