@@ -95,7 +95,7 @@ for version in "${VERSIONS[@]}"; do
 extends:
   - "https://unpkg.com/@apisyouwonthate/style-guide/dist/ruleset.js"
   - "https://unpkg.com/@rhoas/spectral-ruleset"
-  - "https://raw.githubusercontent.com/SchwarzIT/api-linter-rules/refs/heads/main/spectral.yml"
+  - "https://raw.githubusercontent.com/SchwarzIT/api-linter-rules/68d460e890baef7e55f9420ab4e693f2f0a14d3c/spectral.yml"
   - "https://unpkg.com/@stoplight/spectral-documentation/dist/ruleset.mjs"
 rules:
   api-health: "off"
