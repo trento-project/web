@@ -180,20 +180,26 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
-  defp handle_unsuccessful_response(response) do
-    case response do
-      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        Logger.error(
-          "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
-        )
+  defp handle_unsuccessful_response(
+         {:ok, %HTTPoison.Response{status_code: status_code, body: body}}
+       ) do
+    Logger.error(
+      "Unexpected response from Prometheus API, status code: #{status_code}, body: #{inspect(body)}."
+    )
 
-        {:error, :unexpected_response}
+    {:error, :unexpected_response}
+  end
 
-      {:error, reason} = error ->
-        Logger.error("Error getting data from Prometheus API: #{inspect(reason)}")
+  defp handle_unsuccessful_response({:error, reason} = error) do
+    Logger.error("Error getting data from Prometheus API: #{inspect(reason)}")
 
-        error
-    end
+    error
+  end
+
+  defp handle_unsuccessful_response(error) do
+    Logger.error("Unexpected Error getting data from Prometheus API: #{inspect(error)}")
+
+    {:error, :unexpected_response}
   end
 
   defp extract_results(%{
