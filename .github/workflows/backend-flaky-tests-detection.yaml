@@ -144,7 +144,7 @@ jobs:
           done
       - name: Upload backend test junit reports
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: backend-junit-reports-elixir${{ matrix.elixir }}-run${{ matrix.run }}
           path: junit-reports/*.xml
