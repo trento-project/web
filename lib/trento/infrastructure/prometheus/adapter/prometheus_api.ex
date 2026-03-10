@@ -14,6 +14,24 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   @behaviour Trento.Infrastructure.Prometheus.Gen
   @behaviour Trento.Charts.HostDataFetcher
 
+  @total_swap "total_swap"
+  @free_swap "free_swap"
+  @used_swap "used_swap"
+
+  @swap_metrics [@total_swap, @free_swap, @used_swap]
+
+  @size_by_device "size_by_device"
+  @avail_by_device "avail_by_device"
+  @used_by_device "used_by_device"
+
+  @device_metrics [@size_by_device, @avail_by_device, @used_by_device]
+
+  @fs_size_bytes "fs_size_bytes"
+  @fs_avail_bytes "fs_avail_bytes"
+  @fs_used_bytes "fs_used_bytes"
+
+  @filesystem_metrics [@fs_size_bytes, @fs_avail_bytes, @fs_used_bytes]
+
   def ram_total(host_id, from, to) do
     query = "node_memory_MemTotal_bytes{agentID=\"#{host_id}\"}"
 
@@ -176,13 +194,13 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
         Enum.group_by(query_results, fn
           %{metric: %{"trnt_metric" => metric}} ->
             cond do
-              metric in ["total_swap", "free_swap", "used_swap"] ->
+              metric in @swap_metrics ->
                 :swap
 
-              metric in ["size_by_device", "avail_by_device", "used_by_device"] ->
+              metric in @device_metrics ->
                 :devices
 
-              metric in ["fs_size_bytes", "fs_avail_bytes", "fs_used_bytes"] ->
+              metric in @filesystem_metrics ->
                 :filesystems
 
               true ->
