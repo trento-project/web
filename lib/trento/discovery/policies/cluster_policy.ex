@@ -445,13 +445,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_hana_scale_up_system_replication_mode(nodes, sid) do
     nodes
     |> find_online_node_attributes()
-    |> Map.get("hana_#{String.downcase(sid)}_srmode", "")
+    |> Map.get("hana_#{String.downcase(sid)}_srmode", "Unknown")
   end
 
   defp parse_hana_scale_up_system_replication_operation_mode(nodes, sid) do
     nodes
     |> find_online_node_attributes()
-    |> Map.get("hana_#{String.downcase(sid)}_op_mode", "")
+    |> Map.get("hana_#{String.downcase(sid)}_op_mode", "Unknown")
   end
 
   defp find_online_node_attributes(nodes) do
