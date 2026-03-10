@@ -43,12 +43,15 @@ defmodule Trento.Charts.HostDataFetcher do
   @callback num_cpus(from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, integer()} | {:error, any}
 
-  @callback filesystem_usage(host_id :: String.t()) ::
-              {:ok,
-               %{
-                 swap: [sampled_metric()],
-                 devices: [sampled_metric()],
-                 filesystems: [sampled_metric()]
-               }}
-              | {:error, any}
+  @callback devices_size(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+
+  @callback devices_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+
+  @callback filesystems_size(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+
+  @callback filesystems_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+
+  @callback swap_total(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+
+  @callback swap_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
 end

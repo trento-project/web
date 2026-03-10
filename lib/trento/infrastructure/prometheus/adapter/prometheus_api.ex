@@ -14,24 +14,6 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   @behaviour Trento.Infrastructure.Prometheus.Gen
   @behaviour Trento.Charts.HostDataFetcher
 
-  @total_swap "total_swap"
-  @free_swap "free_swap"
-  @used_swap "used_swap"
-
-  @swap_metrics [@total_swap, @free_swap, @used_swap]
-
-  @size_by_device "size_by_device"
-  @avail_by_device "avail_by_device"
-  @used_by_device "used_by_device"
-
-  @device_metrics [@size_by_device, @avail_by_device, @used_by_device]
-
-  @fs_size_bytes "fs_size_bytes"
-  @fs_avail_bytes "fs_avail_bytes"
-  @fs_used_bytes "fs_used_bytes"
-
-  @filesystem_metrics [@fs_size_bytes, @fs_avail_bytes, @fs_used_bytes]
-
   def ram_total(host_id, from, to) do
     query = "node_memory_MemTotal_bytes{agentID=\"#{host_id}\"}"
 
@@ -115,79 +97,40 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
-  def filesystem_usage(host_id) do
-    query =
-      labeled_query(
-        "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})",
-        @size_by_device
-      )
-      |> or_labeled_query(
-        "(sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'}))",
-        @avail_by_device
-      )
-      |> or_labeled_query(
-        "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})",
-        @used_by_device
-      )
-      |> or_labeled_query("node_filesystem_size_bytes{agentID='#{host_id}'}", @fs_size_bytes)
-      |> or_labeled_query("node_filesystem_avail_bytes{agentID='#{host_id}'}", @fs_avail_bytes)
-      |> or_labeled_query(
-        "(node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})",
-        @fs_used_bytes
-      )
-      |> or_labeled_query("node_memory_SwapTotal_bytes{agentID='#{host_id}'}", @total_swap)
-      |> or_labeled_query("node_memory_SwapFree_bytes{agentID='#{host_id}'}", @free_swap)
-      |> or_labeled_query(
-        "(node_memory_SwapTotal_bytes{agentID='#{host_id}'} - node_memory_SwapFree_bytes{agentID='#{host_id}'})",
-        @used_swap
-      )
+  def devices_size(host_id) do
+    query = "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})"
 
-    with {:ok, query_results} <- perform_simple_query(query) do
-      result =
-        Enum.group_by(query_results, fn
-          %{metric: %{"trnt_metric" => metric}} ->
-            cond do
-              metric in @swap_metrics ->
-                :swap
-
-              metric in @device_metrics ->
-                :devices
-
-              metric in @filesystem_metrics ->
-                :filesystems
-
-              true ->
-                :ungrouped
-            end
-
-          _ ->
-            :ungrouped
-        end)
-
-      {:ok,
-       Map.merge(
-         %{
-           swap: [],
-           devices: [],
-           filesystems: []
-         },
-         result
-       )}
-    end
+    perform_simple_query(query)
   end
 
-  defp labeled_query(base_query, label) do
-    "label_replace(
-        (#{base_query}),
-        'trnt_metric',
-        '#{label}',
-        '',
-        ''
-      )"
+  def devices_avail(host_id) do
+    query = "sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'})"
+
+    perform_simple_query(query)
   end
 
-  defp or_labeled_query(query1, query2, label) do
-    "#{query1} or #{labeled_query(query2, label)}"
+  def filesystems_size(host_id) do
+    query = "node_filesystem_size_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query)
+  end
+
+  def filesystems_avail(host_id) do
+    query = "node_filesystem_avail_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query)
+  end
+
+  def swap_total(host_id) do
+    query = "node_memory_SwapTotal_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query)
+  end
+
+  def swap_avail(host_id) do
+    query = "node_memory_SwapFree_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query)
   end
 
   def get_exporters_status(host_id) do
