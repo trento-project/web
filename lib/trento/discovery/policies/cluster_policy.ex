@@ -444,23 +444,22 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp parse_hana_scale_up_system_replication_mode(nodes, sid) do
     nodes
-    |> find_online_node_attributes()
+    |> find_hana_scale_up_node_attributes()
     |> Map.get("hana_#{String.downcase(sid)}_srmode", "Unknown")
   end
 
   defp parse_hana_scale_up_system_replication_operation_mode(nodes, sid) do
     nodes
-    |> find_online_node_attributes()
+    |> find_hana_scale_up_node_attributes()
     |> Map.get("hana_#{String.downcase(sid)}_op_mode", "Unknown")
   end
 
-  defp find_online_node_attributes(nodes) do
+  # find_hana_scale_up_node_attributes finds first available node attributes
+  # in hana scale up configuration
+  defp find_hana_scale_up_node_attributes(nodes) do
     Enum.find_value(nodes, %{}, fn
-      %{status: "Online", attributes: attributes} -> attributes
-      # Shutdown state is the transition from Online to Offline, so it is still
-      # considered online by the cluster. That's why the attributes are valid
-      %{status: "Shutdown", attributes: attributes} -> attributes
-      _ -> false
+      %{attributes: attributes} when map_size(attributes) > 0 -> attributes
+      _ -> nil
     end)
   end
 
