@@ -115,6 +115,7 @@ jobs:
     needs: [setup-matrix, test-javascript]
     if: ${{ !cancelled() }}
     strategy:
+      max-parallel: 1
       matrix:
         include:
           - suite-name: "Jest — Node ${{ needs.setup-matrix.outputs.NODEJS_DEV }}"

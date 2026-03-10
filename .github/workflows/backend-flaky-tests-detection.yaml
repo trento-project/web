@@ -154,6 +154,7 @@ jobs:
     needs: [setup-matrix, test-backend]
     if: ${{ !cancelled() }}
     strategy:
+      max-parallel: 1
       matrix:
         include:
           - suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_DEV }}"
