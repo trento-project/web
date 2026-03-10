@@ -65,8 +65,8 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
   end
 
   defp random_usages(type, max_size \\ 475_906_703_360, max_avail \\ 338_771_271_680) do
-    avail = Enum.random(1_000_000_000..max_avail)
-    total = Enum.random(avail..max_size)
+    avail = Enum.random(0..max_avail)
+    total = Enum.random(max_avail..max_size)
 
     case type do
       :total -> total
