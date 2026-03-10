@@ -116,78 +116,31 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   def filesystem_usage(host_id) do
-    query = "
-      label_replace(
-        (sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})),
-        'trnt_metric',
-        'size_by_device',
-        '',
-        ''
+    query =
+      labeled_query(
+        "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})",
+        @size_by_device
       )
-      or
-      label_replace(
-        (sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'})),
-        'trnt_metric',
-        'avail_by_device',
-        '',
-        ''
+      |> or_labeled_query(
+        "(sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'}))",
+        @avail_by_device
       )
-      or
-      label_replace(
-        (sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})),
-        'trnt_metric',
-        'used_by_device',
-        '',
-        ''
+      |> or_labeled_query(
+        "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})",
+        @used_by_device
       )
-      or
-      label_replace(
-        node_filesystem_size_bytes{agentID='#{host_id}'},
-        'trnt_metric',
-        'fs_size_bytes',
-        '',
-        ''
+      |> or_labeled_query("node_filesystem_size_bytes{agentID='#{host_id}'}", @fs_size_bytes)
+      |> or_labeled_query("node_filesystem_avail_bytes{agentID='#{host_id}'}", @fs_avail_bytes)
+      |> or_labeled_query(
+        "(node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})",
+        @fs_used_bytes
       )
-      or
-      label_replace(
-        node_filesystem_avail_bytes{agentID='#{host_id}'},
-        'trnt_metric',
-        'fs_avail_bytes',
-        '',
-        ''
+      |> or_labeled_query("node_memory_SwapTotal_bytes{agentID='#{host_id}'}", @total_swap)
+      |> or_labeled_query("node_memory_SwapFree_bytes{agentID='#{host_id}'}", @free_swap)
+      |> or_labeled_query(
+        "(node_memory_SwapTotal_bytes{agentID='#{host_id}'} - node_memory_SwapFree_bytes{agentID='#{host_id}'})",
+        @used_swap
       )
-      or
-      label_replace(
-        (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'}),
-        'trnt_metric',
-        'fs_used_bytes',
-        '',
-        ''
-      )
-      or
-      label_replace(
-        node_memory_SwapTotal_bytes{agentID='#{host_id}'},
-        'trnt_metric',
-        'total_swap',
-        '',
-        ''
-      )
-      or
-      label_replace(
-        node_memory_SwapFree_bytes{agentID='#{host_id}'},
-        'trnt_metric',
-        'free_swap',
-        '',
-        ''
-      )
-      or
-      label_replace(
-        (node_memory_SwapTotal_bytes{agentID='#{host_id}'} - node_memory_SwapFree_bytes{agentID='#{host_id}'}),
-        'trnt_metric',
-        'used_swap',
-        '',
-        ''
-      )"
 
     with {:ok, query_results} <- perform_simple_query(query) do
       result =
@@ -221,6 +174,20 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
          result
        )}
     end
+  end
+
+  defp labeled_query(base_query, label) do
+    "label_replace(
+        (#{base_query}),
+        'trnt_metric',
+        '#{label}',
+        '',
+        ''
+      )"
+  end
+
+  defp or_labeled_query(query1, query2, label) do
+    "#{query1} or #{labeled_query(query2, label)}"
   end
 
   def get_exporters_status(host_id) do
