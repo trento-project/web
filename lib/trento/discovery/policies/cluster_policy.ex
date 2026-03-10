@@ -457,6 +457,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp find_online_node_attributes(nodes) do
     Enum.find_value(nodes, %{}, fn
       %{status: "Online", attributes: attributes} -> attributes
+      # Shutdown state is the transition from Online to Offline, so it is still
+      # considered online by the cluster. That's why the attributes are valid
+      %{status: "Shutdown", attributes: attributes} -> attributes
       _ -> false
     end)
   end
