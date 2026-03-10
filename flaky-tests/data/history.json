@@ -66,5 +66,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-10T06:33:12Z",
+    "commit": "e8b468eb361269a354c51fad0a0089875d858029",
+    "run_id": "22886799102",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1407
+      },
+      {
+        "name": "should not be able to login with deleted user::Users Delete user should not be able to login with deleted user",
+        "score": 0.1301
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.1159
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1159
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.07026
+      }
+    ]
   }
 ]
