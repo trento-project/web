@@ -78,6 +78,7 @@ jobs:
                 rproxy_ssl_cert_as_base64: true
                 rproxy_ssl_key_as_base64: true
                 trento_server_url: 'http://${{ env.PR_BASE_URL }}'
+                trento_prometheus_auth: 'none'
 
               children:
                 trento_server:
