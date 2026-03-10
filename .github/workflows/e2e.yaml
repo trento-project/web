@@ -56,7 +56,7 @@ jobs:
           # workspace: ${{ github.head_ref }}
           auto_approve: true
       - name: Upload tfstate
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: ${{ !env.ACT }}
         with:
           name: terraform-state
