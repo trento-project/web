@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v6
       - name: Download JUnit reports artifacts
         id: download-reports
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           path: junit-reports
           pattern: ${{ inputs.junit-artifact-pattern }}
