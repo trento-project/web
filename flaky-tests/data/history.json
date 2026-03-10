@@ -22,5 +22,49 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-10T04:10:21Z",
+    "commit": "e8b468eb361269a354c51fad0a0089875d858029",
+    "run_id": "22886287364",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.5
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1279
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.05781
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
   }
 ]
