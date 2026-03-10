@@ -340,6 +340,8 @@ describe('Users', () => {
       usersPage.visit();
       usersPage.clickNewUserDeleteButton();
       usersPage.clickConfirmDeleteUserButton();
+      usersPage.userDeletedSuccesfullyToasterIsDisplayed();
+      usersPage.deletedUserNameIsNotDisplayed();
     });
 
     it('should delete the user properly', () => {
