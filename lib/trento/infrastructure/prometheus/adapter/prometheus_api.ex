@@ -97,6 +97,114 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
+  def filesystem_usage(host_id) do
+    query = "
+      label_replace(
+        (sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})),
+        'trnt_metric',
+        'size_by_device',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        (sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'})),
+        'trnt_metric',
+        'avail_by_device',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        (sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'})),
+        'trnt_metric',
+        'used_by_device',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        node_filesystem_size_bytes{agentID='#{host_id}'},
+        'trnt_metric',
+        'fs_size_bytes',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        node_filesystem_avail_bytes{agentID='#{host_id}'},
+        'trnt_metric',
+        'fs_avail_bytes',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        (node_filesystem_size_bytes{agentID='#{host_id}'} - node_filesystem_avail_bytes{agentID='#{host_id}'}),
+        'trnt_metric',
+        'fs_used_bytes',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        node_memory_SwapTotal_bytes{agentID='#{host_id}'},
+        'trnt_metric',
+        'total_swap',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        node_memory_SwapFree_bytes{agentID='#{host_id}'},
+        'trnt_metric',
+        'free_swap',
+        '',
+        ''
+      )
+      or
+      label_replace(
+        (node_memory_SwapTotal_bytes{agentID='#{host_id}'} - node_memory_SwapFree_bytes{agentID='#{host_id}'}),
+        'trnt_metric',
+        'used_swap',
+        '',
+        ''
+      )"
+
+    with {:ok, query_results} <- perform_simple_query(query) do
+      result =
+        Enum.group_by(query_results, fn
+          %{metric: %{"trnt_metric" => metric}} ->
+            cond do
+              metric in ["total_swap", "free_swap", "used_swap"] ->
+                :swap
+
+              metric in ["size_by_device", "avail_by_device", "used_by_device"] ->
+                :devices
+
+              metric in ["fs_size_bytes", "fs_avail_bytes", "fs_used_bytes"] ->
+                :filesystems
+
+              true ->
+                :ungrouped
+            end
+
+          _ ->
+            :ungrouped
+        end)
+
+      {:ok,
+       Map.merge(
+         %{
+           swap: [],
+           devices: [],
+           filesystems: []
+         },
+         result
+       )}
+    end
+  end
+
   def get_exporters_status(host_id) do
     with %HostReadModel{prometheus_targets: prometheus_targets} <-
            Repo.get(HostReadModel, host_id),
@@ -127,15 +235,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   defp parse_exporter_status(%{
-         "metric" => %{"exporter_name" => exporter_name},
-         "value" => [_, value]
+         metric: %{"exporter_name" => exporter_name},
+         sample: %{
+           value: value
+         }
        }) do
     {exporter_name,
-     case value do
-       "0" ->
+     case trunc(value) do
+       0 ->
          :critical
 
-       "1" ->
+       1 ->
          :passing
 
        _ ->
@@ -157,7 +267,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
            http_client().get(url, headers, params: params),
          {:ok, result_body} <- Jason.decode(body),
          query_values <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.query_values_to_samples(query_values) do
+         {:ok, samples} <- ChartIntegration.matrix_results_to_samples(query_values) do
       {:ok, samples}
     else
       error -> handle_unsuccessful_response(error)
@@ -173,8 +283,10 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body) do
-      {:ok, extract_results(result_body)}
+         {:ok, result_body} <- Jason.decode(body),
+         results <- extract_results(result_body),
+         {:ok, samples} <- ChartIntegration.vector_results_to_samples(results) do
+      {:ok, samples}
     else
       error -> handle_unsuccessful_response(error)
     end

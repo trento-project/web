@@ -5,6 +5,8 @@ defmodule Trento.Charts.HostDataFetcher do
 
   alias Trento.Charts.ChartTimeSeriesSample
 
+  @type sampled_metric :: %{metric: map(), sample: ChartTimeSeriesSample.t()}
+
   @callback cpu_busy_iowait(host_id :: String.t(), from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, [ChartTimeSeriesSample.t()]} | {:error, any}
 
@@ -40,4 +42,13 @@ defmodule Trento.Charts.HostDataFetcher do
 
   @callback num_cpus(from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, integer()} | {:error, any}
+
+  @callback filesystem_usage(host_id :: String.t()) ::
+              {:ok,
+               %{
+                 swap: [sampled_metric()],
+                 devices: [sampled_metric()],
+                 filesystems: [sampled_metric()]
+               }}
+              | {:error, any}
 end

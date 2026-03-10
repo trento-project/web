@@ -13,31 +13,33 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     Mox.verify_on_exit!()
   end
 
+  defp setup_mocked_prometheus_api(_) do
+    default_prometheus_config =
+      Application.get_env(:trento, Trento.Infrastructure.Prometheus.PrometheusApi)
+
+    test_prometheus_config = Keyword.put(default_prometheus_config, :http_client, Mock)
+
+    Application.put_env(
+      :trento,
+      Trento.Infrastructure.Prometheus.PrometheusApi,
+      test_prometheus_config
+    )
+
+    on_exit(fn ->
+      Application.put_env(
+        :trento,
+        Trento.Infrastructure.Prometheus.PrometheusApi,
+        default_prometheus_config
+      )
+    end)
+  end
+
   test "should return not found is the host is not registered" do
     assert {:error, :not_found} == PrometheusApi.get_exporters_status(Faker.UUID.v4())
   end
 
   describe "get_exporters_status with expected exporters" do
-    setup do
-      default_prometheus_config =
-        Application.get_env(:trento, Trento.Infrastructure.Prometheus.PrometheusApi)
-
-      test_prometheus_config = Keyword.put(default_prometheus_config, :http_client, Mock)
-
-      Application.put_env(
-        :trento,
-        Trento.Infrastructure.Prometheus.PrometheusApi,
-        test_prometheus_config
-      )
-
-      on_exit(fn ->
-        Application.put_env(
-          :trento,
-          Trento.Infrastructure.Prometheus.PrometheusApi,
-          default_prometheus_config
-        )
-      end)
-    end
+    setup :setup_mocked_prometheus_api
 
     test "expected exporters not present in query results are reported as critical" do
       %{id: host_id} =
@@ -84,11 +86,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
-                  "value" => ["1234567890", "1"]
+                  "value" => [1_234_567_890, "1"]
                 },
                 %{
                   "metric" => %{"exporter_name" => "ha_cluster_exporter"},
-                  "value" => ["1234567890", "1"]
+                  "value" => [1_234_567_890, "1"]
                 }
               ]
             }
@@ -122,11 +124,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
-                  "value" => ["1234567890", "1"]
+                  "value" => [1_234_567_890, "1"]
                 },
                 %{
                   "metric" => %{"exporter_name" => "ha_cluster_exporter"},
-                  "value" => ["1234567890", "0"]
+                  "value" => [1_234_567_890, "0"]
                 }
               ]
             }
@@ -154,7 +156,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
-                  "value" => ["1234567890", "1"]
+                  "value" => [1_234_567_890, "1"]
                 }
               ]
             }
@@ -183,11 +185,11 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
               "result" => [
                 %{
                   "metric" => %{"exporter_name" => "node_exporter"},
-                  "value" => ["1234567890", "1"]
+                  "value" => [1_234_567_890, "1"]
                 },
                 %{
                   "metric" => %{"exporter_name" => "extra_exporter"},
-                  "value" => ["1234567890", "0"]
+                  "value" => [1_234_567_890, "0"]
                 }
               ]
             }
@@ -411,6 +413,284 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
                 %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:34:28.000000Z], value: 0.0},
                 %ChartTimeSeriesSample{timestamp: ~U[2023-12-11 17:33:28.000000Z], value: 0.0}
               ]} == PrometheusApi.swap_used(prometheus_chart_agent_id, from, to)
+    end
+  end
+
+  describe "filesystem data fetching" do
+    setup :setup_mocked_prometheus_api
+
+    test "should return all empty samples when no data is available" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "resultType" => "vector",
+              "result" => []
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                swap: [],
+                devices: [],
+                filesystems: []
+              }} = PrometheusApi.filesystem_usage(Faker.UUID.v4())
+    end
+
+    test "should return some empty samples when some data is not available" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "resultType" => "vector",
+              "result" => [
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda1",
+                    "trnt_metric" => "size_by_device"
+                  },
+                  "value" => [1_702_316_008, "123456789"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                swap: [],
+                devices: [
+                  %{
+                    sample: %ChartTimeSeriesSample{},
+                    metric: _
+                  }
+                ],
+                filesystems: []
+              }} = PrometheusApi.filesystem_usage(Faker.UUID.v4())
+    end
+
+    test "should handle unexpected metrics" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "resultType" => "vector",
+              "result" => [
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda1",
+                    "trnt_metric" => "size_by_device"
+                  },
+                  "value" => [1_702_316_008, "123456789"]
+                },
+                %{
+                  "metric" => %{
+                    "trnt_metric" => "unexpected_metric"
+                  },
+                  "value" => [1_702_316_008, "123456789"]
+                },
+                %{
+                  "metric" => %{
+                    "foo" => "bar"
+                  },
+                  "value" => [1_702_316_008, "123456789"]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                swap: [],
+                devices: [
+                  %{
+                    sample: %ChartTimeSeriesSample{},
+                    metric: _
+                  }
+                ],
+                filesystems: [],
+                ungrouped: ungrouped_metrics
+              }} = PrometheusApi.filesystem_usage(Faker.UUID.v4())
+
+      assert length(ungrouped_metrics) == 2
+    end
+
+    test "should return filesystem usage metrics" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        body =
+          Jason.encode!(%{
+            "data" => %{
+              "resultType" => "vector",
+              "result" => [
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "trnt_metric" => "size_by_device"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "trnt_metric" => "avail_by_device"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "trnt_metric" => "used_by_device"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "fstype" => "brfs",
+                    "mountpoint" => "/home",
+                    "trnt_metric" => "fs_size_bytes"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "fstype" => "brfs",
+                    "mountpoint" => "/home",
+                    "trnt_metric" => "fs_avail_bytes"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "device" => "/dev/sda2",
+                    "fstype" => "brfs",
+                    "mountpoint" => "/home",
+                    "trnt_metric" => "fs_used_bytes"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "536576000"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "trnt_metric" => "total_swap"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "123456789"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "trnt_metric" => "free_swap"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "123456789"
+                  ]
+                },
+                %{
+                  "metric" => %{
+                    "trnt_metric" => "used_swap"
+                  },
+                  "value" => [
+                    1_773_147_729.150,
+                    "123456789"
+                  ]
+                }
+              ]
+            }
+          })
+
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok,
+              %{
+                swap: swap_metrics,
+                devices: devices_metrics,
+                filesystems: filesystem_metrics
+              }} = PrometheusApi.filesystem_usage(Faker.UUID.v4())
+
+      assert length(swap_metrics) == 3
+      assert length(devices_metrics) == 3
+      assert length(filesystem_metrics) == 3
+
+      assert swap_metrics
+             |> Enum.concat(devices_metrics)
+             |> Enum.concat(filesystem_metrics)
+             |> Enum.all?(fn %{sample: %ChartTimeSeriesSample{}, metric: %{"trnt_metric" => _}} ->
+               true
+             end)
+    end
+  end
+
+  describe "error handling" do
+    setup :setup_mocked_prometheus_api
+
+    scenarios = [
+      %{
+        name: "error response",
+        result: {:ok, %HTTPoison.Response{status_code: 500, body: ""}},
+        expected_error: :unexpected_response
+      },
+      %{
+        name: "unexpected successful response",
+        result: {:ok, %HTTPoison.Response{status_code: 204, body: ""}},
+        expected_error: :unexpected_response
+      },
+      %{
+        name: "HTTP client error",
+        result: {:error, %HTTPoison.Error{reason: :timeout}},
+        expected_error: %HTTPoison.Error{reason: :timeout}
+      }
+    ]
+
+    for %{name: name, result: result, expected_error: expected_error} <- scenarios do
+      @scenario_result result
+      @expected_error expected_error
+
+      test "should handle error on query range, #{name}" do
+        expect(Mock, :get, fn _url, _headers, _params ->
+          @scenario_result
+        end)
+
+        assert {:error, @expected_error} =
+                 PrometheusApi.cpu_idle(Faker.UUID.v4(), DateTime.utc_now(), DateTime.utc_now())
+      end
+
+      test "should handle error on simple query, #{name}" do
+        expect(Mock, :get, fn _url, _headers, _params ->
+          @scenario_result
+        end)
+
+        assert {:error, @expected_error} = PrometheusApi.filesystem_usage(Faker.UUID.v4())
+      end
     end
   end
 end
