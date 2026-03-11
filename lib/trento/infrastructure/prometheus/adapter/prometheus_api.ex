@@ -97,40 +97,40 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
-  def devices_size(host_id) do
+  def devices_size(host_id, time) do
     query = "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
-  def devices_avail(host_id) do
+  def devices_avail(host_id, time) do
     query = "sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'})"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
-  def filesystems_size(host_id) do
+  def filesystems_size(host_id, time) do
     query = "node_filesystem_size_bytes{agentID='#{host_id}'}"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
-  def filesystems_avail(host_id) do
+  def filesystems_avail(host_id, time) do
     query = "node_filesystem_avail_bytes{agentID='#{host_id}'}"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
-  def swap_total(host_id) do
+  def swap_total(host_id, time) do
     query = "node_memory_SwapTotal_bytes{agentID='#{host_id}'}"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
-  def swap_avail(host_id) do
+  def swap_avail(host_id, time) do
     query = "node_memory_SwapFree_bytes{agentID='#{host_id}'}"
 
-    perform_simple_query(query)
+    perform_simple_query(query, time)
   end
 
   def get_exporters_status(host_id) do
@@ -202,12 +202,16 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
-  defp perform_simple_query(query) do
+  defp perform_simple_query(query, time \\ DateTime.utc_now())
+
+  defp perform_simple_query(query, time) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
     url = "#{prometheus_url}/api/v1/query"
     headers = [{"Accept", "application/json"}]
-    params = %{query: query}
+    time = DateTime.to_iso8601(time)
+
+    params = %{query: query, time: time}
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(url, headers, params: params),

@@ -460,7 +460,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.devices_size(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.devices_size(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 3
 
       assert Enum.all?(sampled_metrics, fn %{
@@ -494,7 +496,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.devices_avail(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.devices_avail(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 1
 
       assert [
@@ -533,7 +537,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.filesystems_size(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.filesystems_size(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 1
 
       assert [
@@ -576,7 +582,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.filesystems_avail(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.filesystems_avail(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 1
 
       assert [
@@ -615,7 +623,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.swap_total(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.swap_total(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 1
 
       assert [
@@ -650,7 +660,9 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
         {:ok, %HTTPoison.Response{status_code: 200, body: body}}
       end)
 
-      assert {:ok, sampled_metrics} = PrometheusApi.swap_total(Faker.UUID.v4())
+      assert {:ok, sampled_metrics} =
+               PrometheusApi.swap_total(Faker.UUID.v4(), DateTime.utc_now())
+
       assert length(sampled_metrics) == 1
 
       assert [
@@ -700,8 +712,35 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       test "should handle error on simple query, #{name}" do
         expect(Mock, :get, fn _url, _headers, _params -> @scenario_result end)
 
-        assert {:error, @expected_error} = PrometheusApi.filesystems_avail(Faker.UUID.v4())
+        assert {:error, @expected_error} =
+                 PrometheusApi.filesystems_avail(Faker.UUID.v4(), DateTime.utc_now())
       end
+    end
+  end
+
+  describe "time propagation in instant query" do
+    setup :setup_mocked_prometheus_api
+
+    test "should implicitly add time query param" do
+      %{id: host_id} = insert(:host)
+
+      expect(Mock, :get, fn _url, _headers, params: %{time: _} ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+      end)
+
+      PrometheusApi.get_exporters_status(host_id)
+    end
+
+    test "should explicitly pass query param" do
+      time = DateTime.utc_now()
+
+      iso_time = DateTime.to_iso8601(time)
+
+      expect(Mock, :get, fn _url, _headers, params: %{time: ^iso_time} ->
+        {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+      end)
+
+      PrometheusApi.swap_total(Faker.UUID.v4(), time)
     end
   end
 end

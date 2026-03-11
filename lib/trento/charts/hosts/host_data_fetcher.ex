@@ -43,15 +43,21 @@ defmodule Trento.Charts.HostDataFetcher do
   @callback num_cpus(from :: DateTime.t(), to :: DateTime.t()) ::
               {:ok, integer()} | {:error, any}
 
-  @callback devices_size(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback devices_size(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 
-  @callback devices_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback devices_avail(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 
-  @callback filesystems_size(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback filesystems_size(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 
-  @callback filesystems_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback filesystems_avail(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 
-  @callback swap_total(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback swap_total(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 
-  @callback swap_avail(host_id :: String.t()) :: {:ok, [sampled_metric()]} | {:error, any}
+  @callback swap_avail(host_id :: String.t(), time :: DateTime.t()) ::
+              {:ok, [sampled_metric()]} | {:error, any}
 end

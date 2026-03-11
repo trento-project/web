@@ -35,21 +35,21 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
   def num_cpus(_, _), do: {:ok, 8}
   def get_exporters_status(_), do: {:ok, %{"Node Exporter" => :passing}}
 
-  def devices_size(_),
+  def devices_size(_, _),
     do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :total))}
 
-  def devices_avail(_),
+  def devices_avail(_, _),
     do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :avail))}
 
-  def filesystems_size(_),
+  def filesystems_size(_, _),
     do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :total))}
 
-  def filesystems_avail(_),
+  def filesystems_avail(_, _),
     do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :avail))}
 
-  def swap_total(_), do: random_swap_data(:total)
+  def swap_total(_, _), do: random_swap_data(:total)
 
-  def swap_avail(_), do: random_swap_data(:avail)
+  def swap_avail(_, _), do: random_swap_data(:avail)
 
   defp random_chart_data(from, to, interval \\ 0..100) do
     minute_difference = trunc(DateTime.diff(from, to, :minute) / 5)
