@@ -339,7 +339,11 @@ describe('Users', () => {
       );
       usersPage.visit();
       usersPage.clickNewUserDeleteButton();
+      usersPage.interceptDeleteUser();
+      usersPage.interceptGetUsers();
       usersPage.clickConfirmDeleteUserButton();
+      usersPage.waitForRequest('deleteUser');
+      usersPage.waitForRequest('getUsers');
     });
 
     it('should delete the user properly', () => {
@@ -356,7 +360,6 @@ describe('Users', () => {
       usersPage.typeUserPasswordConfirmation();
       usersPage.clickSubmitUserCreationButton();
       usersPage.userCreatedSuccessfullyToasterIsDisplayed();
-
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
       usersPage.newUserIsDisplayed();
     });
