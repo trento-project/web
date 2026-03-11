@@ -22,5 +22,21 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-11T03:41:21Z",
+    "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
+    "run_id": "22935232557",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      }
+    ]
   }
 ]
