@@ -661,7 +661,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
       end)
 
       assert {:ok, sampled_metrics} =
-               PrometheusApi.swap_total(Faker.UUID.v4(), DateTime.utc_now())
+               PrometheusApi.swap_avail(Faker.UUID.v4(), DateTime.utc_now())
 
       assert length(sampled_metrics) == 1
 

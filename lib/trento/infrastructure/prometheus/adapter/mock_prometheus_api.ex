@@ -35,21 +35,21 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
   def num_cpus(_, _), do: {:ok, 8}
   def get_exporters_status(_), do: {:ok, %{"Node Exporter" => :passing}}
 
-  def devices_size(_, _),
-    do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :total))}
+  def devices_size(_, time),
+    do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :total, time))}
 
-  def devices_avail(_, _),
-    do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :avail))}
+  def devices_avail(_, time),
+    do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :avail, time))}
 
-  def filesystems_size(_, _),
-    do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :total))}
+  def filesystems_size(_, time),
+    do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :total, time))}
 
-  def filesystems_avail(_, _),
-    do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :avail))}
+  def filesystems_avail(_, time),
+    do: {:ok, Enum.map(@mock_filesystems, &random_filesystem_data(&1, :avail, time))}
 
-  def swap_total(_, _), do: random_swap_data(:total)
+  def swap_total(_, time), do: random_swap_data(:total, time)
 
-  def swap_avail(_, _), do: random_swap_data(:avail)
+  def swap_avail(_, time), do: random_swap_data(:avail, time)
 
   defp random_chart_data(from, to, interval \\ 0..100) do
     minute_difference = trunc(DateTime.diff(from, to, :minute) / 5)
@@ -74,12 +74,12 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
     end
   end
 
-  defp random_swap_data(type) do
+  defp random_swap_data(type, time) do
     {:ok,
      [
        %{
          sample: %ChartTimeSeriesSample{
-           timestamp: DateTime.utc_now(),
+           timestamp: time,
            value: random_usages(type, 2_148_335_616, 1_148_184_064)
          },
          metric: %{}
@@ -87,20 +87,20 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
      ]}
   end
 
-  defp random_devices_data(device, type) do
+  defp random_devices_data(device, type, time) do
     %{
       sample: %ChartTimeSeriesSample{
-        timestamp: DateTime.utc_now(),
+        timestamp: time,
         value: random_usages(type)
       },
       metric: %{"device" => device}
     }
   end
 
-  defp random_filesystem_data(mountpoint, type) do
+  defp random_filesystem_data(mountpoint, type, time) do
     %{
       sample: %ChartTimeSeriesSample{
-        timestamp: DateTime.utc_now(),
+        timestamp: time,
         value: random_usages(type)
       },
       metric: %{
