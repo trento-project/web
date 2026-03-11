@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-C471304F.js"></script>
+    <script src="dist/sidebar_items-7519B5A3.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -158,7 +158,15 @@ Chart time series objects</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#query_values_to_samples/1" data-no-tooltip translate="no">query_values_to_samples(query_values)</a>
+        <a href="#matrix_results_to_samples/1" data-no-tooltip translate="no">matrix_results_to_samples(matrix_results)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#vector_results_to_samples/1" data-no-tooltip translate="no">vector_results_to_samples(vector_results)</a>
 
       </div>
 
@@ -177,14 +185,14 @@ Chart time series objects</p>
       <span class="text">Functions</span>
     </h1>
     <div class="functions-list">
-<section class="detail" id="query_values_to_samples/1">
+<section class="detail" id="matrix_results_to_samples/1">
 
   <div class="detail-header">
-    <a href="#query_values_to_samples/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#matrix_results_to_samples/1" class="detail-link" data-no-tooltip title="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">query_values_to_samples(query_values)</h1>
+    <h1 class="signature" translate="no">matrix_results_to_samples(matrix_results)</h1>
 
       <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/chart_integration.ex#L11" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
@@ -198,8 +206,38 @@ Chart time series objects</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> query_values_to_samples([<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) ::
+          <pre translate="no"><span class="attribute">@spec</span> matrix_results_to_samples([<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) ::
   {:ok, [<a href="Trento.Charts.ChartTimeSeriesSample.html#t:t/0">Trento.Charts.ChartTimeSeriesSample.t</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="vector_results_to_samples/1">
+
+  <div class="detail-header">
+    <a href="#vector_results_to_samples/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">vector_results_to_samples(vector_results)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/chart_integration.ex#L26" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> vector_results_to_samples([<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()]) ::
+  {:ok, [%{metric: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), sample: <a href="Trento.Charts.ChartTimeSeriesSample.html#t:t/0">Trento.Charts.ChartTimeSeriesSample.t</a>()}]}
+  | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
 
       </div>
 

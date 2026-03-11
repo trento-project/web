@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-C471304F.js"></script>
+    <script src="dist/sidebar_items-7519B5A3.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -150,6 +150,20 @@ Info
       </a>
       <span class="text">Summary</span>
     </h1>
+<div class="summary-types summary">
+  <h2>
+    <a href="#types">Types</a>
+  </h2>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#t:sampled_metric/0" data-no-tooltip translate="no">sampled_metric()</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-callbacks summary">
   <h2>
     <a href="#callbacks">Callbacks</a>
@@ -205,6 +219,38 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#c:devices_avail/2" data-no-tooltip translate="no">devices_avail(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:devices_size/2" data-no-tooltip translate="no">devices_size(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:filesystems_avail/2" data-no-tooltip translate="no">filesystems_avail(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:filesystems_size/2" data-no-tooltip translate="no">filesystems_size(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#c:num_cpus/2" data-no-tooltip translate="no">num_cpus(from, to)</a>
 
       </div>
@@ -245,6 +291,22 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#c:swap_avail/2" data-no-tooltip translate="no">swap_avail(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:swap_total/2" data-no-tooltip translate="no">swap_total(host_id, time)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#c:swap_used/3" data-no-tooltip translate="no">swap_used(host_id, from, to)</a>
 
       </div>
@@ -255,6 +317,49 @@ Info
 
   </section>
 
+
+  <section id="types" class="details-list">
+    <h1 class="section-heading">
+      <a class="hover-link" href="#types">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Types</span>
+    </h1>
+    <div class="types-list">
+<section class="detail" id="t:sampled_metric/0">
+
+  <div class="detail-header">
+    <a href="#t:sampled_metric/0" class="detail-link" data-no-tooltip title="Link to this type">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this type</span>
+    </a>
+    <h1 class="signature" translate="no">sampled_metric()</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L8" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@type</span> sampled_metric() :: %{
+  metric: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(),
+  sample: <a href="Trento.Charts.ChartTimeSeriesSample.html#t:t/0">Trento.Charts.ChartTimeSeriesSample.t</a>()
+}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
 
   <section id="callbacks" class="details-list">
     <h1 class="section-heading">
@@ -273,7 +378,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_busy_iowait(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L8" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L10" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -302,7 +407,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_busy_irqs(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L23" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L25" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -331,7 +436,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_busy_other(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L20" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L22" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -360,7 +465,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_busy_system(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L14" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L16" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -389,7 +494,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_busy_user(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L17" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L19" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -418,7 +523,7 @@ Info
     </a>
     <h1 class="signature" translate="no">cpu_idle(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L11" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L13" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -438,6 +543,122 @@ Info
 
   </section>
 </section>
+<section class="detail" id="c:devices_avail/2">
+
+  <div class="detail-header">
+    <a href="#c:devices_avail/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">devices_avail(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L49" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> devices_avail(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:devices_size/2">
+
+  <div class="detail-header">
+    <a href="#c:devices_size/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">devices_size(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L46" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> devices_size(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:filesystems_avail/2">
+
+  <div class="detail-header">
+    <a href="#c:filesystems_avail/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">filesystems_avail(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L55" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> filesystems_avail(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:filesystems_size/2">
+
+  <div class="detail-header">
+    <a href="#c:filesystems_size/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">filesystems_size(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L52" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> filesystems_size(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="c:num_cpus/2">
 
   <div class="detail-header">
@@ -447,7 +668,7 @@ Info
     </a>
     <h1 class="signature" translate="no">num_cpus(from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L41" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L43" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -476,7 +697,7 @@ Info
     </a>
     <h1 class="signature" translate="no">ram_cache_and_buffer(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L32" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L34" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -509,7 +730,7 @@ Info
     </a>
     <h1 class="signature" translate="no">ram_free(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L35" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L37" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -538,7 +759,7 @@ Info
     </a>
     <h1 class="signature" translate="no">ram_total(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L26" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L28" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -567,7 +788,7 @@ Info
     </a>
     <h1 class="signature" translate="no">ram_used(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L29" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L31" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -587,6 +808,64 @@ Info
 
   </section>
 </section>
+<section class="detail" id="c:swap_avail/2">
+
+  <div class="detail-header">
+    <a href="#c:swap_avail/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">swap_avail(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L61" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> swap_avail(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+<section class="detail" id="c:swap_total/2">
+
+  <div class="detail-header">
+    <a href="#c:swap_total/2" class="detail-link" data-no-tooltip title="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this callback</span>
+    </a>
+    <h1 class="signature" translate="no">swap_total(host_id, time)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L58" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> swap_total(host_id :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), time :: <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, [<a href="#t:sampled_metric/0">sampled_metric</a>()]} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="c:swap_used/3">
 
   <div class="detail-header">
@@ -596,7 +875,7 @@ Info
     </a>
     <h1 class="signature" translate="no">swap_used(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L38" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts/hosts/host_data_fetcher.ex#L40" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
