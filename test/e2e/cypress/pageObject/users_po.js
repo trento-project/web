@@ -6,6 +6,7 @@ import * as basePage from './base_po.js';
 import { userFactory } from '@lib/test-utils/factories/users';
 
 // Test data
+const usersEndpoint = '/api/v1/users';
 const url = '/users';
 export const PASSWORD = 'password';
 export const USER = userFactory.build({ username: 'e2etest' });
@@ -432,6 +433,11 @@ export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
 
 // API
+export const interceptDeleteUser = () =>
+  cy.intercept('DELETE', `${usersEndpoint}/*`).as('deleteUser');
+
+export const interceptGetUsers = () =>
+  cy.intercept('GET', usersEndpoint).as('getUsers');
 
 export const interceptDeleteTotpEnrollmentEndpoint = () =>
   cy
@@ -483,7 +489,7 @@ export const apiCreateUser = () => {
       abilities: [],
     };
     return cy.request({
-      url: '/api/v1/users',
+      url: usersEndpoint,
       method: 'POST',
       auth: { bearer: accessToken },
       body,
@@ -495,13 +501,13 @@ export const apiPatchUser = (id, payload) => {
   return basePage.apiLogin().then(({ accessToken }) =>
     cy
       .request({
-        url: `/api/v1/users/${id}`,
+        url: `${usersEndpoint}/${id}`,
         method: 'GET',
         auth: { bearer: accessToken },
       })
       .then(({ headers: { etag } }) => {
         cy.request({
-          url: `/api/v1/users/${id}`,
+          url: `${usersEndpoint}/${id}`,
           method: 'PATCH',
           auth: { bearer: accessToken },
           body: payload,
@@ -554,7 +560,7 @@ export const apiPersonalAccessTokenUnauthorized = (accessToken) => {
 };
 
 export const apiPersonalAccessTokenForbidden = (accessToken) => {
-  _assertAuthenticationStatusCode(accessToken, 403, '/api/v1/users');
+  _assertAuthenticationStatusCode(accessToken, 403, usersEndpoint);
 };
 
 export const apiModifyUserFullName = () =>
