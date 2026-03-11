@@ -97,6 +97,42 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
+  def devices_size(host_id, time) do
+    query = "sum by (device) (node_filesystem_size_bytes{agentID='#{host_id}'})"
+
+    perform_simple_query(query, time)
+  end
+
+  def devices_avail(host_id, time) do
+    query = "sum by (device) (node_filesystem_avail_bytes{agentID='#{host_id}'})"
+
+    perform_simple_query(query, time)
+  end
+
+  def filesystems_size(host_id, time) do
+    query = "node_filesystem_size_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query, time)
+  end
+
+  def filesystems_avail(host_id, time) do
+    query = "node_filesystem_avail_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query, time)
+  end
+
+  def swap_total(host_id, time) do
+    query = "node_memory_SwapTotal_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query, time)
+  end
+
+  def swap_avail(host_id, time) do
+    query = "node_memory_SwapFree_bytes{agentID='#{host_id}'}"
+
+    perform_simple_query(query, time)
+  end
+
   def get_exporters_status(host_id) do
     with %HostReadModel{prometheus_targets: prometheus_targets} <-
            Repo.get(HostReadModel, host_id),
@@ -127,15 +163,17 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   defp parse_exporter_status(%{
-         "metric" => %{"exporter_name" => exporter_name},
-         "value" => [_, value]
+         metric: %{"exporter_name" => exporter_name},
+         sample: %{
+           value: value
+         }
        }) do
     {exporter_name,
-     case value do
-       "0" ->
+     case trunc(value) do
+       0 ->
          :critical
 
-       "1" ->
+       1 ->
          :passing
 
        _ ->
@@ -157,24 +195,30 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
            http_client().get(url, headers, params: params),
          {:ok, result_body} <- Jason.decode(body),
          query_values <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.query_values_to_samples(query_values) do
+         {:ok, samples} <- ChartIntegration.matrix_results_to_samples(query_values) do
       {:ok, samples}
     else
       error -> handle_unsuccessful_response(error)
     end
   end
 
-  defp perform_simple_query(query) do
+  defp perform_simple_query(query, time \\ DateTime.utc_now())
+
+  defp perform_simple_query(query, time) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
     url = "#{prometheus_url}/api/v1/query"
     headers = [{"Accept", "application/json"}]
-    params = %{query: query}
+    time = DateTime.to_iso8601(time)
+
+    params = %{query: query, time: time}
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body) do
-      {:ok, extract_results(result_body)}
+         {:ok, result_body} <- Jason.decode(body),
+         results <- extract_results(result_body),
+         {:ok, samples} <- ChartIntegration.vector_results_to_samples(results) do
+      {:ok, samples}
     else
       error -> handle_unsuccessful_response(error)
     end
