@@ -203,7 +203,7 @@ jobs:
 
       - name: Checkout gh-pages for update
         if: github.event_name == 'schedule'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: gh-pages
           path: dashboard-site
