@@ -82,5 +82,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-11T04:10:57Z",
+    "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
+    "run_id": "22935882618",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.2981
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.1905
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
