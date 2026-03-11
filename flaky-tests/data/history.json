@@ -106,5 +106,25 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-11T06:48:39Z",
+    "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
+    "run_id": "22936441022",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not be able to login with deleted user::Users Delete user should not be able to login with deleted user",
+        "score": 0.1471
+      },
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.05001
+      }
+    ]
   }
 ]
