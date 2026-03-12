@@ -1175,11 +1175,15 @@ defmodule Trento.ClustersTest do
       @operation operation
       @operator operator
 
-      test "should request #{@operation} operation on online node" do
+      test "should request #{@operation} operation on online and heartbeat passing nodes" do
         argument = UUID.uuid4()
         %{id: cluster_id} = insert(:cluster)
         insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.offline())
-        [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host, cluster_id: cluster_id)
+
+        [%{id: host_id_1}, %{id: host_id_2}] =
+          insert_list(2, :host, cluster_id: cluster_id, heartbeat: :passing)
+
+        insert(:host, cluster_id: cluster_id, heartbeat: :critical)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
