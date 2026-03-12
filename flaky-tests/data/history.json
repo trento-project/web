@@ -178,5 +178,45 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-12T08:33:55Z",
+    "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
+    "run_id": "22985917491",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 7
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.04892
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.02501
+      }
+    ]
   }
 ]
