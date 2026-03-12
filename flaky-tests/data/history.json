@@ -162,5 +162,21 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-12T06:36:41Z",
+    "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
+    "run_id": "22986410376",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 94,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.05001
+      }
+    ]
   }
 ]
