@@ -2747,6 +2747,24 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
              |> ClusterPolicy.handle(nil)
   end
 
+  test "should set system replication mode and operation mode to Unknown if node attributes is empty" do
+    assert {
+             :ok,
+             [
+               %RegisterOnlineClusterHost{
+                 details: %HanaClusterDetails{
+                   system_replication_mode: "Unknown",
+                   system_replication_operation_mode: "Unknown"
+                 }
+               }
+             ]
+           } =
+             "ha_cluster_discovery_hana_scale_up"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "Crmmon", "NodeAttributes"], %{"Nodes" => []})
+             |> ClusterPolicy.handle(nil)
+  end
+
   describe "ascs/ers clusters health" do
     test "should set the health to critical when one of the nodes is unclean" do
       assert {:ok,
