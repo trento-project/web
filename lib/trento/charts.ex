@@ -7,10 +7,13 @@ defmodule Trento.Charts do
 
   alias Trento.Charts.Hosts.{
     HostCpuChart,
+    HostFilesystemChart,
     HostMemoryChart
   }
 
   alias Trento.Charts.ChartTimeSeries
+
+  alias Trento.Support.DateService
 
   @spec host_cpu_chart(String.t(), DateTime.t(), DateTime.t()) ::
           {:ok, HostCpuChart.t()} | {:error, any}
@@ -76,6 +79,28 @@ defmodule Trento.Charts do
          },
          ram_free: %ChartTimeSeries{label: "ram_free", series: ram_free_samples},
          swap_used: %ChartTimeSeries{label: "swap_used", series: swap_used_samples}
+       }}
+    end
+  end
+
+  @spec host_filesystem_chart(String.t(), DateTime.t()) ::
+          {:ok, HostFilesystemChart.t()} | {:error, any}
+  def host_filesystem_chart(host_id, time \\ DateService.utc_now()) do
+    with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, devices_size} <- host_data_fetcher().devices_size(host_id, time),
+         {:ok, devices_avail} <- host_data_fetcher().devices_avail(host_id, time),
+         {:ok, filesystems_size} <- host_data_fetcher().filesystems_size(host_id, time),
+         {:ok, filesystems_avail} <- host_data_fetcher().filesystems_avail(host_id, time),
+         {:ok, swap_total} <- host_data_fetcher().swap_total(host_id, time),
+         {:ok, swap_avail} <- host_data_fetcher().swap_avail(host_id, time) do
+      {:ok,
+       %HostFilesystemChart{
+         devices_size: devices_size,
+         devices_avail: devices_avail,
+         filesystems_size: filesystems_size,
+         filesystems_avail: filesystems_avail,
+         swap_total: List.first(swap_total),
+         swap_avail: List.first(swap_avail)
        }}
     end
   end

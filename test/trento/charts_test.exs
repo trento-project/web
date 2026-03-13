@@ -2,10 +2,13 @@ defmodule Trento.ChartsTest do
   use ExUnit.Case
   use Trento.DataCase
 
+  import Mox
+
   import Trento.Factory
 
   alias Trento.Charts.Hosts.{
     HostCpuChart,
+    HostFilesystemChart,
     HostMemoryChart
   }
 
@@ -134,6 +137,71 @@ defmodule Trento.ChartsTest do
       assert Enum.empty?(ram_used.series)
       assert Enum.empty?(ram_cache_and_buffer.series)
       assert Enum.empty?(swap_used.series)
+    end
+  end
+
+  describe "host filesystem charts" do
+    setup do
+      insert(:host, id: "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9")
+
+      expect(Trento.Support.DateService.Mock, :utc_now, fn _ ->
+        DateTime.from_unix!(1_773_388_980)
+      end)
+
+      Application.put_env(:trento, Trento.Support.DateService, Trento.Support.DateService.Mock)
+
+      on_exit(fn -> Application.put_env(:trento, Trento.Support.DateService, DateTime) end)
+
+      %{
+        prometheus_chart_agent_id: "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9"
+      }
+    end
+
+    test "should return an error if the host does not exists" do
+      assert {:error, :not_found} = Trento.Charts.host_filesystem_chart(Faker.UUID.v4())
+    end
+
+    test "should return results for each section of the filesystem chart data when data is found",
+         %{
+           prometheus_chart_agent_id: prometheus_chart_agent_id
+         } do
+      assert {:ok,
+              %HostFilesystemChart{
+                devices_size: devices_size,
+                devices_avail: devices_avail,
+                filesystems_size: filesystems_size,
+                filesystems_avail: filesystems_avail,
+                swap_total: swap_total,
+                swap_avail: swap_avail
+              }} = Trento.Charts.host_filesystem_chart(prometheus_chart_agent_id)
+
+      assert length(devices_size) == 3
+      assert length(devices_avail) == 3
+      assert length(filesystems_size) == 14
+      assert length(filesystems_avail) == 14
+      assert is_map(swap_total)
+      assert is_map(swap_avail)
+    end
+
+    test "should return empty results when no data is found" do
+      %{id: host_id} = insert(:host)
+
+      assert {:ok,
+              %HostFilesystemChart{
+                devices_size: devices_size,
+                devices_avail: devices_avail,
+                filesystems_size: filesystems_size,
+                filesystems_avail: filesystems_avail,
+                swap_total: swap_total,
+                swap_avail: swap_avail
+              }} = Trento.Charts.host_filesystem_chart(host_id)
+
+      assert Enum.empty?(devices_size)
+      assert Enum.empty?(devices_avail)
+      assert Enum.empty?(filesystems_size)
+      assert Enum.empty?(filesystems_avail)
+      assert is_nil(swap_total)
+      assert is_nil(swap_avail)
     end
   end
 end
