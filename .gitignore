@@ -44,3 +44,5 @@ npm-debug.log
 config/dev.local.exs
 
 storybook-static
+
+.DS_Store
