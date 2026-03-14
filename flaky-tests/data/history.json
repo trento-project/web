@@ -421,5 +421,57 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-14T04:11:08Z",
+    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
+    "run_id": "23079835925",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.5
+      },
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.07001
+      },
+      {
+        "name": "AdvisoryDetails::displays CVEs with a valid link",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Host reboot operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.04526
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.02501
+      }
+    ]
   }
 ]
