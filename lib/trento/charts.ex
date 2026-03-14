@@ -97,10 +97,10 @@ defmodule Trento.Charts do
        %HostFilesystemChart{
          devices_size: devices_size,
          devices_avail: devices_avail,
-         filesystems_size: filesystems_size,
-         filesystems_avail: filesystems_avail,
-         swap_total: List.first(swap_total),
-         swap_avail: List.first(swap_avail)
+         filesystems_size: normalize_filesystem_samples(filesystems_size),
+         filesystems_avail: normalize_filesystem_samples(filesystems_avail),
+         swap_total: normalize_swap_sample(swap_total),
+         swap_avail: normalize_swap_sample(swap_avail)
        }}
     end
   end
@@ -110,6 +110,21 @@ defmodule Trento.Charts do
   defp normalize_cpu_series_to_num_cpus(cpu_series, num_cpus) do
     Enum.map(cpu_series, fn %{timestamp: timestamp, value: value} ->
       %{timestamp: timestamp, value: value / num_cpus}
+    end)
+  end
+
+  defp normalize_filesystem_samples(samples) do
+    Enum.map(samples, fn %{metric: metric} = sampled_meric ->
+      Map.put(sampled_meric, :metric, Map.take(metric, ["device", "mountpoint", "fstype"]))
+    end)
+  end
+
+  defp normalize_swap_sample(swap_sample) do
+    swap_sample
+    |> List.first()
+    |> then(fn
+      sample when is_map(sample) -> Map.take(sample, [:sample])
+      _ -> nil
     end)
   end
 end

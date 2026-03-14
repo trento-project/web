@@ -181,6 +181,17 @@ defmodule Trento.ChartsTest do
       assert length(filesystems_avail) == 14
       assert is_map(swap_total)
       assert is_map(swap_avail)
+
+      assert Enum.all?(devices_size ++ devices_avail, fn %{metric: metric, sample: _} ->
+               Map.keys(metric) == ["device"]
+             end)
+
+      assert Enum.all?(filesystems_size ++ filesystems_avail, fn %{metric: metric, sample: _} ->
+               Map.keys(metric) == ["device", "fstype", "mountpoint"]
+             end)
+
+      assert Map.keys(swap_avail) == [:sample]
+      assert Map.keys(swap_total) == [:sample]
     end
 
     test "should return empty results when no data is found" do

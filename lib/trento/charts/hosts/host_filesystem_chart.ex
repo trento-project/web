@@ -3,7 +3,7 @@ defmodule Trento.Charts.Hosts.HostFilesystemChart do
   Represents filesystem metrics for a host
   """
 
-  alias Trento.Charts.SampledMetric
+  alias Trento.Charts.{ChartTimeSeriesSample, SampledMetric}
 
   @enforce_keys [
     :devices_size,
@@ -27,7 +27,7 @@ defmodule Trento.Charts.Hosts.HostFilesystemChart do
           devices_avail: [SampledMetric.t()],
           filesystems_size: [SampledMetric.t()],
           filesystems_avail: [SampledMetric.t()],
-          swap_total: SampledMetric.t(),
-          swap_avail: SampledMetric.t()
+          swap_total: ChartTimeSeriesSample.t(),
+          swap_avail: ChartTimeSeriesSample.t()
         }
 end
