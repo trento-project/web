@@ -4,6 +4,37 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule Sample do
+    @moduledoc false
+    OpenApiSpex.schema(
+      %{
+        type: :object,
+        description:
+          "Represents a data point, consisting of a timestamp and a corresponding float value.",
+        properties: %{
+          timestamp: %Schema{
+            type: :string,
+            format: "date-time",
+            description:
+              "The ISO8601 formatted timestamp indicating when the data point was recorded."
+          },
+          value: %Schema{
+            type: :number,
+            example: 270_396.2030,
+            format: :float,
+            description:
+              "The float value associated with the timestamp, representing the measured metric at that point in time."
+          }
+        },
+        example: %{
+          timestamp: "2024-01-15T10:00:00Z",
+          value: 270_396.2030
+        }
+      },
+      struct?: false
+    )
+  end
+
   defmodule ChartTimeSeries do
     @moduledoc false
     OpenApiSpex.schema(
@@ -23,26 +54,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
             type: :array,
             description:
               "A list of values representing the time series data points, each associated with a timestamp for trend analysis.",
-            items: %Schema{
-              type: :object,
-              description:
-                "Represents a data point in the time series, consisting of a timestamp and a corresponding float value.",
-              properties: %{
-                timestamp: %Schema{
-                  type: :string,
-                  format: "date-time",
-                  description:
-                    "The ISO8601 formatted timestamp indicating when the data point was recorded in the time series."
-                },
-                value: %Schema{
-                  type: :number,
-                  example: 270_396.2030,
-                  format: :float,
-                  description:
-                    "The float value associated with the timestamp, representing the measured metric at that point in time."
-                }
-              }
-            }
+            items: Sample
           }
         },
         example: %{
@@ -52,6 +64,66 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
             %{timestamp: "2024-01-15T10:01:00Z", value: 80.2}
           ]
         }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule SampledMetric do
+    @moduledoc false
+    OpenApiSpex.schema(
+      %{
+        title: "SampledMetricV1",
+        description: "Represents a metric and its sample.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          metric: %Schema{
+            type: :object,
+            description: "A map containing metadata about the metric."
+          },
+          sample: Sample
+        },
+        example: %{
+          metric: %{
+            device: "/dev/sda1",
+            fstype: "btrfs",
+            mountpoint: "/"
+          },
+          sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_290_915_840}
+        }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule SampledMetricList do
+    @moduledoc false
+    OpenApiSpex.schema(
+      %{
+        title: "SampledMetricListV1",
+        description: "Represents a list of sampled metrics.",
+        type: :array,
+        additionalProperties: false,
+        items: SampledMetric,
+        example: [
+          %{
+            metric: %{
+              device: "/dev/sda1",
+              fstype: "btrfs",
+              mountpoint: "/"
+            },
+            sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_290_915_840}
+          },
+          %{
+            metric: %{
+              device: "/dev/sda2",
+              fstype: "ext4",
+              mountpoint: "/var"
+            },
+            sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_290_915_840}
+          }
+        ]
       },
       struct?: false
     )
@@ -177,6 +249,97 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
           ram_free: ChartTimeSeries,
           ram_used: ChartTimeSeries,
           swap_used: ChartTimeSeries
+        }
+      },
+      struct?: false
+    )
+  end
+
+  defmodule HostFilesystemChart do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "HostFilesystemChartV1",
+        description:
+          "Represents a chart that provides detailed information about the filesystem usage at a specific moment in time.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          devices_size: SampledMetricList,
+          devices_avail: SampledMetricList,
+          filesystems_size: SampledMetricList,
+          filesystems_avail: SampledMetricList,
+          swap_total: Sample,
+          swap_avail: Sample
+        },
+        example: %{
+          devices_size: [
+            %{
+              metric: %{
+                device: "/dev/sda1"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 3_807_253_626_880}
+            },
+            %{
+              metric: %{
+                device: "/dev/sda2"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_021_370_368}
+            }
+          ],
+          devices_avail: [
+            %{
+              metric: %{
+                device: "/dev/sda1"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 2_645_207_482_368}
+            },
+            %{
+              metric: %{
+                device: "/dev/sda2"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 47_222_784}
+            }
+          ],
+          filesystems_size: [
+            %{
+              metric: %{
+                device: "/dev/sda1",
+                fstype: "btrfs",
+                mountpoint: "/"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 3_807_253_626_880}
+            },
+            %{
+              metric: %{
+                device: "/dev/sda2",
+                fstype: "btrfs",
+                mountpoint: "/home"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_021_370_368}
+            }
+          ],
+          filesystems_avail: [
+            %{
+              metric: %{
+                device: "/dev/sda1",
+                fstype: "btrfs",
+                mountpoint: "/"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 2_645_207_482_368}
+            },
+            %{
+              metric: %{
+                device: "/dev/sda2",
+                fstype: "btrfs",
+                mountpoint: "/home"
+              },
+              sample: %{timestamp: "2024-01-15T10:00:00Z", value: 47_222_784}
+            }
+          ],
+          swap_total: %{timestamp: "2024-01-15T10:00:00Z", value: 2_148_335_616},
+          swap_avail: %{timestamp: "2024-01-15T10:00:00Z", value: 1_290_936_320}
         }
       },
       struct?: false
