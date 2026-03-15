@@ -620,5 +620,45 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-15T06:55:13Z",
+    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
+    "run_id": "23103453779",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.25
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.25
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.25
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.05001
+      }
+    ]
   }
 ]
