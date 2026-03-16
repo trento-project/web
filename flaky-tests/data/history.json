@@ -708,5 +708,69 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-16T04:40:07Z",
+    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
+    "run_id": "23127863508",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 16
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.5
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
+        "score": 0.25
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.1829
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1720
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.1577
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune apply solution operation button based on user abilities",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.02501
+      }
+    ]
   }
 ]
