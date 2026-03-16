@@ -788,5 +788,25 @@
         "score": 0.04141
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-16T07:03:12Z",
+    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
+    "run_id": "23128326961",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.05001
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.05001
+      }
+    ]
   }
 ]
