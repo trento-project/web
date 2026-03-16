@@ -88,8 +88,6 @@ const startStopOperations = [
 
 const modalInitialState = { open: false, operation: '' };
 
-const closeOperationModal = (prevState) => ({ ...prevState, open: false });
-
 function SystemReplicationDataPill({
   label,
   data,
@@ -194,6 +192,13 @@ export function GenericSystemDetails({
     type === APPLICATION_TYPE
       ? OPERATION_NOT_ALLOWED_SAP_SYSTEM
       : OPERATION_NOT_ALLOWED_DATABASE;
+
+  const closeOperationModal = (prevState) => {
+    setCurrentOperationInstance(undefined);
+    setCurrentOperationSite(undefined);
+
+    return { ...prevState, open: false };
+  };
 
   return (
     <div>
