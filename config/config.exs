@@ -106,7 +106,9 @@ config :trento, :saml,
   }
 
 # Agent heartbeat interval. Overridable at runtime via HOST_HEARTBEAT_INTERVAL env variable (in seconds).
-config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
+config :trento, Trento.Heartbeats,
+  interval: :timer.seconds(5),
+  tolerance: :timer.seconds(1)
 
 # This is passed to the frontend as the time after the last heartbeat
 # to wait before displaying the deregistration button

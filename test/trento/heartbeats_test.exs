@@ -16,6 +16,9 @@ defmodule Trento.HeartbeatsTest do
 
   @moduletag :integration
 
+  @heartbeats_interval Application.compile_env(:trento, Heartbeats)[:interval]
+  @heartbeats_tolerance Application.compile_env(:trento, Heartbeats)[:tolerance]
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   for scenario <- [:with_correlation, :without_correlation] do
@@ -49,7 +52,7 @@ defmodule Trento.HeartbeatsTest do
         updated_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + 1,
             :millisecond
           )
 
@@ -75,7 +78,7 @@ defmodule Trento.HeartbeatsTest do
         expired_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + @heartbeats_tolerance + 1,
             :millisecond
           )
 
@@ -96,7 +99,7 @@ defmodule Trento.HeartbeatsTest do
         expired_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + 1,
             :millisecond
           )
 

@@ -19,8 +19,6 @@ defmodule Trento.Heartbeats do
 
   require Logger
 
-  @heartbeat_interval Application.compile_env!(:trento, __MODULE__)[:interval]
-
   @spec heartbeat(String.t(), module()) :: :ok | {:error, any}
   def heartbeat(agent_id, date_service \\ DateService) do
     changeset =
@@ -74,7 +72,7 @@ defmodule Trento.Heartbeats do
         where:
           is_nil(host.deregistered_at) and
             h.timestamp <
-              ^DateTime.add(date_service.utc_now(), -@heartbeat_interval, :millisecond)
+              ^DateTime.add(date_service.utc_now(), -(@heartbeat_interval + @heartbeat_tolerance), :millisecond)
 
     Repo.all(query)
   end

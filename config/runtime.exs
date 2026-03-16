@@ -224,11 +224,11 @@ if config_env() in [:prod, :demo] do
     ]
 
   # Agent heartbeat interval in seconds. Heartbeats older than this value
-  # are considered expired. Defaults to 6 seconds.
+  # are considered expired. Defaults to 5 seconds.
   config :trento, Trento.Heartbeats,
     interval:
       "HOST_HEARTBEAT_INTERVAL"
-      |> System.get_env("6")
+      |> System.get_env("5")
       |> String.to_integer()
       |> :timer.seconds()
 
