@@ -26,6 +26,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
               "The float value associated with the timestamp, representing the measured metric at that point in time."
           }
         },
+        nullable: true,
         example: %{
           timestamp: "2024-01-15T10:00:00Z",
           value: 270_396.2030

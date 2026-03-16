@@ -171,8 +171,9 @@ defmodule TrentoWeb.V1.ChartController do
     end
   end
 
-  defp get_filesystem_chart(%{id: id}), do: Charts.host_filesystem_chart(id)
-
   defp get_filesystem_chart(%{id: id, time: time}),
     do: Charts.host_filesystem_chart(id, time)
+
+  defp get_filesystem_chart(%{id: id}),
+    do: Charts.host_filesystem_chart(id)
 end

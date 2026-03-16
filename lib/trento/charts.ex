@@ -13,8 +13,6 @@ defmodule Trento.Charts do
 
   alias Trento.Charts.ChartTimeSeries
 
-  alias Trento.Support.DateService
-
   @spec host_cpu_chart(String.t(), DateTime.t(), DateTime.t()) ::
           {:ok, HostCpuChart.t()} | {:error, any}
   def host_cpu_chart(host_id, from, to) do
@@ -85,7 +83,7 @@ defmodule Trento.Charts do
 
   @spec host_filesystem_chart(String.t(), DateTime.t()) ::
           {:ok, HostFilesystemChart.t()} | {:error, any}
-  def host_filesystem_chart(host_id, time \\ DateService.utc_now()) do
+  def host_filesystem_chart(host_id, time \\ DateTime.utc_now()) do
     with {:ok, _} <- Hosts.by_host_id(host_id),
          {:ok, devices_size} <- host_data_fetcher().devices_size(host_id, time),
          {:ok, devices_avail} <- host_data_fetcher().devices_avail(host_id, time),

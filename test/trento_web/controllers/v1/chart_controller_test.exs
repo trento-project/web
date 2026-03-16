@@ -1,8 +1,6 @@
 defmodule TrentoWeb.V1.ChartControllerTest do
   use TrentoWeb.ConnCase, async: true
 
-  import Mox
-
   import OpenApiSpex.TestAssertions
   import Trento.Factory
 
@@ -120,14 +118,6 @@ defmodule TrentoWeb.V1.ChartControllerTest do
     setup :setup_api_spec
 
     setup do
-      expect(Trento.Support.DateService.Mock, :utc_now, fn _ ->
-        DateTime.from_unix!(1_773_388_980)
-      end)
-
-      Application.put_env(:trento, Trento.Support.DateService, Trento.Support.DateService.Mock)
-
-      on_exit(fn -> Application.put_env(:trento, Trento.Support.DateService, DateTime) end)
-
       host_id = "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9"
 
       insert(:host, id: host_id)

@@ -2,8 +2,6 @@ defmodule Trento.ChartsTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import Mox
-
   import Trento.Factory
 
   alias Trento.Charts.Hosts.{
@@ -144,14 +142,6 @@ defmodule Trento.ChartsTest do
     setup do
       insert(:host, id: "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9")
 
-      expect(Trento.Support.DateService.Mock, :utc_now, fn _ ->
-        DateTime.from_unix!(1_773_388_980)
-      end)
-
-      Application.put_env(:trento, Trento.Support.DateService, Trento.Support.DateService.Mock)
-
-      on_exit(fn -> Application.put_env(:trento, Trento.Support.DateService, DateTime) end)
-
       %{
         prometheus_chart_agent_id: "f7a8969b-db9e-4162-b82a-d5cfafe1c4e9"
       }
@@ -173,7 +163,11 @@ defmodule Trento.ChartsTest do
                 filesystems_avail: filesystems_avail,
                 swap_total: swap_total,
                 swap_avail: swap_avail
-              }} = Trento.Charts.host_filesystem_chart(prometheus_chart_agent_id)
+              }} =
+               Trento.Charts.host_filesystem_chart(
+                 prometheus_chart_agent_id,
+                 DateTime.from_unix!(1_773_388_980)
+               )
 
       assert length(devices_size) == 3
       assert length(devices_avail) == 3
