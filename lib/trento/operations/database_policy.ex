@@ -112,6 +112,9 @@ defmodule Trento.Operations.DatabasePolicy do
 
   # system replication not configured
   defp primary_site_started(_, _, nil), do: :ok
+  # full database request
+  defp primary_site_started(_, params, _) when not is_map_key(params, :site), do: :ok
+  defp primary_site_started(_, %{site: nil}, _), do: :ok
   # primary site
   defp primary_site_started(_, %{site: site}, site), do: :ok
   # secondary sites, check primary is started
@@ -154,7 +157,7 @@ defmodule Trento.Operations.DatabasePolicy do
     end
   end
 
-  # secondary sites
+  # secondary sites or full database stop request
   defp secondary_sites_stopped(_, _, _), do: :ok
 
   defp application_instances_stopped(%DatabaseReadModel{sap_systems: []}, _, _), do: :ok

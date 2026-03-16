@@ -144,6 +144,32 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_start, database, %{})
     end
 
+    test "should authorize operation in full database if instances are stopped" do
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary",
+              system_replication_site: "Site2",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{site: nil})
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{})
+    end
+
     test "should authorize operation if the request is for the primary site" do
       database =
         build(:database,
@@ -319,6 +345,32 @@ defmodule Trento.Operations.DatabasePolicyTest do
             )
           ]
         )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
+    test "should authorize operation in full database if instances are running" do
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Secondary",
+              system_replication_site: "Site2",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: nil})
 
       assert :ok ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
