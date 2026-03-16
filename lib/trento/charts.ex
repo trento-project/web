@@ -114,8 +114,8 @@ defmodule Trento.Charts do
   end
 
   defp normalize_filesystem_samples(samples) do
-    Enum.map(samples, fn %{metric: metric} = sampled_meric ->
-      Map.put(sampled_meric, :metric, Map.take(metric, ["device", "mountpoint", "fstype"]))
+    Enum.map(samples, fn %{metric: metric} = sampled_metric ->
+      Map.put(sampled_metric, :metric, Map.take(metric, ["device", "mountpoint", "fstype"]))
     end)
   end
 

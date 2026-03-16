@@ -35,40 +35,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
     )
   end
 
-  defmodule ChartTimeSeries do
-    @moduledoc false
-    OpenApiSpex.schema(
-      %{
-        title: "ChartTimeSeriesV1",
-        description:
-          "Represents a time series for a chart, containing a sequence of float values distributed over time for visualization and analysis.",
-        type: :object,
-        additionalProperties: false,
-        properties: %{
-          label: %Schema{
-            type: :string,
-            description:
-              "A descriptive label for the time series, used for identification in chart visualizations."
-          },
-          series: %Schema{
-            type: :array,
-            description:
-              "A list of values representing the time series data points, each associated with a timestamp for trend analysis.",
-            items: Sample
-          }
-        },
-        example: %{
-          label: "CPU Usage",
-          series: [
-            %{timestamp: "2024-01-15T10:00:00Z", value: 75.5},
-            %{timestamp: "2024-01-15T10:01:00Z", value: 80.2}
-          ]
-        }
-      },
-      struct?: false
-    )
-  end
-
   defmodule SampledMetric do
     @moduledoc false
     OpenApiSpex.schema(
@@ -124,6 +90,40 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Chart do
             sample: %{timestamp: "2024-01-15T10:00:00Z", value: 1_290_915_840}
           }
         ]
+      },
+      struct?: false
+    )
+  end
+
+  defmodule ChartTimeSeries do
+    @moduledoc false
+    OpenApiSpex.schema(
+      %{
+        title: "ChartTimeSeriesV1",
+        description:
+          "Represents a time series for a chart, containing a sequence of float values distributed over time for visualization and analysis.",
+        type: :object,
+        additionalProperties: false,
+        properties: %{
+          label: %Schema{
+            type: :string,
+            description:
+              "A descriptive label for the time series, used for identification in chart visualizations."
+          },
+          series: %Schema{
+            type: :array,
+            description:
+              "A list of values representing the time series data points, each associated with a timestamp for trend analysis.",
+            items: Sample
+          }
+        },
+        example: %{
+          label: "CPU Usage",
+          series: [
+            %{timestamp: "2024-01-15T10:00:00Z", value: 75.5},
+            %{timestamp: "2024-01-15T10:01:00Z", value: 80.2}
+          ]
+        }
       },
       struct?: false
     )
