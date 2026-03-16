@@ -2,6 +2,8 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+
   alias Trento.Operations.ApplicationInstancePolicy
 
   import Trento.Factory
@@ -21,12 +23,24 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
              ApplicationInstancePolicy.authorize_operation(:unknown, instance, %{})
   end
 
+  test "should forbid operation if the host heartbeat where the application instance is running is not passing" do
+    instance =
+      build(:application_instance,
+        host: build(:host, heartbeat: :critical)
+      )
+
+    for operation <- SapInstanceOperations.values() do
+      assert {:error, ["Trento agent is not currently running in the host"]} ==
+               ApplicationInstancePolicy.authorize_operation(operation, instance, %{})
+    end
+  end
+
   describe "sap_instance_start" do
     test "should authorize Message server start always" do
       instance =
         build(:application_instance,
           features: "MESSAGESERVER|ENQUE",
-          host: build(:host, cluster: @empty_ascs_ers_cluster)
+          host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
         )
 
       assert :ok ==
@@ -57,7 +71,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         instance =
           build(:application_instance,
             sid: sid,
-            host: build(:host, cluster: @empty_ascs_ers_cluster)
+            host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
           )
 
         sap_system =
@@ -78,7 +92,9 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     test "should forbid other instances start if Message server is not found" do
       %{sid: sid} =
         instance =
-        build(:application_instance, host: build(:host, cluster: @empty_ascs_ers_cluster))
+        build(:application_instance,
+          host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
+        )
 
       sap_system =
         build(:sap_system,
@@ -105,7 +121,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         instance =
           build(:application_instance,
             features: "ENQREP",
-            host: build(:host, cluster: @empty_ascs_ers_cluster)
+            host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
           )
 
         sap_system =
@@ -143,7 +159,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
         instance =
           build(:application_instance,
-            host: build(:host, cluster: @empty_ascs_ers_cluster)
+            host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
           )
 
         sap_system =
@@ -167,7 +183,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       instance =
         build(:application_instance,
           features: "MESSAGESERVER|ENQUE",
-          host: build(:host, cluster: @empty_ascs_ers_cluster)
+          host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
         )
 
       other_instances = build_list(2, :application_instance, health: :unknown)
@@ -190,7 +206,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         instance =
         build(:application_instance,
           features: "MESSAGESERVER|ENQUE",
-          host: build(:host, cluster: @empty_ascs_ers_cluster)
+          host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
         )
 
       [%{instance_number: inst_number_1}, %{instance_number: inst_number_2}] =
@@ -217,7 +233,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
   test "should authorize other instances stop" do
     instance =
       build(:application_instance,
-        host: build(:host, cluster: @empty_ascs_ers_cluster)
+        host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
       )
 
     other_instances = build_list(2, :application_instance, health: :unknown)
