@@ -105,7 +105,7 @@ config :trento, :saml,
     last_name_field: "lastName"
   }
 
-# Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
+# Agent heartbeat interval. Overridable at runtime via HOST_HEARTBEAT_INTERVAL env variable (in seconds).
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
 # This is passed to the frontend as the time after the last heartbeat

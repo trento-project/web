@@ -43,7 +43,7 @@ config :phoenix, :plug_init_mode, :runtime
 # Disable open_api_spex cache to to enable testing of operations with runtime var usage
 config :open_api_spex, :cache_adapter, OpenApiSpex.Plug.NoneCache
 
-# Agent heartbeat interval. Adding one extra second to the agent 5s interval to avoid glitches
+# Agent heartbeat interval. See HOST_HEARTBEAT_INTERVAL in runtime.exs.
 config :trento, Trento.Heartbeats, interval: :timer.seconds(6)
 
 # This is passed to the frontend as the time after the last heartbeat
