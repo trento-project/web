@@ -174,71 +174,131 @@ defmodule Trento.DatabasesTest do
       %{
         name: "database_start",
         operation: :database_start,
-        expected_operator: "databasestart@v1",
-        params: %{},
-        expected_arguments: %{}
-      },
-      %{
-        name: "database_start with params",
-        operation: :database_start,
-        expected_operator: "databasestart@v1",
-        params: %{
-          site: "Trento",
-          timeout: 5_000
-        },
-        expected_arguments: %{
-          "site" => %ProtobufValue{kind: {:string_value, "Trento"}},
-          "timeout" => %ProtobufValue{kind: {:number_value, 5_000}}
-        }
+        expected_operator: "databasestart@v1"
       },
       %{
         name: "database_stop",
         operation: :database_stop,
-        expected_operator: "databasestop@v1",
-        params: %{},
-        expected_arguments: %{}
+        expected_operator: "databasestop@v1"
       }
     ]
 
     for %{name: name} = scenario <- scenarios do
       @scenario scenario
 
-      test "should request #{name} operation" do
+      test "should request #{name} operation excluding hosts with critical heartbeat and absent instances" do
         %{
           operation: operation,
-          expected_operator: expected_operator,
-          params: params,
-          expected_arguments: expected_arguments
+          expected_operator: expected_operator
         } = @scenario
 
+        timeout = 30_000
         %{id: database_id} = insert(:database)
 
         %{id: host_id_1} = insert(:host, heartbeat: :critical)
         %{id: host_id_2} = insert(:host, heartbeat: :passing)
         %{id: host_id_3} = insert(:host, heartbeat: :passing)
+        %{id: host_id_4} = insert(:host, heartbeat: :passing)
+        %{id: host_id_5} = insert(:host, heartbeat: :passing)
 
-        insert(:database_instance, database_id: database_id, host_id: host_id_1)
+        insert(:database_instance,
+          database_id: database_id,
+          host_id: host_id_1,
+          system_replication_site: "Site1",
+          system_replication_tier: 1
+        )
 
         insert(:database_instance,
           database_id: database_id,
           host_id: host_id_2,
-          absent_at: DateTime.utc_now()
+          absent_at: DateTime.utc_now(),
+          system_replication_tier: 2
         )
 
-        %{instance_number: instance_number} =
+        insert(:database_instance,
+          database_id: database_id,
+          host_id: host_id_3,
+          instance_number: "01",
+          system_replication_site: "Site3",
+          system_replication_tier: 2
+        )
+
+        insert(:database_instance,
+          database_id: database_id,
+          host_id: host_id_4,
+          system_replication_site: "Site3",
+          system_replication_tier: 2
+        )
+
+        insert(:database_instance,
+          database_id: database_id,
+          host_id: host_id_5,
+          instance_number: "02",
+          system_replication_site: "Site4",
+          system_replication_tier: 3
+        )
+
+        expect(
+          Trento.Infrastructure.Messaging.Adapter.Mock,
+          :publish,
+          1,
+          fn OperationsPublisher,
+             "requests",
+             %OperationRequested{
+               group_id: ^database_id,
+               operation_type: ^expected_operator,
+               targets: targets
+             } ->
+            assert [
+                     %OperationTarget{
+                       arguments: %{
+                         "timeout" => %ProtobufValue{kind: {:number_value, timeout}},
+                         "system_replication_tier" => %ProtobufValue{kind: {:number_value, 2}}
+                       }
+                     },
+                     %OperationTarget{
+                       arguments: %{
+                         "timeout" => %ProtobufValue{kind: {:number_value, timeout}},
+                         "system_replication_tier" => %ProtobufValue{kind: {:number_value, 3}}
+                       }
+                     }
+                   ] =
+                     Enum.sort_by(targets, fn %{arguments: %{"system_replication_tier" => tier}} ->
+                       tier
+                     end)
+
+            :ok
+          end
+        )
+
+        assert {:ok, _} =
+                 Databases.request_operation(operation, database_id, %{timeout: timeout})
+      end
+
+      test "should request #{name} operation filtering by site" do
+        %{
+          operation: operation,
+          expected_operator: expected_operator
+        } = @scenario
+
+        filtered_site = Faker.Cat.name()
+        %{id: database_id} = insert(:database)
+
+        %{id: host_id_1} = insert(:host, heartbeat: :passing)
+        %{id: host_id_2} = insert(:host, heartbeat: :passing)
+
+        %{instance_number: instance_number1} =
           insert(:database_instance,
             database_id: database_id,
-            host_id: host_id_3,
-            system_replication_site: Map.get(params, :site, nil)
+            host_id: host_id_1,
+            system_replication_site: filtered_site,
+            system_replication_tier: 1
           )
 
-        expected_args =
-          Map.merge(
-            %{
-              "instance_number" => %ProtobufValue{kind: {:string_value, instance_number}}
-            },
-            expected_arguments
-          )
+        insert(:database_instance,
+          database_id: database_id,
+          host_id: host_id_2
+        )
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -251,8 +311,11 @@ defmodule Trento.DatabasesTest do
                operation_type: ^expected_operator,
                targets: [
                  %OperationTarget{
-                   agent_id: ^host_id_3,
-                   arguments: ^expected_args
+                   agent_id: ^host_id_1,
+                   arguments: %{
+                     "instance_number" => %ProtobufValue{kind: {:string_value, ^instance_number1}},
+                     "system_replication_tier" => %ProtobufValue{kind: {:number_value, 1}}
+                   }
                  }
                ]
              } ->
@@ -261,14 +324,15 @@ defmodule Trento.DatabasesTest do
         )
 
         assert {:ok, _} =
-                 Databases.request_operation(operation, database_id, params)
+                 Databases.request_operation(operation, database_id, %{
+                   site: filtered_site
+                 })
       end
 
-      test "should request #{name} operation with first host if there is no running host" do
+      test "should request #{name} operation with empty targets if there is no running host" do
         %{
           operation: operation,
-          expected_operator: expected_operator,
-          params: params
+          expected_operator: expected_operator
         } = @scenario
 
         %{id: database_id} = insert(:database)
@@ -278,8 +342,7 @@ defmodule Trento.DatabasesTest do
 
         insert(:database_instance,
           database_id: database_id,
-          host_id: host_id_1,
-          system_replication_site: Map.get(params, :site, nil)
+          host_id: host_id_1
         )
 
         insert(:database_instance, database_id: database_id, host_id: host_id_2)
@@ -293,23 +356,18 @@ defmodule Trento.DatabasesTest do
              %OperationRequested{
                group_id: ^database_id,
                operation_type: ^expected_operator,
-               targets: [
-                 %OperationTarget{
-                   agent_id: _,
-                   arguments: _
-                 }
-               ]
+               targets: []
              } ->
             :ok
           end
         )
 
         assert {:ok, _} =
-                 Databases.request_operation(operation, database_id, params)
+                 Databases.request_operation(operation, database_id, %{})
       end
 
       test "should handle operation #{name} publish error" do
-        %{operation: operation, params: params} = @scenario
+        %{operation: operation} = @scenario
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -321,50 +379,8 @@ defmodule Trento.DatabasesTest do
         )
 
         assert {:error, :amqp_error} =
-                 Databases.request_operation(operation, UUID.uuid4(), params)
+                 Databases.request_operation(operation, UUID.uuid4(), %{})
       end
-    end
-
-    test "should request operation filtering by site" do
-      filtered_site = Faker.Cat.name()
-      %{id: database_id} = insert(:database)
-
-      %{id: host_id_1} = insert(:host, heartbeat: :passing)
-      %{id: host_id_2} = insert(:host, heartbeat: :passing)
-
-      insert(:database_instance,
-        database_id: database_id,
-        host_id: host_id_1,
-        system_replication_site: nil
-      )
-
-      insert(:database_instance,
-        database_id: database_id,
-        host_id: host_id_2,
-        system_replication_site: filtered_site
-      )
-
-      expect(
-        Trento.Infrastructure.Messaging.Adapter.Mock,
-        :publish,
-        1,
-        fn OperationsPublisher,
-           "requests",
-           %OperationRequested{
-             group_id: ^database_id,
-             targets: [
-               %OperationTarget{
-                 agent_id: ^host_id_2,
-                 arguments: _
-               }
-             ]
-           } ->
-          :ok
-        end
-      )
-
-      assert {:ok, _} =
-               Databases.request_operation(:database_start, database_id, %{site: filtered_site})
     end
   end
 end

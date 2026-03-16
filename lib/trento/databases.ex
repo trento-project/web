@@ -96,8 +96,8 @@ defmodule Trento.Databases do
       when operation in DatabaseOperations.values() do
     operation_id = UUID.uuid4()
 
-    # Look for 1st running host to send the operation including the instance_number
-    # If there is not any running host, the request is sent to the first instance
+    # Filter the 1st running host for each SR site to send the operation.
+    # If "site" field is coming in params, only instances with this sites are filtered.
     # Not checking if the database is deregistered. That must be done by the function user
     instances =
       database_id
@@ -107,20 +107,25 @@ defmodule Trento.Databases do
 
     targets =
       instances
-      |> Enum.find(Enum.at(instances, 0), fn %{
-                                               absent_at: absent_at,
-                                               host: %{heartbeat: heartbeat}
-                                             } ->
+      |> Enum.filter(fn %{absent_at: absent_at, host: %{heartbeat: heartbeat}} ->
         heartbeat == :passing && absent_at == nil
       end)
-      |> case do
-        nil ->
-          # Corner case scenario. We shouldn't have databases without db instances
-          []
+      |> Enum.uniq_by(fn %{system_replication_site: sr_site} -> sr_site end)
+      |> Enum.flat_map(fn
+        %{host_id: host_id, instance_number: instance_number, system_replication_tier: sr_tier} ->
+          [
+            %{
+              agent_id: host_id,
+              arguments:
+                params
+                |> Map.put(:instance_number, instance_number)
+                |> Map.put(:system_replication_tier, sr_tier)
+            }
+          ]
 
-        %{host_id: host_id, instance_number: instance_number} ->
-          [%{agent_id: host_id, arguments: Map.put(params, :instance_number, instance_number)}]
-      end
+        _ ->
+          []
+      end)
 
     case Operations.request_operation(
            operation_id,
