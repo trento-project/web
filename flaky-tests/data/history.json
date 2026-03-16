@@ -684,5 +684,29 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-16T04:08:35Z",
+    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
+    "run_id": "23127208057",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
