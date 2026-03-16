@@ -281,10 +281,8 @@ export function GenericSystemDetails({
                 userAbilities={userAbilities}
                 operations={systemOperations}
                 menuPosition="bottom end"
-                disabled={hasSystemReplication || !someHostHeartbeatPassing}
-                disabledTooltip={
-                  hasSystemReplication ? '' : operationNotAllowedMsg
-                }
+                disabled={!someHostHeartbeatPassing}
+                disabledTooltip={operationNotAllowedMsg}
               />
             </div>
           </div>
