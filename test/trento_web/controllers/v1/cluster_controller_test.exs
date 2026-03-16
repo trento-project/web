@@ -194,7 +194,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
       test "should respond with 500 on messaging error for operation #{@operation}", %{conn: conn} do
         %{id: cluster_id} = insert(:cluster)
-        insert(:host, cluster_id: cluster_id)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -226,7 +226,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
              api_spec: api_spec
            } do
         %{id: cluster_id} = insert(:cluster)
-        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: cluster_id)
 
         %{id: user_id} = insert(:user)
 
@@ -271,7 +271,12 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
            conn: conn
          } do
       %{id: cluster_id} = insert(:cluster)
-      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.online())
+
+      insert(:host,
+        heartbeat: :passing,
+        cluster_id: cluster_id,
+        cluster_host_status: ClusterHostStatus.online()
+      )
 
       resp =
         conn
@@ -295,7 +300,12 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
            conn: conn
          } do
       %{id: cluster_id} = insert(:cluster)
-      insert(:host, cluster_id: cluster_id, cluster_host_status: ClusterHostStatus.online())
+
+      insert(:host,
+        heartbeat: :passing,
+        cluster_id: cluster_id,
+        cluster_host_status: ClusterHostStatus.online()
+      )
 
       for invalid_args <- [%{"other" => "value"}, %{"node_id" => UUID.uuid4()}] do
         resp =
@@ -398,7 +408,9 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
       test "should return 500 when requesting #{operation} on messaging error", %{conn: conn} do
         %{id: cluster_id} = insert(:cluster)
-        %{id: host_id} = insert(:host, cluster_id: cluster_id, systemd_units: @host_units)
+
+        %{id: host_id} =
+          insert(:host, heartbeat: :passing, cluster_id: cluster_id, systemd_units: @host_units)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -437,6 +449,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
         %{id: host_id} =
           insert(:host,
+            heartbeat: :passing,
             cluster_id: cluster_id,
             systemd_units: @host_units
           )
@@ -507,6 +520,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
         %{id: host_id} =
           insert(:host,
+            heartbeat: :passing,
             cluster_id: cluster_id,
             systemd_units: host_units
           )
@@ -529,6 +543,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
 
       %{id: host_id} =
         insert(:host,
+          heartbeat: :passing,
           cluster_id: cluster_id,
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "disabled")
@@ -580,10 +595,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -626,10 +641,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -664,10 +679,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -710,10 +725,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       insert(:database_instance,
         host_id: secondary_host_id,
@@ -740,7 +755,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -771,10 +786,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -817,10 +832,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -854,10 +869,10 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       %{id: secondary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       insert(:database_instance,
         host_id: primary_host_id,
@@ -898,7 +913,7 @@ defmodule TrentoWeb.V1.ClusterControllerTest do
         )
 
       %{id: primary_host_id} =
-        insert(:host, cluster_id: cluster_id, cluster_host_status: :online)
+        insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :online)
 
       expect(
         Trento.Infrastructure.Messaging.Adapter.Mock,
