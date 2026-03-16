@@ -8,12 +8,22 @@ defmodule Trento.Operations.HostPolicy do
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   alias Trento.Support.OperationsHelper
 
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
+
+  # for all operations, when the heartbeat of the host is not passing
+  def authorize_operation(operation, %HostReadModel{heartbeat: heartbeat}, _)
+      when operation in HostOperations.values() and heartbeat != :passing,
+      do:
+        {:error,
+         [
+           "Trento agent is not currently running in the host"
+         ]}
 
   # saptune_solution_apply and saptune_solution_change operation authorized when:
   # - the sap workload is not running
