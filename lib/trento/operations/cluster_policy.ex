@@ -8,6 +8,7 @@ defmodule Trento.Operations.ClusterPolicy do
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
   alias Trento.Clusters
 
@@ -48,12 +49,55 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
+  # for all cluster operations, check the heartbeat of all the hosts composing the cluster
+  # authorize if at least one host heartbeat is passing
   def authorize_operation(
         operation,
-        %ClusterReadModel{name: name, hosts: hosts},
-        _
+        %ClusterReadModel{hosts: hosts} = cluster,
+        params
       )
       when operation in ClusterOperations.values() do
+    some_heartbeat_passing? =
+      Enum.any?(hosts, fn %HostReadModel{heartbeat: heartbeat} ->
+        heartbeat == :passing
+      end)
+
+    if some_heartbeat_passing? do
+      do_authorize_operation(operation, cluster, params)
+    else
+      {:error, ["Trento agent is not currently running in any of the hosts in the cluster"]}
+    end
+  end
+
+  # for all cluster host operations, check the heartbeat of the specific host in the cluster
+  # authorize if the host heartbeat is passing
+  def authorize_operation(
+        operation,
+        %ClusterReadModel{hosts: hosts} = cluster,
+        %{host_id: host_id} = params
+      )
+      when operation in ClusterHostOperations.values() do
+    heartbeat =
+      Enum.find_value(hosts, :unknown, fn
+        %{id: ^host_id, heartbeat: heartbeat} -> heartbeat
+        _ -> nil
+      end)
+
+    if heartbeat == :passing do
+      do_authorize_operation(operation, cluster, params)
+    else
+      {:error, ["Trento agent is not currently running in the host"]}
+    end
+  end
+
+  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+
+  defp do_authorize_operation(
+         operation,
+         %ClusterReadModel{name: name, hosts: hosts},
+         _
+       )
+       when operation in ClusterOperations.values() do
     if Enum.any?(hosts, fn %{cluster_host_status: status} ->
          status == ClusterHostStatus.online()
        end) do
@@ -64,14 +108,14 @@ defmodule Trento.Operations.ClusterPolicy do
   end
 
   # can start a secondary node only if the primary node is already started
-  def authorize_operation(
-        :cluster_host_start,
-        %ClusterReadModel{sap_instances: sap_instances, hosts: hosts, type: type},
-        %{
-          host_id: host_id
-        }
-      )
-      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+  defp do_authorize_operation(
+         :cluster_host_start,
+         %ClusterReadModel{sap_instances: sap_instances, hosts: hosts, type: type},
+         %{
+           host_id: host_id
+         }
+       )
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     database_instances = get_cluster_database_instances(hosts, sap_instances)
     host_running_primary? = primary_instance_in_host?(database_instances, host_id)
 
@@ -109,17 +153,17 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
-  def authorize_operation(:cluster_host_start, _, _), do: :ok
+  defp do_authorize_operation(:cluster_host_start, _, _), do: :ok
 
   # can stop a primary node only if all secondary nodes are already stopped
-  def authorize_operation(
-        :cluster_host_stop,
-        %ClusterReadModel{sap_instances: sap_instances, hosts: hosts, type: type},
-        %{
-          host_id: host_id
-        }
-      )
-      when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+  defp do_authorize_operation(
+         :cluster_host_stop,
+         %ClusterReadModel{sap_instances: sap_instances, hosts: hosts, type: type},
+         %{
+           host_id: host_id
+         }
+       )
+       when type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     database_instances = get_cluster_database_instances(hosts, sap_instances)
     host_running_primary? = primary_instance_in_host?(database_instances, host_id)
 
@@ -147,14 +191,14 @@ defmodule Trento.Operations.ClusterPolicy do
     end
   end
 
-  def authorize_operation(:cluster_host_stop, _, _), do: :ok
+  defp do_authorize_operation(:cluster_host_stop, _, _), do: :ok
 
-  def authorize_operation(
-        operation,
-        %ClusterReadModel{hosts: hosts},
-        %{host_id: host_id}
-      )
-      when operation in [:pacemaker_enable, :pacemaker_disable] do
+  defp do_authorize_operation(
+         operation,
+         %ClusterReadModel{hosts: hosts},
+         %{host_id: host_id}
+       )
+       when operation in [:pacemaker_enable, :pacemaker_disable] do
     %HostReadModel{
       hostname: hostname,
       systemd_units: systemd_units
@@ -186,8 +230,6 @@ defmodule Trento.Operations.ClusterPolicy do
          ]}
     end
   end
-
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
   ### and the used functions, at the end, the unique thing that really changes:
   defp get_cluster_database_instances(hosts, sap_instances) do
