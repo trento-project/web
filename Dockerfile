@@ -38,7 +38,6 @@ RUN mix phx.digest
 RUN mix release
 
 FROM registry.suse.com/bci/bci-base:${OS_VER}
-ARG DATE
 ARG OS_VER
 ARG VERSION
 ARG MIX_ENV=prod
@@ -53,7 +52,7 @@ LABEL org.opencontainers.image.description="The companion web app for SUSE Linux
 LABEL org.opencontainers.image.documentation="https://www.trento-project.io/docs/web/README.html"
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.url="https://github.com/trento-project/web"
-LABEL org.opencontainers.image.created="${DATE}"
+# LABEL org.opencontainers.image.created="" # Set by GHA, no need to set here
 LABEL org.opencontainers.image.vendor="SUSE LLC"
 LABEL org.opencontainers.image.source="https://github.com/trento-project/web"
 LABEL org.opencontainers.image.ref.name="${OS_VER}-${VERSION}"
