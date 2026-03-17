@@ -12,6 +12,7 @@ import { EOS_MORE_VERT, EOS_LOADING_ANIMATED } from 'eos-icons-react';
 
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
+import Tooltip from '@common/Tooltip';
 
 // The custom component is required to wrap in the DisabledGuard component
 // and pass the disabled value to the child
@@ -44,30 +45,40 @@ function OperationsButton({
   userAbilities = [],
   menuPosition = 'bottom start',
   transparent = false,
-  disabled,
+  disabled = false,
+  disabledTooltip = '',
+  disabledTooltipPosition = 'bottom',
 }) {
   const ref = useRef(null);
   const someRunning = some(operations, { running: true });
 
   return (
     <Menu>
-      <MenuButton disabled={disabled} as={Fragment}>
-        <div className="flex" ref={ref}>
-          <Button
-            type={transparent ? 'transparent' : 'primary-white'}
-            className={classNames(
-              'inline-block mx-0.5 border-green-500',
-              { 'border-none': transparent },
-              { border: !transparent }
-            )}
-            size={transparent ? 'fit' : 'small'}
-            disabled={disabled}
-          >
-            <EOS_MORE_VERT className="inline-block fill-jungle-green-500" />{' '}
-            {text}
-          </Button>
-        </div>
-      </MenuButton>
+      <Tooltip
+        isEnabled={disabledTooltip && disabled}
+        content={disabledTooltip}
+        wrap={false}
+        place={disabledTooltipPosition}
+      >
+        <MenuButton disabled={disabled} as={Fragment}>
+          <div className="flex" ref={ref}>
+            <Button
+              type={transparent ? 'transparent' : 'primary-white'}
+              className={classNames(
+                'inline-block mx-0.5 border-green-500',
+                { 'border-none': transparent },
+                { border: !transparent }
+              )}
+              size={transparent ? 'fit' : 'small'}
+              disabled={disabled}
+            >
+              <EOS_MORE_VERT className="inline-block fill-jungle-green-500" />{' '}
+              {text}
+            </Button>
+          </div>
+        </MenuButton>
+      </Tooltip>
+
       <MenuItems
         anchor={{ to: menuPosition, gap: '5px' }}
         as="div"

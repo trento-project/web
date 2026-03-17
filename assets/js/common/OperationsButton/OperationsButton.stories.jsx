@@ -1,5 +1,6 @@
 import { noop } from 'lodash';
 
+import { PLACES } from '@common/Tooltip';
 import OperationsButton from './OperationsButton';
 
 export default {
@@ -20,6 +21,26 @@ export default {
       control: {
         type: 'text',
       },
+    },
+    disabled: {
+      type: 'boolean',
+      description: 'Main button disabled or not',
+      control: {
+        type: 'boolean',
+      },
+    },
+    disabledTooltip: {
+      type: 'string',
+      description: 'Tooltip for the main button when disabled',
+      control: {
+        type: 'text',
+      },
+    },
+    disabledTooltipPosition: {
+      type: 'string',
+      description: 'Position of the main button tooltip',
+      options: PLACES,
+      control: { type: 'radio' },
     },
   },
 };
@@ -50,6 +71,13 @@ export const Disabled = {
   args: {
     ...Default.args,
     disabled: true,
+  },
+};
+
+export const DisabledWithTooltip = {
+  args: {
+    ...Disabled.args,
+    disabledTooltip: 'Operations are disabled',
   },
 };
 
