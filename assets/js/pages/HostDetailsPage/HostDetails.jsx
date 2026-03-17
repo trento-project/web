@@ -378,22 +378,22 @@ function HostDetails({
           onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}
         />
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
-          <div>
+          <div className="flex gap-2">
             <HostChart
               hostId={hostID}
               chartId="cpu"
               chartTitle="CPU"
               yAxisFormatter={(value) => `${value}%`}
               startInterval={subHours(timeNow, 3)}
+              className="w-1/2"
             />
-          </div>
-          <div>
             <HostChart
               hostId={hostID}
               chartId="memory"
               chartTitle="Memory"
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
+              className="w-1/2"
             />
           </div>
         </ChartsFeatureWrapper>

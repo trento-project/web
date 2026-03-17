@@ -13,6 +13,7 @@ function HostChart({
   startInterval = subMinutes(new Date(), 10),
   endInterval = new Date(),
   updateFrequency = 30000,
+  className,
 }) {
   const [chartStartInterval, setChartStartInterval] = useState(startInterval);
   const [chartEndInterval, setChartEndInterval] = useState(endInterval);
@@ -78,6 +79,7 @@ function HostChart({
   return (
     <TimeSeriesLineChart
       chartWrapperClassNames="h-[350px]"
+      className={className}
       title={chartTitle}
       datasets={chartData}
       start={chartStartInterval}

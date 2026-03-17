@@ -182,7 +182,7 @@ function TimeSeriesLineChart({
   return (
     <div
       className={classNames(
-        'mt-4 bg-white shadow rounded-lg py-4 px-8 mx-auto',
+        'bg-white shadow rounded-lg py-4 px-8 mx-auto',
         className
       )}
     >
