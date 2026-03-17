@@ -39,6 +39,22 @@ defmodule Trento.Operations.ClusterPolicyTest do
     end
   end
 
+  test "should continue checking policies if at least one host heartbeat in the cluster is passing" do
+    cluster =
+      build(:cluster,
+        hosts: [
+          build(:host, heartbeat: :passing),
+          build(:host, heartbeat: :critical)
+        ]
+      )
+
+    for operation <- ClusterOperations.values() do
+      refute {:error,
+              ["Trento agent is not currently running in any of the hosts in the cluster"]} ==
+               ClusterPolicy.authorize_operation(operation, cluster, %{})
+    end
+  end
+
   describe "maintenance" do
     test "should authorize operation depending on the cluster maintenance mode" do
       cluster_name = Faker.StarWars.character()

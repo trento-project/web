@@ -32,6 +32,23 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
   end
 
+  test "should continue checking policies if at least one host heartbeat in the database is passing" do
+    database =
+      build(:database,
+        sap_systems: [],
+        database_instances: [
+          build(:database_instance, host: build(:host, heartbeat: :passing, cluster: nil)),
+          build(:database_instance, host: build(:host, heartbeat: :critical, cluster: nil))
+        ]
+      )
+
+    for operation <- DatabaseOperations.values() do
+      refute {:error,
+              ["Trento agent is not currently running in any of the hosts in the database"]} ==
+               DatabasePolicy.authorize_operation(operation, database, %{})
+    end
+  end
+
   describe "database_start" do
     test "should forbid operation if the database cluster is not in maintenance" do
       %{name: cluster_name, sap_instances: [%{sid: sid, instance_number: instance_number}]} =
