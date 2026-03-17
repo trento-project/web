@@ -852,5 +852,49 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-17T04:20:05Z",
+    "commit": "b93668e90d45b300402452ee599a739f1322bf11",
+    "run_id": "23177780584",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.1437
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1334
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      }
+    ]
   }
 ]
