@@ -209,8 +209,8 @@ defmodule Trento.Clusters do
     targets =
       cluster_id
       |> get_cluster_hosts()
-      |> Enum.filter(fn %{cluster_host_status: status} ->
-        status == ClusterHostStatus.online()
+      |> Enum.filter(fn %{cluster_host_status: status, heartbeat: heartbeat} ->
+        status == ClusterHostStatus.online() and heartbeat == :passing
       end)
       |> Enum.with_index()
       |> Enum.map(fn {%{id: host_id}, index} ->
