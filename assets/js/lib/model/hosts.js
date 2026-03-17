@@ -1,4 +1,4 @@
-import { pipe, getOr, find } from 'lodash/fp';
+import { pipe, getOr, find, some } from 'lodash/fp';
 
 const getUnitFileState = (host, unit) =>
   pipe(
@@ -17,3 +17,7 @@ export const canDisableUnit = (host, unit) =>
 // a status that is not Offline: Online, Maintenance, Pending, etc
 export const isOnlineInCluster = (host) =>
   getOr('Offline', 'status', host) !== 'Offline';
+
+export const isHeartbeatPassing = ({ heartbeat }) => heartbeat === 'passing';
+
+export const isSomeHostHeartbeatPassing = some({ heartbeat: 'passing' });
