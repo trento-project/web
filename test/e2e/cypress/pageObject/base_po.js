@@ -248,6 +248,17 @@ export const preloadTestData = ({
   loadScenario('healthy-27-node-SAP-cluster');
 };
 
+const getTrentoInstanceApiKey = () =>
+  apiLogin().then(({ accessToken }) => {
+    cy.request({
+      method: 'GET',
+      url: '/api/v1/settings/api_key',
+      auth: {
+        bearer: accessToken,
+      },
+    }).then(({ body: { generated_api_key } }) => generated_api_key);
+  });
+
 export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
     Cypress.env('project_root'),
@@ -255,13 +266,26 @@ export const loadScenario = (scenario) => {
     Cypress.env('web_api_host'),
     Cypress.env('web_api_port'),
   ];
-  if (photofinishBinary) {
-    cy.log(`Loading scenario "${scenario}"...`);
-    cy.exec(
-      `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`
-    );
+
+  const baseUrl = Cypress.config().baseUrl;
+
+  if (!photofinishBinary) {
+    cy.log('Photofinish binary not present');
+    return;
+  }
+
+  cy.log(`Loading scenario "${scenario}"...`);
+
+  if (baseUrl.includes('localhost')) {
+    cy.log('Photofinish shooting to localhost');
+    const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`;
+    cy.exec(photofinishCommand);
   } else {
-    cy.log(`Photofinish is not used.`);
+    getTrentoInstanceApiKey().then((apiKey) => {
+      cy.log(`Photofinish shooting to: ${baseUrl}`);
+      const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario} "${apiKey}"`;
+      cy.exec(photofinishCommand, { timeout: 180000 });
+    });
   }
 };
 
