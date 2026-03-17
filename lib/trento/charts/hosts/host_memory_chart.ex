@@ -16,10 +16,10 @@ defmodule Trento.Charts.Hosts.HostMemoryChart do
   defstruct [:ram_total, :ram_used, :ram_cache_and_buffer, :ram_free, :swap_used]
 
   @type t :: %__MODULE__{
-          ram_total: [ChartTimeSeries.t()],
-          ram_cache_and_buffer: [ChartTimeSeries.t()],
-          ram_free: [ChartTimeSeries.t()],
-          ram_used: [ChartTimeSeries.t()],
-          swap_used: [ChartTimeSeries.t()]
+          ram_total: ChartTimeSeries.t(),
+          ram_cache_and_buffer: ChartTimeSeries.t(),
+          ram_free: ChartTimeSeries.t(),
+          ram_used: ChartTimeSeries.t(),
+          swap_used: ChartTimeSeries.t()
         }
 end

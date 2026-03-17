@@ -7,6 +7,7 @@ defmodule Trento.Charts do
 
   alias Trento.Charts.Hosts.{
     HostCpuChart,
+    HostFilesystemChart,
     HostMemoryChart
   }
 
@@ -80,11 +81,48 @@ defmodule Trento.Charts do
     end
   end
 
+  @spec host_filesystem_chart(String.t(), DateTime.t()) ::
+          {:ok, HostFilesystemChart.t()} | {:error, any}
+  def host_filesystem_chart(host_id, time \\ DateTime.utc_now()) do
+    with {:ok, _} <- Hosts.by_host_id(host_id),
+         {:ok, devices_size} <- host_data_fetcher().devices_size(host_id, time),
+         {:ok, devices_avail} <- host_data_fetcher().devices_avail(host_id, time),
+         {:ok, filesystems_size} <- host_data_fetcher().filesystems_size(host_id, time),
+         {:ok, filesystems_avail} <- host_data_fetcher().filesystems_avail(host_id, time),
+         {:ok, swap_total} <- host_data_fetcher().swap_total(host_id, time),
+         {:ok, swap_avail} <- host_data_fetcher().swap_avail(host_id, time) do
+      {:ok,
+       %HostFilesystemChart{
+         devices_size: devices_size,
+         devices_avail: devices_avail,
+         filesystems_size: normalize_filesystem_samples(filesystems_size),
+         filesystems_avail: normalize_filesystem_samples(filesystems_avail),
+         swap_total: normalize_swap_sample(swap_total),
+         swap_avail: normalize_swap_sample(swap_avail)
+       }}
+    end
+  end
+
   defp host_data_fetcher, do: Application.fetch_env!(:trento, __MODULE__)[:host_data_fetcher]
 
   defp normalize_cpu_series_to_num_cpus(cpu_series, num_cpus) do
     Enum.map(cpu_series, fn %{timestamp: timestamp, value: value} ->
       %{timestamp: timestamp, value: value / num_cpus}
+    end)
+  end
+
+  defp normalize_filesystem_samples(samples) do
+    Enum.map(samples, fn %{metric: metric} = sampled_metric ->
+      Map.put(sampled_metric, :metric, Map.take(metric, ["device", "mountpoint", "fstype"]))
+    end)
+  end
+
+  defp normalize_swap_sample(swap_sample) do
+    swap_sample
+    |> List.first()
+    |> then(fn
+      sample when is_map(sample) -> Map.take(sample, [:sample])
+      _ -> nil
     end)
   end
 end
