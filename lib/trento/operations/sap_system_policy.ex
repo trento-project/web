@@ -16,7 +16,7 @@ defmodule Trento.Operations.SapSystemPolicy do
 
   alias Trento.Hosts.Projections.HostReadModel
 
-  # for all operations, check the heartbeat of all the hosts composing the database
+  # for all operations, check the heartbeat of all the hosts composing the SAP system
   # authorize if at least one host heartbeat is passing
   def authorize_operation(
         operation,
