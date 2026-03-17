@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { capitalize, get, noop } from 'lodash';
 
+import { OPERATION_NOT_ALLOWED_HOST } from '@lib/operations';
+import { isHeartbeatPassing } from '@lib/model/hosts';
 import { getEnsaVersionLabel } from '@lib/model/sapSystems';
 
 import DottedPagination from '@common/DottedPagination';
@@ -64,6 +66,8 @@ const getNodeDetailsTableConfig = (
               userAbilities={userAbilities}
               menuPosition="bottom"
               transparent
+              disabled={!isHeartbeatPassing(item)}
+              disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
               operations={getHostOperations(item)}
             />
             <AttributesDetails title="Node Details" attributes={attributes} />

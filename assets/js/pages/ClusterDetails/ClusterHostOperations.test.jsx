@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
-import { noop } from 'lodash';
+import { map, noop } from 'lodash';
 
 import {
   buildHostsFromAscsErsClusterDetails,
@@ -28,6 +28,10 @@ import AscsErsClusterDetails from './AscsErsClusterDetails';
 
 const ascsErsDetails = ascsErsClusterDetailsFactory.build();
 const ascsErsHosts = buildHostsFromAscsErsClusterDetails(ascsErsDetails);
+const ascsErsHostsPassingHeartbeat = map(ascsErsHosts, (host) => ({
+  ...host,
+  heartbeat: 'passing',
+}));
 
 const enrichPropsWithSystemdUnit = (props, unit, state) => {
   const systemdUnits = systemdUnitFactory.buildList(1, {
@@ -52,10 +56,11 @@ describe.each([
     name: 'HanaClusterSite',
     Component: HanaClusterSite,
     props: {
-      hosts: hostFactory.buildList(2),
+      hosts: hostFactory.buildList(2, { heartbeat: 'passing' }),
       nodes: hanaClusterDetailsNodesFactory.buildList(2, {
         id: faker.string.uuid(),
         resources: [],
+        heartbeat: 'passing',
       }),
     },
   },
@@ -63,13 +68,13 @@ describe.each([
     name: 'AscsErsClusterDetails',
     Component: AscsErsClusterDetails,
     props: {
-      hosts: ascsErsHosts,
+      hosts: ascsErsHostsPassingHeartbeat,
       sapSystems: buildSapSystemsFromAscsErsClusterDetails(ascsErsDetails),
       details: ascsErsDetails,
       // nodes is used for better data extraction in test
       nodes: ascsErsDetails.sap_systems[0].nodes.map((node, idx) => ({
         ...node,
-        id: ascsErsHosts[idx].id,
+        id: ascsErsHostsPassingHeartbeat[idx].id,
       })),
     },
   },
@@ -327,12 +332,18 @@ describe.each([
           status,
         })),
         // props below are used in ASCS/ERS cluster type
-        hosts: hostFactory.buildList(1, { cluster_host_status: hostStatus }),
+        hosts: hostFactory.buildList(1, {
+          heartbeat: 'passing',
+          cluster_host_status: hostStatus,
+        }),
         details: {
           ...props?.details,
           sap_systems: [
             {
-              nodes: hanaClusterDetailsNodesFactory.buildList(2, { status }),
+              nodes: hanaClusterDetailsNodesFactory.buildList(2, {
+                heartbeat: 'passing',
+                status,
+              }),
             },
           ],
         },
@@ -473,4 +484,50 @@ describe.each([
       enabled ? expect(item).toBeEnabled() : expect(item).toBeDisabled();
     }
   );
+
+  it('should disable node operations button if the host heartbeast is not passing', async () => {
+    const user = userEvent.setup();
+    const clusterID = faker.string.uuid();
+    // hosts is used for AscsClusterDetails and nodes for HanaClusterSite
+    const hosts = hostFactory.buildList(2, { heartbeat: 'critical' });
+    const nodes = hanaClusterDetailsNodesFactory.buildList(2, {
+      id: faker.string.uuid(),
+      resources: [],
+      heartbeat: 'critical',
+    });
+
+    renderWithRouter(
+      <Component
+        nodes={nodes}
+        hosts={hosts}
+        sapSystems={buildSapSystemsFromAscsErsClusterDetails(ascsErsDetails)}
+        details={ascsErsDetails}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        getClusterHostOperations={getClusterHostOperations(
+          clusterID,
+          { group_id: '123', operation: PACEMAKER_ENABLE },
+          noop,
+          noop,
+          noop
+        )}
+      />
+    );
+
+    const nodesTable = screen.getByRole('table');
+
+    const { getAllByRole } = within(nodesTable);
+
+    const [
+      operationBtnHost1,
+      _detailsBtnHost1,
+      _operationBtnHost2,
+      _detailsBtnHost2,
+    ] = getAllByRole('button');
+
+    await user.hover(operationBtnHost1);
+
+    expect(
+      screen.queryByText('Trento agent is not currently running in the host')
+    ).toBeInTheDocument();
+  });
 });

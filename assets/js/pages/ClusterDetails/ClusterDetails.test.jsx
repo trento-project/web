@@ -225,6 +225,78 @@ describe('ClusterDetails ClusterDetails component', () => {
     }
   );
 
+  describe('cluster operations', () => {
+    it('should disable main operations button if all the hosts heartbeat is not passing', async () => {
+      const user = userEvent.setup();
+      const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, {
+        heartbeat: 'critical',
+      });
+
+      renderWithRouter(
+        <ClusterDetails
+          clusterID={id}
+          clusterName={name}
+          details={details}
+          hasSelectedChecks
+          hosts={hosts}
+          selectedChecks={[]}
+          userAbilities={userAbilities}
+          onStartExecution={noop}
+          navigate={noop}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+
+      await user.hover(operationsButton);
+      expect(
+        screen.queryByText(
+          'Trento agent is not currently running in any of the hosts in the cluster'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('should disable resources operations buttons if all the hosts heartbeat is not passing', async () => {
+      const user = userEvent.setup();
+      const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, {
+        heartbeat: 'critical',
+      });
+
+      renderWithRouter(
+        <ClusterDetails
+          clusterID={id}
+          clusterName={name}
+          details={details}
+          hasSelectedChecks
+          hosts={hosts}
+          selectedChecks={[]}
+          userAbilities={userAbilities}
+          onStartExecution={noop}
+          navigate={noop}
+          operationsEnabled
+        />
+      );
+
+      const resourcesHeader = screen.getByRole('heading', {
+        name: 'Resources',
+      });
+      const resourcesTable = resourcesHeader.nextElementSibling;
+      const { getAllByRole } = within(resourcesTable);
+      const operationButtons = getAllByRole('button');
+      await user.hover(operationButtons[0]);
+      expect(
+        screen.queryByText(
+          'Trento agent is not currently running in any of the hosts in the cluster'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
   describe.each([
     {
       operation: CLUSTER_MAINTENANCE_CHANGE,
@@ -248,6 +320,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         const { id, name, details } = clusterFactory.build();
         const hosts = hostFactory.buildList(2, {
           cluster_host_status: 'online',
+          heartbeat: 'passing',
         });
 
         renderWithRouter(
@@ -284,6 +357,7 @@ describe('ClusterDetails ClusterDetails component', () => {
       it('should show operation running', async () => {
         const user = userEvent.setup();
         const { id, name, details } = clusterFactory.build();
+        const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 
         renderWithRouter(
           <ClusterDetails
@@ -291,7 +365,7 @@ describe('ClusterDetails ClusterDetails component', () => {
             clusterName={name}
             details={details}
             hasSelectedChecks
-            hosts={[]}
+            hosts={hosts}
             runningOperation={{
               groupID: id,
               operation,
@@ -322,6 +396,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         const user = userEvent.setup();
         const { id, name, details } = clusterFactory.build();
         const mockCleanForbiddenOperation = jest.fn();
+        const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 
         renderWithRouter(
           <ClusterDetails
@@ -329,7 +404,7 @@ describe('ClusterDetails ClusterDetails component', () => {
             clusterName={name}
             details={details}
             hasSelectedChecks
-            hosts={[]}
+            hosts={hosts}
             runningOperation={{
               operation,
               forbidden: true,
@@ -363,6 +438,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         const { id, name, details } = clusterFactory.build();
         const hosts = hostFactory.buildList(2, {
           cluster_host_status: 'offline',
+          heartbeat: 'passing',
         });
 
         renderWithRouter(
@@ -395,6 +471,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     it('should disable check execution button when the user abilities are not compatible', async () => {
       const user = userEvent.setup();
       const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 
       renderWithRouter(
         <ClusterDetails
@@ -402,7 +479,7 @@ describe('ClusterDetails ClusterDetails component', () => {
           clusterName={name}
           details={details}
           hasSelectedChecks
-          hosts={[]}
+          hosts={hosts}
           selectedChecks={['check1']}
           userAbilities={[{ name: 'all', resource: 'other_resource' }]}
           onStartExecution={noop}
@@ -420,6 +497,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     it('should enable check execution button when the user abilities are compatible', async () => {
       const user = userEvent.setup();
       const { id, name, details } = clusterFactory.build();
+      const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 
       renderWithRouter(
         <ClusterDetails
@@ -427,7 +505,7 @@ describe('ClusterDetails ClusterDetails component', () => {
           clusterName={name}
           details={details}
           hasSelectedChecks
-          hosts={[]}
+          hosts={hosts}
           selectedChecks={['check1']}
           userAbilities={[
             { name: 'all', resource: 'cluster_checks_execution' },
@@ -476,6 +554,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         const { id, name, details } = clusterFactory.build();
         const hosts = hostFactory.buildList(2, {
           cluster_host_status: 'online',
+          heartbeat: 'passing',
         });
 
         renderWithRouter(
