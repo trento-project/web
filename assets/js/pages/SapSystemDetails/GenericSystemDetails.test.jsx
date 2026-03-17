@@ -337,14 +337,20 @@ describe('GenericSystemDetails', () => {
   it('should show instance operations', async () => {
     const user = userEvent.setup();
 
+    const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
     const sapSystem = sapSystemFactory.build({
+      hosts,
       instances: [
-        sapSystemApplicationInstanceFactory.build({ health: 'passing' }),
-        sapSystemApplicationInstanceFactory.build({ health: 'unknown' }),
+        sapSystemApplicationInstanceFactory.build({
+          health: 'passing',
+          host: hosts[0],
+        }),
+        sapSystemApplicationInstanceFactory.build({
+          health: 'unknown',
+          host: hosts[0],
+        }),
       ],
     });
-
-    sapSystem.hosts = hostFactory.buildList(1);
 
     renderWithRouter(
       <GenericSystemDetails
@@ -417,13 +423,14 @@ describe('GenericSystemDetails', () => {
     async ({ operation, enabled, health }) => {
       const user = userEvent.setup();
 
+      const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const system = sapSystemFactory.build({
+        hosts,
         instances: sapSystemApplicationInstanceFactory.buildList(1, {
           health,
+          host: hosts[0],
         }),
       });
-
-      system.hosts = hostFactory.buildList(5);
 
       renderWithRouter(
         <GenericSystemDetails
@@ -468,13 +475,14 @@ describe('GenericSystemDetails', () => {
     async ({ operation, enabled, health }) => {
       const user = userEvent.setup();
 
+      const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const database = databaseFactory.build({
+        hosts,
         instances: databaseInstanceFactory.buildList(1, {
           health,
+          host: hosts[0],
         }),
       });
-
-      database.hosts = hostFactory.buildList(5);
 
       renderWithRouter(
         <GenericSystemDetails
@@ -495,13 +503,14 @@ describe('GenericSystemDetails', () => {
   );
 
   it('should disable system operations if system replication is enabled', () => {
+    const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
     const database = databaseFactory.build({
+      hosts,
       instances: databaseInstanceFactory.buildList(1, {
         system_replication: 'Primary',
+        host: hosts[0],
       }),
     });
-
-    database.hosts = hostFactory.buildList(5);
 
     renderWithRouter(
       <GenericSystemDetails
@@ -547,23 +556,25 @@ describe('GenericSystemDetails', () => {
     async ({ operation, enabled, health }) => {
       const user = userEvent.setup();
 
+      const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const database = databaseFactory.build({
+        hosts,
         instances: [
           databaseInstanceFactory.build({
             health,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             system_replication_tier: 1,
+            host: hosts[0],
           }),
           databaseInstanceFactory.build({
             system_replication: 'Secondary',
             system_replication_site: 'Site2',
             system_replication_tier: 2,
+            host: hosts[1],
           }),
         ],
       });
-
-      database.hosts = hostFactory.buildList(5);
 
       renderWithRouter(
         <GenericSystemDetails
@@ -618,21 +629,21 @@ describe('GenericSystemDetails', () => {
     'should show instance operation $operation in running state',
     async ({ operation, menuItemText, health }) => {
       const user = userEvent.setup();
-      const hosts = hostFactory.buildList(1);
+      const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
       const hostID = hosts[0].id;
       const instanceNumber = '00';
 
       const sapSystem = sapSystemFactory.build({
+        hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
             health,
             host_id: hostID,
+            host: hosts[0],
             instance_number: instanceNumber,
           }),
         ],
       });
-
-      sapSystem.hosts = hosts;
 
       const runningOperations = [
         { groupID: hostID, operation, metadata: { instanceNumber } },
@@ -694,17 +705,17 @@ describe('GenericSystemDetails', () => {
     'should show system/database operation $operation in running state',
     async ({ operation, menuItemText, health, type, getOperations }) => {
       const user = userEvent.setup();
-      const hosts = hostFactory.buildList(1);
+      const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
 
       const sapSystem = sapSystemFactory.build({
+        hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
             health,
+            host: hosts[0],
           }),
         ],
       });
-
-      sapSystem.hosts = hosts;
 
       const runningOperations = [{ groupID: sapSystem.id, operation }];
 
@@ -742,25 +753,26 @@ describe('GenericSystemDetails', () => {
     'should show database site operation $operation in running state',
     async ({ operation, menuItemText, health }) => {
       const user = userEvent.setup();
-      const hosts = hostFactory.buildList(1);
+      const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
       const site = 'Site1';
 
       const database = databaseFactory.build({
+        hosts,
         instances: [
           databaseInstanceFactory.build({
             health,
             system_replication: 'Primary',
             system_replication_site: site,
+            host: hosts[0],
           }),
           databaseInstanceFactory.build({
             health,
             system_replication: 'Secondary',
             system_replication_site: 'Site2',
+            host: hosts[1],
           }),
         ],
       });
-
-      database.hosts = hosts;
 
       const runningOperations = [
         {
@@ -810,22 +822,22 @@ describe('GenericSystemDetails', () => {
     'should disable instance operations if a $scenario is running',
     async ({ index }) => {
       const user = userEvent.setup();
-      const hosts = hostFactory.buildList(1);
+      const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
       const hostID = hosts[0].id;
       const sapSystemID = faker.string.uuid();
 
       const sapSystem = sapSystemFactory.build({
         id: sapSystemID,
+        hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
             host_id: hostID,
             sap_system_id: sapSystemID,
             health: 'passing',
+            host: hosts[0],
           }),
         ],
       });
-
-      sapSystem.hosts = hosts;
 
       // use hostID and sapSystemID as group ID to test disabled both scenarios
       const groupID = index === 0 ? hostID : sapSystemID;
@@ -858,19 +870,19 @@ describe('GenericSystemDetails', () => {
 
   it('should disable systems operations if an instance operation is running', async () => {
     const user = userEvent.setup();
-    const hosts = hostFactory.buildList(1);
+    const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
     const hostID = hosts[0].id;
 
     const sapSystem = sapSystemFactory.build({
+      hosts,
       instances: [
         sapSystemApplicationInstanceFactory.build({
           health: 'unknown',
           host_id: hostID,
+          host: hosts[0],
         }),
       ],
     });
-
-    sapSystem.hosts = hosts;
 
     const runningOperations = [
       { groupID: hostID, operation: SAP_INSTANCE_START },
@@ -901,16 +913,18 @@ describe('GenericSystemDetails', () => {
     const user = userEvent.setup();
     const mockCleanForbiddenOperation = jest.fn();
 
-    const hosts = hostFactory.buildList(1);
+    const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
     const hostID = hosts[0].id;
 
     const sapSystem = sapSystemFactory.build({
+      hosts,
       instances: [
-        sapSystemApplicationInstanceFactory.build({ host_id: hostID }),
+        sapSystemApplicationInstanceFactory.build({
+          host_id: hostID,
+          host: hosts[0],
+        }),
       ],
     });
-
-    sapSystem.hosts = hosts;
 
     const forbiddenOperation = SAP_INSTANCE_START;
     const runningOperations = [
@@ -950,17 +964,121 @@ describe('GenericSystemDetails', () => {
     expect(mockCleanForbiddenOperation).toHaveBeenCalled();
   });
 
+  it('should disable instance operations if the host heartbeat is not passing', async () => {
+    const user = userEvent.setup();
+
+    const hosts = hostFactory.buildList(1, { heartbeat: 'critical' });
+    const sapSystem = sapSystemFactory.build({
+      hosts,
+      instances: sapSystemApplicationInstanceFactory.buildList(1, {
+        host: hosts[0],
+      }),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        cleanUpPermittedFor={[]}
+        getInstanceOperations={getSapInstanceOperations}
+        operationsEnabled
+      />
+    );
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const { getByRole } = within(layoutTable);
+    const opButton = getByRole('button');
+
+    await user.hover(opButton);
+    expect(
+      screen.queryByText('Trento agent is not currently running in the host')
+    ).toBeInTheDocument();
+  });
+
+  it('should disable system operations if all the hosts heartbeat is not passing', async () => {
+    const user = userEvent.setup();
+
+    const hosts = hostFactory.buildList(2, { heartbeat: 'critical' });
+    const sapSystem = sapSystemFactory.build({
+      hosts,
+      instances: sapSystemApplicationInstanceFactory.buildList(1, {
+        host: hosts[0],
+      }),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+        cleanUpPermittedFor={[]}
+        getInstanceOperations={getSapInstanceOperations}
+        operationsEnabled
+      />
+    );
+
+    const operationsButton = screen.getByRole('button', {
+      name: 'Operations',
+    });
+
+    await user.hover(operationsButton);
+    expect(
+      screen.queryByText(
+        'Trento agent is not currently running in any of the hosts in the system'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('should disable database site operations if all the hosts in the site heartbeat is not passing', async () => {
+    const user = userEvent.setup();
+
+    const hosts = hostFactory.buildList(1, { heartbeat: 'critical' });
+    const database = databaseFactory.build({
+      hosts,
+      instances: databaseInstanceFactory.buildList(1, {
+        host: hosts[0],
+        system_replication: 'Primary',
+      }),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        cleanUpPermittedFor={[]}
+        getSiteOperations={getDatabaseSiteOperations}
+        operationsEnabled
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+
+    const { getByRole } = within(siteTables[0].previousSibling);
+    const siteOpButton1 = getByRole('button');
+    await user.hover(siteOpButton1);
+    expect(
+      screen.queryByText(
+        'Trento agent is not currently running in any of the hosts in the database site'
+      )
+    ).toBeInTheDocument();
+  });
+
   describe('forbidden actions', () => {
     it('should forbid instance cleanup', async () => {
       const user = userEvent.setup();
       const mockedCleanUp = jest.fn();
 
+      const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const sapSystem = sapSystemFactory.build({
-        instances: sapSystemApplicationInstanceFactory.buildList(2),
+        hosts,
+        instances: sapSystemApplicationInstanceFactory.buildList(2, {
+          host: hosts[0],
+        }),
       });
 
       sapSystem.instances[0].absent_at = faker.date.past().toISOString();
-      sapSystem.hosts = hostFactory.buildList(5);
 
       renderWithRouter(
         <GenericSystemDetails
@@ -1020,13 +1138,14 @@ describe('GenericSystemDetails', () => {
       async ({ forbidden, label, abilities, health }) => {
         const user = userEvent.setup();
 
+        const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const sapSystem = sapSystemFactory.build({
+          hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
             health,
+            host: hosts[0],
           }),
         });
-
-        sapSystem.hosts = hostFactory.buildList(1);
 
         renderWithRouter(
           <GenericSystemDetails
@@ -1128,14 +1247,15 @@ describe('GenericSystemDetails', () => {
       async ({ forbidden, label, abilities, health, type, getOperations }) => {
         const user = userEvent.setup();
 
+        const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         // reusing a sap system for a database test, they have the same attributes
         const sapSystem = sapSystemFactory.build({
+          hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
             health,
+            host: hosts[0],
           }),
         });
-
-        sapSystem.hosts = hostFactory.buildList(1);
 
         renderWithRouter(
           <GenericSystemDetails
@@ -1189,15 +1309,16 @@ describe('GenericSystemDetails', () => {
       async ({ forbidden, label, abilities, health }) => {
         const user = userEvent.setup();
 
+        const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const database = databaseFactory.build({
+          hosts,
           instances: databaseInstanceFactory.buildList(1, {
             health,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
+            host: hosts[0],
           }),
         });
-
-        database.hosts = hostFactory.buildList(1);
 
         renderWithRouter(
           <GenericSystemDetails

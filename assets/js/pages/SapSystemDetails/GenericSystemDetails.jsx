@@ -29,6 +29,8 @@ import {
   SAP_SYSTEM_STOP,
   DATABASE_START,
   DATABASE_STOP,
+  OPERATION_NOT_ALLOWED_SYSTEM,
+  OPERATION_NOT_ALLOWED_SITE,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -37,6 +39,7 @@ import {
   DATABASE_TYPE,
   getEnsaVersionLabel,
 } from '@lib/model/sapSystems';
+import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
@@ -184,6 +187,8 @@ export function GenericSystemDetails({
     (instance) => instance.system_replication
   );
 
+  const someHostHeartbeatPassing = isSomeHostHeartbeatPassing(system.hosts);
+
   return (
     <div>
       <DeregistrationModal
@@ -270,7 +275,10 @@ export function GenericSystemDetails({
                 userAbilities={userAbilities}
                 operations={systemOperations}
                 menuPosition="bottom end"
-                disabled={hasSystemReplication}
+                disabled={hasSystemReplication || !someHostHeartbeatPassing}
+                disabledTooltip={
+                  hasSystemReplication ? '' : OPERATION_NOT_ALLOWED_SYSTEM
+                }
               />
             </div>
           </div>
@@ -397,6 +405,12 @@ export function GenericSystemDetails({
                             userAbilities={userAbilities}
                             menuPosition="bottom end"
                             transparent
+                            disabled={
+                              !isSomeHostHeartbeatPassing(
+                                map(instances, ({ host }) => host)
+                              )
+                            }
+                            disabledTooltip={OPERATION_NOT_ALLOWED_SITE}
                             operations={curriedGetSiteOperations(site)}
                           />
                         </div>
