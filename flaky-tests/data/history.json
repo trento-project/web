@@ -896,5 +896,37 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-17T04:20:46Z",
+    "commit": "b93668e90d45b300402452ee599a739f1322bf11",
+    "run_id": "23177780584",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.25
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
   }
 ]
