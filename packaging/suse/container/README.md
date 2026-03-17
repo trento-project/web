@@ -6,28 +6,33 @@ _Trento_ is a bespoke, stand-alone web application, built by SUSE from the groun
 
 ## Usage
 
-Trento Web exposes its HTTP endpoint on port `4000`.
+The officially supported ways to run Trento are described at the [SUSE documentation website](https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/id-installation.html#). It covers the RPM and the Kubernetes-based deployments.
 
-To run Trento Web using the container image:
+If you want to run Trento using containers, please refer to the Helm chart available at the [Trento Helm Charts](https://github.com/trento-project/helm-charts) repository. It is the supported way to run Trento using containers in a Kubernetes environment, as it takes care of all the necessary dependencies and configurations for you.
 
-```console
-docker run -d \
-  --name trento-web \
-  -p 4000:4000 \
-  -e DATABASE_URL='ecto://trento_user:web_password@postgres-host/trento' \
-  -e EVENTSTORE_URL='ecto://trento_user:web_password@postgres-host/trento_event_store' \
-  -e AMQP_URL='amqp://trento_user:trento_user_password@rabbitmq-host/vhost' \
-  -e SECRET_KEY_BASE='<secret-key-base>' \
-  -e ACCESS_TOKEN_ENC_SECRET='<access-token-enc-secret>' \
-  -e REFRESH_TOKEN_ENC_SECRET='<refresh-token-enc-secret>' \
-  -e TRENTO_WEB_ORIGIN='localhost' \
-  -e CHECKS_SERVICE_BASE_URL='http://wanda-host:4000' \
-  registry.suse.com/trento/trento-web
+You can install the Trento Helm Chart using the following command:
+
+```bash
+helm upgrade \
+   --install trento-server oci://registry.suse.com/trento/trento-server \
+   --create-namespace \
+   --namespace trento \
+   --set global.trentoWeb.origin=YOUR_TRENTO_SERVER_HOSTNAME \
+   --set trento-web.adminUser.password=YOUR_ADMIN_PASSWORD
 ```
 
-Open Trento Web at `http://localhost:4000`.
+### Using the container image directly
 
-Refer to the [official SUSE documentation](https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html) for detailed installation and configuration instructions.
+Running the container image directly is not the recommended way to run Trento and it is not supported by SUSE. It requires manual configuration of all dependencies and environment variables, including PostgreSQL and RabbitMQ.
+
+If you still want to run Trento from the container image without Kubernetes, please refer to the [project documentation](https://www.trento-project.io/docs/developer/internal-notes/trento-container-install.html).
+
+As a quick example, you can run the container image using the following command:
+
+```bash
+# Set the proper environment variables, see https://github.com/trento-project/web/blob/main/packaging/suse/rpm/systemd/trento-web.example for reference
+docker run -d -p 4000:4000 --name trento-web registry.suse.com/trento/trento-web start
+```
 
 ## Licensing
 
