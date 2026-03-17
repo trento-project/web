@@ -171,7 +171,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: host_id} = insert(:host)
+      %{id: host_id} = insert(:host, heartbeat: :passing)
 
       %{sap_system_id: sap_system_id, instance_number: inst_number} =
         insert(:application_instance, host_id: host_id)
@@ -238,7 +238,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
              conn: conn,
              api_spec: api_spec
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
         %{sap_system_id: sap_system_id} = insert(:application_instance, host_id: host_id)
 
         conn
@@ -252,7 +252,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
       end
 
       test "should respond with 500 for operation #{operation} on messaging error", %{conn: conn} do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
 
         %{sap_system_id: sap_system_id, instance_number: inst_number} =
           insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)
@@ -306,7 +306,7 @@ defmodule TrentoWeb.V1.SapSystemControllerTest do
               )
           )
 
-        %{id: host_id} = insert(:host, cluster_id: cluster_id)
+        %{id: host_id} = insert(:host, heartbeat: :passing, cluster_id: cluster_id)
 
         %{sap_system_id: sap_system_id, instance_number: inst_number} =
           insert(:application_instance, features: "MESSAGESERVER|ENQUE", host_id: host_id)

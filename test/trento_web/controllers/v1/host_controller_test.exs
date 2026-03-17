@@ -433,7 +433,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(:host)
+        %{id: host_id} = insert(:host, heartbeat: :passing)
 
         resp =
           conn
@@ -459,11 +459,16 @@ defmodule TrentoWeb.V1.HostControllerTest do
     # more specific tests for each operation can be added outside this loop
     for {operation, operation_type, host} <- [
           {"saptune_solution_apply", "saptuneapplysolution@v1",
-           build(:host, saptune_status: nil)},
+           build(:host, heartbeat: :passing, saptune_status: nil)},
           {"saptune_solution_change", "saptunechangesolution@v1",
-           build(:host, saptune_status: build(:saptune_status))},
+           build(:host, heartbeat: :passing, saptune_status: build(:saptune_status))},
           {"reboot", "hostreboot@v1",
-           build(:host, application_instances: [], database_instances: [], cluster_id: nil)}
+           build(:host,
+             heartbeat: :passing,
+             application_instances: [],
+             database_instances: [],
+             cluster_id: nil
+           )}
         ] do
       @operation operation
       @operation_type operation_type
@@ -484,7 +489,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(@host)
+        %{id: host_id} = insert(@host, heartbeat: :passing)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -516,7 +521,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            %{
              conn: conn
            } do
-        %{id: host_id} = insert(@host)
+        %{id: host_id} = insert(@host, heartbeat: :passing)
 
         %{id: user_id} = insert(:user)
 
@@ -544,7 +549,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         conn: conn,
         api_spec: api_spec
       } do
-        %{id: host_id} = insert(@host)
+        %{id: host_id} = insert(@host, heartbeat: :passing)
 
         expect(
           Trento.Infrastructure.Messaging.Adapter.Mock,
@@ -568,7 +573,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       conn: conn,
       api_spec: api_spec
     } do
-      %{id: host_id} = insert(:host)
+      %{id: host_id} = insert(:host, heartbeat: :passing)
 
       conn
       |> post("/api/v1/hosts/#{host_id}/operations/unknown")
@@ -582,7 +587,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
     api_spec: api_spec
   } do
     %{id: cluster_id} = insert(:cluster, type: :hana_scale_up)
-    %{id: host_id} = insert(:host, cluster_id: cluster_id, cluster_host_status: :offline)
+
+    %{id: host_id} =
+      insert(:host, heartbeat: :passing, cluster_id: cluster_id, cluster_host_status: :offline)
+
     database_instances = insert_list(2, :database_instance, host_id: host_id)
     application_instances = insert_list(2, :application_instance, host_id: host_id)
 
@@ -629,7 +637,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            conn: conn,
            api_spec: api_spec
          } do
-      %{id: host_id} = insert(:host, saptune_status: @saptune_status)
+      %{id: host_id} = insert(:host, heartbeat: :passing, saptune_status: @saptune_status)
       insert(:application_instance, host_id: host_id, health: Health.passing())
 
       conn
@@ -646,6 +654,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
        } do
     %{id: host_id} =
       insert(:host,
+        heartbeat: :passing,
         cluster_id: nil,
         application_instances: [
           build(:application_instance, health: Health.passing())

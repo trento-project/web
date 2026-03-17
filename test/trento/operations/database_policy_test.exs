@@ -3,6 +3,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
   use ExUnit.Case, async: true
 
   require Trento.Enums.Health, as: Health
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
 
   alias Trento.Operations.DatabasePolicy
 
@@ -13,6 +14,39 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
     assert {:error, ["Unknown operation"]} ==
              DatabasePolicy.authorize_operation(:unknown, database, %{})
+  end
+
+  test "should forbid operation if any of the hosts heartbeat where the database is running is not passing" do
+    database =
+      build(:database,
+        database_instances: [
+          build(:database_instance, host: build(:host, heartbeat: :critical)),
+          build(:database_instance, host: build(:host, heartbeat: :critical))
+        ]
+      )
+
+    for operation <- DatabaseOperations.values() do
+      assert {:error,
+              ["Trento agent is not currently running in any of the hosts in the database"]} ==
+               DatabasePolicy.authorize_operation(operation, database, %{})
+    end
+  end
+
+  test "should continue checking policies if at least one host heartbeat in the database is passing" do
+    database =
+      build(:database,
+        sap_systems: [],
+        database_instances: [
+          build(:database_instance, host: build(:host, heartbeat: :passing, cluster: nil)),
+          build(:database_instance, host: build(:host, heartbeat: :critical, cluster: nil))
+        ]
+      )
+
+    for operation <- DatabaseOperations.values() do
+      refute {:error,
+              ["Trento agent is not currently running in any of the hosts in the database"]} ==
+               DatabasePolicy.authorize_operation(operation, database, %{})
+    end
   end
 
   describe "database_start" do
@@ -26,7 +60,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build_list(2, :database_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -43,12 +77,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
               health: Health.unknown(),
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :critical, cluster: nil)
             )
           ]
         )
@@ -68,7 +102,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
               system_replication: nil,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
           ]
         )
@@ -84,12 +118,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build(:database_instance,
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -106,12 +140,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
               health: Health.passing(),
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -133,7 +167,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build_list(2, :database_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -150,13 +184,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build(:database_instance,
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               health: Health.passing(),
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -185,12 +219,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build(:database_instance,
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               health: Health.unknown(),
               system_replication: "Secondary",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -223,7 +257,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build(:database_instance,
               system_replication: nil,
               system_replication_site: nil,
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -248,7 +282,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
               system_replication: nil,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
           ]
         )
@@ -266,12 +300,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
               health: Health.unknown(),
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -299,7 +333,10 @@ defmodule Trento.Operations.DatabasePolicyTest do
                 )
             }
           ],
-          database_instances: build_list(2, :database_instance, host: build(:host, cluster: nil))
+          database_instances:
+            build_list(2, :database_instance,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
         )
 
       assert :ok ==
@@ -321,13 +358,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
           database_instances: [
             build(:database_instance,
               system_replication: "Primary",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               health: Health.unknown(),
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )

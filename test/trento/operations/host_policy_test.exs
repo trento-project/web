@@ -4,15 +4,25 @@ defmodule Trento.Operations.HostPolicyTest do
 
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   alias Trento.Operations.HostPolicy
 
   import Trento.Factory
 
   test "should forbid unknown operation" do
-    host = build(:host)
+    host = build(:host, heartbeat: :passing)
 
     assert {:error, ["Unknown operation"]} == HostPolicy.authorize_operation(:unknown, host, %{})
+  end
+
+  test "should forbid operation if the host heartbeat is not passing" do
+    host = build(:host, heartbeat: :critical)
+
+    for operation <- HostOperations.values() do
+      assert {:error, ["Trento agent is not currently running in the host"]} ==
+               HostPolicy.authorize_operation(operation, host, %{})
+    end
   end
 
   describe "Saptune operations" do
@@ -49,6 +59,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: build(:cluster),
@@ -72,6 +83,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: build(:cluster),
@@ -99,6 +111,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: build(:cluster),
@@ -115,6 +128,7 @@ defmodule Trento.Operations.HostPolicyTest do
       test "should authorize operation '#{operation}' if there is not any SAP instance running. Scenario: #{name}" do
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: [],
             database_instances: [],
             cluster: nil,
@@ -130,6 +144,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: nil,
@@ -151,12 +166,14 @@ defmodule Trento.Operations.HostPolicyTest do
 
         hosts = [
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: maintenance_cluster,
             saptune_status: @saptune_status
           ),
           build(:host,
+            heartbeat: :passing,
             application_instances: application_instances,
             database_instances: database_instances,
             cluster: non_maintenance_cluster,
@@ -173,6 +190,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should forbid applying a saptune solution when there is an already applied one" do
       host =
         build(:host,
+          heartbeat: :passing,
           application_instances: [],
           database_instances: [],
           cluster: nil,
@@ -192,6 +210,7 @@ defmodule Trento.Operations.HostPolicyTest do
           ] do
         host =
           build(:host,
+            heartbeat: :passing,
             application_instances: [],
             database_instances: [],
             cluster: nil,
@@ -210,6 +229,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should authorize host reboot if host is not part of a cluster" do
       host =
         build(:host,
+          heartbeat: :passing,
           cluster: nil,
           cluster_id: nil,
           application_instances: [],
@@ -222,6 +242,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should forbid host reboot if pacemaker service is enabled" do
       host =
         build(:host,
+          heartbeat: :passing,
           systemd_units: [
             build(:host_systemd_unit, name: "pacemaker.service", unit_file_state: "enabled")
           ],
@@ -235,6 +256,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should authorize host reboot if the cluster is stopped/offline in the host" do
       host =
         build(:host,
+          heartbeat: :passing,
           hostname: "host1",
           cluster_host_status: ClusterHostStatus.offline(),
           systemd_units: [
@@ -250,6 +272,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should forbid host reboot if the cluster is running/online in the host" do
       host =
         build(:host,
+          heartbeat: :passing,
           hostname: "host1",
           cluster_host_status: ClusterHostStatus.online(),
           systemd_units: [
@@ -266,6 +289,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should authorize host reboot if all application and database instances are stopped" do
       host =
         build(:host,
+          heartbeat: :passing,
           cluster: nil,
           cluster_id: nil,
           application_instances: [
@@ -296,6 +320,7 @@ defmodule Trento.Operations.HostPolicyTest do
 
       host =
         build(:host,
+          heartbeat: :passing,
           cluster: nil,
           cluster_id: nil,
           application_instances: application_instances,
@@ -312,6 +337,7 @@ defmodule Trento.Operations.HostPolicyTest do
     test "should forbid host reboot if not all database instances are stopped" do
       host =
         build(:host,
+          heartbeat: :passing,
           cluster: nil,
           cluster_id: nil,
           application_instances: [],

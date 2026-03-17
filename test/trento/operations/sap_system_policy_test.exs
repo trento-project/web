@@ -3,6 +3,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
   use ExUnit.Case, async: true
 
   require Trento.Enums.Health, as: Health
+  require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
 
   alias Trento.Operations.SapSystemPolicy
 
@@ -13,6 +14,39 @@ defmodule Trento.Operations.SapSystemPolicyTest do
 
     assert {:error, ["Unknown operation"]} ==
              SapSystemPolicy.authorize_operation(:unknown, sap_system, %{})
+  end
+
+  test "should forbid operation if any of the hosts heartbeat where the sap system is running is not passing" do
+    sap_system =
+      build(:sap_system,
+        application_instances: [
+          build(:application_instance, host: build(:host, heartbeat: :critical)),
+          build(:application_instance, host: build(:host, heartbeat: :critical))
+        ]
+      )
+
+    for operation <- SapSystemOperations.values() do
+      assert {:error,
+              ["Trento agent is not currently running in any of the hosts in the SAP system"]} ==
+               SapSystemPolicy.authorize_operation(operation, sap_system, %{})
+    end
+  end
+
+  test "should continue checking policies if at least one host heartbeat in the sap system is passing" do
+    sap_system =
+      build(:sap_system,
+        database_instances: [],
+        application_instances: [
+          build(:application_instance, host: build(:host, heartbeat: :passing)),
+          build(:application_instance, host: build(:host, heartbeat: :critical))
+        ]
+      )
+
+    for operation <- SapSystemOperations.values() do
+      refute {:error,
+              ["Trento agent is not currently running in any of the hosts in the SAP system"]} ==
+               SapSystemPolicy.authorize_operation(operation, sap_system, %{})
+    end
   end
 
   describe "sap_system_start" do
@@ -31,7 +65,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build_list(2, :application_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -55,7 +89,9 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               )
           ],
           application_instances:
-            build_list(2, :application_instance, host: build(:host, cluster: nil))
+            build_list(2, :application_instance,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
         )
 
       assert {:error, ["Database #{sid} is not started"]} ==
@@ -80,7 +116,9 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             )
           ],
           application_instances:
-            build_list(2, :application_instance, host: build(:host, cluster: nil))
+            build_list(2, :application_instance,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
         )
 
       assert {:error, ["Database #{sid} primary site Site1 is not started"]} ==
@@ -98,7 +136,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               build(:application_instance,
                 health: Health.unknown(),
                 features: "MESSAGESERVER|ENQUE",
-                host: build(:host, cluster: nil)
+                host: build(:host, heartbeat: :passing, cluster: nil)
               )
           ]
         )
@@ -120,7 +158,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build_list(2, :application_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -142,7 +180,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               build_list(2, :application_instance,
                 sid: sid,
                 instance_number: instance_number,
-                host: build(:host, cluster: cluster)
+                host: build(:host, heartbeat: :passing, cluster: cluster)
               )
           )
 
@@ -163,7 +201,9 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             )
           ],
           application_instances:
-            build_list(2, :application_instance, host: build(:host, cluster: nil))
+            build_list(2, :application_instance,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
         )
 
       assert :ok ==
@@ -178,7 +218,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build(:application_instance,
               health: Health.passing(),
               features: "MESSAGESERVER|ENQUE",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -204,7 +244,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               build(:application_instance,
                 health: Health.unknown(),
                 features: "MESSAGESERVER|ENQUE",
-                host: build(:host, cluster: nil)
+                host: build(:host, heartbeat: :passing, cluster: nil)
               )
             ]
           )
@@ -230,7 +270,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build_list(2, :application_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -251,12 +291,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               build(:application_instance,
                 health: Health.passing(),
                 features: "ABAP|GATEWAY|ICMAN|IGS",
-                host: build(:host, cluster: nil)
+                host: build(:host, heartbeat: :passing, cluster: nil)
               ),
             build(:application_instance,
               health: Health.passing(),
               features: "MESSAGESERVER|ENQUE",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :critical, cluster: nil)
             )
           ]
         )
@@ -277,7 +317,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build_list(2, :application_instance,
               sid: sid,
               instance_number: instance_number,
-              host: build(:host, cluster: cluster)
+              host: build(:host, heartbeat: :passing, cluster: cluster)
             )
         )
 
@@ -298,7 +338,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
               build_list(2, :application_instance,
                 sid: sid,
                 instance_number: instance_number,
-                host: build(:host, cluster: cluster)
+                host: build(:host, heartbeat: :passing, cluster: cluster)
               )
           )
 
@@ -316,7 +356,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build(:application_instance,
               health: Health.passing(),
               features: "MESSAGESERVER|ENQUE",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -334,7 +374,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build(:application_instance,
               health: Health.unknown(),
               features: "MESSAGESERVER|ENQUE",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
@@ -352,12 +392,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             build(:application_instance,
               health: Health.unknown(),
               features: "J2EE|IGS",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:application_instance,
               health: Health.passing(),
               features: "GATEWAY|MESSAGESERVER|ENQUE",
-              host: build(:host, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )

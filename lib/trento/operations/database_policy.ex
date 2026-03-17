@@ -5,6 +5,8 @@ defmodule Trento.Operations.DatabasePolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
+  require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+
   alias Trento.Support.OperationsHelper
 
   alias Trento.Databases.Projections.{
@@ -12,11 +14,37 @@ defmodule Trento.Operations.DatabasePolicy do
     DatabaseReadModel
   }
 
+  alias Trento.Hosts.Projections.HostReadModel
+
+  # for all operations, check the heartbeat of all the hosts composing the database
+  # authorize if at least one host heartbeat is passing
   def authorize_operation(
-        :database_start,
-        %DatabaseReadModel{} = database,
+        operation,
+        %DatabaseReadModel{database_instances: instances} = database,
         params
-      ) do
+      )
+      when operation in DatabaseOperations.values() do
+    some_heartbeat_passing? =
+      Enum.any?(instances, fn %DatabaseInstanceReadModel{
+                                host: %HostReadModel{heartbeat: heartbeat}
+                              } ->
+        heartbeat == :passing
+      end)
+
+    if some_heartbeat_passing? do
+      do_authorize_operation(operation, database, params)
+    else
+      {:error, ["Trento agent is not currently running in any of the hosts in the database"]}
+    end
+  end
+
+  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+
+  defp do_authorize_operation(
+         :database_start,
+         %DatabaseReadModel{} = database,
+         params
+       ) do
     primary_site = get_primary_site(database)
 
     OperationsHelper.reduce_operation_authorizations([
@@ -25,11 +53,11 @@ defmodule Trento.Operations.DatabasePolicy do
     ])
   end
 
-  def authorize_operation(
-        :database_stop,
-        %DatabaseReadModel{} = database,
-        params
-      ) do
+  defp do_authorize_operation(
+         :database_stop,
+         %DatabaseReadModel{} = database,
+         params
+       ) do
     primary_site = get_primary_site(database)
 
     OperationsHelper.reduce_operation_authorizations([
@@ -38,8 +66,6 @@ defmodule Trento.Operations.DatabasePolicy do
       application_instances_stopped(database, params, primary_site)
     ])
   end
-
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
 
   defp get_primary_site(%DatabaseReadModel{
          database_instances: database_instances

@@ -5,6 +5,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
+  require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+
   alias Trento.Support.OperationsHelper
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -42,6 +44,19 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
       :ok
     end
   end
+
+  # for all operations, when the heartbeat of the host is not passing
+  def authorize_operation(
+        operation,
+        %ApplicationInstanceReadModel{host: %HostReadModel{heartbeat: heartbeat}},
+        _
+      )
+      when operation in SapInstanceOperations.values() and heartbeat != :passing,
+      do:
+        {:error,
+         [
+           "Trento agent is not currently running in the host"
+         ]}
 
   # instance start operation authorized when:
   # - other instances in the system are started

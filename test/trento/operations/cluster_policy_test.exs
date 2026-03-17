@@ -7,12 +7,52 @@ defmodule Trento.Operations.ClusterPolicyTest do
   import Trento.Factory
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
+  require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
   test "should forbid unknown operation" do
     cluster = build(:cluster)
 
     assert {:error, ["Unknown operation"]} ==
              ClusterPolicy.authorize_operation(:unknown, cluster, %{})
+  end
+
+  test "should forbid cluster host operation if the host heartbeat is not passing" do
+    cluster =
+      %{hosts: [%{id: host_id}, _]} =
+      build(:cluster, hosts: build_list(2, :host, heartbeat: :critical))
+
+    for operation <- ClusterHostOperations.values() do
+      assert {:error, ["Trento agent is not currently running in the host"]} ==
+               ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
+    end
+  end
+
+  test "should forbid cluster operation if any of the hosts heartbeat where the cluster is running is not passing" do
+    cluster =
+      build(:cluster, hosts: build_list(2, :host, heartbeat: :critical))
+
+    for operation <- ClusterOperations.values() do
+      assert {:error,
+              ["Trento agent is not currently running in any of the hosts in the cluster"]} ==
+               ClusterPolicy.authorize_operation(operation, cluster, %{})
+    end
+  end
+
+  test "should continue checking policies if at least one host heartbeat in the cluster is passing" do
+    cluster =
+      build(:cluster,
+        hosts: [
+          build(:host, heartbeat: :passing),
+          build(:host, heartbeat: :critical)
+        ]
+      )
+
+    for operation <- ClusterOperations.values() do
+      refute {:error,
+              ["Trento agent is not currently running in any of the hosts in the cluster"]} ==
+               ClusterPolicy.authorize_operation(operation, cluster, %{})
+    end
   end
 
   describe "maintenance" do
@@ -81,8 +121,8 @@ defmodule Trento.Operations.ClusterPolicyTest do
         cluster =
           build(:cluster,
             hosts: [
-              build(:host, cluster_host_status: ClusterHostStatus.offline()),
-              build(:host, cluster_host_status: ClusterHostStatus.online())
+              build(:host, heartbeat: :passing, cluster_host_status: ClusterHostStatus.offline()),
+              build(:host, heartbeat: :passing, cluster_host_status: ClusterHostStatus.online())
             ]
           )
 
@@ -93,7 +133,11 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{name: cluster_name} =
           cluster =
           build(:cluster,
-            hosts: build_list(2, :host, cluster_host_status: ClusterHostStatus.offline())
+            hosts:
+              build_list(2, :host,
+                heartbeat: :passing,
+                cluster_host_status: ClusterHostStatus.offline()
+              )
           )
 
         assert {:error, ["Cluster #{cluster_name} does not have any online node"]} ==
@@ -127,6 +171,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
             hosts: [
               build(:host,
                 id: host_id,
+                heartbeat: :passing,
                 systemd_units: Enum.map(host_units, &build(:host_systemd_unit, &1))
               )
             ]
@@ -186,6 +231,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         host =
           build(:host,
             id: host_id,
+            heartbeat: :passing,
             systemd_units: Enum.map(host_units, &build(:host_systemd_unit, &1))
           )
 
