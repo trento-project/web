@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-7519B5A3.js"></script>
+    <script src="dist/sidebar_items-C3D1C4BC.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -165,6 +165,14 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#host_filesystem_chart/2" data-no-tooltip translate="no">host_filesystem_chart(host_id, time \\ DateTime.utc_now())</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#host_memory_chart/3" data-no-tooltip translate="no">host_memory_chart(host_id, from, to)</a>
 
       </div>
@@ -193,7 +201,7 @@ Info
     </a>
     <h1 class="signature" translate="no">host_cpu_chart(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts.ex#L17" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts.ex#L18" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -213,6 +221,37 @@ Info
 
   </section>
 </section>
+<section class="detail" id="host_filesystem_chart/2">
+
+    <span id="host_filesystem_chart/1"></span>
+
+  <div class="detail-header">
+    <a href="#host_filesystem_chart/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">host_filesystem_chart(host_id, time \\ DateTime.utc_now())</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts.ex#L86" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> host_filesystem_chart(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>()) ::
+  {:ok, <a href="Trento.Charts.Hosts.HostFilesystemChart.html#t:t/0">Trento.Charts.Hosts.HostFilesystemChart.t</a>()} | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="host_memory_chart/3">
 
   <div class="detail-header">
@@ -222,7 +261,7 @@ Info
     </a>
     <h1 class="signature" translate="no">host_memory_chart(host_id, from, to)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts.ex#L61" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/charts.ex#L62" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>

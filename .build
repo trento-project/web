@@ -26,7 +26,9 @@ Trento.Charts.ChartTimeSeries.html
 Trento.Charts.ChartTimeSeriesSample.html
 Trento.Charts.HostDataFetcher.html
 Trento.Charts.Hosts.HostCpuChart.html
+Trento.Charts.Hosts.HostFilesystemChart.html
 Trento.Charts.Hosts.HostMemoryChart.html
+Trento.Charts.SampledMetric.html
 Trento.Charts.html
 Trento.Clusters.Cluster.html
 Trento.Clusters.ClusterEnrichmentData.html
@@ -550,7 +552,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-28A51232.js
-dist/sidebar_items-7519B5A3.js
+dist/search_data-D006D55B.js
+dist/sidebar_items-C3D1C4BC.js
 index.html
 search.html
