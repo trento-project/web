@@ -223,6 +223,23 @@ if config_env() in [:prod, :demo] do
       }
     ]
 
+  # Agent heartbeat interval in seconds (HOST_HEARTBEAT_INTERVAL, default: 5).
+  # A heartbeat is considered expired after: interval * (allowed_missed + 1) + tolerance.
+  # HOST_HEARTBEAT_ALLOWED_MISSED (default: 0) controls how many missed heartbeats
+  # are tolerated before marking a host as unhealthy.
+  config :trento, Trento.Heartbeats,
+    interval:
+      "HOST_HEARTBEAT_INTERVAL"
+      |> System.get_env("5")
+      |> String.to_integer()
+      |> :timer.seconds(),
+    # Allowed missed heartbeats before considering a host unhealthy. Defaults to 0.
+    # Increase this value if you want to allow some delay in receiving heartbeats before marking a host as unhealthy.
+    allowed_missed_heartbeats:
+      "HOST_HEARTBEAT_ALLOWED_MISSED"
+      |> System.get_env("0")
+      |> String.to_integer()
+
   config :trento,
     oas_server_url: System.get_env("OAS_SERVER_URL")
 

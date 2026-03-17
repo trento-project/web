@@ -16,6 +16,9 @@ defmodule Trento.HeartbeatsTest do
 
   @moduletag :integration
 
+  @heartbeats_interval Application.compile_env(:trento, Heartbeats)[:interval]
+  @heartbeats_tolerance Application.compile_env(:trento, Heartbeats)[:tolerance]
+
   setup [:set_mox_from_context, :verify_on_exit!]
 
   for scenario <- [:with_correlation, :without_correlation] do
@@ -49,7 +52,7 @@ defmodule Trento.HeartbeatsTest do
         updated_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + 1,
             :millisecond
           )
 
@@ -75,7 +78,64 @@ defmodule Trento.HeartbeatsTest do
         expired_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + @heartbeats_tolerance + 1,
+            :millisecond
+          )
+
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> expired_time end
+        )
+
+        scenario_setup(@scenario, agent_id, :critical)
+        Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+      end
+
+      test "do not dispatch commands when heartbeat is within allowed missed window scenario:#{@scenario}" do
+        allowed_missed = 2
+        put_allowed_missed_heartbeats(allowed_missed)
+
+        %{id: agent_id} = insert(:host, heartbeat: :passing)
+        %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+
+        # Time past a single interval + tolerance but within the allowed missed window
+        within_window_time =
+          DateTime.add(
+            now,
+            @heartbeats_interval + @heartbeats_tolerance + 1,
+            :millisecond
+          )
+
+        expect(
+          Trento.Support.DateService.Mock,
+          :utc_now,
+          fn -> within_window_time end
+        )
+
+        expect(
+          Trento.Commanded.Mock,
+          :dispatch,
+          0,
+          fn _ -> :ok end
+        )
+
+        Heartbeats.dispatch_heartbeat_failed_commands(Trento.Support.DateService.Mock)
+      end
+
+      test "dispatch commands when heartbeat exceeds allowed missed window scenario:#{@scenario}" do
+        allowed_missed = 2
+        put_allowed_missed_heartbeats(allowed_missed)
+
+        %{id: agent_id} = insert(:host, heartbeat: :passing)
+        %{timestamp: now} = insert(:heartbeat, agent_id: agent_id)
+
+        expire_after = @heartbeats_interval * (allowed_missed + 1) + @heartbeats_tolerance
+
+        expired_time =
+          DateTime.add(
+            now,
+            expire_after + 1,
             :millisecond
           )
 
@@ -96,7 +156,7 @@ defmodule Trento.HeartbeatsTest do
         expired_time =
           DateTime.add(
             now,
-            Application.get_env(:trento, Heartbeats)[:interval] + 1,
+            @heartbeats_interval + 1,
             :millisecond
           )
 
@@ -158,5 +218,19 @@ defmodule Trento.HeartbeatsTest do
     )
 
     :ok
+  end
+
+  defp put_allowed_missed_heartbeats(value) do
+    original_config = Application.get_env(:trento, Heartbeats)
+
+    Application.put_env(
+      :trento,
+      Heartbeats,
+      Keyword.put(original_config, :allowed_missed_heartbeats, value)
+    )
+
+    on_exit(fn ->
+      Application.put_env(:trento, Heartbeats, original_config)
+    end)
   end
 end

@@ -22,5 +22,8 @@ Dig into link:https://github.com/trento-project/web/blob/main/config/[./config] 
 `+ALERT_RECIPIENT+` - `+SMTP_SERVER+` - `+SMTP_PORT+` - `+SMTP_USER+` -
 `+SMTP_PASSWORD+`
 
+*Heartbeat* - `+HOST_HEARTBEAT_INTERVAL+` (agent heartbeat interval in seconds, default: `5`) -
+`+HOST_HEARTBEAT_ALLOWED_MISSED+` (number of missed heartbeats allowed before marking a host as unhealthy, default: `0`)
+
 *AUTHENTICATION* - `+ACCESS_TOKEN_ENC_SECRET+` -
 `+REFRESH_TOKEN_ENC_SECRET+`

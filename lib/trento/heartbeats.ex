@@ -19,8 +19,6 @@ defmodule Trento.Heartbeats do
 
   require Logger
 
-  @heartbeat_interval Application.compile_env!(:trento, __MODULE__)[:interval]
-
   @spec heartbeat(String.t(), module()) :: :ok | {:error, any}
   def heartbeat(agent_id, date_service \\ DateService) do
     changeset =
@@ -67,14 +65,19 @@ defmodule Trento.Heartbeats do
   end
 
   defp get_all_expired_heartbeats(date_service) do
+    config = Application.get_env(:trento, __MODULE__)
+    interval = config[:interval]
+    tolerance = config[:tolerance]
+    allowed_missed = config[:allowed_missed_heartbeats]
+    expire_after = interval * (allowed_missed + 1) + tolerance
+
     query =
       from h in Heartbeat,
         join: host in HostReadModel,
         on: h.agent_id == type(host.id, :string),
         where:
           is_nil(host.deregistered_at) and
-            h.timestamp <
-              ^DateTime.add(date_service.utc_now(), -@heartbeat_interval, :millisecond)
+            h.timestamp < ^DateTime.add(date_service.utc_now(), -expire_after, :millisecond)
 
     Repo.all(query)
   end
