@@ -360,6 +360,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     deftype do
       field :mode, :string
       field :operation_mode, :string
+      field :site_id, :string
       field :site_name, :string
       field :site_mapping, :map
       field :tier_mapping, :map

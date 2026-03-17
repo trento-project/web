@@ -119,6 +119,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         system_replication: parse_system_replication(instance),
         system_replication_status: parse_system_replication_status(instance),
         system_replication_site: parse_system_replication_site(instance),
+        system_replication_site_id: parse_system_replication_site_id(instance),
         system_replication_mode: parse_system_replication_mode(instance),
         system_replication_operation_mode: parse_system_replication_operation_mode(instance),
         system_replication_source_site: parse_system_replication_source_site(instance),
@@ -272,6 +273,16 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
          HdbnsutilSRstate: %HdbnsutilSRstate{site_name: site_name}
        }),
        do: site_name
+
+  defp parse_system_replication_site_id(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_id: nil}
+       }),
+       do: nil
+
+  defp parse_system_replication_site_id(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_id: site_id}
+       }),
+       do: String.to_integer(site_id)
 
   defp parse_system_replication_mode(%Instance{
          HdbnsutilSRstate: %HdbnsutilSRstate{mode: mode}

@@ -6,13 +6,14 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
   use Trento.Support.Event
   use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
-  defevent version: 3 do
+  defevent version: 4 do
     field :database_id, Ecto.UUID
     field :host_id, Ecto.UUID
     field :instance_number, :string
     field :system_replication, :string
     field :system_replication_status, :string
     field :system_replication_site, :string
+    field :system_replication_site_id, :integer
     field :system_replication_mode, :string
     field :system_replication_operation_mode, :string
     field :system_replication_source_site, :string
@@ -21,4 +22,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
 
   def upcast(params, _, 3),
     do: Map.put(params, "system_replication_tier", 0)
+
+  def upcast(params, _, 4),
+    do: Map.put(params, "system_replication_site_id", 0)
 end

@@ -122,6 +122,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        system_replication: "",
                        system_replication_status: "",
                        system_replication_site: nil,
+                       system_replication_site_id: nil,
                        system_replication_mode: nil,
                        system_replication_operation_mode: nil,
                        system_replication_source_site: nil,
@@ -202,6 +203,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         system_replication: "Primary",
         system_replication_status: "Active",
         system_replication_site: "Site1",
+        system_replication_site_id: 1,
         system_replication_mode: "sync",
         system_replication_operation_mode: "logreplay",
         system_replication_source_site: "Site2",
@@ -222,6 +224,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert event.system_replication_mode == projection.system_replication_mode
     assert event.system_replication_operation_mode == projection.system_replication_operation_mode
     assert event.system_replication_site == projection.system_replication_site
+    assert event.system_replication_site_id == projection.system_replication_site_id
     assert event.system_replication_source_site == projection.system_replication_source_site
     assert event.system_replication_tier == projection.system_replication_tier
 
@@ -233,6 +236,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        system_replication: ^system_replication,
                        system_replication_status: ^system_replication_status,
                        system_replication_site: "Site1",
+                       system_replication_site_id: 1,
                        system_replication_mode: "sync",
                        system_replication_operation_mode: "logreplay",
                        system_replication_source_site: "Site2",
@@ -273,6 +277,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert nil == projection.system_replication
     assert nil == projection.system_replication_status
     assert nil == projection.system_replication_site
+    assert nil == projection.system_replication_site_id
     assert nil == projection.system_replication_mode
     assert nil == projection.system_replication_operation_mode
     assert nil == projection.system_replication_source_site
@@ -286,6 +291,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        system_replication: nil,
                        system_replication_status: nil,
                        system_replication_site: nil,
+                       system_replication_site_id: nil,
                        system_replication_mode: nil,
                        system_replication_operation_mode: nil,
                        system_replication_source_site: nil,

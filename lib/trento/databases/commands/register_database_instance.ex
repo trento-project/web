@@ -34,6 +34,7 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
     field :system_replication, :string
     field :system_replication_status, :string
     field :system_replication_site, :string
+    field :system_replication_site_id, :integer
     field :system_replication_mode, :string
     field :system_replication_operation_mode, :string
     field :system_replication_source_site, :string

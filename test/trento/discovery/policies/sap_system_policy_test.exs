@@ -34,6 +34,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 tenants: [%Tenant{name: "HS6"}, %Tenant{name: "S4TENANT"}],
                 system_replication: nil,
                 system_replication_status: nil,
+                system_replication_site_id: nil,
                 health: :passing
               }
             ]} =
@@ -55,6 +56,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication: "Primary",
                 system_replication_status: "ERROR",
                 system_replication_site: "Site1",
+                system_replication_site_id: 1,
                 system_replication_source_site: nil,
                 system_replication_mode: "primary",
                 system_replication_operation_mode: "primary",
@@ -80,6 +82,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication: "Secondary",
                 system_replication_status: nil,
                 system_replication_site: "Site2",
+                system_replication_site_id: 2,
                 system_replication_source_site: "Site1",
                 system_replication_mode: "sync",
                 system_replication_operation_mode: "logreplay",
@@ -105,6 +108,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication: "Secondary",
                 system_replication_status: nil,
                 system_replication_site: "Site2",
+                system_replication_site_id: 2,
                 system_replication_source_site: "Site1",
                 system_replication_mode: "sync",
                 system_replication_operation_mode: "logreplay",
