@@ -269,9 +269,7 @@ const _resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       method: 'DELETE',
-      url: `${Cypress.config(
-        'wandaUrl'
-      )}/api/v1/groups/${groupId}/checks/${checkId}/customization`,
+      url: `${Cypress.env('wandaUrl')}/api/v1/groups/${groupId}/checks/${checkId}/customization`,
       auth: { bearer: accessToken },
       failOnStatusCode: false,
     })
