@@ -61,6 +61,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_mode: "primary",
                 system_replication_operation_mode: "primary",
                 system_replication_tier: 1,
+                system_replication_active_primary_site: nil,
                 health: :passing
               }
             ]} =
@@ -87,6 +88,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_mode: "sync",
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
+                system_replication_active_primary_site: 1,
                 health: :passing
               }
             ]} =
@@ -113,6 +115,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_mode: "sync",
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
+                system_replication_active_primary_site: 1,
                 health: :passing
               }
             ]} =
@@ -144,6 +147,9 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 tenants: [%Tenant{name: "HDP"}],
                 system_replication: "Primary",
                 system_replication_status: nil,
+                system_replication_site_id: 1,
+                system_replication_tier: 1,
+                system_replication_active_primary_site: nil,
                 health: :unknown
               }
             ]} =

@@ -364,6 +364,7 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       field :site_name, :string
       field :site_mapping, :map
       field :tier_mapping, :map
+      field :active_primary_site, :string
     end
 
     def changeset(sr_state, attrs) do
