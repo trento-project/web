@@ -1052,5 +1052,33 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-18T04:25:13Z",
+    "commit": "bb1ca35c23075b29fc2ad5852fcebe95f855981e",
+    "run_id": "23228618727",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
   }
 ]
