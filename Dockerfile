@@ -1,5 +1,6 @@
 ARG OS_VER=15.7
 FROM registry.suse.com/bci/bci-base:${OS_VER} AS elixir-build
+ARG OS_VER
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
