@@ -952,5 +952,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-18T03:56:04Z",
+    "commit": "bb1ca35c23075b29fc2ad5852fcebe95f855981e",
+    "run_id": "23227964383",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
+        "score": 0.09501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07392
+      },
+      {
+        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
+        "score": 0.02501
+      }
+    ]
   }
 ]
