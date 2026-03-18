@@ -1,5 +1,10 @@
 import { hostFactory } from '@lib/test-utils/factories';
-import { canDisableUnit, canEnableUnit } from './hosts';
+import {
+  canDisableUnit,
+  canEnableUnit,
+  isHeartbeatPassing,
+  isSomeHostHeartbeatPassing,
+} from './hosts';
 
 describe('hosts', () => {
   describe('enabling units', () => {
@@ -57,6 +62,27 @@ describe('hosts', () => {
       expect(canDisableUnit(host, 'quux.service')).toBe(false);
       expect(canDisableUnit(host, 'corge.service')).toBe(false);
       expect(canDisableUnit(host, 'unknown.service')).toBe(false);
+    });
+  });
+
+  describe('heartbeat', () => {
+    it('should check if a host heartbeat is passing', () => {
+      const hostPassing = hostFactory.build({ heartbeat: 'passing' });
+      expect(isHeartbeatPassing(hostPassing)).toBeTruthy();
+
+      const hostCritical = hostFactory.build({ heartbeat: 'critical' });
+      expect(isHeartbeatPassing(hostCritical)).toBeFalsy();
+    });
+
+    it('should check if at least one host heartbeat is passing', () => {
+      const hostsPassing = [
+        hostFactory.build({ heartbeat: 'passing' }),
+        hostFactory.build({ heartbeat: 'critical' }),
+      ];
+      expect(isSomeHostHeartbeatPassing(hostsPassing)).toBeTruthy();
+
+      const hostsCritical = hostFactory.buildList(2, { heartbeat: 'critical' });
+      expect(isSomeHostHeartbeatPassing(hostsCritical)).toBeFalsy();
     });
   });
 });

@@ -12,6 +12,7 @@ import {
 import { RUNNING_STATES } from '@state/lastExecutions';
 
 import { isSomeHostOnline } from '@lib/model/clusters';
+import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 
 import {
   CLUSTER_MAINTENANCE_CHANGE,
@@ -20,6 +21,7 @@ import {
   PACEMAKER_DISABLE,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
+  OPERATION_NOT_ALLOWED_CLUSTER,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
@@ -86,6 +88,7 @@ function ClusterDetails({
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
 
   const someHostOnline = isSomeHostOnline(hosts);
+  const someHostHeartbeatPassing = isSomeHostHeartbeatPassing(hosts);
 
   const clusterState = state || 'unknown';
 
@@ -194,6 +197,8 @@ function ClusterDetails({
             {operationsEnabled && (
               <OperationsButton
                 userAbilities={userAbilities}
+                disabled={!someHostHeartbeatPassing}
+                disabledTooltip={OPERATION_NOT_ALLOWED_CLUSTER}
                 operations={clusterOperations}
               />
             )}
@@ -257,6 +262,7 @@ function ClusterDetails({
         resources={details?.resources}
         hosts={hosts}
         userAbilities={userAbilities}
+        operationsDisabled={!someHostHeartbeatPassing}
         getResourceOperations={curriedGetResourceOperations}
       />
       <SBDDetails sbdDevices={details.sbd_devices} />

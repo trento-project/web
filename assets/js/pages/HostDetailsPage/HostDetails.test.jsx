@@ -394,6 +394,28 @@ describe('HostDetails component', () => {
   });
 
   describe('operations', () => {
+    it('should disable operations button if host heartbeat is not passing', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="2.0.0"
+          heartbeat="critical"
+          userAbilities={userAbilities}
+          operationsEnabled
+        />
+      );
+
+      const operationsButton = screen.getByRole('button', {
+        name: 'Operations',
+      });
+
+      await user.hover(operationsButton);
+      expect(
+        screen.queryByText('Trento agent is not currently running in the host')
+      ).toBeInTheDocument();
+    });
+
     it.each`
       scenario            | runningOperation
       ${'Saptune apply'}  | ${{ operation: SAPTUNE_SOLUTION_APPLY, menuEntry: 'Apply Saptune Solution' }}
@@ -407,6 +429,7 @@ describe('HostDetails component', () => {
         renderWithRouter(
           <HostDetails
             agentVersion="2.0.0"
+            heartbeat="passing"
             userAbilities={userAbilities}
             operationsEnabled
             runningOperation={{ operation }}
@@ -441,6 +464,7 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
+          heartbeat="passing"
           userAbilities={userAbilities}
           operationsEnabled
         />
@@ -470,6 +494,7 @@ describe('HostDetails component', () => {
         renderWithRouter(
           <HostDetails
             agentVersion="2.0.0"
+            heartbeat="passing"
             userAbilities={userAbilities}
             operationsEnabled
             runningOperation={{
@@ -560,6 +585,7 @@ describe('HostDetails component', () => {
           renderWithRouter(
             <HostDetails
               agentVersion="2.0.0"
+              heartbeat="passing"
               userAbilities={[ability]}
               operationsEnabled
               sapInstances={sapInstances}
@@ -597,6 +623,7 @@ describe('HostDetails component', () => {
       renderWithRouter(
         <HostDetails
           agentVersion="1.0.0"
+          heartbeat="passing"
           userAbilities={userAbilities}
           sapInstances={sapInstances}
           cluster={cluster}

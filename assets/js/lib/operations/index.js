@@ -25,6 +25,15 @@ export const DATABASE_START = 'database_start';
 export const DATABASE_STOP = 'database_stop';
 export const HOST_REBOOT = 'reboot';
 
+export const OPERATION_NOT_ALLOWED_HOST =
+  'Trento agent is not currently running in the host';
+export const OPERATION_NOT_ALLOWED_CLUSTER =
+  'Trento agent is not currently running in any of the hosts in the cluster';
+export const OPERATION_NOT_ALLOWED_SITE =
+  'Trento agent is not currently running in any of the hosts in the database site';
+export const OPERATION_NOT_ALLOWED_SYSTEM =
+  'Trento agent is not currently running in any of the hosts in the system';
+
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
   [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',

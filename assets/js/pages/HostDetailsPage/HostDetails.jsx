@@ -12,10 +12,12 @@ import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
   HOST_REBOOT,
+  OPERATION_NOT_ALLOWED_HOST,
   getOperationLabel,
   getOperationForbiddenMessage,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { isHeartbeatPassing } from '@lib/model/hosts';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -231,6 +233,8 @@ function HostDetails({
               {operationsEnabled && (
                 <OperationsButton
                   userAbilities={userAbilities}
+                  disabled={!isHeartbeatPassing({ heartbeat })}
+                  disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
                   operations={[
                     {
                       value: 'Reboot Host',

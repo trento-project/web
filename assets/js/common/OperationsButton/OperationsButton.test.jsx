@@ -139,4 +139,21 @@ describe('OperationsButton', () => {
 
     expect(screen.getByText('Operations')).toBeDisabled();
   });
+
+  it('should show a tooltip for disabled operations button', async () => {
+    const user = userEvent.setup();
+    const disabledTooltip = 'Operations disabled';
+
+    render(
+      <OperationsButton
+        disabled
+        disabledTooltip={disabledTooltip}
+        operations={testOperations}
+        userAbilities={[]}
+      />
+    );
+
+    await user.hover(screen.getByText('Operations'));
+    expect(screen.queryByText(disabledTooltip)).toBeInTheDocument();
+  });
 });
