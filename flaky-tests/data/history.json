@@ -976,5 +976,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-18T03:56:48Z",
+    "commit": "bb1ca35c23075b29fc2ad5852fcebe95f855981e",
+    "run_id": "23227964383",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
+        "score": 0.02501
+      }
+    ]
   }
 ]
