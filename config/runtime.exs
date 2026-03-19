@@ -233,6 +233,7 @@ if config_env() in [:prod, :demo] do
       |> System.get_env("5")
       |> String.to_integer()
       |> :timer.seconds(),
+    tolerance: :timer.seconds(1),
     # Allowed missed heartbeats before considering a host unhealthy. Defaults to 0.
     # Increase this value if you want to allow some delay in receiving heartbeats before marking a host as unhealthy.
     allowed_missed_heartbeats:
