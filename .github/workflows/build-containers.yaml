@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: "The container image tag. Note that this might be either a fixed version string, or a moving tag like 'rolling'"
+      version:
+        required: false
+        type: string
+        description: "The version to use in labels. If not provided, will be calculated from git history."
       MIX_ENV:
         required: false
         type: string
@@ -53,7 +57,12 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
       - name: Get version from git history
         id: get_version_from_git
-        run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+        run: |
+          if [ -z "${{ inputs.version }}" ]; then
+            echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          fi
       - name: Build and push container image
         uses: docker/build-push-action@v6
         with:
