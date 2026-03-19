@@ -137,6 +137,12 @@ jobs:
           - mix_env: test
             elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - mix_env: prod
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - mix_env: prod
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -167,7 +173,9 @@ jobs:
           mix local.hex --force
           mix deps.get
           mix deps.compile --warnings-as-errors
-          mix dialyzer --plt
+      - name: Build Dialyzer PLT
+        if: steps.mix-cache.outputs.cache-hit != 'true' && matrix.mix_env != 'prod'
+        run: mix dialyzer --plt
 
   npm-deps:
     name: Npm dependencies
@@ -404,6 +412,68 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mix coveralls.github --warnings-as-errors --trace
+
+  test-release:
+    name: Test release build
+    needs: [setup-matrix-env, elixir-deps, detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+    env:
+      MIX_ENV: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Setup
+        id: setup-elixir
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
+      - name: Retrieve Elixir Cached Dependencies
+        uses: actions/cache@v5
+        id: mix-cache
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Build release
+        run: mix release
+      - name: Start release
+        run: |
+          export DATABASE_URL=ecto://postgres:postgres@localhost/trento_dev
+          export EVENTSTORE_URL=ecto://postgres:postgres@localhost/trento_event_store_dev
+          export DATABASE_POOL_SIZE=10
+          export EVENTSTORE_POOL_SIZE=10
+          export PORT=4000
+          export SECRET_KEY_BASE=OxpmZytAd3dCb8heWykxY02zDQaNeDINbYK0ZCYxVn/xd+Vawc3JFiOLv5kwVBfARp3OT8mWqal0F45AiNP2QA==
+          export TRENTO_WEB_ORIGIN=localhost
+          export ACCESS_TOKEN_ENC_SECRET=Zk9Wm3Qr7Xt1Jv5Hn8Bl2Yp6Uf0Sd4Cg7Ei9Ao3Lw1Nx5Rk8Tj2Mq6Vh0Dp4Fa
+          export REFRESH_TOKEN_ENC_SECRET=Gx2Ym8Kp4Rn0Wj6Ct3Hs9Lv1Bf5Dq7Uo0Ei2Ak4Nz8Mw6Xr1Jl3Tf9Sg5Vh7Py
+          export AMQP_URL=amqp://guest:guest@localhost
+          export ADMIN_USER=admin
+          export CHECKS_SERVICE_BASE_URL=http://localhost:8081
+          export CHECKS_INTERVAL=5
+          export PROMETHEUS_URL=http://localhost:9090
+          export CHARTS_ENABLED=false
+          export HOST_HEARTBEAT_INTERVAL=5
+          export HOST_HEARTBEAT_ALLOWED_MISSED=0
+          export ENABLE_API_KEY=true
+          export ENABLE_OIDC=false
+          export ENABLE_OAUTH2=false
+          export ENABLE_SAML=false
+          export ENABLE_ALERTING=false
+          _build/prod/rel/trento/bin/trento eval "IO.puts(:ok)"
 
   chromatic:
     name: Chromatic deployment
