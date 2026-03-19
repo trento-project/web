@@ -1192,5 +1192,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-19T04:28:17Z",
+    "commit": "f8d99891c28ecd2e8a28dbb83b8206d11e440740",
+    "run_id": "23279314937",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "NotificationBox Component::should display the title",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.02501
+      }
+    ]
   }
 ]
