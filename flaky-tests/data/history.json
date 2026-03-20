@@ -1319,5 +1319,33 @@
         "score": 0.5
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-20T06:21:27Z",
+    "commit": "b9457e15add8d418bc2d5841e98d7e94e04118a7",
+    "run_id": "23328908839",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.02501
+      },
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      }
+    ]
   }
 ]
