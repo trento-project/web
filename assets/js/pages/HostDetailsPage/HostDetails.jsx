@@ -18,6 +18,7 @@ import {
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
+import { formatBytes } from '@lib/charts';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -54,15 +55,6 @@ import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
-
-function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-}
 
 export const buildCidrNotation = (ipAddresses, netmasks) =>
   zipWith(
