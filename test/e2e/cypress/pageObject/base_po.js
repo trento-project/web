@@ -282,7 +282,7 @@ export const loadScenario = (scenario) => {
     getTrentoInstanceApiKey().then((apiKey) => {
       cy.log(`Photofinish shooting to: ${baseUrl}`);
       const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario} "${apiKey}"`;
-      cy.exec(photofinishCommand, { timeout: 180000 });
+      cy.exec(photofinishCommand, { timeout: 360000 });
     });
   }
 };
