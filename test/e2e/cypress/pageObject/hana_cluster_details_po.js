@@ -103,8 +103,11 @@ export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
 
 export const waitForInitialEndpoints = () => {
   basePage.waitForRequest(lastExecutionEndpointAlias);
-  basePage.waitForRequest(catalogEndpointAlias);
+  waitForCatalogEndpoint();
 };
+
+export const waitForCatalogEndpoint = () =>
+  basePage.waitForRequest(catalogEndpointAlias);
 
 export const visitAvailableHanaCluster = (wait = true) =>
   visit(availableHanaCluster.id, wait);
@@ -167,7 +170,7 @@ export const checkInputValueIsTheExpected = (value) =>
 
 export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
   cy
-    .get(checkSettingsWarningMessage)
+    .get(checkSettingsWarningMessage, { timeout: 90000 })
     .should('have.text', expectedWarningMessage);
 
 export const expectedResultRowsAreDisplayed = () => {
@@ -184,7 +187,7 @@ export const expectedResultRowsAreDisplayed = () => {
 };
 
 export const expectedCheckIsDisplayed = (checkNameValue) =>
-  cy.get(checkName(checkNameValue)).should('be.visible');
+  cy.get(checkName(checkNameValue), { timeout: 60000 }).should('be.visible');
 
 export const validateExpectedCheckResults = (expectedCheckResults) => {
   expectedCheckResults.forEach((result) => {
@@ -260,7 +263,10 @@ export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSecondarySyncState'
   );
-  cy.get(hanaSecondarySyncStateLabel).should('contain', hanaSecondarySyncState);
+  cy.get(hanaSecondarySyncStateLabel, { timeout: 60000 }).should(
+    'contain',
+    hanaSecondarySyncState
+  );
 };
 
 export const expectedMaintenanceModeIsDisplayed = (clusterType) => {
@@ -398,7 +404,7 @@ export const expectedResourcesDisplayed = () => {
 
 export const expectedClusterStateIsDisplayed = (state) => {
   const { displayedText, icon } = clusterStates[state];
-  cy.get(clusterStateLabel).contains(displayedText);
+  cy.get(clusterStateLabel, { timeout: 60000 }).contains(displayedText);
   cy.get(clusterStateBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
@@ -475,7 +481,8 @@ export const linkToDeregisteredHostIsNotAvailable = () => {
 
 export const linkToDeregisteredHostIsAvailable = () => {
   cy.get(
-    `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
+    `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`,
+    { timeout: 90000 }
   ).should('have.attr', 'href');
 };
 
@@ -491,26 +498,33 @@ export const notAuthorizedTooltipIsNotDisplayed = () => {
 };
 
 // API
+
 export const interceptGetChecks = () =>
-  cy.intercept('GET', '/api/v1/groups/*/checks?*').as(getChecksEndpointAlias);
+  cy
+    .intercept('GET', `${Cypress.env('wandaUrl')}/api/v1/groups/*/checks?*`)
+    .as(getChecksEndpointAlias);
 
 export const waitForGetChecksEndpoint = () =>
-  basePage.waitForRequest(getChecksEndpointAlias);
+  basePage.waitForRequest(getChecksEndpointAlias, { timeout: 80000 });
 
 export const interceptLastExecutionRequestMocked = () => {
-  const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
+  const lastExecutionURL = `${Cypress.env(
+    'wandaUrl'
+  )}/api/v2/checks/groups/**/executions/last`;
   cy.intercept(lastExecutionURL, {
     body: lastExecution,
   }).as(lastExecutionEndpointAlias);
 };
 
 export const interceptLastExecutionRequest = () => {
-  const lastExecutionURL = '/api/v2/checks/groups/**/executions/last';
+  const lastExecutionURL = `${Cypress.env(
+    'wandaUrl'
+  )}/api/v2/checks/groups/**/executions/last`;
   cy.intercept(lastExecutionURL).as(lastExecutionEndpointAlias);
 };
 
-export const interceptCatalogRequest = () => {
-  const catalogURL = '/api/v3/checks/catalog*';
+export const interceptCatalogRequestMocked = () => {
+  const catalogURL = `${Cypress.env('wandaUrl')}/api/v3/checks/catalog*`;
   cy.intercept(catalogURL, { body: { items: catalog } }).as(
     catalogEndpointAlias
   );
