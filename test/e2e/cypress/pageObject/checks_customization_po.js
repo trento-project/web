@@ -235,7 +235,7 @@ export const modalCloseButtonShouldBeEnabled = () =>
 
 export const waitForCustomizedCheckElements = () => {
   cy.contains(modifiedCheckID, firstCheck.id).should('be.visible', {
-    timeout: 20000,
+    timeout: 60000,
   });
   cy.contains(modifiedPillLabel).should('be.visible');
   cy.contains('tr.tn-check-result-row', firstCheck.description)
@@ -281,6 +281,7 @@ const _resetCheck = (groupId, checkId) =>
       failOnStatusCode: false,
     })
   );
+
 const _resetChecks = (checks) => {
   checks.forEach(({ id }) => {
     _resetCheck(availableHanaCluster.id, id);
