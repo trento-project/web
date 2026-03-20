@@ -1263,5 +1263,45 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-20T04:14:21Z",
+    "commit": "b9457e15add8d418bc2d5841e98d7e94e04118a7",
+    "run_id": "23328407660",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.09051
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.08373
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune apply solution operation button based on user abilities",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
+        "score": 0.03977
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.02501
+      }
+    ]
   }
 ]
