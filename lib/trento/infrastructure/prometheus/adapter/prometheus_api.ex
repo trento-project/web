@@ -8,6 +8,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   alias Trento.Repo
 
   alias Trento.Infrastructure.Prometheus.ChartIntegration
+  alias Trento.Infrastructure.Prometheus.PromQL
 
   require Logger
 
@@ -133,6 +134,32 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     perform_simple_query(query, time)
   end
 
+  def proxy_query(host_id, params) do
+    query = Map.get(params, "query", "")
+    query = PromQL.inject_label(query, "agentID", host_id)
+
+    has_range_params = Map.has_key?(params, "start") and Map.has_key?(params, "end")
+
+    if has_range_params do
+      query_params =
+        %{query: query, start: params["start"], end: params["end"]}
+        |> maybe_put(:step, params["step"])
+        |> maybe_put(:timeout, params["timeout"])
+
+      execute_query("/api/v1/query_range", query_params)
+    else
+      query_params =
+        %{query: query}
+        |> maybe_put(:time, params["time"])
+        |> maybe_put(:timeout, params["timeout"])
+
+      execute_query("/api/v1/query", query_params)
+    end
+  end
+
+  defp maybe_put(map, _key, nil), do: map
+  defp maybe_put(map, key, value), do: Map.put(map, key, value)
+
   def get_exporters_status(host_id) do
     with %HostReadModel{prometheus_targets: prometheus_targets} <-
            Repo.get(HostReadModel, host_id),
@@ -163,17 +190,15 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   defp parse_exporter_status(%{
-         metric: %{"exporter_name" => exporter_name},
-         sample: %{
-           value: value
-         }
+         "metric" => %{"exporter_name" => exporter_name},
+         "value" => [_, value]
        }) do
     {exporter_name,
-     case trunc(value) do
-       0 ->
+     case value do
+       "0" ->
          :critical
 
-       1 ->
+       "1" ->
          :passing
 
        _ ->
@@ -182,43 +207,48 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   defp perform_query_range(query, from, to) do
-    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
+    params = %{
+      query: query,
+      start: DateTime.to_iso8601(from),
+      end: DateTime.to_iso8601(to),
+      step: "60s"
+    }
 
-    start_parameter = DateTime.to_iso8601(from)
-    end_parameter = DateTime.to_iso8601(to)
-
-    url = "#{prometheus_url}/api/v1/query_range"
-    headers = [{"Accept", "application/json"}]
-    params = %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
-
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body),
-         query_values <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.matrix_results_to_samples(query_values) do
-      {:ok, samples}
-    else
-      error -> handle_unsuccessful_response(error)
+    with {:ok, result_body} <- execute_query("/api/v1/query_range", params) do
+      result_body
+      |> extract_results()
+      |> ChartIntegration.matrix_results_to_samples()
     end
   end
 
-  defp perform_simple_query(query, time \\ DateTime.utc_now())
+  defp perform_simple_query(query) do
+    time = DateTime.to_iso8601(DateTime.utc_now())
+
+    with {:ok, result_body} <- execute_query("/api/v1/query", %{query: query, time: time}) do
+      {:ok, extract_results(result_body)}
+    end
+  end
 
   defp perform_simple_query(query, time) do
+    iso_time = DateTime.to_iso8601(time)
+
+    with {:ok, result_body} <- execute_query("/api/v1/query", %{query: query, time: iso_time}) do
+      result_body
+      |> extract_results()
+      |> ChartIntegration.vector_results_to_samples()
+    end
+  end
+
+  defp execute_query(endpoint, params) do
     prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
 
-    url = "#{prometheus_url}/api/v1/query"
+    url = "#{prometheus_url}#{endpoint}"
     headers = [{"Accept", "application/json"}]
-    time = DateTime.to_iso8601(time)
-
-    params = %{query: query, time: time}
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body),
-         results <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.vector_results_to_samples(results) do
-      {:ok, samples}
+         {:ok, decoded} <- Jason.decode(body) do
+      {:ok, decoded}
     else
       error -> handle_unsuccessful_response(error)
     end

@@ -1,4 +1,15 @@
 defmodule TrentoWeb.ErrorJSON do
+  def render("400.json", %{reason: reason}) when is_binary(reason) do
+    %{
+      errors: [
+        %{
+          title: "Bad Request",
+          detail: reason
+        }
+      ]
+    }
+  end
+
   def render("400.json", %{reason: %{exception: exception}}) do
     %{
       errors: [

@@ -51,6 +51,10 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
 
   def swap_avail(_, time), do: random_swap_data(:avail, time)
 
+  def proxy_query(_host_id, _params) do
+    {:ok, %{"status" => "success", "data" => %{"resultType" => "vector", "result" => []}}}
+  end
+
   defp random_chart_data(from, to, interval \\ 0..100) do
     minute_difference = trunc(DateTime.diff(from, to, :minute) / 5)
 

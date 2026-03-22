@@ -4,6 +4,8 @@ defmodule TrentoWeb.V1.PrometheusJSON do
 
   def exporters_status(%{status: status}), do: status
 
+  def metrics(%{metrics: metrics}), do: metrics
+
   def targets(%{targets: targets}), do: Enum.flat_map(targets, &target(%{target: &1}))
 
   # Support backward compatibility with older agents that don't send prometheus_targets

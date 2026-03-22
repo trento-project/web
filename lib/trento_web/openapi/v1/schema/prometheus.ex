@@ -4,6 +4,54 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
   require OpenApiSpex
   alias OpenApiSpex.Schema
 
+  defmodule MetricsResponse do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "PrometheusMetricsResponseV1",
+        description: "Raw Prometheus query response proxied for a specific host.",
+        type: :object,
+        example: %{
+          status: "success",
+          data: %{
+            resultType: "vector",
+            result: [
+              %{
+                "metric" => %{"__name__" => "up", "instance" => "localhost:9090"},
+                "value" => [1_616_000_000, "1"]
+              }
+            ]
+          }
+        },
+        properties: %{
+          status: %Schema{
+            type: :string,
+            description: "Prometheus response status.",
+            example: "success"
+          },
+          data: %Schema{
+            type: :object,
+            description: "Prometheus response data.",
+            properties: %{
+              resultType: %Schema{
+                type: :string,
+                description: "Type of result.",
+                example: "vector"
+              },
+              result: %Schema{
+                type: :array,
+                description: "Query result entries.",
+                items: %Schema{type: :object}
+              }
+            }
+          }
+        }
+      },
+      struct?: false
+    )
+  end
+
   defmodule ExporterStatus do
     @moduledoc false
 

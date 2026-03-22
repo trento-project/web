@@ -13,6 +13,9 @@ defmodule Trento.Infrastructure.Prometheus do
   @spec get_exporters_status(String.t()) :: {:ok, map} | {:error, any}
   def get_exporters_status(host_id), do: adapter().get_exporters_status(host_id)
 
+  @spec proxy_query(String.t(), map) :: {:ok, map} | {:error, any}
+  def proxy_query(host_id, params), do: adapter().proxy_query(host_id, params)
+
   defp adapter,
     do: Application.fetch_env!(:trento, __MODULE__)[:adapter]
 end

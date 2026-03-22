@@ -92,4 +92,100 @@ defmodule TrentoWeb.V1.PrometheusControllerTest do
              ]
            } = response
   end
+
+  describe "metrics proxy" do
+    setup do
+      %{api_spec: ApiSpec.spec()}
+    end
+
+    test "should proxy an instant query successfully", %{conn: conn, api_spec: api_spec} do
+      host_id = Faker.UUID.v4()
+
+      prometheus_response = %{
+        "status" => "success",
+        "data" => %{
+          "resultType" => "vector",
+          "result" => [
+            %{
+              "metric" => %{"__name__" => "up", "agentID" => host_id},
+              "value" => [1_702_316_008, "1"]
+            }
+          ]
+        }
+      }
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :proxy_query, fn ^host_id, params ->
+        assert Map.has_key?(params, "query")
+        {:ok, prometheus_response}
+      end)
+
+      response =
+        conn
+        |> get("/api/v1/hosts/#{host_id}/metrics?query=up")
+        |> json_response(200)
+
+      assert response == prometheus_response
+      assert_schema(response, "PrometheusMetricsResponseV1", api_spec)
+    end
+
+    test "should proxy a range query successfully", %{conn: conn, api_spec: api_spec} do
+      host_id = Faker.UUID.v4()
+
+      prometheus_response = %{
+        "status" => "success",
+        "data" => %{
+          "resultType" => "matrix",
+          "result" => []
+        }
+      }
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :proxy_query, fn ^host_id, params ->
+        assert params["start"] == "2023-12-11T17:00:00Z"
+        assert params["end"] == "2023-12-11T18:00:00Z"
+        assert params["step"] == "60s"
+        {:ok, prometheus_response}
+      end)
+
+      response =
+        conn
+        |> get(
+          "/api/v1/hosts/#{host_id}/metrics?query=up&start=2023-12-11T17:00:00Z&end=2023-12-11T18:00:00Z&step=60s"
+        )
+        |> json_response(200)
+
+      assert response == prometheus_response
+      assert_schema(response, "PrometheusMetricsResponseV1", api_spec)
+    end
+
+    test "should return 400 when query param is missing", %{conn: conn} do
+      response =
+        conn
+        |> get("/api/v1/hosts/#{Faker.UUID.v4()}/metrics")
+        |> json_response(400)
+
+      assert %{
+               "errors" => [
+                 %{
+                   "title" => "Bad Request",
+                   "detail" => "Missing required query parameter: query"
+                 }
+               ]
+             } = response
+    end
+
+    test "should return 502 when prometheus returns an error", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :proxy_query, fn ^host_id, _params ->
+        {:error, :unexpected_response}
+      end)
+
+      response =
+        conn
+        |> get("/api/v1/hosts/#{host_id}/metrics?query=up")
+        |> json_response(502)
+
+      assert %{"errors" => [%{"title" => "Bad Gateway"}]} = response
+    end
+  end
 end
