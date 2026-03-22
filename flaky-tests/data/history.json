@@ -1562,5 +1562,29 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-22T06:29:53Z",
+    "commit": "07e9b4bd7934596ec75ecd4ff85b86940ee39e2a",
+    "run_id": "23395610155",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.02501
+      }
+    ]
   }
 ]
