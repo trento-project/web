@@ -30,7 +30,10 @@ module.exports = (on, config) => {
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
     startAgentHeartbeat(agents) {
-      const { web_api_host, web_api_port, heartbeat_interval } = config.env;
+      const heartbeatInterval = config.env('heartbeat_interval');
+      const baseUrl = config.env('baseUrl');
+      const web_api_host = new URL(baseUrl).hostname;
+      const web_api_port = new URL(baseUrl).port;
       const heartbeat = (agentId) =>
         http
           .request({
@@ -43,10 +46,7 @@ module.exports = (on, config) => {
 
       agents.forEach((agentId) => {
         heartbeat(agentId);
-        let interval = setInterval(
-          () => heartbeat(agentId),
-          heartbeat_interval
-        );
+        let interval = setInterval(() => heartbeat(agentId), heartbeatInterval);
         heartbeatsIntervals.push(interval);
       });
       return null;
