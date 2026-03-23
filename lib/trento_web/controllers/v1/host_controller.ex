@@ -9,6 +9,8 @@ defmodule TrentoWeb.V1.HostController do
     Hosts
   }
 
+  alias Trento.Infrastructure.Prometheus
+
   require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   alias Trento.Hosts.Projections.HostReadModel
@@ -260,6 +262,59 @@ defmodule TrentoWeb.V1.HostController do
 
     def unquote(host_operation)(conn, params) do
       request_operation(conn, params)
+    end
+  end
+
+  operation :query_metrics,
+    summary: "Execute a PromQL query scoped to a host.",
+    tags: ["Target Infrastructure"],
+    description:
+      "Executes an arbitrary PromQL query against Prometheus, automatically injecting the host's agentID label into all vector selectors to scope results to the specified host. " <>
+        "Supports both instant queries (default) and range queries (when 'from' and 'to' are provided).",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the host to scope the query to. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ]
+    ],
+    request_body:
+      {"PromQL query to execute", "application/json", Schema.Prometheus.QueryRequest,
+       required: true},
+    responses: [
+      ok:
+        {"Raw Prometheus query result scoped to the specified host.",
+         "application/json", Schema.Prometheus.QueryResponse},
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  def query_metrics(conn, %{id: host_id}) do
+    %{query: query} = body = OpenApiSpex.body_params(conn)
+
+    result =
+      case body do
+        %{from: from, to: to} ->
+          Prometheus.query_range(query, host_id, from, to)
+
+        _ ->
+          time = Map.get(body, :time, DateTime.utc_now())
+          Prometheus.query(query, host_id, time)
+      end
+
+    case result do
+      {:ok, %{"data" => %{"result" => query_results}}} ->
+        json(conn, query_results)
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:bad_gateway)
+        |> json(%{errors: [%{detail: "Prometheus query failed"}]})
     end
   end
 

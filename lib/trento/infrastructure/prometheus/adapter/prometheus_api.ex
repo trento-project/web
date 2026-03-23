@@ -154,6 +154,43 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
     end
   end
 
+  def query(query, time) do
+    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
+
+    url = "#{prometheus_url}/api/v1/query"
+    headers = [{"Accept", "application/json"}]
+    time = DateTime.to_iso8601(time)
+
+    params = %{query: query, time: time}
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           http_client().get(url, headers, params: params),
+         {:ok, result_body} <- Jason.decode(body) do
+      {:ok, result_body}
+    else
+      error -> handle_unsuccessful_response(error)
+    end
+  end
+
+  def query_range(query, from, to) do
+    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
+
+    start_parameter = DateTime.to_iso8601(from)
+    end_parameter = DateTime.to_iso8601(to)
+
+    url = "#{prometheus_url}/api/v1/query_range"
+    headers = [{"Accept", "application/json"}]
+    params = %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
+
+    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
+           http_client().get(url, headers, params: params),
+         {:ok, result_body} <- Jason.decode(body) do
+      {:ok, result_body}
+    else
+      error -> handle_unsuccessful_response(error)
+    end
+  end
+
   defp build_expected_exporters(nil), do: %{}
 
   defp build_expected_exporters(prometheus_targets) do
