@@ -95,7 +95,7 @@ const providerDetails = {
 
 // UI Interactions
 export const visit = (selectedHost = '') =>
-  basePage.visit(`/${url}/${selectedHost}`);
+  basePage.visit(`${url}/${selectedHost}`);
 
 export const visitVmdrbddev01Host = () =>
   basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf');
@@ -403,7 +403,7 @@ const _getTableHeaders = (tableName) =>
   });
 
 export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentRunningLabel).should('be.visible');
+  cy.get(agentRunningLabel, { timeout: 20000 }).should('be.visible');
   return cy
     .get(agentRunningBadge)
     .invoke('attr', 'class')
