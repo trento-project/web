@@ -1,9 +1,9 @@
 import React from 'react';
-import SwapUsage from './SwapUsage';
+import SwapUsageChart from './SwapUsageChart';
 
 export default {
-  title: 'Components/FilesystemCharts/SwapUsage',
-  component: SwapUsage,
+  title: 'Components/FilesystemCharts/SwapUsageChart',
+  component: SwapUsageChart,
   argTypes: {
     availBytes: {
       description: 'Available swap in bytes',
@@ -18,7 +18,7 @@ export default {
       control: { type: 'number' },
     },
   },
-  render: (args) => <SwapUsage {...args} className="w-full h-[400px]" />,
+  render: (args) => <SwapUsageChart {...args} className="w-full h-[400px]" />,
 };
 
 export const Default = {

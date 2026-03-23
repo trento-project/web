@@ -1,16 +1,16 @@
 import React from 'react';
-import Mountpoints from './Mountpoints';
+import MountpointsChart from './MountpointsChart';
 
 export default {
-  title: 'Components/FilesystemCharts/Mountpoints',
-  component: Mountpoints,
+  title: 'Components/FilesystemCharts/MountpointsChart',
+  component: MountpointsChart,
   argTypes: {
     mountpoints: {
       description: 'An object containing information about each mountpoint',
       control: { type: 'object' },
     },
   },
-  render: (args) => <Mountpoints {...args} className="w-full h-[400px]" />,
+  render: (args) => <MountpointsChart {...args} className="w-full h-[400px]" />,
 };
 
 export const Default = {

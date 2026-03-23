@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { pipe } from 'lodash/fp';
-import { calculateFilesystemUsage } from '../../common/FilesystemCharts/dataMapper';
+import { calculateFilesystemUsage } from '@common/FilesystemCharts/dataMapper';
 import { fetchHostFilesystemData } from '@lib/api/charts';
-import { SwapUsage } from '@common/FilesystemCharts';
-import { Mountpoints } from '@common/FilesystemCharts';
+import { SwapUsageChart } from '@common/FilesystemCharts';
+import { MountpointsChart } from '@common/FilesystemCharts';
 
 function DiskSpaceChart({ hostId, updateFrequency = 30000 }) {
   const [chartData, setChartData] = useState({});
@@ -31,12 +31,12 @@ function DiskSpaceChart({ hostId, updateFrequency = 30000 }) {
 
   return (
     <div className="flex gap-2 pt-4">
-      <SwapUsage
+      <SwapUsageChart
         availBytes={swap?.availBytes}
         usedBytes={swap?.usedBytes}
         totalBytes={swap?.totalBytes}
       />
-      <Mountpoints mountpoints={mountpoints} />
+      <MountpointsChart mountpoints={mountpoints} />
     </div>
   );
 }

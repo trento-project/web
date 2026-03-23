@@ -1,4 +1,4 @@
-import SwapUsage from './SwapUsage';
-import Mountpoints from './Mountpoints';
+import SwapUsageChart from './SwapUsageChart';
+import MountpointsChart from './MountpointsChart';
 
-export { SwapUsage, Mountpoints };
+export { SwapUsageChart, MountpointsChart };

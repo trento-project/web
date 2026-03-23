@@ -14,7 +14,7 @@ import { formatBytes } from '@lib/charts';
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
-function SwapUsage({ availBytes, usedBytes, totalBytes, className }) {
+function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
   const swapData = {
     labels: ['Available', 'Used'],
     datasets: [
@@ -72,4 +72,4 @@ function SwapUsage({ availBytes, usedBytes, totalBytes, className }) {
   );
 }
 
-export default SwapUsage;
+export default SwapUsageChart;

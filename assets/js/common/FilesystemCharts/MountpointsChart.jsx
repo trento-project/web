@@ -24,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-function Mountpoints({ mountpoints, className }) {
+function MountpointsChart({ mountpoints, className }) {
   const mountpointsLabels = keys(mountpoints);
   const used = map(values(mountpoints), ({ usedBytes }) => usedBytes);
   const available = map(values(mountpoints), ({ availBytes }) => availBytes);
@@ -100,4 +100,4 @@ function Mountpoints({ mountpoints, className }) {
   );
 }
 
-export default Mountpoints;
+export default MountpointsChart;
