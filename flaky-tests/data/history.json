@@ -1602,5 +1602,29 @@
         "score": 0.25
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-23T03:58:04Z",
+    "commit": "07e9b4bd7934596ec75ecd4ff85b86940ee39e2a",
+    "run_id": "23420458287",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07953
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
+      }
+    ]
   }
 ]
