@@ -13,8 +13,6 @@ module.exports = defineConfig({
   viewportHeight: 768,
   defaultCommandTimeout: 10000,
   env: {
-    web_api_host: 'localhost',
-    web_api_port: 4000,
     heartbeat_interval: 5000,
     project_root: '../..',
     photofinish_binary: 'photofinish',
@@ -22,6 +20,8 @@ module.exports = defineConfig({
     login_password: 'adminpassword',
     destination_environment: 'dev',
     idp_url: 'http://localhost:8081',
+    auto_discover_api_key: false,
+    api_key: '',
   },
   e2e: {
     // We've imported your old cypress plugins here.
