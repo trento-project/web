@@ -436,17 +436,12 @@ export const loadMovedScenario = () =>
   basePage.loadScenario('sap-systems-overview-moved');
 
 const apiDeregisterInstance = (sapSystemdId, hostId, instanceNumber) => {
-  const [webAPIHost, webAPIPort] = [
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
-  ];
-
   const headers = {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  return basePage.apiLogin().then(({ accessToken }) => {
-    const url = `http://${webAPIHost}:${webAPIPort}/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
+  basePage.apiLogin().then(({ accessToken }) => {
+    const url = `${Cypress.config.baseUrl}/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
     return cy.request({
       method: 'DELETE',
       url: url,

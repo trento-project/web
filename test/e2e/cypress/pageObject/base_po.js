@@ -248,21 +248,23 @@ export const preloadTestData = ({
 
 const getTrentoInstanceApiKey = () =>
   apiLogin().then(({ accessToken }) => {
-    cy.request({
-      method: 'GET',
-      url: '/api/v1/settings/api_key',
-      auth: {
-        bearer: accessToken,
-      },
-    }).then(({ body: { generated_api_key } }) => generated_api_key);
+    return cy
+      .request({
+        method: 'GET',
+        url: '/api/v1/settings/api_key',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then(({ body: { generated_api_key } }) => generated_api_key);
   });
 
 export const loadScenario = (scenario) => {
-  const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
+  const [projectRoot, photofinishBinary, autoDiscoverApiKey, apiKey] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
+    Cypress.env('auto_discover_api_key'),
+    Cypress.env('api_key'),
   ];
 
   const baseUrl = Cypress.config().baseUrl;
@@ -274,16 +276,20 @@ export const loadScenario = (scenario) => {
 
   cy.log(`Loading scenario "${scenario}"...`);
 
-  if (baseUrl.includes('localhost')) {
-    cy.log('Photofinish shooting to localhost');
-    const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`;
-    cy.exec(photofinishCommand);
-  } else {
-    getTrentoInstanceApiKey().then((apiKey) => {
-      cy.log(`Photofinish shooting to: ${baseUrl}`);
-      const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario} "${apiKey}"`;
-      cy.exec(photofinishCommand, { timeout: 360000 });
+  const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
+
+  const runPhotofinish = (apiKey) => {
+    cy.log(`Photofinish shooting to: ${baseUrl}`);
+    if (apiKey === '') cy.exec(photofinishCommand, { timeout: 360000 });
+    else cy.exec(`${photofinishCommand} "${apiKey}"`, { timeout: 360000 });
+  };
+
+  if (autoDiscoverApiKey) {
+    getTrentoInstanceApiKey().then((discoveredKey) => {
+      runPhotofinish(discoveredKey);
     });
+  } else {
+    runPhotofinish(apiKey);
   }
 };
 
