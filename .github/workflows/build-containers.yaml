@@ -55,7 +55,7 @@ jobs:
         id: get_version_from_git
         run: echo "version=$(hack/get_version_from_git.sh)" >> $GITHUB_OUTPUT
       - name: Build and push container image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: true
