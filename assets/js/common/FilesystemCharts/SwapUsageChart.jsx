@@ -16,12 +16,12 @@ ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
 function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
   const swapData = {
-    labels: ['Available', 'Used'],
+    labels: ['Used', 'Available'],
     datasets: [
       {
-        data: [availBytes, usedBytes],
-        backgroundColor: ['rgba(48,186,120, 1)', 'rgba(165, 238, 212, 1)'],
-        borderColor: ['rgba(48,186,120, 1)', 'rgba(165, 238, 212, 1)'],
+        data: [usedBytes, availBytes],
+        backgroundColor: ['rgba(88, 207, 155, 1)', 'rgba(178, 186, 186, 0.7)'],
+        borderColor: ['rgba(88, 207, 155, 1)', 'rgba(178, 186, 186, 0.7)'],
         borderWidth: 1,
       },
     ],
@@ -31,16 +31,6 @@ function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      title: {
-        display: true,
-        color: 'black',
-        text: formatBytes(totalBytes),
-        font: {
-          family: 'Lato',
-          weight: 700,
-          size: 32,
-        },
-      },
       legend: {
         position: 'bottom',
       },
@@ -57,6 +47,8 @@ function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
     },
   };
 
+  const renderedTotal = totalBytes ? formatBytes(totalBytes) : 'N/A';
+
   return (
     <div
       className={classNames(
@@ -64,9 +56,14 @@ function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
         className
       )}
     >
-      <h2 className="font-bold text-center text-xl">Swap</h2>
-      <div className="pt-6 relative text-center h-[92%] w-full flex justify-center h-[350px]">
-        <Doughnut data={swapData} options={swapChartOptions} />
+      <h2 className="font-bold text-center text-xl">Swap Utilization</h2>
+      <div className="flex items-center justify-center pt-6 h-[300px]">
+        <div className="h-[92%]">
+          <Doughnut data={swapData} options={swapChartOptions} />
+        </div>
+        <div className="ml-4 align-self-center">
+          <p className="text-3xl font-bold">{renderedTotal}</p>
+        </div>
       </div>
     </div>
   );
