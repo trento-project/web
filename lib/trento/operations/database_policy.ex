@@ -35,7 +35,7 @@ defmodule Trento.Operations.DatabasePolicy do
     if some_heartbeat_passing? do
       do_authorize_operation(operation, database, params)
     else
-      {:error, get_heatbeat_not_passing_forbidden_msg(params)}
+      {:error, get_heartbeat_not_passing_forbidden_msg(params)}
     end
   end
 
@@ -48,10 +48,10 @@ defmodule Trento.Operations.DatabasePolicy do
 
   defp filter_by_site(instances, _), do: instances
 
-  defp get_heatbeat_not_passing_forbidden_msg(%{site: site}) when not is_nil(site),
+  defp get_heartbeat_not_passing_forbidden_msg(%{site: site}) when not is_nil(site),
     do: ["Trento agent is not currently running in any of the hosts in the database site #{site}"]
 
-  defp get_heatbeat_not_passing_forbidden_msg(_),
+  defp get_heartbeat_not_passing_forbidden_msg(_),
     do: ["Trento agent is not currently running in any of the hosts in the database"]
 
   defp do_authorize_operation(

@@ -996,7 +996,7 @@ describe('GenericSystemDetails', () => {
     ).toBeInTheDocument();
   });
 
-  it('should disable system operations if all the hosts heartbeat is not passing', async () => {
+  it('should disable SAP system operations if all the hosts heartbeat is not passing', async () => {
     const user = userEvent.setup();
 
     const hosts = hostFactory.buildList(2, { heartbeat: 'critical' });
@@ -1025,7 +1025,42 @@ describe('GenericSystemDetails', () => {
     await user.hover(operationsButton);
     expect(
       screen.queryByText(
-        'Trento agent is not currently running in any of the hosts in the system'
+        'Trento agent is not currently running in any of the hosts in the SAP system'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('should disable database operations if all the hosts heartbeat is not passing', async () => {
+    const user = userEvent.setup();
+
+    const hosts = hostFactory.buildList(1, { heartbeat: 'critical' });
+    const database = databaseFactory.build({
+      hosts,
+      instances: databaseInstanceFactory.buildList(1, {
+        host: hosts[0],
+        system_replication: null,
+      }),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        cleanUpPermittedFor={[]}
+        getSiteOperations={getDatabaseSiteOperations}
+        operationsEnabled
+      />
+    );
+
+    const operationsButton = screen.getByRole('button', {
+      name: 'Operations',
+    });
+
+    await user.hover(operationsButton);
+    expect(
+      screen.queryByText(
+        'Trento agent is not currently running in any of the hosts in the database'
       )
     ).toBeInTheDocument();
   });

@@ -29,7 +29,8 @@ import {
   SAP_SYSTEM_STOP,
   DATABASE_START,
   DATABASE_STOP,
-  OPERATION_NOT_ALLOWED_SYSTEM,
+  OPERATION_NOT_ALLOWED_DATABASE,
+  OPERATION_NOT_ALLOWED_SAP_SYSTEM,
   OPERATION_NOT_ALLOWED_SITE,
   getOperationLabel,
   getOperationForbiddenMessage,
@@ -189,6 +190,11 @@ export function GenericSystemDetails({
 
   const someHostHeartbeatPassing = isSomeHostHeartbeatPassing(system.hosts);
 
+  const operationNotAllowedMsg =
+    type === APPLICATION_TYPE
+      ? OPERATION_NOT_ALLOWED_SAP_SYSTEM
+      : OPERATION_NOT_ALLOWED_DATABASE;
+
   return (
     <div>
       <DeregistrationModal
@@ -277,7 +283,7 @@ export function GenericSystemDetails({
                 menuPosition="bottom end"
                 disabled={hasSystemReplication || !someHostHeartbeatPassing}
                 disabledTooltip={
-                  hasSystemReplication ? '' : OPERATION_NOT_ALLOWED_SYSTEM
+                  hasSystemReplication ? '' : operationNotAllowedMsg
                 }
               />
             </div>
