@@ -49,7 +49,7 @@ import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
-import HostChart from './HostChart';
+import HostTimeSeriesLineChart from './HostTimeSeriesLineChart';
 import DiskSpaceChart from './DiskSpaceChart';
 
 import {
@@ -372,7 +372,7 @@ function HostDetails({
         />
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
           <div className="flex gap-2">
-            <HostChart
+            <HostTimeSeriesLineChart
               hostId={hostID}
               chartId="cpu"
               chartTitle="CPU"
@@ -380,7 +380,7 @@ function HostDetails({
               startInterval={subHours(timeNow, 3)}
               className="w-1/2"
             />
-            <HostChart
+            <HostTimeSeriesLineChart
               hostId={hostID}
               chartId="memory"
               chartTitle="Memory"

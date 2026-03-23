@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { get } from '@lib/network';
+import { fetchHostTimeSeriesData } from '@lib/api/charts';
 import { addMinutes, parseISO, subMinutes } from 'date-fns';
 import TimeSeriesLineChart from '@common/TimeSeriesLineChart/TimeSeriesLineChart';
 
-function HostChart({
+function HostTimeSeriesLineChart({
   hostId,
   chartId,
   chartTitle,
@@ -32,8 +32,11 @@ function HostChart({
   }, [chartEndInterval]);
 
   const fetchApiData = async (start, end) => {
-    const { data: chartApiData } = await get(
-      `charts/hosts/${hostId}/${chartId}?from=${start.toISOString()}&to=${end.toISOString()}`
+    const { data: chartApiData } = await fetchHostTimeSeriesData(
+      hostId,
+      chartId,
+      start.toISOString(),
+      end.toISOString()
     );
 
     const updatedChartData = Object.keys(chartApiData).map((chartKey) => ({
@@ -93,4 +96,4 @@ function HostChart({
   );
 }
 
-export default HostChart;
+export default HostTimeSeriesLineChart;
