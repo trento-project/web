@@ -31,8 +31,10 @@ export const OPERATION_NOT_ALLOWED_CLUSTER =
   'Trento agent is not currently running in any of the hosts in the cluster';
 export const OPERATION_NOT_ALLOWED_SITE =
   'Trento agent is not currently running in any of the hosts in the database site';
-export const OPERATION_NOT_ALLOWED_SYSTEM =
-  'Trento agent is not currently running in any of the hosts in the system';
+export const OPERATION_NOT_ALLOWED_SAP_SYSTEM =
+  'Trento agent is not currently running in any of the hosts in the SAP system';
+export const OPERATION_NOT_ALLOWED_DATABASE =
+  'Trento agent is not currently running in any of the hosts in the database';
 
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',

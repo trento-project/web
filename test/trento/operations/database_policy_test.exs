@@ -32,6 +32,39 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
   end
 
+  test "should forbid operation if any of the hosts heartbeat where the database is running in a site is not passing" do
+    site = "Site2"
+
+    database =
+      build(:database,
+        database_instances: [
+          build(:database_instance,
+            system_replication_site: "Site1",
+            system_replication: "Primary",
+            host: build(:host, heartbeat: :passing)
+          ),
+          build(:database_instance,
+            system_replication_site: site,
+            system_replication: "Secondary",
+            host: build(:host, heartbeat: :critical)
+          ),
+          build(:database_instance,
+            system_replication_site: site,
+            system_replication: "Secondary",
+            host: build(:host, heartbeat: :critical)
+          )
+        ]
+      )
+
+    for operation <- DatabaseOperations.values() do
+      assert {:error,
+              [
+                "Trento agent is not currently running in any of the hosts in the database site #{site}"
+              ]} ==
+               DatabasePolicy.authorize_operation(operation, database, %{site: site})
+    end
+  end
+
   test "should continue checking policies if at least one host heartbeat in the database is passing" do
     database =
       build(:database,
@@ -77,12 +110,12 @@ defmodule Trento.Operations.DatabasePolicyTest do
               health: Health.unknown(),
               system_replication: "Primary",
               system_replication_site: "Site1",
-              host: build(:host, heartbeat: :passing, cluster: nil)
+              host: build(:host, heartbeat: :critical, cluster: nil)
             ),
             build(:database_instance,
               system_replication: "Secondary",
               system_replication_site: "Site2",
-              host: build(:host, heartbeat: :critical, cluster: nil)
+              host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
         )
