@@ -4,7 +4,7 @@ import {
   swapFactory,
 } from '@lib/test-utils/factories/charts';
 
-describe('dataMapperzz', () => {
+describe('dataMapper', () => {
   it('should correctly calculate filesystem and swap usage', () => {
     const commonRootMetric = { mountpoint: '/', device: '/dev/sda1' };
     const commonDataMetric = { mountpoint: '/data', device: '/dev/sdb1' };
