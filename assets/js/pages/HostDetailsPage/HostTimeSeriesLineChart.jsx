@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { get } from '@lib/network';
+import { fetchHostTimeSeriesData } from '@lib/api/charts';
 import { addMinutes, parseISO, subMinutes } from 'date-fns';
 import TimeSeriesLineChart from '@common/TimeSeriesLineChart/TimeSeriesLineChart';
 
-function HostChart({
+function HostTimeSeriesLineChart({
   hostId,
   chartId,
   chartTitle,
@@ -13,6 +13,7 @@ function HostChart({
   startInterval = subMinutes(new Date(), 10),
   endInterval = new Date(),
   updateFrequency = 30000,
+  className,
 }) {
   const [chartStartInterval, setChartStartInterval] = useState(startInterval);
   const [chartEndInterval, setChartEndInterval] = useState(endInterval);
@@ -31,8 +32,11 @@ function HostChart({
   }, [chartEndInterval]);
 
   const fetchApiData = async (start, end) => {
-    const { data: chartApiData } = await get(
-      `charts/hosts/${hostId}/${chartId}?from=${start.toISOString()}&to=${end.toISOString()}`
+    const { data: chartApiData } = await fetchHostTimeSeriesData(
+      hostId,
+      chartId,
+      start.toISOString(),
+      end.toISOString()
     );
 
     const updatedChartData = Object.keys(chartApiData).map((chartKey) => ({
@@ -78,6 +82,7 @@ function HostChart({
   return (
     <TimeSeriesLineChart
       chartWrapperClassNames="h-[350px]"
+      className={className}
       title={chartTitle}
       datasets={chartData}
       start={chartStartInterval}
@@ -91,4 +96,4 @@ function HostChart({
   );
 }
 
-export default HostChart;
+export default HostTimeSeriesLineChart;

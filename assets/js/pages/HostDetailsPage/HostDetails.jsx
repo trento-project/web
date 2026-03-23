@@ -18,6 +18,7 @@ import {
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
+import { formatBytes } from '@lib/charts';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -48,21 +49,13 @@ import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
-import HostChart from './HostChart';
+import HostTimeSeriesLineChart from './HostTimeSeriesLineChart';
+import DiskSpaceChart from './DiskSpaceChart';
 
 import {
   subscriptionsTableConfiguration,
   sapInstancesTableConfiguration,
 } from './tableConfigs';
-
-function formatBytes(bytes, decimals = 2) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / k ** i).toFixed(dm))} ${sizes[i]}`;
-}
 
 export const buildCidrNotation = (ipAddresses, netmasks) =>
   zipWith(
@@ -378,24 +371,25 @@ function HostDetails({
           onNavigateToPackages={() => navigate(`/hosts/${hostID}/packages`)}
         />
         <ChartsFeatureWrapper chartsEnabled={chartsEnabled}>
-          <div>
-            <HostChart
+          <div className="flex gap-2">
+            <HostTimeSeriesLineChart
               hostId={hostID}
               chartId="cpu"
               chartTitle="CPU"
               yAxisFormatter={(value) => `${value}%`}
               startInterval={subHours(timeNow, 3)}
+              className="w-1/2"
             />
-          </div>
-          <div>
-            <HostChart
+            <HostTimeSeriesLineChart
               hostId={hostID}
               chartId="memory"
               chartTitle="Memory"
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
+              className="w-1/2"
             />
           </div>
+          <DiskSpaceChart hostId={hostID} />
         </ChartsFeatureWrapper>
         <div className="mt-16">
           <div className="mb-4">
