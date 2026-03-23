@@ -267,7 +267,7 @@ defmodule TrentoWeb.V1.HostController do
 
   operation :query_metrics,
     summary: "Execute a PromQL query scoped to a host.",
-    tags: ["Target Infrastructure"],
+    tags: ["Target Infrastructure", "MCP"],
     description:
       "Executes an arbitrary PromQL query against Prometheus, automatically injecting the host's agentID label into all vector selectors to scope results to the specified host. " <>
         "Supports both instant queries (default) and range queries (when 'from' and 'to' are provided).",
@@ -289,8 +289,8 @@ defmodule TrentoWeb.V1.HostController do
        required: true},
     responses: [
       ok:
-        {"Raw Prometheus query result scoped to the specified host.",
-         "application/json", Schema.Prometheus.QueryResponse},
+        {"Raw Prometheus query result scoped to the specified host.", "application/json",
+         Schema.Prometheus.QueryResponse},
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
