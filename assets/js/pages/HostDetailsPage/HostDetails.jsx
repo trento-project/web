@@ -50,6 +50,7 @@ import ProviderDetails from './ProviderDetails';
 import SaptuneSummary from './SaptuneSummary';
 import StatusPill from './StatusPill';
 import HostChart from './HostChart';
+import DiskSpaceChart from './DiskSpaceChart';
 
 import {
   subscriptionsTableConfiguration,
@@ -388,6 +389,7 @@ function HostDetails({
               className="w-1/2"
             />
           </div>
+          <DiskSpaceChart hostId={hostID} />
         </ChartsFeatureWrapper>
         <div className="mt-16">
           <div className="mb-4">
