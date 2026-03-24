@@ -395,6 +395,24 @@ describe('Table component', () => {
       expect(screen.getByText(/1–10/)).toBeInTheDocument();
     });
 
+    it('should fall back to default per_page when value is not in allowed options', () => {
+      const data = tableDataFactory.buildList(25);
+      const searchParams = new URLSearchParams({ per_page: '37' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+      expect(screen.getByText(/1–10/)).toBeInTheDocument();
+    });
+
     it('should fall back to defaults when searchParams has invalid values', () => {
       const data = tableDataFactory.buildList(15);
       const searchParams = new URLSearchParams({
