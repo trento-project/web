@@ -1750,5 +1750,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-24T03:48:58Z",
+    "commit": "45cf93bff3807941239fe56c83c24115510347d5",
+    "run_id": "23471821283",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07836
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
