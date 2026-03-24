@@ -97,10 +97,15 @@ function Table({
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
-  const initialPage = getIntParam(searchParams, 'page', 1);
   const initialItemsPerPage = (() => {
     const value = getIntParam(searchParams, 'per_page', itemsPerPageOptions[0]);
     return itemsPerPageOptions.includes(value) ? value : itemsPerPageOptions[0];
+  })();
+
+  const initialPage = (() => {
+    const value = getIntParam(searchParams, 'page', 1);
+    const totalPages = pages(data, initialItemsPerPage);
+    return totalPages > 0 ? Math.min(value, totalPages) : value;
   })();
 
   const [filters, setFilters] = useState([]);

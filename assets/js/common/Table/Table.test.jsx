@@ -342,6 +342,24 @@ describe('Table component', () => {
       expect(screen.getByText(/11–20/)).toBeInTheDocument();
     });
 
+    it('should cap page to the last page when it exceeds total pages', () => {
+      const data = tableDataFactory.buildList(15);
+      const searchParams = new URLSearchParams({ page: '100' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(5);
+      expect(screen.getByText(/11–15/)).toBeInTheDocument();
+    });
+
     it('should use the per_page value from searchParams', () => {
       const data = tableDataFactory.buildList(25);
       const searchParams = new URLSearchParams({ per_page: '20' });
