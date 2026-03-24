@@ -1726,5 +1726,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-24T03:48:16Z",
+    "commit": "45cf93bff3807941239fe56c83c24115510347d5",
+    "run_id": "23471821283",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test retrieving software updates discovery result successfully returns non-empty discoveries",
+        "score": 0.5
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
+        "score": 0.02501
+      }
+    ]
   }
 ]
