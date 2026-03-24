@@ -1810,5 +1810,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-24T04:18:07Z",
+    "commit": "45cf93bff3807941239fe56c83c24115510347d5",
+    "run_id": "23472451169",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      }
+    ]
   }
 ]
