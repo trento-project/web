@@ -408,6 +408,13 @@ jobs:
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
+      - name: Wait for Prometheus to be ready
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:9090/-/ready && exit 0
+            sleep 2
+          done
+          echo "Prometheus failed to start" && exit 1
       - name: Run test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
