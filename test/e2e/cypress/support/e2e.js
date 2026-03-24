@@ -27,5 +27,3 @@ before(() => {
     apiLoginAndCreateSession();
   }
 });
-
-Cypress.on('uncaught:exception', () => false);
