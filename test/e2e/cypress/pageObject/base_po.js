@@ -244,28 +244,14 @@ export const preloadTestData = ({
    */
   isDataLoadedFunc().then((isLoaded) => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
+    loadScenario('healthy-27-node-SAP-cluster');
   });
-  loadScenario('healthy-27-node-SAP-cluster');
 };
 
-const getTrentoInstanceApiKey = () =>
-  apiLogin().then(({ accessToken }) => {
-    return cy
-      .request({
-        method: 'GET',
-        url: '/api/v1/settings/api_key',
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then(({ body: { generated_api_key } }) => generated_api_key);
-  });
-
 export const loadScenario = (scenario) => {
-  const [projectRoot, photofinishBinary, autoDiscoverApiKey, apiKey] = [
+  const [projectRoot, photofinishBinary, apiKey] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
-    Cypress.env('auto_discover_api_key'),
     Cypress.env('api_key'),
   ];
 
@@ -280,19 +266,9 @@ export const loadScenario = (scenario) => {
 
   const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
 
-  const runPhotofinish = (apiKey) => {
-    cy.log(`Photofinish shooting to: ${baseUrl}`);
-    if (apiKey === '') cy.exec(photofinishCommand, { timeout: 360000 });
-    else cy.exec(`${photofinishCommand} "${apiKey}"`, { timeout: 360000 });
-  };
-
-  if (autoDiscoverApiKey) {
-    getTrentoInstanceApiKey().then((discoveredKey) => {
-      runPhotofinish(discoveredKey);
-    });
-  } else {
-    runPhotofinish(apiKey);
-  }
+  cy.log(`Photofinish shooting to: ${baseUrl}`);
+  if (apiKey === '') cy.exec(photofinishCommand, { timeout: 360000 });
+  else cy.exec(`${photofinishCommand} "${apiKey}"`, { timeout: 360000 });
 };
 
 const isTestDataLoaded = () =>
