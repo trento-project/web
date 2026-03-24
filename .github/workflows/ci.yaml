@@ -1063,8 +1063,8 @@ jobs:
           name: openapi-diff-report-${{ matrix.version }}
           path: specs/
 
-  build-containers:
-    name: Build containers
+  publish-containers:
+    name: Publish GHCR Containers
     needs:
       - static-code-analysis-js
       - static-code-analysis-elixir
@@ -1076,41 +1076,48 @@ jobs:
     if: |
       (
         (github.event_name == 'push' && github.ref_name == 'main') ||
-        github.event_name == 'workflow_dispatch' ||
-        (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo')
+        github.event_name == 'workflow_dispatch'
       )
-    uses: ./.github/workflows/build-containers.yaml
-    secrets: inherit
     strategy:
       matrix:
         include:
-          - MIX_ENV: prod
+          - mix_env: prod
             tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
-          - MIX_ENV: demo
+          - mix_env: demo
             tag: demo
+    uses: ./.github/workflows/publish-containers.yaml
     with:
       image_name: trento-web
-      MIX_ENV: ${{ matrix.MIX_ENV }}
       tag: ${{ matrix.tag }}
+      extra_build_args: |
+        MIX_ENV=${{ matrix.mix_env }}
+        GTM_ID=${{ vars.GTM_ID }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   deploy-demo-env:
     name: Deploy updated images to the demo environment
     runs-on: self-hosted
-    if: |
-      vars.DEPLOY_DEMO == 'true' &&
+    needs:
+      - publish-containers
+    if: >-
+      ${{
+        !cancelled() &&
+        (needs.publish-containers.result == 'skipped' || needs.publish-containers.result == 'success') &&
+        vars.DEPLOY_DEMO == 'true' &&
         (
           (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo') ||
           (github.event_name == 'push' && github.ref_name == 'main') ||
           github.event_name == 'workflow_dispatch'
         )
+      }}
     env:
       IMAGE_REPOSITORY: ghcr.io/${{ github.repository_owner }}
       TRENTO_WEB_ORIGIN: ${{ secrets.TRENTO_DEMO_IP }}
       TRENTO_NAMESPACE: ${{ secrets.TRENTO_NAMESPACE }}
       TRENTO_ADMIN_EMAIL: ${{ secrets.TRENTO_ADMIN_EMAIL }}
       TRENTO_INGRESS_CLASS: ${{ secrets.TRENTO_INGRESS_CLASS }}
-    needs:
-      - build-containers
     steps:
       - name: Cleanup previous run
         run: |
