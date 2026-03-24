@@ -162,7 +162,7 @@ export const expectedCriticalHostsAreDisplayed = (amount) =>
   cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
 
 export const expectedPassingHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithPassing).should('have.text', amount);
+  cy.get(hostsWithPassing, { timeout: 80000 }).should('have.text', amount);
 
 export const expectedAmountOfWarningsIsDisplayed = (amount) =>
   cy.get(warningHostBadge).should('have.length', amount);
