@@ -56,9 +56,9 @@ const tableRow = 'tbody tr';
 
 // UI Interactions
 
-export const visit = () => {
+export const visit = (params = '') => {
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
-  basePage.visit(url);
+  basePage.visit([url, params].join('?'));
   cy.wait('@clustersEndpoint');
 };
 
@@ -94,6 +94,15 @@ export const expectedPaginationIsDisplayed = (expectedPaginationDetails) =>
 
 export const nextPageButtonIsDisabled = () =>
   cy.get(nextPageSelector).should('be.disabled');
+
+export const expectedHostsCountIsDisplayed = (count) =>
+  cy.get(hostNameCell).should('have.length', count);
+
+export const expectedItemsPerPageIsSelected = (perPage) =>
+  cy
+    .get('div[data-testid="pagination"] button')
+    .first()
+    .should('have.text', `${perPage}`);
 
 export const everyLinkGoesToExpectedHostDetailsPage = () => {
   availableHosts.slice(0, 10).forEach((host) => {

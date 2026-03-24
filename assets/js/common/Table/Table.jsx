@@ -59,6 +59,16 @@ const getFilterFunction = (column, value) =>
     ? column.filter(value, column.key)
     : getDefaultFilterFunction(value, column.key);
 
+const getIntParam = (searchParams, key, defaultValue) => {
+  if (!searchParams || !searchParams.has(key)) {
+    return defaultValue;
+  }
+
+  const value = parseInt(searchParams.get(key), 10);
+
+  return isNaN(value) ? defaultValue : value;
+};
+
 const itemsPerPageOptions = [10, 20, 50, 75, 100];
 
 function Table({
@@ -85,13 +95,19 @@ function Table({
     onPageChange = noop,
   } = config;
 
-  const [filters, setFilters] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
+  const searchParamsEnabled = Boolean(searchParams && setSearchParams);
+
+  const initialPage = getIntParam(searchParams, 'page', 1);
+  const initialItemsPerPage = getIntParam(
+    searchParams,
+    'per_page',
     itemsPerPageOptions[0]
   );
 
-  const searchParamsEnabled = Boolean(searchParams && setSearchParams);
+  const [filters, setFilters] = useState([]);
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const [currentItemsPerPage, setCurrentItemsPerPage] =
+    useState(initialItemsPerPage);
 
   const columnFiltersBoundToParams = columns.filter(
     (c) => c.filter && c.filterFromParams

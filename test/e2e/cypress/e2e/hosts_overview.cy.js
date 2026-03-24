@@ -194,6 +194,31 @@ context('Hosts Overview', () => {
     });
   });
 
+  describe('Pagination query params initialization', () => {
+    it('should start on the page specified in the URL query string', () => {
+      hostsOverviewPage.visit('page=2');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of');
+    });
+
+    it('should use the per_page value from the URL query string', () => {
+      hostsOverviewPage.visit('per_page=20');
+      hostsOverviewPage.expectedHostsCountIsDisplayed(20);
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 1–20 of');
+    });
+
+    it('should use both page and per_page from the URL query string', () => {
+      hostsOverviewPage.visit('page=2&per_page=20');
+      hostsOverviewPage.expectedHostsCountIsDisplayed(7);
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 21–27 of');
+    });
+
+    it('should fall back to defaults when query params have invalid values', () => {
+      hostsOverviewPage.visit('page=abc&per_page=xyz');
+      hostsOverviewPage.expectedHostsCountIsDisplayed(10);
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 1–10 of');
+    });
+  });
+
   describe('Forbidden actions', () => {
     beforeEach(() => {
       hostsOverviewPage.apiDeleteAllHostsTags();
