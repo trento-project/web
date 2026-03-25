@@ -1965,5 +1965,21 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-25T06:27:30Z",
+    "commit": "9948c96c40357af1cff5a138ba16becf68d5a9e0",
+    "run_id": "23524874297",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected instances details::SAP Systems Overview Registered SAP Systems should be available in the overview Instances are the expected ones should show the expected instances details",
+        "score": 0.05001
+      }
+    ]
   }
 ]
