@@ -1889,5 +1889,49 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-25T04:20:18Z",
+    "commit": "9948c96c40357af1cff5a138ba16becf68d5a9e0",
+    "run_id": "23524317346",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 10
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1149
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "checksUtils::should get host expectation statements results",
+        "score": 0.05001
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
+      }
+    ]
   }
 ]
