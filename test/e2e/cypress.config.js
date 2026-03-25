@@ -61,6 +61,12 @@ module.exports = defineConfig({
     async setupNodeEvents(on, config) {
       config.env.wandaUrl = calculateWandaUrl(config);
 
+      on('task', {
+        async refreshApiKey() {
+          return await discoverApiKey(config);
+        },
+      });
+
       if (
         config.env.auto_discover_api_key === true ||
         config.env.auto_discover_api_key === 'true'
