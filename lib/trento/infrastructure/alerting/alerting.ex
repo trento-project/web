@@ -131,6 +131,8 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
     ]
   end
 
+  defp prepare_mailer_config(_), do: []
+
   defp deliver_notification(construct_email) do
     case Settings.get_alerting_settings() do
       {:ok, settings} ->
@@ -163,7 +165,7 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
       {:ok, _} ->
         :ok
 
-      {:error, {:retries_exceeded, {:network_failure, chars, {:error, :nxdomain}}}} ->
+      {:error, {:retries_exceeded, {:network_failure, chars, _reason}}} ->
         Logger.error("Failed to lookup #{chars} address.")
 
         :ok
