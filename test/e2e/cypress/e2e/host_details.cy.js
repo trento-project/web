@@ -155,7 +155,12 @@ context('Host Details', () => {
   });
 
   describe("Node exporter status should be 'running'", () => {
-    beforeEach(() => hostDetailsPage.visitSelectedHost());
+    beforeEach(() => {
+      if (!Cypress.config().baseUrl.includes('localhost')) {
+        hostDetailsPage.interceptNodeExporterStatusMockedForRealInstance();
+      }
+      hostDetailsPage.visitSelectedHost();
+    });
 
     it("should show the status as 'running'", () => {
       hostDetailsPage.nodeExporterStatusIsCorrectlyDisplayed();

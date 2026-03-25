@@ -4,6 +4,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test Data
+import * as sumaMocks from '../fixtures/software_updates_mocks.js';
 import { selectedHost } from '../fixtures/host-details/selected_host.js';
 import {
   saptuneDetailsData,
@@ -533,6 +534,47 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 };
 
 // API
+export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
+  const isRealInstance = !Cypress.config().baseUrl.includes('localhost');
+
+  if (isRealInstance) {
+    cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
+      statusCode: 422,
+      body: sumaMocks.getHostNotFoundError(),
+    }).as('getSoftwareUpdatesNotFound');
+  }
+};
+
+export const interceptSumaRequestsMockedForRealInstance = () => {
+  const isRealInstance = !Cypress.config().baseUrl.includes('localhost');
+
+  if (isRealInstance) {
+    cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
+      body: sumaMocks.getSoftwareUpdatesList(),
+    });
+
+    cy.intercept('GET', '/api/v1/software_updates/errata_details/*', {
+      body: sumaMocks.getErrataDetails(),
+    });
+
+    cy.intercept('GET', '/api/v1/software_updates/packages*', {
+      body: sumaMocks.getPackagesPatches(),
+    }).as('getPackagesPatches');
+
+    cy.intercept('POST', '/api/v1/settings/suse_manager', {
+      statusCode: 201,
+    });
+    cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
+      statusCode: 204,
+    });
+  }
+};
+
+export const interceptNodeExporterStatusMockedForRealInstance = () =>
+  cy.intercept('/api/v1/hosts/*/exporters_status', {
+    body: { 'Node Exporter': 'passing' },
+  });
+
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
   return basePage.loadScenario(`host-${hostName}-saptune-${state}`);

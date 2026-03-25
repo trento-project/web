@@ -55,5 +55,6 @@ export const triggerSapSystemAlertingEmail = () =>
 export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
 
-export const deleteAllEmailsFromMailpit = () =>
-  cy.task('deleteAllEmailsFromMailpit');
+export const deleteAllEmailsFromMailpit = () => {
+  if (Cypress.env('ALERTING_TESTS')) cy.task('deleteAllEmailsFromMailpit');
+};

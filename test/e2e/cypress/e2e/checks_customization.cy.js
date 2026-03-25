@@ -117,31 +117,29 @@ context('Checks customization', () => {
     });
   });
 
-  if (Cypress.config().baseUrl.includes('localhost')) {
-    describe('Execution with customized check values', () => {
-      before(function () {
-        const isWandaRunningLocally =
-          Cypress.env('wandaUrl') === 'http://localhost:4001';
-        if (!isWandaRunningLocally) this.skip();
-      });
-
-      it('should run a checks execution with customized check values', () => {
-        checksSelectionPage.openCheckCustomizationModal('00081D');
-        checksSelectionPage.clickOnWarningCheckbox();
-        checksSelectionPage.inputCheckValue('expected_max_messages', '100');
-        checksSelectionPage.clickModalSaveButton();
-        checksSelectionPage.clickCorosyncSelectionToggle();
-        checksSelectionPage.clickSaveChecksSelectionButton();
-        checksSelectionPage.clickStartExecutionButton();
-        checksSelectionPage.waitForCustomizedCheckElements();
-        checksSelectionPage.expandModifiedCheckResult();
-        checksSelectionPage.clickModifiedCheckExpectations();
-        checksSelectionPage.validateCheckStatus();
-        checksSelectionPage.validateEvaluationResultsDescription();
-        checksSelectionPage.validateEvaluationResultsModifiedPill();
-        checksSelectionPage.validateCustomValue();
-        checksSelectionPage.vailidateGatheredFactsValue();
-      });
+  describe('Execution with customized check values', () => {
+    before(function () {
+      const isWandaRunningLocally =
+        Cypress.env('wandaUrl') === 'http://localhost:4001';
+      if (!isWandaRunningLocally) this.skip();
     });
-  }
+
+    it('should run a checks execution with customized check values', () => {
+      checksSelectionPage.openCheckCustomizationModal('00081D');
+      checksSelectionPage.clickOnWarningCheckbox();
+      checksSelectionPage.inputCheckValue('expected_max_messages', '100');
+      checksSelectionPage.clickModalSaveButton();
+      checksSelectionPage.clickCorosyncSelectionToggle();
+      checksSelectionPage.clickSaveChecksSelectionButton();
+      checksSelectionPage.clickStartExecutionButton();
+      checksSelectionPage.waitForCustomizedCheckElements();
+      checksSelectionPage.expandModifiedCheckResult();
+      checksSelectionPage.clickModifiedCheckExpectations();
+      checksSelectionPage.validateCheckStatus();
+      checksSelectionPage.validateEvaluationResultsDescription();
+      checksSelectionPage.validateEvaluationResultsModifiedPill();
+      checksSelectionPage.validateCustomValue();
+      checksSelectionPage.vailidateGatheredFactsValue();
+    });
+  });
 });
