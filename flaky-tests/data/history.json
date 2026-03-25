@@ -1933,5 +1933,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-25T04:21:20Z",
+    "commit": "9948c96c40357af1cff5a138ba16becf68d5a9e0",
+    "run_id": "23524317346",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.08646
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.08646
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05453
+      },
+      {
+        "name": "Label Component::should display an info tooltip if specified",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      }
+    ]
   }
 ]
