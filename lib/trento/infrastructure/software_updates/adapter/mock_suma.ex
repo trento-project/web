@@ -5,6 +5,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
 
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
+  alias Trento.Support.StructHelper
+
   @impl true
   def setup, do: :ok
 
@@ -20,161 +22,94 @@ defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
   def get_relevant_patches(system_id) do
     if system_id in mocked_relevant_patches_system_ids() do
       {:ok,
-       [
-         %{
-           date: "2024-02-27",
-           advisory_name: "SUSE-15-SP4-2024-630",
-           advisory_type: :bugfix,
-           advisory_status: "stable",
-           id: 4182,
-           advisory_synopsis: "Recommended update for cloud-netconfig",
-           update_date: "2024-02-27"
-         },
-         %{
-           date: "2024-02-26",
-           advisory_name: "SUSE-15-SP4-2024-619",
-           advisory_type: :security_advisory,
-           advisory_status: "stable",
-           id: 4174,
-           advisory_synopsis: "important: Security update for java-1_8_0-ibm",
-           update_date: "2024-02-26"
-         }
-       ]}
+       get_mock_data()
+       |> Map.get("relevant_patches")
+       |> Enum.map(fn patch ->
+         patch
+         |> StructHelper.to_atomized_map()
+         |> Map.update!(:advisory_type, &String.to_existing_atom/1)
+       end)}
     else
-      {:ok, []}
+      {:error, :system_id_not_found}
     end
   end
 
   @impl true
-  def get_upgradable_packages(_system_id),
+  def get_upgradable_packages(system_id),
     do:
-      {:ok,
-       [
-         %{
-           name: "elixir",
-           arch: "x86_64",
-           from_version: "1.15.7",
-           from_release: "3",
-           from_epoch: "0",
-           to_version: "1.16.2",
-           to_release: "1",
-           to_epoch: "0",
-           to_package_id: 92_348_112_636
-         },
-         %{
-           name: "systemd",
-           arch: "x86_64",
-           from_version: "254",
-           from_release: "1",
-           from_epoch: "",
-           to_version: "255",
-           to_release: "1",
-           to_epoch: "0",
-           to_package_id: 8_912_349_843
-         }
-       ]}
+      (if system_id in mocked_relevant_patches_system_ids() do
+         {:ok,
+          get_mock_data()
+          |> Map.get("upgradable_packages")
+          |> Enum.map(&StructHelper.to_atomized_map/1)}
+       else
+         {:error, :system_id_not_found}
+       end)
 
   @impl true
   def get_patches_for_package(_package_id),
     do:
       {:ok,
-       [
+       get_mock_data()
+       |> Map.get("relevant_patches")
+       |> Enum.map(fn patch ->
          %{
-           advisory: "SUSE-15-SP4-2024-630",
-           type: "bugfix",
-           synopsis: "Recommended update for cloud-netconfig",
-           issue_date: "2024-02-27",
-           update_date: "2024-02-27",
-           last_modified_date: "2024-02-27"
-         },
-         %{
-           advisory: "SUSE-15-SP4-2024-619",
-           type: "security_advisory",
-           synopsis: "important: Security update for java-1_8_0-ibm",
-           issue_date: "2024-02-27",
-           update_date: "2024-02-27",
-           last_modified_date: "2024-02-27"
+           advisory: patch["advisory_name"],
+           type: patch["advisory_type"],
+           synopsis: patch["advisory_synopsis"],
+           issue_date: patch["date"],
+           update_date: patch["update_date"],
+           last_modified_date: patch["update_date"]
          }
-       ]}
+       end)}
 
   @impl true
   def get_errata_details(_advisory_name),
     do:
       {:ok,
-       %{
-         type: "security_advisory",
-         synopsis: "important: Security update for java-1_8_0-ibm",
-         issue_date: "2024-02-27",
-         update_date: "2024-02-27",
-         last_modified_date: "2024-02-27",
-         advisory_status: "stable",
-         reboot_suggested: true,
-         restart_suggested: true,
-         id: 2,
-         release: 3,
-         vendor_advisory: "IBM",
-         product: "IBM® Semeru Runtime™ Certified Edition",
-         errataFrom: "SUSE",
-         topic: "Java",
-         description: "Minor security bug fixes",
-         references: "N.A.",
-         notes: "N.A.",
-         solution: "N.A."
-       }}
+       get_mock_data()
+       |> Map.get("errata_details")
+       |> StructHelper.to_atomized_map()}
 
   @impl true
   def get_affected_systems(_advisory_name),
     do:
       {:ok,
-       [
-         %{
-           name: "vmdrbddev01"
-         },
-         %{name: "vmdrbddev02"}
-       ]}
+       get_mock_data()
+       |> Map.get("affected_systems")
+       |> Enum.map(&StructHelper.to_atomized_map/1)}
 
   @impl true
   def get_cves(_advisory_name),
-    do:
-      {:ok,
-       [
-         "SUSE-15-SP4-2024-630",
-         "SUSE-15-SP4-2024-234",
-         "SUSE-15-SP4-2024-990"
-       ]}
+    do: {:ok, Map.get(get_mock_data(), "cves")}
 
   @impl true
   def get_affected_packages(_advisory_name),
     do:
       {:ok,
-       [
-         %{
-           name: "elixir",
-           version: "6.9.7",
-           release: "2",
-           arch_label: "x86_64",
-           epoch: "0"
-         },
-         %{
-           name: "systemd",
-           version: "6.9.7",
-           release: "2",
-           arch_label: "x86_64",
-           epoch: "0"
-         }
-       ]}
+       get_mock_data()
+       |> Map.get("affected_packages")
+       |> Enum.map(&StructHelper.to_atomized_map/1)}
 
   @impl true
   def get_bugzilla_fixes(_advisory_name),
     do:
       {:ok,
-       %{
-         "1210660": "VUL-0: CVE-2023-2137: sqlite2,sqlite3: Heap buffer overflow in sqlite"
-       }}
+       get_mock_data()
+       |> Map.get("bugzilla_fixes")
+       |> StructHelper.to_atomized_map()}
 
   @impl true
   def clear, do: :ok
 
   defp mocked_relevant_patches_system_ids,
     do: Application.fetch_env!(:trento, __MODULE__)[:relevant_patches_system_ids]
+
+  defp get_mock_data do
+    :trento
+    |> :code.priv_dir()
+    |> Path.join("fixtures/software_updates.json")
+    |> File.read!()
+    |> Jason.decode!()
+  end
 end

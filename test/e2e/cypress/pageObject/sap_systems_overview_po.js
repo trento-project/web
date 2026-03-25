@@ -452,8 +452,6 @@ const apiDeregisterInstance = (sapSystemdId, hostId, instanceNumber) => {
     const url = `${
       Cypress.config().baseUrl
     }/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
-    cy.log(url);
-    cy.pause();
     cy.request({
       method: 'DELETE',
       url: url,
