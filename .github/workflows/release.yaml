@@ -83,25 +83,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-containers:
-    name: Build containers
-    uses: ./.github/workflows/build-containers.yaml
+  publish-containers:
+    name: Publish GHCR Containers
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@v1.0.0
     needs:
       - release
-    secrets: inherit
     strategy:
       matrix:
         include:
-          - MIX_ENV: prod
+          - mix_env: prod
             tag: ${{ needs.release.outputs.version }}
-          - MIX_ENV: prod
+          - mix_env: prod
             tag: rolling
-          - MIX_ENV: demo
+          - mix_env: demo
             tag: demo
     with:
       image_name: trento-web
-      MIX_ENV: ${{ matrix.MIX_ENV }}
       tag: ${{ matrix.tag }}
+      extra_build_args: |
+        MIX_ENV=${{ matrix.mix_env }}
+        GTM_ID=${{ vars.GTM_ID }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   obs-sync:
     name: Update OBS package
@@ -110,11 +114,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - obs_project: ${{ vars.OBS_PROJECT_STABLE }} 
-          - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}      
+          - obs_project: ${{ vars.OBS_PROJECT_STABLE }}
+          - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
     needs:
       - release
     secrets: inherit
     with:
       update_changelog: true
-      obs_project: ${{ matrix.obs_project }}  
+      obs_project: ${{ matrix.obs_project }}

@@ -18,20 +18,25 @@ jobs:
       - id: check
         run: echo "create_env=${{ contains(fromJson(vars.PR_ENV_ALLOW_LIST), github.event.sender.login) && contains(github.event.pull_request.labels.*.name, vars.PR_ENV_LABEL) }}" >> "$GITHUB_OUTPUT"
 
-  build-container:
-    name: Build container
-    uses: ./.github/workflows/build-containers.yaml
+  publish-containers:
+    name: Publish GHCR Containers
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@v1.0.0
     needs: check-env-creation-privilege
     if: needs.check-env-creation-privilege.outputs.create_env == 'true'
-    secrets: inherit
     with:
       image_name: trento-web
       tag: ${{ github.event.pull_request.number }}-env
+      extra_build_args: |
+        MIX_ENV=prod
+        GTM_ID=${{ vars.GTM_ID }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   create-pr-environment:
     name: Create or update the pr environment
     runs-on: ubuntu-24.04
-    needs: build-container
+    needs: publish-containers
     env:
       PR_BASE_URL: ${{ github.event.pull_request.number }}.prenv.trento.suse.com
       PR_NUMBER: ${{ github.event.pull_request.number }}
