@@ -18,22 +18,61 @@
 
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
+
 let heartbeatsIntervals = [];
+
+const fetchApiKeyFromServer = async (config) => {
+  const { baseUrl, env } = config;
+  const { login_user, login_password } = env;
+
+  const loginResponse = await fetch(`${baseUrl}/api/session`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      username: login_user,
+      password: login_password,
+    }),
+  });
+
+  if (!loginResponse.ok) {
+    throw new Error(`Login failed with status ${loginResponse.status}`);
+  }
+
+  const { access_token } = await loginResponse.json();
+
+  const apiKeyResponse = await fetch(`${baseUrl}/api/v1/settings/api_key`, {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  if (!apiKeyResponse.ok) {
+    throw new Error(
+      `API Key retrieval failed with status ${apiKeyResponse.status}`
+    );
+  }
+  const { generated_api_key } = await apiKeyResponse.json();
+  return generated_api_key;
+};
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
   cypressSplit(on, config);
+
   on('task', {
+    getApiKey() {
+      return fetchApiKeyFromServer(config);
+    },
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
+
     startAgentHeartbeat(agents) {
       const heartbeatInterval = config.env.heartbeat_interval;
       const heartbeat = (agentId) => {
         const headers = {};
 
-        if (config.env.api_key) headers['X-Trento-apiKey'] = config.env.api_key;
+        const apiKey = cachedApiKey || config.env.api_key;
+        if (apiKey) headers['X-Trento-apiKey'] = apiKey;
 
         return fetch(`${config.baseUrl}/api/v1/hosts/${agentId}/heartbeat`, {
           method: 'POST',
