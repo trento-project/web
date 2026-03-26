@@ -13,6 +13,7 @@ import {
   filter,
   overSome,
   isEmpty,
+  every,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -76,6 +77,8 @@ const getUniqueHosts = (hosts) =>
       }, new Map())
       .values()
   );
+
+const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
 
 // it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
@@ -186,7 +189,12 @@ export function GenericSystemDetails({
     (instance) => instance.system_replication
   );
 
-  const someHostHeartbeatPassing = isSomeHostHeartbeatPassing(system.hosts);
+  const someHostHeartbeatPassing =
+    type === APPLICATION_TYPE
+      ? isSomeHostHeartbeatPassing(system.hosts)
+      : every(sitedInstances, (instances, _site) =>
+          isSomeHostHeartbeatPassing(mapInstancesHosts(instances))
+        );
 
   const operationNotAllowedMsg =
     type === APPLICATION_TYPE
@@ -416,7 +424,7 @@ export function GenericSystemDetails({
                             transparent
                             disabled={
                               !isSomeHostHeartbeatPassing(
-                                map(instances, ({ host }) => host)
+                                mapInstancesHosts(instances)
                               )
                             }
                             disabledTooltip={OPERATION_NOT_ALLOWED_SITE}
