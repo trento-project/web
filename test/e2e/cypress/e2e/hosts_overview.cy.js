@@ -16,7 +16,7 @@ context('Hosts Overview', () => {
     });
 
     it('should show 10 of the 27 registered hosts', () => {
-      hostsOverviewPage.tenHostsAreListed();
+      hostsOverviewPage.hostsListedAre(10);
     });
 
     it('should have 3 pages', () => {
@@ -246,7 +246,7 @@ context('Hosts Overview', () => {
       cy.url().should('contain', anyPageUrl);
 
       hostsOverviewPage.visit();
-      hostsOverviewPage.tenHostsAreListed();
+      hostsOverviewPage.hostsListedAre(10);
 
       hostsOverviewPage.selectHostnameFilter(hostname);
       hostsOverviewPage.hostsListedAre(1);

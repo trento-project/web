@@ -95,10 +95,6 @@ export const hostsIsHighglightedInSidebar = () => {
   cy.get(basePage.navigation.hosts).should('have.attr', 'aria-current', 'page');
 };
 
-export const tenHostsAreListed = () => {
-  cy.get(hostNameCell).should('have.length', 10);
-};
-
 export const expectedPaginationIsDisplayed = (expectedPaginationDetails) =>
   cy
     .get(currentPaginationDetails)
