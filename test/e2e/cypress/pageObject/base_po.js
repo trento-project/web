@@ -247,10 +247,9 @@ export const preloadTestData = ({
 };
 
 export const loadScenario = (scenario) => {
-  const [projectRoot, photofinishBinary, apiKey] = [
+  const [projectRoot, photofinishBinary] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
-    Cypress.env('api_key'),
   ];
 
   const baseUrl = Cypress.config().baseUrl;
@@ -262,11 +261,18 @@ export const loadScenario = (scenario) => {
 
   cy.log(`Loading scenario "${scenario}"...`);
 
-  const photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
+  let photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
 
-  cy.log(`Photofinish shooting to: ${baseUrl}`);
-  if (apiKey === '') cy.exec(photofinishCommand, { timeout: 360000 });
-  else cy.exec(`${photofinishCommand} "${apiKey}"`, { timeout: 360000 });
+  const runPhotofinish = (apiKey) => {
+    photofinishCommand = apiKey
+      ? `${photofinishCommand} "${apiKey}"`
+      : photofinishCommand;
+
+    cy.log(`Photofinish shooting to: ${baseUrl}`);
+    return cy.exec(photofinishCommand, { timeout: 360000 });
+  };
+
+  cy.task('getApiKey').then((apiKey) => runPhotofinish(apiKey));
 };
 
 const isTestDataLoaded = () =>
