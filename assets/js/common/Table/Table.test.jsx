@@ -396,4 +396,143 @@ describe('Table component', () => {
       expect(collapsedCell).toHaveTextContent(content);
     });
   });
+
+  describe('pagination query params initialization', () => {
+    it('should start on the page specified in searchParams', () => {
+      const data = tableDataFactory.buildList(25);
+      const searchParams = new URLSearchParams({ page: '2' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      expect(screen.getByText(/11–20/)).toBeInTheDocument();
+    });
+
+    it('should cap page to the last page when it exceeds total pages', () => {
+      const data = tableDataFactory.buildList(15);
+      const searchParams = new URLSearchParams({ page: '100' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(5);
+      expect(screen.getByText(/11–15/)).toBeInTheDocument();
+    });
+
+    it('should use the per_page value from searchParams', () => {
+      const data = tableDataFactory.buildList(25);
+      const searchParams = new URLSearchParams({ per_page: '20' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(20);
+    });
+
+    it('should use both page and per_page from searchParams', () => {
+      const data = tableDataFactory.buildList(50);
+      const searchParams = new URLSearchParams({ page: '2', per_page: '20' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(20);
+      expect(screen.getByText(/21–40/)).toBeInTheDocument();
+    });
+
+    it('should fall back to defaults when searchParams has no page or per_page', () => {
+      const data = tableDataFactory.buildList(15);
+      const searchParams = new URLSearchParams();
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+      expect(screen.getByText(/1–10/)).toBeInTheDocument();
+    });
+
+    it('should fall back to default per_page when value is not in allowed options', () => {
+      const data = tableDataFactory.buildList(25);
+      const searchParams = new URLSearchParams({ per_page: '37' });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+      expect(screen.getByText(/1–10/)).toBeInTheDocument();
+    });
+
+    it('should fall back to defaults when searchParams has invalid values', () => {
+      const data = tableDataFactory.buildList(15);
+      const searchParams = new URLSearchParams({
+        page: 'abc',
+        per_page: 'xyz',
+      });
+
+      render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={() => {}}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+      expect(screen.getByText(/1–10/)).toBeInTheDocument();
+    });
+
+    it('should fall back to defaults when searchParams is not provided', () => {
+      const data = tableDataFactory.buildList(15);
+
+      render(
+        <Table config={tableConfig} data={data} setSearchParams={() => {}} />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+    });
+  });
 });
