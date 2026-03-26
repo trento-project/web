@@ -40,7 +40,7 @@ jobs:
 
       - name: Draft release
         id: draft-release
-        uses: release-drafter/release-drafter@v6
+        uses: release-drafter/release-drafter@v7
         with:
           publish: false
           version: ${{ steps.detect-version.outputs.current-version }}
@@ -73,7 +73,7 @@ jobs:
     steps:
       - name: Publish release
         id: publish-release
-        uses: release-drafter/release-drafter@v6
+        uses: release-drafter/release-drafter@v7
         with:
           publish: true
           tag: ${{ needs.pre-release.outputs.version }}
