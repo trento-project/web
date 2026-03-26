@@ -17,7 +17,7 @@ defmodule Trento.Operations.DatabasePolicy do
   alias Trento.Hosts.Projections.HostReadModel
 
   # for all operations, check the heartbeat of all the hosts composing the database
-  # authorize if at least one host heartbeat is passing
+  # authorize if at least one host heartbeat per system replication site is passing
   # if a site is given, it is used to filter the list of instances in that site
   def authorize_operation(
         operation,
@@ -25,17 +25,30 @@ defmodule Trento.Operations.DatabasePolicy do
         params
       )
       when operation in DatabaseOperations.values() do
-    some_heartbeat_passing? =
+    sites_without_passing_heartbeat =
       instances
       |> filter_by_site(params)
-      |> Enum.any?(fn %DatabaseInstanceReadModel{host: %HostReadModel{heartbeat: heartbeat}} ->
-        heartbeat == :passing
+      |> Enum.group_by(& &1.system_replication_site)
+      |> Enum.reject(fn {_site, grouped_instances} ->
+        Enum.any?(grouped_instances, fn %DatabaseInstanceReadModel{
+                                          host: %HostReadModel{heartbeat: heartbeat}
+                                        } ->
+          heartbeat == :passing
+        end)
       end)
+      |> Enum.map(fn {site, _} -> site end)
 
-    if some_heartbeat_passing? do
+    if Enum.empty?(sites_without_passing_heartbeat) do
       do_authorize_operation(operation, database, params)
     else
-      {:error, get_heartbeat_not_passing_forbidden_msg(params)}
+      {:error,
+       Enum.map(sites_without_passing_heartbeat, fn
+         nil ->
+           "Trento agent is not currently running in any of the hosts in the database"
+
+         site ->
+           "Trento agent is not currently running in any of the hosts in the database site #{site}"
+       end)}
     end
   end
 
@@ -47,12 +60,6 @@ defmodule Trento.Operations.DatabasePolicy do
     do: Enum.filter(instances, fn %{system_replication_site: site} -> site == params_site end)
 
   defp filter_by_site(instances, _), do: instances
-
-  defp get_heartbeat_not_passing_forbidden_msg(%{site: site}) when not is_nil(site),
-    do: ["Trento agent is not currently running in any of the hosts in the database site #{site}"]
-
-  defp get_heartbeat_not_passing_forbidden_msg(_),
-    do: ["Trento agent is not currently running in any of the hosts in the database"]
 
   defp do_authorize_operation(
          :database_start,
