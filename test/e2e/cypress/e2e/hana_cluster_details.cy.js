@@ -302,9 +302,10 @@ context('HANA cluster details', () => {
     const CHECK_SBD = 'SBD';
 
     before(function () {
-      const isWandaRunningLocally =
-        Cypress.env('wandaUrl') === 'http://localhost:4001';
-      if (!isWandaRunningLocally) this.skip();
+      const isWandaRealInstance = !Cypress.env('wandaUrl').includes(
+        'http://localhost:4001'
+      );
+      if (isWandaRealInstance) this.skip();
     });
 
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
@@ -333,8 +334,9 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.loadScenario('cluster-unknown-provider')
     );
 
+    beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
+
     it('should show a warning message in the check selection view', () => {
-      hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.clickCheckSelectionButton();
       const expectedWarningMessage =
         'The following catalog is valid for on-premise bare metal platforms.If you are running your HANA cluster on a different platform, please use results with caution';
@@ -344,7 +346,6 @@ context('HANA cluster details', () => {
     });
 
     it('should show a warning message in the checks results view', () => {
-      hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.clickCheckResultsButton();
       const expectedWarningMessage =
         'The following results are valid for on-premise bare metal platforms.If you are running your HANA cluster on a different platform, please use results with caution';

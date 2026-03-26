@@ -535,9 +535,9 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 
 // API
 export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
-  const isRealInstance = !Cypress.config().baseUrl.includes('localhost');
+  const isTrentoRealInstance = !Cypress.config().baseUrl.includes('localhost');
 
-  if (isRealInstance) {
+  if (isTrentoRealInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
       statusCode: 422,
       body: sumaMocks.getHostNotFoundError(),
@@ -546,9 +546,9 @@ export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
 };
 
 export const interceptSumaRequestsMockedForRealInstance = () => {
-  const isRealInstance = !Cypress.config().baseUrl.includes('localhost');
+  const isTrentoRealInstance = !Cypress.config().baseUrl.includes('localhost');
 
-  if (isRealInstance) {
+  if (isTrentoRealInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
       body: sumaMocks.getSoftwareUpdatesList(),
     });
