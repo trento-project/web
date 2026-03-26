@@ -32,6 +32,9 @@ const hostNameCell = '.tn-hostname';
 const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
 const nextPageSelector = '[aria-label="next-page"]';
+const prevPageSelector = '[aria-label="prev-page"]';
+const selectPaginationButton =
+  'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
 
 const hostsWithWarning = 'p:contains("Warning") + p';
 const hostsWithCritical = 'p:contains("Critical") + p';
@@ -77,6 +80,13 @@ export const hostsListedAre = (amount) =>
   cy.get(hostNameCell).should('have.length', amount);
 
 export const clickNextPageButton = () => cy.get(nextPageSelector).click();
+
+export const clickPrevPageButton = () => cy.get(prevPageSelector).click();
+
+export const selectItemsPerPage = (amountOfItems) => {
+  cy.get(selectPaginationButton).click();
+  return cy.get(`span:contains("${amountOfItems}")`).first().click();
+};
 
 export const addTagToHost = () => {
   const host = _getHostToDeregisterData(hostToDeregister);

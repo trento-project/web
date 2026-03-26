@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
 
@@ -137,6 +137,26 @@ function Table({
     );
   }, [filters]);
 
+  const isFirstPaginationRender = useRef(true);
+  useEffect(() => {
+    if (!searchParamsEnabled || !pagination) return;
+
+    if (isFirstPaginationRender.current) {
+      isFirstPaginationRender.current = false;
+      return;
+    }
+
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('page', String(currentPage));
+        next.set('per_page', String(currentItemsPerPage));
+        return next;
+      },
+      { replace: true }
+    );
+  }, [currentPage, currentItemsPerPage]);
+
   useEffect(() => {
     if (!searchParamsEnabled) return;
 
@@ -198,6 +218,36 @@ function Table({
     .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
   const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
+
+  useEffect(() => {
+    if (!searchParamsEnabled || !pagination) return;
+
+    const paramPage = getIntParam(searchParams, 'page', 1);
+    const paramPerPage = (() => {
+      const value = getIntParam(
+        searchParams,
+        'per_page',
+        itemsPerPageOptions[0]
+      );
+      return itemsPerPageOptions.includes(value)
+        ? value
+        : itemsPerPageOptions[0];
+    })();
+
+    if (paramPerPage !== currentItemsPerPage) {
+      setCurrentItemsPerPage(paramPerPage);
+      setCurrentPage(1);
+      return;
+    }
+
+    const totalPagesFromParam = pages(sortedData, paramPerPage);
+    const clampedPage =
+      totalPagesFromParam > 0 ? Math.min(paramPage, totalPagesFromParam) : 1;
+
+    if (clampedPage !== currentPage) {
+      setCurrentPage(clampedPage);
+    }
+  }, [searchParams]);
 
   const renderedData = pagination
     ? page(currentPage, sortedData, currentItemsPerPage)
