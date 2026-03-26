@@ -119,10 +119,13 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         system_replication: parse_system_replication(instance),
         system_replication_status: parse_system_replication_status(instance),
         system_replication_site: parse_system_replication_site(instance),
+        system_replication_site_id: parse_system_replication_site_id(instance),
         system_replication_mode: parse_system_replication_mode(instance),
         system_replication_operation_mode: parse_system_replication_operation_mode(instance),
         system_replication_source_site: parse_system_replication_source_site(instance),
         system_replication_tier: parse_system_replication_tier(instance),
+        system_replication_active_primary_site:
+          parse_system_replication_active_primary_site(instance),
         health: parse_dispstatus(instance)
       })
     end)
@@ -273,6 +276,16 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
        }),
        do: site_name
 
+  defp parse_system_replication_site_id(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_id: nil}
+       }),
+       do: nil
+
+  defp parse_system_replication_site_id(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{site_id: site_id}
+       }),
+       do: String.to_integer(site_id)
+
   defp parse_system_replication_mode(%Instance{
          HdbnsutilSRstate: %HdbnsutilSRstate{mode: mode}
        }),
@@ -288,10 +301,34 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
        }),
        do: Map.get(site_mapping, site_name, nil)
 
+  # instance is running and tier mapping is available
   defp parse_system_replication_tier(%Instance{
          HdbnsutilSRstate: %HdbnsutilSRstate{site_name: site_name, tier_mapping: tier_mapping}
-       }),
+       })
+       when map_size(tier_mapping) > 0,
        do: Map.get(tier_mapping, site_name, nil)
+
+  # instance is stopped and system replication configuration is primary
+  defp parse_system_replication_tier(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{mode: "primary"}
+       }),
+       do: 1
+
+  # instance is stopped and system replication is not configured or
+  # system replication configuration is secondary.
+  # in the case of a secondary configuration, the tier value is updated
+  # in a middleware enrichment protocol
+  defp parse_system_replication_tier(_), do: nil
+
+  defp parse_system_replication_active_primary_site(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{active_primary_site: nil}
+       }),
+       do: nil
+
+  defp parse_system_replication_active_primary_site(%Instance{
+         HdbnsutilSRstate: %HdbnsutilSRstate{active_primary_site: active_primary_site}
+       }),
+       do: String.to_integer(active_primary_site)
 
   defp parse_ensa_version(%Instance{SAPControl: %SapControl{Processes: processes}}) do
     Enum.find_value(processes, EnsaVersion.no_ensa(), fn
