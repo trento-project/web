@@ -534,5 +534,39 @@ describe('Table component', () => {
       const table = screen.getByRole('table');
       expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
     });
+
+    it('should fall back to default per_page when searchParams changes to an invalid per_page value', async () => {
+      const data = tableDataFactory.buildList(25);
+      const searchParams = new URLSearchParams({ page: '1', per_page: '20' });
+      const setSearchParams = jest.fn();
+
+      const { rerender } = render(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      );
+
+      const table = screen.getByRole('table');
+      expect(table.querySelectorAll('tbody > tr')).toHaveLength(20);
+
+      const invalidParams = new URLSearchParams({ page: '1', per_page: '37' });
+
+      rerender(
+        <Table
+          config={tableConfig}
+          data={data}
+          searchParams={invalidParams}
+          setSearchParams={setSearchParams}
+        />
+      );
+
+      await waitFor(() => {
+        expect(table.querySelectorAll('tbody > tr')).toHaveLength(10);
+        expect(screen.getByText(/1–10/)).toBeInTheDocument();
+      });
+    });
   });
 });
