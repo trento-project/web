@@ -11,14 +11,15 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegisteredTest do
                version: 4,
                database_id: ^database_id,
                system_replication_site: nil,
-               system_replication_site_id: 0,
+               system_replication_site_id: nil,
                system_replication_mode: nil,
                system_replication_operation_mode: nil,
                system_replication_source_site: nil,
-               system_replication_tier: 0
+               system_replication_tier: nil
              } =
                %{
-                 "database_id" => database_id
+                 "database_id" => database_id,
+                 "system_replication_tier" => 0
                }
                |> DatabaseInstanceRegistered.upcast(%{})
                |> DatabaseInstanceRegistered.new!()

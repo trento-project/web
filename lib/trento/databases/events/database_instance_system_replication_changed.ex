@@ -23,6 +23,9 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged do
   def upcast(params, _, 3),
     do: Map.put(params, "system_replication_tier", 0)
 
-  def upcast(params, _, 4),
-    do: Map.put(params, "system_replication_site_id", 0)
+  # version 4 upcast is a fix to set tier value to nil to use it as default
+  def upcast(%{"system_replication_tier" => 0} = params, _, 4),
+    do: Map.put(params, "system_replication_tier", nil)
+
+  def upcast(params, _, 4), do: params
 end
