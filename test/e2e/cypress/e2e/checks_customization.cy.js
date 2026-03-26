@@ -119,9 +119,10 @@ context('Checks customization', () => {
 
   describe('Execution with customized check values', () => {
     before(function () {
-      const isWandaRunningLocally =
-        Cypress.env('wandaUrl') === 'http://localhost:4001';
-      if (!isWandaRunningLocally) this.skip();
+      const isWandaRealInstance = !Cypress.env('wandaUrl').includes(
+        'http://localhost:4001'
+      );
+      if (isWandaRealInstance) this.skip();
     });
 
     it('should run a checks execution with customized check values', () => {
