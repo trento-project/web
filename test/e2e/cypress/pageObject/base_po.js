@@ -267,16 +267,13 @@ export const loadScenario = (scenario) => {
     return;
   }
 
-  cy.log(`Loading scenario "${scenario}"...`);
-
   let photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
 
   const runPhotofinish = (apiKey) => {
     photofinishCommand = apiKey
       ? `${photofinishCommand} "${apiKey}"`
       : photofinishCommand;
-
-    cy.log(`Photofinish shooting to: ${baseUrl}`);
+    cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
     return cy.exec(photofinishCommand, { timeout: 360000 });
   };
 
