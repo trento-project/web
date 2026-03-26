@@ -2009,5 +2009,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-26T04:01:53Z",
+    "commit": "e2e8ffb8224cc8811d9dfec82cb752f30c4db787",
+    "run_id": "23576491557",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users create_user with abilities attaches the abilities to the user",
+        "score": 0.02501
+      }
+    ]
   }
 ]
