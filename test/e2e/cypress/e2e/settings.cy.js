@@ -6,15 +6,7 @@ context('Settings page', () => {
     settingsPage.waitForRequest('settingsEndpoint');
   });
 
-  after(() => {
-    settingsPage.updateApiKeyExpiration(null);
-
-    const isRealInstance = !Cypress.config().baseUrl.includes('localhost');
-
-    if (isRealInstance) {
-      cy.task('refreshApiKey').then((newKey) => Cypress.env('api_key', newKey));
-    }
-  });
+  after(() => settingsPage.updateApiKeyExpiration(null));
 
   describe('Api key display', () => {
     it('should display the api key with the copy button', () => {
