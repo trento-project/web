@@ -2069,5 +2069,21 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-26T04:34:29Z",
+    "commit": "e2e8ffb8224cc8811d9dfec82cb752f30c4db787",
+    "run_id": "23577247916",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
   }
 ]
