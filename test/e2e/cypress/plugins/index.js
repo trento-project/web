@@ -19,6 +19,67 @@
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
 
+module.exports = (on, config) => {
+  // `on` is used to hook into various events Cypress emits
+  // `config` is the resolved Cypress config
+
+  cypressSplit(on, config);
+
+  on('task', {
+    async getApiKey() {
+      return fetchApiKeyFromServer(config);
+    },
+    searchEmailInMailpit,
+    deleteAllEmailsFromMailpit,
+    startAgentHeartbeat(agents) {
+      const heartbeatInterval = config.env.heartbeat_interval;
+
+      const startIntervals = (apiKey) => {
+        agents.forEach((agentId) => {
+          const heartbeat = () => {
+            const headers = {};
+            if (apiKey) headers['X-Trento-apiKey'] = apiKey;
+
+            return fetch(
+              `${config.baseUrl}/api/v1/hosts/${agentId}/heartbeat`,
+              {
+                method: 'POST',
+                headers,
+              }
+            );
+          };
+
+          heartbeat();
+          let interval = setInterval(heartbeat, heartbeatInterval);
+          heartbeatsIntervals.push(interval);
+        });
+      };
+
+      if (!config.baseUrl.includes('localhost')) {
+        fetchApiKeyFromServer(config).then((key) => startIntervals(key));
+      } else startIntervals();
+
+      return null;
+    },
+
+    stopAgentsHeartbeat() {
+      heartbeatsIntervals.forEach((interval) => {
+        clearInterval(interval);
+      });
+      heartbeatsIntervals = [];
+      return null;
+    },
+  });
+
+  const webpackOptions = {
+    webpackOptions: require('../../webpack.config'),
+    watchOptions: {},
+  };
+  on('file:preprocessor', webpack(webpackOptions));
+
+  return config;
+};
+
 let heartbeatsIntervals = [];
 
 const fetchApiKeyFromServer = async (config) => {
@@ -51,59 +112,6 @@ const fetchApiKeyFromServer = async (config) => {
   }
   const { generated_api_key } = await apiKeyResponse.json();
   return generated_api_key;
-};
-
-module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-
-  cypressSplit(on, config);
-
-  on('task', {
-    getApiKey() {
-      return fetchApiKeyFromServer(config);
-    },
-    searchEmailInMailpit,
-    deleteAllEmailsFromMailpit,
-
-    startAgentHeartbeat(agents) {
-      const heartbeatInterval = config.env.heartbeat_interval;
-      const heartbeat = (agentId) => {
-        const headers = {};
-
-        const apiKey = cachedApiKey || config.env.api_key;
-        if (apiKey) headers['X-Trento-apiKey'] = apiKey;
-
-        return fetch(`${config.baseUrl}/api/v1/hosts/${agentId}/heartbeat`, {
-          method: 'POST',
-          headers,
-        });
-      };
-
-      agents.forEach((agentId) => {
-        heartbeat(agentId);
-        let interval = setInterval(() => heartbeat(agentId), heartbeatInterval);
-        heartbeatsIntervals.push(interval);
-      });
-      return null;
-    },
-
-    stopAgentsHeartbeat() {
-      heartbeatsIntervals.forEach((interval) => {
-        clearInterval(interval);
-      });
-      heartbeatsIntervals = [];
-      return null;
-    },
-  });
-
-  const webpackOptions = {
-    webpackOptions: require('../../webpack.config'),
-    watchOptions: {},
-  };
-  on('file:preprocessor', webpack(webpackOptions));
-
-  return config;
 };
 
 const mailpitUrl = 'http://localhost:8025/api/v1';
