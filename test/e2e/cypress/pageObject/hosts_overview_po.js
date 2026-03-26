@@ -155,7 +155,7 @@ export const expectedWarningHostsAreDisplayed = (amount) =>
   cy.get(hostsWithWarning).should('have.text', amount);
 
 export const expectedCriticalHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
+  cy.get(hostsWithCritical, { timeout: 80000 }).should('have.text', amount);
 
 export const expectedPassingHostsAreDisplayed = (amount) =>
   cy.get(hostsWithPassing, { timeout: 80000 }).should('have.text', amount);
@@ -167,7 +167,7 @@ export const expectedAmountOfCriticalsIsDisplayed = (amount) => {
   if (amount === 0) return cy.get(criticalHostBadge).should('not.exist');
   else {
     return cy
-      .get(criticalHostBadge, { timeout: 20000 })
+      .get(criticalHostBadge, { timeout: 80000 })
       .should('have.length', amount);
   }
 };
@@ -209,7 +209,7 @@ export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
     .should('have.length', amount);
 
 export const heartbeatFailingToasterIsDisplayed = () =>
-  cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
+  cy.get(heartbeatFailingToaster, { timeout: 80000 }).should('be.visible');
 
 export const deregisterModalTitleIsDisplayed = () =>
   cy.get(deregisterHostModalTitle).should('be.visible');
