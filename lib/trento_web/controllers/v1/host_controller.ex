@@ -300,11 +300,11 @@ defmodule TrentoWeb.V1.HostController do
     result =
       case body do
         %{from: from, to: to} ->
-          Prometheus.query_range(query, host_id, from, to)
+          Prometheus.query_range(host_id, query, from, to)
 
         _ ->
           time = Map.get(body, :time, DateTime.utc_now())
-          Prometheus.query(query, host_id, time)
+          Prometheus.query(host_id, query, time)
       end
 
     case result do
