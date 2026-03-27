@@ -695,8 +695,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       response =
         conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/metrics/query", %{
+        |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
           "query" => "up"
         })
         |> json_response(200)
@@ -713,8 +712,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       end)
 
       conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/hosts/#{host_id}/metrics/query", %{
+      |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
         "query" => "node_memory_MemTotal_bytes",
         "time" => "2024-01-15T10:00:00Z"
       })
@@ -741,8 +739,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       end)
 
       conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/hosts/#{host_id}/metrics/query", %{
+      |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
         "query" => "rate(node_cpu_seconds_total[5m])",
         "from" => "2024-01-15T10:00:00Z",
         "to" => "2024-01-15T12:00:00Z"
@@ -750,7 +747,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       |> json_response(200)
     end
 
-    test "should return 502 when Prometheus query fails", %{conn: conn} do
+    test "should return 500 when Prometheus query fails", %{conn: conn} do
       host_id = Faker.UUID.v4()
 
       expect(Trento.Infrastructure.Prometheus.Mock, :query, fn _query, _time ->
@@ -759,11 +756,10 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
       response =
         conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/metrics/query", %{
+        |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
           "query" => "up"
         })
-        |> json_response(502)
+        |> json_response(500)
 
       assert %{"errors" => [%{"detail" => "Prometheus query failed"}]} = response
     end
@@ -772,8 +768,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
       host_id = Faker.UUID.v4()
 
       conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/hosts/#{host_id}/metrics/query", %{})
+      |> get("/api/v1/hosts/#{host_id}/metrics/query")
       |> json_response(422)
     end
   end

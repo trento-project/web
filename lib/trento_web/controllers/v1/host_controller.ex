@@ -282,11 +282,51 @@ defmodule TrentoWeb.V1.HostController do
           format: :uuid,
           example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
         }
+      ],
+      query: [
+        in: :query,
+        description:
+          "A PromQL query expression. The host's agentID label will be automatically injected into all vector selectors.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "node_memory_MemTotal_bytes"
+        }
+      ],
+      time: [
+        in: :query,
+        description:
+          "Evaluation timestamp for instant queries. If not provided, the current time will be used.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T10:00:00Z"
+        }
+      ],
+      from: [
+        in: :query,
+        description:
+          "Start of the time range for range queries. When both 'from' and 'to' are provided, a range query is executed instead of an instant query.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T10:00:00Z"
+        }
+      ],
+      to: [
+        in: :query,
+        description:
+          "End of the time range for range queries. Must be provided together with 'from'.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T12:00:00Z"
+        }
       ]
     ],
-    request_body:
-      {"PromQL query to execute", "application/json", Schema.Prometheus.QueryRequest,
-       required: true},
     responses: [
       ok:
         {"Raw Prometheus query result scoped to the specified host.", "application/json",
@@ -294,16 +334,14 @@ defmodule TrentoWeb.V1.HostController do
       unprocessable_entity: UnprocessableEntity.response()
     ]
 
-  def query_metrics(conn, %{id: host_id}) do
-    %{query: query} = body = OpenApiSpex.body_params(conn)
-
+  def query_metrics(conn, %{id: host_id, query: query} = params) do
     result =
-      case body do
+      case params do
         %{from: from, to: to} ->
           Prometheus.query_range(host_id, query, from, to)
 
         _ ->
-          time = Map.get(body, :time, DateTime.utc_now())
+          time = Map.get(params, :time, DateTime.utc_now())
           Prometheus.query(host_id, query, time)
       end
 
@@ -313,7 +351,7 @@ defmodule TrentoWeb.V1.HostController do
 
       {:error, _reason} ->
         conn
-        |> put_status(:bad_gateway)
+        |> put_status(:internal_server_error)
         |> json(%{errors: [%{detail: "Prometheus query failed"}]})
     end
   end

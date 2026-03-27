@@ -143,7 +143,7 @@ defmodule TrentoWeb.Router do
         as: :hosts_tagging
 
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
-      post "/hosts/:id/metrics/query", HostController, :query_metrics
+      get "/hosts/:id/metrics/query", HostController, :query_metrics
 
       get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
 
