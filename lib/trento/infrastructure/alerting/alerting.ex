@@ -131,8 +131,6 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
     ]
   end
 
-  defp prepare_mailer_config(_), do: []
-
   defp deliver_notification(construct_email) do
     case Settings.get_alerting_settings() do
       {:ok, settings} ->
