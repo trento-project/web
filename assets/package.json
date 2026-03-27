@@ -50,7 +50,7 @@
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.9.1",
     "axios": "^1.13.5",
-    "axios-auth-refresh": "^3.3.6",
+    "axios-auth-refresh": "^5.0.2",
     "chart.js": "^4.5.0",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-zoom": "^2.2.0",
