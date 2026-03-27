@@ -5,12 +5,10 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   alias Trento.Hosts
   alias Trento.Hosts.Projections.HostReadModel
 
-  @heartbeat_interval Application.compile_env!(:trento, Trento.Heartbeats)[:interval]
   @deregistration_debounce Application.compile_env!(
                              :trento,
                              :deregistration_debounce
                            )
-  @total_deregistration_debounce @heartbeat_interval + @deregistration_debounce
 
   @spec enrich(RequestHostDeregistration.t(), map) ::
           {:ok, RequestHostDeregistration.t()}
@@ -35,11 +33,17 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
     if :lt ==
          DateTime.compare(
            DateTime.utc_now(),
-           DateTime.add(last_heartbeat_timestamp, @total_deregistration_debounce, :millisecond)
+           DateTime.add(last_heartbeat_timestamp, total_deregistration_debounce(), :millisecond)
          ),
        do: {:error, :host_alive},
        else: {:ok, command}
   end
 
   defp host_deregisterable(_, _), do: {:error, :host_not_registered}
+
+  defp total_deregistration_debounce do
+    heartbeat_interval = Application.fetch_env!(:trento, Trento.Heartbeats)[:interval]
+
+    heartbeat_interval + @deregistration_debounce
+  end
 end
