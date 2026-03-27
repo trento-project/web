@@ -8,16 +8,18 @@ defmodule Trento.Databases.Events.DatabaseInstanceSystemReplicationChangedTest d
       database_id = Faker.UUID.v4()
 
       assert %DatabaseInstanceSystemReplicationChanged{
-               version: 3,
+               version: 4,
                database_id: ^database_id,
                system_replication_site: nil,
+               system_replication_site_id: nil,
                system_replication_mode: nil,
                system_replication_operation_mode: nil,
                system_replication_source_site: nil,
-               system_replication_tier: 0
+               system_replication_tier: nil
              } =
                %{
-                 "database_id" => database_id
+                 "database_id" => database_id,
+                 "system_replication_tier" => 0
                }
                |> DatabaseInstanceSystemReplicationChanged.upcast(%{})
                |> DatabaseInstanceSystemReplicationChanged.new!()

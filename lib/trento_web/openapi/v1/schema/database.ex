@@ -96,6 +96,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             description:
               "The site associated with system replication for the database instance, supporting multi-site management."
           },
+          system_replication_site_id: %Schema{
+            type: :integer,
+            nullable: true,
+            description:
+              "The site ID associated with system replication for the database instance, supporting multi-site management."
+          },
           system_replication_mode: %Schema{
             type: :string,
             nullable: true,
@@ -146,6 +152,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           system_replication: "ENABLED",
           system_replication_status: "ACTIVE",
           system_replication_site: "Site1",
+          system_replication_site_id: 1,
           system_replication_mode: "ASYNC",
           system_replication_operation_mode: "logreplay",
           system_replication_source_site: "Site2",
