@@ -730,7 +730,7 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
           "resultType" => "vector",
           "result" => [
             %{
-              "metric" => %{"__name__" => "up", "agentID" => "host-123"},
+              "metric" => %{"__name__" => "up"},
               "value" => [1_705_312_800, "1"]
             }
           ]
