@@ -2217,5 +2217,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-27T04:36:03Z",
+    "commit": "b3310211fb9cd39a2cecef215abcf292db5d22d5",
+    "run_id": "23630933338",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
