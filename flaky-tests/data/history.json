@@ -2157,5 +2157,65 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-27T04:34:59Z",
+    "commit": "b3310211fb9cd39a2cecef215abcf292db5d22d5",
+    "run_id": "23630933338",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 12
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.09501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Host reboot operation running",
+        "score": 0.02501
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
   }
 ]
