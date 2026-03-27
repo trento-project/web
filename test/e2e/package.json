@@ -10,8 +10,8 @@
   "devDependencies": {
     "cypress": "^13.2.0",
     "cypress-localstorage-commands": "^2.2.2",
-    "cypress-split": "^1.24.7",
-    "eslint": "^8.15.0",
+    "cypress-split": "^1.24.31",
+    "eslint": "^10.1.0",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-mocha": "^10.5.0",
     "mocha-junit-reporter": "^2.2.1",
@@ -21,7 +21,7 @@
     "@cypress/webpack-preprocessor": "^5.16.1",
     "date-fns": "^3.3.1",
     "lodash": "^4.17.23",
-    "npm": "^10.9.6",
+    "npm": "^11.12.1",
     "totp-generator": "^1.0.0"
   }
 }
