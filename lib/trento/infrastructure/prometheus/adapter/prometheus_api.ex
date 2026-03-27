@@ -219,45 +219,16 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApi do
   end
 
   defp perform_query_range(query, from, to) do
-    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
-
-    start_parameter = DateTime.to_iso8601(from)
-    end_parameter = DateTime.to_iso8601(to)
-
-    url = "#{prometheus_url}/api/v1/query_range"
-    headers = [{"Accept", "application/json"}]
-    params = %{query: query, start: start_parameter, end: end_parameter, step: "60s"}
-
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body),
-         query_values <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.matrix_results_to_samples(query_values) do
-      {:ok, samples}
-    else
-      error -> handle_unsuccessful_response(error)
+    with {:ok, result_body} <- query_range(query, from, to) do
+      result_body |> extract_results() |> ChartIntegration.matrix_results_to_samples()
     end
   end
 
   defp perform_simple_query(query, time \\ DateTime.utc_now())
 
   defp perform_simple_query(query, time) do
-    prometheus_url = Application.fetch_env!(:trento, __MODULE__)[:url]
-
-    url = "#{prometheus_url}/api/v1/query"
-    headers = [{"Accept", "application/json"}]
-    time = DateTime.to_iso8601(time)
-
-    params = %{query: query, time: time}
-
-    with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           http_client().get(url, headers, params: params),
-         {:ok, result_body} <- Jason.decode(body),
-         results <- extract_results(result_body),
-         {:ok, samples} <- ChartIntegration.vector_results_to_samples(results) do
-      {:ok, samples}
-    else
-      error -> handle_unsuccessful_response(error)
+    with {:ok, result_body} <- query(query, time) do
+      result_body |> extract_results() |> ChartIntegration.vector_results_to_samples()
     end
   end
 
