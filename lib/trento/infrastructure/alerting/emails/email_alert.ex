@@ -2,7 +2,6 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
   @moduledoc false
 
   import Swoosh.Email
-  import Phoenix.Component
   use TrentoWeb, :html
 
   embed_templates "email_templates/*"
