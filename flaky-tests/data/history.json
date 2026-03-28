@@ -2363,5 +2363,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-28T06:30:24Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23677425420",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": []
   }
 ]
