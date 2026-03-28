@@ -2335,5 +2335,33 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-28T04:20:32Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23677051145",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
   }
 ]
