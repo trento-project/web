@@ -2275,5 +2275,65 @@
         "score": 0.7001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-28T04:19:32Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23677051145",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.5
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.4301
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.2653
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show system/database operation database_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.03577
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Host reboot operation running",
+        "score": 0.02501
+      }
+    ]
   }
 ]
