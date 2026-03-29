@@ -2478,5 +2478,21 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-29T06:49:01Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23701587938",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.07638
+      }
+    ]
   }
 ]
