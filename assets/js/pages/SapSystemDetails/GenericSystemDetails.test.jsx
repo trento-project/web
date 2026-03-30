@@ -502,34 +502,6 @@ describe('GenericSystemDetails', () => {
     }
   );
 
-  it('should disable system operations if system replication is enabled', () => {
-    const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
-    const database = databaseFactory.build({
-      hosts,
-      instances: databaseInstanceFactory.buildList(1, {
-        system_replication: 'Primary',
-        host: hosts[0],
-      }),
-    });
-
-    renderWithRouter(
-      <GenericSystemDetails
-        title={faker.string.uuid()}
-        system={database}
-        type={DATABASE_TYPE}
-        operationsEnabled
-        getSystemOperations={getDatabaseOperations}
-        getSiteOperations={getDatabaseSiteOperations}
-      />
-    );
-
-    expect(
-      screen.getByRole('button', {
-        name: 'Operations',
-      })
-    ).toBeDisabled();
-  });
-
   it.each([
     {
       operation: 'Start database',
@@ -556,22 +528,31 @@ describe('GenericSystemDetails', () => {
     async ({ operation, enabled, health }) => {
       const user = userEvent.setup();
 
-      const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
+      const host1 = hostFactory.build({ heartbeat: 'passing' });
+      const host2 = hostFactory.build({ heartbeat: 'passing' });
+      const host3 = hostFactory.build({ heartbeat: 'critical' });
+
       const database = databaseFactory.build({
-        hosts,
+        hosts: [host1, host2, host3],
         instances: [
           databaseInstanceFactory.build({
             health,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             system_replication_tier: 1,
-            host: hosts[0],
+            host: host1,
           }),
           databaseInstanceFactory.build({
             system_replication: 'Secondary',
             system_replication_site: 'Site2',
             system_replication_tier: 2,
-            host: hosts[1],
+            host: host2,
+          }),
+          databaseInstanceFactory.build({
+            system_replication: 'Secondary',
+            system_replication_site: 'Site2',
+            system_replication_tier: 2,
+            host: host3,
           }),
         ],
       });
@@ -1030,16 +1011,23 @@ describe('GenericSystemDetails', () => {
     ).toBeInTheDocument();
   });
 
-  it('should disable database operations if all the hosts heartbeat is not passing', async () => {
+  it('should disable database operations if all the hosts heartbeat in a site is not passing', async () => {
     const user = userEvent.setup();
 
-    const hosts = hostFactory.buildList(1, { heartbeat: 'critical' });
+    const host1 = hostFactory.build({ heartbeat: 'critical' });
+    const host2 = hostFactory.build({ heartbeat: 'passing' });
     const database = databaseFactory.build({
-      hosts,
-      instances: databaseInstanceFactory.buildList(1, {
-        host: hosts[0],
-        system_replication: null,
-      }),
+      hosts: [host1, host2],
+      instances: [
+        databaseInstanceFactory.build({
+          host: host1,
+          system_replication_site: 'Site1',
+        }),
+        databaseInstanceFactory.build({
+          host: host2,
+          system_replication_site: 'Site2',
+        }),
+      ],
     });
 
     renderWithRouter(
@@ -1060,7 +1048,7 @@ describe('GenericSystemDetails', () => {
     await user.hover(operationsButton);
     expect(
       screen.queryByText(
-        'Trento agent is not currently running in any of the hosts in the database'
+        'Trento agent is not currently running in any of the hosts of some database site'
       )
     ).toBeInTheDocument();
   });

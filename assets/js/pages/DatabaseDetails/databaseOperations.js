@@ -23,7 +23,12 @@ export const getDatabaseOperations = (
 ) => [
   {
     value: 'Start database',
-    running: isOperationRunning(runningOperations, database.id, DATABASE_START),
+    running: isOperationRunning(
+      runningOperations,
+      database.id,
+      DATABASE_START,
+      matchesSite(null)
+    ),
     disabled: disabled || every(database.instances, { health: 'passing' }),
     permitted: ['start:database'],
     onClick: () => {
@@ -32,7 +37,12 @@ export const getDatabaseOperations = (
   },
   {
     value: 'Stop database',
-    running: isOperationRunning(runningOperations, database.id, DATABASE_STOP),
+    running: isOperationRunning(
+      runningOperations,
+      database.id,
+      DATABASE_STOP,
+      matchesSite(null)
+    ),
     disabled: disabled || every(database.instances, { health: 'unknown' }),
     permitted: ['stop:database'],
     onClick: () => {

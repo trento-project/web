@@ -13,6 +13,7 @@ import {
   filter,
   overSome,
   isEmpty,
+  every,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -77,6 +78,8 @@ const getUniqueHosts = (hosts) =>
       .values()
   );
 
+const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
+
 // it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
 const startStopOperations = [
@@ -87,8 +90,6 @@ const startStopOperations = [
 ];
 
 const modalInitialState = { open: false, operation: '' };
-
-const closeOperationModal = (prevState) => ({ ...prevState, open: false });
 
 function SystemReplicationDataPill({
   label,
@@ -188,12 +189,24 @@ export function GenericSystemDetails({
     (instance) => instance.system_replication
   );
 
-  const someHostHeartbeatPassing = isSomeHostHeartbeatPassing(system.hosts);
+  const someHostHeartbeatPassing =
+    type === APPLICATION_TYPE
+      ? isSomeHostHeartbeatPassing(system.hosts)
+      : every(sitedInstances, (instances, _site) =>
+          isSomeHostHeartbeatPassing(mapInstancesHosts(instances))
+        );
 
   const operationNotAllowedMsg =
     type === APPLICATION_TYPE
       ? OPERATION_NOT_ALLOWED_SAP_SYSTEM
       : OPERATION_NOT_ALLOWED_DATABASE;
+
+  const closeOperationModal = (prevState) => {
+    setCurrentOperationInstance(undefined);
+    setCurrentOperationSite(undefined);
+
+    return { ...prevState, open: false };
+  };
 
   return (
     <div>
@@ -281,10 +294,8 @@ export function GenericSystemDetails({
                 userAbilities={userAbilities}
                 operations={systemOperations}
                 menuPosition="bottom end"
-                disabled={hasSystemReplication || !someHostHeartbeatPassing}
-                disabledTooltip={
-                  hasSystemReplication ? '' : operationNotAllowedMsg
-                }
+                disabled={!someHostHeartbeatPassing}
+                disabledTooltip={operationNotAllowedMsg}
               />
             </div>
           </div>
@@ -413,7 +424,7 @@ export function GenericSystemDetails({
                             transparent
                             disabled={
                               !isSomeHostHeartbeatPassing(
-                                map(instances, ({ host }) => host)
+                                mapInstancesHosts(instances)
                               )
                             }
                             disabledTooltip={OPERATION_NOT_ALLOWED_SITE}

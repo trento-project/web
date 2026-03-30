@@ -16,18 +16,39 @@ defmodule Trento.Operations.DatabasePolicyTest do
              DatabasePolicy.authorize_operation(:unknown, database, %{})
   end
 
-  test "should forbid operation if any of the hosts heartbeat where the database is running is not passing" do
+  test "should forbid operation if any of the hosts heartbeat per site where the database is running is not passing" do
     database =
       build(:database,
         database_instances: [
-          build(:database_instance, host: build(:host, heartbeat: :critical)),
-          build(:database_instance, host: build(:host, heartbeat: :critical))
+          build(:database_instance,
+            system_replication_site: nil,
+            host: build(:host, heartbeat: :critical)
+          ),
+          build(:database_instance,
+            system_replication_site: "Site1",
+            host: build(:host, heartbeat: :critical)
+          ),
+          build(:database_instance,
+            system_replication_site: "Site1",
+            host: build(:host, heartbeat: :critical)
+          ),
+          build(:database_instance,
+            system_replication_site: "Site2",
+            host: build(:host, heartbeat: :passing)
+          ),
+          build(:database_instance,
+            system_replication_site: "Site2",
+            host: build(:host, heartbeat: :critical)
+          )
         ]
       )
 
     for operation <- DatabaseOperations.values() do
       assert {:error,
-              ["Trento agent is not currently running in any of the hosts in the database"]} ==
+              [
+                "Trento agent is not currently running in any of the hosts in the database",
+                "Trento agent is not currently running in any of the hosts in the database site Site1"
+              ]} ==
                DatabasePolicy.authorize_operation(operation, database, %{})
     end
   end
@@ -41,7 +62,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
           build(:database_instance,
             system_replication_site: "Site1",
             system_replication: "Primary",
-            host: build(:host, heartbeat: :passing)
+            host: build(:host, heartbeat: :critical)
           ),
           build(:database_instance,
             system_replication_site: site,
@@ -70,8 +91,14 @@ defmodule Trento.Operations.DatabasePolicyTest do
       build(:database,
         sap_systems: [],
         database_instances: [
-          build(:database_instance, host: build(:host, heartbeat: :passing, cluster: nil)),
-          build(:database_instance, host: build(:host, heartbeat: :critical, cluster: nil))
+          build(:database_instance,
+            system_replication_site: nil,
+            host: build(:host, heartbeat: :passing, cluster: nil)
+          ),
+          build(:database_instance,
+            system_replication_site: nil,
+            host: build(:host, heartbeat: :critical, cluster: nil)
+          )
         ]
       )
 
@@ -139,6 +166,32 @@ defmodule Trento.Operations.DatabasePolicyTest do
             )
           ]
         )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{})
+    end
+
+    test "should authorize operation in full database if instances are stopped" do
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary",
+              system_replication_site: "Site2",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{site: nil})
 
       assert :ok ==
                DatabasePolicy.authorize_operation(:database_start, database, %{})
@@ -319,6 +372,32 @@ defmodule Trento.Operations.DatabasePolicyTest do
             )
           ]
         )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
+    test "should authorize operation in full database if instances are running" do
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Secondary",
+              system_replication_site: "Site2",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: nil})
 
       assert :ok ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
