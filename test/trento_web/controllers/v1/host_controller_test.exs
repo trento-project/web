@@ -668,6 +668,111 @@ defmodule TrentoWeb.V1.HostControllerTest do
     |> assert_schema("ForbiddenV1", api_spec)
   end
 
+  describe "query_metrics" do
+    test "should execute an instant PromQL query scoped to a host", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      host_id = Faker.UUID.v4()
+
+      expected_results = [
+        %{
+          "metric" => %{"__name__" => "up", "agentID" => host_id},
+          "value" => [1_705_312_800, "1"]
+        }
+      ]
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :query, fn query, _time ->
+        assert query =~ "agentID"
+        assert query =~ host_id
+
+        {:ok,
+         %{
+           "status" => "success",
+           "data" => %{"resultType" => "vector", "result" => expected_results}
+         }}
+      end)
+
+      response =
+        conn
+        |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
+          "query" => "up"
+        })
+        |> json_response(200)
+
+      assert response == expected_results
+      assert_schema(response, "PrometheusQueryResponseV1", api_spec)
+    end
+
+    test "should execute an instant PromQL query with explicit time", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :query, fn _query, _time ->
+        {:ok, %{"status" => "success", "data" => %{"resultType" => "vector", "result" => []}}}
+      end)
+
+      conn
+      |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
+        "query" => "node_memory_MemTotal_bytes",
+        "time" => "2024-01-15T10:00:00Z"
+      })
+      |> json_response(200)
+    end
+
+    test "should execute a range PromQL query when from and to are provided", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :query_range, fn _query, _from, _to ->
+        {:ok,
+         %{
+           "status" => "success",
+           "data" => %{
+             "resultType" => "matrix",
+             "result" => [
+               %{
+                 "metric" => %{"__name__" => "node_cpu_seconds_total"},
+                 "values" => [[1_705_312_800, "0.5"], [1_705_312_860, "0.6"]]
+               }
+             ]
+           }
+         }}
+      end)
+
+      conn
+      |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
+        "query" => "rate(node_cpu_seconds_total[5m])",
+        "from" => "2024-01-15T10:00:00Z",
+        "to" => "2024-01-15T12:00:00Z"
+      })
+      |> json_response(200)
+    end
+
+    test "should return 500 when Prometheus query fails", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+
+      expect(Trento.Infrastructure.Prometheus.Mock, :query, fn _query, _time ->
+        {:error, :unexpected_response}
+      end)
+
+      response =
+        conn
+        |> get("/api/v1/hosts/#{host_id}/metrics/query", %{
+          "query" => "up"
+        })
+        |> json_response(500)
+
+      assert %{"errors" => [%{"detail" => "Prometheus query failed"}]} = response
+    end
+
+    test "should return 422 when query is missing", %{conn: conn} do
+      host_id = Faker.UUID.v4()
+
+      conn
+      |> get("/api/v1/hosts/#{host_id}/metrics/query")
+      |> json_response(422)
+    end
+  end
+
   describe "forbidden response" do
     test "should return forbidden on any controller action if the user does not have the right permission",
          %{conn: conn, api_spec: api_spec} do

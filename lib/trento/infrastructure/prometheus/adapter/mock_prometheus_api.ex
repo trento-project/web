@@ -35,6 +35,12 @@ defmodule Trento.Infrastructure.Prometheus.MockPrometheusApi do
   def num_cpus(_, _), do: {:ok, 8}
   def get_exporters_status(_), do: {:ok, %{"Node Exporter" => :passing}}
 
+  def query(_, _),
+    do: {:ok, %{"status" => "success", "data" => %{"resultType" => "vector", "result" => []}}}
+
+  def query_range(_, _, _),
+    do: {:ok, %{"status" => "success", "data" => %{"resultType" => "matrix", "result" => []}}}
+
   def devices_size(_, time),
     do: {:ok, Enum.map(@mock_devices, &random_devices_data(&1, :total, time))}
 

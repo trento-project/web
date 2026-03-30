@@ -718,6 +718,117 @@ defmodule Trento.Infrastructure.Prometheus.PrometheusApiTest do
     end
   end
 
+  describe "query" do
+    setup :setup_mocked_prometheus_api
+
+    test "should return raw Prometheus response for instant query" do
+      time = ~U[2024-01-15 10:00:00Z]
+
+      expected_response = %{
+        "status" => "success",
+        "data" => %{
+          "resultType" => "vector",
+          "result" => [
+            %{
+              "metric" => %{"__name__" => "up"},
+              "value" => [1_705_312_800, "1"]
+            }
+          ]
+        }
+      }
+
+      expect(Mock, :get, fn url, _headers, params: %{query: query, time: iso_time} ->
+        assert url =~ "/api/v1/query"
+        assert query == "up"
+        assert iso_time == DateTime.to_iso8601(time)
+
+        body = Jason.encode!(expected_response)
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok, ^expected_response} = PrometheusApi.query("up", time)
+    end
+
+    test "should return error on non-200 response" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        {:ok, %HTTPoison.Response{status_code: 500, body: "internal error"}}
+      end)
+
+      assert {:error, :unexpected_response} =
+               PrometheusApi.query("up", DateTime.utc_now())
+    end
+
+    test "should return error on HTTP client error" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        {:error, %HTTPoison.Error{reason: :timeout}}
+      end)
+
+      assert {:error, %HTTPoison.Error{reason: :timeout}} =
+               PrometheusApi.query("up", DateTime.utc_now())
+    end
+  end
+
+  describe "query_range" do
+    setup :setup_mocked_prometheus_api
+
+    test "should return raw Prometheus response for range query" do
+      from = ~U[2024-01-15 10:00:00Z]
+      to = ~U[2024-01-15 12:00:00Z]
+
+      expected_response = %{
+        "status" => "success",
+        "data" => %{
+          "resultType" => "matrix",
+          "result" => [
+            %{
+              "metric" => %{"__name__" => "node_cpu_seconds_total"},
+              "values" => [[1_705_312_800, "0.5"], [1_705_312_860, "0.6"]]
+            }
+          ]
+        }
+      }
+
+      expect(Mock, :get, fn url,
+                            _headers,
+                            params: %{
+                              query: query,
+                              start: start_param,
+                              end: end_param,
+                              step: step
+                            } ->
+        assert url =~ "/api/v1/query_range"
+        assert query == "rate(node_cpu_seconds_total[5m])"
+        assert start_param == DateTime.to_iso8601(from)
+        assert end_param == DateTime.to_iso8601(to)
+        assert step == "60s"
+
+        body = Jason.encode!(expected_response)
+        {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+      end)
+
+      assert {:ok, ^expected_response} =
+               PrometheusApi.query_range("rate(node_cpu_seconds_total[5m])", from, to)
+    end
+
+    test "should return error on non-200 response" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        {:ok, %HTTPoison.Response{status_code: 422, body: "bad query"}}
+      end)
+
+      assert {:error, :unexpected_response} =
+               PrometheusApi.query_range("bad{", DateTime.utc_now(), DateTime.utc_now())
+    end
+
+    test "should return error on HTTP client error" do
+      expect(Mock, :get, fn _url, _headers, _params ->
+        {:error, %HTTPoison.Error{reason: :econnrefused}}
+      end)
+
+      assert {:error, %HTTPoison.Error{reason: :econnrefused}} =
+               PrometheusApi.query_range("up", DateTime.utc_now(), DateTime.utc_now())
+    end
+  end
+
   describe "time propagation in instant query" do
     setup :setup_mocked_prometheus_api
 

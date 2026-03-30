@@ -9,6 +9,8 @@ defmodule TrentoWeb.V1.HostController do
     Hosts
   }
 
+  alias Trento.Infrastructure.Prometheus
+
   require Trento.Operations.Enums.HostOperations, as: HostOperations
 
   alias Trento.Hosts.Projections.HostReadModel
@@ -260,6 +262,97 @@ defmodule TrentoWeb.V1.HostController do
 
     def unquote(host_operation)(conn, params) do
       request_operation(conn, params)
+    end
+  end
+
+  operation :query_metrics,
+    summary: "Execute a PromQL query scoped to a host.",
+    tags: ["Target Infrastructure", "MCP"],
+    description:
+      "Executes an arbitrary PromQL query against Prometheus, automatically injecting the host's agentID label into all vector selectors to scope results to the specified host. " <>
+        "Supports both instant queries (default) and range queries (when 'from' and 'to' are provided).",
+    parameters: [
+      id: [
+        in: :path,
+        description:
+          "Unique identifier of the host to scope the query to. This value must be a valid UUID string.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :uuid,
+          example: "d59523fc-0497-4b1e-9fdd-14aa7cda77f1"
+        }
+      ],
+      query: [
+        in: :query,
+        description:
+          "A PromQL query expression. The host's agentID label will be automatically injected into all vector selectors.",
+        required: true,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          example: "node_memory_MemTotal_bytes"
+        }
+      ],
+      time: [
+        in: :query,
+        description:
+          "Evaluation timestamp for instant queries. If not provided, the current time will be used.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T10:00:00Z"
+        }
+      ],
+      from: [
+        in: :query,
+        description:
+          "Start of the time range for range queries. When both 'from' and 'to' are provided, a range query is executed instead of an instant query.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T10:00:00Z"
+        }
+      ],
+      to: [
+        in: :query,
+        description:
+          "End of the time range for range queries. Must be provided together with 'from'.",
+        required: false,
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-15T12:00:00Z"
+        }
+      ]
+    ],
+    responses: [
+      ok:
+        {"Raw Prometheus query result scoped to the specified host.", "application/json",
+         Schema.Prometheus.QueryResponse},
+      unprocessable_entity: UnprocessableEntity.response()
+    ]
+
+  def query_metrics(conn, %{id: host_id, query: query} = params) do
+    result =
+      case params do
+        %{from: from, to: to} ->
+          Prometheus.query_range(host_id, query, from, to)
+
+        _ ->
+          time = Map.get(params, :time, DateTime.utc_now())
+          Prometheus.query(host_id, query, time)
+      end
+
+    case result do
+      {:ok, %{"data" => %{"result" => query_results}}} ->
+        json(conn, query_results)
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: [%{detail: "Prometheus query failed"}]})
     end
   end
 
