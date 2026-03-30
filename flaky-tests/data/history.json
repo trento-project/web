@@ -2530,5 +2530,37 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-30T04:46:11Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23727952270",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1153
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      }
+    ]
   }
 ]
