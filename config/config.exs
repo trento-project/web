@@ -277,6 +277,40 @@ config :trento, Trento.Repo, types: Trento.Postgrex.Types
 
 config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelations
 
+config :trento, :ai,
+  enabled: true,
+  providers: [
+    googleai: [
+      models: [
+        "gemini-2.5-pro",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-3.1-flash-preview",
+        "gemini-3.1-flash-lite-preview",
+        "gemini-3.1-pro-preview"
+      ]
+    ],
+    openai: [
+      models: [
+        "gpt-4o",
+        "gpt-4o-mini",
+        "o3-mini",
+        "o3",
+        "gpt-4.1",
+        "gpt-4",
+        "gpt-5-mini",
+        "gpt-5.4"
+      ]
+    ],
+    anthropic: [
+      models: [
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5"
+      ]
+    ]
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

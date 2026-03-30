@@ -12,5 +12,7 @@ config :trento, Trento.SoftwareUpdates.Discovery,
 config :trento,
   operations_enabled: true
 
+config :trento, :ai, enabled: false
+
 # Do not print debug messages in production
 # config :logger, level: :info
