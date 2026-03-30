@@ -54,6 +54,8 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:agentic_runtime,
+       github: "gagandeepb/agentic_runtime", ref: "10ecdbc7cffae34caca55fbd70bd4d30283fdf4b"},
       {:cachex, "~> 4.1"},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
@@ -73,7 +75,7 @@ defmodule Trento.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:flop, "~> 0.25.0"},
       {:floki, ">= 0.36.2", only: :test},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.2.0"},
       # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
       {:ranch, "~> 1.8.0", override: true},
