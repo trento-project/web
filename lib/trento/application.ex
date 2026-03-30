@@ -15,6 +15,7 @@ defmodule Trento.Application do
         TrentoWeb.Telemetry,
         # Start the PubSub system
         {Phoenix.PubSub, name: Trento.PubSub},
+        TrentoWeb.Presence,
         {Cachex, [:activity_correlations]},
         {Task.Supervisor, name: Trento.TasksSupervisor},
         # Start the Endpoint (http/https)
@@ -32,7 +33,8 @@ defmodule Trento.Application do
         Trento.Infrastructure.Discovery.AMQP.Publisher,
         Trento.Vault,
         Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
-        {Samly.Provider, []}
+        {Samly.Provider, []},
+        AgenticRuntime.start_runtime([])
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++
