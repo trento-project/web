@@ -292,8 +292,6 @@ config :trento, :ai,
     ],
     openai: [
       models: [
-        "gpt-4o",
-        "gpt-4o-mini",
         "o3-mini",
         "o3",
         "gpt-4.1",
