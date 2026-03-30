@@ -1,6 +1,3 @@
-<!doctype html>
-<html>
-
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -363,10 +360,8 @@
       <td>&nbsp;</td>
       <td class="container">
         <div class="content">
-
           <!-- START CENTERED WHITE CONTAINER -->
           <table role="presentation" class="main">
-
             <!-- START MAIN CONTENT AREA -->
             <tr>
               <td class="wrapper">
@@ -374,21 +369,23 @@
                   <tr>
                     <td>
                       <p>Hi there,</p>
-                      <p>One of the components of the SAP environment currently monitored by Trento requires your attention:</p>
+                      <p></p>
                       <div>
-                        <p>Component: <b><%= @component %></b><br />
-                        <%= @identified_by %>: <b><%= @identifier %></b><br />
-                        Reason: <b><%= @alerting_reason %></b>
-                        </p>
+                        <%= if @api_key_expired do %>
+                          <b>Your api key is expired.</b>
+                        <% else %>
+                          <b>Your api key is going to expire in <%= @expire_days %> days.</b>
+                        <% end %>
                       </div>
-                      <p>Check the corresponding Details View in the Trento Console for remediation suggestions.</p>
+                      <p>
+                        Use the Settings page in the Trento Console to generate a new api key.
+                      </p>
                       <p>Thanks for your attention.</p>
                     </td>
                   </tr>
                 </table>
               </td>
             </tr>
-
             <!-- END MAIN CONTENT AREA -->
           </table>
           <!-- END CENTERED WHITE CONTAINER -->
@@ -398,27 +395,34 @@
             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
               <tr>
                 <td class="content-block">
-
                   <a href="https://www.trento-project.io/">
-                    <img src="https://www.trento-project.io/images/trento-logo-stacked.svg" alt="Trento Project"
-                      width="100" height="75" border="0"
-                      style="border:0; outline:none; text-decoration:none; display:block; margin:auto">
+                    <img
+                      src="https://www.trento-project.io/images/trento-logo-stacked.svg"
+                      alt="Trento Project"
+                      width="100"
+                      height="75"
+                      border="0"
+                      style="border:0; outline:none; text-decoration:none; display:block; margin:auto"
+                    />
                   </a>
                   <br />
-                  <a href="https://www.suse.com"><img src="https://www.trento-project.io/images/suse-black-logo-green.svg" alt="Trento Project"
-                    width="100" border="0"
-                    style="border:0; outline:none; text-decoration:none; display:block; margin:auto"></a>
+                  <a href="https://www.suse.com">
+                    <img
+                      src="https://www.trento-project.io/images/suse-black-logo-green.svg"
+                      alt="Trento Project"
+                      width="100"
+                      border="0"
+                      style="border:0; outline:none; text-decoration:none; display:block; margin:auto"
+                    />
+                  </a>
                 </td>
               </tr>
             </table>
           </div>
           <!-- END FOOTER -->
-
         </div>
       </td>
       <td>&nbsp;</td>
     </tr>
   </table>
 </body>
-
-</html>

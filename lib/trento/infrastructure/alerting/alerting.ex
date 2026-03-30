@@ -163,7 +163,7 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
       {:ok, _} ->
         :ok
 
-      {:error, {:retries_exceeded, {:network_failure, chars, {:error, :nxdomain}}}} ->
+      {:error, {:retries_exceeded, {:network_failure, chars, _reason}}} ->
         Logger.error("Failed to lookup #{chars} address.")
 
         :ok
