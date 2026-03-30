@@ -27,56 +27,6 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Prometheus do
     )
   end
 
-  defmodule QueryRequest do
-    @moduledoc false
-
-    OpenApiSpex.schema(
-      %{
-        title: "PrometheusQueryRequestV1",
-        description:
-          "Request body for executing a PromQL query against Prometheus, scoped to a specific host.",
-        type: :object,
-        additionalProperties: false,
-        required: [:query],
-        example: %{
-          "query" => "node_memory_MemTotal_bytes",
-          "from" => "2024-01-15T10:00:00Z",
-          "to" => "2024-01-15T12:00:00Z"
-        },
-        properties: %{
-          query: %Schema{
-            type: :string,
-            description:
-              "A PromQL query expression. The host's agentID label will be automatically injected into all vector selectors.",
-            example: "node_memory_MemTotal_bytes"
-          },
-          time: %Schema{
-            type: :string,
-            format: :"date-time",
-            description:
-              "Evaluation timestamp for instant queries. If not provided, the current time will be used.",
-            example: "2024-01-15T10:00:00Z"
-          },
-          from: %Schema{
-            type: :string,
-            format: :"date-time",
-            description:
-              "Start of the time range for range queries. When both 'from' and 'to' are provided, a range query is executed instead of an instant query.",
-            example: "2024-01-15T10:00:00Z"
-          },
-          to: %Schema{
-            type: :string,
-            format: :"date-time",
-            description:
-              "End of the time range for range queries. Must be provided together with 'from'.",
-            example: "2024-01-15T12:00:00Z"
-          }
-        }
-      },
-      struct?: false
-    )
-  end
-
   defmodule QueryResponse do
     @moduledoc false
 
