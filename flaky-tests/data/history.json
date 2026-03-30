@@ -2562,5 +2562,41 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-30T04:47:15Z",
+    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
+    "run_id": "23727952270",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      },
+      {
+        "name": "checksUtils::should get host expectation statements results",
+        "score": 0.02501
+      }
+    ]
   }
 ]
