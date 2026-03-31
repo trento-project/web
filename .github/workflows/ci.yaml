@@ -1085,7 +1085,7 @@ jobs:
             tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
           - mix_env: demo
             tag: demo
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@v1.0.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@98e2a3d821253d603d16fd53fb10bcf85f64b395
     with:
       image_name: trento-web
       tag: ${{ matrix.tag }}
