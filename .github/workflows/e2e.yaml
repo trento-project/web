@@ -29,26 +29,26 @@ jobs:
       TF_VAR_trento_server_image_id: "ami-094a0810ca766cdce"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: test/e2e/package-lock.json
       - name: Checkout terraform repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: trento-project/trento-e2e
           path: terraform
       - name: Use branch workspace
-        uses: dflook/terraform-new-workspace@v2
+        uses: dflook/terraform-new-workspace@ac5eff4d33ad43d8b9c45bcaf4c58cae69313b13 # v2
         with:
           path: terraform/deployments/aws/hana_ha_enabled
           workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
       - name: Deploy test infrastructure
-        uses: dflook/terraform-apply@v2
+        uses: dflook/terraform-apply@5489b988934a50bf1489d5b7c5253b46520a7dca # v2
         continue-on-error: true
         with:
           path: terraform/deployments/aws/hana_ha_enabled
@@ -56,20 +56,20 @@ jobs:
           # workspace: ${{ github.head_ref }}
           auto_approve: true
       - name: Upload tfstate
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         if: ${{ !env.ACT }}
         with:
           name: terraform-state
           path: terraform/deployments/aws/hana_ha_enabled/terraform.tfstate.d
       - name: Get outputs
-        uses: dflook/terraform-output@v2
+        uses: dflook/terraform-output@becc8dd3d8be55485cd9f8c716f470c3c99824da # v2
         id: tf-outputs
         with:
           path: terraform/deployments/aws/hana_ha_enabled
           workspace: "trentoe2e"
           # workspace: ${{ github.head_ref }}
       - name: Checkout ansible repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: trento-project/ansible
           path: ansible
@@ -79,7 +79,7 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v9
+        uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
         continue-on-error: true
         with:
           playbook: ansible/playbook.yml
@@ -123,7 +123,7 @@ jobs:
             rabbitmq_host='${{ steps.tf-outputs.outputs.trento_server_ip }}:5672' \
             api_key='api-key'"
       - name: Cypress run
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@783cb3f07983868532cabaedaa1e6c00ff4786a8 # v7.1.9
         env:
           CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }}
           CYPRESS_REAL_CLUSTER_TESTS: true
@@ -132,13 +132,13 @@ jobs:
           working-directory: test/e2e
           spec: cypress/e2e/hana_scale_up_checks.cy.js
       - name: Destroy
-        uses: dflook/terraform-destroy-workspace@v2
+        uses: dflook/terraform-destroy-workspace@fb0d0809a9f25427f61a9a242b68970952e2287b # v2
         continue-on-error: true
         with:
           path: terraform/deployments/aws/hana_ha_enabled
           workspace: "trentoe2e"
       - name: Install aws-delete-vpc
-        uses: jaxxstorm/action-install-gh-release@v3.0.0
+        uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: isovalent/aws-delete-vpc
           cache: enable

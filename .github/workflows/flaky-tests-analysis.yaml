@@ -25,10 +25,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Download JUnit reports artifacts
         id: download-reports
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           path: junit-reports
           pattern: ${{ inputs.junit-artifact-pattern }}
@@ -186,7 +186,7 @@ jobs:
           fi
 
       - name: Delete artifacts
-        uses: geekyeggo/delete-artifact@v6
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
           name: ${{ inputs.junit-artifact-pattern }}
           failOnError: false
@@ -195,7 +195,7 @@ jobs:
         run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
       - name: Upload failed JUnit reports
         if: fromJson(steps.analyze.outputs.has-failed-reports)
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
           name: ${{ steps.artifact-name.outputs.value }}
           path: ${{ steps.analyze.outputs.failed-reports-dir }}
@@ -203,7 +203,7 @@ jobs:
 
       - name: Checkout gh-pages for update
         if: github.event_name == 'schedule'
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           ref: gh-pages
           path: dashboard-site
@@ -231,7 +231,7 @@ jobs:
 
       - name: Commit and push changes
         if: github.event_name == 'schedule'
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           branch: gh-pages
           repository: dashboard-site
