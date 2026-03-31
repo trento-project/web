@@ -137,6 +137,50 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                  queue_event: operation_completed
                })
     end
+
+    test "should upgrade error message when operation request failed" do
+      scenarios = [
+        %{
+          error: :TARGETS_MISSING,
+          mapped_error: "The operation request does not include any valid target"
+        },
+        %{
+          error: :ARGUMENTS_MISSING,
+          mapped_error: "The operation request does not include some required argument"
+        },
+        %{
+          error: :ALREADY_RUNNING,
+          mapped_error:
+            "Other operation was already running in some of the targets for this operation"
+        },
+        %{error: :UNKNOWN, mapped_error: "The operation request abnormally failed"}
+      ]
+
+      for %{error: error, mapped_error: mapped_error} <- scenarios do
+        %{
+          operation_id: operation_id,
+          group_id: group_id,
+          result: result
+        } =
+          operation_completed =
+          build(:operation_completed_with_failed_request_v1,
+            operation_type: "saptuneapplysolution@v1",
+            error: error
+          )
+
+        assert %{
+                 correlation_id: operation_id,
+                 operation_id: operation_id,
+                 resource_id: group_id,
+                 operation: :saptune_solution_apply,
+                 result: result,
+                 error: mapped_error
+               } ==
+                 QueueEventParser.get_activity_metadata(:operation_completed, %{
+                   queue_event: operation_completed
+                 })
+      end
+    end
   end
 
   describe "checks customization" do
