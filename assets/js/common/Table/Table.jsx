@@ -111,11 +111,15 @@ function Table({
       return [...acc, { key: curr.key, value: curr.value }];
     }, []);
 
-    setSearchParams(updateSearchParams(searchParams, filtersBoundToQs));
-  }, [filters, searchParams]);
+    setSearchParams(
+      (prev) => updateSearchParams(new URLSearchParams(prev), filtersBoundToQs),
+      { replace: true }
+    );
+  }, [filters]);
 
   useEffect(() => {
     if (!searchParamsEnabled) return;
+
     const filterFromQs = columnFiltersBoundToParams.reduce((acc, curr) => {
       const paramsFilterValue = searchParams.getAll(curr.key);
 
@@ -129,7 +133,32 @@ function Table({
       ];
     }, []);
 
-    if (filterFromQs.length) {
+    const hasActiveParamFilters = filters.some((f) =>
+      columnFiltersBoundToParams.some((col) => col.key === f.key)
+    );
+
+    // If there are no filters in the query string but there are active filters bound to params, clear them
+    if (filterFromQs.length === 0 && hasActiveParamFilters) {
+      setFilters(
+        filters.filter(
+          (f) => !columnFiltersBoundToParams.some((col) => col.key === f.key)
+        )
+      );
+      return;
+    }
+
+    const filtersChanged = filterFromQs.some((qsFilter) => {
+      const currentFilter = filters.find((f) => f.key === qsFilter.key);
+      return (
+        !currentFilter ||
+        currentFilter.value.length !== qsFilter.value.length ||
+        currentFilter.value.some((v, i) => v === qsFilter.value[i])
+      );
+    });
+
+    // Apply filters from qs only if they differ from current filters to avoid
+    // infinite loop of updates and unnecessary re-renders
+    if (filtersChanged) {
       setFilters(filterFromQs);
     }
   }, [searchParams]);

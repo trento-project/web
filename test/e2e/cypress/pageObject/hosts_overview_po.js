@@ -53,16 +53,28 @@ const removeTag1Button =
 const sidTableHeader = 'thead th:contains("SID")';
 const clusterTableHeader = 'thead th:contains("Cluster")';
 const tableRow = 'tbody tr';
+const hostnameFilterButton = '[data-testid="filter-Hostname"]';
+const hostnameFilterOptions = '[data-testid="filter-Hostname-options"]';
 
 // UI Interactions
 
-export const visit = () => {
+export const visit = (params) => {
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
-  basePage.visit(url);
+  const visitUrl = [url, params].filter(Boolean).join('?');
+  basePage.visit(visitUrl);
   cy.wait('@clustersEndpoint');
 };
 
 export const validateUrl = () => basePage.validateUrl(url);
+
+export const selectHostnameFilter = (hostname) => {
+  cy.get(hostnameFilterButton).click();
+  cy.get(hostnameFilterOptions).find(`li`).contains(hostname).click();
+  cy.get(hostnameFilterButton).click();
+};
+
+export const hostsListedAre = (amount) =>
+  cy.get(hostNameCell).should('have.length', amount);
 
 export const clickNextPageButton = () => cy.get(nextPageSelector).click();
 
@@ -81,10 +93,6 @@ export const clickCleanupConfirmationButton = () =>
 
 export const hostsIsHighglightedInSidebar = () => {
   cy.get(basePage.navigation.hosts).should('have.attr', 'aria-current', 'page');
-};
-
-export const tenHostsAreListed = () => {
-  cy.get(hostNameCell).should('have.length', 10);
 };
 
 export const expectedPaginationIsDisplayed = (expectedPaginationDetails) =>
