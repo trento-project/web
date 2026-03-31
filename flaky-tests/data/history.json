@@ -2654,5 +2654,45 @@
         "score": 0.03577
       }
     ]
+  },
+  {
+    "timestamp": "2026-03-31T04:36:56Z",
+    "commit": "0976bc51a7a041d5cc409131c821e8cdf001f9d3",
+    "run_id": "23780262451",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.5
+      },
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.02501
+      }
+    ]
   }
 ]
