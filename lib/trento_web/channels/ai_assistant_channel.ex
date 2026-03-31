@@ -57,7 +57,7 @@ defmodule TrentoWeb.AIAssistantChannel do
         )
 
       base_system_prompt = "You are helpful AI assistant."
-      # Ensure agent is running (seamless start if not)
+      # Ensure agent is running
       # Coordinator.start_conversation_session is idempotent
       case Coordinator.start_conversation_session(conversation_id,
              filesystem_scope: filesystem_scope,
@@ -84,9 +84,7 @@ defmodule TrentoWeb.AIAssistantChannel do
                |> assign(:input, "")
                |> assign(:loading, true)}
 
-            # Note: No stream_insert here!
             # Display happens when we receive {:display_message_saved, msg} event
-
             {:error, reason} ->
               Logger.error("Failed to execute agent: #{inspect(reason)}")
 
@@ -151,7 +149,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     {:noreply,
      socket
-     # |> push_patch(to: ~p"/chat")
      |> assign(:put_flash, "Info: New conversation started")}
   end
 
@@ -253,7 +250,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:conversation_title_generated, new_title, agent_id}}, socket) do
     Logger.info("Conversation title generated: #{new_title}")
 
-    # Build page title from new title (application-specific UI concern)
+    # Build page title from new title
     page_title =
       if String.length(new_title) > 60 do
         truncated = String.slice(new_title, 0, 60)
@@ -329,7 +326,7 @@ defmodule TrentoWeb.AIAssistantChannel do
            user_id: user_id
          ) do
       {:ok, socket} ->
-        # Build page title from conversation title (application-specific)
+        # Build page title from conversation title
         page_title = build_page_title(socket.assigns.conversation)
 
         socket
@@ -338,7 +335,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
       {:error, socket} ->
         # Conversation not found - navigate to fresh state
-        push(socket, "re_init", %{})
+        send(self(), {:reinit_params, %{}})
     end
   end
 
