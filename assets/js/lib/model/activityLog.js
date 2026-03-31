@@ -9,7 +9,11 @@ import {
   uniq,
   values,
 } from 'lodash/fp';
-import { getOperationLabel, getOperationResourceType } from '@lib/operations';
+import {
+  OPERATION_REQUEST_FAILED,
+  getOperationLabel,
+  getOperationResourceType,
+} from '@lib/operations';
 import { isPermitted } from './users';
 
 export const LOGIN_ATTEMPT = 'login_attempt';
@@ -690,7 +694,9 @@ export const ACTIVITY_TYPES_CONFIG = {
   [OPERATION_COMPLETED]: {
     label: 'Operation Completed',
     message: ({ metadata }) =>
-      `Operation ${getOperationLabel(metadata.operation)} completed`,
+      metadata.result === OPERATION_REQUEST_FAILED
+        ? `Operation ${getOperationLabel(metadata.operation)} request failed`
+        : `Operation ${getOperationLabel(metadata.operation)} completed`,
     resource: operationResourceType,
   },
   // Check Customization

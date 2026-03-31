@@ -113,6 +113,8 @@ const OPERATION_FORBIDDEN_MESSAGES = {
   [SAPTUNE_SOLUTION_CHANGE]: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
 };
 
+export const OPERATION_REQUEST_FAILED = 'REQUEST_FAILED';
+
 export const getOperationLabel = (operation) =>
   get(OPERATION_LABELS, operation, 'unknown');
 
