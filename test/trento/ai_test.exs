@@ -3,6 +3,8 @@ defmodule Trento.AiTest do
 
   alias Trento.AI
 
+  import Trento.Factory
+
   setup do
     original_config = Application.get_env(:trento, :ai)
 
@@ -29,8 +31,15 @@ defmodule Trento.AiTest do
   describe "enabling/disabling features" do
     test "features are disabled" do
       Application.put_env(:trento, :ai, enabled: false)
-      assert AI.create_user_configuration(%{}, %{}) == {:error, :ai_features_disabled}
-      assert AI.update_user_configuration(%{}, %{}) == {:error, :ai_features_disabled}
+      user = build(:user)
+
+      attrs = %{
+        model: "foo",
+        api_key: "bar"
+      }
+
+      assert AI.create_user_configuration(user, attrs) == {:error, :ai_features_disabled}
+      assert AI.update_user_configuration(user, attrs) == {:error, :ai_features_disabled}
     end
 
     test "features are enabled" do
@@ -39,8 +48,15 @@ defmodule Trento.AiTest do
         configurations: DummyConfigurations
       )
 
-      assert AI.create_user_configuration(%{}, %{}) == {:ok, :created}
-      assert AI.update_user_configuration(%{}, %{}) == {:ok, :updated}
+      user = build(:user)
+
+      attrs = %{
+        model: "foo",
+        api_key: "bar"
+      }
+
+      assert AI.create_user_configuration(user, attrs) == {:ok, :created}
+      assert AI.update_user_configuration(user, attrs) == {:ok, :updated}
     end
   end
 end
