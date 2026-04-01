@@ -11,14 +11,19 @@ import {
   PERSONAL_ACCESS_TOKEN_CREATION,
   PERSONAL_ACCESS_TOKEN_DELETION,
   PERSONAL_ACCESS_TOKEN_ADMIN_DELETION,
+  OPERATION_COMPLETED,
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
   taggingResourceType,
   operationResourceType,
   checkCustomizationResourceType,
+  toMessage,
 } from './activityLog';
-import { SAPTUNE_SOLUTION_APPLY } from '../operations';
+import {
+  SAPTUNE_SOLUTION_APPLY,
+  OPERATION_REQUEST_FAILED,
+} from '@lib/operations';
 
 const nonUserManagementActivities = difference(ACTIVITY_TYPES, [
   LOGIN_ATTEMPT,
@@ -217,6 +222,26 @@ describe('activityLog', () => {
 
       scenarios.forEach(({ entry, expected }) => {
         expect(checkCustomizationResourceType(entry)).toBe(expected);
+      });
+    });
+
+    it('should resolve operation completed message', () => {
+      const scenarios = [
+        { result: OPERATION_REQUEST_FAILED, message: 'request failed' },
+        { result: 'UPDATED', message: 'completed' },
+      ];
+
+      scenarios.forEach(({ result, message }) => {
+        const entry = {
+          type: OPERATION_COMPLETED,
+          metadata: {
+            operation: SAPTUNE_SOLUTION_APPLY,
+            result,
+          },
+        };
+        expect(toMessage(entry)).toBe(
+          `Operation Apply Saptune solution ${message}`
+        );
       });
     });
   });

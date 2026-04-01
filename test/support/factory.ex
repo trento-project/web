@@ -174,7 +174,8 @@ defmodule Trento.Factory do
 
   alias Trento.Operations.V1.{
     OperationCompleted,
-    OperationErrorDetails
+    OperationErrorDetails,
+    OperationRequestFailedDetails
   }
 
   alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
@@ -1407,6 +1408,31 @@ defmodule Trento.Factory do
            %OperationErrorDetails{
              step: step,
              target_errors: target_errors
+           }}
+    }
+  end
+
+  def operation_completed_with_failed_request_v1_factory(attrs) do
+    operation_completed =
+      build(
+        :operation_completed_v1,
+        Map.drop(attrs, [:error])
+      )
+
+    error =
+      Map.get(
+        attrs,
+        :error,
+        Enum.random([:TARGETS_MISSING, :ARGUMENTS_MISSING, :ALREADY_RUNNING, :UNKNOWN])
+      )
+
+    %OperationCompleted{
+      operation_completed
+      | result: :REQUEST_FAILED,
+        details:
+          {:request_failed_details,
+           %OperationRequestFailedDetails{
+             error: error
            }}
     }
   end

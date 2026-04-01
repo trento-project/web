@@ -15,7 +15,8 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   alias Trento.Operations.V1.{
     OperationCompleted,
-    OperationErrorDetails
+    OperationErrorDetails,
+    OperationRequestFailedDetails
   }
 
   alias Trento.Infrastructure.Operations
@@ -150,5 +151,26 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
     |> Map.put(:errors, errors)
   end
 
+  defp maybe_put_error_details(metadata, %{
+         details: {:request_failed_details, %OperationRequestFailedDetails{error: error}}
+       }) do
+    metadata
+    |> Map.put(:error, error)
+    |> Map.put(:reason, map_request_failed_error(error))
+  end
+
   defp maybe_put_error_details(metadata, _), do: metadata
+
+  defp map_request_failed_error(:ARGUMENTS_MISSING),
+    do: "The operation request failed because one or more mandatory arguments are missing"
+
+  defp map_request_failed_error(:TARGETS_MISSING),
+    do: "The operation request failed because no valid target was specified"
+
+  defp map_request_failed_error(:ALREADY_RUNNING),
+    do:
+      "The operation request cannot proceed due to concurrent operations executing on the selected target(s)"
+
+  defp map_request_failed_error(:UNKNOWN),
+    do: "The operation request terminated with an unexpected error"
 end
