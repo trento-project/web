@@ -2754,5 +2754,37 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-01T04:26:42Z",
+    "commit": "ccc91639f04ea26ed14e5c7eeb59807d9f1f1d3b",
+    "run_id": "23831532089",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting software updates should fail when settings are not configured",
+        "score": 0.02501
+      }
+    ]
   }
 ]
