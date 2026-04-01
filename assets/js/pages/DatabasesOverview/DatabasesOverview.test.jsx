@@ -202,7 +202,7 @@ describe('DatabasesOverview component', () => {
       });
 
       expect(window.location.search).toEqual(
-        `?health=${health}&sid=${sid}&tags=${tags[0].value}`
+        `?page=1&per_page=10&health=${health}&sid=${sid}&tags=${tags[0].value}`
       );
     });
   });
