@@ -85,7 +85,7 @@ jobs:
 
   publish-containers:
     name: Publish GHCR Containers
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@98e2a3d821253d603d16fd53fb10bcf85f64b395
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@b3aa163d3e0872c07ccf3755928f21c070ca0e5b # v1.1.0
     needs:
       - release
     strategy:
