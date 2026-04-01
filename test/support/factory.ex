@@ -182,6 +182,8 @@ defmodule Trento.Factory do
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
+  alias Trento.AI.{LlmRegistry, UserConfiguration}
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1457,5 +1459,24 @@ defmodule Trento.Factory do
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"])
     }
+  end
+
+  def random_ai_model do
+    :all
+    |> LlmRegistry.get_provider_models()
+    |> Enum.random()
+  end
+
+  def ai_user_configuration_factory(attrs) do
+    user_id = Map.get(attrs, :user_id, 1)
+    model = Map.get(attrs, :model, random_ai_model())
+
+    %UserConfiguration{}
+    |> UserConfiguration.changeset(%{
+      user_id: user_id,
+      model: model,
+      api_key: Faker.String.base64(32)
+    })
+    |> Ecto.Changeset.apply_changes()
   end
 end
