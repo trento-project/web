@@ -119,6 +119,8 @@ function Table({
 
   const hasFilters = columns.filter(({ filter }) => Boolean(filter)).length > 0;
 
+  const paginationTouched = useRef(false);
+
   useEffect(() => {
     if (!searchParamsEnabled) return;
     const filtersBoundToQs = filters.reduce((acc, curr) => {
@@ -132,19 +134,23 @@ function Table({
     }, []);
 
     setSearchParams(
-      (prev) => updateSearchParams(new URLSearchParams(prev), filtersBoundToQs),
+      (prev) => {
+        const next = updateSearchParams(
+          new URLSearchParams(prev),
+          filtersBoundToQs
+        );
+        if (pagination && paginationTouched.current) {
+          next.set('page', String(currentPage));
+          next.set('per_page', String(currentItemsPerPage));
+        }
+        return next;
+      },
       { replace: true }
     );
   }, [filters]);
-
-  const isFirstPaginationRender = useRef(true);
   useEffect(() => {
     if (!searchParamsEnabled || !pagination) return;
-
-    if (isFirstPaginationRender.current) {
-      isFirstPaginationRender.current = false;
-      return;
-    }
+    if (!paginationTouched.current) return;
 
     setSearchParams(
       (prev) => {
@@ -242,7 +248,9 @@ function Table({
 
     const totalPagesFromParam = pages(sortedData, paramPerPage);
     const clampedPage =
-      totalPagesFromParam > 0 ? Math.min(paramPage, totalPagesFromParam) : 1;
+      totalPagesFromParam > 0
+        ? Math.min(paramPage, totalPagesFromParam)
+        : paramPage;
 
     if (clampedPage !== currentPage) {
       setCurrentPage(clampedPage);
@@ -272,6 +280,7 @@ function Table({
             data={data}
             filters={filters}
             onChange={(newFilters) => {
+              paginationTouched.current = true;
               setFilters(newFilters);
               setCurrentPage(1);
             }}
@@ -373,6 +382,7 @@ function Table({
                 hasNext={currentPage < totalPages}
                 currentItemsPerPage={currentItemsPerPage}
                 onSelect={(selection) => {
+                  paginationTouched.current = true;
                   switch (selection) {
                     case 'prev':
                       setCurrentPage(currentPage - 1);
@@ -390,6 +400,7 @@ function Table({
                   }
                 }}
                 onChangeItemsPerPage={(perPage) => {
+                  paginationTouched.current = true;
                   setCurrentItemsPerPage(perPage);
                   setCurrentPage(1);
                 }}
