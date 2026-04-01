@@ -154,7 +154,9 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   defp maybe_put_error_details(metadata, %{
          details: {:request_failed_details, %OperationRequestFailedDetails{error: error}}
        }) do
-    Map.put(metadata, :error, map_request_failed_error(error))
+    metadata
+    |> Map.put(:error, error)
+    |> Map.put(:reason, map_request_failed_error(error))
   end
 
   defp maybe_put_error_details(metadata, _), do: metadata

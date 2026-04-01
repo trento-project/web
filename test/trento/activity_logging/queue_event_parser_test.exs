@@ -178,7 +178,8 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
                  resource_id: group_id,
                  operation: :saptune_solution_apply,
                  result: result,
-                 error: mapped_error
+                 error: error,
+                 reason: mapped_error
                } ==
                  QueueEventParser.get_activity_metadata(:operation_completed, %{
                    queue_event: operation_completed
