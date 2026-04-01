@@ -230,7 +230,7 @@ describe('ClustersList component', () => {
       });
 
       expect(window.location.search).toEqual(
-        `?page=1&per_page=10&health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
+        `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
       );
     });
   });

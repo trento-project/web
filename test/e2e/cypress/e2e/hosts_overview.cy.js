@@ -334,7 +334,6 @@ context('Hosts Overview', () => {
       hostsOverviewPage.hostsListedAre(7);
       hostsOverviewPage.expectedPaginationIsDisplayed('Showing 21–27 of 27');
     });
-
   });
 
   describe('Forbidden actions', () => {

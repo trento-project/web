@@ -280,7 +280,6 @@ function Table({
             data={data}
             filters={filters}
             onChange={(newFilters) => {
-              paginationTouched.current = true;
               setFilters(newFilters);
               setCurrentPage(1);
             }}

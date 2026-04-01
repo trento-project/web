@@ -427,7 +427,7 @@ describe('HostsLists component', () => {
       });
 
       expect(window.location.search).toEqual(
-        `?page=1&per_page=10&health=${health}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
+        `?health=${health}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
       );
     });
   });
