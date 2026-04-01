@@ -2786,5 +2786,45 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-01T04:50:23Z",
+    "commit": "ccc91639f04ea26ed14e5c7eeb59807d9f1f1d3b",
+    "run_id": "23832077383",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 7
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.06551
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
   }
 ]
