@@ -160,13 +160,15 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   defp maybe_put_error_details(metadata, _), do: metadata
 
   defp map_request_failed_error(:ARGUMENTS_MISSING),
-    do: "The operation request does not include some required argument"
+    do: "The operation request failed because one or more mandatory arguments are missing"
 
   defp map_request_failed_error(:TARGETS_MISSING),
-    do: "The operation request does not include any valid target"
+    do: "The operation request failed because no valid target was specified"
 
   defp map_request_failed_error(:ALREADY_RUNNING),
-    do: "Other operation was already running in some of the targets for this operation"
+    do:
+      "The operation request cannot proceed due to concurrent operations executing on the selected target(s)"
 
-  defp map_request_failed_error(:UNKNOWN), do: "The operation request abnormally failed"
+  defp map_request_failed_error(:UNKNOWN),
+    do: "The operation request terminated with an unexpected error"
 end

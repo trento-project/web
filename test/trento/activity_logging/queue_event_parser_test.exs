@@ -142,18 +142,22 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
       scenarios = [
         %{
           error: :TARGETS_MISSING,
-          mapped_error: "The operation request does not include any valid target"
+          mapped_error: "The operation request failed because no valid target was specified"
         },
         %{
           error: :ARGUMENTS_MISSING,
-          mapped_error: "The operation request does not include some required argument"
+          mapped_error:
+            "The operation request failed because one or more mandatory arguments are missing"
         },
         %{
           error: :ALREADY_RUNNING,
           mapped_error:
-            "Other operation was already running in some of the targets for this operation"
+            "The operation request cannot proceed due to concurrent operations executing on the selected target(s)"
         },
-        %{error: :UNKNOWN, mapped_error: "The operation request abnormally failed"}
+        %{
+          error: :UNKNOWN,
+          mapped_error: "The operation request terminated with an unexpected error"
+        }
       ]
 
       for %{error: error, mapped_error: mapped_error} <- scenarios do
