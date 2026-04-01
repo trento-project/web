@@ -30,9 +30,9 @@ jobs:
     if: needs.check_env_creation_privilege.outputs.create_env == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Comment on the pull request
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -52,10 +52,10 @@ jobs:
       REGISTRY: ghcr.io
       IMAGE_TAG: ${{ github.event.pull_request.number }}-env
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - uses: docker/setup-buildx-action@v4
+      - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4
       - name: Log in to the Container registry
         uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2
         with:
@@ -63,7 +63,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Delete the container image
-        uses: bots-house/ghcr-delete-image-action@v1.1.0
+        uses: bots-house/ghcr-delete-image-action@3827559c68cb4dcdf54d813ea9853be6d468d3a4 # v1.1.0
         with:
           owner: ${{ github.repository_owner }}
           name: trento-web
@@ -76,7 +76,7 @@ jobs:
     needs: delete-pr-image
     steps:
       - name: Checkout ansible repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           repository: trento-project/ansible
           path: ansible
@@ -88,7 +88,7 @@ jobs:
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v9
+        uses: dawidd6/action-ansible-playbook@126642a1c6ce512da255ef2b41e8ee90f0077474 # v9
         with:
           playbook: ansible/playbook.cleanup.yml
           key: ${{ secrets.SSH_PR_MACHINE_KEY }}

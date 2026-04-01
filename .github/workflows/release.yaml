@@ -19,7 +19,7 @@ jobs:
       version: ${{ steps.detect-version.outputs.current-version }}
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 2
           ssh-key: ${{ secrets.RELEASE_KEY }}
@@ -32,7 +32,7 @@ jobs:
       - name: Detect new version
         id: detect-version
         if: steps.check-parent-commit.outputs.sha
-        uses: salsify/action-detect-and-tag-new-version@v2
+        uses: salsify/action-detect-and-tag-new-version@b1778166f13188a9d478e2d1198f993011ba9864 # v2.0.3
         with:
           create-tag: false
           version-command: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Draft release
         id: draft-release
-        uses: release-drafter/release-drafter@v7
+        uses: release-drafter/release-drafter@139054aeaa9adc52ab36ddf67437541f039b88e2 # v7
         with:
           publish: false
           version: ${{ steps.detect-version.outputs.current-version }}
@@ -50,13 +50,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update CHANGELOG.md
-        uses: stefanzweifel/changelog-updater-action@v1
+        uses: stefanzweifel/changelog-updater-action@a938690fad7edf25368f37e43a1ed1b34303eb36 # v1
         with:
           latest-version: ${{ steps.draft-release.outputs.tag_name }}
           release-notes: ${{ steps.draft-release.outputs.body }}
 
       - name: Commit new changelog
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
         with:
           branch: main
           commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
@@ -73,7 +73,7 @@ jobs:
     steps:
       - name: Publish release
         id: publish-release
-        uses: release-drafter/release-drafter@v7
+        uses: release-drafter/release-drafter@139054aeaa9adc52ab36ddf67437541f039b88e2 # v7
         with:
           publish: true
           tag: ${{ needs.pre-release.outputs.version }}

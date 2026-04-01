@@ -26,9 +26,9 @@ jobs:
       total-runs: ${{ steps.compute-matrix.outputs.total-runs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: gather versions
-        uses: endorama/asdf-parse-tool-versions@v1
+        uses: endorama/asdf-parse-tool-versions@c981d1f09f7fad3a91bc97b6d28ce6ec0c93ded5 # v1
       - name: Compute matrix
         id: compute-matrix
         run: |
@@ -48,16 +48,16 @@ jobs:
           - nodejs: ${{ needs.setup-matrix.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         id: npm-cache
         with:
           path: |
@@ -81,16 +81,16 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         id: npm-cache
         with:
           path: |
@@ -105,7 +105,7 @@ jobs:
           JEST_JUNIT_OUTPUT_NAME: jest-junit-node${{ matrix.nodejs }}-run${{ matrix.run }}-${{ env.ENV_TS }}.xml
       - name: Upload jest test junit reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
           name: jest-junit-reports-node${{ matrix.nodejs }}-run${{ matrix.run }}
           path: /tmp/*.xml

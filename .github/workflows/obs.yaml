@@ -40,11 +40,11 @@ jobs:
       options: -u 0:0
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
+        uses: endorama/asdf-parse-tool-versions@afbfa92e56234f29b1e82314f50c3d1244285f60 # v1.3.4
         id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -54,11 +54,11 @@ jobs:
           VERSION=$(/scripts/get_version_from_git.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         id: npm-cache
         with:
           path: |
@@ -116,11 +116,11 @@ jobs:
         SOURCE_DIR: packaging/suse/rpm
       options: -u 0:0
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@v1.3.4
+        uses: endorama/asdf-parse-tool-versions@afbfa92e56234f29b1e82314f50c3d1244285f60 # v1.3.4
         id: tool-versions
       - name: Configure git for in-container operations
         run: git config --global --add safe.directory $GITHUB_WORKSPACE
@@ -130,11 +130,11 @@ jobs:
           VERSION=$(/scripts/get_version_from_git.sh)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Setup Node
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         id: npm-cache
         with:
           path: |
