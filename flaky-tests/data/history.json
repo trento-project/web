@@ -2877,5 +2877,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-04-02T03:56:26Z",
+    "commit": "e05ba8d0898f3c86967c5d9b1728027b00c6878f",
+    "run_id": "23882673701",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
+        "score": 0.25
+      }
+    ]
   }
 ]
