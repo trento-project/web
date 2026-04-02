@@ -278,6 +278,64 @@ context('Hosts Overview', () => {
     });
   });
 
+  describe('Pagination and browser navigation', () => {
+    const anyPageUrl = '/any-page';
+
+    it('should update the URL with page param when navigating pages', () => {
+      hostsOverviewPage.visit();
+      hostsOverviewPage.clickNextPageButton();
+      cy.url().should('contain', 'page=2');
+      cy.url().should('contain', 'per_page=10');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
+    });
+
+    it('should update the URL with per_page param when changing items per page', () => {
+      hostsOverviewPage.visit();
+      hostsOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'per_page=20');
+      cy.url().should('contain', 'page=1');
+      hostsOverviewPage.hostsListedAre(20);
+    });
+
+    it('should preserve pagination when coming back from another page', () => {
+      hostsOverviewPage.visit();
+      hostsOverviewPage.clickNextPageButton();
+      cy.url().should('contain', 'page=2');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
+
+      cy.visit(anyPageUrl);
+      cy.url().should('contain', anyPageUrl);
+
+      cy.go('back');
+
+      cy.url().should('contain', '/hosts');
+      cy.url().should('contain', 'page=2');
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
+    });
+
+    it('should preserve per_page when coming back from another page', () => {
+      hostsOverviewPage.visit();
+      hostsOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'per_page=20');
+      hostsOverviewPage.hostsListedAre(20);
+
+      cy.visit(anyPageUrl);
+      cy.url().should('contain', anyPageUrl);
+
+      cy.go('back');
+
+      cy.url().should('contain', '/hosts');
+      cy.url().should('contain', 'per_page=20');
+      hostsOverviewPage.hostsListedAre(20);
+    });
+
+    it('should render the correct page when visiting a URL with pagination params', () => {
+      hostsOverviewPage.visit('page=2&per_page=20');
+      hostsOverviewPage.hostsListedAre(7);
+      hostsOverviewPage.expectedPaginationIsDisplayed('Showing 21–27 of 27');
+    });
+  });
+
   describe('Forbidden actions', () => {
     beforeEach(() => {
       hostsOverviewPage.apiDeleteAllHostsTags();
