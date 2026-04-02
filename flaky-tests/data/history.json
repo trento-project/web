@@ -2937,5 +2937,45 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-02T06:56:13Z",
+    "commit": "e05ba8d0898f3c86967c5d9b1728027b00c6878f",
+    "run_id": "23884013857",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.1083
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.05515
+      },
+      {
+        "name": "should complete host deregistration when all instances are moved out::Hosts Overview Deregistration Clean-up button should deregister a host Movement of application instances on hosts should complete host deregistration when all instances are moved out",
+        "score": 0.05001
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.04448
+      },
+      {
+        "name": "should show a warning message in the check selection view::HANA cluster details Cluster with unknown provider should show a warning message in the check selection view",
+        "score": 0.02501
+      },
+      {
+        "name": "should show a warning message in the checks results view::HANA cluster details Cluster with unknown provider should show a warning message in the checks results view",
+        "score": 0.02501
+      }
+    ]
   }
 ]
