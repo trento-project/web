@@ -14,5 +14,4 @@ config :trento,
 
 config :trento, :ai, enabled: false
 
-# Do not print debug messages in production
-# config :logger, level: :info
+config :logger, level: :info
