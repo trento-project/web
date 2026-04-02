@@ -2913,5 +2913,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-02T04:30:02Z",
+    "commit": "e05ba8d0898f3c86967c5d9b1728027b00c6878f",
+    "run_id": "23883420296",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      }
+    ]
   }
 ]
