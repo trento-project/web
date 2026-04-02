@@ -14,4 +14,4 @@ config :trento,
 
 config :trento, :ai, enabled: false
 
-#config :logger, level: :info
+config :logger, level: :info
