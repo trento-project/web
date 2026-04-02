@@ -121,10 +121,40 @@ function Table({
 
   const paginationTouched = useRef(false);
 
+  const filterSyncRef = useRef({
+    columnFiltersBoundToParams,
+    currentItemsPerPage,
+    currentPage,
+    filters,
+    onPageChange,
+    pagination,
+    searchParamsEnabled,
+    setSearchParams,
+  });
+  filterSyncRef.current = {
+    columnFiltersBoundToParams,
+    currentItemsPerPage,
+    currentPage,
+    filters,
+    onPageChange,
+    pagination,
+    searchParamsEnabled,
+    setSearchParams,
+  };
+
   useEffect(() => {
-    if (!searchParamsEnabled) return;
+    const {
+      searchParamsEnabled: enabled,
+      columnFiltersBoundToParams: boundColumns,
+      setSearchParams: updateParams,
+      pagination: hasPagination,
+      currentPage: pg,
+      currentItemsPerPage: perPage,
+    } = filterSyncRef.current;
+
+    if (!enabled) return;
     const filtersBoundToQs = filters.reduce((acc, curr) => {
-      const isFilterBoundToQs = columnFiltersBoundToParams.find(
+      const isFilterBoundToQs = boundColumns.find(
         (col) => col.key === curr.key
       );
 
@@ -133,15 +163,15 @@ function Table({
       return [...acc, { key: curr.key, value: curr.value }];
     }, []);
 
-    setSearchParams(
+    updateParams(
       (prev) => {
         const next = updateSearchParams(
           new URLSearchParams(prev),
           filtersBoundToQs
         );
-        if (pagination && paginationTouched.current) {
-          next.set('page', String(currentPage));
-          next.set('per_page', String(currentItemsPerPage));
+        if (hasPagination && paginationTouched.current) {
+          next.set('page', String(pg));
+          next.set('per_page', String(perPage));
         }
         return next;
       },
@@ -149,10 +179,16 @@ function Table({
     );
   }, [filters]);
   useEffect(() => {
-    if (!searchParamsEnabled || !pagination) return;
+    const {
+      searchParamsEnabled: enabled,
+      pagination: hasPagination,
+      setSearchParams: updateParams,
+    } = filterSyncRef.current;
+
+    if (!enabled || !hasPagination) return;
     if (!paginationTouched.current) return;
 
-    setSearchParams(
+    updateParams(
       (prev) => {
         const next = new URLSearchParams(prev);
         next.set('page', String(currentPage));
@@ -164,9 +200,15 @@ function Table({
   }, [currentPage, currentItemsPerPage]);
 
   useEffect(() => {
-    if (!searchParamsEnabled) return;
+    const {
+      searchParamsEnabled: enabled,
+      columnFiltersBoundToParams: boundColumns,
+      filters: currentFilters,
+    } = filterSyncRef.current;
 
-    const filterFromQs = columnFiltersBoundToParams.reduce((acc, curr) => {
+    if (!enabled) return;
+
+    const filterFromQs = boundColumns.reduce((acc, curr) => {
       const paramsFilterValue = searchParams.getAll(curr.key);
 
       if (paramsFilterValue.length === 0) return [...acc];
@@ -175,26 +217,31 @@ function Table({
 
       return [
         ...acc,
-        ...createFilter(filters, curr.key, paramsFilterValue, filterFunction),
+        ...createFilter(
+          currentFilters,
+          curr.key,
+          paramsFilterValue,
+          filterFunction
+        ),
       ];
     }, []);
 
-    const hasActiveParamFilters = filters.some((f) =>
-      columnFiltersBoundToParams.some((col) => col.key === f.key)
+    const hasActiveParamFilters = currentFilters.some((f) =>
+      boundColumns.some((col) => col.key === f.key)
     );
 
     // If there are no filters in the query string but there are active filters bound to params, clear them
     if (filterFromQs.length === 0 && hasActiveParamFilters) {
       setFilters(
-        filters.filter(
-          (f) => !columnFiltersBoundToParams.some((col) => col.key === f.key)
+        currentFilters.filter(
+          (f) => !boundColumns.some((col) => col.key === f.key)
         )
       );
       return;
     }
 
     const filtersChanged = filterFromQs.some((qsFilter) => {
-      const currentFilter = filters.find((f) => f.key === qsFilter.key);
+      const currentFilter = currentFilters.find((f) => f.key === qsFilter.key);
       return (
         !currentFilter ||
         currentFilter.value.length !== qsFilter.value.length ||
@@ -224,9 +271,18 @@ function Table({
     .reduce((d, filterFunction) => d.filter(filterFunction), data);
 
   const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
+  filterSyncRef.current.sortedData = sortedData;
 
   useEffect(() => {
-    if (!searchParamsEnabled || !pagination) return;
+    const {
+      searchParamsEnabled: enabled,
+      pagination: hasPagination,
+      currentItemsPerPage: perPage,
+      currentPage: pg,
+      sortedData: sorted,
+    } = filterSyncRef.current;
+
+    if (!enabled || !hasPagination) return;
 
     const paramPage = getIntParam(searchParams, 'page', 1);
     const paramPerPage = (() => {
@@ -240,19 +296,19 @@ function Table({
         : itemsPerPageOptions[0];
     })();
 
-    if (paramPerPage !== currentItemsPerPage) {
+    if (paramPerPage !== perPage) {
       setCurrentItemsPerPage(paramPerPage);
       setCurrentPage(1);
       return;
     }
 
-    const totalPagesFromParam = pages(sortedData, paramPerPage);
+    const totalPagesFromParam = pages(sorted, paramPerPage);
     const clampedPage =
       totalPagesFromParam > 0
         ? Math.min(paramPage, totalPagesFromParam)
         : paramPage;
 
-    if (clampedPage !== currentPage) {
+    if (clampedPage !== pg) {
       setCurrentPage(clampedPage);
     }
   }, [searchParams]);
@@ -260,10 +316,15 @@ function Table({
   const renderedData = pagination
     ? page(currentPage, sortedData, currentItemsPerPage)
     : sortedData;
+  filterSyncRef.current.renderedData = renderedData;
+
+  const renderedDataLength = renderedData.length;
 
   useEffect(() => {
-    onPageChange(renderedData);
-  }, [currentPage, renderedData.length]);
+    const { onPageChange: callback, renderedData: rendered } =
+      filterSyncRef.current;
+    callback(rendered);
+  }, [currentPage, renderedDataLength]);
 
   const totalPages = pages(sortedData, currentItemsPerPage);
 
