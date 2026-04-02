@@ -5,32 +5,31 @@ defmodule Trento.AITest do
 
   import Trento.Factory
 
-  setup do
-    original_config = Application.get_env(:trento, :ai)
+  import Mox
 
-    on_exit(fn -> Application.put_env(:trento, :ai, original_config) end)
-  end
+  setup :verify_on_exit!
 
   describe "enabled?/0" do
     test "returns true when AI features are enabled" do
-      Application.put_env(:trento, :ai, enabled: true)
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: true] end)
+
       assert AI.enabled?() == true
     end
 
     test "returns false when AI features are disabled" do
-      Application.put_env(:trento, :ai, enabled: false)
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
       assert AI.enabled?() == false
     end
 
     test "returns false when AI features are not configured" do
-      Application.delete_env(:trento, :ai)
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [] end)
       assert AI.enabled?() == false
     end
   end
 
   describe "enabling/disabling features" do
     test "features are disabled" do
-      Application.put_env(:trento, :ai, enabled: false)
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 2, fn -> [enabled: false] end)
       user = build(:user)
 
       attrs = %{
@@ -43,10 +42,12 @@ defmodule Trento.AITest do
     end
 
     test "features are enabled" do
-      Application.put_env(:trento, :ai,
-        enabled: true,
-        configurations: DummyConfigurations
-      )
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 4, fn ->
+        [
+          enabled: true,
+          configurations: DummyConfigurations
+        ]
+      end)
 
       user = build(:user)
 

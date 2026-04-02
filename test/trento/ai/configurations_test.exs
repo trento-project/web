@@ -1,5 +1,6 @@
 defmodule Trento.Ai.ConfigurationsTest do
   use Trento.DataCase, async: true
+  use Trento.AI.AICase
 
   alias Trento.Users.User
 

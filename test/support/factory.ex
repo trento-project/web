@@ -1462,6 +1462,8 @@ defmodule Trento.Factory do
   end
 
   def random_ai_model do
+    Trento.AI.AICase.stub_config_loader()
+
     :all
     |> LLMRegistry.get_provider_models()
     |> Enum.random()

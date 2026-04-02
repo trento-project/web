@@ -3,6 +3,8 @@ defmodule Trento.AI.LLMRegistry do
   This module is responsible for managing the registry of available LLM providers and their models.
   """
 
+  alias Trento.AI.ApplicationConfigLoader
+
   @doc """
   Returns the list of configured LLM providers.
   """
@@ -47,9 +49,5 @@ defmodule Trento.AI.LLMRegistry do
   @spec model_supported?(bitstring()) :: boolean()
   def model_supported?(model), do: model in get_provider_models(:all)
 
-  defp get_ai_providers_config do
-    :trento
-    |> Application.get_env(:ai, [])
-    |> Keyword.get(:providers, [])
-  end
+  defp get_ai_providers_config, do: Keyword.get(ApplicationConfigLoader.load(), :providers, [])
 end

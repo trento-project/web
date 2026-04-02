@@ -3,6 +3,8 @@ defmodule Trento.AI do
   The `Trento.AI` module provides functions to interact with the AI features of the Trento application.
   """
 
+  alias Trento.AI.ApplicationConfigLoader
+
   alias Trento.AI.Configurations
 
   @doc """
@@ -10,10 +12,7 @@ defmodule Trento.AI do
   """
   @spec enabled?() :: boolean()
   def enabled?,
-    do:
-      :trento
-      |> Application.get_env(:ai, [])
-      |> Keyword.get(:enabled, false)
+    do: Keyword.get(ApplicationConfigLoader.load(), :enabled, false)
 
   @doc """
   Creates a user configuration for AI.
@@ -41,9 +40,6 @@ defmodule Trento.AI do
     end
   end
 
-  defp configurations do
-    :trento
-    |> Application.get_env(:ai)
-    |> Keyword.get(:configurations, Configurations)
-  end
+  defp configurations,
+    do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
 end
