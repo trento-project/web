@@ -9,21 +9,21 @@ import React from 'react';
 const iconByHealth = {
   passing: () => (
     <EOS_CHECK_CIRCLE_OUTLINED
-      size={40}
+      size="100%"
       className="fill-green-600"
       style={{ opacity: 1 }}
     />
   ),
   warning: () => (
     <EOS_WARNING_OUTLINED
-      size={40}
+      size="100%"
       className="fill-yellow-400"
       style={{ opacity: 1 }}
     />
   ),
   critical: () => (
     <EOS_ERROR_OUTLINED
-      size={40}
+      size="100%"
       className="fill-red-600"
       style={{ opacity: 1 }}
     />
@@ -32,20 +32,20 @@ const iconByHealth = {
 
 const styleByHealth = {
   passing: (selected, asButton) =>
-    classNames('tn-health-passing w-1/3 px-5 border rounded-lg my-2', {
+    classNames('tn-health-passing w-1/3 border rounded-lg my-2', {
       'bg-jungle-green-500 border-green-600 text-white hover:opacity-75':
         selected,
       'text-jungle-green-500 bg-white': !selected,
       'hover:opacity-75': asButton && !selected,
     }),
   warning: (selected, asButton) =>
-    classNames('tn-health-warning w-1/3 px-5 border rounded-lg my-2', {
+    classNames('tn-health-warning w-1/3 border rounded-lg my-2', {
       'bg-yellow-400 border-yellow-400 text-white hover:opacity-75': selected,
       'text-yellow-400 bg-white': !selected,
       'hover:opacity-75': asButton && !selected,
     }),
   critical: (selected, asButton) =>
-    classNames('tn-health-critical w-1/3 px-5 border rounded-lg my-2', {
+    classNames('tn-health-critical w-1/3 border rounded-lg my-2', {
       'bg-red-600 border-red-600 text-white hover:opacity-75': selected,
       'text-red-600 bg-white': !selected,
       'hover:opacity-75': asButton && !selected,
@@ -80,11 +80,11 @@ function HealthSummaryBox({
       role={!asButton ? null : 'button'}
       onClick={() => onClick(health)}
     >
-      <div className="flex rounded justify-between p-4 text-2xl font-semibold">
-        <span className="rounded-lg p-1 mr-2 bg-white">
+      <div className="flex rounded justify-between px-2 py-4 lg:px-4 text-2xl font-semibold">
+        <span className="min-w-8 w-12 rounded-lg p-1 bg-white">
           {iconByHealth[health]()}
         </span>
-        <div className="flex w-full ml-2 items-center justify-between">
+        <div className="flex w-full ml-2 items-center justify-between text-xl lg:text-2xl">
           <p>{labelByHealth[health]}</p>
           <p className="font-semibold">{value}</p>
         </div>

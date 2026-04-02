@@ -191,7 +191,7 @@ function Table({
 
   return (
     <div
-      className={classNames(className, 'container mx-auto', {
+      className={classNames('container mx-auto', {
         'px-4 sm:px-8': usePadding,
       })}
     >
@@ -208,9 +208,9 @@ function Table({
           />
         </div>
       )}
-      <div className="">
+      <div className={className}>
         <div
-          className={classNames('-mx-4 sm:-mx-8 px-4 sm:px-8', {
+          className={classNames('', {
             'pt-4': usePadding,
           })}
         >
@@ -223,7 +223,7 @@ function Table({
             )}
           >
             {header}
-            <table className="min-w-full leading-normal table-fixed">
+            <table className="min-w-full w-max leading-normal table-fixed">
               <thead>
                 <tr>
                   {collapsibleDetailRenderer && (
@@ -297,45 +297,46 @@ function Table({
                 )}
               </tbody>
             </table>
-            {pagination && (
-              <Pagination
-                hasPrev={currentPage > 1}
-                hasNext={currentPage < totalPages}
-                currentItemsPerPage={currentItemsPerPage}
-                onSelect={(selection) => {
-                  switch (selection) {
-                    case 'prev':
-                      setCurrentPage(currentPage - 1);
-                      break;
-                    case 'next':
-                      setCurrentPage(currentPage + 1);
-                      break;
-                    case 'first':
-                      setCurrentPage(1);
-                      break;
-                    case 'last':
-                      setCurrentPage(totalPages);
-                      break;
-                    default:
-                  }
-                }}
-                onChangeItemsPerPage={(perPage) => {
-                  setCurrentItemsPerPage(perPage);
-                  setCurrentPage(1);
-                }}
-                pageStats={
-                  <PageStats
-                    selectedPage={Math.min(currentPage, totalPages)}
-                    itemsPresent={renderedData.length}
-                    itemsTotal={filteredData.length}
-                    currentItemsPerPage={currentItemsPerPage}
-                  />
-                }
-              />
-            )}
           </div>
         </div>
       </div>
+      {pagination && (
+        <Pagination
+          className="rounded-b"
+          hasPrev={currentPage > 1}
+          hasNext={currentPage < totalPages}
+          currentItemsPerPage={currentItemsPerPage}
+          onSelect={(selection) => {
+            switch (selection) {
+              case 'prev':
+                setCurrentPage(currentPage - 1);
+                break;
+              case 'next':
+                setCurrentPage(currentPage + 1);
+                break;
+              case 'first':
+                setCurrentPage(1);
+                break;
+              case 'last':
+                setCurrentPage(totalPages);
+                break;
+              default:
+            }
+          }}
+          onChangeItemsPerPage={(perPage) => {
+            setCurrentItemsPerPage(perPage);
+            setCurrentPage(1);
+          }}
+          pageStats={
+            <PageStats
+              selectedPage={Math.min(currentPage, totalPages)}
+              itemsPresent={renderedData.length}
+              itemsTotal={filteredData.length}
+              currentItemsPerPage={currentItemsPerPage}
+            />
+          }
+        />
+      )}
     </div>
   );
 }

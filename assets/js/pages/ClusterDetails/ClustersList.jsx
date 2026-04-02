@@ -50,6 +50,7 @@ function ClustersList() {
   const config = {
     pagination: true,
     usePadding: false,
+    hideMobile: true,
     columns: [
       {
         title: 'Health',
@@ -105,6 +106,7 @@ function ClustersList() {
       },
       {
         title: 'Resources',
+        className: 'hidden xl:table-cell',
         key: 'resources_number',
       },
       {
@@ -128,7 +130,7 @@ function ClustersList() {
       {
         title: 'Tags',
         key: 'tags',
-        className: 'w-80',
+        className: 'w-80 hidden 2xl:table-cell',
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((tag) => filter.includes(tag)),

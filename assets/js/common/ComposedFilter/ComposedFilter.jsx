@@ -20,7 +20,13 @@ const renderFilter = (key, { type, ...filterProps }, value, onChange) => {
       );
     case 'select':
       return (
-        <Filter key={key} {...filterProps} value={value} onChange={onChange} />
+        <Filter
+          key={key}
+          {...filterProps}
+          value={value}
+          hideMobile={(key === 'tags') & filterProps.hideMobile ? true : false}
+          onChange={onChange}
+        />
       );
     case 'date':
       return (
@@ -77,7 +83,10 @@ function ComposedFilter({
     <div className="grid grid-flow-col grid-cols-2 gap-2">
       <div
         className={classNames(
-          'grid grid-cols-subgrid grid-flow-col gap-2 grid-cols-5 col-span-5',
+          'grid grid-cols-subgrid grid-flow-col grid-rows-2 md:grid-rows-1 gap-2 lg:gap-4',
+          { 'grid-cols-2 md:grid-cols-3 col-span-3': filters.length === 3 },
+          { 'grid-cols-4 col-span-4': filters.length === 4 },
+          { 'xl:grid-cols-5 col-span-5 xl:col-span-3': filters.length === 5 },
           className
         )}
       >
@@ -90,8 +99,8 @@ function ComposedFilter({
           ])
           .map((args) => renderFilter(...args))}
       </div>
-      <div className="grid grid-cols-subgrid grid-flow-col gap-2 grid-rows-2 grid-cols-2 col-span-2">
-        {!autoApply && (
+      {!autoApply && (
+        <div className="grid grid-cols-subgrid grid-flow-col gap-2 grid-rows-2 grid-cols-2 col-span-2">
           <>
             {children && (
               <div className="grid grid-cols-subgrid grid-flow-col col-span-2 gap-2">
@@ -120,8 +129,8 @@ function ComposedFilter({
               </Button>
             </div>
           </>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
