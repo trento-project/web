@@ -1,4 +1,4 @@
-defmodule Trento.AiTest do
+defmodule Trento.AITest do
   use ExUnit.Case
 
   alias Trento.AI

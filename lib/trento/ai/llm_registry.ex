@@ -1,4 +1,4 @@
-defmodule Trento.AI.LlmRegistry do
+defmodule Trento.AI.LLMRegistry do
   @moduledoc """
   This module is responsible for managing the registry of available LLM providers and their models.
   """

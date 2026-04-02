@@ -182,7 +182,7 @@ defmodule Trento.Factory do
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
-  alias Trento.AI.{LlmRegistry, UserConfiguration}
+  alias Trento.AI.{LLMRegistry, UserConfiguration}
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -1463,7 +1463,7 @@ defmodule Trento.Factory do
 
   def random_ai_model do
     :all
-    |> LlmRegistry.get_provider_models()
+    |> LLMRegistry.get_provider_models()
     |> Enum.random()
   end
 

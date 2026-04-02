@@ -6,14 +6,14 @@ defmodule Trento.AI.UserConfiguration do
 
   alias Trento.Support.Ecto.EncryptedBinary
 
-  alias Trento.AI.LlmRegistry
+  alias Trento.AI.LLMRegistry
 
   @type t :: %__MODULE__{}
 
   @primary_key false
   schema "ai_configurations" do
     field :model, :string
-    field :provider, Ecto.Enum, values: LlmRegistry.providers()
+    field :provider, Ecto.Enum, values: LLMRegistry.providers()
     field :api_key, EncryptedBinary, redact: true
 
     belongs_to :user, Trento.Users.User, primary_key: true
@@ -45,11 +45,11 @@ defmodule Trento.AI.UserConfiguration do
   defp get_model_provider(attrs) do
     attrs
     |> Map.get(:model)
-    |> LlmRegistry.get_model_provider()
+    |> LLMRegistry.get_model_provider()
   end
 
   defp validate_model(_model_field_atom, model) do
-    if LlmRegistry.model_supported?(model) do
+    if LLMRegistry.model_supported?(model) do
       []
     else
       [model: {"is not supported", validation: :ai_model_validity}]
