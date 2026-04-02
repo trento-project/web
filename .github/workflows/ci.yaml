@@ -1085,7 +1085,7 @@ jobs:
             tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
           - mix_env: demo
             tag: demo
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@98e2a3d821253d603d16fd53fb10bcf85f64b395
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@b3aa163d3e0872c07ccf3755928f21c070ca0e5b # v1.1.0
     with:
       image_name: trento-web
       tag: ${{ matrix.tag }}
@@ -1202,9 +1202,9 @@ jobs:
           photofinish run demo -u "http://$TRENTO_DEMO_IP/api/v1/collect" "$TRENTO_API_KEY"
 
   obs-sync:
-    name: Update obs packages
-    if: vars.OBS_ENABLED == 'true' && (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/obs.yaml
+    name: Update OBS packages
+    if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
     needs:
       - static-code-analysis-elixir
       - static-code-analysis-js
@@ -1213,6 +1213,11 @@ jobs:
       - test-e2e
       - test-integration
       - test-regression
-    secrets: inherit
     with:
       obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
+      obs_package: ${{ vars.OBS_PACKAGE }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      obs_user: ${{ secrets.OBS_USER }}
+      obs_pass: ${{ secrets.OBS_PASS }}
+      obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}

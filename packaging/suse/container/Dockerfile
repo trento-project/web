@@ -7,30 +7,7 @@
 #!UseOBSRepositories
 #!ExclusiveArch: x86_64
 
-ARG OS_VER=15.7
-FROM registry.suse.com/bci/nodejs:22 AS assets-build
-ADD web.tar.gz /build/
-WORKDIR /build/web/assets
-RUN npm run tailwind:build
-RUN npm run build
-
-FROM registry.suse.com/bci/bci-base:${OS_VER} AS release
-RUN zypper -n in make gcc git-core elixir==1.15 elixir-hex erlang==26 erlang-rebar3
-COPY --from=assets-build /build /build
-WORKDIR /build/web/
-ENV LANG=en_US.UTF-8
-ENV LANGUAGE=en_US:en
-ENV LC_ALL=en_US.UTF-8
-ENV MIX_ENV=prod
-ENV MIX_HOME=/usr/bin
-ENV MIX_REBAR3=/usr/bin/rebar3
-ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
-ENV VERSION=%%VERSION%%
-ENV GTM_ID=%%GTM_ID%%
-RUN mix phx.digest
-RUN mix release
-
-FROM registry.suse.com/bci/bci-base:${OS_VER}
+FROM registry.suse.com/bci/bci-base:15.7
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
@@ -58,9 +35,8 @@ LABEL org.opencontainers.image.base.name="%BASE_REFNAME%"
 LABEL org.opencontainers.image.base.digest="%BASE_DIGEST%"
 LABEL io.artifacthub.package.logo-url="https://www.trento-project.io/images/trento-icon.svg"
 LABEL io.artifacthub.package.readme-url="%SOURCEURL_WITH(README.md)%"
-# Erlang runtime dependencies
-RUN zypper -n in libsystemd0 libopenssl3
-WORKDIR /app
-COPY --from=release /build/web/_build/prod/rel/trento .
+
+RUN zypper -n in trento-web; \
+    zypper -n clean -a;
 EXPOSE 4000/tcp
-ENTRYPOINT ["/app/bin/trento"]
+ENTRYPOINT ["/usr/lib/trento/bin/trento"]
