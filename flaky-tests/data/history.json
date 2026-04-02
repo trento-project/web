@@ -2893,5 +2893,25 @@
         "score": 0.25
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-02T04:29:02Z",
+    "commit": "e05ba8d0898f3c86967c5d9b1728027b00c6878f",
+    "run_id": "23883420296",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.1001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
   }
 ]
