@@ -13,7 +13,7 @@ concurrency: ${{ github.workflow }}
 jobs:
   release:
     name: Git Release
-    uses: trento-project/.github/.github/workflows/git-release.yaml@02ffead455852e984484738fd1c28ea839c94cbf # v1.4.2
+    uses: trento-project/.github/.github/workflows/git-release.yaml@145e0db1f8ffe3b28218ad91ae871936f640f439 # v1.4.3
     with:
       triggering_branch: ${{ github.ref_name }}
     secrets:
