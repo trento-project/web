@@ -13,7 +13,7 @@ concurrency: ${{ github.workflow }}
 jobs:
   release:
     name: Git Release
-    uses: trento-project/.github/.github/workflows/git-release.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
+    uses: trento-project/.github/.github/workflows/git-release.yaml@8eb0cca8f3ddfa9927356bb38dde2de86c91219b # v1.4.0
     with:
       triggering_branch: ${{ github.ref_name }}
     secrets:
@@ -23,7 +23,7 @@ jobs:
 
   publish-containers:
     name: Publish GHCR Containers
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@8eb0cca8f3ddfa9927356bb38dde2de86c91219b # v1.4.0
     needs:
       - release
     strategy:
@@ -57,7 +57,7 @@ jobs:
             name: stable
           - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
             name: rolling
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@8eb0cca8f3ddfa9927356bb38dde2de86c91219b # v1.4.0
     with:
       update_changelog: true
       obs_project: ${{ matrix.obs_project }}
