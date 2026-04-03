@@ -4,88 +4,26 @@ on:
   push:
     branches:
       - main
+      - release
     paths:
       - "VERSION"
 
 concurrency: ${{ github.workflow }}
 
 jobs:
-  pre-release:
-    name: Detect new version, draft release, update changelog
-    permissions:
-      contents: write
-    runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.detect-version.outputs.current-version }}
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-        with:
-          fetch-depth: 2
-          ssh-key: ${{ secrets.RELEASE_KEY }}
-
-      - name: Check if there is a parent commit
-        id: check-parent-commit
-        run: |
-          echo "sha=$(git rev-parse --verify --quiet HEAD^)" >> $GITHUB_OUTPUT
-
-      - name: Detect new version
-        id: detect-version
-        if: steps.check-parent-commit.outputs.sha
-        uses: salsify/action-detect-and-tag-new-version@b1778166f13188a9d478e2d1198f993011ba9864 # v2.0.3
-        with:
-          create-tag: false
-          version-command: |
-            cat VERSION
-
-      - name: Draft release
-        id: draft-release
-        uses: release-drafter/release-drafter@139054aeaa9adc52ab36ddf67437541f039b88e2 # v7
-        with:
-          publish: false
-          version: ${{ steps.detect-version.outputs.current-version }}
-          disable-autolabeler: true
-          config-name: release_drafter.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update CHANGELOG.md
-        uses: stefanzweifel/changelog-updater-action@a938690fad7edf25368f37e43a1ed1b34303eb36 # v1
-        with:
-          latest-version: ${{ steps.draft-release.outputs.tag_name }}
-          release-notes: ${{ steps.draft-release.outputs.body }}
-
-      - name: Commit new changelog
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
-        with:
-          branch: main
-          commit_message: "Automatically update CHANGELOG.md for release ${{ steps.detect-version.outputs.current-version }}"
-
   release:
-    name: Tag and publish release
-    permissions:
-      contents: write
-    runs-on: ubuntu-24.04
-    outputs:
-      version: ${{ steps.publish-release.outputs.tag_name }}
-    needs:
-      - pre-release
-    steps:
-      - name: Publish release
-        id: publish-release
-        uses: release-drafter/release-drafter@139054aeaa9adc52ab36ddf67437541f039b88e2 # v7
-        with:
-          publish: true
-          tag: ${{ needs.pre-release.outputs.version }}
-          version: ${{ needs.pre-release.outputs.version }}
-          disable-autolabeler: true
-          config-name: release_drafter.yaml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    name: Git Release
+    uses: trento-project/.github/.github/workflows/git-release.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
+    with:
+      triggering_branch: ${{ github.ref_name }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+      gpg_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
 
   publish-containers:
     name: Publish GHCR Containers
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@b3aa163d3e0872c07ccf3755928f21c070ca0e5b # v1.1.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
     needs:
       - release
     strategy:
@@ -108,17 +46,24 @@ jobs:
       ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
 
   obs-sync:
-    name: Update OBS package
-    if: vars.OBS_ENABLED == 'true'
-    uses: ./.github/workflows/obs.yaml
+    name: Update OBS package (${{ matrix.name }})
+    needs:
+      - release
+    if: fromJSON(vars.OBS_ENABLED)
     strategy:
       matrix:
         include:
           - obs_project: ${{ vars.OBS_PROJECT_STABLE }}
+            name: stable
           - obs_project: ${{ vars.OBS_PROJECT_ROLLING }}
-    needs:
-      - release
-    secrets: inherit
+            name: rolling
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@4da9363d468d645164f5d81714e41c07b539834a # v1.3.0
     with:
       update_changelog: true
       obs_project: ${{ matrix.obs_project }}
+      obs_package: ${{ vars.OBS_PACKAGE }}
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      obs_user: ${{ secrets.OBS_USER }}
+      obs_pass: ${{ secrets.OBS_PASS }}
+      obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
