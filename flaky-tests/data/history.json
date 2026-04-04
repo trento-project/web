@@ -3169,5 +3169,21 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-04T04:17:02Z",
+    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
+    "run_id": "23970860615",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
+        "score": 0.05001
+      }
+    ]
   }
 ]
