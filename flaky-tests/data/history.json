@@ -3305,5 +3305,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-05T04:37:46Z",
+    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
+    "run_id": "23994134670",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
