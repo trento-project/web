@@ -3348,5 +3348,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-04-05T07:03:40Z",
+    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
+    "run_id": "23994424541",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 12
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should have an empty last login field if the user has not logged in yet::Users Last login should have an empty last login field if the user has not logged in yet",
+        "score": 0.5
+      },
+      {
+        "name": "should update the last login field with the current time when the user logs in::Users Last login should update the last login field with the current time when the user logs in",
+        "score": 0.5
+      },
+      {
+        "name": "should complete host deregistration when all instances are moved out::Hosts Overview Deregistration Clean-up button should deregister a host Movement of application instances on hosts should complete host deregistration when all instances are moved out",
+        "score": 0.07026
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.05707
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.02501
+      }
+    ]
   }
 ]
