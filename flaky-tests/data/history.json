@@ -3380,5 +3380,45 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-06T04:10:33Z",
+    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
+    "run_id": "24018029578",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 7
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
