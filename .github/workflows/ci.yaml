@@ -1103,13 +1103,14 @@ jobs:
       - publish-containers
     if: >-
       ${{
-        !cancelled() &&
-        (needs.publish-containers.result == 'skipped' || needs.publish-containers.result == 'success') &&
-        vars.DEPLOY_DEMO == 'true' &&
-        (
-          (github.event_name == 'repository_dispatch' && github.event.action == 'deploy-demo') ||
-          (github.event_name == 'push' && github.ref_name == 'main') ||
-          github.event_name == 'workflow_dispatch'
+        !cancelled()
+        && vars.DEPLOY_DEMO == 'true'
+        && (
+          (github.event_name == 'push' && github.ref_name == 'main' || github.event_name == 'workflow_dispatch')
+          && needs.publish-containers.result == 'success'
+          || github.event_name == 'repository_dispatch'
+             && github.event.action == 'deploy-demo'
+             && needs.publish-containers.result == 'skipped'
         )
       }}
     env:
