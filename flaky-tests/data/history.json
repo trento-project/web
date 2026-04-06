@@ -3488,5 +3488,29 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-06T04:47:48Z",
+    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
+    "run_id": "24018677760",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.05001
+      },
+      {
+        "name": "Settings sagas › checkApiKeyExpiration saga::should dispatch a dismissable notification if the api key is to expire in less than 30 days",
+        "score": 0.02501
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
   }
 ]
