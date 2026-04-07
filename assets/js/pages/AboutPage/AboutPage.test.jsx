@@ -18,6 +18,31 @@ describe('AboutPage component', () => {
     expect(
       screen.getByText(`${apiRequestData.sles_subscriptions} found`)
     ).toBeTruthy();
+    expect(screen.getByText(apiRequestData.wanda_version)).toBeTruthy();
+    expect(screen.getByText(apiRequestData.postgres_version)).toBeTruthy();
+    expect(screen.getByText(apiRequestData.rabbitmq_version)).toBeTruthy();
+    expect(screen.getByText(apiRequestData.prometheus_version)).toBeTruthy();
+  });
+
+  it('should render N/A when component versions are null', async () => {
+    const dataWithNullVersions = {
+      ...apiRequestData,
+      wanda_version: null,
+      postgres_version: null,
+      rabbitmq_version: null,
+      prometheus_version: null,
+    };
+
+    await act(async () => {
+      renderWithRouter(
+        <AboutPage
+          onFetch={() => Promise.resolve({ data: dataWithNullVersions })}
+        />
+      );
+    });
+
+    const naElements = screen.getAllByText('N/A');
+    expect(naElements).toHaveLength(4);
   });
 
   it('should render the about page with default values if api get request fails', async () => {

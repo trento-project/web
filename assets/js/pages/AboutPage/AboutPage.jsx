@@ -12,27 +12,61 @@ import AboutPageText from './AboutPageText';
 function AboutPage({ onFetch = getAboutData }) {
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');
+  const [wandaVersion, setWandaVersion] = useState(null);
+  const [postgresVersion, setPostgresVersion] = useState(null);
+  const [rabbitmqVersion, setRabbitmqVersion] = useState(null);
+  const [prometheusVersion, setPrometheusVersion] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     onFetch()
-      .then(({ data: { version: newVersion, sles_subscriptions } }) => {
-        setLoading(false);
-        setVersion(newVersion);
-        setSubscriptions(sles_subscriptions);
-      })
+      .then(
+        ({
+          data: {
+            version: newVersion,
+            sles_subscriptions,
+            wanda_version,
+            postgres_version,
+            rabbitmq_version,
+            prometheus_version,
+          },
+        }) => {
+          setLoading(false);
+          setVersion(newVersion);
+          setSubscriptions(sles_subscriptions);
+          setWandaVersion(wanda_version);
+          setPostgresVersion(postgres_version);
+          setRabbitmqVersion(rabbitmq_version);
+          setPrometheusVersion(prometheus_version);
+        }
+      )
       .catch((error) => {
         logError(error);
         setLoading(false);
       });
   }, []);
 
-  // TODO: check if the data is off now
   const listViewData = [
     {
       title: 'Server version',
       content: loading ? 'Loading...' : version,
+    },
+    {
+      title: 'Wanda version',
+      content: loading ? 'Loading...' : wandaVersion || 'N/A',
+    },
+    {
+      title: 'PostgreSQL version',
+      content: loading ? 'Loading...' : postgresVersion || 'N/A',
+    },
+    {
+      title: 'RabbitMQ version',
+      content: loading ? 'Loading...' : rabbitmqVersion || 'N/A',
+    },
+    {
+      title: 'Prometheus version',
+      content: loading ? 'Loading...' : prometheusVersion || 'N/A',
     },
     {
       title: 'GitHub repository',

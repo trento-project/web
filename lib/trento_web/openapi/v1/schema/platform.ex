@@ -81,7 +81,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         example: %{
           flavor: "Community",
           version: "2.4.0",
-          sles_subscriptions: 5
+          sles_subscriptions: 5,
+          wanda_version: "1.0.0",
+          postgres_version: "16.1",
+          rabbitmq_version: "3.12.0",
+          prometheus_version: "2.48.0"
         },
         properties: %{
           flavor: %Schema{
@@ -98,6 +102,26 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :integer,
             description:
               "The number of SLES Subscription discovered on the target infrastructure."
+          },
+          wanda_version: %Schema{
+            type: :string,
+            nullable: true,
+            description: "Version of the Wanda checks engine."
+          },
+          postgres_version: %Schema{
+            type: :string,
+            nullable: true,
+            description: "Version of the PostgreSQL server."
+          },
+          rabbitmq_version: %Schema{
+            type: :string,
+            nullable: true,
+            description: "Version of the RabbitMQ server."
+          },
+          prometheus_version: %Schema{
+            type: :string,
+            nullable: true,
+            description: "Version of the Prometheus server."
           }
         }
       },
