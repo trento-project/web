@@ -55,7 +55,7 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:agentic_runtime,
-       github: "gagandeepb/agentic_runtime", ref: "10ecdbc7cffae34caca55fbd70bd4d30283fdf4b"},
+       github: "trento-project/agentic_runtime", ref: "7078150e8273f3b4671e78e6518c33de477da143"},
       {:cachex, "~> 4.1"},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.3"},
