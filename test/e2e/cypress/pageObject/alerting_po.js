@@ -42,7 +42,7 @@ export const emailIsReceived = (type) => {
 };
 
 export const triggerHostAlertingEmail = () => {
-  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
+  basePage.startAgentsHeartbeat(['9cd46919-5f19-59aa-993e-cf3736c71053']);
   basePage.stopAgentsHeartbeat();
 };
 
