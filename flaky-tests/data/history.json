@@ -3564,5 +3564,21 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-07T04:01:34Z",
+    "commit": "d8cc7cd8b9b4c08109924a5c859ed816111cf639",
+    "run_id": "24063285446",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.02501
+      }
+    ]
   }
 ]
