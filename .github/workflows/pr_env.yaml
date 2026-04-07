@@ -26,6 +26,7 @@ jobs:
     with:
       image_name: trento-web
       tag: ${{ github.event.pull_request.number }}-env
+      branch: ${{ github.ref_name }}
       extra_build_args: |
         MIX_ENV=prod
         GTM_ID=${{ vars.GTM_ID }}
