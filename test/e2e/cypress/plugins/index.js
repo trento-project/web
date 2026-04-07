@@ -19,7 +19,6 @@
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
