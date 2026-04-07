@@ -14,7 +14,6 @@ import {
   HOST_REBOOT,
   OPERATION_NOT_ALLOWED_HOST,
   getOperationLabel,
-  getOperationForbiddenMessage,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
@@ -186,9 +185,7 @@ function HostDetails({
             isOpen={operationForbidden}
             onCancel={cleanForbiddenOperation}
             errors={operationForbiddenErrors}
-          >
-            {getOperationForbiddenMessage(runningOperationName)}
-          </OperationForbiddenModal>
+          />
           <SaptuneSolutionOperationModal
             operation={currentOperation}
             currentlyApplied={currentlyAppliedSolution}

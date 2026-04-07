@@ -1,7 +1,5 @@
 import { get } from 'lodash';
 
-import { SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG } from './ForbiddenMessages';
-
 export const HOST_OPERATION = 'host';
 export const CLUSTER_OPERATION = 'cluster';
 export const SAP_SYSTEM_OPERATION = 'sap_system';
@@ -108,11 +106,6 @@ const OPERATION_RESOURCE_TYPES = {
   [HOST_REBOOT]: HOST_OPERATION,
 };
 
-const OPERATION_FORBIDDEN_MESSAGES = {
-  [SAPTUNE_SOLUTION_APPLY]: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-  [SAPTUNE_SOLUTION_CHANGE]: SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG,
-};
-
 export const OPERATION_REQUEST_FAILED = 'REQUEST_FAILED';
 
 export const getOperationLabel = (operation) =>
@@ -126,9 +119,6 @@ export const getOperationInternalName = (operation) =>
 
 export const getOperationResourceType = (operation) =>
   get(OPERATION_RESOURCE_TYPES, operation, 'unknown');
-
-export const getOperationForbiddenMessage = (operation) =>
-  get(OPERATION_FORBIDDEN_MESSAGES, operation, null);
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);

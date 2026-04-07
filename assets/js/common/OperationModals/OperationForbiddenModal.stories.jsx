@@ -30,8 +30,4 @@ export default {
   },
 };
 
-export const Default = {
-  args: {
-    children: 'My operation forbidden additional information',
-  },
-};
+export const Default = {};

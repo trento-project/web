@@ -1,10 +1,7 @@
-import { SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG } from './ForbiddenMessages';
-
 import {
   getOperationLabel,
   getOperationInternalName,
   getOperationResourceType,
-  getOperationForbiddenMessage,
   operationSucceeded,
   getOperationTitle,
   shouldShowOperationDisclaimer,
@@ -105,18 +102,6 @@ describe('operations', () => {
     `should return the operation $operation resource type`,
     ({ operation, resourceType }) => {
       expect(getOperationResourceType(operation)).toBe(resourceType);
-    }
-  );
-
-  it.each`
-    operation                    | message
-    ${'unknown'}                 | ${null}
-    ${'saptune_solution_apply'}  | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
-    ${'saptune_solution_change'} | ${SAPTUNE_SOLUTION_OPERATION_FORBIDDEN_MSG}
-  `(
-    `should return the operation $operation forbidden message`,
-    ({ operation, message }) => {
-      expect(getOperationForbiddenMessage(operation)).toBe(message);
     }
   );
 
