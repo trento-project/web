@@ -31,11 +31,15 @@ jobs:
         include:
           - mix_env: prod
             tag: ${{ needs.release.outputs.version }}
+            branch: ${{ github.ref_name }}
           - mix_env: prod
             tag: rolling
+            branch: main
           - mix_env: demo
             tag: demo
+            branch: main
     with:
+      branch: ${{ matrix.branch }}
       image_name: trento-web
       tag: ${{ matrix.tag }}
       extra_build_args: |
