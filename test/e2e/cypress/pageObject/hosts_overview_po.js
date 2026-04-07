@@ -341,8 +341,9 @@ export const startAgentHeartbeat = () => {
   return cy.task('startAgentHeartbeat', [hostToDeregister.id]);
 };
 
-export const startAgentsHeartbeat = () =>
-  cy.task('startAgentHeartbeat', agents());
+export const startAgentsHeartbeat = () => {
+  basePage.startAgentsHeartbeat(agents());
+};
 
 export const loadHostWithoutSaptune = () =>
   basePage.loadScenario(`host-${hostWithoutSap}-saptune-uninstalled`);

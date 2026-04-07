@@ -269,8 +269,22 @@ export const loadScenario = (scenario) => {
     return cy.exec(photofinishCommand, { timeout: 360000 });
   };
 
-  cy.task('getApiKey').then((apiKey) => runPhotofinish(apiKey));
+  if (baseUrl.includes('localhost')) return runPhotofinish();
+  else return getApiKey().then((apiKey) => runPhotofinish(apiKey));
 };
+
+export const getApiKey = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/settings/api_key',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((response) => response.body.generated_api_key)
+  );
 
 const isTestDataLoaded = () =>
   apiLogin().then(({ accessToken }) =>

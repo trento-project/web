@@ -584,7 +584,7 @@ export const loadAwsHostDetails = () =>
   basePage.loadScenario('host-details-aws');
 
 export const startAgentHeartbeat = () =>
-  cy.task('startAgentHeartbeat', [selectedHost.agentId]);
+  basePage.startAgentsHeartbeat([selectedHost.agentId]);
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);

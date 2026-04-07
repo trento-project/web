@@ -18,46 +18,42 @@
 
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
+let heartbeatsIntervals = [];
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
   cypressSplit(on, config);
-
   on('task', {
-    async getApiKey() {
-      return fetchApiKeyFromServer(config);
-    },
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
-    startAgentHeartbeat(agents) {
-      const heartbeatInterval = config.env.heartbeat_interval;
+    startAgentHeartbeat({ agents, apiKey }) {
+      const url = new URL(config.baseUrl);
+      const isHttps = url.protocol === 'https:';
+      const transport = isHttps ? require('https') : require('http');
 
-      const startIntervals = (apiKey) => {
-        agents.forEach((agentId) => {
-          const heartbeat = () => {
-            const headers = {};
-            if (apiKey) headers['X-Trento-apiKey'] = apiKey;
-
-            return fetch(
-              `${config.baseUrl}/api/v1/hosts/${agentId}/heartbeat`,
-              {
-                method: 'POST',
-                headers,
-              }
-            );
-          };
-
-          heartbeat();
-          let interval = setInterval(heartbeat, heartbeatInterval);
-          heartbeatsIntervals.push(interval);
-        });
+      const heartbeat = (agentId) => {
+        transport
+          .request({
+            host: url.hostname,
+            path: `/api/v1/hosts/${agentId}/heartbeat`,
+            port: url.port || (isHttps ? 443 : 80),
+            method: 'POST',
+            headers: apiKey ? { 'X-Trento-ApiKey': apiKey } : {},
+          })
+          .end();
       };
 
-      if (!config.baseUrl.includes('localhost')) {
-        fetchApiKeyFromServer(config).then((key) => startIntervals(key));
-      } else startIntervals();
+      agents.forEach((agentId) => {
+        heartbeat(agentId);
+        let interval = setInterval(
+          () => heartbeat(agentId),
+          config.env.heartbeat_interval
+        );
+        heartbeatsIntervals.push(interval);
+      });
 
       return null;
     },
@@ -66,7 +62,6 @@ module.exports = (on, config) => {
       heartbeatsIntervals.forEach((interval) => {
         clearInterval(interval);
       });
-      heartbeatsIntervals = [];
       return null;
     },
   });
@@ -78,40 +73,6 @@ module.exports = (on, config) => {
   on('file:preprocessor', webpack(webpackOptions));
 
   return config;
-};
-
-let heartbeatsIntervals = [];
-
-const fetchApiKeyFromServer = async (config) => {
-  const { baseUrl, env } = config;
-  const { login_user, login_password } = env;
-
-  const loginResponse = await fetch(`${baseUrl}/api/session`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      username: login_user,
-      password: login_password,
-    }),
-  });
-
-  if (!loginResponse.ok) {
-    throw new Error(`Login failed with status ${loginResponse.status}`);
-  }
-
-  const { access_token } = await loginResponse.json();
-
-  const apiKeyResponse = await fetch(`${baseUrl}/api/v1/settings/api_key`, {
-    headers: { Authorization: `Bearer ${access_token}` },
-  });
-
-  if (!apiKeyResponse.ok) {
-    throw new Error(
-      `API Key retrieval failed with status ${apiKeyResponse.status}`
-    );
-  }
-  const { generated_api_key } = await apiKeyResponse.json();
-  return generated_api_key;
 };
 
 const mailpitUrl = 'http://localhost:8025/api/v1';
