@@ -23,7 +23,6 @@ import {
   CLUSTER_HOST_STOP,
   OPERATION_NOT_ALLOWED_CLUSTER,
   getOperationLabel,
-  getOperationForbiddenMessage,
 } from '@lib/operations';
 
 import BackButton from '@common/BackButton';
@@ -167,9 +166,7 @@ function ClusterDetails({
             isOpen={operationForbidden}
             onCancel={onCleanForbiddenOperation}
             errors={operationForbiddenErrors}
-          >
-            {getOperationForbiddenMessage(runningOperationName)}
-          </OperationForbiddenModal>
+          />
           <SimpleAcceptanceOperationModal
             operation={operationModalOpen.operation}
             descriptionResolverArgs={getOperationModalDescriptionArgs(

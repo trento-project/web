@@ -34,7 +34,6 @@ import {
   OPERATION_NOT_ALLOWED_SAP_SYSTEM,
   OPERATION_NOT_ALLOWED_SITE,
   getOperationLabel,
-  getOperationForbiddenMessage,
 } from '@lib/operations';
 import {
   APPLICATION_TYPE,
@@ -228,9 +227,7 @@ export function GenericSystemDetails({
         isOpen={isForbidden}
         onCancel={() => onCleanForbiddenOperation(forbiddenOperationID)}
         errors={forbiddenErrors}
-      >
-        {getOperationForbiddenMessage(forbiddenOperationName)}
-      </OperationForbiddenModal>
+      />
       <SimpleAcceptanceOperationModal
         operation={operationModalOpen.operation}
         descriptionResolverArgs={{

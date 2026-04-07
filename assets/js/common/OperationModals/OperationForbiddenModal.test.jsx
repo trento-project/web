@@ -11,9 +11,7 @@ describe('OperationForbiddenModal', () => {
         operation="My operation"
         errors={['error1', 'error2']}
         isOpen
-      >
-        Some children
-      </OperationForbiddenModal>
+      />
     );
 
     expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
@@ -28,8 +26,6 @@ describe('OperationForbiddenModal', () => {
     const items = getAllByRole('listitem');
     expect(items[0].textContent).toBe('error1');
     expect(items[1].textContent).toBe('error2');
-
-    expect(screen.getByText('Some children')).toBeInTheDocument();
   });
 
   it('should run onCancel when the close button is clicked', async () => {

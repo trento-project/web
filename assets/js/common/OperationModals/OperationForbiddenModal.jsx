@@ -10,7 +10,6 @@ function OperationForbiddenModal({
   errors,
   isOpen = false,
   onCancel = noop,
-  children,
 }) {
   return (
     <Modal
@@ -30,7 +29,6 @@ function OperationForbiddenModal({
           </li>
         ))}
       </ul>
-      <p className="text-sm mb-1">{children}</p>
       <div className="flex justify-start gap-2 mt-4">
         <Button
           type="primary-white-fit"

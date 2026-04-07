@@ -106,8 +106,6 @@ const OPERATION_RESOURCE_TYPES = {
   [HOST_REBOOT]: HOST_OPERATION,
 };
 
-const OPERATION_FORBIDDEN_MESSAGES = {};
-
 export const OPERATION_REQUEST_FAILED = 'REQUEST_FAILED';
 
 export const getOperationLabel = (operation) =>
@@ -121,9 +119,6 @@ export const getOperationInternalName = (operation) =>
 
 export const getOperationResourceType = (operation) =>
   get(OPERATION_RESOURCE_TYPES, operation, 'unknown');
-
-export const getOperationForbiddenMessage = (operation) =>
-  get(OPERATION_FORBIDDEN_MESSAGES, operation, null);
 
 export const operationSucceeded = (result) =>
   ['UPDATED', 'NOT_UPDATED'].includes(result);
