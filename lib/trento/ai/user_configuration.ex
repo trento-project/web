@@ -35,18 +35,10 @@ defmodule Trento.AI.UserConfiguration do
     |> foreign_key_constraint(:user_id, message: "User does not exist")
   end
 
-  defp maybe_update_provider(attrs) do
-    case Map.has_key?(attrs, :model) do
-      true -> Map.put(attrs, :provider, get_model_provider(attrs))
-      false -> attrs
-    end
-  end
+  defp maybe_update_provider(%{model: model} = attrs),
+    do: Map.put(attrs, :provider, LLMRegistry.get_model_provider(model))
 
-  defp get_model_provider(attrs) do
-    attrs
-    |> Map.get(:model)
-    |> LLMRegistry.get_model_provider()
-  end
+  defp maybe_update_provider(attrs), do: attrs
 
   defp validate_model(_model_field_atom, model) do
     if LLMRegistry.model_supported?(model) do

@@ -27,22 +27,9 @@ defmodule Trento.AITest do
     end
   end
 
-  describe "enabling/disabling features" do
-    test "features are disabled" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 2, fn -> [enabled: false] end)
-      user = build(:user)
-
-      attrs = %{
-        model: "foo",
-        api_key: "bar"
-      }
-
-      assert AI.create_user_configuration(user, attrs) == {:error, :ai_features_disabled}
-      assert AI.update_user_configuration(user, attrs) == {:error, :ai_features_disabled}
-    end
-
-    test "features are enabled" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 4, fn ->
+  describe "delegating creation and update to configurations module" do
+    test "should delegate to configurations module" do
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 2, fn ->
         [
           enabled: true,
           configurations: DummyConfigurations

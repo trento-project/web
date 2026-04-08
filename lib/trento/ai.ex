@@ -19,26 +19,16 @@ defmodule Trento.AI do
 
   See `Trento.AI.Configurations.create_user_configuration/2` for more details.
   """
-  def create_user_configuration(user, attrs) do
-    execute_if_enabled(fn -> configurations().create_user_configuration(user, attrs) end)
-  end
+  def create_user_configuration(user, attrs),
+    do: configurations().create_user_configuration(user, attrs)
 
   @doc """
   Updates a user configuration for AI.
 
   See `Trento.AI.Configurations.update_user_configuration/2` for more details.
   """
-  def update_user_configuration(user, attrs) do
-    execute_if_enabled(fn -> configurations().update_user_configuration(user, attrs) end)
-  end
-
-  defp execute_if_enabled(function) do
-    if enabled?() do
-      function.()
-    else
-      {:error, :ai_features_disabled}
-    end
-  end
+  def update_user_configuration(user, attrs),
+    do: configurations().update_user_configuration(user, attrs)
 
   defp configurations,
     do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
