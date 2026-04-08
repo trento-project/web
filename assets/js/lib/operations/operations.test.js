@@ -26,8 +26,8 @@ describe('operations', () => {
     ${'pacemaker_disable'}          | ${'Disable Pacemaker'}
     ${'database_start'}             | ${'Database start'}
     ${'database_stop'}              | ${'Database stop'}
-    ${'cluster_host_start'}         | ${'Start cluster host'}
-    ${'cluster_host_stop'}          | ${'Stop cluster host'}
+    ${'cluster_host_start'}         | ${'Set node online in cluster'}
+    ${'cluster_host_stop'}          | ${'Set node offline in cluster'}
     ${'reboot'}                     | ${'Reboot host'}
   `(`should return the operation $operation label`, ({ operation, label }) => {
     expect(getOperationLabel(operation)).toBe(label);
@@ -47,8 +47,8 @@ describe('operations', () => {
     ${'pacemaker_enable'}           | ${'Enable Pacemaker'}
     ${'pacemaker_disable'}          | ${'Disable Pacemaker'}
     ${'cluster_maintenance_change'} | ${'Maintenance change'}
-    ${'cluster_host_start'}         | ${'Start cluster host'}
-    ${'cluster_host_stop'}          | ${'Stop cluster host'}
+    ${'cluster_host_start'}         | ${'Set node online in cluster'}
+    ${'cluster_host_stop'}          | ${'Set node offline in cluster'}
     ${'cluster_resource_refresh'}   | ${'Refresh resources'}
     ${'reboot'}                     | ${'Reboot host'}
   `(`should return the operation $operation title`, ({ operation, title }) => {

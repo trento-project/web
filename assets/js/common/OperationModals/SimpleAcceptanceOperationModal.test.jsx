@@ -96,14 +96,14 @@ describe('SimpleAcceptanceOperationModal', () => {
     {
       operation: CLUSTER_HOST_START,
       descriptionResolverArgs: { hostName },
-      title: 'Start cluster host',
-      expectedDescription: `Start cluster host ${hostName}`,
+      title: 'Set node online in cluster',
+      expectedDescription: `Set node online in cluster ${hostName}`,
     },
     {
       operation: CLUSTER_HOST_STOP,
       descriptionResolverArgs: { hostName },
-      title: 'Stop cluster host',
-      expectedDescription: `Stop cluster host ${hostName}`,
+      title: 'Set node offline in cluster',
+      expectedDescription: `Set node offline in cluster ${hostName}`,
     },
     {
       operation: HOST_REBOOT,
