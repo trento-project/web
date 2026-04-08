@@ -22,7 +22,7 @@
     "chromatic": "^16.0.0",
     "esbuild": "^0.27.4",
     "esbuild-plugin-path-alias": "^1.0.7",
-    "eslint": "^9.38.0",
+    "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.32.0",
