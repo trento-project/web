@@ -83,6 +83,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           version: "2.4.0",
           sles_subscriptions: 5,
           wanda_version: "1.0.0",
+          checks_version: "1.0.0",
           postgres_version: "16.1",
           rabbitmq_version: "3.12.0",
           prometheus_version: "2.48.0"
@@ -107,6 +108,11 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :string,
             nullable: true,
             description: "Version of the Wanda checks engine."
+          },
+          checks_version: %Schema{
+            type: :string,
+            nullable: true,
+            description: "Version of the checks catalog."
           },
           postgres_version: %Schema{
             type: :string,

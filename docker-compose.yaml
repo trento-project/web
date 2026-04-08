@@ -91,7 +91,7 @@ services:
 
   wanda:
     profiles: [wanda]
-    image: ghcr.io/trento-project/trento-wanda:demo
+    image: ghcr.io/trento-project/trento-wanda:rolling
     environment:
       DATABASE_URL: ecto://postgres:postgres@postgres/wanda_db
       SECRET_KEY_BASE: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k

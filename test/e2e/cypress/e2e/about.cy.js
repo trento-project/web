@@ -22,6 +22,10 @@ describe('About page', () => {
     aboutPage.expectedWandaVersionIsDisplayed();
   });
 
+  it('should show the Checks version', () => {
+    aboutPage.expectedChecksVersionIsDisplayed();
+  });
+
   it('should show the PostgreSQL version', () => {
     aboutPage.expectedPostgresVersionIsDisplayed();
   });

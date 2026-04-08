@@ -11,6 +11,7 @@ defmodule TrentoWeb.V1.AboutJSON do
         sles_subscriptions: sles_subscriptions,
         flavor: "Community",
         wanda_version: Map.get(about_info, :wanda_version),
+        checks_version: Map.get(about_info, :checks_version),
         postgres_version: Map.get(about_info, :postgres_version),
         rabbitmq_version: Map.get(about_info, :rabbitmq_version),
         prometheus_version: Map.get(about_info, :prometheus_version)

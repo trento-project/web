@@ -11,13 +11,21 @@ defmodule Trento.Infrastructure.ComponentVersions do
 
   @timeout 5_000
 
+  @defaults %{
+    postgres_version: nil,
+    rabbitmq_version: nil,
+    prometheus_version: nil,
+    wanda_version: nil,
+    checks_version: nil
+  }
+
   @impl true
   def get_versions do
     fetchers = [
-      {:postgres_version, &fetch_postgres_version/0},
-      {:rabbitmq_version, &fetch_rabbitmq_version/0},
-      {:prometheus_version, &fetch_prometheus_version/0},
-      {:wanda_version, &fetch_wanda_version/0}
+      {:postgres, &fetch_postgres_version/0},
+      {:rabbitmq, &fetch_rabbitmq_version/0},
+      {:prometheus, &fetch_prometheus_version/0},
+      {:wanda, &fetch_wanda_info/0}
     ]
 
     results =
@@ -29,41 +37,33 @@ defmodule Trento.Infrastructure.ComponentVersions do
         timeout: @timeout,
         on_timeout: :kill_task
       )
-      |> Enum.reduce(%{}, fn
-        {:ok, {key, version}}, acc -> Map.put(acc, key, version)
+      |> Enum.reduce(@defaults, fn
+        {:ok, {_key, result}}, acc when is_map(result) -> Map.merge(acc, result)
         {:exit, _}, acc -> acc
       end)
 
-    Map.merge(
-      %{
-        postgres_version: nil,
-        rabbitmq_version: nil,
-        prometheus_version: nil,
-        wanda_version: nil
-      },
-      results
-    )
+    results
   end
 
   defp safe_fetch(key, fetcher) do
     case fetcher.() do
-      {:ok, version} -> version
-      {:error, _} -> nil
+      {:ok, result} -> result
+      {:error, _} -> %{}
     end
   rescue
     e ->
       Logger.error("Failed to fetch #{key}: #{inspect(e)}")
-      nil
+      %{}
   catch
     kind, reason ->
       Logger.error("Failed to fetch #{key}: #{inspect(kind)} #{inspect(reason)}")
-      nil
+      %{}
   end
 
   defp fetch_postgres_version do
     case SQL.query(Trento.Repo, "SHOW server_version", []) do
       {:ok, %{rows: [[version]]}} ->
-        {:ok, version}
+        {:ok, %{postgres_version: version}}
 
       {:error, reason} ->
         Logger.error("Failed to fetch PostgreSQL version: #{inspect(reason)}")
@@ -93,7 +93,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     case :amqp_connection.info(pid, [:server_properties]) do
       [{:server_properties, props}] ->
         case List.keyfind(props, "version", 0) do
-          {"version", :longstr, version} -> {:ok, to_string(version)}
+          {"version", :longstr, version} -> {:ok, %{rabbitmq_version: to_string(version)}}
           _ -> {:error, :version_not_found}
         end
 
@@ -112,7 +112,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     case HTTPoison.get(url, headers, recv_timeout: @timeout) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
-          {:ok, %{"data" => %{"version" => version}}} -> {:ok, version}
+          {:ok, %{"data" => %{"version" => version}}} -> {:ok, %{prometheus_version: version}}
           _ -> {:error, :unexpected_response}
         end
 
@@ -126,7 +126,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     end
   end
 
-  defp fetch_wanda_version do
+  defp fetch_wanda_info do
     checks_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
 
     case HTTPoison.get("#{checks_base_url}/api", [{"Accept", "application/json"}],
@@ -134,8 +134,15 @@ defmodule Trento.Infrastructure.ComponentVersions do
          ) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
-          {:ok, %{"version" => version}} -> {:ok, version}
-          _ -> {:error, :unexpected_response}
+          {:ok, %{"version" => version} = data} ->
+            {:ok,
+             %{
+               wanda_version: version,
+               checks_version: Map.get(data, "checks_version")
+             }}
+
+          _ ->
+            {:error, :unexpected_response}
         end
 
       {:error, reason} ->

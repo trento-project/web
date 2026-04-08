@@ -13,6 +13,7 @@ function AboutPage({ onFetch = getAboutData }) {
   const [subscriptions, setSubscriptions] = useState(0);
   const [version, setVersion] = useState('v0.0.0');
   const [wandaVersion, setWandaVersion] = useState(null);
+  const [checksVersion, setChecksVersion] = useState(null);
   const [postgresVersion, setPostgresVersion] = useState(null);
   const [rabbitmqVersion, setRabbitmqVersion] = useState(null);
   const [prometheusVersion, setPrometheusVersion] = useState(null);
@@ -27,6 +28,7 @@ function AboutPage({ onFetch = getAboutData }) {
             version: newVersion,
             sles_subscriptions,
             wanda_version,
+            checks_version,
             postgres_version,
             rabbitmq_version,
             prometheus_version,
@@ -36,6 +38,7 @@ function AboutPage({ onFetch = getAboutData }) {
           setVersion(newVersion);
           setSubscriptions(sles_subscriptions);
           setWandaVersion(wanda_version);
+          setChecksVersion(checks_version);
           setPostgresVersion(postgres_version);
           setRabbitmqVersion(rabbitmq_version);
           setPrometheusVersion(prometheus_version);
@@ -55,6 +58,10 @@ function AboutPage({ onFetch = getAboutData }) {
     {
       title: 'Wanda version',
       content: loading ? 'Loading...' : wandaVersion || 'N/A',
+    },
+    {
+      title: 'Checks version',
+      content: loading ? 'Loading...' : checksVersion || 'N/A',
     },
     {
       title: 'PostgreSQL version',

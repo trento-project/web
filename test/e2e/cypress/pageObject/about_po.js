@@ -7,6 +7,8 @@ const url = '/about';
 const pageTitle = 'h2';
 const versionLabel = 'div.font-bold:contains("Server version") + div span';
 const wandaVersionLabel = 'div.font-bold:contains("Wanda version") + div span';
+const checksVersionLabel =
+  'div.font-bold:contains("Checks version") + div span';
 const postgresVersionLabel =
   'div.font-bold:contains("PostgreSQL version") + div span';
 const rabbitmqVersionLabel =
@@ -41,6 +43,10 @@ export const componentVersionIsDisplayed = (selector) => {
 
 export const expectedWandaVersionIsDisplayed = () => {
   return componentVersionIsDisplayed(wandaVersionLabel);
+};
+
+export const expectedChecksVersionIsDisplayed = () => {
+  return componentVersionIsDisplayed(checksVersionLabel);
 };
 
 export const expectedPostgresVersionIsDisplayed = () => {

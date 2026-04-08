@@ -19,6 +19,7 @@ describe('AboutPage component', () => {
       screen.getByText(`${apiRequestData.sles_subscriptions} found`)
     ).toBeTruthy();
     expect(screen.getByText(apiRequestData.wanda_version)).toBeTruthy();
+    expect(screen.getByText(apiRequestData.checks_version)).toBeTruthy();
     expect(screen.getByText(apiRequestData.postgres_version)).toBeTruthy();
     expect(screen.getByText(apiRequestData.rabbitmq_version)).toBeTruthy();
     expect(screen.getByText(apiRequestData.prometheus_version)).toBeTruthy();
@@ -28,6 +29,7 @@ describe('AboutPage component', () => {
     const dataWithNullVersions = {
       ...apiRequestData,
       wanda_version: null,
+      checks_version: null,
       postgres_version: null,
       rabbitmq_version: null,
       prometheus_version: null,
@@ -42,7 +44,7 @@ describe('AboutPage component', () => {
     });
 
     const naElements = screen.getAllByText('N/A');
-    expect(naElements).toHaveLength(4);
+    expect(naElements).toHaveLength(5);
   });
 
   it('should render the about page with default values if api get request fails', async () => {
