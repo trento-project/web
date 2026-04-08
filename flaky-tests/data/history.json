@@ -3698,5 +3698,33 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-08T04:36:50Z",
+    "commit": "c1c8179aea75eb25e7a1b991435fe595884aa945",
+    "run_id": "24117491595",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.06823
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.02501
+      }
+    ]
   }
 ]
