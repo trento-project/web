@@ -37,7 +37,8 @@ const getWebsocketParams = () => ({
 });
 
 export const initSocketConnection = () => {
-  const socket = new Socket('/socket', {
+  const basePath = window.basePath || '';
+  const socket = new Socket(`${basePath}/socket`, {
     params: () => getWebsocketParams(),
   });
   socket.onError(async () => {

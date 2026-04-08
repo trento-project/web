@@ -21,7 +21,7 @@ export const unrecoverableAuthError = Error(
 );
 
 export const networkClient = axios.create({
-  baseURL: '/api/v1',
+  baseURL: `${window.basePath || ''}/api/v1`,
 });
 
 networkClient.interceptors.request.use((request) => {
@@ -54,6 +54,7 @@ createAuthRefreshInterceptor(networkClient, refreshAuthLogic);
 networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
     logWarn('unrecoverable auth flow, session expired');
+    const basePath = windowReference.basePath || '';
     const currentLocationPath = new URLSearchParams();
     currentLocationPath.append(
       'request_path',
@@ -61,7 +62,7 @@ networkClient.interceptors.response.use(null, (error) => {
     );
 
     windowReference.location.assign(
-      `/session/new?${currentLocationPath.toString()}`
+      `${basePath}/session/new?${currentLocationPath.toString()}`
     );
   }
   throw error;
