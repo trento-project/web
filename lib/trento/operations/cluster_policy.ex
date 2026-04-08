@@ -139,7 +139,7 @@ defmodule Trento.Operations.ClusterPolicy do
       count_primary_running == 0 ->
         {:error,
          [
-           "Cluster on host #{host.hostname} cannot be started because no primary database instance is running in the cluster"
+           "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster"
          ]}
 
       host_running_primary? or all_primary_running? ->
@@ -148,7 +148,7 @@ defmodule Trento.Operations.ClusterPolicy do
       true ->
         {:error,
          [
-           "Cluster on host #{host.hostname} cannot be started because no primary database instance is running in the cluster"
+           "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster"
          ]}
     end
   end
@@ -184,7 +184,7 @@ defmodule Trento.Operations.ClusterPolicy do
 
       {:error,
        [
-         "Cluster on host #{host.hostname} cannot be stopped because some secondary nodes are still online"
+         "Cluster on host #{host.hostname} cannot be set offline because some secondary nodes are still online"
        ]}
     else
       :ok

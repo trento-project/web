@@ -161,7 +161,7 @@ export const getClusterHostOperations = curry(
       },
     },
     {
-      value: 'Start cluster in node',
+      value: 'Set node online in cluster',
       running: isOperationRunning(
         [runningOperation],
         clusterID,
@@ -179,7 +179,7 @@ export const getClusterHostOperations = curry(
       },
     },
     {
-      value: 'Stop cluster in node',
+      value: 'Set node offline in cluster',
       running: isOperationRunning(
         [runningOperation],
         clusterID,

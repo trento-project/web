@@ -37,8 +37,8 @@ export const OPERATION_NOT_ALLOWED_DATABASE =
 const OPERATION_LABELS = {
   [SAPTUNE_SOLUTION_APPLY]: 'Apply Saptune solution',
   [SAPTUNE_SOLUTION_CHANGE]: 'Change Saptune solution',
-  [CLUSTER_HOST_START]: 'Start cluster host',
-  [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [CLUSTER_HOST_START]: 'Set node online in cluster',
+  [CLUSTER_HOST_STOP]: 'Set node offline in cluster',
   [CLUSTER_MAINTENANCE_CHANGE]: 'Cluster maintenance change',
   [CLUSTER_RESOURCE_REFRESH]: 'Refresh cluster resources',
   [SAP_INSTANCE_START]: 'SAP instance start',
@@ -53,8 +53,8 @@ const OPERATION_LABELS = {
 };
 
 const OPERATION_TITLES = {
-  [CLUSTER_HOST_START]: 'Start cluster host',
-  [CLUSTER_HOST_STOP]: 'Stop cluster host',
+  [CLUSTER_HOST_START]: 'Set node online in cluster',
+  [CLUSTER_HOST_STOP]: 'Set node offline in cluster',
   [CLUSTER_MAINTENANCE_CHANGE]: 'Maintenance change',
   [CLUSTER_RESOURCE_REFRESH]: 'Refresh resources',
   [DATABASE_START]: 'Start database',
