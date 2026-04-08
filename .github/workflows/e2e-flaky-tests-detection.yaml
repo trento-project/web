@@ -63,7 +63,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@afbfa92e56234f29b1e82314f50c3d1244285f60 # v1.3.4
+        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
         id: tool-versions
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
@@ -89,7 +89,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@afbfa92e56234f29b1e82314f50c3d1244285f60 # v1.3.4
+        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
         id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
@@ -143,7 +143,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@afbfa92e56234f29b1e82314f50c3d1244285f60 # v1.3.4
+        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
         id: tool-versions
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
