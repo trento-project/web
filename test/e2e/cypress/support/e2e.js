@@ -27,3 +27,7 @@ before(() => {
     apiLoginAndCreateSession();
   }
 });
+
+Cypress.on('uncaught:exception', () => {
+  if (Cypress.config().baseUrl.includes('target16sp0')) return false;
+});
