@@ -178,6 +178,7 @@ function ProfilePage() {
     analytics_enabled: analyticsEnabled,
     analytics_eula_accepted: analyticsEulaAccepted,
     totp_enabled: totpEnabled,
+    timezone,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
 
@@ -193,6 +194,7 @@ function ProfilePage() {
         analyticsEnabled={analyticsEnabled}
         analyticsEulaAccepted={analyticsEulaAccepted}
         totpEnabled={totpEnabled}
+        timezone={timezone}
         totpSecret={totpEnrollmentSecret}
         totpQrData={totpEnrollmentQrData}
         errors={errorsState}

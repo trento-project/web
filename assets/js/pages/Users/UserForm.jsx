@@ -7,6 +7,7 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
+import SearchableSelect from '@common/SearchableSelect';
 import Switch from '@common/Switch';
 import Tooltip from '@common/Tooltip';
 import {
@@ -16,7 +17,7 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-
+import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -37,6 +38,7 @@ function UserForm({
   lastLoginAt = '',
   analyticsEnabledConfig = false,
   analyticsEnabled,
+  timezone = DEFAULT_TIMEZONE,
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -58,6 +60,8 @@ function UserForm({
   const [confirmPasswordErrorState, setConfirmPasswordError] = useState(null);
   const [statusState, setStatus] = useState(status);
   const [totpState, setTotpState] = useState(Boolean(totpEnabledAt));
+  const [timezoneState, setTimezone] = useState(timezone);
+  const [timezoneErrorState, setTimezoneError] = useState(null);
   const [selectedAbilities, setAbilities] = useState(
     userAbilities.map(({ id }) => id)
   );
@@ -68,6 +72,7 @@ function UserForm({
     setUsernameError(getError('username', errors));
     setPasswordError(getError('password', errors));
     setConfirmPasswordError(getError('password_confirmation', errors));
+    setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
   const validateRequired = () => {
@@ -111,11 +116,13 @@ function UserForm({
     }),
     abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
     ...(totpEnabledAt && !totpState && { totp_disabled: true }),
+    ...(editing && { timezone: timezoneState }),
   });
 
   const buildSSOUserPayload = () => ({
     enabled: statusState === USER_ENABLED,
     abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
+    ...(editing && { timezone: timezoneState }),
   });
 
   const onSaveClicked = () => {
@@ -270,6 +277,26 @@ function UserForm({
           </div>
           {editing && (
             <>
+              <Label
+                className="col-start-1 col-span-2 sm:pt-2"
+                info={"Aligns timestamps according to timezone selection"}
+              >
+                Timezone
+              </Label>
+              <div className="col-start-3 col-span-4">
+                <SearchableSelect
+                  value={timezoneState}
+                  options={generateTimezoneOptions()}
+                  onChange={(value) => {
+                    setTimezone(value);
+                    setTimezoneError(null);
+                  }}
+                  disabled={!saveEnabled || saving}
+                  placeholder="Select timezone..."
+                  noOptionsMessage={() => 'No timezones found'}
+                />
+                {timezoneErrorState && errorMessage(timezoneErrorState)}
+              </div>
               {!singleSignOnEnabled && (
                 <>
                   <Label

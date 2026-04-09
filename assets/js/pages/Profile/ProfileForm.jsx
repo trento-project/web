@@ -8,8 +8,10 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
+import SearchableSelect from '@common/SearchableSelect';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
+import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -38,6 +40,7 @@ function ProfileForm({
   analyticsEnabledConfig = false,
   analyticsEnabled = false,
   analyticsEulaAccepted = false,
+  timezone = DEFAULT_TIMEZONE,
   errors,
   loading,
   disableForm,
@@ -57,6 +60,8 @@ function ProfileForm({
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
   const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
   const [analyticsEnabledState, setAnalyticsState] = useState(analyticsEnabled);
+  const [timezoneState, setTimezone] = useState(timezone);
+  const [timezoneErrorState, setTimezoneError] = useState(null);
 
   const saveButtonVisible = !singleSignOnEnabled || analyticsEnabledConfig;
 
@@ -88,6 +93,7 @@ function ProfileForm({
       analytics_enabled: analyticsEnabledState,
       ...(analyticsEnabledState &&
         !analyticsEulaAccepted && { analytics_eula_accepted: true }),
+      timezone: timezoneState,
     };
 
     onSave(user);
@@ -104,6 +110,7 @@ function ProfileForm({
   useEffect(() => {
     setFullNameError(getError('fullname', errors));
     setEmailAddressError(getError('email', errors));
+    setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
   return (
@@ -205,6 +212,26 @@ function ProfileForm({
               placeholder=""
               disabled
             />
+          </div>
+          <Label
+            className="col-start-1 col-span-2 pt-2"
+            info={"Aligns timestamps according to timezone selection"}
+          >
+            Timezone
+          </Label>
+          <div className="col-start-3 col-span-4">
+            <SearchableSelect
+              value={timezoneState}
+              options={generateTimezoneOptions()}
+              onChange={(value) => {
+                setTimezone(value);
+                setTimezoneError(null);
+              }}
+              disabled={loading || disableForm}
+              placeholder="Select timezone..."
+              noOptionsMessage={() => 'No timezones found'}
+            />
+            {timezoneErrorState && errorMessage(timezoneErrorState)}
           </div>
           {analyticsEnabledConfig && (
             <>
