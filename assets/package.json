@@ -79,6 +79,7 @@
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.4",
+    "tzdata": "^1.0.48",
     "uuid": "^11.1.0"
   },
   "overrides": {
