@@ -3882,5 +3882,37 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-09T07:00:13Z",
+    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
+    "run_id": "24172712574",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.5
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.1177
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.07251
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.05969
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.02501
+      }
+    ]
   }
 ]
