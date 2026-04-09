@@ -78,6 +78,8 @@ const defaultClassNames = {
 function MultiSelect({
   options,
   values,
+  value,
+  isMulti = true,
   disabled = false,
   components = defaultComponents,
   selectClassNames = defaultClassNames,
@@ -88,7 +90,8 @@ function MultiSelect({
 }) {
   return (
     <Select
-      isMulti
+      isMulti={isMulti}
+      value={value}
       defaultValue={values}
       options={options}
       classNames={selectClassNames}
