@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
 import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import UserForm from './UserForm';
 
@@ -27,6 +28,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Generate Password')).toBeVisible();
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
+    expect(screen.queryByText('Timezone')).not.toBeInTheDocument();
     expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
     expect(screen.queryByText('Analytics Opt-in')).not.toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
@@ -47,6 +49,7 @@ describe('UserForm', () => {
       totp_enabled_at: totpEnabledAt,
       analytics_enabled: analyticsEnabled,
       last_login_at: lastLoginAt,
+      timezone,
     } = userFactory.build();
 
     render(
@@ -60,6 +63,7 @@ describe('UserForm', () => {
         analyticsEnabledConfig
         analytics_enabled={analyticsEnabled}
         lastLoginAt={lastLoginAt}
+        timezone={timezone}
         editing
       />
     );
@@ -72,6 +76,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Created')).toBeVisible();
     expect(screen.getByText('Updated')).toBeVisible();
     expect(screen.getByText('Last Login')).toBeVisible();
+    expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByText('TOTP')).toBeVisible();
     expect(screen.getByText('Analytics Opt-in')).toBeVisible();
     expect(screen.getByText('Enabled')).toBeVisible();
@@ -208,6 +213,7 @@ describe('UserForm', () => {
       username,
       created_at: createdAt,
       updated_at: updatedAt,
+      timezone,
     } = userFactory.build();
 
     render(
@@ -219,6 +225,7 @@ describe('UserForm', () => {
         updatedAt={updatedAt}
         editing
         onSave={mockOnSave}
+        timezone={timezone}
       />
     );
 
@@ -232,6 +239,7 @@ describe('UserForm', () => {
       email,
       enabled: result,
       abilities: [],
+      timezone,
     });
   });
 
@@ -272,6 +280,7 @@ describe('UserForm', () => {
       enabled: true,
       abilities: [],
       totp_disabled: true,
+      timezone: DEFAULT_TIMEZONE,
     });
   });
 
@@ -359,6 +368,7 @@ describe('UserForm', () => {
       email,
       enabled: true,
       abilities: abilities.slice(0, 2),
+      timezone: DEFAULT_TIMEZONE,
     });
   });
 
@@ -376,6 +386,132 @@ describe('UserForm', () => {
     );
 
     expect(screen.getByText('Last Login').nextSibling).toHaveTextContent('-');
+  });
+
+  it('should set timezone selector value when timezone is not provided', () => {
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    } = userFactory.build();
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        editing
+      />
+    );
+
+    expect(screen.getByText('Timezone')).toBeVisible();
+    expect(screen.getByLabelText('Timezone')).toBeVisible();
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(DEFAULT_TIMEZONE);
+  });
+
+  it('should set timezone selector value when timezone is provided', () => {
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+      timezone,
+    } = userFactory.build();
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        timezone={timezone}
+        editing
+      />
+    );
+
+    expect(screen.getByText('Timezone')).toBeVisible();
+    expect(screen.getByLabelText('Timezone')).toBeVisible();
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(timezone);
+  });
+
+  it('should set timezone in save payload when timezone selector changes', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+      timezone,
+    } = userFactory.build();
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        timezone={DEFAULT_TIMEZONE}
+        editing
+        onSave={mockOnSave}
+      />
+    );
+
+    const timezoneSelectorInput = screen.getByLabelText('Timezone');
+
+    await user.click(timezoneSelectorInput);
+    await user.type(timezoneSelectorInput, timezone);
+    await user.click(await screen.findByText(new RegExp(`^${timezone}`)));
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: true,
+      abilities: [],
+      timezone,
+    });
+  });
+
+  it('should set timezone error when timezone error is provided', async () => {
+    const {
+      created_at: createdAt,
+      updated_at: updatedAt,
+      fullname,
+      email,
+      username,
+    } = userFactory.build();
+    const errors = [
+      {
+        detail: 'is not a valid IANA timezone',
+        source: { pointer: '/timezone' },
+        title: 'Invalid value',
+      },
+    ];
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        errors={errors}
+        editing
+      />
+    );
+
+    expect(
+      await screen.findByText(/is not a valid IANA timezone/i)
+    ).toBeVisible();
   });
 
   describe('Single sign on', () => {
@@ -396,12 +532,13 @@ describe('UserForm', () => {
       expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
       expect(screen.getByText('Permissions')).toBeVisible();
       expect(screen.getByText('Enabled')).toBeVisible();
+      expect(screen.getByText('Timezone')).toBeVisible();
     });
 
     it('should save permissions and status', async () => {
       const user = userEvent.setup();
 
-      const { fullname, email, username } = userFactory.build();
+      const { fullname, email, username, timezone } = userFactory.build();
 
       const abilities = abilityFactory.buildList(3);
       const userAbilities = [abilities[0]];
@@ -418,6 +555,7 @@ describe('UserForm', () => {
           editing
           abilities={abilities}
           userAbilities={userAbilities}
+          timezone={timezone}
           singleSignOnEnabled
         />
       );
@@ -443,6 +581,7 @@ describe('UserForm', () => {
       expect(mockOnSave).toHaveBeenNthCalledWith(1, {
         enabled: true,
         abilities: abilities.slice(0, 2),
+        timezone,
       });
     });
   });

@@ -278,6 +278,7 @@ function UserForm({
           {editing && (
             <>
               <Label
+                htmlFor="timezone"
                 className="col-start-1 col-span-2 sm:pt-2"
                 info={"Aligns timestamps according to timezone selection"}
               >
@@ -285,6 +286,8 @@ function UserForm({
               </Label>
               <div className="col-start-3 col-span-4">
                 <SearchableSelect
+                  inputId="timezone"
+                  name="timezone"
                   value={timezoneState}
                   options={generateTimezoneOptions()}
                   onChange={(value) => {

@@ -21,6 +21,7 @@ function SearchableSelect({
   placeholder,
   noOptionsMessage,
   filterOption = defaultFilterOption,
+  ...props
 }) {
   const selectedOption = options.find((opt) => opt.value === value);
 
@@ -37,6 +38,7 @@ function SearchableSelect({
       placeholder={placeholder}
       noOptionsMessage={noOptionsMessage}
       filterOption={filterOption}
+      {...props}
     />
   );
 }
