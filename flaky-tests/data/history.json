@@ -3866,5 +3866,21 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-09T04:33:16Z",
+    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
+    "run_id": "24172058823",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      }
+    ]
   }
 ]
