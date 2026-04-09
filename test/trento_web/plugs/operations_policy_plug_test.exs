@@ -10,7 +10,14 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
     @behaviour Trento.Operations.PolicyBehaviour
 
     def authorize_operation(:authorized, _, _), do: :ok
-    def authorize_operation(:forbidden, _, _), do: {:error, ["error1", "error2"]}
+
+    def authorize_operation(:forbidden, _, _),
+      do:
+        {:error,
+         [
+           %{message: "error1", metadata: [%{"key" => "value"}]},
+           %{message: "error2", metadata: []}
+         ]}
   end
 
   setup %{conn: conn} do
@@ -69,11 +76,13 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
              "errors" => [
                %{
                  "detail" => "error1",
-                 "title" => "Forbidden"
+                 "title" => "Forbidden",
+                 "metadata" => [%{"key" => "value"}]
                },
                %{
                  "detail" => "error2",
-                 "title" => "Forbidden"
+                 "title" => "Forbidden",
+                 "metadata" => []
                }
              ]
            } == resp
