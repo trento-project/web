@@ -53,6 +53,19 @@ Mox.defmock(Trento.Support.DateService.Mock, for: Trento.Support.DateService)
 Mox.defmock(Joken.CurrentTime.Mock, for: Joken.CurrentTime)
 Application.put_env(:joken, :current_time_adapter, Joken.CurrentTime.Mock)
 
+Mox.defmock(Trento.AI.ApplicationConfigLoader.Mock,
+  for: Trento.AI.ApplicationConfigLoader
+)
+
+test_ai_config =
+  Keyword.put(
+    Application.get_env(:trento, :ai),
+    :application_config_loader,
+    Trento.AI.ApplicationConfigLoader.Mock
+  )
+
+Application.put_env(:trento, :ai, test_ai_config)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do
