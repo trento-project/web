@@ -1,3 +1,4 @@
+import { action } from 'storybook/actions';
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
 
 import AIConfiguration from './AIConfiguration';
@@ -18,6 +19,14 @@ export default {
       type: 'function',
       description: 'Updates AI configuration',
     },
+    onEditClick: {
+      type: 'function',
+      description: 'Edit button click handler',
+    },
+  },
+  args: {
+    aiConfiguration: {},
+    onEditClick: action('Edit button clicked!'),
   },
 };
 
@@ -36,8 +45,4 @@ export const WithUnmappedModel = {
   },
 };
 
-export const WithoutAIConfiguration = {
-  args: {
-    aiConfiguration: null,
-  },
-};
+export const WithoutAIConfiguration = {};
