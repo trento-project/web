@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
+import { pipe, defaultTo, get, getOr } from 'lodash/fp';
+
 import PageHeader from '@common/PageHeader';
 import PersonalAccessTokens from '@common/PersonalAccessTokens';
 import AIConfiguration from '@common/AIConfiguration';
@@ -15,6 +17,8 @@ import {
   resetTotpEnrolling,
   deletePersonalAccessToken,
   generatePersonalAccessToken,
+  createAIConfiguration,
+  editAIConfiguration,
 } from '@lib/api/users';
 import {
   setUser as setUserInState,
@@ -168,6 +172,32 @@ function ProfilePage() {
       .catch(() => toast.error('Error deleting personal access token.'));
   };
 
+  const handleSuccessfulAIConfigOperation =
+    (successMessage) =>
+    ({ data }) => {
+      setUser({ ...userState, ai_configuration: data });
+      toast.success(successMessage);
+    };
+
+  const handleFailedAIConfigOperation = (errorMessage) => (error) => {
+    pipe(getOr([], 'response.data.errors'), setErrors, () => {
+      toast.error(errorMessage);
+      throw error;
+    })(error);
+  };
+
+  const createAIConfig = (provider, model, apiKey) => {
+    return createAIConfiguration(provider, model, apiKey)
+      .then(handleSuccessfulAIConfigOperation('AI configuration saved!'))
+      .catch(handleFailedAIConfigOperation('Error saving AI configuration.'));
+  };
+
+  const updateAIConfig = (provider, model, apiKey) => {
+    return editAIConfiguration(provider, model, apiKey)
+      .then(handleSuccessfulAIConfigOperation('AI configuration updated!'))
+      .catch(handleFailedAIConfigOperation('Error updating AI configuration.'));
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -180,9 +210,10 @@ function ProfilePage() {
     analytics_enabled: analyticsEnabled,
     analytics_eula_accepted: analyticsEulaAccepted,
     totp_enabled: totpEnabled,
-    ai_configuration: aiConfiguration,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
+
+  const getAIConfiguration = pipe(get('ai_configuration'), defaultTo({}));
 
   return (
     <>
@@ -221,7 +252,12 @@ function ProfilePage() {
         onGenerateToken={generateToken}
       />
       {getFromConfig('aiEnabled') && (
-        <AIConfiguration className="mt-4" aiConfiguration={aiConfiguration} />
+        <AIConfiguration
+          className="mt-4"
+          aiConfiguration={getAIConfiguration(userState)}
+          onCreate={createAIConfig}
+          onUpdate={updateAIConfig}
+        />
       )}
     </>
   );
