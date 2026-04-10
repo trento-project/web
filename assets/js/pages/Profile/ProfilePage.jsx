@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import PageHeader from '@common/PageHeader';
 import PersonalAccessTokens from '@common/PersonalAccessTokens';
+import AIConfiguration from '@common/AIConfiguration';
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
 import ProfileForm from '@pages/Profile/ProfileForm';
@@ -21,6 +22,7 @@ import {
 } from '@state/user';
 import { dismissNotification } from '@state/notifications';
 import { getAnalyticsEnabledConfig } from '@lib/analytics';
+import { getFromConfig } from '@lib/config';
 
 const analyticsEnabledConfig = getAnalyticsEnabledConfig();
 
@@ -178,6 +180,7 @@ function ProfilePage() {
     analytics_enabled: analyticsEnabled,
     analytics_eula_accepted: analyticsEulaAccepted,
     totp_enabled: totpEnabled,
+    ai_configuration: aiConfiguration,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
 
@@ -217,6 +220,9 @@ function ProfilePage() {
         onDeleteToken={deleteToken}
         onGenerateToken={generateToken}
       />
+      {getFromConfig('aiEnabled') && (
+        <AIConfiguration className="mt-4" aiConfiguration={aiConfiguration} />
+      )}
     </>
   );
 }
