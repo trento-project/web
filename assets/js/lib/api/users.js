@@ -34,3 +34,9 @@ export const generatePersonalAccessToken = (name, expiresAt) =>
 
 export const deletePersonalAccessToken = (tokenID) =>
   del(`/profile/tokens/${tokenID}`);
+
+export const createAIConfiguration = (provider, model, apiKey) =>
+  post('/profile/ai_configuration', { provider, model, api_key: apiKey });
+
+export const editAIConfiguration = (provider, model, apiKey) =>
+  patch('/profile/ai_configuration', { provider, model, api_key: apiKey });
