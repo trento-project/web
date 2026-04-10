@@ -3966,5 +3966,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-10T04:47:52Z",
+    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
+    "run_id": "24226469869",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.02501
+      }
+    ]
   }
 ]
