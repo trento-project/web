@@ -435,15 +435,18 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
 
-export const selectTimezone = (timezone) =>
-  cy
-    .get(timezoneInputField)
+export const selectTimezone = (timezone) => {
+  cy.get(timezoneInputField)
     .should('be.visible')
     .click()
-    .type(`{selectall}{backspace}${timezone}{enter}`);
+    .type(`{selectall}{backspace}${timezone}`);
+
+  // Wait for and click the filtered option from the dropdown
+  return cy.get('div[id*="-option-"]', { timeout: 5000 }).first().click();
+};
 
 export const timezoneValueIsDisplayed = (timezone) =>
-  cy.get(timezoneSelectedValue).should('contain', timezone);
+  cy.get(timezoneInputField).should('have.value', timezone);
 
 // API
 export const interceptDeleteUser = () =>
