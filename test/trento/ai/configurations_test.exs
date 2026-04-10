@@ -4,7 +4,7 @@ defmodule Trento.Ai.ConfigurationsTest do
 
   alias Trento.Users.User
 
-  alias Trento.AI.{Configurations, LLMRegistry, UserConfiguration}
+  alias Trento.AI.{Configurations, UserConfiguration}
 
   import Trento.Factory
 
@@ -260,12 +260,10 @@ defmodule Trento.Ai.ConfigurationsTest do
       model = build(:random_ai_model, provider: provider)
       api_key = Faker.String.base64()
 
-      expected_provider = LLMRegistry.get_model_provider(model)
-
       assert {:ok,
               %UserConfiguration{
                 model: ^model,
-                provider: ^expected_provider,
+                provider: ^provider,
                 api_key: ^api_key,
                 user_id: ^user_id
               } = created_config} =

@@ -30,20 +30,6 @@ defmodule Trento.AI.LLMRegistry do
   def get_provider_models(_), do: []
 
   @doc """
-  Returns the provider for a given model or nil if the model is not supported.
-  """
-  @spec get_model_provider(bitstring()) :: atom() | nil
-  def get_model_provider(model) do
-    Enum.find_value(get_ai_providers_config(), fn {provider, config} ->
-      if model in Keyword.get(config, :models, []) do
-        provider
-      else
-        nil
-      end
-    end)
-  end
-
-  @doc """
   Checks if a given model is supported by a specific provider.
   """
   @spec model_supported_by_provider?(bitstring(), atom()) :: boolean()

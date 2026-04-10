@@ -84,21 +84,6 @@ defmodule Trento.AI.LLMRegistryTest do
     end
   end
 
-  describe "get_model_provider/1" do
-    test "returns the provider for a given model" do
-      expect_config_loader_to_be_called_times(2)
-
-      assert LLMRegistry.get_model_provider("model6") == :provider3
-      assert LLMRegistry.get_model_provider("model1") == :provider1
-    end
-
-    test "returns nil for an unknown model" do
-      expect_config_loader_to_be_called_times(1)
-
-      assert LLMRegistry.get_model_provider("unknown-model") == nil
-    end
-  end
-
   describe "model_supported?/1" do
     test "returns true for a supported model" do
       expect_config_loader_to_be_called_times(2)
