@@ -140,6 +140,51 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
              ]
            } == resp
   end
+down
+  test "should update timezone in profile", %{
+    conn: conn,
+    api_spec: api_spec,
+    user: %{id: user_id}
+  } do
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", %{timezone: "Europe/Berlin"})
+      |> json_response(:ok)
+      |> assert_schema("UserProfileV1", api_spec)
+
+    assert %{id: ^user_id, timezone: "Europe/Berlin"} = resp
+  end
+
+  test "should update timezone when SSO is enabled", %{
+    conn: conn,
+    api_spec: api_spec,
+    user: %{id: user_id}
+  } do
+    Application.put_env(:trento, :oidc, enabled: true)
+
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", %{timezone: "Europe/Berlin"})
+      |> json_response(:ok)
+      |> assert_schema("UserProfileV1", api_spec)
+
+    Application.put_env(:trento, :oidc, enabled: false)
+
+    assert %{id: ^user_id, timezone: "Europe/Berlin"} = resp
+  end
+
+  test "should return unprocessable entity for invalid timezone", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    conn
+    |> put_req_header("content-type", "application/json")
+    |> patch("/api/v1/profile", %{timezone: "US/Pacific-New"})
+    |> json_response(:unprocessable_entity)
+    |> assert_schema("UnprocessableEntityV1", api_spec)
+  end
 
   test "should get totp enrollment data when totp is not configured for the user", %{
     conn: conn,
