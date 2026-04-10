@@ -442,7 +442,9 @@ export const selectTimezone = (timezone) =>
     .type(`{selectall}{backspace}${timezone}`)
     .get('[role="listbox"]', { timeout: 10000 })
     .contains('[role="option"]', timezone)
-    .click();
+    .click()
+    .get(timezoneStoredValue)
+    .should('have.value', timezone);
 
 export const timezoneValueIsDisplayed = (timezone) =>
   cy.get(timezoneStoredValue).should('have.value', timezone);

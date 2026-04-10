@@ -102,12 +102,14 @@ describe('SSO integration', () => {
       usersPage.selectDisabledStatus();
       usersPage.selectTimezone(timezone);
       usersPage.clickSaveUserButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
 
       usersPage.clickPlainUserInList();
       usersPage.timezoneValueIsDisplayed(timezone);
       usersPage.clickRemovePermissionButton();
       usersPage.selectEnabledStatus();
       usersPage.clickSaveUserButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
     });
 
     it('should have a read only profile view and all:all permissions', () => {
