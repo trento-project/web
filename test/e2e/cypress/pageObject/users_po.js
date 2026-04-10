@@ -433,18 +433,14 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
 
-export const selectTimezone = (timezone) => {
-  cy.get(timezoneInputField)
+export const selectTimezone = (timezone) =>
+  cy
+    .get(timezoneInputField)
     .should('be.visible')
     .click()
-    .type(`{selectall}{backspace}${timezone}`);
-
-  // Click the option that contains the timezone text (first visible option after filtering)
-  return cy
-    .get('div[id*="timezone-option-"]', { timeout: 5000 })
-    .contains(timezone)
-    .click({ force: true });
-};
+    .type(`{selectall}{backspace}${timezone}`)
+    .wait(300) // Wait for dropdown to filter options
+    .type('{downarrow}{enter}'); // Navigate to first match and select
 
 export const timezoneValueIsDisplayed = (timezone) =>
   cy.get(timezoneInputField).should('have.value', timezone);
