@@ -37,36 +37,28 @@ export const expectedGithubUrlIsDisplayed = () =>
     .get(githubRepositoryLabel)
     .should('have.text', 'https://github.com/trento-project/web');
 
-export const componentVersionIsDisplayed = (selector) => {
-  return cy.get(selector).should('not.be.empty').and('be.visible');
-};
+export const componentVersionIsDisplayed = (selector) =>
+  cy.get(selector).should('not.be.empty').and('be.visible');
 
-export const expectedWandaVersionIsDisplayed = () => {
-  return componentVersionIsDisplayed(wandaVersionLabel);
-};
+export const expectedWandaVersionIsDisplayed = () =>
+  componentVersionIsDisplayed(wandaVersionLabel);
 
-export const expectedChecksVersionIsDisplayed = () => {
-  return componentVersionIsDisplayed(checksVersionLabel);
-};
+export const expectedChecksVersionIsDisplayed = () =>
+  componentVersionIsDisplayed(checksVersionLabel);
 
-export const expectedPostgresVersionIsDisplayed = () => {
-  return componentVersionIsDisplayed(postgresVersionLabel);
-};
+export const expectedPostgresVersionIsDisplayed = () =>
+  componentVersionIsDisplayed(postgresVersionLabel);
 
-export const expectedRabbitmqVersionIsDisplayed = () => {
-  return componentVersionIsDisplayed(rabbitmqVersionLabel);
-};
+export const expectedRabbitmqVersionIsDisplayed = () =>
+  componentVersionIsDisplayed(rabbitmqVersionLabel);
 
-export const expectedPrometheusVersionIsDisplayed = () => {
-  return componentVersionIsDisplayed(prometheusVersionLabel);
-};
+export const expectedPrometheusVersionIsDisplayed = () =>
+  componentVersionIsDisplayed(prometheusVersionLabel);
 
-export const expectedSlesForSapSubscriptionsAreDisplayed = () => {
-  const subscriptions = getValue('subscriptions');
-  return cy
+export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
+  cy
     .get(amountOfSlesForSapSubscriptionsLabel)
     .should('have.text', `${subscriptions} found`);
-}
 
 export const apiDeregisterHost = () =>
   basePage.apiDeregisterHost(hostToDeregister);

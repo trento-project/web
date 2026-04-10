@@ -48,7 +48,7 @@ function AboutPage({ onFetch = getAboutData }) {
         logError(error);
         setLoading(false);
       });
-  }, []);
+  }, [onFetch]);
 
   const listViewData = [
     {
