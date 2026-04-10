@@ -1,5 +1,9 @@
 defmodule TrentoWeb.V1.ProfileJSON do
-  alias TrentoWeb.V1.{AbilityJSON, PersonalAccessTokensJSON}
+  alias TrentoWeb.V1.{
+    AbilityJSON,
+    AIConfigurationJSON,
+    PersonalAccessTokensJSON
+  }
 
   def profile(%{
         user: %{
@@ -32,7 +36,7 @@ defmodule TrentoWeb.V1.ProfileJSON do
         created_at: created_at,
         analytics_enabled: analytics_enabled_at != nil,
         analytics_eula_accepted: analytics_eula_accepted_at != nil,
-        ai_configuration: ai_configuration(ai_configuration),
+        ai_configuration: AIConfigurationJSON.ai_configuration_entry(ai_configuration),
         idp_user: length(user_identities) > 0,
         updated_at: updated_at
       }
@@ -49,15 +53,4 @@ defmodule TrentoWeb.V1.ProfileJSON do
         }
       }),
       do: %{secret: Base.encode32(secret, padding: false), secret_qr_encoded: secret_qr_encoded}
-
-  defp ai_configuration(%{
-         provider: provider,
-         model: model
-       }),
-       do: %{
-         provider: provider,
-         model: model
-       }
-
-  defp ai_configuration(_), do: nil
 end
