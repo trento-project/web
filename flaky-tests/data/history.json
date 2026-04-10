@@ -3914,5 +3914,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-10T04:20:00Z",
+    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
+    "run_id": "24225844167",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should clear a previously tracked software updates discovery result",
+        "score": 0.05001
+      }
+    ]
   }
 ]
