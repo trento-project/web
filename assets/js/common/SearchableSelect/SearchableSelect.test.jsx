@@ -6,9 +6,21 @@ import userEvent from '@testing-library/user-event';
 import SearchableSelect from '.';
 
 const options = [
-  { value: 'Europe/Berlin', label: 'Europe/Berlin (UTC+1)', searchLabel: 'Europe/Berlin' },
-  { value: 'America/New_York', label: 'America/New_York (UTC-5)', searchLabel: 'America/New_York' },
-  { value: 'Asia/Tokyo', label: 'Asia/Tokyo (UTC+9)', searchLabel: 'Asia/Tokyo' },
+  {
+    value: 'Europe/Berlin',
+    label: 'Europe/Berlin (GMT+1)',
+    searchLabel: 'Europe/Berlin',
+  },
+  {
+    value: 'America/New_York',
+    label: 'America/New_York (GMT-5)',
+    searchLabel: 'America/New_York',
+  },
+  {
+    value: 'Asia/Tokyo',
+    label: 'Asia/Tokyo (GMT+9)',
+    searchLabel: 'Asia/Tokyo',
+  },
 ];
 
 describe('SearchableSelect Component', () => {
@@ -22,7 +34,7 @@ describe('SearchableSelect Component', () => {
       />
     );
 
-    expect(screen.getByText('Europe/Berlin (UTC+1)')).toBeVisible();
+    expect(screen.getByText('Europe/Berlin (GMT+1)')).toBeVisible();
   });
 
   it('should call onChange with option value', async () => {
@@ -38,7 +50,7 @@ describe('SearchableSelect Component', () => {
     );
 
     await user.click(screen.getByText('Select timezone...'));
-    await user.click(screen.getByText('Asia/Tokyo (UTC+9)'));
+    await user.click(screen.getByText('Asia/Tokyo (GMT+9)'));
 
     expect(onChange).toHaveBeenCalledWith('Asia/Tokyo');
   });
@@ -57,7 +69,7 @@ describe('SearchableSelect Component', () => {
     await user.click(screen.getByText('Select timezone...'));
     await user.type(screen.getByRole('combobox'), 'new_york');
 
-    expect(screen.getByText('America/New_York (UTC-5)')).toBeVisible();
-    expect(screen.queryByText('Asia/Tokyo (UTC+9)')).not.toBeInTheDocument();
+    expect(screen.getByText('America/New_York (GMT-5)')).toBeVisible();
+    expect(screen.queryByText('Asia/Tokyo (GMT+9)')).not.toBeInTheDocument();
   });
 });

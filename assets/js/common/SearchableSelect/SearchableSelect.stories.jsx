@@ -42,9 +42,21 @@ export default {
 };
 
 const options = [
-  { value: 'Europe/Berlin', label: 'Europe/Berlin (UTC+1)', searchLabel: 'Europe/Berlin' },
-  { value: 'America/New_York', label: 'America/New_York (UTC-5)', searchLabel: 'America/New_York' },
-  { value: 'Asia/Tokyo', label: 'Asia/Tokyo (UTC+9)', searchLabel: 'Asia/Tokyo' },
+  {
+    value: 'Europe/Berlin',
+    label: 'Europe/Berlin (GMT+1)',
+    searchLabel: 'Europe/Berlin',
+  },
+  {
+    value: 'America/New_York',
+    label: 'America/New_York (GMT-5)',
+    searchLabel: 'America/New_York',
+  },
+  {
+    value: 'Asia/Tokyo',
+    label: 'Asia/Tokyo (GMT+9)',
+    searchLabel: 'Asia/Tokyo',
+  },
 ];
 
 export const Default = {
