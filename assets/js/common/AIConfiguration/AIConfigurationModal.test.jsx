@@ -25,7 +25,9 @@ describe('AIConfigurationModal', () => {
     expect(screen.getByText('None')).toBeVisible();
     expect(screen.getByPlaceholderText('Enter API key')).toBeVisible();
 
-    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    ).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
   });
 
@@ -47,7 +49,9 @@ describe('AIConfigurationModal', () => {
     expect(screen.getByText('gemini-2.5-pro')).toBeVisible();
     expect(screen.getByPlaceholderText('Change API Key')).toBeVisible();
 
-    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    ).toBeDisabled();
   });
 
   it('should enable Save button when a Provider is selected', async () => {
@@ -62,12 +66,16 @@ describe('AIConfigurationModal', () => {
     expect(screen.getByText('gemini-2.5-pro')).toBeVisible();
 
     // It becomes enabled because a Provider changed, and it validates on submission.
-    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    ).toBeEnabled();
 
     // Type API Key
     await user.type(screen.getByPlaceholderText('Enter API key'), 'my-api-key');
 
-    expect(screen.getByRole('button', { name: 'Save' })).toBeEnabled();
+    expect(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    ).toBeEnabled();
   });
 
   it('should call onSave when new config is submitted', async () => {
@@ -85,7 +93,9 @@ describe('AIConfigurationModal', () => {
     // Type API Key
     await user.type(screen.getByPlaceholderText('Enter API key'), 'my-api-key');
 
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    );
 
     expect(onSave).toHaveBeenCalledWith(
       'googleai',
@@ -117,7 +127,9 @@ describe('AIConfigurationModal', () => {
       'new-api-key'
     );
 
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    );
 
     expect(onUpdate).toHaveBeenCalledWith(undefined, undefined, 'new-api-key');
   });
@@ -134,7 +146,9 @@ describe('AIConfigurationModal', () => {
     await user.click(screen.getByText('Select an AI Provider'));
     await user.click(screen.getByText('Google Gemini'));
 
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Save AI Configuration' })
+    );
 
     expect(screen.getByText(REQUIRED_FIELD_TEXT)).toBeVisible();
     expect(onSave).not.toHaveBeenCalled();

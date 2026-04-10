@@ -163,6 +163,7 @@ function AIConfigurationModal({
           <div className="col-start-3 col-span-6">
             <Input
               type="text"
+              aria-label="ai-api-key-input"
               value={apiKey}
               placeholder={apiKeySet ? 'Change API Key' : 'Enter API key'}
               onChange={({ target: { value } }) => {
@@ -181,6 +182,7 @@ function AIConfigurationModal({
         <Button
           disabled={saving || !provider || !model || isUnchanged}
           type="default-fit"
+          aria-label="Save AI Configuration"
           onClick={onSaveClicked}
         >
           Save
