@@ -140,7 +140,9 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
              ]
            } == resp
   end
-down
+
+  down
+
   test "should update timezone in profile", %{
     conn: conn,
     api_spec: api_spec,

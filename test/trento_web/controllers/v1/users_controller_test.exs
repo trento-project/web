@@ -125,6 +125,30 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       assert etag == "1"
     end
 
+    test "should create the user when timezone is valid", %{conn: conn, api_spec: api_spec} do
+      valid_params = %{
+        fullname: Faker.Person.name(),
+        email: Faker.Internet.email(),
+        username: Faker.Pokemon.name(),
+        enabled: true,
+        timezone: "Europe/Berlin",
+        password: "testpassword89",
+        password_confirmation: "testpassword89"
+      }
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/users", valid_params)
+
+      resp =
+        conn
+        |> json_response(:created)
+        |> assert_schema("UserItemV1", api_spec)
+
+      assert resp.timezone == "Europe/Berlin"
+    end
+
     test "should create the user with abilities", %{conn: conn, api_spec: api_spec} do
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
 
@@ -238,6 +262,21 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UnprocessableEntityV1", api_spec)
     end
 
+    test "should not update the user if timezone is invalid", %{conn: conn, api_spec: api_spec} do
+      %{id: id, lock_version: lock_version} = insert(:user)
+
+      invalid_params = %{
+        timezone: "US/Pacific-New"
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("if-match", "#{lock_version}")
+      |> patch("/api/v1/users/#{id}", invalid_params)
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
+    end
+
     test "should not update the user if parameters are not valid", %{
       conn: conn,
       api_spec: api_spec
@@ -281,6 +320,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         enabled: false,
+        timezone: "Europe/Berlin",
         password: "testpassword89",
         password_confirmation: "testpassword89"
       }
@@ -323,6 +363,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.fullname == fullname
       refute resp.enabled == true
       refute resp.email == email
+      assert resp.timezone == "Europe/Berlin"
 
       assert_broadcast "user_locked", %{}, 1000
 
