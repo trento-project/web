@@ -113,4 +113,38 @@ defmodule Trento.AI.LLMRegistryTest do
       assert LLMRegistry.model_supported?("unknown-model") == false
     end
   end
+
+  describe "provider_supported?/1" do
+    test "returns true for a supported provider" do
+      expect_config_loader_to_be_called_times(2)
+
+      assert LLMRegistry.provider_supported?(:provider1) == true
+      assert LLMRegistry.provider_supported?(:provider2) == true
+    end
+
+    test "returns false for an unsupported provider" do
+      expect_config_loader_to_be_called_times(1)
+
+      assert LLMRegistry.provider_supported?(:unknown) == false
+      assert LLMRegistry.provider_supported?("foo") == false
+    end
+  end
+
+  describe "model_supported_by_provider?/2" do
+    test "returns true if the model is supported by the provider" do
+      expect_config_loader_to_be_called_times(2)
+
+      assert LLMRegistry.model_supported_by_provider?("model1", :provider1) == true
+      assert LLMRegistry.model_supported_by_provider?("model4", :provider2) == true
+    end
+
+    test "returns false if the model is not supported by the provider" do
+      expect_config_loader_to_be_called_times(3)
+
+      assert LLMRegistry.model_supported_by_provider?("model1", :provider2) == false
+      assert LLMRegistry.model_supported_by_provider?("model3", :provider1) == false
+      assert LLMRegistry.model_supported_by_provider?("foo", :provider1) == false
+      assert LLMRegistry.model_supported_by_provider?("bar", "baz") == false
+    end
+  end
 end

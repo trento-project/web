@@ -6,9 +6,11 @@ defmodule Trento.Ai.ConfigurationsTest do
 
   alias Trento.AI.{Configurations, LLMRegistry, UserConfiguration}
 
-  alias Trento.Factory
-
   import Trento.Factory
+
+  import Mox
+
+  setup :verify_on_exit!
 
   describe "creating a user AI configuration" do
     test "should not allow creating AI configuration for a deleted or disabled user" do
@@ -19,10 +21,7 @@ defmodule Trento.Ai.ConfigurationsTest do
         assert {:error, :forbidden} ==
                  Configurations.create_user_configuration(
                    user,
-                   %{
-                     model: Factory.random_ai_model(),
-                     api_key: Faker.String.base64()
-                   }
+                   build(:ai_configuration_creation_params)
                  )
       end
     end
@@ -34,10 +33,7 @@ defmodule Trento.Ai.ConfigurationsTest do
               %Ecto.Changeset{errors: [user_id: {"can't be blank", [validation: :required]}]}} =
                Configurations.create_user_configuration(
                  user,
-                 %{
-                   model: Factory.random_ai_model(),
-                   api_key: Faker.String.base64()
-                 }
+                 build(:ai_configuration_creation_params)
                )
     end
 
@@ -47,10 +43,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert {:error, %Ecto.Changeset{errors: [user_id: {"User does not exist", _}]}} =
                Configurations.create_user_configuration(
                  user,
-                 %{
-                   model: Factory.random_ai_model(),
-                   api_key: Faker.String.base64()
-                 }
+                 build(:ai_configuration_creation_params)
                )
     end
 
@@ -60,12 +53,39 @@ defmodule Trento.Ai.ConfigurationsTest do
         attrs: %{},
         expected_errors: [
           model: {"can't be blank", [validation: :required]},
+          provider: {"can't be blank", [validation: :required]},
           api_key: {"can't be blank", [validation: :required]}
+        ]
+      },
+      %{
+        name: "missing provider",
+        attrs: %{
+          model: build(:random_ai_model),
+          api_key: Faker.String.base64()
+        },
+        expected_errors: [
+          provider: {"can't be blank", [validation: :required]}
+        ]
+      },
+      %{
+        name: "empty provider",
+        attrs_sceanarios:
+          Enum.map(
+            [nil, "", "  "],
+            &%{
+              provider: &1,
+              model: build(:random_ai_model),
+              api_key: Faker.String.base64()
+            }
+          ),
+        expected_errors: [
+          provider: {"can't be blank", [validation: :required]}
         ]
       },
       %{
         name: "missing model",
         attrs: %{
+          provider: build(:random_ai_provider),
           api_key: Faker.String.base64()
         },
         expected_errors: [
@@ -78,6 +98,7 @@ defmodule Trento.Ai.ConfigurationsTest do
           Enum.map(
             [nil, "", "  "],
             &%{
+              provider: build(:random_ai_provider),
               model: &1,
               api_key: Faker.String.base64()
             }
@@ -93,6 +114,7 @@ defmodule Trento.Ai.ConfigurationsTest do
             [123, true, %{}, []],
             &%{
               model: &1,
+              provider: build(:random_ai_provider),
               api_key: Faker.String.base64()
             }
           ),
@@ -104,6 +126,7 @@ defmodule Trento.Ai.ConfigurationsTest do
         name: "unsupported model",
         attrs: %{
           model: Faker.Lorem.word(),
+          provider: build(:random_ai_provider),
           api_key: Faker.String.base64()
         },
         expected_errors: [
@@ -111,9 +134,23 @@ defmodule Trento.Ai.ConfigurationsTest do
         ]
       },
       %{
+        name: "model unsupported by the specified provider",
+        attrs: %{
+          provider: :googleai,
+          model: "gpt-5.4",
+          api_key: Faker.String.base64()
+        },
+        expected_errors: [
+          model:
+            {"is not supported by the specified provider",
+             [validation: :ai_model_provider_mismatch]}
+        ]
+      },
+      %{
         name: "missing api key",
         attrs: %{
-          model: Factory.random_ai_model()
+          provider: :googleai,
+          model: build(:random_ai_model, provider: :googleai)
         },
         expected_errors: [
           api_key: {"can't be blank", [validation: :required]}
@@ -125,7 +162,8 @@ defmodule Trento.Ai.ConfigurationsTest do
           Enum.map(
             [nil, "", "  "],
             &%{
-              model: Factory.random_ai_model(),
+              provider: :openai,
+              model: build(:random_ai_model, provider: :openai),
               api_key: &1
             }
           ),
@@ -139,7 +177,8 @@ defmodule Trento.Ai.ConfigurationsTest do
           Enum.map(
             [123, true, %{}, []],
             &%{
-              model: Factory.random_ai_model(),
+              provider: :anthropic,
+              model: build(:random_ai_model, provider: :anthropic),
               api_key: &1
             }
           ),
@@ -169,6 +208,34 @@ defmodule Trento.Ai.ConfigurationsTest do
       end
     end
 
+    test "should fail creating AI configuration when the provider is not among the supported ones" do
+      %User{id: user_id} = user = insert(:user)
+
+      unsuppoerted_providers = [:unsupported_provider, Faker.Lorem.word(), 123, true, %{}, []]
+
+      for unsuppoerted_provider <- unsuppoerted_providers do
+        assert {:error,
+                %Ecto.Changeset{
+                  errors: [
+                    provider:
+                      {"is invalid",
+                       [
+                         type: _,
+                         validation: :inclusion,
+                         enum: ["anthropic", "googleai", "openai" | _]
+                       ]}
+                  ]
+                }} =
+                 Configurations.create_user_configuration(user, %{
+                   provider: unsuppoerted_provider,
+                   model: build(:random_ai_model),
+                   api_key: Faker.String.base64()
+                 })
+
+        assert nil == load_ai_config(user_id)
+      end
+    end
+
     test "should not allow creating AI configuration for a user that already has one" do
       %User{id: user_id} = user = insert(:user)
 
@@ -182,17 +249,15 @@ defmodule Trento.Ai.ConfigurationsTest do
               }} =
                Configurations.create_user_configuration(
                  user,
-                 %{
-                   model: random_ai_model(),
-                   api_key: Faker.String.base64()
-                 }
+                 build(:ai_configuration_creation_params)
                )
     end
 
     test "should allow creating AI configuration with valid data" do
       %User{id: user_id} = user = insert(:user)
 
-      model = Factory.random_ai_model()
+      provider = build(:random_ai_provider)
+      model = build(:random_ai_model, provider: provider)
       api_key = Faker.String.base64()
 
       expected_provider = LLMRegistry.get_model_provider(model)
@@ -204,9 +269,56 @@ defmodule Trento.Ai.ConfigurationsTest do
                 api_key: ^api_key,
                 user_id: ^user_id
               } = created_config} =
-               Configurations.create_user_configuration(user, %{model: model, api_key: api_key})
+               Configurations.create_user_configuration(
+                 user,
+                 build(:ai_configuration_creation_params,
+                   provider: provider,
+                   model: model,
+                   api_key: api_key
+                 )
+               )
 
       assert ^created_config = load_ai_config(user_id)
+    end
+
+    test "should support creating AI configuration with a model that is supported by multiple providers" do
+      %User{id: user_id1} = user1 = insert(:user)
+
+      assert {:ok,
+              %UserConfiguration{
+                model: "model1",
+                provider: :provider1,
+                api_key: _api_key,
+                user_id: ^user_id1
+              } = created_config1} =
+               Configurations.create_user_configuration(
+                 user1,
+                 build(:ai_configuration_creation_params,
+                   provider: :provider1,
+                   model: "model1"
+                 )
+               )
+
+      assert ^created_config1 = load_ai_config(user_id1)
+
+      %User{id: user_id2} = user2 = insert(:user)
+
+      assert {:ok,
+              %UserConfiguration{
+                model: "model1",
+                provider: :provider2,
+                api_key: _api_key,
+                user_id: ^user_id2
+              } = created_config2} =
+               Configurations.create_user_configuration(
+                 user2,
+                 build(:ai_configuration_creation_params,
+                   provider: :provider2,
+                   model: "model1"
+                 )
+               )
+
+      assert ^created_config2 = load_ai_config(user_id2)
     end
   end
 
@@ -225,7 +337,7 @@ defmodule Trento.Ai.ConfigurationsTest do
         assert {:error, :forbidden} ==
                  Configurations.update_user_configuration(
                    user,
-                   %{model: Factory.random_ai_model(), api_key: Faker.String.base64()}
+                   build(:ai_configuration_creation_params)
                  )
 
         assert %UserConfiguration{} = load_ai_config(user_id)
@@ -238,7 +350,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert {:error, :forbidden} =
                Configurations.update_user_configuration(
                  user,
-                 %{model: Factory.random_ai_model(), api_key: Faker.String.base64()}
+                 build(:ai_configuration_creation_params)
                )
     end
 
@@ -248,7 +360,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert {:error, :not_found} =
                Configurations.update_user_configuration(
                  user,
-                 %{model: Factory.random_ai_model(), api_key: Faker.String.base64()}
+                 build(:ai_configuration_creation_params)
                )
     end
 
@@ -258,7 +370,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert {:error, :not_found} =
                Configurations.update_user_configuration(
                  user,
-                 %{model: Factory.random_ai_model(), api_key: Faker.String.base64()}
+                 build(:ai_configuration_creation_params)
                )
     end
 
@@ -284,6 +396,33 @@ defmodule Trento.Ai.ConfigurationsTest do
         },
         expected_errors: [
           model: {"is not supported", [validation: :ai_model_validity]}
+        ]
+      },
+      %{
+        name: "model unsupported by the specified provider",
+        attrs: %{
+          provider: :googleai,
+          model: "gpt-5.4"
+        },
+        expected_errors: [
+          model:
+            {"is not supported by the specified provider",
+             [validation: :ai_model_provider_mismatch]}
+        ]
+      },
+      %{
+        name: "empty provider",
+        attrs_sceanarios:
+          Enum.map(
+            [nil, "", "  "],
+            &%{
+              provider: &1,
+              model: build(:random_ai_model),
+              api_key: Faker.String.base64()
+            }
+          ),
+        expected_errors: [
+          provider: {"can't be blank", [validation: :required]}
         ]
       },
       %{
@@ -325,13 +464,20 @@ defmodule Trento.Ai.ConfigurationsTest do
           api_key: initial_api_key
         } = insert(:ai_user_configuration, user_id: user_id)
 
-        %{expected_errors: expected_errors} = @failing_update_validation_scenario
+        expected_errors = Map.get(@failing_update_validation_scenario, :expected_errors, [])
+
+        expected_errors_scenarios =
+          Map.get(@failing_update_validation_scenario, :expected_errors_scenarios, [
+            expected_errors
+          ])
 
         attrs = Map.get(@failing_update_validation_scenario, :attrs, %{})
         attrs_scenarios = Map.get(@failing_update_validation_scenario, :attrs_sceanarios, [attrs])
 
-        for resolved_scenario <- attrs_scenarios do
-          assert {:error, %Ecto.Changeset{errors: ^expected_errors}} =
+        for {resolved_scenario, index} <- Enum.with_index(attrs_scenarios) do
+          resolved_expected_errors = Enum.at(expected_errors_scenarios, index, expected_errors)
+
+          assert {:error, %Ecto.Changeset{errors: ^resolved_expected_errors}} =
                    Configurations.update_user_configuration(user, resolved_scenario)
 
           assert %UserConfiguration{
@@ -344,23 +490,56 @@ defmodule Trento.Ai.ConfigurationsTest do
       end
     end
 
+    test "should fail updating only the provider" do
+      %User{id: user_id} = user = insert(:user)
+
+      %UserConfiguration{
+        model: initial_model,
+        provider: initial_provider,
+        api_key: initial_api_key
+      } =
+        insert(:ai_user_configuration,
+          user_id: user_id,
+          provider: :googleai,
+          model: build(:random_ai_model, provider: :googleai)
+        )
+
+      new_provider = :openai
+
+      assert {:error,
+              %Ecto.Changeset{
+                errors: [
+                  model:
+                    {"is not supported by the specified provider",
+                     [validation: :ai_model_provider_mismatch]}
+                ]
+              }} =
+               Configurations.update_user_configuration(user, %{
+                 provider: new_provider
+               })
+
+      assert %UserConfiguration{
+               model: ^initial_model,
+               provider: ^initial_provider,
+               api_key: ^initial_api_key
+             } = load_ai_config(user_id)
+    end
+
     test "should allow updating only the model" do
       %User{id: user_id} = user = insert(:user)
 
       %UserConfiguration{
         model: _initial_model,
-        provider: _initial_provider,
+        provider: initial_provider,
         api_key: initial_api_key
       } = insert(:ai_user_configuration, user_id: user_id)
 
-      new_model = Factory.random_ai_model()
-
-      expected_provider = LLMRegistry.get_model_provider(new_model)
+      new_model = build(:random_ai_model, provider: initial_provider)
 
       assert {:ok,
               %UserConfiguration{
                 model: ^new_model,
-                provider: ^expected_provider,
+                provider: ^initial_provider,
                 api_key: ^initial_api_key,
                 user_id: ^user_id
               } = updated_config} =
@@ -371,27 +550,55 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert ^updated_config = load_ai_config(user_id)
     end
 
+    test "should allow updating only the api key" do
+      %User{id: user_id} = user = insert(:user)
+
+      %UserConfiguration{
+        model: initial_model,
+        provider: initial_provider,
+        api_key: _initial_api_key
+      } = insert(:ai_user_configuration, user_id: user_id)
+
+      new_api_key = Faker.String.base64()
+
+      assert {:ok,
+              %UserConfiguration{
+                model: ^initial_model,
+                provider: ^initial_provider,
+                api_key: ^new_api_key,
+                user_id: ^user_id
+              } = updated_config} =
+               Configurations.update_user_configuration(user, %{
+                 api_key: new_api_key
+               })
+
+      assert ^updated_config = load_ai_config(user_id)
+    end
+
     test "should allow updating AI configuration with valid data" do
       %User{id: user_id} = user = insert(:user)
 
       insert(:ai_user_configuration, user_id: user_id)
 
-      new_model = Factory.random_ai_model()
+      new_provider = build(:random_ai_provider)
+      new_model = build(:random_ai_model, provider: new_provider)
       new_api_key = Faker.String.base64()
-
-      expected_provider = LLMRegistry.get_model_provider(new_model)
 
       assert {:ok,
               %UserConfiguration{
                 model: ^new_model,
-                provider: ^expected_provider,
+                provider: ^new_provider,
                 api_key: ^new_api_key,
                 user_id: ^user_id
               } = updated_config} =
-               Configurations.update_user_configuration(user, %{
-                 model: new_model,
-                 api_key: new_api_key
-               })
+               Configurations.update_user_configuration(
+                 user,
+                 build(:ai_configuration_creation_params,
+                   provider: new_provider,
+                   model: new_model,
+                   api_key: new_api_key
+                 )
+               )
 
       assert ^updated_config = load_ai_config(user_id)
     end

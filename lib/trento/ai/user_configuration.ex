@@ -14,6 +14,7 @@ defmodule Trento.AI.UserConfiguration do
   schema "ai_configurations" do
     field :model, :string
     field :provider, Ecto.Enum, values: LLMRegistry.providers()
+    # field :provider, :string
     field :api_key, EncryptedBinary, redact: true
 
     belongs_to :user, Trento.Users.User, primary_key: true
@@ -22,12 +23,11 @@ defmodule Trento.AI.UserConfiguration do
   end
 
   def changeset(ai_configuration, attrs) do
-    updated_attrs = maybe_update_provider(attrs)
-
     ai_configuration
-    |> cast(updated_attrs, [:user_id, :model, :provider, :api_key])
-    |> validate_required([:user_id, :model, :api_key])
-    |> validate_change(:model, &validate_model/2)
+    |> cast(attrs, [:user_id, :model, :provider, :api_key])
+    |> validate_required([:user_id, :model, :provider, :api_key])
+    |> validate_change(:provider, &validate_provider/2)
+    |> validate_model()
     |> unique_constraint(:user_id,
       name: :ai_configurations_pkey,
       message: "User already has a configuration"
@@ -35,16 +35,41 @@ defmodule Trento.AI.UserConfiguration do
     |> foreign_key_constraint(:user_id, message: "User does not exist")
   end
 
-  defp maybe_update_provider(%{model: model} = attrs),
-    do: Map.put(attrs, :provider, LLMRegistry.get_model_provider(model))
-
-  defp maybe_update_provider(attrs), do: attrs
-
-  defp validate_model(_model_field_atom, model) do
-    if LLMRegistry.model_supported?(model) do
+  defp validate_provider(_provider_field_atom, provider) do
+    if LLMRegistry.provider_supported?(provider) do
       []
     else
-      [model: {"is not supported", validation: :ai_model_validity}]
+      [provider: {"is not supported", validation: :ai_provider_validity}]
     end
+  end
+
+  defp validate_model(%{errors: [provider: _]} = changeset), do: changeset
+
+  defp validate_model(changeset) do
+    provider = get_field(changeset, :provider)
+    model = get_field(changeset, :model)
+
+    changeset
+    |> force_change(:model, model)
+    |> force_change(:provider, provider)
+    |> validate_change(:model, fn _model_atom, _model ->
+      model_supported? = LLMRegistry.model_supported?(model)
+      model_supported_by_provider? = LLMRegistry.model_supported_by_provider?(model, provider)
+
+      case {model_supported?, model_supported_by_provider?} do
+        {true, true} ->
+          []
+
+        {true, false} ->
+          [
+            model:
+              {"is not supported by the specified provider",
+               validation: :ai_model_provider_mismatch}
+          ]
+
+        {false, _} ->
+          [model: {"is not supported", validation: :ai_model_validity}]
+      end
+    end)
   end
 end

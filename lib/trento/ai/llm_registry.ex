@@ -44,10 +44,26 @@ defmodule Trento.AI.LLMRegistry do
   end
 
   @doc """
+  Checks if a given model is supported by a specific provider.
+  """
+  @spec model_supported_by_provider?(bitstring(), atom()) :: boolean()
+  def model_supported_by_provider?(model, provider) do
+    model in get_provider_models(provider)
+  end
+
+  @doc """
   Checks if a given model is supported by any provider.
   """
   @spec model_supported?(bitstring()) :: boolean()
   def model_supported?(model), do: model in get_provider_models(:all)
+
+  @doc """
+  Checks if a given provider is supported.
+  """
+  @spec provider_supported?(atom()) :: boolean()
+  def provider_supported?(provider) when is_atom(provider), do: provider in providers()
+
+  def provider_supported?(_), do: false
 
   defp get_ai_providers_config, do: Keyword.get(ApplicationConfigLoader.load(), :providers, [])
 end
