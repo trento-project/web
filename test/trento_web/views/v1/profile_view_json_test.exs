@@ -71,5 +71,42 @@ defmodule TrentoWeb.V1.ProfileJSONTest do
         assert length(rendered_user.personal_access_tokens) == expected_pat_count
       end
     end
+
+    test "should render a user profile with AI configuration" do
+      %{
+        provider: provider,
+        model: model
+      } = ai_user_configuration = build(:ai_user_configuration)
+
+      scenarios = [
+        %{
+          user: build(:user, abilities: [], user_identities: [], ai_configuration: nil),
+          expected_ai_configuration: nil
+        },
+        %{
+          # not providing ai_configuration results in an Ecto.Association.NotLoaded
+          user: build(:user, abilities: [], user_identities: []),
+          expected_ai_configuration: nil
+        },
+        %{
+          user:
+            build(:user,
+              abilities: [],
+              user_identities: [],
+              ai_configuration: ai_user_configuration
+            ),
+          expected_ai_configuration: %{
+            provider: provider,
+            model: model
+          }
+        }
+      ]
+
+      for %{user: user, expected_ai_configuration: expected_ai_configuration} <- scenarios do
+        rendered_user = ProfileJSON.profile(%{user: user})
+
+        assert rendered_user.ai_configuration == expected_ai_configuration
+      end
+    end
   end
 end
