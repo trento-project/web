@@ -439,8 +439,11 @@ export const selectTimezone = (timezone) => {
     .click()
     .type(`{selectall}{backspace}${timezone}`);
 
-  // Wait for and click the filtered option from the dropdown
-  return cy.get('div[id*="-option-"]', { timeout: 5000 }).first().click();
+  // Click the option that contains the timezone text (first visible option after filtering)
+  return cy
+    .get('div[id*="timezone-option-"]', { timeout: 5000 })
+    .contains(timezone)
+    .click({ force: true });
 };
 
 export const timezoneValueIsDisplayed = (timezone) =>
