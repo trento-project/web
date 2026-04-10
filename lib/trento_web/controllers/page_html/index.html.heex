@@ -13,7 +13,9 @@
       ssoCallbackUrl: '<%= raw @sso_callback_url %>',
       ssoEnrollmentUrl: '<%= raw @sso_enrollment_url %>',
       operationsEnabled: <%= @operations_enabled %>,
-      webversion: '<%= @version %>'
+      webversion: '<%= @version %>',
+      aiEnabled: <%= @ai_enabled %>,
+      aiProviders: <%= raw Jason.encode!(@ai_providers) %>
   };
 </script>
 
