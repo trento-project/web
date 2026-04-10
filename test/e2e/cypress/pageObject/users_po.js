@@ -74,7 +74,7 @@ const continueWithoutAnalyticsButton =
   'button:contains("Continue without Analytics")';
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
-const timezoneInputField = 'label:contains("Timezone") + div input';
+const timezoneInputField = 'input#timezone';
 const timezoneSelectedValue =
   'label:contains("Timezone") + div div[class*="singleValue"]';
 
@@ -438,6 +438,7 @@ export const clickAnalyticsOptInSwitch = () =>
 export const selectTimezone = (timezone) =>
   cy
     .get(timezoneInputField)
+    .should('be.visible')
     .click()
     .type(`{selectall}{backspace}${timezone}{enter}`);
 
