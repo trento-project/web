@@ -74,6 +74,9 @@ const continueWithoutAnalyticsButton =
   'button:contains("Continue without Analytics")';
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
+const timezoneInputField = 'label:contains("Timezone") + div input';
+const timezoneSelectedValue =
+  'label:contains("Timezone") + div div[class*="singleValue"]';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -431,6 +434,15 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 
 export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
+
+export const selectTimezone = (timezone) =>
+  cy
+    .get(timezoneInputField)
+    .click()
+    .type(`{selectall}{backspace}${timezone}{enter}`);
+
+export const timezoneValueIsDisplayed = (timezone) =>
+  cy.get(timezoneSelectedValue).should('contain', timezone);
 
 // API
 export const interceptDeleteUser = () =>
