@@ -75,8 +75,6 @@ const continueWithoutAnalyticsButton =
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
 const timezoneInputField = 'input#timezone';
-const timezoneSelectedValue =
-  'label:contains("Timezone") + div div[class*="singleValue"]';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
