@@ -13,6 +13,10 @@ defmodule Trento.Users do
   alias Trento.Abilities.UsersAbilities
   alias Trento.UserIdentities.UserIdentity
 
+  alias Trento.PersonalAccessTokens.PersonalAccessToken
+
+  alias Trento.AI.UserConfiguration, as: AIUserConfiguration
+
   alias Trento.Users.User
 
   @spec by_id(id :: non_neg_integer()) :: {:ok, User.t()} | {:error, :not_found}
@@ -53,6 +57,7 @@ defmodule Trento.Users do
          |> preload(:abilities)
          |> preload(:user_identities)
          |> preload(:personal_access_tokens)
+         |> preload(:ai_configuration)
          |> Repo.one() do
       nil -> {:error, :not_found}
       user -> {:ok, user}
@@ -169,6 +174,8 @@ defmodule Trento.Users do
         )
         |> delete_abilities_multi()
         |> delete_user_identities_multi()
+        |> delete_personal_access_tokens_multi()
+        |> delete_ai_user_configuration_multi()
         |> Repo.transaction()
 
       case result do
@@ -321,6 +328,26 @@ defmodule Trento.Users do
       :delete_user_identities,
       fn %{user: %User{id: user_id}} ->
         from(u in UserIdentity, where: u.user_id == ^user_id)
+      end
+    )
+  end
+
+  defp delete_personal_access_tokens_multi(multi) do
+    Ecto.Multi.delete_all(
+      multi,
+      :delete_personal_access_tokens,
+      fn %{user: %User{id: user_id}} ->
+        from(u in PersonalAccessToken, where: u.user_id == ^user_id)
+      end
+    )
+  end
+
+  defp delete_ai_user_configuration_multi(multi) do
+    Ecto.Multi.delete_all(
+      multi,
+      :delete_ai_user_configuration,
+      fn %{user: %User{id: user_id}} ->
+        from(u in AIUserConfiguration, where: u.user_id == ^user_id)
       end
     )
   end
