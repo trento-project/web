@@ -275,5 +275,6 @@ defmodule TrentoWeb.V1.UsersController do
   # when sso is enabled, we only allow abilities, enabled and timezone as parameters
   defp clean_params_for_sso_integration(attrs, true),
     do: Map.take(attrs, [:abilities, :enabled, :timezone])
+
   defp clean_params_for_sso_integration(attrs, _), do: attrs
 end
