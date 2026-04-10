@@ -503,6 +503,8 @@ TrentoWeb.SessionJSON.html
 TrentoWeb.TokensCase.html
 TrentoWeb.UserChannel.html
 TrentoWeb.UserSocket.html
+TrentoWeb.V1.AIConfigurationController.html
+TrentoWeb.V1.AIConfigurationJSON.html
 TrentoWeb.V1.AbilityController.html
 TrentoWeb.V1.AbilityJSON.html
 TrentoWeb.V1.AboutController.html
@@ -557,7 +559,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-881C725D.js
-dist/sidebar_items-4FB2FDED.js
+dist/search_data-C77EEF43.js
+dist/sidebar_items-DA0B474B.js
 index.html
 search.html

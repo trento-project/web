@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-4FB2FDED.js"></script>
+    <script src="dist/sidebar_items-DA0B474B.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -187,6 +187,26 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#model_supported_by_provider?/2" data-no-tooltip translate="no">model_supported_by_provider?(model, provider)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Checks if a given model is supported by a specific provider.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#provider_supported?/1" data-no-tooltip translate="no">provider_supported?(provider)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Checks if a given provider is supported.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#providers/0" data-no-tooltip translate="no">providers()</a>
 
       </div>
@@ -273,7 +293,7 @@ Info
     </a>
     <h1 class="signature" translate="no">model_supported?(model)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_registry.ex#L50" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_registry.ex#L58" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -290,6 +310,62 @@ Info
       </div>
 
 <p>Checks if a given model is supported by any provider.</p>
+  </section>
+</section>
+<section class="detail" id="model_supported_by_provider?/2">
+
+  <div class="detail-header">
+    <a href="#model_supported_by_provider?/2" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">model_supported_by_provider?(model, provider)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_registry.ex#L50" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> model_supported_by_provider?(<a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">bitstring</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Checks if a given model is supported by a specific provider.</p>
+  </section>
+</section>
+<section class="detail" id="provider_supported?/1">
+
+  <div class="detail-header">
+    <a href="#provider_supported?/1" class="detail-link" data-no-tooltip title="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature" translate="no">provider_supported?(provider)</h1>
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_registry.ex#L64" class="icon-action" rel="help" title="View Source">
+       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+       <span class="sr-only">View Source</span>
+     </a>
+
+
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> provider_supported?(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()</pre>
+
+      </div>
+
+<p>Checks if a given provider is supported.</p>
   </section>
 </section>
 <section class="detail" id="providers/0">
