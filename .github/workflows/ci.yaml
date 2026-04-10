@@ -25,6 +25,11 @@ env:
   ELIXIR_BC: "1.15.7-otp-26"
   ERLANG_BC: "26.2.1"
   NODEJS_BC: "20.20.0"
+  OPENAPI_DIFF_VERSION: "2.0.1" # https://github.com/OpenAPITools/openapi-diff/releases
+  PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
+  K3S_VERSION: "v1.31.2+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
+  CERT_MANAGER_VERSION: "v1.14.5" # https://github.com/cert-manager/cert-manager/releases
+  POSTGRESQL_VERSION: "15" # https://hub.docker.com/_/postgres/tags
 
 jobs:
   # job to detect changed paths
@@ -620,7 +625,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
           chmod: 0755
         env:
@@ -709,13 +714,13 @@ jobs:
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
           backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_dev.sql"
-          postgresql_version: "15"
+          postgresql_version: ${{ env.POSTGRESQL_VERSION }}
       - name: Postgres trento_eventstore_dev restore
         uses: tj-actions/pg-restore@7ac93da67774277a23b67c31b415760f5bee7441 # v6
         with:
           database_url: "postgresql://postgres:postgres@localhost:5433/postgres"
           backup_file: "test/fixtures/regression/${{ matrix.test }}/trento_eventstore_dev.sql"
-          postgresql_version: "15"
+          postgresql_version: ${{ env.POSTGRESQL_VERSION }}
       - name: Run DB migrations
         run: mix ecto.migrate
       - name: Run DB seed
@@ -726,7 +731,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
           chmod: 0755
         env:
@@ -861,7 +866,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
           chmod: 0755
         env:
@@ -1049,7 +1054,7 @@ jobs:
         run: mv /tmp/specs .
       - name: Find difference between OpenAPI specifications
         run: |
-          docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:2.0.1 \
+          docker run -v "$(pwd)/specs:/specs" --rm openapitools/openapi-diff:${{ env.OPENAPI_DIFF_VERSION }} \
             /specs/target-spec.json \
             /specs/current-spec.json \
             --fail-on-incompatible \
@@ -1126,16 +1131,16 @@ jobs:
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@502a9ff4d816dad543e359971fe2c3128d0f4c6e # v4
         with:
-          k3s-version: v1.31.2+k3s1
+          k3s-version: ${{ env.K3S_VERSION }}
       - name: Add bitnami & jetstack(cert-manager) helm deps
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo add jetstack https://charts.jetstack.io
           helm repo update
       - name: Install CRDs for cert-manager
-        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.5/cert-manager.crds.yaml
+        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${{ env.CERT_MANAGER_VERSION }}/cert-manager.crds.yaml
       - name: Install cert-manager
-        run: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.14.5
+        run: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version ${{ env.CERT_MANAGER_VERSION }}
         continue-on-error: true
       - name: Download and unzip helm chart
         run: |
@@ -1193,7 +1198,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
           chmod: 0755
         env:

@@ -15,6 +15,7 @@ concurrency:
 
 env:
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
+  NODEJS_BC: "20.20.0"
 
 jobs:
   setup-matrix:
@@ -32,7 +33,7 @@ jobs:
       - name: Compute matrix
         id: compute-matrix
         run: |
-          echo "NODEJS_BC=20.20.0" >> $GITHUB_OUTPUT
+          echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
           echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT

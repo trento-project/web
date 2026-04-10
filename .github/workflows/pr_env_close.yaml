@@ -12,6 +12,7 @@ concurrency:
 env:
   PR_ENV_LABEL: env
   PR_NUMBER: "${{ github.event.pull_request.number }}"
+  ANSIBLE_CORE_VERSION: "2.16.3" # https://pypi.org/project/ansible-core/#history
 
 jobs:
   check_env_creation_privilege:
@@ -84,7 +85,7 @@ jobs:
         if: ${{ env.ACT }}
         run: echo '/opt/pipx_bin' >> $GITHUB_PATH
       - name: Install ansible-core
-        run: sudo pipx install --force ansible-core==2.16.3
+        run: sudo pipx install --force ansible-core==${{ env.ANSIBLE_CORE_VERSION }}
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
