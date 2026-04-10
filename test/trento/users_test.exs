@@ -192,6 +192,36 @@ defmodule Trento.UsersTest do
       assert analytics_enabled_at == nil
       assert analytics_eula_accepted_at == nil
     end
+
+    test "update_user_profile updates timezone" do
+      user = insert(:user)
+
+      assert {:ok, %User{timezone: "Europe/Berlin"}} =
+               Users.update_user_profile(user, %{timezone: "Europe/Berlin"})
+    end
+
+    test "update_user_profile returns error for invalid timezone" do
+      user = insert(:user)
+
+      assert {:error, changeset} = Users.update_user_profile(user, %{timezone: "US/Pacific-New"})
+      assert changeset.errors[:timezone]
+    end
+
+    test "update_user_profile_sso_enabled updates timezone" do
+      user = insert(:user)
+
+      assert {:ok, %User{timezone: "Europe/Berlin"}} =
+               Users.update_user_profile_sso_enabled(user, %{timezone: "Europe/Berlin"})
+    end
+
+    test "update_user_profile_sso_enabled returns error for invalid timezone" do
+      user = insert(:user)
+
+      assert {:error, changeset} =
+               Users.update_user_profile_sso_enabled(user, %{timezone: "US/Pacific-New"})
+
+      assert changeset.errors[:timezone]
+    end
   end
 
   describe "users" do
