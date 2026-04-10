@@ -4014,5 +4014,45 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-10T07:12:07Z",
+    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
+    "run_id": "24227020728",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 1
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.1714
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow to deregister a host after clean-up confirmation::Host Details Deregistration \"Clean up\" button should deregister a host should allow to deregister a host after clean-up confirmation",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed::Host Details Deregistration \"Clean up\" button should be visible only for an unhealthy host should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
