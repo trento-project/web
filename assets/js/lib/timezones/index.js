@@ -1,6 +1,5 @@
 import tzdata from 'tzdata';
 
-
 // Default timezone is set to UTC until a user explicitly selects one.
 export const DEFAULT_TIMEZONE = 'Etc/UTC';
 

@@ -415,11 +415,14 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(DEFAULT_TIMEZONE);
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
+      DEFAULT_TIMEZONE
+    );
   });
 
   it('should set timezone selector value when timezone is provided', () => {
-    const { username, fullname, email, abilities, timezone } = profileFactory.build();
+    const { username, fullname, email, abilities, timezone } =
+      profileFactory.build();
 
     render(
       <ProfileForm
@@ -433,11 +436,14 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(timezone);
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
+      timezone
+    );
   });
 
   it('should set timezone in save payload when timezone selector changes', async () => {
-    const { username, fullname, email, abilities, timezone } = profileFactory.build();
+    const { username, fullname, email, abilities, timezone } =
+      profileFactory.build();
     const mockOnSave = jest.fn();
     const user = userEvent.setup();
 
@@ -475,7 +481,9 @@ describe('ProfileForm', () => {
 
     render(<ProfileForm errors={errors} />);
 
-    expect(await screen.findByText(/is not a valid IANA timezone/i)).toBeVisible();
+    expect(
+      await screen.findByText(/is not a valid IANA timezone/i)
+    ).toBeVisible();
   });
 
   describe('Single sign on', () => {
@@ -565,7 +573,8 @@ describe('ProfileForm', () => {
     });
 
     it('should set timezone in save payload when timezone selector changes', async () => {
-      const { username, fullname, email, abilities, timezone } = profileFactory.build();
+      const { username, fullname, email, abilities, timezone } =
+        profileFactory.build();
       const mockOnSave = jest.fn();
       const user = userEvent.setup();
 
@@ -595,5 +604,4 @@ describe('ProfileForm', () => {
       });
     });
   });
-
 });

@@ -410,7 +410,9 @@ describe('UserForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(DEFAULT_TIMEZONE);
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
+      DEFAULT_TIMEZONE
+    );
   });
 
   it('should set timezone selector value when timezone is provided', () => {
@@ -437,7 +439,9 @@ describe('UserForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(timezone);
+    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
+      timezone
+    );
   });
 
   it('should set timezone in save payload when timezone selector changes', async () => {

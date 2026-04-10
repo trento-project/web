@@ -216,7 +216,7 @@ function ProfileForm({
           <Label
             htmlFor="timezone"
             className="col-start-1 col-span-2 pt-2"
-            info={"Aligns timestamps according to timezone selection"}
+            info={'Aligns timestamps according to timezone selection'}
           >
             Timezone
           </Label>
