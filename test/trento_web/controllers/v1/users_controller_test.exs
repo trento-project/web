@@ -392,7 +392,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItemV1", api_spec)
     end
 
-    test "should only update abilities and enabled when sso is enabled", %{
+    test "should only update abilities, enabled and timezone when sso is enabled", %{
       conn: conn,
       api_spec: api_spec
     } do
@@ -405,6 +405,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         enabled: true,
+        timezone: "Europe/Berlin",
         password: "testpassword89",
         password_confirmation: "testpassword89",
         abilities: [%{id: id, name: name, resource: resource, label: label}]
@@ -422,6 +423,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
       assert resp.enabled
+      assert resp.timezone == valid_params.timezone
       assert resp.password_change_requested_at == nil
       assert abilities == [%{id: id, name: name, resource: resource, label: label}]
 
