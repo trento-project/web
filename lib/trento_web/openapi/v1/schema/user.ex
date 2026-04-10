@@ -7,6 +7,40 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
   alias TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken.PersonalAccessTokenCollection
 
+  defmodule AIConfiguration do
+    @moduledoc false
+
+    OpenApiSpex.schema(
+      %{
+        title: "AIConfigurationV1",
+        description: "AI configuration for a user.",
+        type: :object,
+        nullable: true,
+        additionalProperties: false,
+        properties: %{
+          provider: %Schema{
+            type: :string,
+            description: "Chosen AI provider.",
+            example: "googleai",
+            nullable: false
+          },
+          model: %Schema{
+            type: :string,
+            description: "Chosen AI model.",
+            example: "gemini-2.0-flash",
+            nullable: false
+          }
+        },
+        example: %{
+          provider: "googleai",
+          model: "gemini-2.0-flash"
+        },
+        required: [:provider, :model]
+      },
+      struct?: false
+    )
+  end
+
   defmodule UserTOTPEnrollmentPayload do
     @moduledoc false
 
@@ -157,6 +191,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false,
             example: true
           },
+          ai_configuration: AIConfiguration,
           created_at: %OpenApiSpex.Schema{
             type: :string,
             format: :"date-time",
