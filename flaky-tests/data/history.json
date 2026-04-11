@@ -4142,5 +4142,45 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-11T06:49:36Z",
+    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
+    "run_id": "24274631377",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 20
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.3453
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.1027
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.1015
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.07251
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.05001
+      },
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.05001
+      }
+    ]
   }
 ]
