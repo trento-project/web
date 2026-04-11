@@ -4094,5 +4094,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-11T04:20:51Z",
+    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
+    "run_id": "24274249598",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.05001
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
