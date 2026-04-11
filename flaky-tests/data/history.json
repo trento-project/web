@@ -4118,5 +4118,29 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-11T04:21:34Z",
+    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
+    "run_id": "24274249598",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.02501
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
   }
 ]
