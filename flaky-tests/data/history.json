@@ -4218,5 +4218,37 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-12T04:49:17Z",
+    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
+    "run_id": "24298708972",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "Label Component::should display an info tooltip if specified",
+        "score": 0.02501
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.02501
+      }
+    ]
   }
 ]
