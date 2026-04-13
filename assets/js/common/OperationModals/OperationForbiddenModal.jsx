@@ -24,7 +24,7 @@ const formatError = (error, metadata, onCancel) => {
     // corresponding metadata by index and create the link
     if (part.match(replacePattern)) {
       const index = parseInt(part.substring(1));
-      const { id, label, type } = get(metadata, index);
+      const { id, label, type } = get(metadata, index) ?? {};
 
       return id ? (
         <Link
