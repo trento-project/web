@@ -133,17 +133,32 @@ defmodule Trento.Operations.DatabasePolicy do
   defp primary_site_started(_, %{site: nil}, _), do: :ok
   # primary site
   defp primary_site_started(_, %{site: site}, site), do: :ok
-  # secondary sites, check primary is started
+  # secondary sites, check primary of this site is started.
+  # for that, check site instances with the previous tier number are started.
+  # for example: to start tier 3 check if tier 2 instances are started.
+  # this policy is sub-optimal as it doesn't handle well a potential multi-target + multi-tier setup.
+  # in that scenario, the policy would check all instances in 2nd tier, without filtering only
+  # replicated sites by the 3rd tier site.
   defp primary_site_started(
          %DatabaseReadModel{
            sid: sid,
            database_instances: database_instances
          },
-         _,
-         primary_site
+         %{site: site},
+         _
        ) do
+    requested_site_tier =
+      Enum.find_value(database_instances, 0, fn %{
+                                                  system_replication_tier: tier,
+                                                  system_replication_site: inst_site
+                                                } ->
+        if site == inst_site do
+          tier
+        end
+      end)
+
     database_instances
-    |> Enum.filter(fn %{system_replication_site: site} -> site == primary_site end)
+    |> Enum.filter(fn %{system_replication_tier: tier} -> tier == requested_site_tier - 1 end)
     |> Enum.all?(fn %{health: health} -> health == :passing end)
     |> if do
       :ok
@@ -151,7 +166,7 @@ defmodule Trento.Operations.DatabasePolicy do
       {:error,
        [
          OperationsHelper.build_error(
-           "Primary site #{primary_site} of database #{sid} is not started",
+           "Primary site of #{site} in database #{sid} is not started",
            []
          )
        ]}
@@ -166,11 +181,11 @@ defmodule Trento.Operations.DatabasePolicy do
            sid: sid,
            database_instances: database_instances
          },
-         %{site: primary_site},
-         primary_site
+         %{site: site},
+         _
        ) do
     database_instances
-    |> Enum.reject(fn %{system_replication_site: site} -> site == primary_site end)
+    |> Enum.filter(fn %{system_replication_source_site: soure_site} -> site == soure_site end)
     |> Enum.all?(fn %{health: health} -> health == :unknown end)
     |> if do
       :ok
@@ -178,7 +193,7 @@ defmodule Trento.Operations.DatabasePolicy do
       {:error,
        [
          OperationsHelper.build_error(
-           "Secondary sites of database #{sid} are not stopped",
+           "Secondary sites for site #{site} in database #{sid} are not stopped",
            []
          )
        ]}

@@ -157,6 +157,9 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
 
     test "should forbid operation in secondary site if primary site is not started" do
+      site1 = "Site1"
+      site2 = "Site2"
+
       %{sid: sid} =
         database =
         build(:database,
@@ -164,12 +167,20 @@ defmodule Trento.Operations.DatabasePolicyTest do
             build(:database_instance,
               health: Health.unknown(),
               system_replication: "Primary",
-              system_replication_site: "Site1",
+              system_replication_tier: 1,
               host: build(:host, heartbeat: :critical, cluster: nil)
             ),
             build(:database_instance,
+              health: Health.unknown(),
               system_replication: "Secondary",
-              system_replication_site: "Site2",
+              system_replication_site: site1,
+              system_replication_tier: 2,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              system_replication: "Secondary",
+              system_replication_site: site2,
+              system_replication_tier: 3,
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
@@ -178,11 +189,20 @@ defmodule Trento.Operations.DatabasePolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Primary site Site1 of database #{sid} is not started",
+                  message: "Primary site of #{site1} in database #{sid} is not started",
                   metadata: []
                 }
               ]} ==
-               DatabasePolicy.authorize_operation(:database_start, database, %{site: "Site2"})
+               DatabasePolicy.authorize_operation(:database_start, database, %{site: site1})
+
+      assert {:error,
+              [
+                %{
+                  message: "Primary site of #{site2} in database #{sid} is not started",
+                  metadata: []
+                }
+              ]} ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{site: site2})
     end
 
     test "should authorize operation if cluster is in maintenance and system replication is not enabled" do
@@ -334,6 +354,11 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
 
     test "should forbid operation if the request is for the primary site and secondary sites are not stopped" do
+      site1 = "Site1"
+      site2 = "Site2"
+      site3 = "Site3"
+      site4 = "Site3"
+
       %{sid: sid} =
         database =
         build(:database,
@@ -341,13 +366,28 @@ defmodule Trento.Operations.DatabasePolicyTest do
           database_instances: [
             build(:database_instance,
               system_replication: "Primary",
-              system_replication_site: "Site1",
+              system_replication_site: site1,
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
               health: Health.passing(),
               system_replication: "Secondary",
-              system_replication_site: "Site2",
+              system_replication_site: site2,
+              system_replication_source_site: site1,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary 2",
+              system_replication_site: site3,
+              system_replication_source_site: site1,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Secondary",
+              system_replication_site: site4,
+              system_replication_source_site: site2,
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
           ]
@@ -356,11 +396,26 @@ defmodule Trento.Operations.DatabasePolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Secondary sites of database #{sid} are not stopped",
+                  message: "Secondary sites for site #{site1} in database #{sid} are not stopped",
                   metadata: []
                 }
               ]} ==
-               DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: site1})
+
+      assert {:error,
+              [
+                %{
+                  message: "Secondary sites for site #{site2} in database #{sid} are not stopped",
+                  metadata: []
+                }
+              ]} ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: site2})
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: site3})
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: site4})
     end
 
     test "should forbid operation if the request is for the primary site and attached application instances are not stopped" do
