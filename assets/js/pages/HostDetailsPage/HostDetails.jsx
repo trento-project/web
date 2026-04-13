@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { get, zipWith, startCase, some } from 'lodash';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
 import {
   EOS_CLEAR_ALL,
   EOS_PLAY_CIRCLE,
@@ -18,6 +19,9 @@ import {
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATETIME_ISO_SQL_FORMAT } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -43,6 +47,7 @@ import SuseLogo from '@static/suse_logo.svg';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 import { canStartExecution } from '@pages/ChecksSelection';
 import DeregistrationModal from '@pages/DeregistrationModal';
+import { getUserProfile } from '@state/selectors/user';
 
 import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
@@ -109,6 +114,7 @@ function HostDetails({
   const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
+  const { timezone } = useSelector(getUserProfile);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -142,6 +148,29 @@ function HostDetails({
   const runningOperationName = get(runningOperation, 'operation', null);
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
+
+  // Format SLES subscriptions dates to be displayed in user's timezone
+  const formattedSlesSubscriptions = (slesSubscriptions || []).map(
+    (subscription) => {
+      const formattedStartsAt = subscription?.starts_at
+        ? formatDate(subscription.starts_at, DATETIME_ISO_SQL_FORMAT, {
+            in: tz(timezone),
+          }) || subscription.starts_at
+        : subscription?.starts_at;
+
+      const formattedExpiresAt = subscription?.expires_at
+        ? formatDate(subscription.expires_at, DATETIME_ISO_SQL_FORMAT, {
+            in: tz(timezone),
+          }) || subscription.expires_at
+        : subscription?.expires_at;
+
+      return {
+        ...subscription,
+        starts_at: formattedStartsAt,
+        expires_at: formattedExpiresAt,
+      };
+    }
+  );
 
   const timeNow = new Date();
 
@@ -376,6 +405,7 @@ function HostDetails({
               yAxisFormatter={(value) => `${value}%`}
               startInterval={subHours(timeNow, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
             <HostTimeSeriesLineChart
               hostId={hostID}
@@ -384,6 +414,7 @@ function HostDetails({
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
           </div>
           <DiskSpaceChart hostId={hostID} />
@@ -416,7 +447,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={slesSubscriptions}
+            data={formattedSlesSubscriptions}
           />
         </div>
       </div>

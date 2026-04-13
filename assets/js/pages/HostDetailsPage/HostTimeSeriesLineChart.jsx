@@ -14,6 +14,7 @@ function HostTimeSeriesLineChart({
   endInterval = new Date(),
   updateFrequency = 30000,
   className,
+  timezone,
 }) {
   const [chartStartInterval, setChartStartInterval] = useState(startInterval);
   const [chartEndInterval, setChartEndInterval] = useState(endInterval);
@@ -88,6 +89,7 @@ function HostTimeSeriesLineChart({
       start={chartStartInterval}
       end={chartEndInterval}
       chartRef={chartRef}
+      timezone={timezone}
       yAxisScaleType={yAxisScaleType}
       yAxisMaxValue={yAxisMaxValue}
       yAxisLabelFormatter={yAxisFormatter}
