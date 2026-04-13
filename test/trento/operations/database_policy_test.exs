@@ -407,6 +407,50 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
 
+    test "should forbid operation if the request is for full database and attached application instances are not stopped" do
+      database =
+        build(:database,
+          sap_systems: [
+            %{
+              application_instances:
+                [
+                  %{sid: sid1, instance_number: inst_number1},
+                  %{sid: sid2, instance_number: inst_number2}
+                ] =
+                  build_list(2, :application_instance,
+                    health: Health.passing(),
+                    features: "ABAP|GATEWAY|ICMAN|IGS"
+                  )
+            }
+          ],
+          database_instances: [
+            build(:database_instance,
+              system_replication: "Primary",
+              system_replication_site: "Site1",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            ),
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Secondary",
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      expected_error =
+        {:error,
+         [
+           "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
+           "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
+         ]}
+
+      assert expected_error ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: nil})
+
+      assert expected_error ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
     test "should forbid operation if the request is for a database without system replication and attached application instances are not stopped" do
       database =
         build(:database,
@@ -495,9 +539,18 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: site})
     end
 
-    test "should authorize operation in full database if instances are running" do
+    test "should authorize operation in full database if instances are running and attached application instances are stopped" do
       database =
         build(:database,
+          sap_systems: [
+            %{
+              application_instances:
+                build_list(2, :application_instance,
+                  health: Health.unknown(),
+                  features: "ABAP|GATEWAY|ICMAN|IGS"
+                )
+            }
+          ],
           database_instances: [
             build(:database_instance,
               health: Health.passing(),

@@ -228,6 +228,13 @@ defmodule Trento.Operations.DatabasePolicy do
        ),
        do: application_instances_stopped(database, nil, nil)
 
+  # full database stop request, check if app instances are stopped
+  defp application_instances_stopped(database, params, _) when not is_map_key(params, :site),
+    do: application_instances_stopped(database, nil, nil)
+
+  defp application_instances_stopped(database, %{site: nil}, _),
+    do: application_instances_stopped(database, nil, nil)
+
   # secondary site
   defp application_instances_stopped(_, _, _), do: :ok
 end
