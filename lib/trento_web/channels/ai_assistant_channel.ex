@@ -5,6 +5,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias AgenticRuntime.Conversations
   alias AgenticRuntime.Agents.Coordinator
   alias AgenticRuntime.IntegrationHelpers
+  alias Trento.Users
 
   @impl true
   def join("ai_assistant:" <> user_id, _session, socket) do
@@ -32,6 +33,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_in("send_message", %{"message" => message_text}, socket) do
     message_text = String.trim(message_text)
+    current_user_id = socket.assigns.current_scope.user.id
+    _user = Users.get_user(current_user_id)
 
     if message_text == "" or socket.assigns.loading do
       {:noreply, socket}
@@ -66,11 +69,10 @@ defmodule TrentoWeb.AIAssistantChannel do
              factory_opts: [
                model_config: model_config,
                base_system_prompt: base_system_prompt,
-               tools: []
+               tools: TrentoWeb.AIAssistantTools.tools()
              ]
            ) do
         {:ok, session} ->
-          # Create LangChain Message
           langchain_message = AgenticRuntime.build_new_user_message!(message_text)
 
           # Add message to AgenticRuntime (will save and broadcast via PubSub)
@@ -206,11 +208,9 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:status_changed, :cancelled, _data}}, socket) do
     Logger.info("Agent execution was cancelled")
-
-    {:noreply,
-     socket
-     |> IntegrationHelpers.handle_status_cancelled()
-     |> push("scroll-to-bottom", %{})}
+    updated_socket = IntegrationHelpers.handle_status_cancelled(socket)
+    push(updated_socket, "agent-execution-cancelled", %{})
+    {:noreply, socket}
   end
 
   @impl true
@@ -221,8 +221,8 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   @impl true
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
-     updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
-     push(socket, "scroll-to-bottom", %{})
+    updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
+    push(socket, "scroll-to-bottom", %{})
     {:noreply, updated_socket}
   end
 
@@ -234,7 +234,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:display_message_saved, display_msg}}, socket) do
     updated_socket = IntegrationHelpers.handle_display_message_saved(socket, display_msg)
-    push(updated_socket, "scroll-to-bottom", %{display_msg: Jason.encode!(display_msg)})
+    push(updated_socket, "scroll-to-bottom", %{display_msg: display_msg})
 
     {:noreply, updated_socket}
   end
@@ -274,26 +274,23 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   @impl true
   def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
-    {:noreply,
-     socket
-     |> IntegrationHelpers.handle_tool_call_identified(tool_info)
-     |> push("scroll-to-bottom", %{})}
+    updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
+    push(updated_socket, "scroll-to-bottom", %{tool_info: tool_info})
+    {:noreply, updated_socket}
   end
 
   @impl true
   def handle_info({:agent, {:tool_execution_update, status, tool_info}}, socket) do
-    {:noreply,
-     socket
-     |> IntegrationHelpers.handle_tool_execution_update(status, tool_info)
-     |> push("scroll-to-bottom", %{})}
+    updated_socket = IntegrationHelpers.handle_tool_execution_update(socket, status, tool_info)
+    push(updated_socket, "scroll-to-bottom", %{status: status, tool_info: tool_info})
+    {:noreply, updated_socket}
   end
 
   @impl true
   def handle_info({:agent, {:display_message_updated, updated_msg}}, socket) do
-    {:noreply,
-     socket
-     |> IntegrationHelpers.handle_display_message_updated(updated_msg)
-     |> push("scroll-to-bottom", %{})}
+    updated_socket = IntegrationHelpers.handle_display_message_updated(socket, updated_msg)
+    push(updated_socket, "scroll-to-bottom", %{updated_msg: updated_msg})
+    {:noreply, updated_socket}
   end
 
   @impl true
@@ -336,6 +333,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       {:error, socket} ->
         # Conversation not found - navigate to fresh state
         send(self(), {:reinit_params, %{}})
+        socket
     end
   end
 
