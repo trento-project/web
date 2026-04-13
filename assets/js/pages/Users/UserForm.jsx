@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { format, parseISO } from 'date-fns';
+import { useSelector } from 'react-redux';
 
 import Button from '@common/Button';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATETIME_LOCALE_LONG_FORMAT } from '@lib/timezones';
+import { getUserProfile } from '@state/selectors/user';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
@@ -17,7 +21,7 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { generateTimezoneOptions } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -38,7 +42,7 @@ function UserForm({
   lastLoginAt = '',
   analyticsEnabledConfig = false,
   analyticsEnabled,
-  timezone = DEFAULT_TIMEZONE,
+  timezone,
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -65,6 +69,7 @@ function UserForm({
   const [selectedAbilities, setAbilities] = useState(
     userAbilities.map(({ id }) => id)
   );
+  const { timezone: userTimezone } = useSelector(getUserProfile);
 
   useEffect(() => {
     setFullNameError(getError('fullname', errors));
@@ -339,15 +344,23 @@ function UserForm({
                 <>
                   <Label className="col-start-1 col-span-2">Created</Label>
                   <span className="col-start-3 col-span-4">
-                    {format(parseISO(createdAt), 'PPpp')}
+                    {formatDate(createdAt, DATETIME_LOCALE_LONG_FORMAT, {
+                      in: tz(userTimezone),
+                    })}
                   </span>
                   <Label className="col-start-1 col-span-2">Updated</Label>
                   <span className="col-start-3 col-span-4">
-                    {format(parseISO(updatedAt), 'PPpp')}
+                    {formatDate(updatedAt, DATETIME_LOCALE_LONG_FORMAT, {
+                      in: tz(userTimezone),
+                    })}
                   </span>
                   <Label className="col-start-1 col-span-2">Last Login</Label>
                   <span className="col-start-3 col-span-4">
-                    {lastLoginAt ? format(parseISO(lastLoginAt), 'PPpp') : '-'}
+                    {lastLoginAt
+                      ? formatDate(lastLoginAt, DATETIME_LOCALE_LONG_FORMAT, {
+                          in: tz(userTimezone),
+                        })
+                      : '-'}
                   </span>
                 </>
               )}
