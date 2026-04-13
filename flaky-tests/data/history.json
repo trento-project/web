@@ -4370,5 +4370,25 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-13T05:00:24Z",
+    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
+    "run_id": "24326061637",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
