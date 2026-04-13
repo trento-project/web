@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
 
 import { getAdvisoryErrata } from '@lib/api/softwareUpdates';
 import * as history from '@lib/history';
 import BackButton from '@common/BackButton';
 import GenericError from '@common/GenericError';
+import { getUserProfile } from '@state/selectors/user';
 import AdvisoryDetails from './AdvisoryDetails';
 
 function AdvisoryDetailsPage() {
@@ -13,6 +15,7 @@ function AdvisoryDetailsPage() {
   const [error, setError] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const { hostID, advisoryID } = useParams();
+  const { timezone } = useSelector(getUserProfile);
 
   useEffect(() => {
     getAdvisoryErrata(advisoryID)
@@ -39,7 +42,11 @@ function AdvisoryDetailsPage() {
         Back
       </BackButton>
       {!isLoading && !error && (
-        <AdvisoryDetails advisoryName={advisoryID} errata={advisoryErrata} />
+        <AdvisoryDetails
+          advisoryName={advisoryID}
+          errata={advisoryErrata}
+          timezone={timezone}
+        />
       )}
       {!isLoading && error && <GenericError message={error} />}
     </>

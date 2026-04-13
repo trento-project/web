@@ -18,6 +18,7 @@ function SuseManagerConfig({
   url = 'https://',
   username,
   certUploadDate,
+  timezone,
   onEditClick = noop,
   clearSettingsDialogOpen = false,
   testConnectionEnabled = false,
@@ -96,7 +97,7 @@ function SuseManagerConfig({
             aria-label="suma-cacert-upload-date"
             className="col-span-2 text-gray-500 mb-3"
           >
-            <CertificateUploadDate date={certUploadDate} />
+            <CertificateUploadDate date={certUploadDate} timezone={timezone} />
           </div>
 
           <div className="font-bold">Username</div>

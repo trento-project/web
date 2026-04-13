@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { EOS_SEARCH } from 'eos-icons-react';
 import Papa from 'papaparse';
+import { useSelector } from 'react-redux';
 
 import PageHeader from '@common/PageHeader';
 import PatchList from '@common/PatchList';
@@ -9,6 +10,7 @@ import Select from '@common/Select';
 import Button from '@common/Button';
 
 import { containsSubstring } from '@lib/filter';
+import { getUserProfile } from '@state/selectors/user';
 
 const advisoryTypesFromPatches = (patches) =>
   Array.from(new Set(patches.map(({ advisory_type }) => advisory_type))).sort();
@@ -19,6 +21,7 @@ const filterPatchesByAdvisoryType = (patches, advisoryType) =>
   );
 
 function HostRelevantPatches({ hostName, onNavigate, patches }) {
+  const { timezone } = useSelector(getUserProfile);
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
@@ -106,7 +109,11 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
           </a>
         </div>
       </div>
-      <PatchList onNavigate={onNavigate} patches={displayedPatches} />
+      <PatchList
+        onNavigate={onNavigate}
+        patches={displayedPatches}
+        timezone={timezone}
+      />
     </>
   );
 }
