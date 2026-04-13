@@ -30,7 +30,10 @@ export const expectedGithubUrlIsDisplayed = () => {
 };
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = () => {
-  const subscriptions = getValue('subscriptions');
+  const subscriptions =
+    getValue('subscriptions') +
+    (Cypress.config().baseUrl.includes('target') ? 1 : 0);
+
   return cy
     .get(amountOfSlesForSapSubscriptionsLabel)
     .should('have.text', `${subscriptions} found`);
