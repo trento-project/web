@@ -12,7 +12,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
   test "should forbid unknown operation" do
     database = build(:database)
 
-    assert {:error, ["Unknown operation"]} ==
+    assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              DatabasePolicy.authorize_operation(:unknown, database, %{})
   end
 
@@ -46,8 +46,16 @@ defmodule Trento.Operations.DatabasePolicyTest do
     for operation <- DatabaseOperations.values() do
       assert {:error,
               [
-                "Trento agent is not currently running in any of the hosts in the database",
-                "Trento agent is not currently running in any of the hosts in the database site Site1"
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the database",
+                  metadata: []
+                },
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the database site Site1",
+                  metadata: []
+                }
               ]} ==
                DatabasePolicy.authorize_operation(operation, database, %{})
     end
@@ -80,7 +88,11 @@ defmodule Trento.Operations.DatabasePolicyTest do
     for operation <- DatabaseOperations.values() do
       assert {:error,
               [
-                "Trento agent is not currently running in any of the hosts in the database site #{site}"
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the database site #{site}",
+                  metadata: []
+                }
               ]} ==
                DatabasePolicy.authorize_operation(operation, database, %{site: site})
     end
@@ -104,14 +116,24 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
     for operation <- DatabaseOperations.values() do
       refute {:error,
-              ["Trento agent is not currently running in any of the hosts in the database"]} ==
+              [
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the database",
+                  metadata: []
+                }
+              ]} ==
                DatabasePolicy.authorize_operation(operation, database, %{})
     end
   end
 
   describe "database_start" do
     test "should forbid operation if the database cluster is not in maintenance" do
-      %{name: cluster_name, sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+      %{
+        id: cluster_id,
+        name: cluster_name,
+        sap_instances: [%{sid: sid, instance_number: instance_number}]
+      } =
         cluster = build_cluster_with_maintenance(false)
 
       database =
@@ -124,12 +146,18 @@ defmodule Trento.Operations.DatabasePolicyTest do
             )
         )
 
-      assert {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]} ==
+      assert {:error,
+              [
+                %{
+                  message: "Cluster {0} operating this host is not in maintenance mode",
+                  metadata: [%{id: cluster_id, label: cluster_name, type: :cluster}]
+                }
+              ]} ==
                DatabasePolicy.authorize_operation(:database_start, database, %{})
     end
 
     test "should forbid operation in secondary site if primary site is not started" do
-      %{sid: sid} =
+      %{id: database_id, sid: sid} =
         database =
         build(:database,
           database_instances: [
@@ -147,7 +175,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
           ]
         )
 
-      assert {:error, ["Primary site Site1 of database #{sid} is not started"]} ==
+      assert {:error,
+              [
+                %{
+                  message: "Primary site Site1 of database {0} is not started",
+                  metadata: [%{id: database_id, label: sid, type: :database}]
+                }
+              ]} ==
                DatabasePolicy.authorize_operation(:database_start, database, %{site: "Site2"})
     end
 
@@ -243,7 +277,11 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
   describe "database_stop" do
     test "should forbid operation if the database cluster is not in maintenance" do
-      %{name: cluster_name, sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+      %{
+        id: cluster_id,
+        name: cluster_name,
+        sap_instances: [%{sid: sid, instance_number: instance_number}]
+      } =
         cluster = build_cluster_with_maintenance(false)
 
       database =
@@ -257,12 +295,18 @@ defmodule Trento.Operations.DatabasePolicyTest do
             )
         )
 
-      assert {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]} ==
+      assert {:error,
+              [
+                %{
+                  message: "Cluster {0} operating this host is not in maintenance mode",
+                  metadata: [%{id: cluster_id, label: cluster_name, type: :cluster}]
+                }
+              ]} ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
     end
 
     test "should forbid operation if the request is for the primary site and secondary sites are not stopped" do
-      %{sid: sid} =
+      %{id: database_id, sid: sid} =
         database =
         build(:database,
           sap_systems: [],
@@ -281,7 +325,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
           ]
         )
 
-      assert {:error, ["Secondary sites of database #{sid} are not stopped"]} ==
+      assert {:error,
+              [
+                %{
+                  message: "Secondary sites of database {0} are not stopped",
+                  metadata: [%{id: database_id, label: sid, type: :database}]
+                }
+              ]} ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
 
@@ -292,8 +342,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 [
-                  %{sid: sid1, instance_number: inst_number1},
-                  %{sid: sid2, instance_number: inst_number2}
+                  %{sap_system_id: sap_system_id1, sid: sid1, instance_number: inst_number1},
+                  %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
                     health: Health.passing(),
@@ -317,8 +367,14 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
       assert {:error,
               [
-                "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
-                "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
+                %{
+                  message: "Instance #{inst_number1} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id1, label: sid1, type: :sap_system}]
+                },
+                %{
+                  message: "Instance #{inst_number2} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id2, label: sid2, type: :sap_system}]
+                }
               ]} ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})
     end
@@ -330,8 +386,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 [
-                  %{sid: sid1, instance_number: inst_number1},
-                  %{sid: sid2, instance_number: inst_number2}
+                  %{sap_system_id: sap_system_id1, sid: sid1, instance_number: inst_number1},
+                  %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
                     health: Health.passing(),
@@ -350,8 +406,14 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
       assert {:error,
               [
-                "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
-                "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
+                %{
+                  message: "Instance #{inst_number1} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id1, label: sid1, type: :sap_system}]
+                },
+                %{
+                  message: "Instance #{inst_number2} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id2, label: sid2, type: :sap_system}]
+                }
               ]} ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
     end

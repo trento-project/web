@@ -19,7 +19,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
   test "should forbid unknown operation" do
     instance = build(:application_instance)
 
-    assert {:error, ["Unknown operation"]} ==
+    assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              ApplicationInstancePolicy.authorize_operation(:unknown, instance, %{})
   end
 
@@ -30,7 +30,8 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       )
 
     for operation <- SapInstanceOperations.values() do
-      assert {:error, ["Trento agent is not currently running in the host"]} ==
+      assert {:error,
+              [%{message: "Trento agent is not currently running in the host", metadata: []}]} ==
                ApplicationInstancePolicy.authorize_operation(operation, instance, %{})
     end
   end
@@ -48,6 +49,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     end
 
     test "should authorize other instances start depending on Message server running status" do
+      sap_system_id = Faker.UUID.v4()
       instance_number = "00"
       sid = "PRD"
 
@@ -56,7 +58,13 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         %{
           health: :unknown,
           result:
-            {:error, ["Message server #{instance_number} of SAP system #{sid} is not started"]}
+            {:error,
+             [
+               %{
+                 message: "Message server #{instance_number} of SAP system {0} is not started",
+                 metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+               }
+             ]}
         }
       ]
 
@@ -70,6 +78,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
         instance =
           build(:application_instance,
+            sap_system_id: sap_system_id,
             sid: sid,
             host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
           )
@@ -90,7 +99,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     end
 
     test "should forbid other instances start if Message server is not found" do
-      %{sid: sid} =
+      %{sap_system_id: sap_system_id, sid: sid} =
         instance =
         build(:application_instance,
           host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
@@ -102,7 +111,13 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
           database: build(:database, health: :passing)
         )
 
-      assert {:error, ["Message server not found in SAP system #{sid}"]} ==
+      assert {:error,
+              [
+                %{
+                  message: "Message server not found in SAP system {0}",
+                  metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+                }
+              ]} ==
                ApplicationInstancePolicy.authorize_operation(
                  :sap_instance_start,
                  %{instance | sap_system: sap_system},
@@ -140,13 +155,21 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     end
 
     test "should authorize other instances start depending on database running state" do
+      database_id = Faker.UUID.v4()
       sid = "PRD"
 
       scenarios = [
         %{database_health: :passing, result: :ok},
         %{
           database_health: :unknown,
-          result: {:error, ["Database #{sid} is not started"]}
+          result:
+            {:error,
+             [
+               %{
+                 message: "Database {0} is not started",
+                 metadata: [%{id: database_id, label: sid, type: :database}]
+               }
+             ]}
         }
       ]
 
@@ -165,7 +188,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         sap_system =
           build(:sap_system,
             application_instances: [message_server_instance, instance],
-            database: build(:database, sid: sid, health: database_health)
+            database: build(:database, id: database_id, sid: sid, health: database_health)
           )
 
         assert result ==
@@ -202,7 +225,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
     end
 
     test "should forbid Message server stop if the other instances are running" do
-      %{sid: sid} =
+      %{sap_system_id: sap_system_id, sid: sid} =
         instance =
         build(:application_instance,
           features: "MESSAGESERVER|ENQUE",
@@ -219,8 +242,14 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
 
       assert {:error,
               [
-                "Instance #{inst_number_1} of SAP system #{sid} is not stopped",
-                "Instance #{inst_number_2} of SAP system #{sid} is not stopped"
+                %{
+                  message: "Instance #{inst_number_1} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+                },
+                %{
+                  message: "Instance #{inst_number_2} of SAP system {0} is not stopped",
+                  metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+                }
               ]} ==
                ApplicationInstancePolicy.authorize_operation(
                  :sap_instance_stop,

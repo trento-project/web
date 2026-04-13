@@ -10,6 +10,8 @@ defmodule Trento.Operations.ClusterPolicy do
   require Trento.Operations.Enums.ClusterOperations, as: ClusterOperations
   require Trento.Operations.Enums.ClusterHostOperations, as: ClusterHostOperations
 
+  alias Trento.Support.OperationsHelper
+
   alias Trento.Clusters
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -21,19 +23,25 @@ defmodule Trento.Operations.ClusterPolicy do
   # - cluster resource is not managed
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{name: name} = cluster,
+        %ClusterReadModel{id: id, name: name} = cluster,
         %{cluster_resource_id: nil}
       ) do
     if Clusters.maintenance?(cluster) do
       :ok
     else
-      {:error, ["Cluster #{name} operating this host is not in maintenance mode"]}
+      {:error,
+       [
+         OperationsHelper.build_error(
+           "Cluster {0} operating this host is not in maintenance mode",
+           [%{id: id, label: name, type: :cluster}]
+         )
+       ]}
     end
   end
 
   def authorize_operation(
         :maintenance,
-        %ClusterReadModel{name: name} = cluster,
+        %ClusterReadModel{id: id, name: name} = cluster,
         %{cluster_resource_id: cluster_resource_id}
       ) do
     if Enum.any?([
@@ -44,7 +52,10 @@ defmodule Trento.Operations.ClusterPolicy do
     else
       {:error,
        [
-         "Cluster #{name} or resource #{cluster_resource_id} operating this host are not in maintenance mode"
+         OperationsHelper.build_error(
+           "Cluster {0} or resource #{cluster_resource_id} operating this host are not in maintenance mode",
+           [%{id: id, label: name, type: :cluster}]
+         )
        ]}
     end
   end
@@ -65,7 +76,12 @@ defmodule Trento.Operations.ClusterPolicy do
     if some_heartbeat_passing? do
       do_authorize_operation(operation, cluster, params)
     else
-      {:error, ["Trento agent is not currently running in any of the hosts in the cluster"]}
+      {:error,
+       [
+         OperationsHelper.build_error(
+           "Trento agent is not currently running in any of the hosts in the cluster"
+         )
+       ]}
     end
   end
 
@@ -86,15 +102,17 @@ defmodule Trento.Operations.ClusterPolicy do
     if heartbeat == :passing do
       do_authorize_operation(operation, cluster, params)
     else
-      {:error, ["Trento agent is not currently running in the host"]}
+      {:error,
+       [OperationsHelper.build_error("Trento agent is not currently running in the host")]}
     end
   end
 
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+  def authorize_operation(_, _, _),
+    do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
   defp do_authorize_operation(
          operation,
-         %ClusterReadModel{name: name, hosts: hosts},
+         %ClusterReadModel{id: id, name: name, hosts: hosts},
          _
        )
        when operation in ClusterOperations.values() do
@@ -103,7 +121,12 @@ defmodule Trento.Operations.ClusterPolicy do
        end) do
       :ok
     else
-      {:error, ["Cluster #{name} does not have any online node"]}
+      {:error,
+       [
+         OperationsHelper.build_error("Cluster {0} does not have any online node", [
+           %{id: id, label: name, type: :cluster}
+         ])
+       ]}
     end
   end
 
@@ -139,7 +162,10 @@ defmodule Trento.Operations.ClusterPolicy do
       count_primary_running == 0 ->
         {:error,
          [
-           "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster"
+           OperationsHelper.build_error(
+             "Cluster on host {0} cannot be set online because no primary database instance is running in the cluster",
+             [%{id: host.id, label: host.hostname, type: :host}]
+           )
          ]}
 
       host_running_primary? or all_primary_running? ->
@@ -148,7 +174,10 @@ defmodule Trento.Operations.ClusterPolicy do
       true ->
         {:error,
          [
-           "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster"
+           OperationsHelper.build_error(
+             "Cluster on host {0} cannot be set online because no primary database instance is running in the cluster",
+             [%{id: host.id, label: host.hostname, type: :host}]
+           )
          ]}
     end
   end
@@ -184,7 +213,10 @@ defmodule Trento.Operations.ClusterPolicy do
 
       {:error,
        [
-         "Cluster on host #{host.hostname} cannot be set offline because some secondary nodes are still online"
+         OperationsHelper.build_error(
+           "Cluster on host {0} cannot be set offline because some secondary nodes are still online",
+           [%{id: host.id, label: host.hostname, type: :host}]
+         )
        ]}
     else
       :ok
@@ -220,13 +252,19 @@ defmodule Trento.Operations.ClusterPolicy do
       ^already_applied_state ->
         {:error,
          [
-           "Pacemaker service on host #{hostname} is already #{already_applied_state}"
+           OperationsHelper.build_error(
+             "Pacemaker service on host {0} is already #{already_applied_state}",
+             [%{id: host_id, label: hostname, type: :host}]
+           )
          ]}
 
       _ ->
         {:error,
          [
-           "Pacemaker service unit state is unrecognized on host #{hostname}"
+           OperationsHelper.build_error(
+             "Pacemaker service unit state is unrecognized on host {0}",
+             [%{id: host_id, label: hostname, type: :host}]
+           )
          ]}
     end
   end
