@@ -5,6 +5,7 @@ defmodule TrentoWeb.AIAssistantTools do
   alias Trento.Databases
   alias Trento.Clusters
   alias TrentoWeb.V1
+  alias TrentoWeb.V2
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Databases.Projections.DatabaseReadModel
@@ -14,7 +15,9 @@ defmodule TrentoWeb.AIAssistantTools do
   def tools do
     [
       host_list_tool(),
-      sap_system_list_tool()
+      sap_system_list_tool(),
+      databases_list_tool(),
+      clusters_list_tool()
     ]
   end
 
@@ -104,7 +107,7 @@ defmodule TrentoWeb.AIAssistantTools do
           true ->
             clusters = Clusters.get_all_clusters()
 
-            V1.DatabaseJSON.databases(%{clusters: clusters})
+            V2.ClusterJSON.clusters(%{clusters: clusters})
             |> Jason.encode!()
 
           _ ->
