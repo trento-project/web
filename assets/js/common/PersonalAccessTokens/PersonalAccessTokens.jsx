@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 
 import { noop } from 'lodash';
-import { format, isAfter } from 'date-fns';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { isAfter } from 'date-fns';
 import classNames from 'classnames';
+import { useSelector } from 'react-redux';
+
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { getUserProfile } from '@state/selectors/user';
 
 import Button from '@common/Button';
 
@@ -21,6 +27,7 @@ function PersonalAccessTokens({
 }) {
   const [tokenToDelete, setTokenToDelete] = useState(null);
   const [generateTokenModalOpen, setGenerateTokenModalOpen] = useState(false);
+  const { timezone } = useSelector(getUserProfile);
 
   return (
     <>
@@ -35,6 +42,7 @@ function PersonalAccessTokens({
       />
       <GenerateTokenModal
         isOpen={generateTokenModalOpen}
+        timezone={timezone}
         onGenerate={(name, expiresAt) => {
           onGenerateToken(name, expiresAt);
           setGenerateTokenModalOpen(false);
@@ -92,7 +100,11 @@ function PersonalAccessTokens({
                         )}
                       >
                         Expires:{' '}
-                        {expiresAt ? format(expiresAt, 'd LLL yyyy') : 'Never'}
+                        {expiresAt
+                          ? formatDate(expiresAt, DATE_DAY_MONTH_YEAR_FORMAT, {
+                              in: tz(timezone),
+                            })
+                          : 'Never'}
                       </p>
                     </div>
                     <div className="flex justify-end ml-auto my-1">
