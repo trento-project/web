@@ -205,6 +205,34 @@ defmodule Trento.Operations.DatabasePolicyTest do
                DatabasePolicy.authorize_operation(:database_start, database, %{})
     end
 
+    test "should authorize operation if cluster is not configured in the requested site" do
+      site = "Site1"
+
+      %{sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+        cluster = build_cluster_with_maintenance(false)
+
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.passing(),
+              system_replication: "Primary",
+              sid: sid,
+              instance_number: instance_number,
+              host: build(:host, heartbeat: :passing, cluster: cluster)
+            ),
+            build(:database_instance,
+              system_replication: nil,
+              system_replication_site: site,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_start, database, %{site: site})
+    end
+
     test "should authorize operation in full database if instances are stopped" do
       database =
         build(:database,
@@ -437,6 +465,34 @@ defmodule Trento.Operations.DatabasePolicyTest do
 
       assert :ok ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{})
+    end
+
+    test "should authorize operation if cluster is not configured in the requested site" do
+      site = "Site1"
+
+      %{sap_instances: [%{sid: sid, instance_number: instance_number}]} =
+        cluster = build_cluster_with_maintenance(false)
+
+      database =
+        build(:database,
+          database_instances: [
+            build(:database_instance,
+              health: Health.unknown(),
+              system_replication: "Primary",
+              sid: sid,
+              instance_number: instance_number,
+              host: build(:host, heartbeat: :passing, cluster: cluster)
+            ),
+            build(:database_instance,
+              system_replication: nil,
+              system_replication_site: site,
+              host: build(:host, heartbeat: :passing, cluster: nil)
+            )
+          ]
+        )
+
+      assert :ok ==
+               DatabasePolicy.authorize_operation(:database_stop, database, %{site: site})
     end
 
     test "should authorize operation in full database if instances are running" do

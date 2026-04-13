@@ -74,7 +74,7 @@ defmodule Trento.Operations.DatabasePolicy do
     primary_site = get_primary_site(database)
 
     OperationsHelper.reduce_operation_authorizations([
-      database_instances_cluster_maintenance(database),
+      database_instances_cluster_maintenance(database, params),
       primary_site_started(database, params, primary_site)
     ])
   end
@@ -87,7 +87,7 @@ defmodule Trento.Operations.DatabasePolicy do
     primary_site = get_primary_site(database)
 
     OperationsHelper.reduce_operation_authorizations([
-      database_instances_cluster_maintenance(database),
+      database_instances_cluster_maintenance(database, params),
       secondary_sites_stopped(database, params, primary_site),
       application_instances_stopped(database, params, primary_site)
     ])
@@ -106,11 +106,15 @@ defmodule Trento.Operations.DatabasePolicy do
     end)
   end
 
-  defp database_instances_cluster_maintenance(%DatabaseReadModel{
-         database_instances: database_instances
-       }) do
-    OperationsHelper.reduce_operation_authorizations(
-      database_instances,
+  defp database_instances_cluster_maintenance(
+         %DatabaseReadModel{
+           database_instances: database_instances
+         },
+         params
+       ) do
+    database_instances
+    |> filter_by_site(params)
+    |> OperationsHelper.reduce_operation_authorizations(
       :ok,
       fn database_instance ->
         DatabaseInstanceReadModel.authorize_operation(
