@@ -354,6 +354,23 @@ export const apiDeregisterHost = (hostId) =>
     } else return;
   });
 
+export const apiDeregisterRealHost = () => {
+  return apiLogin().then(({ accessToken }) => {
+    return cy
+      .request({
+        url: '/api/v1/hosts',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then(({ body }) => {
+        const hostId = body[0].id;
+        return apiDeregisterHost(hostId);
+      });
+  });
+};
+
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 
 export const isHostRegistered = (hostId) =>

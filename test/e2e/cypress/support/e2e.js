@@ -14,7 +14,10 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import { apiLoginAndCreateSession } from '../pageObject/base_po';
+import {
+  apiLoginAndCreateSession,
+  apiDeregisterRealHost,
+} from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -26,6 +29,9 @@ before(() => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     apiLoginAndCreateSession();
   }
+
+  // This is required to not break cypress tests when running against a real systemd instance (which installs a real agent)
+  if (Cypress.config().baseUrl.includes('target')) apiDeregisterRealHost();
 });
 
 Cypress.on('uncaught:exception', () => {
