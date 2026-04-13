@@ -1,7 +1,11 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { useSelector } from 'react-redux';
 
 import Spinner from '@common/Spinner';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATETIME_WEEKDAY_SHORT_24H_FORMAT } from '@lib/timezones';
+import { getUserProfile } from '@state/selectors/user';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
@@ -19,6 +23,7 @@ function CheckResultsOverview({
   error = null,
   onCheckClick,
 }) {
+  const { timezone } = useSelector(getUserProfile);
   if (loading || pendingStates.includes(data?.status)) {
     return (
       <div className="flex flex-col items-center px-4">
@@ -65,7 +70,7 @@ function CheckResultsOverview({
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
       <h6 className="opacity-60 text-xs">
-        {format(new Date(data.completed_at), 'iii MMM dd, HH:mm:ss y')}
+        {formatDate(data.completed_at, DATETIME_WEEKDAY_SHORT_24H_FORMAT, { in: tz(timezone) })}
       </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
