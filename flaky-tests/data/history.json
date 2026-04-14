@@ -4550,5 +4550,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-14T04:47:15Z",
+    "commit": "d5c0383d3dc9d8bce172fb437441306226427928",
+    "run_id": "24380994607",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.25
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
+      }
+    ]
   }
 ]
