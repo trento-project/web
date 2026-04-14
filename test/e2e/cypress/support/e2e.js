@@ -13,8 +13,6 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// import 'cypress-localstorage-commands';
-
 // Import commands.js using ES2015 syntax:
 import { apiLoginAndCreateSession } from '../pageObject/base_po';
 
