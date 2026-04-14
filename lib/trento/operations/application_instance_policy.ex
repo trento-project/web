@@ -100,7 +100,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   # Enq rep and App servers, start only if Message server is started
   defp other_instances_started(%ApplicationInstanceReadModel{
-         sap_system_id: sap_system_id,
          host_id: host_id,
          sid: sid,
          instance_number: instance_number,
@@ -123,8 +122,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Message server #{msg_instance_number} of SAP system {0} is not started",
-             [%{id: sap_system_id, label: sid, type: :sap_system}]
+             "Message server #{msg_instance_number} of SAP system #{sid} is not started",
+             []
            )
          ]}
 
@@ -132,8 +131,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Message server not found in SAP system {0}",
-             [%{id: sap_system_id, label: sid, type: :sap_system}]
+             "Message server not found in SAP system #{sid}",
+             []
            )
          ]}
     end
@@ -172,7 +171,6 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
 
   # Message server, stop only if the other instances are stopped
   defp other_instances_stopped(%ApplicationInstanceReadModel{
-         sap_system_id: sap_system_id,
          features: "MESSAGESERVER" <> _,
          host_id: host_id,
          sid: sid,
@@ -194,8 +192,8 @@ defmodule Trento.Operations.ApplicationInstancePolicy do
         {:error,
          Enum.map(running_instances, fn %{instance_number: inst_number} ->
            OperationsHelper.build_error(
-             "Instance #{inst_number} of SAP system {0} is not stopped",
-             [%{id: sap_system_id, label: sid, type: :sap_system}]
+             "Instance #{inst_number} of SAP system #{sid} is not stopped",
+             []
            )
          end)}
     end

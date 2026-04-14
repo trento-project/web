@@ -132,7 +132,6 @@ defmodule Trento.Operations.DatabasePolicy do
   # secondary sites, check primary is started
   defp primary_site_started(
          %DatabaseReadModel{
-           id: db_id,
            sid: sid,
            database_instances: database_instances
          },
@@ -148,8 +147,8 @@ defmodule Trento.Operations.DatabasePolicy do
       {:error,
        [
          OperationsHelper.build_error(
-           "Primary site #{primary_site} of database {0} is not started",
-           [%{id: db_id, label: sid, type: :database}]
+           "Primary site #{primary_site} of database #{sid} is not started",
+           []
          )
        ]}
     end
@@ -160,7 +159,6 @@ defmodule Trento.Operations.DatabasePolicy do
   # primary site, check secondary sites are stopped
   defp secondary_sites_stopped(
          %DatabaseReadModel{
-           id: db_id,
            sid: sid,
            database_instances: database_instances
          },
@@ -176,8 +174,8 @@ defmodule Trento.Operations.DatabasePolicy do
       {:error,
        [
          OperationsHelper.build_error(
-           "Secondary sites of database {0} are not stopped",
-           [%{id: db_id, label: sid, type: :database}]
+           "Secondary sites of database #{sid} are not stopped",
+           []
          )
        ]}
     end

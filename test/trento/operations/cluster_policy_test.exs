@@ -219,40 +219,47 @@ defmodule Trento.Operations.ClusterPolicyTest do
           host_units: [
             [name: "pacemaker.service", unit_file_state: "enabled"]
           ],
-          expected_error: "Pacemaker service on host {0} is already enabled"
+          expected_error: fn %{hostname: hostname} ->
+            "Pacemaker service on host #{hostname} is already enabled"
+          end
         },
         %{
           operation: :pacemaker_disable,
           host_units: [
             [name: "pacemaker.service", unit_file_state: "disabled"]
           ],
-          expected_error: "Pacemaker service on host {0} is already disabled"
+          expected_error: fn %{hostname: hostname} ->
+            "Pacemaker service on host #{hostname} is already disabled"
+          end
         },
         %{
           operation: :pacemaker_enable,
           host_units: [
             [name: "pacemaker.service", unit_file_state: "unrecognized_state"]
           ],
-          expected_error: "Pacemaker service unit state is unrecognized on host {0}"
+          expected_error: fn %{hostname: hostname} ->
+            "Pacemaker service unit state is unrecognized on host #{hostname}"
+          end
         },
         %{
           operation: :pacemaker_disable,
           host_units: [
             [name: "pacemaker.service", unit_file_state: "unrecognized_state"]
           ],
-          expected_error: "Pacemaker service unit state is unrecognized on host {0}"
+          expected_error: fn %{hostname: hostname} ->
+            "Pacemaker service unit state is unrecognized on host #{hostname}"
+          end
         }
       ]
 
       for %{
             operation: operation,
             host_units: host_units,
-            expected_error: expected_error
+            expected_error: expected_error_fn
           } <- unauthorized_scenarios do
         host_id = Faker.UUID.v4()
 
-        %{hostname: hostname} =
-          host =
+        host =
           build(:host,
             id: host_id,
             heartbeat: :passing,
@@ -261,13 +268,9 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
         cluster = build(:cluster, hosts: [host])
 
-        assert {:error,
-                [
-                  %{
-                    message: expected_error,
-                    metadata: [%{id: host_id, label: hostname, type: :host}]
-                  }
-                ]} ==
+        expected_error = expected_error_fn.(host)
+
+        assert {:error, [%{message: expected_error, metadata: []}]} ==
                  ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
       end
     end

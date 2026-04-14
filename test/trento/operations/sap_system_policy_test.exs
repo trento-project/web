@@ -157,8 +157,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
     end
 
     test "should forbid operation if the message server is not started for other type start request" do
-      %{id: sap_system_id} =
-        sap_system =
+      sap_system =
         build(:sap_system,
           database_instances: [],
           application_instances: [
@@ -174,8 +173,8 @@ defmodule Trento.Operations.SapSystemPolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Instance #{inst_number} of SAP system {0} is not started",
-                  metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+                  message: "Instance #{inst_number} of SAP system #{sid} is not started",
+                  metadata: []
                 }
               ]} ==
                SapSystemPolicy.authorize_operation(:sap_system_start, sap_system, %{
@@ -325,8 +324,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
     end
 
     test "should forbid operation if other instances are not stopped and the request is for the message server" do
-      %{id: sap_system_id} =
-        sap_system =
+      sap_system =
         build(:sap_system,
           application_instances: [
             %{sid: sid, instance_number: inst_number} =
@@ -346,8 +344,8 @@ defmodule Trento.Operations.SapSystemPolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Instance #{inst_number} of SAP system {0} is not stopped",
-                  metadata: [%{id: sap_system_id, label: sid, type: :sap_system}]
+                  message: "Instance #{inst_number} of SAP system #{sid} is not stopped",
+                  metadata: []
                 }
               ]} ==
                SapSystemPolicy.authorize_operation(:sap_system_stop, sap_system, %{

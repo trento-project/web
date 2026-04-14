@@ -163,8 +163,8 @@ defmodule Trento.Operations.ClusterPolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Cluster on host {0} cannot be set online because no primary database instance is running in the cluster",
-             [%{id: host.id, label: host.hostname, type: :host}]
+             "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster",
+             []
            )
          ]}
 
@@ -175,8 +175,8 @@ defmodule Trento.Operations.ClusterPolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Cluster on host {0} cannot be set online because no primary database instance is running in the cluster",
-             [%{id: host.id, label: host.hostname, type: :host}]
+             "Cluster on host #{host.hostname} cannot be set online because no primary database instance is running in the cluster",
+             []
            )
          ]}
     end
@@ -214,8 +214,8 @@ defmodule Trento.Operations.ClusterPolicy do
       {:error,
        [
          OperationsHelper.build_error(
-           "Cluster on host {0} cannot be set offline because some secondary nodes are still online",
-           [%{id: host.id, label: host.hostname, type: :host}]
+           "Cluster on host #{host.hostname} cannot be set offline because some secondary nodes are still online",
+           []
          )
        ]}
     else
@@ -253,8 +253,8 @@ defmodule Trento.Operations.ClusterPolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Pacemaker service on host {0} is already #{already_applied_state}",
-             [%{id: host_id, label: hostname, type: :host}]
+             "Pacemaker service on host #{hostname} is already #{already_applied_state}",
+             []
            )
          ]}
 
@@ -262,8 +262,8 @@ defmodule Trento.Operations.ClusterPolicy do
         {:error,
          [
            OperationsHelper.build_error(
-             "Pacemaker service unit state is unrecognized on host {0}",
-             [%{id: host_id, label: hostname, type: :host}]
+             "Pacemaker service unit state is unrecognized on host #{hostname}",
+             []
            )
          ]}
     end

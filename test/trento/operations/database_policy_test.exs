@@ -157,7 +157,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
 
     test "should forbid operation in secondary site if primary site is not started" do
-      %{id: database_id, sid: sid} =
+      %{sid: sid} =
         database =
         build(:database,
           database_instances: [
@@ -178,8 +178,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Primary site Site1 of database {0} is not started",
-                  metadata: [%{id: database_id, label: sid, type: :database}]
+                  message: "Primary site Site1 of database #{sid} is not started",
+                  metadata: []
                 }
               ]} ==
                DatabasePolicy.authorize_operation(:database_start, database, %{site: "Site2"})
@@ -306,7 +306,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
 
     test "should forbid operation if the request is for the primary site and secondary sites are not stopped" do
-      %{id: database_id, sid: sid} =
+      %{sid: sid} =
         database =
         build(:database,
           sap_systems: [],
@@ -328,8 +328,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
       assert {:error,
               [
                 %{
-                  message: "Secondary sites of database {0} are not stopped",
-                  metadata: [%{id: database_id, label: sid, type: :database}]
+                  message: "Secondary sites of database #{sid} are not stopped",
+                  metadata: []
                 }
               ]} ==
                DatabasePolicy.authorize_operation(:database_stop, database, %{site: "Site1"})

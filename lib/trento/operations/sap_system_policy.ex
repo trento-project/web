@@ -141,7 +141,6 @@ defmodule Trento.Operations.SapSystemPolicy do
 
   defp other_instances_started(
          %SapSystemReadModel{
-           id: id,
            application_instances: application_instances
          },
          _
@@ -158,8 +157,8 @@ defmodule Trento.Operations.SapSystemPolicy do
         {:error,
          Enum.map(running_instances, fn %{sid: sid, instance_number: inst_number} ->
            OperationsHelper.build_error(
-             "Instance #{inst_number} of SAP system {0} is not started",
-             [%{id: id, label: sid, type: :sap_system}]
+             "Instance #{inst_number} of SAP system #{sid} is not started",
+             []
            )
          end)}
     end
@@ -167,7 +166,6 @@ defmodule Trento.Operations.SapSystemPolicy do
 
   defp other_instances_stopped(
          %SapSystemReadModel{
-           id: id,
            application_instances: application_instances
          },
          %{instance_type: "scs"}
@@ -184,8 +182,8 @@ defmodule Trento.Operations.SapSystemPolicy do
         {:error,
          Enum.map(running_instances, fn %{sid: sid, instance_number: inst_number} ->
            OperationsHelper.build_error(
-             "Instance #{inst_number} of SAP system {0} is not stopped",
-             [%{id: id, label: sid, type: :sap_system}]
+             "Instance #{inst_number} of SAP system #{sid} is not stopped",
+             []
            )
          end)}
     end
