@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router';
 
+import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
 import { optinCapturing, reset } from '@lib/analytics';
@@ -28,6 +29,7 @@ import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
+import AIAssistant from '@common/AIAssistant';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -242,6 +244,7 @@ function Layout() {
           </span>
         </footer>
       </div>
+      {getFromConfig('aiEnabled') && <AIAssistant />}
     </main>
   );
 }
