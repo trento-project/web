@@ -23,7 +23,7 @@ defmodule TrentoWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "sse"]
     plug TrentoWeb.Plugs.AppJWTAuthPlug, otp_app: :trento
   end
 
@@ -281,6 +281,8 @@ defmodule TrentoWeb.Router do
         get "/hosts/:id/memory", ChartController, :host_memory
         get "/hosts/:id/filesystem", ChartController, :host_filesystem
       end
+
+      post "/ai_agent", AIAgentController, :stream
     end
 
     scope "/v2", TrentoWeb.V2 do
