@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-42139F57.js"></script>
+    <script src="dist/sidebar_items-398883F3.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -212,10 +212,10 @@ scanner for robustness.</p><h2 id="inject_label/3-examples" class="section-headi
   </a>
   <span class="text">Examples</span>
 </h2>
-<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="0880246351-1">(</span><span class="s">&quot;up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="0880246351-1">)</span><span class="w">
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="4722458296-1">(</span><span class="s">&quot;up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="4722458296-1">)</span><span class="w">
 </span><span class="s">&quot;up{agentID=</span><span class="se">\&quot;</span><span class="s">host-123</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="w">
 
-</span><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="0880246351-2">(</span><span class="s">&quot;up{job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="0880246351-2">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="4722458296-2">(</span><span class="s">&quot;up{job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="4722458296-2">)</span><span class="w">
 </span><span class="s">&quot;up{agentID=</span><span class="se">\&quot;</span><span class="s">host-123</span><span class="se">\&quot;</span><span class="s">,job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span></code></pre>
   </section>
 </section>
