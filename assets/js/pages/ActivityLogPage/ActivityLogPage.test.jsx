@@ -175,7 +175,6 @@ describe('ActivityLogPage', () => {
     await user.type(input, '2024-08-14T21:00');
     await user.click(screen.getByText('Apply Filter'));
 
-    // Component applies timezone conversion resulting in next-day UTC output
     const expectedToDate = '2024-08-15T07:00:00.000Z';
 
     expect(onGetSpy).toHaveBeenLastCalledWith(

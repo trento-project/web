@@ -95,6 +95,7 @@ describe('Users', () => {
   it('should render created and last login dates according to user timezone', () => {
     const createdAt = '2024-01-10T23:30:00.000Z';
     const lastLoginAt = '2024-01-11T23:30:00.000Z';
+    const timezone = 'Pacific/Kiritimati';
     const users = [
       userFactory.build({
         created_at: createdAt,
@@ -103,9 +104,9 @@ describe('Users', () => {
       }),
     ];
 
-    renderWithRouter(<Users users={users} loading={false} />, {
-      initialState: { user: { timezone: faker.location.timeZone() } },
-    });
+    renderWithRouter(
+      <Users users={users} loading={false} timezone={timezone} />
+    );
 
     expect(screen.getByText('January 11, 2024')).toBeVisible();
     expect(screen.getByText('January 12, 2024')).toBeVisible();

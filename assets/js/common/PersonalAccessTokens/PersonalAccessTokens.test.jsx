@@ -51,9 +51,12 @@ describe('PersonalAccessTokens', () => {
       expires_at: expiresAt,
     });
 
-    render(<PersonalAccessTokens personalAccessTokens={[token]} />, {
-      initialState: { user: { timezone } },
-    });
+    render(
+      <PersonalAccessTokens
+        personalAccessTokens={[token]}
+        timezone={timezone}
+      />
+    );
 
     expect(screen.getByText('Expires: 11 Jan 2024')).toBeInTheDocument();
   });
