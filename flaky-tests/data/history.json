@@ -4518,5 +4518,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-14T04:46:27Z",
+    "commit": "d5c0383d3dc9d8bce172fb437441306226427928",
+    "run_id": "24380994607",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.25
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should enable Saptune change solution operation button based on user abilities",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
+        "score": 0.02501
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
