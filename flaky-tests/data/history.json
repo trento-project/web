@@ -4470,5 +4470,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-14T04:23:07Z",
+    "commit": "d5c0383d3dc9d8bce172fb437441306226427928",
+    "run_id": "24380456641",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request ha cluster discovery request when cluster_maintenance_change operation is completed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is MESSAGESERVER without completing a SAP system registration",
+        "score": 0.02501
+      }
+    ]
   }
 ]
