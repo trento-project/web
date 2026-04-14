@@ -469,8 +469,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 [
-                  %{sid: sid1, instance_number: inst_number1},
-                  %{sid: sid2, instance_number: inst_number2}
+                  %{sap_system_id: sap_system_id1, sid: sid1, instance_number: inst_number1},
+                  %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
                     health: Health.passing(),
@@ -495,8 +495,14 @@ defmodule Trento.Operations.DatabasePolicyTest do
       expected_error =
         {:error,
          [
-           "Instance #{inst_number1} of SAP system #{sid1} is not stopped",
-           "Instance #{inst_number2} of SAP system #{sid2} is not stopped"
+           %{
+             message: "Instance #{inst_number1} of SAP system {0} is not stopped",
+             metadata: [%{id: sap_system_id1, label: sid1, type: :sap_system}]
+           },
+           %{
+             message: "Instance #{inst_number2} of SAP system {0} is not stopped",
+             metadata: [%{id: sap_system_id2, label: sid2, type: :sap_system}]
+           }
          ]}
 
       assert expected_error ==
