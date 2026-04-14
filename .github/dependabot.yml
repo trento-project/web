@@ -18,3 +18,23 @@ updates:
       interval: "weekly"
     cooldown:
       default-days: 14
+    groups:
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint*"
+  - package-ecosystem: "npm"
+    directory: "/test/e2e"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 14
+    groups:
+      cypress:
+        patterns:
+          - "cypress*"
+          - "@cypress*"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint*"
