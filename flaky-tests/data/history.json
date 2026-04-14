@@ -4570,5 +4570,57 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-14T07:17:08Z",
+    "commit": "d5c0383d3dc9d8bce172fb437441306226427928",
+    "run_id": "24381527924",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 25
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.2217
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.09244
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.07953
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.06823
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.04323
+      },
+      {
+        "name": "should delete the user personal access token and revoke access to guarded resources::Users Edit user personal access tokens should delete the user personal access token and revoke access to guarded resources",
+        "score": 0.02501
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.02501
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
+        "score": 0.02501
+      },
+      {
+        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
+        "score": 0.02501
+      }
+    ]
   }
 ]
