@@ -4490,5 +4490,33 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-14T04:24:11Z",
+    "commit": "d5c0383d3dc9d8bce172fb437441306226427928",
+    "run_id": "24380456641",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
+        "score": 0.02501
+      }
+    ]
   }
 ]
