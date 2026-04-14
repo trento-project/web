@@ -30,11 +30,12 @@ export const expectedGithubUrlIsDisplayed = () => {
 };
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = () => {
-  const subscriptions =
+  // The logic to increase expected subscriptions by one should be removed once TRNT-4343 is done.
+  const expectedNumberOfSubscriptions =
     getValue('subscriptions') +
     (Cypress.config().baseUrl.includes('target') ? 1 : 0);
 
   return cy
     .get(amountOfSlesForSapSubscriptionsLabel)
-    .should('have.text', `${subscriptions} found`);
+    .should('have.text', `${expectedNumberOfSubscriptions} found`);
 };

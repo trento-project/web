@@ -34,6 +34,8 @@ before(() => {
   if (Cypress.config().baseUrl.includes('target')) apiDeregisterRealHost();
 });
 
+
+// This is needed because requests that depend on Prometheus in a real environment return a 500 in SLES16, this can be removed once TRNT-4344 is done.
 Cypress.on('uncaught:exception', () => {
   if (Cypress.config().baseUrl.includes('target16sp0')) return false;
 });
