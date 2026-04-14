@@ -13,6 +13,7 @@ import {
   DATETIME_MONTH_NAME_24H_FORMAT,
   DATETIME_DAY_MONTH_24H_FORMAT,
   DATETIME_WEEKDAY_SHORT_24H_FORMAT,
+  DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT,
   DEFAULT_TIMEZONE,
   TIME_24H_HH_MM_FORMAT,
 } from './index';
@@ -43,6 +44,9 @@ describe('timezone format constants', () => {
     );
     expect(formatInDefaultTimezone(DATETIME_WEEKDAY_SHORT_24H_FORMAT)).toBe(
       'Sun Aug 04, 10:21:00 2024'
+    );
+    expect(formatInDefaultTimezone(DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT)).toBe(
+      'Sun Aug 04 10:21:00 2024'
     );
 
     expect(formatInDefaultTimezone(DATE_DAY_MONTH_YEAR_FORMAT)).toBe(
