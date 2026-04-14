@@ -411,7 +411,20 @@ jobs:
       - name: Run test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: Elixir-${{ matrix.elixir }}
         run: mix coveralls.github --warnings-as-errors --trace
+
+  coveralls-finish:
+    needs: [test-elixir]
+    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   test-release:
     name: Test release build
