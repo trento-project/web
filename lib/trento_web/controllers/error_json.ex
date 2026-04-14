@@ -35,11 +35,19 @@ defmodule TrentoWeb.ErrorJSON do
   def render("403.json", %{errors: errors}) do
     %{
       errors:
-        Enum.map(errors, fn error ->
-          %{
-            title: "Forbidden",
-            detail: error
-          }
+        Enum.map(errors, fn
+          %{message: message, metadata: metadata} ->
+            %{
+              title: "Forbidden",
+              detail: message,
+              metadata: metadata
+            }
+
+          error ->
+            %{
+              title: "Forbidden",
+              detail: error
+            }
         end)
     }
   end
