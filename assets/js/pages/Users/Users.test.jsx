@@ -1,14 +1,15 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen, render, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
 import Users from './Users';
+import { faker } from '@faker-js/faker';
 
 describe('Users', () => {
   it('should render a loading table with a disabled create user button', () => {
-    render(<Users loading />);
+    renderWithRouter(<Users loading />);
 
     const headers = [
       'Username',
@@ -28,8 +29,9 @@ describe('Users', () => {
   });
 
   it('should render an empty table with an enabled create user button', () => {
-    render(<Users loading={false} />);
-
+    renderWithRouter(<Users loading={false} />, {
+      initialState: { user: { timezone: faker.location.timeZone() } },
+    });
     const button = screen.getByRole('button', { name: /Create User/i });
     expect(button).not.toBeDisabled();
     expect(screen.getByText('No data available')).toBeVisible();
@@ -88,6 +90,26 @@ describe('Users', () => {
 
     const table = screen.getByRole('table');
     expect(table.querySelector('td:nth-child(6)')).toHaveTextContent('-');
+  });
+
+  it('should render created and last login dates according to user timezone', () => {
+    const createdAt = '2024-01-10T23:30:00.000Z';
+    const lastLoginAt = '2024-01-11T23:30:00.000Z';
+    const users = [
+      userFactory.build({
+        created_at: createdAt,
+        last_login_at: lastLoginAt,
+        enabled: true,
+      }),
+    ];
+
+    renderWithRouter(<Users users={users} loading={false} />, {
+      initialState: { user: { timezone: faker.location.timeZone() } },
+    });
+
+    expect(screen.getByText('January 11, 2024')).toBeVisible();
+    expect(screen.getByText('January 12, 2024')).toBeVisible();
+    expect(screen.queryByText('January 10, 2024')).not.toBeInTheDocument();
   });
 
   it('should open modal when delete button is pressed and close when cancel button is pressed', async () => {

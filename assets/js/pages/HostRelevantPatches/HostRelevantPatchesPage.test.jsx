@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { noop } from 'lodash';
 
-import { renderWithRouter as render } from '@lib/test-utils';
+import { renderWithRouter, withState } from '@lib/test-utils';
 import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
@@ -24,7 +24,14 @@ describe('HostRelevantPatchesPage', () => {
     it('displays the hostname', () => {
       const host = hostFactory.build();
 
-      render(<HostRelevantPatchesPage hostName={host.hostname} patches={[]} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage hostName={host.hostname} patches={[]} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
       expect(
         screen.getByRole('heading', {
           name: `Relevant Patches: ${host.hostname}`,
@@ -39,9 +46,14 @@ describe('HostRelevantPatchesPage', () => {
       );
       const user = userEvent.setup();
 
-      render(
-        <HostRelevantPatchesPage hostName={host.hostname} patches={patches} />
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage hostName={host.hostname} patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
       );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const advisorySelect = screen.getByRole('button', { name: 'all' });
       await user.click(advisorySelect);
@@ -59,13 +71,27 @@ describe('HostRelevantPatchesPage', () => {
     });
 
     it('shows an input for searching the patches', () => {
-      render(<HostRelevantPatchesPage patches={[]} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={[]} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       expect(screen.getByRole('textbox')).toBeVisible();
     });
 
     it('shows a button for downloading the data as CSV', () => {
-      render(<HostRelevantPatchesPage patches={[]} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={[]} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       expect(
         screen.getByRole('button', { name: 'Download CSV' })
@@ -73,11 +99,37 @@ describe('HostRelevantPatchesPage', () => {
     });
 
     it('shows the relevant patches component', () => {
-      render(<HostRelevantPatchesPage patches={[]} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={[]} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       expect(
         screen.getByRole('row', { name: 'Type Advisory Synopsis Updated' })
       ).toBeVisible();
+    });
+
+    it('renders patch update date using user timezone from state', () => {
+      const patch = relevantPatchFactory.build({
+        update_date: '2024-01-10T23:30:00.000Z',
+      });
+
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={[patch]} />,
+        {
+          user: {
+            timezone: 'Pacific/Kiritimati',
+          },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
+
+      expect(screen.getByText('11 Jan 2024')).toBeVisible();
     });
   });
 
@@ -85,7 +137,14 @@ describe('HostRelevantPatchesPage', () => {
     it('shows all patches by default', () => {
       const patches = relevantPatchFactory.buildList(8);
 
-      render(<HostRelevantPatchesPage patches={patches} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       patches.forEach((patch) => {
         expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
@@ -104,7 +163,14 @@ describe('HostRelevantPatchesPage', () => {
         (patch) => patch.advisory_type === filteredType
       );
 
-      render(<HostRelevantPatchesPage patches={patches} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const advisorySelect = screen.getByRole('button', { name: 'all' });
       await user.click(advisorySelect);
@@ -122,9 +188,14 @@ describe('HostRelevantPatchesPage', () => {
       const patches = relevantPatchFactory.buildList(8);
       const searchTerm = patches[0].advisory_synopsis;
 
-      const { container } = render(
-        <HostRelevantPatchesPage patches={patches} />
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
       );
+
+      const { container } = renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const searchInput = screen.getByRole('textbox');
       await user.click(searchInput);
@@ -152,7 +223,14 @@ describe('HostRelevantPatchesPage', () => {
 
       const patches = [];
 
-      render(<HostRelevantPatchesPage hostName={hostName} patches={patches} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage hostName={hostName} patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const csvButton = screen.getByText('Download CSV');
 
@@ -176,7 +254,14 @@ describe('HostRelevantPatchesPage', () => {
         }),
       ];
 
-      render(<HostRelevantPatchesPage hostName={hostName} patches={patches} />);
+      const [StatefulHostRelevantPatchesPage] = withState(
+        <HostRelevantPatchesPage hostName={hostName} patches={patches} />,
+        {
+          user: { timezone: faker.location.timeZone() },
+        }
+      );
+
+      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const csvButton = screen.getByText('Download CSV');
       user.click(csvButton);

@@ -151,4 +151,42 @@ describe('ActivityLogPage', () => {
       }
     );
   });
+
+  it('should send to_date as timezone-aware ISO when custom date is selected', async () => {
+    const user = userEvent.setup();
+    const timezone = 'Pacific/Kiritimati';
+    const onGetSpy = jest.spyOn(networkClient, 'get');
+
+    axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
+
+    const [StatefulActivityLogPage] = withState(<ActivityLogPage />, {
+      ...defaultInitialState,
+      user: {
+        ...defaultInitialState.user,
+        timezone,
+      },
+    });
+
+    await act(() => renderWithRouter(StatefulActivityLogPage));
+
+    await user.click(screen.getByText('Filter newer than...'));
+
+    const input = document.querySelector('input[type="datetime-local"]');
+    await user.type(input, '2024-08-14T21:00');
+    await user.click(screen.getByText('Apply Filter'));
+
+    // Component applies timezone conversion resulting in next-day UTC output
+    const expectedToDate = '2024-08-15T07:00:00.000Z';
+
+    expect(onGetSpy).toHaveBeenLastCalledWith(
+      '/activity_log',
+      expect.objectContaining({
+        params: expect.objectContaining({
+          to_date: expectedToDate,
+        }),
+      })
+    );
+
+    onGetSpy.mockRestore();
+  });
 });

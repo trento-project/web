@@ -2,6 +2,7 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { faker } from '@faker-js/faker';
 
@@ -65,16 +66,22 @@ describe('CheckResultsOverview component', () => {
     const passing_count = faker.number.int();
     const warning_count = faker.number.int();
     const critical_count = faker.number.int();
+    const completedAt = '2024-01-10T23:30:00Z';
 
     const data = {
-      completed_at: faker.date.past().toISOString(),
+      completed_at: completedAt,
       passing_count,
       warning_count,
       critical_count,
       status: 'completed',
     };
-
-    render(<CheckResultsOverview data={data} catalogDataEmpty={false} />);
+    render(
+      <CheckResultsOverview
+        data={data}
+        catalogDataEmpty={false}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     expect(screen.getByText('Passing')).toBeVisible();
     expect(screen.getByText(passing_count)).toBeVisible();
@@ -82,5 +89,28 @@ describe('CheckResultsOverview component', () => {
     expect(screen.getByText(warning_count)).toBeVisible();
     expect(screen.getByText('Critical')).toBeVisible();
     expect(screen.getByText(critical_count)).toBeVisible();
+    expect(screen.getByText('Wed Jan 10, 23:30:00 2024')).toBeVisible();
+  });
+
+  it('should display completion time using provided timezone', () => {
+    const completedAt = '2024-01-10T23:30:00Z';
+    const data = {
+      completed_at: completedAt,
+      passing_count: faker.number.int(),
+      warning_count: faker.number.int(),
+      critical_count: faker.number.int(),
+      status: 'completed',
+    };
+
+    render(
+      <CheckResultsOverview
+        data={data}
+        catalogDataEmpty={false}
+        timezone="Pacific/Kiritimati"
+      />
+    );
+
+    // UTC+14 shifts this timestamp to the next day: 10 Jan -> 11 Jan.
+    expect(screen.getByText('Thu Jan 11, 13:30:00 2024')).toBeVisible();
   });
 });

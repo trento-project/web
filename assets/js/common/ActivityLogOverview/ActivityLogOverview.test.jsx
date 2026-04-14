@@ -210,4 +210,29 @@ describe('Activity Log Overview', () => {
     expect(screen.getByText('ID')).toBeVisible();
     expect(screen.getByText(id)).toBeVisible();
   });
+
+  it('should render entry time in the provided timezone', () => {
+    const entry = activityLogEntryFactory.build({
+      occurred_on: '2024-01-10T23:30:00Z',
+    });
+
+    render(
+      <ActivityLogOverview
+        activityLog={[entry]}
+        timezone="Pacific/Kiritimati"
+      />
+    );
+
+    expect(screen.getByText('2024-01-11 13:30:00')).toBeVisible();
+  });
+
+  it('should render entry time in an extreme negative-offset timezone', () => {
+    const entry = activityLogEntryFactory.build({
+      occurred_on: '2024-01-10T08:30:00Z',
+    });
+
+    render(<ActivityLogOverview activityLog={[entry]} timezone="Etc/GMT+12" />);
+
+    expect(screen.getByText('2024-01-09 20:30:00')).toBeVisible();
+  });
 });

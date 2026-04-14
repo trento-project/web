@@ -141,6 +141,23 @@ describe('HostDetails component', () => {
 
         expect(screen.getByText('10.0.0.5, 10.0.0.6')).toBeInTheDocument();
       });
+
+      it('should render last boot using provided timezone', () => {
+        renderWithRouter(
+          <HostDetails
+            agentVersion="2.0.0"
+            ipAddresses={['10.0.0.5']}
+            netmasks={[24]}
+            lastBootTimestamp="2024-01-10T23:30:00Z"
+            timezone="Pacific/Kiritimati"
+            userAbilities={userAbilities}
+          />
+        );
+
+        expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
+          '11 Jan 2024, 13:30:00'
+        );
+      });
     });
   });
 
@@ -364,10 +381,10 @@ describe('HostDetails component', () => {
 
       const lastExecution = {
         data: {
-          completed_at: faker.date.past().toISOString(),
+          completed_at: '2024-01-10T23:30:00Z',
           passing_count: passingCount,
-          warning_ccount: warningCount,
-          critical_ccount: criticalCount,
+          warning_count: warningCount,
+          critical_count: criticalCount,
         },
       };
 
@@ -375,11 +392,13 @@ describe('HostDetails component', () => {
         <HostDetails
           agentVersion="2.0.0"
           lastExecution={lastExecution}
+          timezone="Pacific/Kiritimati"
           userAbilities={userAbilities}
         />
       );
 
       expect(screen.getByText(passingCount)).toBeInTheDocument();
+      expect(screen.getByText('Thu Jan 11, 13:30:00 2024')).toBeInTheDocument();
     });
 
     it('should display nothing if lastExecution is an empty object', () => {
@@ -668,6 +687,27 @@ describe('HostDetails component', () => {
           exact: false,
         })
       ).toBeVisible();
+    });
+
+    it('should format SLES subscription dates using provided timezone prop', () => {
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          timezone="Pacific/Kiritimati"
+          slesSubscriptions={[
+            {
+              starts_at: '2024-01-10T23:30:00Z',
+              expires_at: '2024-01-11T23:30:00Z',
+              status: 'active',
+              subscription_id: 'sub-1',
+            },
+          ]}
+        />
+      );
+
+      expect(screen.getByText('2024-01-11 13:30:00')).toBeVisible();
+      expect(screen.getByText('2024-01-12 13:30:00')).toBeVisible();
     });
   });
 });

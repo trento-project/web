@@ -12,6 +12,7 @@ import {
   ascsErsClusterDetailsFactory,
   clusterFactory,
 } from '@lib/test-utils/factories';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { providerData } from '@common/ProviderLabel/ProviderLabel';
 
@@ -25,6 +26,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       details,
     } = clusterFactory.build({
       type: 'ascs_ers',
+      cib_last_written: '2025-04-09T02:32:05Z',
     });
 
     const {
@@ -43,6 +45,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         hosts={buildHostsFromAscsErsClusterDetails(details)}
         sapSystems={sapSystems}
         details={details}
+        timezone={DEFAULT_TIMEZONE}
       />
     );
 
@@ -53,7 +56,7 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
       'ASCS/ERS'
     );
     expect(screen.getByText('CIB last written').nextSibling).toHaveTextContent(
-      cibLastWritten
+      '09 Apr 2025, 02:32:05'
     );
     expect(
       screen.getByText('Cluster maintenance').nextSibling
@@ -259,5 +262,31 @@ describe('ClusterDetails AscsErsClusterDetails component', () => {
         expect(element).toBeInTheDocument();
       });
     });
+  });
+
+  it('should format CIB last written using provided timezone', () => {
+    const {
+      cib_last_written: cibLastWritten,
+      provider,
+      details,
+    } = clusterFactory.build({
+      type: 'ascs_ers',
+      cib_last_written: '2024-01-10T23:30:00Z',
+    });
+
+    renderWithRouter(
+      <AscsErsClusterDetails
+        cibLastWritten={cibLastWritten}
+        provider={provider}
+        hosts={buildHostsFromAscsErsClusterDetails(details)}
+        sapSystems={buildSapSystemsFromAscsErsClusterDetails(details)}
+        details={details}
+        timezone="Pacific/Kiritimati"
+      />
+    );
+
+    expect(screen.getByText('CIB last written').nextSibling).toHaveTextContent(
+      '11 Jan 2024, 13:30:00'
+    );
   });
 });

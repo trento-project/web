@@ -415,7 +415,9 @@ describe('UserForm', () => {
     );
   });
 
-  it('should set timezone selector value when timezone is provided', () => {
+  it('should include provided timezone in save payload', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
     const {
       fullname,
       email,
@@ -434,14 +436,22 @@ describe('UserForm', () => {
         updatedAt={updatedAt}
         timezone={timezone}
         editing
+        onSave={mockOnSave}
       />
     );
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
-      timezone
-    );
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: true,
+      abilities: [],
+      timezone,
+    });
   });
 
   it('should set timezone in save payload when timezone selector changes', async () => {
@@ -470,10 +480,15 @@ describe('UserForm', () => {
     );
 
     const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    const timezoneMatcher = new RegExp(
+      timezone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    );
 
     await user.click(timezoneSelectorInput);
     await user.type(timezoneSelectorInput, timezone);
-    await user.click(await screen.findByText(new RegExp(`^${timezone}`)));
+    await user.click(
+      await screen.findByRole('option', { name: timezoneMatcher })
+    );
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {
@@ -482,6 +497,40 @@ describe('UserForm', () => {
       enabled: true,
       abilities: [],
       timezone,
+    });
+  });
+
+  it('should include default timezone in save payload when timezone is omitted', async () => {
+    const user = userEvent.setup();
+    const mockOnSave = jest.fn();
+    const {
+      fullname,
+      email,
+      username,
+      created_at: createdAt,
+      updated_at: updatedAt,
+    } = userFactory.build();
+
+    render(
+      <UserForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        createdAt={createdAt}
+        updatedAt={updatedAt}
+        editing
+        onSave={mockOnSave}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+      fullname,
+      email,
+      enabled: true,
+      abilities: [],
+      timezone: DEFAULT_TIMEZONE,
     });
   });
 

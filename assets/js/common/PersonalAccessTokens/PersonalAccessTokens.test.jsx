@@ -3,8 +3,10 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { format, formatISO } from 'date-fns';
+import { tz } from '@date-fns/tz';
 import { faker } from '@faker-js/faker';
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
+import { DEFAULT_TIMEZONE, DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import PersonalAccessTokens from './PersonalAccessTokens';
 
@@ -18,7 +20,11 @@ describe('PersonalAccessTokens', () => {
     tokens.forEach(({ name, expires_at: expiresAt }) => {
       expect(screen.getByText(name)).toBeInTheDocument();
       expect(
-        screen.getByText(`Expires: ${format(expiresAt, 'd LLL yyyy')}`)
+        screen.getByText(
+          `Expires: ${format(expiresAt, DATE_DAY_MONTH_YEAR_FORMAT, {
+            in: tz(DEFAULT_TIMEZONE),
+          })}`
+        )
       ).toBeInTheDocument();
     });
   });
@@ -38,6 +44,20 @@ describe('PersonalAccessTokens', () => {
     expect(screen.getByText('Expires: Never')).toBeInTheDocument();
   });
 
+  it('should display token expiration date with timezone day rollover', () => {
+    const expiresAt = '2024-01-10T23:30:00.000Z';
+    const timezone = 'Pacific/Kiritimati';
+    const token = personalAccessTokenFactory.build({
+      expires_at: expiresAt,
+    });
+
+    render(<PersonalAccessTokens personalAccessTokens={[token]} />, {
+      initialState: { user: { timezone } },
+    });
+
+    expect(screen.getByText('Expires: 11 Jan 2024')).toBeInTheDocument();
+  });
+
   it('should show expired tokens with a red color', () => {
     const token = personalAccessTokenFactory.build({
       expires_at: formatISO(faker.date.past()),
@@ -46,7 +66,11 @@ describe('PersonalAccessTokens', () => {
 
     expect(
       screen
-        .getByText(`Expires: ${format(token.expires_at, 'd LLL yyyy')}`)
+        .getByText(
+          `Expires: ${format(token.expires_at, DATE_DAY_MONTH_YEAR_FORMAT, {
+            in: tz(DEFAULT_TIMEZONE),
+          })}`
+        )
         .classList.toString()
     ).toContain('text-red-500');
   });
@@ -109,9 +133,11 @@ describe('PersonalAccessTokens', () => {
     await user.click(screen.getByRole('button', { name: 'generate-token' }));
 
     await user.type(screen.getByRole('textbox'), tokenName);
-    await user.click(screen.getByRole('switch'));
     await user.click(screen.getByRole('button', { name: 'Generate Token' }));
-    expect(mockOnGenerateToken).toHaveBeenCalledWith(tokenName, null);
+    expect(mockOnGenerateToken).toHaveBeenCalledWith(
+      tokenName,
+      expect.any(Date)
+    );
   });
 
   it('should show new token modal if the generated token is given', async () => {
