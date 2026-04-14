@@ -10,6 +10,7 @@ export const DATETIME_LOCALE_LONG_FORMAT = 'PPpp';
 export const DATETIME_MONTH_NAME_24H_FORMAT = 'MMMM dd, yyyy, HH:mm:ss';
 export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
 export const DATETIME_WEEKDAY_SHORT_24H_FORMAT = 'iii MMM dd, HH:mm:ss y';
+export const DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT = 'iii MMM dd HH:mm:ss yyyy';
 export const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy'; // TODO: equals to 'dd MMM y'?
 export const DATE_DAY_MONTH_YEAR_PADDED_FORMAT = 'dd MMM y'; // TODO: equals to 'dd MMM yyyy'?
 export const DATE_DAY_ABBR_MONTH_YEAR_FORMAT = 'd LLL yyyy'; // TODO: equals to 'd MMM y'?
