@@ -7,7 +7,7 @@ import ClusterTypeLabel from '@common/ClusterTypeLabel';
 import SapSystemLink from '@common/SapSystemLink';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_WEEKDAY_SHORT_NO_COMMA_24H_FORMAT } from '@lib/timezones';
+import { DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT } from '@lib/timezones';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
@@ -116,10 +116,8 @@ function HanaClusterDetails({
                 content: cibLastWritten
                   ? formatDate(
                       cibLastWritten,
-                      DATETIME_WEEKDAY_SHORT_NO_COMMA_24H_FORMAT,
-                      {
-                        in: tz(timezone),
-                      }
+                      DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT,
+                      { in: tz(timezone) }
                     )
                   : '-',
               },
