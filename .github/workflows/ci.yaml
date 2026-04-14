@@ -36,6 +36,9 @@ jobs:
       elixir-changed: ${{ steps.set-outputs.outputs.elixir-changed }}
       assets-changed: ${{ steps.set-outputs.outputs.assets-changed }}
     steps:
+      - name: Check runner timezone
+        run: date && timedatectl status || date
+
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
