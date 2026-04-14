@@ -5,10 +5,7 @@ import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import { isAfter } from 'date-fns';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
-
 import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
-import { getUserProfile } from '@state/selectors/user';
 
 import Button from '@common/Button';
 
@@ -24,10 +21,10 @@ function PersonalAccessTokens({
   onDeleteToken = noop,
   onGenerateToken = noop,
   onCloseGeneratedTokenModal = noop,
+  timezone,
 }) {
   const [tokenToDelete, setTokenToDelete] = useState(null);
   const [generateTokenModalOpen, setGenerateTokenModalOpen] = useState(false);
-  const { timezone } = useSelector(getUserProfile);
 
   return (
     <>

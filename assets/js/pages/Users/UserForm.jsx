@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { useSelector } from 'react-redux';
 
 import Button from '@common/Button';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_LOCALE_LONG_FORMAT } from '@lib/timezones';
-import { getUserProfile } from '@state/selectors/user';
+import { DATETIME_LOCALE_LONG_FORMAT, DEFAULT_TIMEZONE } from '@lib/timezones';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
@@ -42,7 +40,7 @@ function UserForm({
   lastLoginAt = '',
   analyticsEnabledConfig = false,
   analyticsEnabled,
-  timezone,
+  timezone = DEFAULT_TIMEZONE,
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -69,7 +67,6 @@ function UserForm({
   const [selectedAbilities, setAbilities] = useState(
     userAbilities.map(({ id }) => id)
   );
-  const { timezone: userTimezone } = useSelector(getUserProfile);
 
   useEffect(() => {
     setFullNameError(getError('fullname', errors));
@@ -345,20 +342,20 @@ function UserForm({
                   <Label className="col-start-1 col-span-2">Created</Label>
                   <span className="col-start-3 col-span-4">
                     {formatDate(createdAt, DATETIME_LOCALE_LONG_FORMAT, {
-                      in: tz(userTimezone),
+                      in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Updated</Label>
                   <span className="col-start-3 col-span-4">
                     {formatDate(updatedAt, DATETIME_LOCALE_LONG_FORMAT, {
-                      in: tz(userTimezone),
+                      in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Last Login</Label>
                   <span className="col-start-3 col-span-4">
                     {lastLoginAt
                       ? formatDate(lastLoginAt, DATETIME_LOCALE_LONG_FORMAT, {
-                          in: tz(userTimezone),
+                          in: tz(timezone),
                         })
                       : '-'}
                   </span>

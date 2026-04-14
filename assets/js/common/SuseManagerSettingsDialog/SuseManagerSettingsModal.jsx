@@ -121,7 +121,9 @@ function SuseManagerSettingsModal({
               <div>Certificate Uploaded</div>
               <div className="text-xs">
                 Uploaded:{' '}
-                {formatDate(certUploadDate, DATE_DAY_MONTH_YEAR_PADDED_FORMAT, { in: tz(timezone) })}
+                {formatDate(certUploadDate, DATE_DAY_MONTH_YEAR_PADDED_FORMAT, {
+                  in: tz(timezone),
+                })}
               </div>
             </div>
             <div className="flex flex-row grow justify-end">

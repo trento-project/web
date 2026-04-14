@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
-import { useSelector } from 'react-redux';
 
 import { isAdmin } from '@lib/model/users';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import { DATE_MONTH_NAME_YEAR_FORMAT } from '@lib/timezones';
-import { getUserProfile } from '@state/selectors/user';
 
 import Banner from '@common/Banners';
 import Button from '@common/Button';
@@ -24,10 +22,10 @@ function Users({
   users = defaultUsers,
   loading = false,
   singleSignOnEnabled = false,
+  timezone,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState(null);
-  const { timezone } = useSelector(getUserProfile);
 
   const usersTableConfig = {
     pagination: true,
@@ -65,7 +63,9 @@ function Users({
         key: 'created_at',
         render: (content, item) => (
           <span>
-            {formatDate(item.created_at, DATE_MONTH_NAME_YEAR_FORMAT, { in: tz(timezone) })}
+            {formatDate(item.created_at, DATE_MONTH_NAME_YEAR_FORMAT, {
+              in: tz(timezone),
+            })}
           </span>
         ),
       },
@@ -77,7 +77,9 @@ function Users({
               render: (content) => (
                 <span>
                   {content
-                    ? formatDate(content, DATE_MONTH_NAME_YEAR_FORMAT, { in: tz(timezone) })
+                    ? formatDate(content, DATE_MONTH_NAME_YEAR_FORMAT, {
+                        in: tz(timezone),
+                      })
                     : '-'}
                 </span>
               ),

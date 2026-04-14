@@ -38,7 +38,9 @@ export const logLevelToIcon = {
 export const toRenderedEntry = (entry, timezone) => ({
   id: entry.id,
   type: entry.type,
-  time: formatDate(entry.occurred_on, DATETIME_ISO_SQL_FORMAT, { in: tz(timezone) }),
+  time: formatDate(entry.occurred_on, DATETIME_ISO_SQL_FORMAT, {
+    in: tz(timezone),
+  }),
   message: toMessage(entry),
   user: entry.actor,
   severity: entry.severity ? logLevelToLabel[entry.severity] : LEVEL_INFO,

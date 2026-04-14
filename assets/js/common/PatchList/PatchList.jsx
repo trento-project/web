@@ -145,7 +145,9 @@ export default function PatchList({ patches, timezone, onNavigate = noop }) {
         sortDirection: sortingColumn === 'update_date' ? sortDirection : null,
         handleClick: handleUpdateDateColClick,
         render: (content, _) =>
-          formatDate(content, DATE_DAY_MONTH_YEAR_COMPACT_FORMAT, { in: tz(timezone) }),
+          formatDate(content, DATE_DAY_MONTH_YEAR_COMPACT_FORMAT, {
+            in: tz(timezone),
+          }),
       },
     ],
   };

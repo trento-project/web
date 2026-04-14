@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { get, zipWith, startCase, some } from 'lodash';
 import classNames from 'classnames';
-import { useSelector } from 'react-redux';
 import {
   EOS_CLEAR_ALL,
   EOS_PLAY_CIRCLE,
@@ -47,7 +46,6 @@ import SuseLogo from '@static/suse_logo.svg';
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 import { canStartExecution } from '@pages/ChecksSelection';
 import DeregistrationModal from '@pages/DeregistrationModal';
-import { getUserProfile } from '@state/selectors/user';
 
 import HostSummary from './HostSummary';
 import ProviderDetails from './ProviderDetails';
@@ -105,6 +103,7 @@ function HostDetails({
   requestOperation,
   cleanForbiddenOperation,
   navigate,
+  timezone,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [
@@ -114,7 +113,6 @@ function HostDetails({
   const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
-  const { timezone } = useSelector(getUserProfile);
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -361,6 +359,7 @@ function HostDetails({
             cluster={cluster}
             ipAddresses={buildCidrNotation(ipAddresses, netmasks)}
             lastBootTimestamp={lastBootTimestamp}
+            timezone={timezone}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary
@@ -375,6 +374,7 @@ function HostDetails({
             <CheckResultsOverview
               data={lastExecutionData}
               catalogDataEmpty={catalogData?.length === 0}
+              timezone={timezone}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
               onCheckClick={(health) =>

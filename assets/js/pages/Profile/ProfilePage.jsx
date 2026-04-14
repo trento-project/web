@@ -218,6 +218,7 @@ function ProfilePage() {
         onCloseGeneratedTokenModal={setGeneratedAccessToken}
         onDeleteToken={deleteToken}
         onGenerateToken={generateToken}
+        timezone={timezone}
       />
     </>
   );

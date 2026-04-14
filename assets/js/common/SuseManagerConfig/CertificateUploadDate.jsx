@@ -16,7 +16,10 @@ function CertificateUploadDate({ date, timezone }) {
       <div>
         <div>Certificate Uploaded</div>
         <div className="text-xs">
-          Uploaded: {formatDate(date, DATE_DAY_MONTH_YEAR_PADDED_FORMAT, { in: tz(timezone) })}
+          Uploaded:{' '}
+          {formatDate(date, DATE_DAY_MONTH_YEAR_PADDED_FORMAT, {
+            in: tz(timezone),
+          })}
         </div>
       </div>
     </div>

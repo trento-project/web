@@ -2,11 +2,9 @@ import React from 'react';
 import { chunk } from 'lodash';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { useSelector } from 'react-redux';
 
 import HealthIcon from '@common/HealthIcon';
 import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
-import { getUserProfile } from '@state/selectors/user';
 import ListView from '@common/ListView';
 import Tooltip from '@common/Tooltip';
 
@@ -42,11 +40,12 @@ function HostSummary({
   cluster,
   ipAddresses,
   lastBootTimestamp,
+  timezone,
 }) {
-  const { timezone } = useSelector(getUserProfile);
-
   const formattedLastBoot = lastBootTimestamp
-    ? formatDate(lastBootTimestamp, DATETIME_DAY_MONTH_24H_FORMAT, { in: tz(timezone) })
+    ? formatDate(lastBootTimestamp, DATETIME_DAY_MONTH_24H_FORMAT, {
+        in: tz(timezone),
+      })
     : 'N/A';
 
   return (

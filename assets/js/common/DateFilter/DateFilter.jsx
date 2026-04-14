@@ -7,7 +7,10 @@ import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
 import { format as formatDate, parseISO, subDays, subHours } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_US_12H_FORMAT, DATETIME_ISO_LOCAL_MILLIS_FORMAT } from '@lib/timezones';
+import {
+  DATETIME_US_12H_FORMAT,
+  DATETIME_ISO_LOCAL_MILLIS_FORMAT,
+} from '@lib/timezones';
 
 import Input from '@common/Input';
 

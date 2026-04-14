@@ -156,6 +156,7 @@ function EditUserPage() {
         personalAccessTokens={personalAccessTokens}
         generateTokenAvailable={false}
         onDeleteToken={onDeleteToken}
+        timezone={timezone}
       />
     </div>
   );

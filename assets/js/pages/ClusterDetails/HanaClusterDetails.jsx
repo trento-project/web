@@ -138,6 +138,7 @@ function HanaClusterDetails({
           <CheckResultsOverview
             data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
+            timezone={timezone}
             loading={catalogLoading || executionLoading}
             error={catalogError || executionError}
             onCheckClick={(health) =>

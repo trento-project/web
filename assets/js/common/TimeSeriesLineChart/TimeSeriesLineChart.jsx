@@ -15,7 +15,10 @@ import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_DAY_MONTH_24H_FORMAT, TIME_24H_HH_MM_FORMAT } from '@lib/timezones';
+import {
+  DATETIME_DAY_MONTH_24H_FORMAT,
+  TIME_24H_HH_MM_FORMAT,
+} from '@lib/timezones';
 
 const AVAILABLE_COLORS = [
   {
@@ -142,7 +145,9 @@ function TimeSeriesLineChart({
         autoSkipPadding: 50,
         maxRotation: 0,
         callback: (value) =>
-          formatDate(new Date(value), TIME_24H_HH_MM_FORMAT, { in: tz(timezone) }),
+          formatDate(new Date(value), TIME_24H_HH_MM_FORMAT, {
+            in: tz(timezone),
+          }),
       },
       time: {
         displayFormats: {
@@ -178,9 +183,13 @@ function TimeSeriesLineChart({
               return '';
             }
 
-            return formatDate(new Date(context[0].parsed.x), DATETIME_DAY_MONTH_24H_FORMAT, {
-              in: tz(timezone),
-            });
+            return formatDate(
+              new Date(context[0].parsed.x),
+              DATETIME_DAY_MONTH_24H_FORMAT,
+              {
+                in: tz(timezone),
+              }
+            );
           },
         },
       },

@@ -55,9 +55,13 @@ function ApiKeyExpireInfo({ apiKeyExpiration, timezone }) {
 
     const expireDate = parseISO(apiKeyExpiration);
     if (apiKeyExpiration && isBefore(new Date(), expireDate)) {
-      return `Key will expire ${formatDate(apiKeyExpiration, DATE_DAY_ABBR_MONTH_YEAR_FORMAT, {
-        in: tz(timezone),
-      })}`;
+      return `Key will expire ${formatDate(
+        expireDate,
+        DATE_DAY_ABBR_MONTH_YEAR_FORMAT,
+        {
+          in: tz(timezone),
+        }
+      )}`;
     }
 
     return 'Key expired';
