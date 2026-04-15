@@ -7,7 +7,12 @@ import { faker } from '@faker-js/faker';
 import { profileFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
-import { DEFAULT_TIMEZONE } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+
+const getTimezoneLabel = (timezone) =>
+  generateTimezoneOptions().find((option) => option.value === timezone)?.label;
+
+const userTimezone = 'Europe/Berlin';
 
 describe('ProfileForm', () => {
   it('should render a pre-filled form', () => {
@@ -415,14 +420,12 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
-      DEFAULT_TIMEZONE
-    );
+    expect(screen.getByText(getTimezoneLabel(DEFAULT_TIMEZONE))).toBeVisible();
   });
 
   it('should set timezone selector value when timezone is provided', () => {
-    const { username, fullname, email, abilities, timezone } =
-      profileFactory.build();
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const timezone = userTimezone;
 
     render(
       <ProfileForm
@@ -436,14 +439,12 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.getByLabelText('Timezone')).toBeVisible();
-    expect(document.querySelector('input[name="timezone"]')).toHaveValue(
-      timezone
-    );
+    expect(screen.getByText(getTimezoneLabel(timezone))).toBeVisible();
   });
 
   it('should set timezone in save payload when timezone selector changes', async () => {
-    const { username, fullname, email, abilities, timezone } =
-      profileFactory.build();
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const timezone = userTimezone;
     const mockOnSave = jest.fn();
     const user = userEvent.setup();
 
@@ -459,10 +460,11 @@ describe('ProfileForm', () => {
     );
 
     const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    const timezoneLabel = getTimezoneLabel(timezone);
 
     await user.click(timezoneSelectorInput);
     await user.type(timezoneSelectorInput, timezone);
-    await user.click(await screen.findByText(new RegExp(`^${timezone}`)));
+    await user.click(await screen.findByText(timezoneLabel));
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(mockOnSave).toHaveBeenCalledWith(
@@ -538,9 +540,9 @@ describe('ProfileForm', () => {
       );
 
       expect(screen.getByLabelText('Timezone')).toBeEnabled();
-      expect(document.querySelector('input[name="timezone"]')).toHaveValue(
-        DEFAULT_TIMEZONE
-      );
+      expect(
+        screen.getByText(getTimezoneLabel(DEFAULT_TIMEZONE))
+      ).toBeVisible();
     });
 
     it('should show save button if analytics configuration is enabled', async () => {
@@ -573,8 +575,8 @@ describe('ProfileForm', () => {
     });
 
     it('should set timezone in save payload when timezone selector changes', async () => {
-      const { username, fullname, email, abilities, timezone } =
-        profileFactory.build();
+      const { username, fullname, email, abilities } = profileFactory.build();
+      const timezone = userTimezone;
       const mockOnSave = jest.fn();
       const user = userEvent.setup();
 
@@ -592,10 +594,11 @@ describe('ProfileForm', () => {
       );
 
       const timezoneSelectorInput = screen.getByLabelText('Timezone');
+      const timezoneLabel = getTimezoneLabel(timezone);
 
       await user.click(timezoneSelectorInput);
       await user.type(timezoneSelectorInput, timezone);
-      await user.click(await screen.findByText(new RegExp(`^${timezone}`)));
+      await user.click(await screen.findByText(timezoneLabel));
       await user.click(screen.getByRole('button', { name: 'Save' }));
 
       expect(mockOnSave).toHaveBeenCalledWith({

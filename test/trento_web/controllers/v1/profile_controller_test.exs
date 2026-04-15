@@ -58,7 +58,11 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> json_response(200)
       |> assert_schema("UserProfileV1", api_spec)
 
-    assert %{id: ^user_id} = resp
+    assert %{
+             id: ^user_id,
+             personal_access_tokens: _,
+             ai_configuration: _
+           } = resp
   end
 
   test "should update the profile with allowed fields", %{

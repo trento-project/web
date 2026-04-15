@@ -7,7 +7,7 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
-import SearchableSelect from '@common/SearchableSelect';
+import MultiSelect from '@common/MultiSelect';
 import Switch from '@common/Switch';
 import Tooltip from '@common/Tooltip';
 import {
@@ -142,6 +142,10 @@ function UserForm({
     setPassword(newPassword);
     setConfirmPassword(newPassword);
   };
+
+  const timezoneOptions = generateTimezoneOptions();
+  const selectedTimezone =
+    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -285,15 +289,16 @@ function UserForm({
                 Timezone
               </Label>
               <div className="col-start-3 col-span-4">
-                <SearchableSelect
+                <MultiSelect
                   inputId="timezone"
                   name="timezone"
-                  value={timezoneState}
-                  options={generateTimezoneOptions()}
-                  onChange={(value) => {
-                    setTimezone(value);
+                  value={selectedTimezone}
+                  options={timezoneOptions}
+                  onChange={(option) => {
+                    setTimezone(option ? option.value : '');
                     setTimezoneError(null);
                   }}
+                  isMulti={false}
                   disabled={!saveEnabled || saving}
                   placeholder="Select timezone..."
                   noOptionsMessage={() => 'No timezones found'}

@@ -9,7 +9,7 @@ defmodule Trento.Operations.DatabaseInstancePolicyTest do
   test "should forbid unknown operation" do
     instance = build(:database_instance)
 
-    assert {:error, ["Unknown operation"]} ==
+    assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              DatabaseInstancePolicy.authorize_operation(:unknown, instance, %{})
   end
 end

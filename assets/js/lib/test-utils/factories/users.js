@@ -70,3 +70,8 @@ export const personalAccessTokenFactory = Factory.define(() => ({
   expires_at: formatISO(faker.date.future()),
   created_at: formatISO(faker.date.past()),
 }));
+
+export const aiConfigurationFactory = Factory.define(() => ({
+  provider: 'googleai',
+  model: 'gemini-2.5-pro',
+}));
