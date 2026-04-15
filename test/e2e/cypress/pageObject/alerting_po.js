@@ -36,9 +36,11 @@ export const apiSetDevEnvAlertingSettings = (method = 'POST') => {
 };
 
 export const emailIsReceived = (type) => {
-  return cy.task('searchEmailInMailpit', `Trento Alert: ${type}`).then((result) => {
-    cy.wrap(result.length).should('equal', 1);
-  });
+  return cy
+    .task('searchEmailInMailpit', `Trento Alert: ${type}`)
+    .then((result) => {
+      cy.wrap(result.length).should('equal', 1);
+    });
 };
 
 export const triggerHostAlertingEmail = () => {
