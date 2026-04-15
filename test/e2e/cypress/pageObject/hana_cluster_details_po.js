@@ -537,7 +537,7 @@ export const apiRestoreWdfHost = () =>
   basePage.loadScenario(`host-${hostToDeregister.name}-restore`);
 
 export const apiCreateUserWithChecksExecutionAbility = () => {
-  basePage.apiCreateUserWithAbilities([
+  return basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'cluster_checks_execution',
@@ -546,7 +546,7 @@ export const apiCreateUserWithChecksExecutionAbility = () => {
 };
 
 export const apiCreateUserWithChecksSelectionAbility = () => {
-  basePage.apiCreateUserWithAbilities([
+  return basePage.apiCreateUserWithAbilities([
     {
       name: 'all',
       resource: 'cluster_checks_selection',
