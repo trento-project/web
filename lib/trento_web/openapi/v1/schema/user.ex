@@ -5,6 +5,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
   alias OpenApiSpex.Schema
 
   alias TrentoWeb.OpenApi.V1.Schema.Ability.AbilityCollection
+  alias TrentoWeb.OpenApi.V1.Schema.AI.UserConfiguration, as: AIConfiguration
   alias TrentoWeb.OpenApi.V1.Schema.PersonalAccessToken.PersonalAccessTokenCollection
 
   defmodule UserTOTPEnrollmentPayload do
@@ -157,6 +158,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             nullable: false,
             example: true
           },
+          ai_configuration: AIConfiguration,
           created_at: %OpenApiSpex.Schema{
             type: :string,
             format: :"date-time",

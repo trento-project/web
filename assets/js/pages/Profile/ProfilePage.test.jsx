@@ -339,4 +339,26 @@ describe('ProfilePage', () => {
 
     expect(screen.getByText('Error validating totp code')).toBeVisible();
   });
+
+  it('should display personal access tokens with expiration dates formatted according to user timezone', async () => {
+    const user = profileFactory.build({
+      personal_access_tokens: [
+        {
+          id: '1',
+          name: 'Test Token',
+          expires_at: '2026-05-14T10:30:00.000Z',
+        },
+      ],
+      timezone: 'Pacific/Kiritimati',
+    });
+
+    axiosMock.onGet(PROFILE_URL).reply(200, user);
+
+    const [StatefulProfile] = withState(<ProfilePage />);
+    await act(async () => {
+      render(StatefulProfile);
+    });
+
+    expect(screen.getByText(/15 May 2026/)).toBeVisible();
+  });
 });

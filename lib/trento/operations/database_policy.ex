@@ -44,15 +44,20 @@ defmodule Trento.Operations.DatabasePolicy do
       {:error,
        Enum.map(sites_without_passing_heartbeat, fn
          nil ->
-           "Trento agent is not currently running in any of the hosts in the database"
+           OperationsHelper.build_error(
+             "Trento agent is not currently running in any of the hosts in the database"
+           )
 
          site ->
-           "Trento agent is not currently running in any of the hosts in the database site #{site}"
+           OperationsHelper.build_error(
+             "Trento agent is not currently running in any of the hosts in the database site #{site}"
+           )
        end)}
     end
   end
 
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+  def authorize_operation(_, _, _),
+    do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
   defp filter_by_site(instances, %{site: nil}), do: instances
 
@@ -139,7 +144,13 @@ defmodule Trento.Operations.DatabasePolicy do
     |> if do
       :ok
     else
-      {:error, ["Primary site #{primary_site} of database #{sid} is not started"]}
+      {:error,
+       [
+         OperationsHelper.build_error(
+           "Primary site #{primary_site} of database #{sid} is not started",
+           []
+         )
+       ]}
     end
   end
 
@@ -160,7 +171,13 @@ defmodule Trento.Operations.DatabasePolicy do
     |> if do
       :ok
     else
-      {:error, ["Secondary sites of database #{sid} are not stopped"]}
+      {:error,
+       [
+         OperationsHelper.build_error(
+           "Secondary sites of database #{sid} are not stopped",
+           []
+         )
+       ]}
     end
   end
 
@@ -186,8 +203,15 @@ defmodule Trento.Operations.DatabasePolicy do
 
       running_instances ->
         {:error,
-         Enum.map(running_instances, fn %{sid: sid, instance_number: inst_number} ->
-           "Instance #{inst_number} of SAP system #{sid} is not stopped"
+         Enum.map(running_instances, fn %{
+                                          sap_system_id: app_id,
+                                          sid: sid,
+                                          instance_number: inst_number
+                                        } ->
+           OperationsHelper.build_error(
+             "Instance #{inst_number} of SAP system {0} is not stopped",
+             [%{id: app_id, label: sid, type: :sap_system}]
+           )
          end)}
     end
   end

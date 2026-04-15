@@ -913,7 +913,7 @@ describe('GenericSystemDetails', () => {
         groupID: hostID,
         operation: forbiddenOperation,
         forbidden: true,
-        errors: ['error1', 'error2'],
+        errors: [{ detail: 'error1' }, { detail: 'error2' }],
       },
     ];
 

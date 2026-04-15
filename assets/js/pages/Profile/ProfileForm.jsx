@@ -8,7 +8,7 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
-import SearchableSelect from '@common/SearchableSelect';
+import MultiSelect from '@common/MultiSelect';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
 import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
@@ -112,6 +112,10 @@ function ProfileForm({
     setEmailAddressError(getError('email', errors));
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
+
+  const timezoneOptions = generateTimezoneOptions();
+  const selectedTimezone =
+    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -221,15 +225,16 @@ function ProfileForm({
             Timezone
           </Label>
           <div className="col-start-3 col-span-4">
-            <SearchableSelect
+            <MultiSelect
               inputId="timezone"
               name="timezone"
-              value={timezoneState}
-              options={generateTimezoneOptions()}
-              onChange={(value) => {
-                setTimezone(value);
+              value={selectedTimezone}
+              options={timezoneOptions}
+              onChange={(option) => {
+                setTimezone(option ? option.value : '');
                 setTimezoneError(null);
               }}
+              isMulti={false}
               disabled={loading || disableForm}
               placeholder="Select timezone..."
               noOptionsMessage={() => 'No timezones found'}

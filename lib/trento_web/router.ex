@@ -239,6 +239,13 @@ defmodule TrentoWeb.Router do
           post "/", PersonalAccessTokensController, :create_personal_access_token
           delete "/:token_id", PersonalAccessTokensController, :revoke_personal_access_token
         end
+
+        if Application.compile_env!(:trento, :ai)[:enabled] do
+          scope "/ai_configuration" do
+            post "/", AIConfigurationController, :create_ai_configuration
+            patch "/", AIConfigurationController, :update_ai_configuration
+          end
+        end
       end
 
       get "/abilities", AbilityController, :index

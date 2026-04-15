@@ -13,7 +13,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
   test "should forbid unknown operation" do
     cluster = build(:cluster)
 
-    assert {:error, ["Unknown operation"]} ==
+    assert {:error, [%{message: "Unknown operation", metadata: []}]} ==
              ClusterPolicy.authorize_operation(:unknown, cluster, %{})
   end
 
@@ -23,7 +23,8 @@ defmodule Trento.Operations.ClusterPolicyTest do
       build(:cluster, hosts: build_list(2, :host, heartbeat: :critical))
 
     for operation <- ClusterHostOperations.values() do
-      assert {:error, ["Trento agent is not currently running in the host"]} ==
+      assert {:error,
+              [%{message: "Trento agent is not currently running in the host", metadata: []}]} ==
                ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
     end
   end
@@ -34,7 +35,13 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
     for operation <- ClusterOperations.values() do
       assert {:error,
-              ["Trento agent is not currently running in any of the hosts in the cluster"]} ==
+              [
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the cluster",
+                  metadata: []
+                }
+              ]} ==
                ClusterPolicy.authorize_operation(operation, cluster, %{})
     end
   end
@@ -50,13 +57,20 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
     for operation <- ClusterOperations.values() do
       refute {:error,
-              ["Trento agent is not currently running in any of the hosts in the cluster"]} ==
+              [
+                %{
+                  message:
+                    "Trento agent is not currently running in any of the hosts in the cluster",
+                  metadata: []
+                }
+              ]} ==
                ClusterPolicy.authorize_operation(operation, cluster, %{})
     end
   end
 
   describe "maintenance" do
     test "should authorize operation depending on the cluster maintenance mode" do
+      cluster_id = Faker.UUID.v4()
       cluster_name = Faker.StarWars.character()
 
       scenarios = [
@@ -64,7 +78,13 @@ defmodule Trento.Operations.ClusterPolicyTest do
         %{
           maintenance_mode: false,
           result:
-            {:error, ["Cluster #{cluster_name} operating this host is not in maintenance mode"]}
+            {:error,
+             [
+               %{
+                 message: "Cluster {0} operating this host is not in maintenance mode",
+                 metadata: [%{id: cluster_id, label: cluster_name, type: :cluster}]
+               }
+             ]}
         }
       ]
 
@@ -72,7 +92,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         cluster_details =
           build(:hana_cluster_details, maintenance_mode: maintenance_mode, nodes: [])
 
-        cluster = build(:cluster, name: cluster_name, details: cluster_details)
+        cluster = build(:cluster, id: cluster_id, name: cluster_name, details: cluster_details)
 
         assert result ==
                  ClusterPolicy.authorize_operation(:maintenance, cluster, %{
@@ -82,6 +102,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
     end
 
     test "should authorize operation depending on the given cluster resource managed state" do
+      cluster_id = Faker.UUID.v4()
       cluster_name = Faker.StarWars.character()
       cluster_resource_id = UUID.uuid4()
 
@@ -91,7 +112,11 @@ defmodule Trento.Operations.ClusterPolicyTest do
           result:
             {:error,
              [
-               "Cluster #{cluster_name} or resource #{cluster_resource_id} operating this host are not in maintenance mode"
+               %{
+                 message:
+                   "Cluster {0} or resource #{cluster_resource_id} operating this host are not in maintenance mode",
+                 metadata: [%{id: cluster_id, label: cluster_name, type: :cluster}]
+               }
              ]}
         },
         %{managed: false, result: :ok}
@@ -103,7 +128,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
         cluster_details =
           build(:hana_cluster_details, maintenance_mode: false, resources: [cluster_resource])
 
-        cluster = build(:cluster, name: cluster_name, details: cluster_details)
+        cluster = build(:cluster, id: cluster_id, name: cluster_name, details: cluster_details)
 
         assert result ==
                  ClusterPolicy.authorize_operation(:maintenance, cluster, %{
@@ -130,7 +155,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
       end
 
       test "should forbid #{@operation} operation if all hosts are offline" do
-        %{name: cluster_name} =
+        %{id: cluster_id, name: cluster_name} =
           cluster =
           build(:cluster,
             hosts:
@@ -140,7 +165,13 @@ defmodule Trento.Operations.ClusterPolicyTest do
               )
           )
 
-        assert {:error, ["Cluster #{cluster_name} does not have any online node"]} ==
+        assert {:error,
+                [
+                  %{
+                    message: "Cluster {0} does not have any online node",
+                    metadata: [%{id: cluster_id, label: cluster_name, type: :cluster}]
+                  }
+                ]} ==
                  ClusterPolicy.authorize_operation(@operation, cluster, %{})
       end
     end
@@ -239,7 +270,7 @@ defmodule Trento.Operations.ClusterPolicyTest do
 
         expected_error = expected_error_fn.(host)
 
-        assert {:error, [^expected_error]} =
+        assert {:error, [%{message: expected_error, metadata: []}]} ==
                  ClusterPolicy.authorize_operation(operation, cluster, %{host_id: host_id})
       end
     end

@@ -34,11 +34,17 @@ defmodule Trento.Operations.SapSystemPolicy do
     if some_heartbeat_passing? do
       do_authorize_operation(operation, sap_systen, params)
     else
-      {:error, ["Trento agent is not currently running in any of the hosts in the SAP system"]}
+      {:error,
+       [
+         OperationsHelper.build_error(
+           "Trento agent is not currently running in any of the hosts in the SAP system"
+         )
+       ]}
     end
   end
 
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+  def authorize_operation(_, _, _),
+    do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
   defp do_authorize_operation(
          :sap_system_start,
@@ -101,11 +107,31 @@ defmodule Trento.Operations.SapSystemPolicy do
       [] ->
         :ok
 
-      [%{sid: sid, system_replication: "Primary", system_replication_site: site} | _] ->
-        {:error, ["Database #{sid} primary site #{site} is not started"]}
+      [
+        %{
+          database_id: database_id,
+          sid: sid,
+          system_replication: "Primary",
+          system_replication_site: site
+        }
+        | _
+      ] ->
+        {:error,
+         [
+           OperationsHelper.build_error(
+             "Database {0} primary site #{site} is not started",
+             [%{id: database_id, label: sid, type: :database}]
+           )
+         ]}
 
-      [%{sid: sid} | _] ->
-        {:error, ["Database #{sid} is not started"]}
+      [%{database_id: database_id, sid: sid} | _] ->
+        {:error,
+         [
+           OperationsHelper.build_error(
+             "Database {0} is not started",
+             [%{id: database_id, label: sid, type: :database}]
+           )
+         ]}
     end
   end
 
@@ -130,7 +156,10 @@ defmodule Trento.Operations.SapSystemPolicy do
       running_instances ->
         {:error,
          Enum.map(running_instances, fn %{sid: sid, instance_number: inst_number} ->
-           "Instance #{inst_number} of SAP system #{sid} is not started"
+           OperationsHelper.build_error(
+             "Instance #{inst_number} of SAP system #{sid} is not started",
+             []
+           )
          end)}
     end
   end
@@ -152,7 +181,10 @@ defmodule Trento.Operations.SapSystemPolicy do
       running_instances ->
         {:error,
          Enum.map(running_instances, fn %{sid: sid, instance_number: inst_number} ->
-           "Instance #{inst_number} of SAP system #{sid} is not stopped"
+           OperationsHelper.build_error(
+             "Instance #{inst_number} of SAP system #{sid} is not stopped",
+             []
+           )
          end)}
     end
   end

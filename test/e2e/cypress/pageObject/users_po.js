@@ -74,8 +74,24 @@ const continueWithoutAnalyticsButton =
   'button:contains("Continue without Analytics")';
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
-const timezoneInputField = 'input#timezone';
-const timezoneStoredValue = 'input[name="timezone"]';
+
+// AI Configuration Selectors
+
+const aiConfigurationSection = 'h2:contains("AI Configuration")';
+const aiConfigurationSectionDescription =
+  'p:contains("Settings used by Liz, your AI Assistant.")';
+const aiConfigurationEditButton =
+  'button[aria-label="ai-configuration-edit-button"]:contains("Edit Settings")';
+
+const aiConfigurationModelProvider = 'div:contains("Model Provider") + div';
+const aiConfigurationModel = 'div:contains("Model") + div';
+const aiConfigurationApiKey = 'div:contains("API Key") + div';
+
+const aiSelectModelProviderDropdown = 'button.ai-provider-selection-dropdown';
+const aiSelectModelDropdown = 'button.ai-model-selection-dropdown';
+const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
+
+const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -434,21 +450,6 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
 
-export const selectTimezone = (timezone) =>
-  cy
-    .get(timezoneInputField)
-    .should('be.visible')
-    .click()
-    .type(`{selectall}{backspace}${timezone}`)
-    .get('[role="listbox"]', { timeout: 10000 })
-    .contains('[role="option"]', timezone)
-    .click()
-    .get(timezoneStoredValue)
-    .should('have.value', timezone);
-
-export const timezoneValueIsDisplayed = (timezone) =>
-  cy.get(timezoneStoredValue).should('have.value', timezone);
-
 // API
 export const interceptDeleteUser = () =>
   cy.intercept('DELETE', `${usersEndpoint}/*`).as('deleteUser');
@@ -578,6 +579,87 @@ export const apiPersonalAccessTokenUnauthorized = (accessToken) => {
 
 export const apiPersonalAccessTokenForbidden = (accessToken) => {
   _assertAuthenticationStatusCode(accessToken, 403, usersEndpoint);
+};
+
+export const apiCreateAIConfiguration = (provider, model, apiKey) => {
+  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
+    return cy
+      .request({
+        url: '/api/v1/profile/ai_configuration',
+        method: 'POST',
+        auth: { bearer: accessToken },
+        body: {
+          provider,
+          model,
+          api_key: apiKey,
+        },
+      })
+      .then(({ body: aiConfiguration }) => {
+        return aiConfiguration;
+      });
+  });
+};
+
+export const aiConfigurationSectionIsDisplayed = () => {
+  cy.get(aiConfigurationSection).should('be.visible');
+  cy.get(aiConfigurationSectionDescription).should('be.visible');
+  cy.get(aiConfigurationEditButton).should('be.visible');
+};
+
+export const aiConfigurationModelProviderShouldBe = (expectedContent) => {
+  cy.get(aiConfigurationModelProvider).should('contain', expectedContent);
+};
+
+export const aiConfigurationModelShouldBe = (expectedContent) => {
+  cy.get(aiConfigurationModel).should('contain', expectedContent);
+};
+
+export const aiConfigurationApiKeyShouldBe = (expectedContent) => {
+  cy.get(aiConfigurationApiKey).should('contain', expectedContent);
+};
+
+export const requiredAPIKeyErrorIsDisplayed = (
+  errorMessage = 'Required field'
+) => cy.contains(requiredFieldsErrors, errorMessage).should('have.length', 1);
+
+export const clickEditAIConfigurationButton = () =>
+  cy.get(aiConfigurationEditButton).click();
+
+export const selectAIProvider = (provider) =>
+  basePage.selectFromDropdown(aiSelectModelProviderDropdown, provider);
+
+export const selectAIModel = (model) =>
+  basePage.selectFromDropdown(aiSelectModelDropdown, model);
+
+export const typeAIConfigurationApiKey = (apiKey) =>
+  cy.get(aiApiKeyInputField).type(apiKey);
+
+const interceptAIConfigurationOperation = (
+  method,
+  alias,
+  shouldWait = true
+) => {
+  cy.intercept(method, '/api/v1/profile/ai_configuration').as(alias);
+  cy.get(saveAIConfigurationButton, { name: 'Save' }).click();
+  if (shouldWait) {
+    basePage.waitForRequest(alias);
+  }
+};
+
+export const clickModalSaveAIConfigurationButton = (shouldWait = true) => {
+  interceptAIConfigurationOperation(
+    'POST',
+    'createAIConfiguration',
+    shouldWait
+  );
+};
+
+export const clickModalUpdateAIConfigurationButton = (shouldWait = true) => {
+  interceptAIConfigurationOperation(
+    'PATCH',
+    'updateAIConfiguration',
+    shouldWait
+  );
 };
 
 export const apiModifyUserFullName = () =>
