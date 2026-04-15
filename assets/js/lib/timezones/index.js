@@ -3,7 +3,6 @@ import { tzName, tzOffset } from '@date-fns/tz';
 
 export const DEFAULT_TIMEZONE = 'Etc/UTC';
 
-
 /**
  * Generate timezone options from the IANA tzdata database.
  * Each option includes the timezone name and current UTC offset with DST accounted for.
