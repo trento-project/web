@@ -152,13 +152,14 @@ const _apiGetClusters = () =>
   });
 
 export const apiRemoveAllClusterTags = () => {
-  _apiGetClusters().then((response) => {
-    const clusterTags = _getClusterTags(response.body);
-    Object.entries(clusterTags).forEach(([clusterId, tags]) => {
-      tags.forEach((tag) => _apiRemoveTagByClusterId(clusterId, tag));
-    });
-  });
-  return basePage.refresh();
+  return _apiGetClusters()
+    .then((response) => {
+      const clusterTags = _getClusterTags(response.body);
+      Object.entries(clusterTags).forEach(([clusterId, tags]) => {
+        tags.forEach((tag) => _apiRemoveTagByClusterId(clusterId, tag));
+      });
+    })
+    .then(() => basePage.refresh());
 };
 
 const _getClusterTags = (jsonData) => {

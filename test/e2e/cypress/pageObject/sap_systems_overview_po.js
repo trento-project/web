@@ -362,7 +362,7 @@ export const addTagButtonIsEnabled = () =>
 
 // API
 export const deregisterInstance = () => {
-  apiDeregisterInstance(
+  return apiDeregisterInstance(
     sapSystemNwd.id,
     sapSystemNwd.hostId,
     sapSystemNwd.instanceNumber
@@ -370,13 +370,14 @@ export const deregisterInstance = () => {
 };
 
 export const apiRemoveAllSapSystemsTags = () => {
-  apiGetSapSystems().then((response) => {
-    const sapSystemTags = getSapSystemTags(response.body);
-    Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
-      tags.forEach((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
-    });
-  });
-  return basePage.refresh();
+  return apiGetSapSystems()
+    .then((response) => {
+      const sapSystemTags = getSapSystemTags(response.body);
+      Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
+        tags.forEach((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
+      });
+    })
+    .then(() => basePage.refresh());
 };
 
 const apiRemoveTagBySapSystemId = (systemId, tagId) =>

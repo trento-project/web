@@ -193,13 +193,14 @@ const apiGetDatabases = () =>
   });
 
 export const apiRemoveAllDatabaseTags = () => {
-  apiGetDatabases().then((response) => {
-    const databaseTags = basePage.getResourceTags(response.body);
-    Object.entries(databaseTags).forEach(([databaseId, tags]) => {
-      tags.forEach((tag) => apiRemoveTagByDatabaseId(databaseId, tag));
-    });
-  });
-  return basePage.refresh();
+  return apiGetDatabases()
+    .then((response) => {
+      const databaseTags = basePage.getResourceTags(response.body);
+      Object.entries(databaseTags).forEach(([databaseId, tags]) => {
+        tags.forEach((tag) => apiRemoveTagByDatabaseId(databaseId, tag));
+      });
+    })
+    .then(() => basePage.refresh());
 };
 
 const apiRemoveTagByDatabaseId = (databaseId, tagId) =>
