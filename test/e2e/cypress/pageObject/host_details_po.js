@@ -4,7 +4,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test Data
-import * as sumaMocks from '../fixtures/software_updates_mocks.js';
+import * as sumaMocks from '../fixtures/suma-software-updates/software_updates.js';
 import { selectedHost } from '../fixtures/host-details/selected_host.js';
 import {
   saptuneDetailsData,

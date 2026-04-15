@@ -242,8 +242,8 @@ export const preloadTestData = ({
    */
   isDataLoadedFunc().then((isLoaded) => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
-    loadScenario('healthy-27-node-SAP-cluster');
   });
+  loadScenario('healthy-27-node-SAP-cluster');
 };
 
 export const loadScenario = (scenario) => {
@@ -298,6 +298,18 @@ const isTestDataLoaded = () =>
       })
       .then(({ body }) => body.length !== 0)
   );
+
+export const startAgentsHeartbeat = (agents) => {
+  const baseUrl = Cypress.config().baseUrl;
+
+  if (baseUrl.includes('localhost')) {
+    return cy.task('startAgentHeartbeat', { agents });
+  }
+
+  return getApiKey().then((apiKey) => {
+    cy.task('startAgentHeartbeat', { agents, apiKey });
+  });
+};
 
 export const apiCreateUserWithAbilities = (abilities) =>
   apiLogin().then(({ accessToken }) =>
@@ -354,9 +366,9 @@ export const apiDeregisterHost = (hostId) =>
     } else return;
   });
 
-export const apiDeregisterRealHost = () => {
-  return apiLogin().then(({ accessToken }) => {
-    return cy
+export const apiDeregisterRealHost = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/hosts',
         method: 'GET',
@@ -367,9 +379,8 @@ export const apiDeregisterRealHost = () => {
       .then(({ body }) => {
         const hostId = body[0].id;
         return apiDeregisterHost(hostId);
-      });
-  });
-};
+      })
+  );
 
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 
