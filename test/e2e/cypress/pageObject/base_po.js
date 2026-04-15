@@ -331,7 +331,7 @@ export const apiCreateUserWithAbilities = (abilities) => {
           ),
         }));
 
-        cy.request({
+        return cy.request({
           url: '/api/v1/users',
           method: 'POST',
           auth: { bearer: accessToken },
@@ -461,7 +461,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
   clearSUMASettings().then(() => {
-    apiLogin().then(({ accessToken }) =>
+    return apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
         method: 'POST',
@@ -501,3 +501,4 @@ export const getAlertingSettings = () => {
     })
   );
 };
+

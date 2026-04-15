@@ -431,7 +431,7 @@ export const apiSetTag = () => {
 };
 
 export const apiCreateUserWithHostTagsAbility = () => {
-  basePage.apiCreateUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
+  return basePage.apiCreateUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
 };
 
 export const apiCreateUserWithHostCleanupAbility = () =>
