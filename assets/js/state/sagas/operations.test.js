@@ -328,10 +328,14 @@ describe('operations saga', () => {
       const groupID = faker.string.uuid();
       const operation = KNOWN_OPERATION;
       const hostname = faker.internet.displayName();
+      const errors = [
+        { detail: 'error1', metadata: [{ key: 'value' }] },
+        { detail: 'error2' },
+      ];
 
       axiosMock
         .onPost(hostOperationRequestURL(groupID, operation))
-        .reply(403, { errors: [{ detail: 'error1' }, { detail: 'error2' }] });
+        .reply(403, { errors });
 
       const dispatched = await recordSaga(
         requestOperation,
@@ -350,7 +354,7 @@ describe('operations saga', () => {
         setForbiddenOperation({
           groupID,
           operation,
-          errors: ['error1', 'error2'],
+          errors,
         }),
       ]);
     });

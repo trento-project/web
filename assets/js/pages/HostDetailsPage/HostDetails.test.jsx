@@ -500,7 +500,7 @@ describe('HostDetails component', () => {
             runningOperation={{
               operation,
               forbidden: true,
-              errors: ['error1', 'error2'],
+              errors: [{ detail: 'error1' }, { detail: 'error2' }],
             }}
             cleanForbiddenOperation={mockCleanForbiddenOperation}
           />

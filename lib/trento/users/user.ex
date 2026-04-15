@@ -51,6 +51,8 @@ defmodule Trento.Users.User do
 
     has_many :personal_access_tokens, PersonalAccessToken, preload_order: [desc: :created_at]
 
+    has_one :ai_configuration, Trento.AI.UserConfiguration
+
     timestamps(type: :utc_datetime_usec)
   end
 
