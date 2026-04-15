@@ -21,7 +21,7 @@ defmodule TrentoWeb.AIAssistantTools do
     ]
   end
 
-  def host_list_tool() do
+  defp host_list_tool() do
     AgenticRuntime.new_tool!(%{
       name: "Host_list",
       summary: "List hosts.",
@@ -45,7 +45,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  def sap_system_list_tool() do
+  defp sap_system_list_tool() do
     AgenticRuntime.new_tool!(%{
       name: "Sap_system_list",
       summary: "List SAP Systems.",
@@ -69,7 +69,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  def databases_list_tool() do
+  defp databases_list_tool() do
     AgenticRuntime.new_tool!(%{
       name: "Database_list",
       summary: "List HANA Databases.",
@@ -93,7 +93,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  def clusters_list_tool() do
+  defp clusters_list_tool() do
     AgenticRuntime.new_tool!(%{
       name: "Cluster_list",
       summary: "List Pacemaker Clusters.",
