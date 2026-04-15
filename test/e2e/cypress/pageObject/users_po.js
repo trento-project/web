@@ -493,7 +493,7 @@ export const apiDisableUser = () =>
 
 export const apiApplyAllUsersPermission = () =>
   apiGetProfileInfo().then(({ id }) => {
-    apiPatchUser(id, {
+    return apiPatchUser(id, {
       abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
     });
   });
