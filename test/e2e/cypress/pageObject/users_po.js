@@ -74,6 +74,8 @@ const continueWithoutAnalyticsButton =
   'button:contains("Continue without Analytics")';
 const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
+const timezoneInputField = 'input#timezone';
+const timezoneStoredValue = 'input[name="timezone"]';
 
 // AI Configuration Selectors
 
@@ -449,6 +451,21 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
 
 export const clickAnalyticsOptInSwitch = () =>
   cy.get(analyticsOptInSwitch).click();
+
+export const selectTimezone = (timezone) =>
+  cy
+    .get(timezoneInputField)
+    .should('be.visible')
+    .click()
+    .type(`{selectall}{backspace}${timezone}`)
+    .get('[role="listbox"]', { timeout: 10000 })
+    .contains('[role="option"]', timezone)
+    .click()
+    .get(timezoneStoredValue)
+    .should('have.value', timezone);
+
+export const timezoneValueIsDisplayed = (timezone) =>
+  cy.get(timezoneStoredValue).should('have.value', timezone);
 
 // API
 export const interceptDeleteUser = () =>
