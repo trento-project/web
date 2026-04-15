@@ -239,7 +239,7 @@ export const removeAlertringPasswordProtection = () =>
   getAlertingRemovePasswordButton().click();
 
 export const setAlertingEnabledEditSwitch = (value) => {
-  cy.get(alertingEnabledEditSwitch)
+  return cy.get(alertingEnabledEditSwitch)
     .invoke('attr', 'aria-checked')
     .then((checked) => {
       const currentlyChecked = checked == 'true';

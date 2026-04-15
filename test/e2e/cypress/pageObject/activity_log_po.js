@@ -215,7 +215,7 @@ export const validateResponsePagination = (amountOfItems) => {
 };
 
 export const responseMatchesFirstPageContent = (expectedResponse) => {
-  waitForActivityLogRequest().then(({ response }) => {
+  return waitForActivityLogRequest().then(({ response }) => {
     expect(response.body.pagination).to.have.property('last', 20);
     expectedResponse.body.data.forEach((element, i) => {
       expect(element.id).to.eq(response.body.data[i].id);
