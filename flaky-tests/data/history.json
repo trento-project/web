@@ -4682,5 +4682,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-15T04:06:46Z",
+    "commit": "8360d6b6b5a0426e4e554ed7f3490430c5b87d10",
+    "run_id": "24435409340",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "AdvisoryDetails::displays CVEs with a valid link",
+        "score": 0.02501
+      },
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.02501
+      }
+    ]
   }
 ]
