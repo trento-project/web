@@ -377,8 +377,8 @@ const apiRemoveTagByHostId = (hostId, tagId) =>
     })
   );
 
-export const apiDeleteAllHostsTags = () => {
-  return apiGetHosts()
+export const apiDeleteAllHostsTags = () =>
+  apiGetHosts()
     .then((response) => {
       const hostsTags = getHostTags(response.body);
       Object.entries(hostsTags).forEach(([clusterId, tags]) => {
@@ -386,8 +386,6 @@ export const apiDeleteAllHostsTags = () => {
       });
     })
     .then(() => basePage.refresh());
-};
-
 const apiGetHosts = () =>
   basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/hosts';
@@ -438,8 +436,5 @@ export const apiSetTag = () => {
 export const apiCreateUserWithHostTagsAbility = () =>
   basePage.apiCreateUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
 
-export const apiCreateUserWithHostCleanupAbility = () => {
-  return basePage.apiCreateUserWithAbilities([
-    { name: 'cleanup', resource: 'host' },
-  ]);
-};
+export const apiCreateUserWithHostCleanupAbility = () =>
+  basePage.apiCreateUserWithAbilities([{ name: 'cleanup', resource: 'host' }]);

@@ -41,7 +41,7 @@ export const ssoLoginAdminUser = () =>
 
 const _loginWithSSO = (username, password) => {
   const args = [username, password];
-  cy.session(args, () => {
+  return cy.session(args, () => {
     cy.visit('/');
     cy.get('button').contains('Login with Single Sign-on').click();
     cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {

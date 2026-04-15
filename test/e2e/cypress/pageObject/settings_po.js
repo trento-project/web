@@ -243,10 +243,7 @@ export const setAlertingEnabledEditSwitch = (value) =>
     .invoke('attr', 'aria-checked')
     .then((checked) => {
       const currentlyChecked = checked == 'true';
-      if (currentlyChecked == value) {
-        return;
-      }
-
+      if (currentlyChecked == value) return;
       return cy.get(alertingEnabledEditSwitch).click();
     });
 

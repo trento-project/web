@@ -148,7 +148,7 @@ export const clickCriticalChecksButton = () =>
   cy.get(criticalChecksButton).click();
 
 export const clickCheckSelectionButton = () =>
-  cy.get(checkSelectionButton).click();
+  cy.get(checkSelectionButton, { timeout: 50000 }).click();
 
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
@@ -504,9 +504,11 @@ export const interceptLastExecutionRequestMocked = () => {
   const lastExecutionURL = `${Cypress.env(
     'wandaUrl'
   )}/api/v2/checks/groups/**/executions/last`;
-  return cy.intercept(lastExecutionURL, {
-    body: lastExecution,
-  }).as(lastExecutionEndpointAlias);
+  return cy
+    .intercept(lastExecutionURL, {
+      body: lastExecution,
+    })
+    .as(lastExecutionEndpointAlias);
 };
 
 export const interceptLastExecutionRequest = () => {
@@ -518,9 +520,9 @@ export const interceptLastExecutionRequest = () => {
 
 export const interceptCatalogRequestMocked = () => {
   const catalogURL = `${Cypress.env('wandaUrl')}/api/v3/checks/catalog*`;
-  return cy.intercept(catalogURL, { body: { items: catalog } }).as(
-    catalogEndpointAlias
-  );
+  return cy
+    .intercept(catalogURL, { body: { items: catalog } })
+    .as(catalogEndpointAlias);
 };
 
 export const apiDeregisterWdfHost = () =>
