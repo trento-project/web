@@ -244,8 +244,8 @@ export const preloadTestData = ({
    */
   isDataLoadedFunc().then((isLoaded) => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
-    loadScenario('healthy-27-node-SAP-cluster');
   });
+  loadScenario('healthy-27-node-SAP-cluster');
 };
 
 export const loadScenario = (scenario) => {
@@ -303,7 +303,13 @@ const isTestDataLoaded = () =>
   );
 
 export const startAgentsHeartbeat = (agents) => {
-  getApiKey().then((apiKey) => {
+  const baseUrl = Cypress.config().baseUrl;
+
+  if (baseUrl.includes('localhost')) {
+    return cy.task('startAgentHeartbeat', { agents });
+  }
+
+  return getApiKey().then((apiKey) => {
     cy.task('startAgentHeartbeat', { agents, apiKey });
   });
 };
