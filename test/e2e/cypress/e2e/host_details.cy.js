@@ -219,7 +219,10 @@ context('Host Details', () => {
   });
 
   describe('Forbidden actions', () => {
-    before(() => hostDetailsPage.restoreHost());
+    before(() => {
+      hostDetailsPage.restoreHost();
+      hostDetailsPage.waitForHostToBeRestored();
+    });
 
     beforeEach(() => {
       hostDetailsPage.apiDeleteAllUsers();
