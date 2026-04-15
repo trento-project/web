@@ -1,27 +1,135 @@
-import { DEFAULT_TIMEZONE, getUtcOffset } from './index';
-
-describe('timezones', () => {
-  it('uses UTC as default timezone', () => {
-    expect(DEFAULT_TIMEZONE).toBe('Etc/UTC');
+describe('generateTimezoneOptions', () => {
+  afterEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
   });
 
-  it('calculates DST correctly for Europe/Berlin in winter vs summer', () => {
-    const winterOffset = getUtcOffset(
-      'Europe/Berlin',
-      new Date('2024-01-01T12:00:00Z')
-    );
-    const summerOffset = getUtcOffset(
-      'Europe/Berlin',
-      new Date('2024-07-01T12:00:00Z')
-    );
+  it('keeps canonical zones, excludes aliases, and preserves Etc/UTC only among Etc zones', () => {
+    jest.doMock('tzdata', () => ({
+      zones: {
+        'Etc/UTC': [0],
+        'Etc/GMT+1': [0],
+        'Europe/Berlin': [0],
+        'America/New_York': [0],
+        Factory: [0],
+        'America/Argentina/Cordoba': 'America/Cordoba',
+      },
+    }));
 
-    expect(winterOffset).toBe('GMT+1');
-    expect(summerOffset).toBe('GMT+2');
+    jest.doMock('@date-fns/tz', () => ({
+      tzOffset: (zone) =>
+        ({
+          'Etc/UTC': 0,
+          'Europe/Berlin': 120,
+          'America/New_York': -240,
+        })[zone],
+      tzName: (zone, _date, type) => {
+        const names = {
+          'Etc/UTC': {
+            shortOffset: 'UTC+00:00',
+            longGeneric: 'Coordinated Universal Time',
+          },
+          'Europe/Berlin': {
+            shortOffset: 'UTC+02:00',
+            longGeneric: 'Central European Time',
+          },
+          'America/New_York': {
+            shortOffset: 'UTC-04:00',
+            longGeneric: 'Eastern Time',
+          },
+        };
+        return names[zone][type];
+      },
+    }));
+
+    let generateTimezoneOptions;
+    jest.isolateModules(() => {
+      ({ generateTimezoneOptions } = require('./index'));
+    });
+
+    expect(generateTimezoneOptions()).toEqual([
+      {
+        value: 'America/New_York',
+        label: 'America/New_York - Eastern Time (UTC-04:00)',
+        searchLabel: 'America/New_York',
+      },
+      {
+        value: 'Etc/UTC',
+        label: 'Etc/UTC - Coordinated Universal Time (UTC+00:00)',
+        searchLabel: 'Etc/UTC',
+      },
+      {
+        value: 'Europe/Berlin',
+        label: 'Europe/Berlin - Central European Time (UTC+02:00)',
+        searchLabel: 'Europe/Berlin',
+      },
+    ]);
   });
 
-  it('returns UTC for invalid timezone identifiers', () => {
-    expect(
-      getUtcOffset('Not/A_Timezone', new Date('2024-01-01T12:00:00Z'))
-    ).toBe('UTC');
+  it('sorts by UTC offset and then alphabetically by zone', () => {
+    jest.doMock('tzdata', () => ({
+      zones: {
+        'Zone/B': [0],
+        'Zone/A': [0],
+        'Zone/C': [0],
+      },
+    }));
+
+    jest.doMock('@date-fns/tz', () => ({
+      tzOffset: (zone) =>
+        ({
+          'Zone/C': -60,
+          'Zone/A': 0,
+          'Zone/B': 0,
+        })[zone],
+      tzName: (_zone, _date, type) =>
+        type === 'shortOffset' ? 'UTC+00:00' : 'Mock Timezone',
+    }));
+
+    let generateTimezoneOptions;
+    jest.isolateModules(() => {
+      ({ generateTimezoneOptions } = require('./index'));
+    });
+
+    expect(generateTimezoneOptions().map(({ value }) => value)).toEqual([
+      'Zone/C',
+      'Zone/A',
+      'Zone/B',
+    ]);
+  });
+
+  it('skips zones that throw while computing labels', () => {
+    jest.doMock('tzdata', () => ({
+      zones: {
+        'Etc/UTC': [0],
+        'Broken/Zone': [0],
+      },
+    }));
+
+    jest.doMock('@date-fns/tz', () => ({
+      tzOffset: () => 0,
+      tzName: (zone, _date, type) => {
+        if (zone === 'Broken/Zone') {
+          throw new RangeError('Invalid time zone');
+        }
+
+        return type === 'shortOffset'
+          ? 'UTC+00:00'
+          : 'Coordinated Universal Time';
+      },
+    }));
+
+    let generateTimezoneOptions;
+    jest.isolateModules(() => {
+      ({ generateTimezoneOptions } = require('./index'));
+    });
+
+    expect(generateTimezoneOptions()).toEqual([
+      {
+        value: 'Etc/UTC',
+        label: 'Etc/UTC - Coordinated Universal Time (UTC+00:00)',
+        searchLabel: 'Etc/UTC',
+      },
+    ]);
   });
 });
