@@ -5015,6 +5015,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         status: "Online",
                         attributes: %{},
                         virtual_ip: nil,
+                        is_majority_maker: true,
                         resources: [
                           %ClusterResource{
                             id: "stonith-sbd",
@@ -5820,7 +5821,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         resources: [],
                         site: nil,
                         status: "Online",
-                        virtual_ip: nil
+                        virtual_ip: nil,
+                        is_majority_maker: true
                       },
                       %HanaClusterNode{
                         attributes: %{
@@ -5903,7 +5905,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         ],
                         site: "HANA_S1",
                         status: "Online",
-                        virtual_ip: "10.23.0.30"
+                        virtual_ip: "10.23.0.30",
+                        is_majority_maker: false
                       },
                       %HanaClusterNode{
                         attributes: %{
