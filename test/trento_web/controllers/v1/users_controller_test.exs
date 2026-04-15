@@ -369,14 +369,16 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       |> assert_schema("UserItemV1", api_spec)
     end
 
-    test "should only update abilities, enabled and timezone when sso is enabled", %{
+    test "should only update abilities and enabled when sso is enabled", %{
       conn: conn,
       api_spec: api_spec
     } do
       Application.put_env(:trento, :oidc, enabled: true)
 
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
-      %{id: user_id, lock_version: lock_version} = insert(:user, locked_at: DateTime.utc_now())
+
+      %{id: user_id, lock_version: lock_version} =
+        insert(:user, locked_at: DateTime.utc_now(), timezone: "Europe/Berlin")
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -407,28 +409,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       Application.put_env(:trento, :oidc, enabled: false)
     end
 
-    test "should update timezone when sso is enabled and only timezone is passed", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      Application.put_env(:trento, :oidc, enabled: true)
-
-      %{id: user_id, lock_version: lock_version} = insert(:user, timezone: "Europe/Berlin")
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> put_req_header("if-match", "#{lock_version}")
-        |> patch("/api/v1/users/#{user_id}", %{timezone: "Europe/Madrid"})
-        |> json_response(:ok)
-        |> assert_schema("UserItemV1", api_spec)
-
-      assert resp.timezone == "Europe/Madrid"
-
-      Application.put_env(:trento, :oidc, enabled: false)
-    end
-
-    test "should not perform an update when sso is enabled and abilities, enabled or timezone are not passed",
+    test "should not perform an update when sso is enabled and abilities or enabled are not passed",
          %{
            conn: conn,
            api_spec: api_spec
