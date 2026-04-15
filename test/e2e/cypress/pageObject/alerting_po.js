@@ -15,8 +15,8 @@ const alertingDevEnvSettings = {
 };
 
 export const apiSetDevEnvAlertingSettings = (method = 'POST') => {
-  basePage.apiLogin().then(({ accessToken }) => {
-    cy.request({
+  return basePage.apiLogin().then(({ accessToken }) => {
+    return cy.request({
       url: '/api/v1/settings/alerting',
       method: method,
       auth: {

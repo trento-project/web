@@ -983,8 +983,8 @@ export const resetAlertingSettingsDB = () => {
 };
 
 export const saveInitialAlertingSettings = () => {
-  basePage.apiLogin().then(({ accessToken }) => {
-    cy.request({
+  return basePage.apiLogin().then(({ accessToken }) => {
+    return cy.request({
       url: '/api/v1/settings/alerting',
       method: 'POST',
       auth: {
