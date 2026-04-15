@@ -22,7 +22,7 @@ defmodule Trento.Operations.HostPolicy do
       do:
         {:error,
          [
-           "Trento agent is not currently running in the host"
+           OperationsHelper.build_error("Trento agent is not currently running in the host")
          ]}
 
   # saptune_solution_apply and saptune_solution_change operation authorized when:
@@ -82,7 +82,9 @@ defmodule Trento.Operations.HostPolicy do
       do:
         {:error,
          [
-           "The host belongs to unsupported cluster type #{cluster_type}"
+           OperationsHelper.build_error(
+             "The host belongs to unsupported cluster type #{cluster_type}"
+           )
          ]}
 
   def authorize_operation(
@@ -103,7 +105,8 @@ defmodule Trento.Operations.HostPolicy do
           cluster_host_status == ClusterHostStatus.offline()
         )
 
-  def authorize_operation(_, _, _), do: {:error, ["Unknown operation"]}
+  def authorize_operation(_, _, _),
+    do: {:error, [OperationsHelper.build_error("Unknown operation")]}
 
   defp authorize_saptune_solution_operation(
          :saptune_solution_apply,
@@ -154,7 +157,7 @@ defmodule Trento.Operations.HostPolicy do
   end
 
   defp or_error(true, _), do: :ok
-  defp or_error(false, error), do: {:error, [error]}
+  defp or_error(false, error), do: {:error, [OperationsHelper.build_error(error)]}
 
   defp systemd_unit_enabled?(systemd_units, unit_name) do
     Enum.any?(systemd_units, fn
@@ -169,24 +172,41 @@ defmodule Trento.Operations.HostPolicy do
     do: Enum.map(instances, &ensure_instance_stopped/1)
 
   defp ensure_instance_stopped(%ApplicationInstanceReadModel{
+         sap_system_id: sap_system_id,
          sid: sid,
          instance_number: instance_number,
          health: health
        })
        when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of SAP system #{sid} is not stopped"]}
+       do:
+         {:error,
+          [
+            OperationsHelper.build_error(
+              "Instance #{instance_number} of SAP system {0} is not stopped",
+              [%{id: sap_system_id, label: sid, type: :sap_system}]
+            )
+          ]}
 
   defp ensure_instance_stopped(%DatabaseInstanceReadModel{
+         database_id: database_id,
          sid: sid,
          instance_number: instance_number,
          health: health
        })
        when health != Health.unknown(),
-       do: {:error, ["Instance #{instance_number} of HANA database #{sid} is not stopped"]}
+       do:
+         {:error,
+          [
+            OperationsHelper.build_error(
+              "Instance #{instance_number} of HANA database {0} is not stopped",
+              [%{id: database_id, label: sid, type: :database}]
+            )
+          ]}
 
   defp ensure_instance_stopped(%instance_module{})
        when instance_module in [ApplicationInstanceReadModel, DatabaseInstanceReadModel],
        do: :ok
 
-  defp ensure_instance_stopped(_), do: {:error, ["Unknown instance type"]}
+  defp ensure_instance_stopped(_),
+    do: {:error, [OperationsHelper.build_error("Unknown instance type")]}
 end

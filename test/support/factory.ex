@@ -182,6 +182,10 @@ defmodule Trento.Factory do
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
+  alias Trento.AI.{LLMRegistry, UserConfiguration}
+
+  alias Trento.AI.AICase
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1456,6 +1460,46 @@ defmodule Trento.Factory do
       check_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"])
+    }
+  end
+
+  def random_ai_provider_factory(_) do
+    AICase.stub_config_loader()
+
+    Enum.random(LLMRegistry.providers())
+  end
+
+  def random_ai_model_factory(attrs) do
+    AICase.stub_config_loader()
+
+    attrs
+    |> Map.get(:provider, :all)
+    |> LLMRegistry.get_provider_models()
+    |> Enum.random()
+  end
+
+  def ai_user_configuration_factory(attrs) do
+    user_id = Map.get(attrs, :user_id, 1)
+    provider = Map.get(attrs, :provider, build(:random_ai_provider))
+    model = Map.get(attrs, :model, build(:random_ai_model, provider: provider))
+
+    %UserConfiguration{
+      user_id: user_id,
+      provider: provider,
+      model: model,
+      api_key: Faker.String.base64(32)
+    }
+  end
+
+  def ai_configuration_creation_params_factory(attrs) do
+    provider = Map.get(attrs, :provider, build(:random_ai_provider))
+    model = Map.get(attrs, :model, build(:random_ai_model, provider: provider))
+    api_key = Map.get(attrs, :api_key, Faker.String.base64(32))
+
+    %{
+      provider: provider,
+      model: model,
+      api_key: api_key
     }
   end
 end

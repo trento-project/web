@@ -12,6 +12,8 @@ defmodule Trento.UsersTest do
 
   alias Trento.PersonalAccessTokens.PersonalAccessToken
 
+  alias Trento.AI.UserConfiguration, as: AIUserConfiguration
+
   import Trento.Factory
 
   describe "user profile" do
@@ -248,7 +250,8 @@ defmodule Trento.UsersTest do
                  id: ^user_id,
                  user_identities: [%{id: ^identity_id}],
                  abilities: [%{id: ^ability_id}],
-                 personal_access_tokens: [^expected_pat]
+                 personal_access_tokens: [^expected_pat],
+                 ai_configuration: %Ecto.Association.NotLoaded{}
                }
              ] = users
 
@@ -322,6 +325,33 @@ defmodule Trento.UsersTest do
                 id: ^user_id2,
                 personal_access_tokens: []
               }} = Users.get_user(user_id2)
+    end
+
+    test "get_user returns a user with its AI configuration" do
+      %{id: user_id_with_ai_configuration} = insert(:user)
+      %{id: user_id_without_ai_configuration} = insert(:user)
+
+      %AIUserConfiguration{
+        model: model,
+        provider: provider,
+        api_key: api_key
+      } = insert(:ai_user_configuration, user_id: user_id_with_ai_configuration)
+
+      assert {:ok,
+              %User{
+                id: ^user_id_with_ai_configuration,
+                ai_configuration: %AIUserConfiguration{
+                  model: ^model,
+                  provider: ^provider,
+                  api_key: ^api_key
+                }
+              }} = Users.get_user(user_id_with_ai_configuration)
+
+      assert {:ok,
+              %User{
+                id: ^user_id_without_ai_configuration,
+                ai_configuration: nil
+              }} = Users.get_user(user_id_without_ai_configuration)
     end
 
     test "create_user with valid data creates a user" do
@@ -684,6 +714,45 @@ defmodule Trento.UsersTest do
 
       refute deleted_at == nil
       assert [] == Trento.Repo.all(from u in UserIdentity, where: u.user_id == ^user_id)
+    end
+
+    test "delete_user/1 deletes user Personal Access Tokens" do
+      %{id: user_id} = user = insert(:user)
+      insert_list(3, :personal_access_token, user_id: user_id)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+
+      assert [] ==
+               Trento.Repo.all(
+                 from pat in PersonalAccessToken,
+                   where: pat.user_id == ^user_id
+               )
+    end
+
+    test "delete_user/1 deletes user AI configuration" do
+      load_users_ai_configuration = fn user_id ->
+        Trento.Repo.get_by(AIUserConfiguration, user_id: user_id)
+      end
+
+      %{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration, user_id: user_id)
+
+      assert %AIUserConfiguration{} = load_users_ai_configuration.(user_id)
+
+      assert {:ok, %User{}} = Users.delete_user(user)
+
+      %User{deleted_at: deleted_at} =
+        Trento.Repo.get_by!(User, id: user_id)
+
+      refute deleted_at == nil
+
+      assert nil == load_users_ai_configuration.(user_id)
     end
 
     test "reset_totp/1 reset user topt values" do

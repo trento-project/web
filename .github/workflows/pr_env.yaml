@@ -7,6 +7,10 @@ on:
       - synchronize
       - labeled
 
+env:
+  ANSIBLE_CORE_VERSION: "2.16.3" # https://pypi.org/project/ansible-core/#history
+  PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
+
 jobs:
   check-env-creation-privilege:
     name: Check if the environment creation criteria are met, store in the job output
@@ -20,7 +24,7 @@ jobs:
 
   publish-containers:
     name: Publish GHCR Containers
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@b3aa163d3e0872c07ccf3755928f21c070ca0e5b # v1.1.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@406be0972195864a87ed454458eaa0856d0c5457 # v1.6.0
     needs: check-env-creation-privilege
     if: needs.check-env-creation-privilege.outputs.create_env == 'true'
     with:
@@ -48,7 +52,7 @@ jobs:
           repository: trento-project/ansible
           path: ansible
       - name: Install ansible-core
-        run: sudo pipx install --force ansible-core==2.16.3
+        run: sudo pipx install --force ansible-core==${{ env.ANSIBLE_CORE_VERSION }}
       - name: Install galaxy deps
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Run playbook
@@ -131,7 +135,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
