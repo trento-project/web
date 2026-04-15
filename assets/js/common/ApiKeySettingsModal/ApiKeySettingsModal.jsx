@@ -125,14 +125,14 @@ function ApiKeySettingsModal({
                   }}
                 />
               </div>
-              <div className="w-2/4 pt-4">
+              <div className="w-2/4">
                 <Select
-                  className="pb-4 min-w-24 max-w-fit"
+                  className="min-w-24 max-w-fit"
                   optionsName=""
                   options={timeOptions}
                   disabled={apiKeyNeverExpires}
-                  value={timeQuantityType}
-                  onChange={(value) => setTimeQuantityType(value)}
+                  values={[timeQuantityType]}
+                  onChange={setTimeQuantityType}
                 />
               </div>
               <div className="w-1/6 h-4/5">

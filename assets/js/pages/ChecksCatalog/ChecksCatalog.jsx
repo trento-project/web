@@ -103,41 +103,43 @@ function ChecksCatalog({
     {
       optionsName: 'targets',
       options: targetTypes.map((targetType) => ({
+        label: targetType,
         value: targetType,
-        disabled: !hasChecksForTarget(completeCatalog, targetType),
+        isDisabled: !hasChecksForTarget(completeCatalog, targetType),
       })),
       renderOption: targetTypeOptionRenderer,
-      value: selectedTargetType,
+      values: [selectedTargetType],
       onChange: onTargetTypeChange,
     },
     {
       optionsName: 'cluster-types',
       options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
+        label: { type, hanaScenario },
         value: { type, hanaScenario },
         key: `${type}_${hanaScenario}`,
-        disabled:
+        isDisabled:
           !hasChecksForClusterType(completeCatalog, type) ||
           !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
-      value: selectedClusterType,
+      values: [selectedClusterType],
       onChange: setSelectedClusterType,
-      disabled: selectedTargetType !== TARGET_CLUSTER,
+      isDisabled: selectedTargetType !== TARGET_CLUSTER,
     },
     {
       optionsName: 'providers',
       options: providers,
       renderOption: providerOptionRenderer,
-      value: selectedProvider,
+      values: [selectedProvider],
       onChange: setProviderSelected,
     },
     {
       optionsName: 'architecture',
       options: architectures,
       renderOption: architectureOptionRenderer,
-      value: selectedArchitecture,
+      values: [selectedArchitecture],
       onChange: setSelectedArchitecture,
-      disabled: selectedTargetType !== TARGET_HOST,
+      isDisabled: selectedTargetType !== TARGET_HOST,
     },
   ];
 

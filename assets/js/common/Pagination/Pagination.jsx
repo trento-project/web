@@ -50,11 +50,10 @@ function ItemsPerPageSelector({
         <span className="pr-2 text-gray-600">Results per page</span>
         <Select
           className="min-w-20 max-w-fit"
-          optionsName=""
           options={itemsPerPageOptions}
-          value={currentItemsPerPage}
+          values={[currentItemsPerPage]}
           onChange={onChange}
-          optionsListPosition="top"
+          menuPlacement="top"
         />
       </div>
     )

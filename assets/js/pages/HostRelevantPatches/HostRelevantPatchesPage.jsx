@@ -85,9 +85,8 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
           <Select
             onChange={setDisplayedAdvisories}
             options={advisoryTypes}
-            optionsName="options"
             className="min-w-36 max-w-fit"
-            value={displayedAdvisories}
+            values={[displayedAdvisories]}
           />
           <Input
             className="flex flex-1 min-w-36 lg:max-w-96"

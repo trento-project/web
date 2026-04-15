@@ -103,8 +103,8 @@ function GenerateTokenModal({
             optionsName=""
             options={timeOptions}
             disabled={tokenNeverExpires}
-            value={timeQuantityType}
-            onChange={(value) => setTimeQuantityType(value)}
+            values={[timeQuantityType]}
+            onChange={setTimeQuantityType}
           />
         </div>
       </div>

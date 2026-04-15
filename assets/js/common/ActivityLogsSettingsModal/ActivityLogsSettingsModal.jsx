@@ -48,7 +48,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           className="min-w-24 max-w-fit"
           optionsName=""
           options={timeUnitOptions}
-          value={time.unit || defaultTimeUnit}
+          values={[time.unit || defaultTimeUnit]}
           error={error}
           onChange={(unit) => {
             const newTime = { ...time, unit };

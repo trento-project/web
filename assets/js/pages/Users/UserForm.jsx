@@ -262,10 +262,8 @@ function UserForm({
               className="w-full"
               optionsName="status"
               options={['Enabled', 'Disabled']}
-              value={statusState}
-              onChange={(value) => {
-                setStatus(value);
-              }}
+              values={[statusState]}
+              onChange={setStatus}
             />
           </div>
           {editing && (
@@ -284,12 +282,16 @@ function UserForm({
                       className="w-full"
                       optionsName="totp"
                       options={[
-                        { value: 'Enabled', disabled: !totpEnabledAt },
+                        {
+                          value: 'Enabled',
+                          label: 'Enabled',
+                          isDisabled: !totpEnabledAt,
+                        },
                         'Disabled',
                       ]}
-                      value={totpState ? 'Enabled' : 'Disabled'}
-                      onChange={(value) => {
-                        setTotpState(value === 'Enabled');
+                      values={[totpState ? 'Enabled' : 'Disabled']}
+                      onChange={(state) => {
+                        setTotpState(state === 'Enabled');
                       }}
                     />
                   </div>

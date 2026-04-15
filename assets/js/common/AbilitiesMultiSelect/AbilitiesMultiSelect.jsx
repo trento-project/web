@@ -2,7 +2,7 @@ import React from 'react';
 import { assign, find } from 'lodash';
 import { getFromConfig } from '@lib/config';
 
-import MultiSelect from '@common/MultiSelect';
+import Select from '@common/Select';
 
 const groupedAbilities = [
   {
@@ -102,9 +102,6 @@ const mapAbilities = (abilities, operationsEnabled) =>
     });
   }, []);
 
-const unmapAbilities = (abilities) =>
-  abilities.map(({ value }) => value).flat();
-
 function AbilitiesMultiSelect({
   abilities,
   userAbilities,
@@ -114,12 +111,14 @@ function AbilitiesMultiSelect({
   ...props
 }) {
   return (
-    <MultiSelect
+    <Select
+      isMulti
+      isClearable
       aria-label="permissions"
       placeholder={placeholder}
       values={mapAbilities(userAbilities, operationsEnabled)}
       options={mapAbilities(abilities, operationsEnabled)}
-      onChange={(values) => setAbilities(unmapAbilities(values))}
+      onChange={setAbilities}
       getOptionValue={(option) => option.value.toString()}
       {...props}
     />
