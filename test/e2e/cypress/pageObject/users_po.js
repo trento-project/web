@@ -330,7 +330,7 @@ export const enableTotpOptionIsDisabled = () => {
 };
 
 export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
-  getTotpSecret().then((newTotpSecret) => {
+  return getTotpSecret().then((newTotpSecret) => {
     cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
   });
 };

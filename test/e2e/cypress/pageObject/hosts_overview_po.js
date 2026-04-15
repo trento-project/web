@@ -300,7 +300,7 @@ const _validateCell = (header, rowIndex, expectedValue) => {
   const tableHeaderSelector = `thead th:contains("${header}")`;
   const tableRowSelector = `tbody tr`;
 
-  cy.get(tableHeaderSelector)
+  return cy.get(tableHeaderSelector)
     .invoke('index')
     .then((i) => {
       const isPropertyArray = Array.isArray(expectedValue);

@@ -248,10 +248,12 @@ export const preloadTestData = ({
    * and the tests require a fully loaded scenario which only happens when the
    * scenario is sent in the second time.
    */
-  isDataLoadedFunc().then((isLoaded) => {
-    if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
+  return isDataLoadedFunc().then((isLoaded) => {
+    if (!isLoaded) {
+      loadScenario('healthy-27-node-SAP-cluster');
+    }
+    return loadScenario('healthy-27-node-SAP-cluster');
   });
-  loadScenario('healthy-27-node-SAP-cluster');
 };
 
 export const loadScenario = (scenario) => {

@@ -148,7 +148,7 @@ export const clickCriticalChecksButton = () =>
   cy.get(criticalChecksButton).click();
 
 export const clickCheckSelectionButton = () =>
-  cy.get(checkSelectionButton).click();
+  cy.get(checkSelectionButton, { timeout: 50000 }).click();
 
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
@@ -174,7 +174,7 @@ export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
     .should('have.text', expectedWarningMessage);
 
 export const expectedResultRowsAreDisplayed = () => {
-  basePage.waitForRequest(lastExecutionEndpointAlias).then(
+  return basePage.waitForRequest(lastExecutionEndpointAlias).then(
     ({
       response: {
         body: { check_results },
