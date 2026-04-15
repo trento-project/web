@@ -507,4 +507,3 @@ export const getAlertingSettings = () => {
     })
   );
 };
-
