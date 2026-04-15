@@ -7,9 +7,12 @@ import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
 import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
-import { DEFAULT_TIMEZONE } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
 
 import UserForm from './UserForm';
+
+const getTimezoneLabel = (timezone) =>
+  generateTimezoneOptions().find((option) => option.value === timezone)?.label;
 
 describe('UserForm', () => {
   it('should display an empty user form', () => {
@@ -457,13 +460,14 @@ describe('UserForm', () => {
   it('should set timezone in save payload when timezone selector changes', async () => {
     const user = userEvent.setup();
     const mockOnSave = jest.fn();
+    const timezone = 'Europe/Berlin';
+
     const {
       fullname,
       email,
       username,
       created_at: createdAt,
       updated_at: updatedAt,
-      timezone,
     } = userFactory.build();
 
     render(
@@ -480,15 +484,10 @@ describe('UserForm', () => {
     );
 
     const timezoneSelectorInput = screen.getByLabelText('Timezone');
-    const timezoneMatcher = new RegExp(
-      timezone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    );
 
     await user.click(timezoneSelectorInput);
     await user.type(timezoneSelectorInput, timezone);
-    await user.click(
-      await screen.findByRole('option', { name: timezoneMatcher })
-    );
+    await user.click(await screen.findByText(getTimezoneLabel(timezone)));
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
     expect(mockOnSave).toHaveBeenNthCalledWith(1, {

@@ -1,7 +1,9 @@
 import React, { act } from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { TZDate } from '@date-fns/tz';
+import { parseISO } from 'date-fns';
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -18,6 +20,11 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import ActivityLogPage from './ActivityLogPage';
 
 const axiosMock = new MockAdapter(networkClient);
+
+const parseDateTimeLocalToUtcIso = (dateTimeLocalValue, timezone) =>
+  new Date(
+    TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime()
+  ).toISOString();
 
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
@@ -172,10 +179,13 @@ describe('ActivityLogPage', () => {
     await user.click(screen.getByText('Filter newer than...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
-    await user.type(input, '2024-08-14T21:00');
+    fireEvent.change(input, { target: { value: '2024-08-14T21:00' } });
     await user.click(screen.getByText('Apply Filter'));
 
-    const expectedToDate = '2024-08-15T07:00:00.000Z';
+    const expectedToDate = parseDateTimeLocalToUtcIso(
+      '2024-08-14T21:00',
+      timezone
+    );
 
     expect(onGetSpy).toHaveBeenLastCalledWith(
       '/activity_log',

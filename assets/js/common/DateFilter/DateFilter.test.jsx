@@ -4,16 +4,11 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { TZDate } from '@date-fns/tz';
 import { parseISO } from 'date-fns';
-import {
-  DEFAULT_TIMEZONE,
-  DATETIME_ISO_LOCAL_MILLIS_FORMAT,
-} from '@lib/timezones';
-import { format } from 'date-fns';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 import DateFilter from '.';
 
-function as_localtime_str(utc_timestamp) {
-  return format(new Date(utc_timestamp), DATETIME_ISO_LOCAL_MILLIS_FORMAT);
-}
+const parseDateTimeLocalToUtc = (dateTimeLocalValue, timezone) =>
+  new Date(TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime());
 
 describe('DateFilter component', () => {
   it('should render with pre-configured options', async () => {
@@ -151,8 +146,9 @@ describe('DateFilter component', () => {
     const input = container.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-08-14T10:21'));
 
-    const expectedDate = new Date(
-      TZDate.tz(DEFAULT_TIMEZONE, parseISO('2024-08-14T10:21')).getTime()
+    const expectedDate = parseDateTimeLocalToUtc(
+      '2024-08-14T10:21',
+      DEFAULT_TIMEZONE
     );
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
@@ -175,18 +171,16 @@ describe('DateFilter component', () => {
     const input = container.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-03-31T03:30'));
 
-    const expectedDate = new Date(
-      TZDate.tz(timezone, parseISO('2024-03-31T03:30')).getTime()
-    );
+    const expectedDate = parseDateTimeLocalToUtc('2024-03-31T03:30', timezone);
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
   });
 
   it.each`
-    value                                                     | expected
-    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))}            | ${'08/14/2024 03:21:00 PM'}
-    ${as_localtime_str(Date.UTC(2021, 1 - 1, 24, 5, 50, 23))} | ${'01/24/2021 05:50:23 AM'}
-    ${'2021-01-24T05:50:23.000Z'}                             | ${'01/24/2021 05:50:23 AM'}
+    value                                          | expected
+    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))} | ${'08/14/2024 03:21:00 PM'}
+    ${Date.UTC(2021, 1 - 1, 24, 5, 50, 23)}        | ${'01/24/2021 05:50:23 AM'}
+    ${'2021-01-24T05:50:23.000Z'}                  | ${'01/24/2021 05:50:23 AM'}
   `('should render the custom date ($value)', async ({ value, expected }) => {
     const mockOnChange = jest.fn();
 

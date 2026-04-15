@@ -6,6 +6,9 @@ import { TZDate } from '@date-fns/tz';
 import { parseISO } from 'date-fns';
 import ComposedFilter from '.';
 
+const parseDateTimeLocalToUtc = (dateTimeLocalValue, timezone) =>
+  new Date(TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime());
+
 jest.setTimeout(100000);
 describe('ComposedFilter component', () => {
   it('should render the specified filters', async () => {
@@ -336,9 +339,7 @@ describe('ComposedFilter component', () => {
     const input = document.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-01-10T23:30'));
 
-    const expectedDate = new Date(
-      TZDate.tz(timezone, parseISO('2024-01-10T23:30')).getTime()
-    );
+    const expectedDate = parseDateTimeLocalToUtc('2024-01-10T23:30', timezone);
 
     expect(mockOnChange).toHaveBeenLastCalledWith({
       to_date: ['custom', expectedDate],
