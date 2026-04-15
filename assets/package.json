@@ -45,6 +45,7 @@
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
@@ -98,7 +99,7 @@
     "format:check": "prettier -c .",
     "format": "prettier --write .",
     "pretest": "ls ../priv/static/assets/app.css || npm run tailwind:build",
-    "test": "jest --maxWorkers=2",
+    "test": "jest --maxWorkers=2 --silent",
     "chromatic": "npx chromatic --exit-zero-on-changes"
   }
 }
