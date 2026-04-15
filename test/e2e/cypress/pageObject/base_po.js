@@ -447,7 +447,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 
   return apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       body: checksBody,
