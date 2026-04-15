@@ -19,6 +19,7 @@ concurrency:
 env:
   MIX_ENV: dev
   DEFAULT_NUM_CONTAINERS: 100
+  PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
 
 jobs:
   elixir-deps:
@@ -186,7 +187,7 @@ jobs:
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
           repo: trento-project/photofinish
-          tag: v1.4.2
+          tag: ${{ env.PHOTOFINISH_VERSION }}
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

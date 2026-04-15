@@ -16,6 +16,8 @@ concurrency:
 env:
   MIX_ENV: test
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
+  ELIXIR_BC: "1.15.7-otp-26"
+  ERLANG_BC: "26.2.1"
 
 jobs:
   setup-matrix:
@@ -35,8 +37,8 @@ jobs:
       - name: Compute matrix
         id: compute-matrix
         run: |
-          echo "ELIXIR_BC=1.15.7-otp-26" >> $GITHUB_OUTPUT
-          echo "ERLANG_BC=26.2.1" >> $GITHUB_OUTPUT
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
           echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
           echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
