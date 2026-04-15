@@ -420,7 +420,8 @@ export const agentStatusIsCorrectlyDisplayed = () => {
 
 export const nodeExporterStatusIsCorrectlyDisplayed = () => {
   cy.get(nodeExporterLabel).should('be.visible');
-  return cy.get(nodeExporterBadge)
+  return cy
+    .get(nodeExporterBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain('jungle-green');
