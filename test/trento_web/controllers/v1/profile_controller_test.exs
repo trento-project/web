@@ -68,7 +68,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
   test "should update the profile with allowed fields", %{
     conn: conn,
     api_spec: api_spec,
-    user: %{id: user_id, password: current_password}
+    user: %{id: user_id, password: current_password, timezone: "Etc/UTC"}
   } do
     %{fullname: fullname, email: email} =
       valid_params = %{
@@ -76,7 +76,8 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         email: Faker.Internet.email(),
         password: "testpassword89",
         current_password: current_password,
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: "Europe/Berlin"
       }
 
     resp =
@@ -86,17 +87,18 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> json_response(:ok)
       |> assert_schema("UserProfileV1", api_spec)
 
-    assert %{id: ^user_id, fullname: ^fullname, email: ^email} = resp
+    assert %{id: ^user_id, fullname: ^fullname, email: ^email, timezone: "Europe/Berlin"} = resp
   end
 
   test "should update the profile with allowed fields when SSO is enabled", %{
     conn: conn,
     api_spec: api_spec,
-    user: %{id: user_id}
+    user: %{id: user_id, timezone: "Etc/UTC"}
   } do
     valid_params = %{
       analytics_enabled: true,
-      analytics_eula_accepted: true
+      analytics_eula_accepted: true,
+      timezone: "Europe/Berlin"
     }
 
     Application.put_env(:trento, :oidc, enabled: true)
@@ -110,7 +112,12 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
 
     Application.put_env(:trento, :oidc, enabled: false)
 
-    assert %{id: ^user_id, analytics_enabled: true, analytics_eula_accepted: true} = resp
+    assert %{
+             id: ^user_id,
+             analytics_enabled: true,
+             analytics_eula_accepted: true,
+             timezone: "Europe/Berlin"
+           } = resp
   end
 
   test "should get an error updating profile when SSO is enabled and invalid fields are sent", %{
@@ -120,7 +127,8 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     invalid_params = %{
       fullname: Faker.Person.name(),
       analytics_enabled: true,
-      analytics_eula_accepted: true
+      analytics_eula_accepted: true,
+      timezone: "US/Pacific-New"
     }
 
     Application.put_env(:trento, :oidc, enabled: true)
@@ -143,51 +151,6 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
                }
              ]
            } == resp
-  end
-
-  test "should update timezone in profile", %{
-    conn: conn,
-    api_spec: api_spec,
-    user: %{id: user_id}
-  } do
-    resp =
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/profile", %{timezone: "Europe/Berlin"})
-      |> json_response(:ok)
-      |> assert_schema("UserProfileV1", api_spec)
-
-    assert %{id: ^user_id, timezone: "Europe/Berlin"} = resp
-  end
-
-  test "should update timezone when SSO is enabled", %{
-    conn: conn,
-    api_spec: api_spec,
-    user: %{id: user_id}
-  } do
-    Application.put_env(:trento, :oidc, enabled: true)
-
-    resp =
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/profile", %{timezone: "Europe/Berlin"})
-      |> json_response(:ok)
-      |> assert_schema("UserProfileV1", api_spec)
-
-    Application.put_env(:trento, :oidc, enabled: false)
-
-    assert %{id: ^user_id, timezone: "Europe/Berlin"} = resp
-  end
-
-  test "should return unprocessable entity for invalid timezone", %{
-    conn: conn,
-    api_spec: api_spec
-  } do
-    conn
-    |> put_req_header("content-type", "application/json")
-    |> patch("/api/v1/profile", %{timezone: "US/Pacific-New"})
-    |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntityV1", api_spec)
   end
 
   test "should get totp enrollment data when totp is not configured for the user", %{
@@ -220,11 +183,21 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         Pow.Plug.fetch_config(conn)
       )
 
-    conn
-    |> put_req_header("content-type", "application/json")
-    |> get("/api/v1/profile/totp_enrollment")
-    |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntityV1", api_spec)
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> get("/api/v1/profile/totp_enrollment")
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
+
+    assert %{
+             errors: [
+               %{
+                 title: "Unprocessable Entity",
+                 detail: "TOTP already enabled, could not process the enrollment procedure"
+               }
+             ]
+           } == resp
   end
 
   test "should return forbidden if the totp enrollment is requested for default admin", %{
@@ -314,11 +287,21 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         Pow.Plug.fetch_config(conn)
       )
 
-    conn
-    |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
-    |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntityV1", api_spec)
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
+
+    assert %{
+             errors: [
+               %{
+                 title: "Unprocessable Entity",
+                 detail: "TOTP already enabled, could not process the enrollment procedure"
+               }
+             ]
+           } == resp
   end
 
   test "should not confirm a totp enrollment if totp is not valid", %{
@@ -337,11 +320,21 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         Pow.Plug.fetch_config(conn)
       )
 
-    conn
-    |> put_req_header("content-type", "application/json")
-    |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
-    |> json_response(:unprocessable_entity)
-    |> assert_schema("UnprocessableEntityV1", api_spec)
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/profile/totp_enrollment", %{totp_code: "12345"})
+      |> json_response(:unprocessable_entity)
+      |> assert_schema("UnprocessableEntityV1", api_spec)
+
+    assert %{
+             errors: [
+               %{
+                 title: "Unprocessable Entity",
+                 detail: "TOTP code not valid for the enrollment procedure."
+               }
+             ]
+           } == resp
   end
 
   test "should confirm a totp enrollment if totp is valid for the enrollment", %{
