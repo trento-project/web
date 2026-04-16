@@ -3,7 +3,6 @@ import { tzName, tzOffset } from '@date-fns/tz';
 
 export const DEFAULT_TIMEZONE = 'Etc/UTC';
 
-export const DATETIME_ISO_LOCAL_MILLIS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
 
 export const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy';

@@ -2,7 +2,6 @@ import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import {
   DATE_DAY_MONTH_YEAR_FORMAT,
-  DATETIME_ISO_LOCAL_MILLIS_FORMAT,
   DATETIME_DAY_MONTH_24H_FORMAT,
   DEFAULT_TIMEZONE,
   TIME_24H_HH_MM_FORMAT,
@@ -14,9 +13,6 @@ describe('timezone format constants', () => {
     formatDate(sampleDate, pattern, { in: tz(DEFAULT_TIMEZONE) });
 
   it('has an example output for every datetime/date/time format constant', () => {
-    expect(formatInDefaultTimezone(DATETIME_ISO_LOCAL_MILLIS_FORMAT)).toBe(
-      '2024-08-04T10:21:00.123'
-    );
     expect(formatInDefaultTimezone(DATETIME_DAY_MONTH_24H_FORMAT)).toBe(
       '04 Aug 2024, 10:21:00'
     );
