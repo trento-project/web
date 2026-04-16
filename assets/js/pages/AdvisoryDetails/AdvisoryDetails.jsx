@@ -1,7 +1,7 @@
 import React from 'react';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATE_DAY_MONTH_YEAR_COMPACT_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
@@ -57,7 +57,7 @@ function AdvisoryDetails({
                 title: 'Issued',
                 content: formatDate(
                   issueDate,
-                  DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
+                  DATE_DAY_MONTH_YEAR_FORMAT,
                   {
                     in: tz(timezone),
                   }
@@ -71,7 +71,7 @@ function AdvisoryDetails({
                 title: 'Updated',
                 content: formatDate(
                   updateDate,
-                  DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
+                  DATE_DAY_MONTH_YEAR_FORMAT,
                   {
                     in: tz(timezone),
                   }

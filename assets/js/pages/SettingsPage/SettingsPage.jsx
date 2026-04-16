@@ -7,7 +7,7 @@ import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATE_DAY_MONTH_YEAR_COMPACT_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
@@ -57,7 +57,7 @@ function ApiKeyExpireInfo({ apiKeyExpiration, timezone }) {
     if (apiKeyExpiration && isBefore(new Date(), expireDate)) {
       return `Key will expire ${formatDate(
         expireDate,
-        DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
+        DATE_DAY_MONTH_YEAR_FORMAT,
         {
           in: tz(timezone),
         }

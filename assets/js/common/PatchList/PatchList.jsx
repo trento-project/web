@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import { noop } from 'lodash';
-import { DATE_DAY_MONTH_YEAR_COMPACT_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import Button from '@common/Button';
 import Table, {
@@ -145,7 +145,7 @@ export default function PatchList({ patches, timezone, onNavigate = noop }) {
         sortDirection: sortingColumn === 'update_date' ? sortDirection : null,
         handleClick: handleUpdateDateColClick,
         render: (content, _) =>
-          formatDate(content, DATE_DAY_MONTH_YEAR_COMPACT_FORMAT, {
+          formatDate(content, DATE_DAY_MONTH_YEAR_FORMAT, {
             in: tz(timezone),
           }),
       },

@@ -5,7 +5,7 @@ import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import {
   DEFAULT_TIMEZONE,
-  DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
+  DATE_DAY_MONTH_YEAR_FORMAT,
 } from '@lib/timezones';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
@@ -36,7 +36,7 @@ describe('PatchList', () => {
       expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
       expect(
         screen.getByText(
-          formatDate(patch.update_date, DATE_DAY_MONTH_YEAR_COMPACT_FORMAT, {
+          formatDate(patch.update_date, DATE_DAY_MONTH_YEAR_FORMAT, {
             in: tz(DEFAULT_TIMEZONE),
           })
         )

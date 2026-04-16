@@ -14,7 +14,7 @@ import {
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 import { networkClient } from '@lib/network';
 import {
-  DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
+  DATE_DAY_MONTH_YEAR_FORMAT,
   DATE_DAY_MONTH_YEAR_FORMAT,
 } from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
@@ -94,7 +94,7 @@ describe('Settings Page', () => {
         renderWithRouter(StatefulSettings);
       });
 
-      const expectedDate = format(futureDate, DATE_DAY_MONTH_YEAR_COMPACT_FORMAT, {
+      const expectedDate = format(futureDate, DATE_DAY_MONTH_YEAR_FORMAT, {
         in: tz('Pacific/Kiritimati'),
       });
       expect(screen.getByText(`Key will expire ${expectedDate}`)).toBeVisible();
