@@ -328,7 +328,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        timezone: "Europe/Berlin"
+        timezone: "Australia/Melbourne"
       }
 
       conn
@@ -353,7 +353,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        timezone: "Europe/Berlin"
+        timezone: "America/Guatemala"
       }
 
       conn =
@@ -370,7 +370,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.fullname == fullname
       refute resp.enabled == true
       refute resp.email == email
-      assert resp.timezone == "Europe/Berlin"
+      assert resp.timezone == valid_params.timezone
 
       assert_broadcast "user_locked", %{}, 1000
 
@@ -389,7 +389,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password: "testpassword89",
         password_confirmation: "testpassword89",
         abilities: [%{id: id, name: name, resource: resource, label: label}],
-        timezone: "Europe/Berlin"
+        timezone: "Pacific/Auckland"
       }
 
       conn
@@ -408,8 +408,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
 
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
 
-      %{id: user_id, lock_version: lock_version} =
-        insert(:user, locked_at: DateTime.utc_now(), timezone: "Europe/Berlin")
+      %{id: user_id, lock_version: lock_version} = insert(:user, locked_at: DateTime.utc_now())
 
       valid_params = %{
         fullname: Faker.Person.name(),
@@ -418,7 +417,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password: "testpassword89",
         password_confirmation: "testpassword89",
         abilities: [%{id: id, name: name, resource: resource, label: label}],
-        timezone: "Europe/Berlin"
+        timezone: "America/Recife"
       }
 
       %{abilities: abilities} =
@@ -468,14 +467,13 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
       assert resp.password_change_requested_at == nil
-      assert resp.timezone == "Europe/Berlin"
+      assert resp.timezone == valid_params.timezone
 
       Application.put_env(:trento, :oidc, enabled: false)
     end
 
     test "should disable the TOTP feature for a user", %{conn: conn, api_spec: api_spec} do
-      %{id: user_id, lock_version: lock_version} =
-        insert(:user, totp_enabled_at: DateTime.utc_now())
+      %{id: user_id, lock_version: lock_version} = insert(:user, totp_enabled_at: DateTime.utc_now())
 
       valid_params = %{
         totp_disabled: true
