@@ -157,11 +157,22 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password_confirmation: "testpassword89"
       }
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/users", invalid_request_params)
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntityV1", api_spec)
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/users", invalid_request_params)
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   title: "Invalid value",
+                   source: %{pointer: "/enabled"},
+                   detail: "Missing field: enabled"
+                 }
+               ]
+             } == resp
     end
 
     test "should not create the user when request parameters are valid but error are returned during creation",
@@ -177,11 +188,22 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         password_confirmation: "notequal"
       }
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/users", valid_params)
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntityV1", api_spec)
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/users", valid_params)
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   title: "Invalid value",
+                   source: %{pointer: "/password_confirmation"},
+                   detail: "does not match confirmation"
+                 }
+               ]
+             } == resp
     end
   end
 
@@ -230,27 +252,23 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         email: already_taken_email
       }
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> put_req_header("if-match", "#{lock_version}")
-      |> patch("/api/v1/users/#{id}", valid_params)
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntityV1", api_spec)
-    end
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("if-match", "#{lock_version}")
+        |> patch("/api/v1/users/#{id}", valid_params)
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
 
-    test "should not update the user if timezone is invalid", %{conn: conn, api_spec: api_spec} do
-      %{id: id, lock_version: lock_version} = insert(:user)
-
-      invalid_params = %{
-        timezone: "US/Pacific-New"
-      }
-
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> put_req_header("if-match", "#{lock_version}")
-      |> patch("/api/v1/users/#{id}", invalid_params)
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntityV1", api_spec)
+      assert %{
+               errors: [
+                 %{
+                   title: "Invalid value",
+                   source: %{pointer: "/email"},
+                   detail: "has already been taken"
+                 }
+               ]
+             } == resp
     end
 
     test "should not update the user if parameters are not valid", %{
@@ -260,14 +278,26 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{id: id} = insert(:user)
 
       invalid_params = %{
-        enabled: "invalid"
+        enabled: "invalid",
+        timezone: "US/Pacific-New"
       }
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/users/#{id}", invalid_params)
-      |> json_response(:unprocessable_entity)
-      |> assert_schema("UnprocessableEntityV1", api_spec)
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/users/#{id}", invalid_params)
+        |> json_response(:unprocessable_entity)
+        |> assert_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{
+                   title: "Invalid value",
+                   source: %{pointer: "/enabled"},
+                   detail: "Invalid boolean. Got: string"
+                 }
+               ]
+             } == resp
     end
 
     test "should not update the user when the request conditional prerequisite is missing", %{
@@ -296,9 +326,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         enabled: false,
-        timezone: "Europe/Berlin",
         password: "testpassword89",
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: "Europe/Berlin"
       }
 
       conn
@@ -321,9 +351,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         enabled: false,
-        timezone: "Europe/Berlin",
         password: "testpassword89",
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: "Europe/Berlin"
       }
 
       conn =
@@ -358,7 +388,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        abilities: [%{id: id, name: name, resource: resource, label: label}]
+        abilities: [%{id: id, name: name, resource: resource, label: label}],
+        timezone: "Europe/Berlin"
       }
 
       conn
@@ -384,10 +415,10 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         enabled: true,
-        timezone: "Europe/Berlin",
         password: "testpassword89",
         password_confirmation: "testpassword89",
-        abilities: [%{id: id, name: name, resource: resource, label: label}]
+        abilities: [%{id: id, name: name, resource: resource, label: label}],
+        timezone: "Europe/Berlin"
       }
 
       %{abilities: abilities} =
@@ -422,7 +453,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         fullname: Faker.Person.name(),
         email: Faker.Internet.email(),
         password: "testpassword89",
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: "Europe/Berlin"
       }
 
       resp =
@@ -436,6 +468,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       refute resp.fullname == valid_params.fullname
       refute resp.email == valid_params.email
       assert resp.password_change_requested_at == nil
+      assert resp.timezone == "Europe/Berlin"
 
       Application.put_env(:trento, :oidc, enabled: false)
     end
