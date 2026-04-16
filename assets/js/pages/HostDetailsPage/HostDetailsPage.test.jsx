@@ -214,7 +214,7 @@ describe('HostDetailsPage', () => {
     );
 
     expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
-      '11 Jan 2024, 13:30:00'
+      '11 Jan 2024, 13:30:00 +14:00'
     );
   });
 });

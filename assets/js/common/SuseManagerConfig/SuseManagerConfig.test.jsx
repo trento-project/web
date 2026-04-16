@@ -60,7 +60,9 @@ describe('SuseManagerConfig', () => {
       />
     );
 
-    expect(screen.getByText('Uploaded: 11 Jan 2024')).toBeInTheDocument();
+    expect(
+      screen.getByText('Uploaded: 11 Jan 2024 +14:00')
+    ).toBeInTheDocument();
   });
 
   it('allows testing connection', async () => {

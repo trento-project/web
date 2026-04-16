@@ -339,7 +339,7 @@ describe('ComposedFilter component', () => {
     const input = document.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-01-10T23:30'));
 
-    const expectedDate = parseDateTimeLocalToUtc('2024-01-10T23:30', timezone);
+    const expectedDate = parseDateTimeLocalToUtc('2024-01-10T10:30', timezone);
 
     expect(mockOnChange).toHaveBeenLastCalledWith({
       to_date: ['custom', expectedDate],

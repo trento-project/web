@@ -3,10 +3,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import {
-  DEFAULT_TIMEZONE,
-  DATE_DAY_MONTH_YEAR_FORMAT,
-} from '@lib/timezones';
+import { DEFAULT_TIMEZONE, DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import PatchList from '.';
@@ -67,6 +64,6 @@ describe('PatchList', () => {
 
     render(<PatchList patches={[patch]} timezone={timezone} />);
 
-    expect(screen.getByText('11 Jan 2024')).toBeVisible();
+    expect(screen.getByText('11 Jan 2024 +14:00')).toBeVisible();
   });
 });

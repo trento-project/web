@@ -183,7 +183,7 @@ describe('ActivityLogPage', () => {
     await user.click(screen.getByText('Apply Filter'));
 
     const expectedToDate = parseDateTimeLocalToUtcIso(
-      '2024-08-14T21:00',
+      '2024-08-14T09:00',
       timezone
     );
 

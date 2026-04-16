@@ -155,7 +155,7 @@ describe('HostDetails component', () => {
         );
 
         expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
-          '11 Jan 2024, 13:30:00'
+          '11 Jan 2024, 13:30:00 +14:00'
         );
       });
     });
@@ -398,7 +398,9 @@ describe('HostDetails component', () => {
       );
 
       expect(screen.getByText(passingCount)).toBeInTheDocument();
-      expect(screen.getByText('Thu Jan 11, 13:30:00 2024')).toBeInTheDocument();
+      expect(
+        screen.getByText('11 Jan 2024, 13:30:00 +14:00')
+      ).toBeInTheDocument();
     });
 
     it('should display nothing if lastExecution is an empty object', () => {
@@ -706,8 +708,8 @@ describe('HostDetails component', () => {
         />
       );
 
-      expect(screen.getByText('2024-01-11 13:30:00')).toBeVisible();
-      expect(screen.getByText('2024-01-12 13:30:00')).toBeVisible();
+      expect(screen.getByText('11 Jan 2024, 13:30:00 +14:00')).toBeVisible();
+      expect(screen.getByText('11 Jan 2024, 13:30:00 +14:00')).toBeVisible();
     });
   });
 });

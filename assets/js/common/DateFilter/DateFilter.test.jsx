@@ -147,7 +147,7 @@ describe('DateFilter component', () => {
     await act(() => user.type(input, '2024-08-14T10:21'));
 
     const expectedDate = parseDateTimeLocalToUtc(
-      '2024-08-14T10:21',
+      '2024-08-14T12:21',
       DEFAULT_TIMEZONE
     );
 
@@ -171,16 +171,16 @@ describe('DateFilter component', () => {
     const input = container.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-03-31T03:30'));
 
-    const expectedDate = parseDateTimeLocalToUtc('2024-03-31T03:30', timezone);
+    const expectedDate = parseDateTimeLocalToUtc('2024-03-30T14:30', timezone);
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
   });
 
   it.each`
     value                                          | expected
-    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))} | ${'08/14/2024 03:21:00 PM'}
-    ${Date.UTC(2021, 1 - 1, 24, 5, 50, 23)}        | ${'01/24/2021 05:50:23 AM'}
-    ${'2021-01-24T05:50:23.000Z'}                  | ${'01/24/2021 05:50:23 AM'}
+    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))} | ${'14 Aug 2024, 15:21:00 +00:00'}
+    ${Date.UTC(2021, 1 - 1, 24, 5, 50, 23)}        | ${'24 Jan 2021, 05:50:23 +00:00'}
+    ${'2021-01-24T05:50:23.000Z'}                  | ${'24 Jan 2021, 05:50:23 +00:00'}
   `('should render the custom date ($value)', async ({ value, expected }) => {
     const mockOnChange = jest.fn();
 

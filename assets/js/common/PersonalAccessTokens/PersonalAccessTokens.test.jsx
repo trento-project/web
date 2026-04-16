@@ -7,13 +7,17 @@ import { tz } from '@date-fns/tz';
 import { faker } from '@faker-js/faker';
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 import { DEFAULT_TIMEZONE, DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
-
 import PersonalAccessTokens from './PersonalAccessTokens';
 
 describe('PersonalAccessTokens', () => {
   it('should show personal access tokens', () => {
     const tokens = personalAccessTokenFactory.buildList(3);
-    render(<PersonalAccessTokens personalAccessTokens={tokens} />);
+    render(
+      <PersonalAccessTokens
+        personalAccessTokens={tokens}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     expect(screen.getByText('Personal Access Tokens')).toBeInTheDocument();
 
@@ -30,7 +34,12 @@ describe('PersonalAccessTokens', () => {
   });
 
   it('should show an empty list of tokens', () => {
-    render(<PersonalAccessTokens personalAccessTokens={[]} />);
+    render(
+      <PersonalAccessTokens
+        personalAccessTokens={[]}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     expect(screen.getByText('No keys issued.')).toBeInTheDocument();
   });
@@ -39,7 +48,12 @@ describe('PersonalAccessTokens', () => {
     const token = personalAccessTokenFactory.build({
       expires_at: null,
     });
-    render(<PersonalAccessTokens personalAccessTokens={[token]} />);
+    render(
+      <PersonalAccessTokens
+        personalAccessTokens={[token]}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     expect(screen.getByText('Expires: Never')).toBeInTheDocument();
   });
@@ -58,14 +72,19 @@ describe('PersonalAccessTokens', () => {
       />
     );
 
-    expect(screen.getByText('Expires: 11 Jan 2024')).toBeInTheDocument();
+    expect(screen.getByText('Expires: 11 Jan 2024 +14:00')).toBeInTheDocument();
   });
 
   it('should show expired tokens with a red color', () => {
     const token = personalAccessTokenFactory.build({
       expires_at: formatISO(faker.date.past()),
     });
-    render(<PersonalAccessTokens personalAccessTokens={[token]} />);
+    render(
+      <PersonalAccessTokens
+        personalAccessTokens={[token]}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     expect(
       screen

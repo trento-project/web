@@ -87,8 +87,8 @@ describe('UsersPage', () => {
       });
     });
 
-    expect(await screen.findByText('January 11, 2024')).toBeVisible();
-    expect(await screen.findByText('January 12, 2024')).toBeVisible();
+    expect(await screen.findByText('11 Jan 2024 +14:00')).toBeVisible();
+    expect(await screen.findByText('12 Jan 2024 +14:00')).toBeVisible();
   });
 
   it('should render toast with failing message when fetching users failed', async () => {

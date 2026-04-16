@@ -89,7 +89,7 @@ describe('CheckResultsOverview component', () => {
     expect(screen.getByText(warning_count)).toBeVisible();
     expect(screen.getByText('Critical')).toBeVisible();
     expect(screen.getByText(critical_count)).toBeVisible();
-    expect(screen.getByText('Wed Jan 10, 23:30:00 2024')).toBeVisible();
+    expect(screen.getByText('10 Jan 2024, 23:30:00 +00:00')).toBeVisible();
   });
 
   it('should display completion time using provided timezone', () => {
@@ -111,6 +111,6 @@ describe('CheckResultsOverview component', () => {
     );
 
     // UTC+14 shifts this timestamp to the next day: 10 Jan -> 11 Jan.
-    expect(screen.getByText('Thu Jan 11, 13:30:00 2024')).toBeVisible();
+    expect(screen.getByText('11 Jan 2024, 13:30:00 +14:00')).toBeVisible();
   });
 });
