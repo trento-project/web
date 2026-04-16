@@ -8,7 +8,7 @@ import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
 import { format as formatDate, parseISO, subDays, subHours } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import {
-  DATETIME_US_12H_FORMAT,
+  DATETIME_DAY_MONTH_24H_FORMAT,
   DATETIME_ISO_LOCAL_MILLIS_FORMAT,
 } from '@lib/timezones';
 
@@ -26,7 +26,7 @@ const toHumanDate = (date, timezone) => {
     return null;
   }
 
-  return formatDate(date, DATETIME_US_12H_FORMAT, { in: tz(timezone) });
+  return formatDate(date, DATETIME_DAY_MONTH_24H_FORMAT, { in: tz(timezone) });
 };
 
 const renderOptionItem = (option, placeholder) => {
