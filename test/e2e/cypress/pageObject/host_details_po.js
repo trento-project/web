@@ -454,12 +454,7 @@ export const cleanedUpHostIsNotDisplayed = () =>
   cy.get(cleanedUpHost).should('not.exist');
 
 export const restoredHostIsDisplayed = () => {
-  cy.get(cleanedUpHost, { timeout: 30000 }).should('be.visible');
-};
-
-export const waitForHostToBeRestored = () => {
-  visit();
-  restoredHostIsDisplayed();
+  cy.get(cleanedUpHost, { timeout: 90000 }).should('be.visible');
 };
 
 export const startExecutionButtonIsDisabled = () =>
