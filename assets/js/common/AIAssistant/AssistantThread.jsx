@@ -11,10 +11,7 @@ import {
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
-import Button from '@common/Button';
 import Spinner from '@common/Spinner';
-import { EOS_AI, EOS_ARROW_UPWARD, EOS_PERSON } from 'eos-icons-react';
-import TooltipIconButton from './TooltipIconButton';
 
 function CustomMarkdownText(props) {
   return (
@@ -29,17 +26,17 @@ function CustomMarkdownText(props) {
 export function AssistantThread() {
   return (
     <ThreadPrimitive.Root
-      className="relative flex h-full flex-col bg-background text-sm"
+      className="relative flex h-full flex-col bg-transparent text-sm"
       style={{
         '--thread-max-width': '44rem',
         '--accent-color': '#30ba78',
         '--accent-foreground': '#ffffff',
       }}
     >
-      <NewThreadButton />
+      <ChatHeader />
       <ThreadPrimitive.Viewport
         turnAnchor="top"
-        className="relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth px-4 pt-4"
+        className="relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth px-4 pt-4 pb-4"
       >
         <AuiIf condition={({ thread }) => thread.isEmpty}>
           <ThreadWelcome />
@@ -53,8 +50,8 @@ export function AssistantThread() {
         />
 
         <ThreadSuggestions />
-        <div className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible bg-white">
-          <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mt-10 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible rounded-t-3xl pb-4">
+        <div className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible bg-gray-50 pt-4">
+          <ThreadPrimitive.ViewportFooter className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-4 overflow-visible pb-4">
             <Composer />
           </ThreadPrimitive.ViewportFooter>
         </div>
@@ -63,34 +60,35 @@ export function AssistantThread() {
   );
 }
 
-function NewThreadButton() {
+function ChatHeader() {
   const aui = useAui();
 
   return (
-    <Button
+    <div className="drag-handle flex items-center justify-between bg-jungle-green-500 px-4 py-4 text-white cursor-move">
+      <div className="flex items-center gap-3">
+        <div className="size-2 rounded-full bg-white opacity-90 ml-1" />
+        <div className="flex flex-col">
+          <span className="font-semibold text-lg leading-none">Liz</span>
+          <span className="text-xs opacity-90 mt-1">Online</span>
+        </div>
+      </div>
+      <button
+        onPointerDown={(e) => e.stopPropagation()}
       onClick={() => aui.threads().switchToNewThread()}
-      type="primary-white-fit"
-      size="small"
-      className="ml-auto mr-4 mt-4 flex items-center gap-2"
-    >
-      New Chat
-    </Button>
+        className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity cursor-pointer"
+      >
+        New chat
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+    </div>
   );
 }
 
 function ThreadWelcome() {
   return (
-    <div className="mx-auto my-auto flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
-      <div className="flex w-full flex-grow flex-col items-center justify-center">
-        <div className="flex size-full flex-col justify-center px-8">
-          <div className="text-2xl font-semibold">I&apos;m Liz</div>
-          <div className="text-2xl text-muted-foreground/65">
-            How can I help you today?
-          </div>
-        </div>
-      </div>
-      <div className="grid w-full gap-2 pb-4 md:grid-cols-2">
-        {/* Thread suggestions (ThreadPrimitive.Suggestion) could go here */}
+    <div className="mx-auto w-full max-w-[var(--thread-max-width)] py-2">
+      <div className="rounded-lg bg-gray-200/60 px-5 py-4 text-gray-800 text-base">
+        Ready to answer any questions you have.
       </div>
     </div>
   );
@@ -99,10 +97,10 @@ function ThreadWelcome() {
 function Composer() {
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
-      <ComposerPrimitive.AttachmentDropzone className="relative flex w-full flex-col rounded-3xl border-2 border-jungle-green-500 bg-background outline-none transition-all has-[textarea:focus-visible]:border-jungle-green-600 has-[textarea:focus-visible]:ring-2 has-[textarea:focus-visible]:ring-jungle-green-500/30 data-[dragging=true]:border-jungle-green-600 data-[dragging=true]:border-dashed data-[dragging=true]:bg-jungle-green-50 dark:data-[dragging=true]:bg-jungle-green-900/20">
+      <ComposerPrimitive.AttachmentDropzone className="relative flex w-full flex-col rounded-md border border-gray-300 bg-white outline-none transition-all focus-within:border-jungle-green-500 focus-within:ring-1 focus-within:ring-jungle-green-500">
         <ComposerPrimitive.Input
-          placeholder="Send a message..."
-          className="max-h-32 min-h-12 w-full resize-none bg-transparent px-4 py-3 pr-14 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-0"
+          placeholder="Ask my anything..."
+          className="max-h-32 min-h-12 w-full resize-none bg-transparent px-4 py-3 pr-20 text-base outline-none placeholder:text-gray-400 focus-visible:ring-0"
           rows={1}
           aria-label="Message input"
         />
@@ -114,46 +112,18 @@ function Composer() {
 
 function ComposerAction() {
   return (
-    <div className="absolute right-2 bottom-2">
+    <div className="absolute right-2 bottom-1.5">
       <AuiIf condition={({ thread }) => !thread.isRunning}>
         <ComposerPrimitive.Send asChild>
-          <TooltipIconButton
-            tooltip="Send message"
-            side="bottom"
+          <button
             type="submit"
-            variant="default"
-            size="icon"
-            className="size-8 rounded-full"
-            style={{
-              backgroundColor: 'var(--accent-color)',
-              color: 'var(--accent-foreground)',
-            }}
+            className="rounded-md bg-jungle-green-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-jungle-green-600 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             aria-label="Send message"
           >
-            <EOS_ARROW_UPWARD className="fill-white" />
-          </TooltipIconButton>
+            Send
+          </button>
         </ComposerPrimitive.Send>
       </AuiIf>
-
-      {/* Thread cancellation */}
-      {/* <AuiIf condition={({ thread }) => thread.isRunning}>
-        <ComposerPrimitive.Cancel asChild>
-          <TooltipIconButton
-            tooltip="Stop generating"
-            side="bottom"
-            variant="default"
-            size="icon"
-            className="size-8 rounded-full"
-            style={{
-              backgroundColor: 'var(--accent-color)',
-              color: 'var(--accent-foreground)',
-            }}
-            aria-label="Stop generating"
-          >
-            <EOS_STOP className='fill-white' />
-          </TooltipIconButton>
-        </ComposerPrimitive.Cancel>
-      </AuiIf> */}
     </div>
   );
 }
@@ -161,46 +131,27 @@ function ComposerAction() {
 function UserMessage() {
   return (
     <MessagePrimitive.Root
-      className="mx-auto grid w-full max-w-[var(--thread-max-width)] auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] content-start gap-y-2 px-2 py-4 fade-in slide-in-from-bottom-1 animate-in duration-150"
+      className="mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150"
       data-role="user"
     >
-      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-jungle-green-500/10">
-        <EOS_PERSON className="fill-jungle-green-600 dark:fill-jungle-green-400" />
-      </div>
-      <div className="relative col-start-2 min-w-0">
-        <div className="rounded-3xl bg-green-100 px-4 py-2.5 break-words text-foreground">
+      <div className="rounded-lg bg-[#e8f5ef] px-5 py-4">
+        <div className="mb-1.5 font-semibold text-[#208b57] text-base">You</div>
+        <div className="break-words text-gray-800 text-base">
           <MessagePrimitive.Parts />
-        </div>
-        <div className="absolute top-1/2 left-0 -translate-x-full -translate-y-1/2 pr-2">
-          <UserActionBar />
         </div>
       </div>
     </MessagePrimitive.Root>
   );
 }
 
-function UserActionBar() {
-  return (
-    <ActionBarPrimitive.Root
-      hideWhenRunning
-      autohide="not-last"
-      className="flex flex-col items-end"
-    ></ActionBarPrimitive.Root>
-  );
-}
-
 function AssistantMessage() {
   return (
     <MessagePrimitive.Root
-      className="relative mx-auto w-full max-w-[var(--thread-max-width)] py-4 fade-in slide-in-from-bottom-1 animate-in duration-150"
+      className="mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150"
       data-role="assistant"
     >
-      <div className="flex gap-3">
-        <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-jungle-green-500/10 flex-shrink-0">
-          <EOS_AI className="fill-jungle-green-600 dark:fill-jungle-green-400" />
-        </div>
-        <div className="flex-1 rounded-2xl bg-green-100 px-4 py-3">
-          <div className="break-words leading-relaxed text-foreground">
+      <div className="rounded-lg bg-white px-5 py-4 shadow-sm">
+        <div className="break-words text-gray-800 text-base leading-relaxed">
             <MessagePrimitive.Parts
               components={{
                 Text: CustomMarkdownText,
@@ -213,12 +164,11 @@ function AssistantMessage() {
                 thread.isRunning && message.content.length === 0
               }
             >
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <div className="flex items-center gap-2 text-muted-foreground mt-2">
                 <Spinner />
                 <span className="text-sm">Thinking...</span>
               </div>
             </AuiIf>
-          </div>
         </div>
       </div>
     </MessagePrimitive.Root>
@@ -228,21 +178,7 @@ function AssistantMessage() {
 function ThreadSuggestions() {
   return (
     <AuiIf condition={({ thread }) => !thread.isRunning && !thread.isEmpty}>
-      <div className="mx-auto mt-4 flex w-full max-w-[var(--thread-max-width)] flex-wrap gap-2 px-2 mb-2">
-        {/* <ThreadPrimitive.Suggestion prompt="Tell me more" asChild>
-          <button className="rounded-full bg-green-100 px-3 py-1 text-sm hover:bg-green-200 cursor-pointer transition-colors">
-            Tell me more
-          </button>
-        </ThreadPrimitive.Suggestion>
-        <ThreadPrimitive.Suggestion
-          prompt="Can you explain differently?"
-          asChild
-        >
-          <button className="rounded-full bg-green-100 px-3 py-1 text-sm hover:bg-green-200 cursor-pointer transition-colors">
-            Explain differently
-          </button>
-        </ThreadPrimitive.Suggestion> */}
-      </div>
+      <div className="mx-auto mt-4 flex w-full max-w-[var(--thread-max-width)] flex-wrap gap-2 px-2 mb-2" />
     </AuiIf>
   );
 }
@@ -250,7 +186,7 @@ function ThreadSuggestions() {
 function MessageError() {
   return (
     <MessagePrimitive.Error>
-      <ErrorPrimitive.Root className="mt-2 rounded-full border border-destructive bg-destructive/10 p-3 text-destructive text-sm dark:bg-destructive/5 dark:text-red-200">
+      <ErrorPrimitive.Root className="mt-2 rounded-md border border-destructive bg-destructive/10 p-3 text-destructive text-sm dark:bg-destructive/5 dark:text-red-200">
         <ErrorPrimitive.Message className="line-clamp-2" />
       </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
