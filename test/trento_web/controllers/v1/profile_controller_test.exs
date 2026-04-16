@@ -68,7 +68,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
   test "should update the profile with allowed fields", %{
     conn: conn,
     api_spec: api_spec,
-    user: %{id: user_id, password: current_password, timezone: "Etc/UTC"}
+    user: %{id: user_id, password: current_password}
   } do
     %{fullname: fullname, email: email} =
       valid_params = %{
@@ -77,7 +77,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
         password: "testpassword89",
         current_password: current_password,
         password_confirmation: "testpassword89",
-        timezone: "Europe/Berlin"
+        timezone: "Europe/Moscow"
       }
 
     resp =
@@ -87,18 +87,18 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
       |> json_response(:ok)
       |> assert_schema("UserProfileV1", api_spec)
 
-    assert %{id: ^user_id, fullname: ^fullname, email: ^email, timezone: "Europe/Berlin"} = resp
+    assert %{id: ^user_id, fullname: ^fullname, email: ^email, timezone: "Europe/Moscow"} = resp
   end
 
   test "should update the profile with allowed fields when SSO is enabled", %{
     conn: conn,
     api_spec: api_spec,
-    user: %{id: user_id, timezone: "Etc/UTC"}
+    user: %{id: user_id}
   } do
     valid_params = %{
       analytics_enabled: true,
       analytics_eula_accepted: true,
-      timezone: "Europe/Berlin"
+      timezone: "Asia/Tokyo"
     }
 
     Application.put_env(:trento, :oidc, enabled: true)
@@ -116,7 +116,7 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
              id: ^user_id,
              analytics_enabled: true,
              analytics_eula_accepted: true,
-             timezone: "Europe/Berlin"
+             timezone: "Asia/Tokyo"
            } = resp
   end
 
