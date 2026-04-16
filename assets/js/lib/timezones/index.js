@@ -11,8 +11,9 @@ export const DATETIME_MONTH_NAME_24H_FORMAT = 'MMMM dd, yyyy, HH:mm:ss';
 export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
 export const DATETIME_WEEKDAY_SHORT_24H_FORMAT = 'iii MMM dd, HH:mm:ss y';
 export const DATETIME_WEEKDAY_NO_COMMA_24H_FORMAT = 'iii MMM dd HH:mm:ss yyyy';
+
 export const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy';
-export const DATE_MONTH_NAME_YEAR_FORMAT = 'MMMM dd, yyyy';
+
 export const TIME_24H_HH_MM_FORMAT = 'HH:mm';
 
 /**

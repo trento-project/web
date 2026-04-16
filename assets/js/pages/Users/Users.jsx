@@ -5,7 +5,7 @@ import { noop } from 'lodash';
 import { isAdmin } from '@lib/model/users';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATE_MONTH_NAME_YEAR_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import Banner from '@common/Banners';
 import Button from '@common/Button';
@@ -63,7 +63,7 @@ function Users({
         key: 'created_at',
         render: (content, item) => (
           <span>
-            {formatDate(item.created_at, DATE_MONTH_NAME_YEAR_FORMAT, {
+            {formatDate(item.created_at, DATE_DAY_MONTH_YEAR_FORMAT, {
               in: tz(timezone),
             })}
           </span>
@@ -77,7 +77,7 @@ function Users({
               render: (content) => (
                 <span>
                   {content
-                    ? formatDate(content, DATE_MONTH_NAME_YEAR_FORMAT, {
+                    ? formatDate(content, DATE_DAY_MONTH_YEAR_FORMAT, {
                         in: tz(timezone),
                       })
                     : '-'}

@@ -2,7 +2,7 @@ import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import {
   DATE_DAY_MONTH_YEAR_FORMAT,
-  DATE_MONTH_NAME_YEAR_FORMAT,
+  DATE_DAY_MONTH_YEAR_FORMAT,
   DATETIME_ISO_SQL_FORMAT,
   DATETIME_US_12H_FORMAT,
   DATETIME_ISO_LOCAL_MILLIS_FORMAT,
@@ -47,9 +47,6 @@ describe('timezone format constants', () => {
     );
     expect(formatInDefaultTimezone(DATE_DAY_MONTH_YEAR_FORMAT)).toBe(
       '04 Aug 2024'
-    );
-    expect(formatInDefaultTimezone(DATE_MONTH_NAME_YEAR_FORMAT)).toBe(
-      'August 04, 2024'
     );
     expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21');
   });
