@@ -64,6 +64,7 @@ describe('SaptuneSolutionOperationModal', () => {
     await user.click(screen.getByText('NETWEAVER'));
 
     await user.click(screen.getByText('Cancel'));
+    screen.debug()
 
     await act(async () =>
       rerender(
@@ -176,9 +177,9 @@ describe('SaptuneSolutionOperationModal', () => {
       />
     );
 
-    expect(screen.getByRole('button', { name: 'HANA' })).toBeInTheDocument();
+    expect(screen.getByText('HANA')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: 'HANA' }));
+    await user.click(screen.getByRole('combobox', { name: 'solutions'}));
 
     expect(
       screen.queryByText('Select a saptune solution')
@@ -197,7 +198,7 @@ describe('SaptuneSolutionOperationModal', () => {
       />
     );
 
-    await user.click(screen.getByRole('button', { name: 'HANA' }));
+    await user.click(screen.getByRole('combobox', { name: 'solutions'}));
 
     expect(screen.getByRole('option', { name: 'HANA' })).toHaveAttribute(
       'aria-disabled',

@@ -157,8 +157,8 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
 
   return (
     <Select
-      disabled={disabled}
-      optionsName="refresh-rate"
+      isDisabled={disabled}
+      aria-label="refresh-rate"
       options={refreshRateOptions}
       values={[refreshRate]}
       renderOption={createOptionRenderer(null, (value) => (

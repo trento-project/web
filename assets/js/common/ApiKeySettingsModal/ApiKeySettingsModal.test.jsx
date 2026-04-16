@@ -34,9 +34,9 @@ describe('ApiKeySettingsModal', () => {
       expect(screen.getByRole('spinbutton')).toBeVisible();
       expect(screen.getByRole('button', { name: 'Generate' })).toBeVisible();
       expect(screen.getByRole('button', { name: 'Close' })).toBeVisible();
-      expect(screen.getByRole('button', { name: 'months' })).toBeVisible();
+      expect(screen.getByText('months')).toBeVisible();
 
-      await user.click(screen.getByRole('button', { name: 'months' }));
+      await user.click(screen.getByRole('combobox', { name: 'key-expiration-time'}));
 
       expect(screen.getByRole('listbox')).toBeVisible();
       expect(screen.getAllByRole('option')).toHaveLength(3);
@@ -114,8 +114,7 @@ describe('ApiKeySettingsModal', () => {
 
       await user.type(screen.getByRole('spinbutton'), '2');
 
-      // months are default click on the select to show all the details
-      await user.click(screen.getByRole('button', { name: 'months' }));
+      await user.click(screen.getByRole('combobox', { name: 'key-expiration-time'}));
 
       await user.click(screen.getByRole('option', { name: 'years' }));
 
@@ -148,8 +147,7 @@ describe('ApiKeySettingsModal', () => {
 
       await user.type(screen.getByRole('spinbutton'), '20');
 
-      // months are default click on the select to show all the details
-      await user.click(screen.getByRole('button', { name: 'months' }));
+      await user.click(screen.getByRole('combobox', { name: 'key-expiration-time'}));
 
       await user.click(screen.getByRole('option', { name: 'days' }));
 
@@ -188,7 +186,7 @@ describe('ApiKeySettingsModal', () => {
 
       expect(screen.getByRole('spinbutton')).toBeDisabled();
 
-      expect(screen.getByRole('button', { name: 'months' })).toBeDisabled();
+      expect(screen.getByRole('combobox', { name: 'key-expiration-time'})).toBeDisabled();
     });
 
     it('should return on onGenerate null expiration date when the generation form is disabled by the user', async () => {

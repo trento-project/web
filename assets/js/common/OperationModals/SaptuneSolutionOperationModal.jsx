@@ -94,8 +94,9 @@ function SaptuneSolutionOperationModal({
         </p>
         <Select
           className="ml-auto !w-2/3"
-          optionsName="solutions"
+          aria-label="solutions"
           options={availableSolutions}
+          value={{value: solution, label: solution}}
           values={[solution]}
           onChange={setSolution}
         />

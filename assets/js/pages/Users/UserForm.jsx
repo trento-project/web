@@ -260,7 +260,7 @@ function UserForm({
           <div className="col-start-3 col-span-4">
             <Select
               className="w-full"
-              optionsName="status"
+              aria-label="status"
               options={['Enabled', 'Disabled']}
               values={[statusState]}
               onChange={setStatus}
@@ -280,7 +280,7 @@ function UserForm({
                   <div className="col-start-3 col-span-4">
                     <Select
                       className="w-full"
-                      optionsName="totp"
+                      aria-label="totp"
                       options={[
                         {
                           value: 'Enabled',

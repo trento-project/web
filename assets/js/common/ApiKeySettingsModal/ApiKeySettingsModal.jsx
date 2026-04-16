@@ -128,9 +128,9 @@ function ApiKeySettingsModal({
               <div className="w-2/4">
                 <Select
                   className="min-w-24 max-w-fit"
-                  optionsName=""
+                  aria-label="key-expiration-time"
                   options={timeOptions}
-                  disabled={apiKeyNeverExpires}
+                  isDisabled={apiKeyNeverExpires}
                   values={[timeQuantityType]}
                   onChange={setTimeQuantityType}
                 />

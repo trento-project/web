@@ -100,9 +100,9 @@ function GenerateTokenModal({
         <div className="col-span-3">
           <Select
             className=""
-            optionsName=""
+            aria-label="generate-key-expiration-time"
             options={timeOptions}
-            disabled={tokenNeverExpires}
+            isDisabled={tokenNeverExpires}
             values={[timeQuantityType]}
             onChange={setTimeQuantityType}
           />

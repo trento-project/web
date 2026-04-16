@@ -101,7 +101,7 @@ function ChecksCatalog({
 
   const filters = [
     {
-      optionsName: 'targets',
+      "aria-label": 'targets',
       options: targetTypes.map((targetType) => ({
         label: targetType,
         value: targetType,
@@ -112,7 +112,7 @@ function ChecksCatalog({
       onChange: onTargetTypeChange,
     },
     {
-      optionsName: 'cluster-types',
+      "aria-label": 'cluster-types',
       options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
         label: { type, hanaScenario },
         value: { type, hanaScenario },
@@ -127,14 +127,14 @@ function ChecksCatalog({
       isDisabled: selectedTargetType !== TARGET_CLUSTER,
     },
     {
-      optionsName: 'providers',
+      "aria-label": 'providers',
       options: providers,
       renderOption: providerOptionRenderer,
       values: [selectedProvider],
       onChange: setProviderSelected,
     },
     {
-      optionsName: 'architecture',
+      "aria-label": 'architecture',
       options: architectures,
       renderOption: architectureOptionRenderer,
       values: [selectedArchitecture],
@@ -177,7 +177,7 @@ function ChecksCatalog({
         </PageHeader>
         {filters.map((filterProps) => (
           <Select
-            key={filterProps.optionsName}
+            key={filterProps["aria-label"]}
             className="ml-auto pb-4 min-w-48 max-w-fit"
             {...filterProps}
             options={[OPTION_ALL, ...filterProps.options]}
