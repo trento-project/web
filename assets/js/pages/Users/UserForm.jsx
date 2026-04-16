@@ -4,7 +4,7 @@ import { noop } from 'lodash';
 import Button from '@common/Button';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_LOCALE_LONG_FORMAT, DEFAULT_TIMEZONE } from '@lib/timezones';
+import { DATETIME_DAY_MONTH_24H_FORMAT, DEFAULT_TIMEZONE } from '@lib/timezones';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
@@ -346,20 +346,20 @@ function UserForm({
                 <>
                   <Label className="col-start-1 col-span-2">Created</Label>
                   <span className="col-start-3 col-span-4">
-                    {formatDate(createdAt, DATETIME_LOCALE_LONG_FORMAT, {
+                    {formatDate(createdAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                       in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Updated</Label>
                   <span className="col-start-3 col-span-4">
-                    {formatDate(updatedAt, DATETIME_LOCALE_LONG_FORMAT, {
+                    {formatDate(updatedAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                       in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Last Login</Label>
                   <span className="col-start-3 col-span-4">
                     {lastLoginAt
-                      ? formatDate(lastLoginAt, DATETIME_LOCALE_LONG_FORMAT, {
+                      ? formatDate(lastLoginAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                           in: tz(timezone),
                         })
                       : '-'}

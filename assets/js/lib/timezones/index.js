@@ -6,7 +6,6 @@ export const DEFAULT_TIMEZONE = 'Etc/UTC';
 export const DATETIME_ISO_SQL_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 export const DATETIME_US_12H_FORMAT = 'MM/dd/yyyy hh:mm:ss a';
 export const DATETIME_ISO_LOCAL_MILLIS_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-export const DATETIME_LOCALE_LONG_FORMAT = 'PPpp';
 export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
 export const DATETIME_WEEKDAY_SHORT_24H_FORMAT = 'iii MMM dd, HH:mm:ss y';
 

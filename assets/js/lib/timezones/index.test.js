@@ -5,8 +5,6 @@ import {
   DATETIME_ISO_SQL_FORMAT,
   DATETIME_US_12H_FORMAT,
   DATETIME_ISO_LOCAL_MILLIS_FORMAT,
-  DATETIME_LOCALE_LONG_FORMAT,
-  DATETIME_MONTH_NAME_24H_FORMAT,
   DATETIME_DAY_MONTH_24H_FORMAT,
   DATETIME_WEEKDAY_SHORT_24H_FORMAT,
   DEFAULT_TIMEZONE,
@@ -27,9 +25,6 @@ describe('timezone format constants', () => {
     );
     expect(formatInDefaultTimezone(DATETIME_ISO_LOCAL_MILLIS_FORMAT)).toBe(
       '2024-08-04T10:21:00.123'
-    );
-    expect(formatInDefaultTimezone(DATETIME_LOCALE_LONG_FORMAT)).toBe(
-      'Aug 4, 2024, 10:21:00 AM'
     );
     expect(formatInDefaultTimezone(DATETIME_DAY_MONTH_24H_FORMAT)).toBe(
       '04 Aug 2024, 10:21:00'
