@@ -25,7 +25,7 @@ env:
   ELIXIR_BC: "1.15.7-otp-26"
   ERLANG_BC: "26.2.1"
   NODEJS_BC: "20.20.0"
-  OPENAPI_DIFF_VERSION: "2.0.1" # https://github.com/OpenAPITools/openapi-diff/releases
+  OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
   K3S_VERSION: "v1.31.2+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
   CERT_MANAGER_VERSION: "v1.14.5" # https://github.com/cert-manager/cert-manager/releases
