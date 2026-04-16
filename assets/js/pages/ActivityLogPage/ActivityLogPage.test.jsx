@@ -143,7 +143,9 @@ describe('ActivityLogPage', () => {
         );
         await act(() => renderWithRouter(StatefulActivityLogPage));
 
-        const autorefreshButton = screen.getByRole('combobox', { name: 'refresh-rate' });
+        const autorefreshButton = screen.getByRole('combobox', {
+          name: 'refresh-rate',
+        });
 
         isEnabled
           ? expect(autorefreshButton).toBeEnabled()

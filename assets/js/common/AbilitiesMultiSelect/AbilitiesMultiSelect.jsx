@@ -116,7 +116,7 @@ function AbilitiesMultiSelect({
       isClearable
       aria-label="permissions"
       placeholder={placeholder}
-      values={mapAbilities(userAbilities, operationsEnabled)}
+      initialValues={mapAbilities(userAbilities, operationsEnabled)}
       options={mapAbilities(abilities, operationsEnabled)}
       onChange={setAbilities}
       getOptionValue={(option) => option.value.toString()}

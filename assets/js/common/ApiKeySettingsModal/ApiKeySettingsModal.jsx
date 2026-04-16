@@ -131,7 +131,7 @@ function ApiKeySettingsModal({
                   aria-label="key-expiration-time"
                   options={timeOptions}
                   isDisabled={apiKeyNeverExpires}
-                  values={[timeQuantityType]}
+                  initialValues={[timeQuantityType]}
                   onChange={setTimeQuantityType}
                 />
               </div>

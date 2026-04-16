@@ -51,7 +51,7 @@ function ItemsPerPageSelector({
         <Select
           className="min-w-20 max-w-fit"
           options={itemsPerPageOptions}
-          values={[currentItemsPerPage]}
+          initialValues={[currentItemsPerPage]}
           onChange={onChange}
           menuPlacement="top"
         />

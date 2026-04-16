@@ -43,7 +43,9 @@ describe('HostRelevantPatchesPage', () => {
         <HostRelevantPatchesPage hostName={host.hostname} patches={patches} />
       );
 
-      const advisorySelect = screen.getByRole('combobox', { name: 'advisories' });
+      const advisorySelect = screen.getByRole('combobox', {
+        name: 'advisories',
+      });
       await user.click(advisorySelect);
 
       expect(screen.getByRole('option', { name: 'all' })).toBeVisible();
@@ -106,7 +108,9 @@ describe('HostRelevantPatchesPage', () => {
 
       render(<HostRelevantPatchesPage patches={patches} />);
 
-      const advisorySelect = screen.getByRole('combobox', { name: 'advisories' });
+      const advisorySelect = screen.getByRole('combobox', {
+        name: 'advisories',
+      });
       await user.click(advisorySelect);
       const advisoryOption = screen.getByRole('option', { name: filteredType });
       await user.click(advisoryOption);

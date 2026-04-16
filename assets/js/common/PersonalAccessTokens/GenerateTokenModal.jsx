@@ -103,7 +103,7 @@ function GenerateTokenModal({
             aria-label="generate-key-expiration-time"
             options={timeOptions}
             isDisabled={tokenNeverExpires}
-            values={[timeQuantityType]}
+            initialValues={[timeQuantityType]}
             onChange={setTimeQuantityType}
           />
         </div>

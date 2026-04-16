@@ -48,7 +48,7 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
           className="min-w-24 max-w-fit"
           aria-label="time"
           options={timeUnitOptions}
-          values={[time.unit || defaultTimeUnit]}
+          initialValues={[time.unit || defaultTimeUnit]}
           error={error}
           onChange={(unit) => {
             const newTime = { ...time, unit };

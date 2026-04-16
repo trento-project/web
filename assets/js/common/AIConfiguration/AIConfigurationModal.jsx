@@ -127,7 +127,7 @@ function AIConfigurationModal({
           <div className="col-start-3 col-span-6">
             <Select
               aria-label="ai-provider"
-              values={[provider]}
+              initialValues={[provider]}
               options={getProviderOptions(aiProviders)}
               renderOption={providerOptionRenderer}
               onChange={(value) => {
@@ -146,7 +146,7 @@ function AIConfigurationModal({
           <div className="col-start-3 col-span-6">
             <Select
               aria-label="ai-model"
-              value={{value: model, label: model}}
+              value={{ value: model, label: model }}
               options={provider ? getModelOptions(aiProviders, provider) : []}
               renderOption={modelOptionRenderer}
               onChange={setModel}

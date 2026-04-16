@@ -262,7 +262,7 @@ function UserForm({
               className="w-full"
               aria-label="status"
               options={['Enabled', 'Disabled']}
-              values={[statusState]}
+              initialValues={[statusState]}
               onChange={setStatus}
             />
           </div>
@@ -289,7 +289,7 @@ function UserForm({
                         },
                         'Disabled',
                       ]}
-                      values={[totpState ? 'Enabled' : 'Disabled']}
+                      initialValues={[totpState ? 'Enabled' : 'Disabled']}
                       onChange={(state) => {
                         setTotpState(state === 'Enabled');
                       }}

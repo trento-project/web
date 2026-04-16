@@ -101,18 +101,18 @@ function ChecksCatalog({
 
   const filters = [
     {
-      "aria-label": 'targets',
+      'aria-label': 'targets',
       options: targetTypes.map((targetType) => ({
         label: targetType,
         value: targetType,
         isDisabled: !hasChecksForTarget(completeCatalog, targetType),
       })),
       renderOption: targetTypeOptionRenderer,
-      values: [selectedTargetType],
+      initialValues: [selectedTargetType],
       onChange: onTargetTypeChange,
     },
     {
-      "aria-label": 'cluster-types',
+      'aria-label': 'cluster-types',
       options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
         label: { type, hanaScenario },
         value: { type, hanaScenario },
@@ -122,22 +122,22 @@ function ChecksCatalog({
           !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
-      values: [selectedClusterType],
+      initialValues: [selectedClusterType],
       onChange: setSelectedClusterType,
       isDisabled: selectedTargetType !== TARGET_CLUSTER,
     },
     {
-      "aria-label": 'providers',
+      'aria-label': 'providers',
       options: providers,
       renderOption: providerOptionRenderer,
-      values: [selectedProvider],
+      initialValues: [selectedProvider],
       onChange: setProviderSelected,
     },
     {
-      "aria-label": 'architecture',
+      'aria-label': 'architecture',
       options: architectures,
       renderOption: architectureOptionRenderer,
-      values: [selectedArchitecture],
+      initialValues: [selectedArchitecture],
       onChange: setSelectedArchitecture,
       isDisabled: selectedTargetType !== TARGET_HOST,
     },
@@ -177,7 +177,7 @@ function ChecksCatalog({
         </PageHeader>
         {filters.map((filterProps) => (
           <Select
-            key={filterProps["aria-label"]}
+            key={filterProps['aria-label']}
             className="ml-auto pb-4 min-w-48 max-w-fit"
             {...filterProps}
             options={[OPTION_ALL, ...filterProps.options]}

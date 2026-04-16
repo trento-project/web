@@ -123,7 +123,7 @@ const formatOptionLabel =
 
 function Select({
   options,
-  values = [],
+  initialValues = [],
   components = defaultComponents,
   selectClassNames = defaultClassNames,
   isMulti = false,
@@ -147,7 +147,7 @@ function Select({
 
   return (
     <ReactSelect
-      defaultValue={composeOpts(values)}
+      defaultValue={composeOpts(initialValues)}
       options={composeOpts(options)}
       classNames={selectClassNames}
       components={components}

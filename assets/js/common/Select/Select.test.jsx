@@ -37,7 +37,7 @@ describe('Select Component', () => {
   });
 
   it('should display initial single value', () => {
-    render(<Select options={options} values={[options[0]]} />);
+    render(<Select options={options} initialValues={[options[0]]} />);
 
     expect(screen.getByText(options[0].label)).toBeVisible();
   });
@@ -45,7 +45,7 @@ describe('Select Component', () => {
   it('should display initial values in multi-select option', () => {
     const values = options.slice(0, 1);
 
-    render(<Select options={options} values={values} isMulti />);
+    render(<Select options={options} initialValues={values} isMulti />);
 
     expect(screen.getByText(values[0].label)).toBeVisible();
   });
@@ -114,7 +114,7 @@ describe('Select Component', () => {
       'option3',
     ];
 
-    render(<Select options={optionsWithDisabled} values={['all']} />);
+    render(<Select options={optionsWithDisabled} initialValues={['all']} />);
 
     await user.click(screen.getByText('all'));
     expect(screen.getByText('option1')).toHaveAttribute(
@@ -138,9 +138,8 @@ describe('Select Component', () => {
 
     render(
       <Select
-        optionsName="foobars"
         options={['all', ...simpleOptions]}
-        values={['all']}
+        initialValues={['all']}
         renderOption={optionRenderer}
       />
     );

@@ -15,9 +15,10 @@ export default {
         type: 'array',
       },
     },
-    values: {
+    initialValues: {
       type: 'array',
-      description: 'Initially selected values',
+      description:
+        'Initially selected values. Used only to prepopulate the select on mount',
       control: {
         type: 'array',
       },
@@ -101,7 +102,7 @@ export const WithTooltip = {
 export const WithInitialValues = {
   args: {
     ...Default.args,
-    values: [options[0]],
+    initialValues: [options[0]],
   },
 };
 
@@ -131,7 +132,7 @@ export const ProviderSelectionSample = {
   args: {
     ...Default.args,
     options: ['all', ...providers],
-    values: ['all'],
+    initialValues: ['all'],
     renderOption: providerOptionRenderer,
   },
 };
@@ -154,7 +155,6 @@ export const WithDisabledOption = {
   args: {
     ...Default.args,
     options: ['all', ...disabledOptions],
-    value: 'baz',
   },
 };
 
