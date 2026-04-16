@@ -4826,5 +4826,33 @@
         "score": 0.04751
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-16T04:17:40Z",
+    "commit": "116041531559de669d60a9c31a82770a55a6973a",
+    "run_id": "24491207415",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "search::should not match not included words",
+        "score": 0.07001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.02501
+      }
+    ]
   }
 ]
