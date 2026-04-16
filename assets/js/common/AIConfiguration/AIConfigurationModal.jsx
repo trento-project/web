@@ -150,7 +150,7 @@ function AIConfigurationModal({
               options={provider ? getModelOptions(aiProviders, provider) : []}
               renderOption={modelOptionRenderer}
               onChange={setModel}
-              disabled={!provider || saving}
+              isDisabled={!provider || saving}
             />
           </div>
 

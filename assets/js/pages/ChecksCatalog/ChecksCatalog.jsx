@@ -134,7 +134,7 @@ function ChecksCatalog({
       onChange: setProviderSelected,
     },
     {
-      'aria-label': 'architecture',
+      'aria-label': 'architectures',
       options: architectures,
       renderOption: architectureOptionRenderer,
       initialValues: [selectedArchitecture],

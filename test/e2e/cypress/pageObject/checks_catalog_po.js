@@ -15,10 +15,18 @@ const checkPanels = '.check-panel';
 
 const targetIcon = 'div[aria-label="accordion-panel"] span span:nth-child(1)';
 
-const providersSelectionDropdown = 'button.providers-selection-dropdown';
-const targetsSelectionDropdown = 'button.targets-selection-dropdown';
-const clusterTypesSelectionDropdown = 'button.cluster-types-selection-dropdown';
-const architectureSelectionDropdown = 'button.architecture-selection-dropdown';
+const providersSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="providers"]'
+);
+const targetsSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="targets"]'
+);
+const clusterTypesSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="cluster-types"]'
+);
+const architectureSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="architectures"]'
+);
 
 const dropdownSelectedIcon =
   '.absolute.inset-y-0.right-2.end-1.flex.items-center.pl-3.text-green-600';
@@ -60,9 +68,7 @@ const catalog = [...group1, ...group2, ...group3];
 const selectFromCatalogDropdown = (dropdownElementSelector, choice) => {
   cy.get(dropdownElementSelector).click();
   cy.get(dropdownSelectedIcon).should('be.visible');
-  return cy
-    .get(`${dropdownElementSelector} + div div:contains("${choice}")`)
-    .click();
+  return cy.get(`${basePage.selectOptions}:contains("${choice}")`).click();
 };
 
 export const visit = () => basePage.visit(url);

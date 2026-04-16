@@ -114,10 +114,15 @@ export const typeNextGeneratedTotpCode = (
   });
 };
 
+export const selectOptions = '[role="listbox"] [role="option"]';
+
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();
-  return cy.get(`${selector} + div div:contains("${choice}")`).click();
+  return cy.get(`${selectOptions}:contains("${choice}")`).click();
 };
+
+export const getSelectControlValue = (ariaLabel) =>
+  `div:has(> ${ariaLabel}) [class$="-singleValue"]`;
 
 export const clickOutside = () => cy.get('body').click();
 

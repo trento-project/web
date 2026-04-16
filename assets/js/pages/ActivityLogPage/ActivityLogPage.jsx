@@ -160,6 +160,7 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
       isDisabled={disabled}
       aria-label="refresh-rate"
       options={refreshRateOptions}
+      value={refreshRate}
       initialValues={[refreshRate]}
       renderOption={createOptionRenderer(null, (value) => (
         <span className="text-center block">

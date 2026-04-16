@@ -48,12 +48,14 @@ const newTotpCodeInputField = 'input[placeholder="TOTP code"]';
 const verifyTotpButton = 'button:contains("Verify")';
 const confirmDisableTotpButton =
   'div[id*="headlessui-dialog-panel"] button:contains("Disable")';
-const editUserTotpDropdown = 'button.totp-selection-dropdown';
-const enableUserTotpOption = `${editUserTotpDropdown} + div div:contains("Enabled")`;
+const editUserTotpDropdown = basePage.getSelectControlValue(
+  '[aria-label="totp-status"]'
+);
+const enableUserTotpOption = `${basePage.selectOptions}:contains("Enabled")`;
 const usersListAdminUser = `a:contains("${basePage.adminUser.username}")`;
 const usersListPlainUser = `a:contains("${basePage.plainUser.username}")`;
 const permissionsDropdown = 'label:contains("Permissions") + div';
-const statusDropdown = 'button.status-selection-dropdown';
+const statusDropdown = basePage.getSelectControlValue('[aria-label="status"]');
 const removePermissionButton = 'div[aria-label*="Remove"] svg';
 const permissionsInputField =
   'label:contains("Permissions") + div span div div:eq(0)';
@@ -87,8 +89,12 @@ const aiConfigurationModelProvider = 'div:contains("Model Provider") + div';
 const aiConfigurationModel = 'div:contains("Model") + div';
 const aiConfigurationApiKey = 'div:contains("API Key") + div';
 
-const aiSelectModelProviderDropdown = 'button.ai-provider-selection-dropdown';
-const aiSelectModelDropdown = 'button.ai-model-selection-dropdown';
+const aiSelectModelProviderDropdown = basePage.getSelectControlValue(
+  '[aria-label="ai-provider"]'
+);
+const aiSelectModelDropdown = basePage.getSelectControlValue(
+  '[aria-label="ai-model"]'
+);
 const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
 
 const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';

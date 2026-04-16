@@ -33,8 +33,10 @@ const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
 const nextPageSelector = '[aria-label="next-page"]';
 const prevPageSelector = '[aria-label="prev-page"]';
-const selectPaginationButton =
-  'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
+const selectPaginationLabel = '[aria-label="per-page"]';
+const selectPaginationButton = basePage.getSelectControlValue(
+  selectPaginationLabel
+);
 
 const hostsWithWarning = 'p:contains("Warning") + p';
 const hostsWithCritical = 'p:contains("Critical") + p';
@@ -85,7 +87,10 @@ export const clickPrevPageButton = () => cy.get(prevPageSelector).click();
 
 export const selectItemsPerPage = (amountOfItems) => {
   cy.get(selectPaginationButton).click();
-  return cy.get(`span:contains("${amountOfItems}")`).first().click();
+  return cy
+    .get(`${basePage.selectOptions}:contains("${amountOfItems}")`)
+    .first()
+    .click();
 };
 
 export const addTagToHost = () => {

@@ -280,7 +280,7 @@ function UserForm({
                   <div className="col-start-3 col-span-4">
                     <Select
                       className="w-full"
-                      aria-label="totp"
+                      aria-label="totp-status"
                       options={[
                         {
                           value: 'Enabled',
