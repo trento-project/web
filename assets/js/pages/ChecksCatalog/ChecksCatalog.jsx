@@ -39,11 +39,10 @@ const architectureOptionRenderer = createOptionRenderer(
 
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  ({ type, hanaScenario }) => {
+  ({ type, hanaScenario }) =>
     trim(
       `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
-    );
-  }
+    )
 );
 
 const targetTypeOptionRenderer = createOptionRenderer(
@@ -77,6 +76,9 @@ function ChecksCatalog({
     if (targetType !== TARGET_CLUSTER) {
       setSelectedClusterType(OPTION_ALL);
     }
+    if (targetType !== TARGET_HOST) {
+      setSelectedArchitecture(OPTION_ALL);
+    }
     setSelectedTargetType(targetType);
   };
 
@@ -89,7 +91,7 @@ function ChecksCatalog({
         isDisabled: !hasChecksForTarget(completeCatalog, targetType),
       })),
       renderOption: targetTypeOptionRenderer,
-      initialValues: [selectedTargetType],
+      value: selectedTargetType,
       onChange: onTargetTypeChange,
     },
     {
@@ -103,7 +105,7 @@ function ChecksCatalog({
           !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
-      initialValues: [selectedClusterType],
+      value: selectedClusterType,
       onChange: setSelectedClusterType,
       isDisabled: selectedTargetType !== TARGET_CLUSTER,
     },
@@ -111,14 +113,14 @@ function ChecksCatalog({
       'aria-label': 'providers',
       options: providers,
       renderOption: providerOptionRenderer,
-      initialValues: [selectedProvider],
+      value: selectedProvider,
       onChange: setProviderSelected,
     },
     {
       'aria-label': 'architectures',
       options: architectures,
       renderOption: architectureOptionRenderer,
-      initialValues: [selectedArchitecture],
+      value: selectedArchitecture,
       onChange: setSelectedArchitecture,
       isDisabled: selectedTargetType !== TARGET_HOST,
     },
