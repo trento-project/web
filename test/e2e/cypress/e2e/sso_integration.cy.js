@@ -64,6 +64,18 @@ describe('SSO integration', () => {
       usersPage.clickAnalyticsOptInSwitch();
       usersPage.clickSaveUserButton();
     });
+
+    it('should be able to change timezone when SSO is enabled', () => {
+      const timezone = 'Europe/Berlin';
+
+      usersPage.visit('/profile');
+      usersPage.selectTimezone(timezone);
+      usersPage.clickSaveUserButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
+
+      usersPage.visit('/profile');
+      usersPage.timezoneValueIsDisplayed(timezone);
+    });
   });
 
   describe('Admin user', () => {
@@ -80,18 +92,24 @@ describe('SSO integration', () => {
       usersPage.createUserButtonIsNotDisplayed();
     });
 
-    it('should have the ability to update user permissions and status', () => {
+    it('should have the ability to update user permissions, status and timezone', () => {
+      const timezone = 'Europe/Madrid';
+
       usersPage.visit();
       usersPage.clickPlainUserInList();
       usersPage.clickPermissionsDropdown();
       usersPage.selectPermission('all:users');
       usersPage.selectDisabledStatus();
+      usersPage.selectTimezone(timezone);
       usersPage.clickSaveUserButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
 
       usersPage.clickPlainUserInList();
+      usersPage.timezoneValueIsDisplayed(timezone);
       usersPage.clickRemovePermissionButton();
       usersPage.selectEnabledStatus();
       usersPage.clickSaveUserButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
     });
 
     it('should have a read only profile view and all:all permissions', () => {

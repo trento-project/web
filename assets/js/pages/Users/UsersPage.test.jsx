@@ -8,11 +8,29 @@ import { networkClient } from '@lib/network';
 import { screen, act, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
-import { renderWithRouter } from '@lib/test-utils';
+import {
+  defaultInitialState,
+  renderWithRouter,
+  withState,
+} from '@lib/test-utils';
+import { faker } from '@faker-js/faker';
 
 import UsersPage from './UsersPage';
 
 const axiosMock = new MockAdapter(networkClient);
+
+const renderUsersPage = (initialState = {}) => {
+  const [StatefulUsersPage] = withState(<UsersPage />, {
+    ...defaultInitialState,
+    ...initialState,
+    user: {
+      ...defaultInitialState.user,
+      ...initialState.user,
+    },
+  });
+
+  return renderWithRouter(StatefulUsersPage);
+};
 
 jest.mock('react-hot-toast', () => ({
   toast: {
@@ -34,7 +52,7 @@ describe('UsersPage', () => {
   it('should render table without data', async () => {
     axiosMock.onGet('/api/v1/users').reply(200, []);
     await act(async () => {
-      renderWithRouter(<UsersPage />);
+      renderUsersPage();
     });
     expect(await screen.getByText('No data available')).toBeVisible();
   });
@@ -46,18 +64,38 @@ describe('UsersPage', () => {
     axiosMock.onGet('/api/v1/users').reply(200, [admin, user]);
 
     await act(async () => {
-      renderWithRouter(<UsersPage />);
+      renderUsersPage();
     });
 
     expect(await screen.getByText(admin.username)).toBeInTheDocument();
     expect(await screen.getByText(user.username)).toBeInTheDocument();
   });
 
+  it('should render created and last login dates using timezone from user state', async () => {
+    const admin = adminUser.build({
+      created_at: '2024-01-10T23:30:00.000Z',
+      last_login_at: '2024-01-11T23:30:00.000Z',
+    });
+
+    axiosMock.onGet('/api/v1/users').reply(200, [admin]);
+
+    await act(async () => {
+      renderUsersPage({
+        user: {
+          timezone: 'Pacific/Kiritimati',
+        },
+      });
+    });
+
+    expect(await screen.findByText('January 11, 2024')).toBeVisible();
+    expect(await screen.findByText('January 12, 2024')).toBeVisible();
+  });
+
   it('should render toast with failing message when fetching users failed', async () => {
     const fetchErrorMessage = 'An error occurred: Fetching users failed';
     axiosMock.onGet('/api/v1/users').reply(404);
     await act(async () => {
-      renderWithRouter(<UsersPage />);
+      renderUsersPage();
     });
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(fetchErrorMessage);
@@ -77,7 +115,7 @@ describe('UsersPage', () => {
       .reply(204);
 
     await act(async () => {
-      renderWithRouter(<UsersPage />);
+      renderUsersPage();
     });
 
     const deleteButtons = screen.getAllByText('Delete');
@@ -101,7 +139,9 @@ describe('UsersPage', () => {
     axiosMock.onDelete(`/api/v1/users/${user.id}`).reply(404);
 
     await act(async () => {
-      renderWithRouter(<UsersPage />);
+      renderUsersPage({
+        user: { timezone: faker.location.timeZone() },
+      });
     });
 
     const deleteButtons = screen.getAllByText('Delete');

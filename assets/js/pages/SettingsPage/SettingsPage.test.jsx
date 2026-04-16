@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { format } from 'date-fns';
+import { tz } from '@date-fns/tz';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -12,6 +13,10 @@ import {
 } from '@lib/test-utils';
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 import { networkClient } from '@lib/network';
+import {
+  DATE_DAY_ABBR_MONTH_YEAR_FORMAT,
+  DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
+} from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
@@ -19,6 +24,7 @@ import {
   alertingSettingsFactory,
   alertingSettingsToApiData,
 } from '../../lib/test-utils/factories/alertingSettings';
+import { DEFAULT_TIMEZONE } from '../../lib/timezones';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -66,6 +72,32 @@ describe('Settings Page', () => {
       expect(
         screen.getByRole('button', { name: 'copy to clipboard' })
       ).toBeVisible();
+    });
+
+    it('should render api key expiration date according to user timezone', async () => {
+      const futureDate = '2026-05-14T10:30:00.000Z';
+
+      const [StatefulSettings] = withState(<SettingsPage />, {
+        ...defaultInitialState,
+        user: {
+          abilities: defaultInitialStateBase.user.abilities,
+          timezone: 'Pacific/Kiritimati',
+        },
+      });
+
+      axiosMock.onGet('/api/v1/settings/api_key').reply(200, {
+        expire_at: futureDate,
+        generated_api_key: 'api_key_with_expiration',
+      });
+
+      await act(async () => {
+        renderWithRouter(StatefulSettings);
+      });
+
+      const expectedDate = format(futureDate, DATE_DAY_ABBR_MONTH_YEAR_FORMAT, {
+        in: tz('Pacific/Kiritimati'),
+      });
+      expect(screen.getByText(`Key will expire ${expectedDate}`)).toBeVisible();
     });
   });
 
@@ -136,9 +168,14 @@ describe('Settings Page', () => {
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('Certificate Uploaded')).toBeVisible();
-      expect(
-        screen.getByText(format(ca_uploaded_at, "'Uploaded:' dd MMM y"))
-      ).toBeVisible();
+      const expectedDate = format(
+        ca_uploaded_at,
+        DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
+        {
+          in: DEFAULT_TIMEZONE,
+        }
+      );
+      expect(screen.getByText(`Uploaded: ${expectedDate}`)).toBeVisible();
 
       const sumaUsername = screen.getByLabelText('suma-username');
       expect(sumaUsername).toBeVisible();

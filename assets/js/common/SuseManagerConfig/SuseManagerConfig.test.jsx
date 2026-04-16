@@ -46,6 +46,23 @@ describe('SuseManagerConfig', () => {
     expect(onEditClick).toHaveBeenCalled();
   });
 
+  it('renders certificate upload date in the provided timezone', () => {
+    const certUploadDate = '2024-01-10T23:30:00.000Z';
+    const timezone = 'Pacific/Kiritimati';
+
+    render(
+      <SuseManagerConfig
+        url={faker.internet.url()}
+        username={faker.animal.cat()}
+        certUploadDate={certUploadDate}
+        timezone={timezone}
+        userAbilities={adminUser}
+      />
+    );
+
+    expect(screen.getByText('Uploaded: 11 Jan 2024')).toBeInTheDocument();
+  });
+
   it('allows testing connection', async () => {
     const user = userEvent.setup();
 

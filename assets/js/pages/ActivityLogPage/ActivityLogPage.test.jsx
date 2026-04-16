@@ -1,7 +1,9 @@
 import React, { act } from 'react';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { TZDate } from '@date-fns/tz';
+import { parseISO } from 'date-fns';
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -18,6 +20,11 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import ActivityLogPage from './ActivityLogPage';
 
 const axiosMock = new MockAdapter(networkClient);
+
+const parseDateTimeLocalToUtcIso = (dateTimeLocalValue, timezone) =>
+  new Date(
+    TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime()
+  ).toISOString();
 
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
@@ -150,5 +157,45 @@ describe('ActivityLogPage', () => {
           : expect(autorefreshButton).toBeDisabled();
       }
     );
+  });
+
+  it('should send to_date as timezone-aware ISO when custom date is selected', async () => {
+    const user = userEvent.setup();
+    const timezone = 'Pacific/Kiritimati';
+    const onGetSpy = jest.spyOn(networkClient, 'get');
+
+    axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
+
+    const [StatefulActivityLogPage] = withState(<ActivityLogPage />, {
+      ...defaultInitialState,
+      user: {
+        ...defaultInitialState.user,
+        timezone,
+      },
+    });
+
+    await act(() => renderWithRouter(StatefulActivityLogPage));
+
+    await user.click(screen.getByText('Filter newer than...'));
+
+    const input = document.querySelector('input[type="datetime-local"]');
+    fireEvent.change(input, { target: { value: '2024-08-14T21:00' } });
+    await user.click(screen.getByText('Apply Filter'));
+
+    const expectedToDate = parseDateTimeLocalToUtcIso(
+      '2024-08-14T21:00',
+      timezone
+    );
+
+    expect(onGetSpy).toHaveBeenLastCalledWith(
+      '/activity_log',
+      expect.objectContaining({
+        params: expect.objectContaining({
+          to_date: expectedToDate,
+        }),
+      })
+    );
+
+    onGetSpy.mockRestore();
   });
 });
