@@ -81,7 +81,7 @@ function SapStartStopOperationModal({
               className="ml-auto !flex-none !w-2/3"
               aria-label="instance_type"
               options={instanceTypes}
-              initialValues={[instanceType]}
+              initialValues={[instanceTypes[0]]}
               onChange={setInstanceType}
             />
           </div>
