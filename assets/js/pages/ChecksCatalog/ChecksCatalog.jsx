@@ -21,7 +21,6 @@ import {
 } from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
-import Pill from '@common/Pill';
 import Select, { createOptionRenderer, OPTION_ALL } from '@common/Select';
 import ProviderLabel from '@common/ProviderLabel';
 import TargetIcon from '@common/TargetIcon';
@@ -40,21 +39,11 @@ const architectureOptionRenderer = createOptionRenderer(
 
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  ({ type, hanaScenario }, disabled) => (
-    <>
-      {trim(
-        `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
-      )}
-      {disabled && (
-        <Pill
-          size="xs"
-          className="absolute right-2 bg-green-100 text-green-800"
-        >
-          Coming Soon
-        </Pill>
-      )}
-    </>
-  )
+  ({ type, hanaScenario }) => {
+    trim(
+      `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
+    );
+  }
 );
 
 const targetTypeOptionRenderer = createOptionRenderer(
@@ -68,14 +57,6 @@ const targetTypeOptionRenderer = createOptionRenderer(
     >
       {targetType === TARGET_CLUSTER && 'Clusters'}
       {targetType === TARGET_HOST && 'Hosts'}
-      {disabled && (
-        <Pill
-          size="xs"
-          className="absolute right-2 bg-green-100 text-green-800"
-        >
-          Coming Soon
-        </Pill>
-      )}
     </TargetIcon>
   )
 );
