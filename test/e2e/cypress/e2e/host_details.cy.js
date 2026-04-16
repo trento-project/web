@@ -220,7 +220,9 @@ context('Host Details', () => {
 
   describe('Forbidden actions', () => {
     before(() => {
+      hostDetailsPage.visit();
       hostDetailsPage.restoreHost();
+      hostDetailsPage.restoredHostIsDisplayed();
     });
 
     beforeEach(() => {
@@ -229,11 +231,6 @@ context('Host Details', () => {
     });
 
     describe('Check Execution', () => {
-      it('Restored host should be displayed', () => {
-        hostDetailsPage.visit();
-        hostDetailsPage.restoredHostIsDisplayed();
-      });
-
       it('should forbid check execution when the correct user abilities are not present in both settings and details', () => {
         hostDetailsPage.apiCreateUserWithoutAbilities();
         hostDetailsPage.apiAcceptAnalyticsEula();
