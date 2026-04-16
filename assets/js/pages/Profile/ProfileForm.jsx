@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { tzOffset } from '@date-fns/tz';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -124,6 +125,30 @@ function ProfileForm({
     [timezoneOptions, timezoneState]
   );
 
+  // State for offsets and warning
+  const [browserOffsetMin, setBrowserOffsetMin] = useState(null);
+  const [profileOffsetMin, setProfileOffsetMin] = useState(null);
+  const [showTimezoneWarning, setShowTimezoneWarning] = useState(false);
+
+  // Compute offsets and warning on timezone change
+  useEffect(() => {
+    const now = new Date();
+    setBrowserOffsetMin(-now.getTimezoneOffset());
+    setProfileOffsetMin(
+      selectedTimezone ? tzOffset(selectedTimezone.value, now) : null
+    );
+  }, [selectedTimezone]);
+
+  // Show warning if browser offset differs from profile offset
+  useEffect(() => {
+    setShowTimezoneWarning(
+      selectedTimezone &&
+        profileOffsetMin !== null &&
+        browserOffsetMin !== null &&
+        browserOffsetMin !== profileOffsetMin
+    );
+  }, [selectedTimezone, profileOffsetMin, browserOffsetMin]);
+
   return (
     <div>
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
@@ -247,6 +272,16 @@ function ProfileForm({
               noOptionsMessage={() => 'No timezones found'}
             />
             {timezoneErrorState && errorMessage(timezoneErrorState)}
+            {showTimezoneWarning && (
+              <div className="mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-sm">
+                <strong>Note:</strong> Your browser UTC offset is{' '}
+                <b>{formatOffset(browserOffsetMin)}</b>, but your profile
+                timezone offset is <b>{formatOffset(profileOffsetMin)}</b>.
+                <br />
+                Trento will always use your profile timezone, not your
+                browser&apos;s.
+              </div>
+            )}
           </div>
           {analyticsEnabledConfig && (
             <>
