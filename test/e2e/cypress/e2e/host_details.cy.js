@@ -220,8 +220,8 @@ context('Host Details', () => {
 
   describe('Forbidden actions', () => {
     before(() => {
-      hostDetailsPage.visit();
       hostDetailsPage.restoreHost();
+      hostDetailsPage.visit();
       hostDetailsPage.restoredHostIsDisplayed();
     });
 
