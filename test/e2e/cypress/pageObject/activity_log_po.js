@@ -245,15 +245,13 @@ export const expectedAggregateAmountOfRequests = (amount) =>
 export const formatEncodedDate = (encodedDate) => {
   const decodedDate = decodeURIComponent(encodedDate);
   const date = new Date(decodedDate);
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
   const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = date.toLocaleString('en', { month: 'short', timeZone: 'UTC' }); // Assuming UTC
   const year = date.getUTCFullYear();
-  let hours = date.getUTCHours();
+  const hours = String(date.getUTCHours()).padStart(2, '0');
   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
   const seconds = String(date.getUTCSeconds()).padStart(2, '0');
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12;
-  return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+  return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds} +00:00`;
 };
 
 const _isUriComponentDate = (encodedDate) => {

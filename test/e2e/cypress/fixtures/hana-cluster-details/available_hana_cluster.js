@@ -11,7 +11,7 @@ export const availableHanaCluster = {
   maintenanceMode: false,
   hanaSecondarySyncState: 'SOK',
   sapHanaSRHealthState: 4,
-  cibLastWritten: 'Tue Jan 25 15:36:59 2022',
+  cibLastWritten: '25 Jan 2022, 15:36:59 +00:00',
   hanaSystemReplicationOperationMode: 'logreplay',
   sites: [
     {
@@ -266,7 +266,7 @@ export const availableHanaClusterCostOpt = {
   maintenanceMode: false,
   hanaSecondarySyncState: 'SOK',
   sapHanaSRHealthState: 4,
-  cibLastWritten: '26 Aug 2024 14:52 +00:00',
+  cibLastWritten: '26 Aug 2024, 14:52:19 +00:00',
   hanaSystemReplicationOperationMode: 'logreplay',
   hosts: [
     {
@@ -292,7 +292,7 @@ export const availableAngiCluster = {
   fencingType: 'external/sbd',
   maintenanceMode: false,
   hanaSecondarySyncState: 'SOK',
-  cibLastWritten: '10 Jun 2024 13:03 +00:00',
+  cibLastWritten: '10 Jun 2024, 13:03:57 +00:00',
   hanaSystemReplicationOperationMode: 'logreplay',
   hosts: [
     {
