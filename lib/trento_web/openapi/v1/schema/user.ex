@@ -609,7 +609,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             updated_at: "2024-01-15T10:30:00Z",
             last_login_at: "2024-01-15T09:00:00Z",
             abilities: [],
-            personal_access_tokens: []
+            personal_access_tokens: [],
+            idp_user: false,
+            analytics_enabled: false,
+            timezone: "Europe/Berlin"
           }
         ]
       },
