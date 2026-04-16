@@ -56,7 +56,7 @@ function HostDetailsPage() {
   const sapInstances = useSelector((state) =>
     getInstancesOnHost(state, hostID)
   );
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   const lastExecution = useSelector(getLastExecution(hostID));
   const catalog = useSelector(getCatalog());
@@ -152,6 +152,7 @@ function HostDetailsPage() {
       softwareUpdatesErrorMessage={softwareUpdatesErrorMessage}
       softwareUpdatesTooltip={softwareUpdatesTooltip}
       userAbilities={abilities}
+      timezone={timezone}
       operationsEnabled={operationsEnabled}
       runningOperation={runningOperation}
       cleanUpHost={() => {

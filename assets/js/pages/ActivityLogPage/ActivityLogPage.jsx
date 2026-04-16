@@ -86,6 +86,7 @@ function MainView({
   itemsPerPage,
   onPageChange,
   onChangeItemsPerPage,
+  timezone,
 }) {
   if (status === 'initial') {
     return <> </>;
@@ -118,7 +119,7 @@ function MainView({
   const { data, pagination } = response;
   return (
     <>
-      <ActivityLogOverview activityLog={data} />
+      <ActivityLogOverview activityLog={data} timezone={timezone} />
       <Pagination
         className="rounded-b-lg"
         hasPrev={pagination?.has_previous_page}
@@ -183,7 +184,7 @@ function ActivityLogPage() {
   );
   const [isFirstPage, setIsFirstPage] = useState(true);
   const [autorefreshInterval, setAutorefreshInterval] = useState(null);
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   const searchInfo = (
     <div className="text-center">
@@ -244,6 +245,7 @@ function ActivityLogPage() {
       title: 'newer than',
       type: 'date',
       prefilled: true,
+      timezone,
       className: 'col-span-1',
     },
     {
@@ -251,6 +253,7 @@ function ActivityLogPage() {
       title: 'older than',
       type: 'date',
       prefilled: true,
+      timezone,
       className: 'col-span-1',
     },
   ];
@@ -347,6 +350,7 @@ function ActivityLogPage() {
         <MainView
           request={activityLogRequest}
           itemsPerPage={itemsPerPage}
+          timezone={timezone}
           onPageChange={pipe(
             setPaginationToSearchParams(searchParams),
             setSearchParams

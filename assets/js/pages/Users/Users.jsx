@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
-import { format, parseISO } from 'date-fns';
 
 import { isAdmin } from '@lib/model/users';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATE_MONTH_NAME_YEAR_FORMAT } from '@lib/timezones';
 
 import Banner from '@common/Banners';
 import Button from '@common/Button';
@@ -20,6 +22,7 @@ function Users({
   users = defaultUsers,
   loading = false,
   singleSignOnEnabled = false,
+  timezone,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -59,7 +62,11 @@ function Users({
         title: 'Created',
         key: 'created_at',
         render: (content, item) => (
-          <span>{format(parseISO(item.created_at), 'MMMM dd, yyyy')}</span>
+          <span>
+            {formatDate(item.created_at, DATE_MONTH_NAME_YEAR_FORMAT, {
+              in: tz(timezone),
+            })}
+          </span>
         ),
       },
       ...(!singleSignOnEnabled
@@ -69,7 +76,11 @@ function Users({
               key: 'last_login_at',
               render: (content) => (
                 <span>
-                  {content ? format(parseISO(content), 'MMMM dd, yyyy') : '-'}
+                  {content
+                    ? formatDate(content, DATE_MONTH_NAME_YEAR_FORMAT, {
+                        in: tz(timezone),
+                      })
+                    : '-'}
                 </span>
               ),
             },

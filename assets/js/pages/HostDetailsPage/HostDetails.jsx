@@ -18,6 +18,9 @@ import {
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATETIME_ISO_SQL_FORMAT } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -100,6 +103,7 @@ function HostDetails({
   requestOperation,
   cleanForbiddenOperation,
   navigate,
+  timezone,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [
@@ -142,6 +146,29 @@ function HostDetails({
   const runningOperationName = get(runningOperation, 'operation', null);
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
+
+  // Format SLES subscriptions dates to be displayed in user's timezone
+  const formattedSlesSubscriptions = (slesSubscriptions || []).map(
+    (subscription) => {
+      const formattedStartsAt = subscription?.starts_at
+        ? formatDate(subscription.starts_at, DATETIME_ISO_SQL_FORMAT, {
+            in: tz(timezone),
+          }) || subscription.starts_at
+        : subscription?.starts_at;
+
+      const formattedExpiresAt = subscription?.expires_at
+        ? formatDate(subscription.expires_at, DATETIME_ISO_SQL_FORMAT, {
+            in: tz(timezone),
+          }) || subscription.expires_at
+        : subscription?.expires_at;
+
+      return {
+        ...subscription,
+        starts_at: formattedStartsAt,
+        expires_at: formattedExpiresAt,
+      };
+    }
+  );
 
   const timeNow = new Date();
 
@@ -332,6 +359,7 @@ function HostDetails({
             cluster={cluster}
             ipAddresses={buildCidrNotation(ipAddresses, netmasks)}
             lastBootTimestamp={lastBootTimestamp}
+            timezone={timezone}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary
@@ -346,6 +374,7 @@ function HostDetails({
             <CheckResultsOverview
               data={lastExecutionData}
               catalogDataEmpty={catalogData?.length === 0}
+              timezone={timezone}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
               onCheckClick={(health) =>
@@ -376,6 +405,7 @@ function HostDetails({
               yAxisFormatter={(value) => `${value}%`}
               startInterval={subHours(timeNow, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
             <HostTimeSeriesLineChart
               hostId={hostID}
@@ -384,6 +414,7 @@ function HostDetails({
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
           </div>
           <DiskSpaceChart hostId={hostID} />
@@ -416,7 +447,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={slesSubscriptions}
+            data={formattedSlesSubscriptions}
           />
         </div>
       </div>

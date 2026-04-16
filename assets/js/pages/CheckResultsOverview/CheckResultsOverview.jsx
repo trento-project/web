@@ -1,7 +1,9 @@
 import React from 'react';
-import { format } from 'date-fns';
 
 import Spinner from '@common/Spinner';
+import { format as formatDate } from 'date-fns';
+import { tz } from '@date-fns/tz';
+import { DATETIME_WEEKDAY_SHORT_24H_FORMAT } from '@lib/timezones';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
@@ -15,6 +17,7 @@ const pendingStates = [RUNNING_EXECUTION_STATE, REQUESTED_EXECUTION_STATE];
 function CheckResultsOverview({
   data,
   catalogDataEmpty = false,
+  timezone,
   loading = false,
   error = null,
   onCheckClick,
@@ -65,7 +68,9 @@ function CheckResultsOverview({
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
       <h6 className="opacity-60 text-xs">
-        {format(new Date(data.completed_at), 'iii MMM dd, HH:mm:ss y')}
+        {formatDate(data.completed_at, DATETIME_WEEKDAY_SHORT_24H_FORMAT, {
+          in: tz(timezone),
+        })}
       </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">
