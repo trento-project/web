@@ -60,8 +60,8 @@ export const selectedHost = {
       type: 'internal',
       status: 'Registered',
       subscriptionStatus: 'ACTIVE',
-      startsAt: '2021-10-18 06:23:46',
-      expiresAt: '2026-10-18 06:23:46',
+      startsAt: '18 Oct 2021, 06:23:46 +00:00',
+      expiresAt: '18 Oct 2026, 06:23:46 +00:00',
     },
     {
       id: 'sle-module-server-applications',
