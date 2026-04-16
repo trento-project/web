@@ -15,7 +15,7 @@ import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwa
 import { networkClient } from '@lib/network';
 import {
   DATE_DAY_MONTH_YEAR_COMPACT_FORMAT,
-  DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
+  DATE_DAY_MONTH_YEAR_FORMAT,
 } from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -170,7 +170,7 @@ describe('Settings Page', () => {
       expect(screen.getByText('Certificate Uploaded')).toBeVisible();
       const expectedDate = format(
         ca_uploaded_at,
-        DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
+        DATE_DAY_MONTH_YEAR_FORMAT,
         {
           in: DEFAULT_TIMEZONE,
         }
