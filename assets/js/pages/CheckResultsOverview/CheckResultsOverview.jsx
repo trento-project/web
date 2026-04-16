@@ -3,7 +3,7 @@ import React from 'react';
 import Spinner from '@common/Spinner';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_WEEKDAY_SHORT_24H_FORMAT } from '@lib/timezones';
+import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
@@ -68,7 +68,7 @@ function CheckResultsOverview({
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
       <h6 className="opacity-60 text-xs">
-        {formatDate(data.completed_at, DATETIME_WEEKDAY_SHORT_24H_FORMAT, {
+        {formatDate(data.completed_at, DATETIME_DAY_MONTH_24H_FORMAT, {
           in: tz(timezone),
         })}
       </h6>
