@@ -2,13 +2,13 @@ import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { TZDate } from '@date-fns/tz';
 import { parseISO } from 'date-fns';
 import { DEFAULT_TIMEZONE } from '@lib/timezones';
 import DateFilter from '.';
 
-const parseDateTimeLocalToUtc = (dateTimeLocalValue, timezone) =>
-  new Date(TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime());
+it('test environment time should always be UTC', () => {
+  expect(new Date().getTimezoneOffset()).toBe(0);
+});
 
 describe('DateFilter component', () => {
   it('should render with pre-configured options', async () => {
@@ -146,10 +146,7 @@ describe('DateFilter component', () => {
     const input = container.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-08-14T10:21'));
 
-    const expectedDate = parseDateTimeLocalToUtc(
-      '2024-08-14T12:21',
-      DEFAULT_TIMEZONE
-    );
+    const expectedDate = parseISO('2024-08-14T10:21:00.000Z');
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
   });
@@ -171,7 +168,7 @@ describe('DateFilter component', () => {
     const input = container.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-03-31T03:30'));
 
-    const expectedDate = parseDateTimeLocalToUtc('2024-03-30T14:30', timezone);
+    const expectedDate = parseISO('2024-03-30T13:30:00.000Z');
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
   });

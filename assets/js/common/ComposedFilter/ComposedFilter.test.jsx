@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { TZDate } from '@date-fns/tz';
 import { parseISO } from 'date-fns';
 import ComposedFilter from '.';
 
-const parseDateTimeLocalToUtc = (dateTimeLocalValue, timezone) =>
-  new Date(TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime());
+it('test environment time should always be UTC', () => {
+  expect(new Date().getTimezoneOffset()).toBe(0);
+});
 
 jest.setTimeout(100000);
 describe('ComposedFilter component', () => {
@@ -339,7 +339,7 @@ describe('ComposedFilter component', () => {
     const input = document.querySelector('input[type="datetime-local"]');
     await act(() => user.type(input, '2024-01-10T23:30'));
 
-    const expectedDate = parseDateTimeLocalToUtc('2024-01-10T10:30', timezone);
+    const expectedDate = parseISO('2024-01-10T09:30');
 
     expect(mockOnChange).toHaveBeenLastCalledWith({
       to_date: ['custom', expectedDate],
