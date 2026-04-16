@@ -162,7 +162,7 @@ export const synopsisStatusLabelIsTheExpected = () =>
   cy.get(synopsisStatusLabel).should('have.text', 'stable');
 
 export const synopsisIssuedDateIsTheExpected = () =>
-  cy.get(synopsisIssuedDateLabel).should('have.text', '27 Feb 2024');
+  cy.get(synopsisIssuedDateLabel).should('have.text', '27 Feb 2024 +00:00');
 
 export const expectedSynopsisSecurityUpdateIsDisplayed = () =>
   cy
