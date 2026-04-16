@@ -114,6 +114,10 @@ function ProfileForm({
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
+  // Utility for formatting offsets
+  const formatOffset = (mins) =>
+    `${mins < 0 ? '-' : '+'}${String(Math.trunc(Math.abs(mins) / 60)).padStart(2, '0')}:${String(Math.abs(mins) % 60).padStart(2, '0')}`;
+
   // Generate timezone options and find selected timezone object
   const timezoneOptions = useMemo(() => generateTimezoneOptions(), []);
   const selectedTimezone = useMemo(
