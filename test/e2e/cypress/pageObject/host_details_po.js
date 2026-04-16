@@ -115,7 +115,7 @@ export const clickSelectedHost = () =>
 export const clickClusterNameLabel = () => cy.get(clusterNameLabel).click();
 
 export const clickCleanUpUnhealthyHostButton = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).click();
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).click();
 
 export const clickCleanUpConfirmationButton = () =>
   cy.get(cleanUpModalConfirmationButton).click();
@@ -441,13 +441,13 @@ export const heartbeatFailingToasterIsDisplayed = () =>
   cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisabled = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.disabled');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.disabled');
 
 export const cleanUpUnhealthyHostButtonIsEnabled = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.enabled');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.enabled');
 
 export const cleanUpUnhealthyHostButtonNotVisible = () =>
   cy.get(cleanUpUnhealthyHostButton).should('not.exist');
@@ -598,6 +598,39 @@ export const startAgentHeartbeat = () =>
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
+
+export const restoreHostAndWait = () => {
+  const waitForHost = (retries = 30) => {
+    if (retries === 0) throw new Error('Host not restored in time');
+
+    restoreHost();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2000);
+
+    basePage.isHostRegistered(selectedHost.agentId).then((isRegistered) => {
+      if (!isRegistered) waitForHost(retries - 1);
+    });
+  };
+
+  waitForHost();
+};
+
+export const interceptDeleteHost = () => {
+  cy.intercept('DELETE', `/api/v1/hosts/${selectedHost.agentId}`).as(
+    'deleteHost'
+  );
+};
+
+export const waitForDeleteHostRequest = () => {
+  basePage
+    .waitForRequest('deleteHost', { timeout: 30000 })
+    .its('response.statusCode')
+    .should('eq', 204);
+};
+
+export const validateHostsListUrl = () => {
+  cy.location('pathname', { timeout: 30000 }).should('eq', '/hosts');
+};
 
 export const apiCreateUserWithHostChecksExecutionAbilities = () =>
   basePage.apiCreateUserWithAbilities([

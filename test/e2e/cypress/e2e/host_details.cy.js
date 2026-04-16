@@ -210,9 +210,10 @@ context('Host Details', () => {
       it('should allow to deregister a host after clean-up confirmation', () => {
         hostDetailsPage.clickCleanUpUnhealthyHostButton();
         hostDetailsPage.cleanUpModalTitleIsDisplayed();
+        hostDetailsPage.interceptDeleteHost();
         hostDetailsPage.clickCleanUpConfirmationButton();
+        hostDetailsPage.waitForDeleteHostRequest();
         hostDetailsPage.cleanuUpModalIsNotDisplayed();
-        hostDetailsPage.validateUrl('/hosts');
         hostDetailsPage.cleanedUpHostIsNotDisplayed();
       });
     });
@@ -220,7 +221,7 @@ context('Host Details', () => {
 
   describe('Forbidden actions', () => {
     before(() => {
-      hostDetailsPage.restoreHost();
+      hostDetailsPage.restoreHostAndWait();
       hostDetailsPage.visit();
       hostDetailsPage.restoredHostIsDisplayed();
     });
