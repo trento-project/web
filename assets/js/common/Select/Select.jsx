@@ -98,8 +98,10 @@ export const defaultClassNames = {
 // {value: 'Enabled', label: 'Enabled'},
 // {value: 'Disabled', label: 'Disabled'}
 // ]
-const composeOpts = (opts) =>
-  map(opts, (opt) => (has(opt, 'value') ? opt : { value: opt, label: opt }));
+const composeOpt = (opt) =>
+  has(opt, 'value') ? opt : { value: opt, label: opt };
+
+const composeOpts = (opts) => map(opts, (opt) => composeOpt(opt));
 
 const defaultRenderOption = (value) => value;
 
@@ -122,6 +124,7 @@ const formatOptionLabel =
   };
 
 function Select({
+  value,
   options,
   initialValues = [],
   components = defaultComponents,
@@ -142,11 +145,12 @@ function Select({
   // isMulti handles multiples values, so we simply map them
   // otherwise return current option value
   const getChangedValues = isMulti
-    ? (opts) => opts.map(({ value }) => value).flat()
-    : ({ value }) => value;
+    ? (opts) => opts.map(({ value: optValue }) => optValue).flat()
+    : ({ value: optValue }) => optValue;
 
   return (
     <ReactSelect
+      value={value && composeOpt(value)}
       defaultValue={composeOpts(initialValues)}
       options={composeOpts(options)}
       classNames={selectClassNames}

@@ -64,7 +64,6 @@ describe('SaptuneSolutionOperationModal', () => {
     await user.click(screen.getByText('NETWEAVER'));
 
     await user.click(screen.getByText('Cancel'));
-    screen.debug();
 
     await act(async () =>
       rerender(

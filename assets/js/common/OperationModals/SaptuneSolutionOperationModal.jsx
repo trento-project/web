@@ -96,7 +96,7 @@ function SaptuneSolutionOperationModal({
           className="ml-auto !w-2/3"
           aria-label="solutions"
           options={availableSolutions}
-          value={{ value: solution, label: solution }}
+          value={solution}
           initialValues={[solution]}
           onChange={setSolution}
         />

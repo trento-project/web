@@ -15,6 +15,13 @@ export default {
         type: 'array',
       },
     },
+    value: {
+      description:
+        'Control value. Used to change select value after it is mounted',
+      control: {
+        type: 'object',
+      },
+    },
     initialValues: {
       type: 'array',
       description:
