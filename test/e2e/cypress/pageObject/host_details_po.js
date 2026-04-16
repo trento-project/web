@@ -132,6 +132,9 @@ export const clickFirstRelatedPackage = () =>
   cy.get(firstRelatedPackage).click();
 
 //Validations
+export const restoredHostIsDisplayed = () =>
+  cy.get(cleanedUpHost, { timeout: 90000 }).should('be.visible');
+
 export const advisoryDetailsAffectedSystemsAreTheExpected = () =>
   cy
     .get(advisoryDetailsAffectedSystems)
@@ -452,10 +455,6 @@ export const cleanuUpModalIsNotDisplayed = () =>
 
 export const cleanedUpHostIsNotDisplayed = () =>
   cy.get(cleanedUpHost).should('not.exist');
-
-export const restoredHostIsDisplayed = () => {
-  cy.get(cleanedUpHost, { timeout: 90000 }).should('be.visible');
-};
 
 export const startExecutionButtonIsDisabled = () =>
   cy.get(startExecutionButton).should('be.disabled');
