@@ -3,11 +3,11 @@ import { tzName, tzOffset } from '@date-fns/tz';
 
 export const DEFAULT_TIMEZONE = 'Etc/UTC';
 
-export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
+export const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss xxx';
 
-export const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy';
+export const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy xxx';
 
-export const TIME_24H_HH_MM_FORMAT = 'HH:mm';
+export const TIME_24H_HH_MM_FORMAT = 'HH:mm xxx';
 
 /**
  * Generate timezone options from the IANA tzdata database.

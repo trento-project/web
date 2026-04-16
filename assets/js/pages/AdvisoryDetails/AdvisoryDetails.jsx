@@ -55,13 +55,9 @@ function AdvisoryDetails({
             data={[
               {
                 title: 'Issued',
-                content: formatDate(
-                  issueDate,
-                  DATE_DAY_MONTH_YEAR_FORMAT,
-                  {
-                    in: tz(timezone),
-                  }
-                ),
+                content: formatDate(issueDate, DATE_DAY_MONTH_YEAR_FORMAT, {
+                  in: tz(timezone),
+                }),
               },
               {
                 title: 'Status',
@@ -69,13 +65,9 @@ function AdvisoryDetails({
               },
               {
                 title: 'Updated',
-                content: formatDate(
-                  updateDate,
-                  DATE_DAY_MONTH_YEAR_FORMAT,
-                  {
-                    in: tz(timezone),
-                  }
-                ),
+                content: formatDate(updateDate, DATE_DAY_MONTH_YEAR_FORMAT, {
+                  in: tz(timezone),
+                }),
               },
               {
                 title: 'Reboot Required',

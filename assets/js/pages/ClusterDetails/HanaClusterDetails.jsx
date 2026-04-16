@@ -114,11 +114,9 @@ function HanaClusterDetails({
               {
                 title: 'CIB last written',
                 content: cibLastWritten
-                  ? formatDate(
-                      cibLastWritten,
-                      DATETIME_DAY_MONTH_24H_FORMAT,
-                      { in: tz(timezone) }
-                    )
+                  ? formatDate(cibLastWritten, DATETIME_DAY_MONTH_24H_FORMAT, {
+                      in: tz(timezone),
+                    })
                   : '-',
               },
               {
