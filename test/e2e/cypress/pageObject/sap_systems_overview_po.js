@@ -101,12 +101,9 @@ export const clickCleanUpModalConfirmationButton = () =>
 
 const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
-  cy.get(expandTableElement).each((cell, index) => {
-    if (cell.hasClass('closed')) {
-      cy.wrap(cell).click();
-    } else {
-      cy.log(`Row ${index} is already expanded`);
-    }
+  return cy.get(expandTableElement).each((cell, index) => {
+    if (cell.hasClass('closed')) cy.wrap(cell).click();
+    else cy.log(`Row ${index} is already expanded`);
     tableRowIsVisible(index);
   });
 };
@@ -125,7 +122,7 @@ export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) =>
-  cy.location('pathname').should('eq', _url);
+  cy.location('pathname', { timeout: 30000 }).should('eq', _url);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);
@@ -139,10 +136,13 @@ export const expectedSidsAreDisplayed = () =>
   );
 
 export const eachSystemHasItsExpectedWorkingLink = () =>
-  availableSAPSystems.forEach(({ sid: sid, id: id }) => {
-    cy.get(`td:contains("${sid}")`).click();
+  cy.wrap(availableSAPSystems).each(({ sid, id }) => {
+    cy.get(`td:contains("${sid}")`).should('be.visible').click();
     basePage.validateUrl(`${url}/${id}`);
-    return cy.go('back');
+    cy.go('back');
+    validateUrl();
+    pageTitleIsCorrectlyDisplayed();
+    cy.get(sapSystemsTableRows).should('be.visible');
   });
 
 export const eachSystemHasExpectedHealth = () =>
@@ -156,8 +156,9 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   const tableCell = (rowIndex, columnIndex) =>
     `tbody tr:nth-child(odd):eq(${rowIndex}) td:eq(${columnIndex})`;
 
-  availableSAPSystems.forEach(
-    ({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
+  return cy
+    .wrap(availableSAPSystems)
+    .each(({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
       cy.get(tableCell(rowIndex, 3)).should('have.text', attachedDatabase.sid);
       cy.get(tableCell(rowIndex, 4)).should(
         'have.text',
@@ -168,8 +169,7 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
         'have.text',
         attachedDatabase.dbAddress
       );
-    }
-  );
+    });
 };
 
 export const sapSystemNwdIsDisplayed = () =>
@@ -199,14 +199,17 @@ export const nwpSystemIsNotDisplayed = () =>
     .should('not.exist');
 
 export const eachSystemHasItsDatabaseWorkingLink = () =>
-  availableSAPSystems.forEach(
-    ({ attachedDatabase: attachedDatabase }, index) => {
+  cy
+    .wrap(availableSAPSystems)
+    .each(({ attachedDatabase: attachedDatabase }, index) => {
       const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
-      cy.get(databaseSidLink).click();
+      cy.get(databaseSidLink).should('be.visible').click();
       validateUrl(`/databases/${attachedDatabase.id}`);
       cy.go('back');
-    }
-  );
+      validateUrl();
+      pageTitleIsCorrectlyDisplayed();
+      cy.get(sapSystemsTableRows).should('be.visible');
+    });
 
 const validateInstanceRowData = (instance, rowIndex) => {
   const currentRow = `${instancesRowsSelector}:eq(${rowIndex})`;
@@ -250,7 +253,7 @@ const validateInstanceRowData = (instance, rowIndex) => {
 
 export const instanceDataIsTheExpected = () => {
   clickAllRows();
-  instancesData.forEach((instance, rowIndex) => {
+  return cy.wrap(instancesData).each((instance, rowIndex) => {
     validateInstanceRowData(instance, rowIndex);
   });
 };
@@ -264,19 +267,24 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   );
   return cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
-    cy.get(`${hanaClusterLinks}:eq(${index})`).click();
+    cy.get(hanaClusterLinks).eq(index).should('be.visible').click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
+    validateUrl();
     pageTitleIsCorrectlyDisplayed();
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
 export const eachInstanceHasItsHostWorkingLink = () =>
-  instancesData.forEach((instance, rowIndex) => {
+  cy.wrap(instancesData).each((instance, rowIndex) => {
     clickAllRows();
-    cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click();
+    cy.get(instanceHostLinks).eq(rowIndex).should('be.visible').click();
     validateUrl(`/hosts/${instance.hostID}`);
     cy.go('back');
+    validateUrl();
+    pageTitleIsCorrectlyDisplayed();
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 
 export const javaSystemIsDiscoveredCorrectly = () => {
@@ -361,16 +369,15 @@ export const addTagButtonIsEnabled = () =>
   cy.get(addTagButton).should('not.have.class', 'opacity-50');
 
 // API
-export const deregisterInstance = () => {
-  return apiDeregisterInstance(
+export const deregisterInstance = () =>
+  apiDeregisterInstance(
     sapSystemNwd.id,
     sapSystemNwd.hostId,
     sapSystemNwd.instanceNumber
   );
-};
 
-export const apiRemoveAllSapSystemsTags = () => {
-  return apiGetSapSystems()
+export const apiRemoveAllSapSystemsTags = () =>
+  apiGetSapSystems()
     .then((response) => {
       const sapSystemTags = getSapSystemTags(response.body);
       Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
@@ -378,7 +385,6 @@ export const apiRemoveAllSapSystemsTags = () => {
       });
     })
     .then(() => basePage.refresh());
-};
 
 const apiRemoveTagBySapSystemId = (systemId, tagId) =>
   basePage.apiLogin().then(({ accessToken }) =>
