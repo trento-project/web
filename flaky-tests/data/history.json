@@ -5014,5 +5014,49 @@
         "score": 0.1696
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-17T06:56:29Z",
+    "commit": "315db7fc47e870e5494c263354f648081a07d4b7",
+    "run_id": "24547443066",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 19
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1476
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.1326
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1326
+      },
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
+        "score": 0.1267
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.08823
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.05001
+      },
+      {
+        "name": "should complete host deregistration when all instances are moved out::Hosts Overview Deregistration Clean-up button should deregister a host Movement of application instances on hosts should complete host deregistration when all instances are moved out",
+        "score": 0.02501
+      },
+      {
+        "name": "should discover a Angi cluster with failover::HANA cluster details Angi architecture should discover a Angi cluster with failover",
+        "score": 0.02501
+      }
+    ]
   }
 ]
