@@ -4946,5 +4946,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-17T03:51:37Z",
+    "commit": "315db7fc47e870e5494c263354f648081a07d4b7",
+    "run_id": "24546373414",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07026
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
+        "score": 0.02501
+      }
+    ]
   }
 ]
