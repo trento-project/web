@@ -247,8 +247,10 @@ export const userDeletedSuccesfullyToasterIsDisplayed = () =>
 export const invalidCurrentPasswordErrorIsDisplayed = () =>
   cy.get(invalidPasswordErrorLabel).should('be.visible');
 
-export const validateRequiredFieldsErrors = () =>
+export const validateRequiredFieldsErrors = () => {
+  cy.get(requiredFieldsErrors).should('exist');
   cy.get(requiredFieldsErrors).should('have.length', 5);
+}
 
 export const invalidEmailErrorIsDisplayed = () =>
   cy
