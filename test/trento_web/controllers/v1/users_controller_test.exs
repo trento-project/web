@@ -109,7 +109,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         username: Faker.Pokemon.name(),
         enabled: true,
         password: "testpassword89",
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: Faker.Address.En.time_zone()
       }
 
       conn =
@@ -117,9 +118,12 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> put_req_header("content-type", "application/json")
         |> post("/api/v1/users", valid_params)
 
-      conn
-      |> json_response(:created)
-      |> assert_schema("UserItemV1", api_spec)
+      resp =
+        conn
+        |> json_response(:created)
+        |> assert_schema("UserItemV1", api_spec)
+
+      assert resp.timezone == valid_params.timezone
 
       [etag] = get_resp_header(conn, "etag")
       assert etag == "1"
@@ -135,6 +139,7 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         enabled: true,
         password: "testpassword89",
         password_confirmation: "testpassword89",
+        timezone: Faker.Address.En.time_zone(),
         abilities: [%{id: id, name: name, resource: resource, label: label}]
       }
 
