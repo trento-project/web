@@ -4966,5 +4966,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-17T04:10:10Z",
+    "commit": "315db7fc47e870e5494c263354f648081a07d4b7",
+    "run_id": "24546762461",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "AdvisoryDetails::displays CVEs with a valid link",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.05001
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.04141
+      }
+    ]
   }
 ]
