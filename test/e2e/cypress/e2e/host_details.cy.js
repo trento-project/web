@@ -221,9 +221,8 @@ context('Host Details', () => {
 
   describe('Forbidden actions', () => {
     before(() => {
-      hostDetailsPage.restoreHostAndWait();
-      hostDetailsPage.visit();
-      hostDetailsPage.restoredHostIsDisplayed();
+      hostDetailsPage.restoreHost();
+      hostDetailsPage.waitForHostRestoration();
     });
 
     beforeEach(() => {
