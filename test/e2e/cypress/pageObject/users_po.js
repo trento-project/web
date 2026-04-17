@@ -250,7 +250,7 @@ export const invalidCurrentPasswordErrorIsDisplayed = () =>
 export const validateRequiredFieldsErrors = () => {
   cy.get(requiredFieldsErrors).should('exist');
   cy.get(requiredFieldsErrors).should('have.length', 5);
-}
+};
 
 export const invalidEmailErrorIsDisplayed = () =>
   cy
