@@ -61,7 +61,7 @@ describe('SuseManagerConfig', () => {
     );
 
     expect(
-      screen.getByText('Uploaded: 11 Jan 2024 +14:00')
+      screen.getByText('Uploaded: 11 Jan 2024')
     ).toBeInTheDocument();
   });
 

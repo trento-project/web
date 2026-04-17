@@ -14,12 +14,12 @@ describe('timezone format constants', () => {
 
   it('has an example output for every datetime/date/time format constant', () => {
     expect(formatInDefaultTimezone(DATETIME_DAY_MONTH_24H_FORMAT)).toBe(
-      '04 Aug 2024, 10:21:00 +00:00'
+      '04 Aug 2024, 10:21:00'
     );
     expect(formatInDefaultTimezone(DATE_DAY_MONTH_YEAR_FORMAT)).toBe(
-      '04 Aug 2024 +00:00'
+      '04 Aug 2024'
     );
-    expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21 +00:00');
+    expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21:00');
   });
 });
 

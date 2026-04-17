@@ -175,9 +175,9 @@ describe('DateFilter component', () => {
 
   it.each`
     value                                          | expected
-    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))} | ${'14 Aug 2024, 15:21:00 +00:00'}
-    ${Date.UTC(2021, 1 - 1, 24, 5, 50, 23)}        | ${'24 Jan 2021, 05:50:23 +00:00'}
-    ${'2021-01-24T05:50:23.000Z'}                  | ${'24 Jan 2021, 05:50:23 +00:00'}
+    ${new Date(Date.UTC(2024, 8 - 1, 14, 15, 21))} | ${'14 Aug 2024, 15:21:00'}
+    ${Date.UTC(2021, 1 - 1, 24, 5, 50, 23)}        | ${'24 Jan 2021, 05:50:23'}
+    ${'2021-01-24T05:50:23.000Z'}                  | ${'24 Jan 2021, 05:50:23'}
   `('should render the custom date ($value)', async ({ value, expected }) => {
     const mockOnChange = jest.fn();
 

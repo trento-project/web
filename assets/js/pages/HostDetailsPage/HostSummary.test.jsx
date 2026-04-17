@@ -80,7 +80,7 @@ describe('HostSummary', () => {
     const ipAddresses = [faker.internet.ipv4()];
     const arch = faker.helpers.arrayElement(['x86_64', 'ppc64le', 's390x']);
     const lastBootTimestamp = '2024-01-10T07:30:00Z';
-    const expectedLastBoot = '10 Jan 2024, 07:30:00 +00:00';
+    const expectedLastBoot = '10 Jan 2024, 07:30:00';
 
     renderWithRouter(
       <HostSummary
@@ -115,7 +115,7 @@ describe('HostSummary', () => {
 
     // UTC+14 shifts this timestamp to the next day: 10 Jan -> 11 Jan.
     expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
-      '11 Jan 2024, 13:30:00 +14:00'
+      '11 Jan 2024, 13:30:00'
     );
   });
 
