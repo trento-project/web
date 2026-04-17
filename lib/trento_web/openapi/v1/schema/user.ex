@@ -572,7 +572,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             example: "Europe/Berlin"
           }
         },
-        required: [:username, :id, :fullname, :email, :created_at, :personal_access_tokens, :timezone],
+        required: [
+          :username,
+          :id,
+          :fullname,
+          :email,
+          :created_at,
+          :personal_access_tokens,
+          :timezone
+        ],
         example: %{
           id: 1,
           fullname: "User Item",
