@@ -6,6 +6,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
 import Users from './Users';
 import { faker } from '@faker-js/faker';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 describe('Users', () => {
   it('should render a loading table with a disabled create user button', () => {
@@ -42,12 +43,12 @@ describe('Users', () => {
       '2024-03-22T16:20:57.801758Z',
       '2024-04-22T16:20:57.801758Z',
     ];
-    const expectedCreationTime = ['March 22, 2024', 'April 22, 2024'];
+    const expectedCreationTime = ['22 Mar 2024', '22 Apr 2024'];
     const lastLoginTime = [
       '2025-11-26T16:20:57.801758Z',
       '2025-12-26T16:20:57.801758Z',
     ];
-    const expectedLastLoginTime = ['November 26, 2025', 'December 26, 2025'];
+    const expectedLastLoginTime = ['26 Nov 2025', '26 Dec 2025'];
     const admin = adminUser.build({
       enabled: true,
       created_at: creationTime[0],
@@ -60,7 +61,9 @@ describe('Users', () => {
     });
     const users = [admin, user];
 
-    renderWithRouter(<Users users={users} loading={false} />);
+    renderWithRouter(
+      <Users users={users} loading={false} timezone={DEFAULT_TIMEZONE} />
+    );
 
     expect(screen.getByText(admin.username)).toBeVisible();
     expect(screen.getByText(admin.fullname)).toBeVisible();
@@ -108,9 +111,9 @@ describe('Users', () => {
       <Users users={users} loading={false} timezone={timezone} />
     );
 
-    expect(screen.getByText('January 11, 2024')).toBeVisible();
-    expect(screen.getByText('January 12, 2024')).toBeVisible();
-    expect(screen.queryByText('January 10, 2024')).not.toBeInTheDocument();
+    expect(screen.getByText('11 Jan 2024')).toBeVisible();
+    expect(screen.getByText('12 Jan 2024')).toBeVisible();
+    expect(screen.queryByText('10 Jan 2024')).not.toBeInTheDocument();
   });
 
   it('should open modal when delete button is pressed and close when cancel button is pressed', async () => {

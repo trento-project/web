@@ -20,7 +20,7 @@ import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_ISO_SQL_FORMAT } from '@lib/timezones';
+import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -151,13 +151,13 @@ function HostDetails({
   const formattedSlesSubscriptions = (slesSubscriptions || []).map(
     (subscription) => {
       const formattedStartsAt = subscription?.starts_at
-        ? formatDate(subscription.starts_at, DATETIME_ISO_SQL_FORMAT, {
+        ? formatDate(subscription.starts_at, DATETIME_DAY_MONTH_24H_FORMAT, {
             in: tz(timezone),
           }) || subscription.starts_at
         : subscription?.starts_at;
 
       const formattedExpiresAt = subscription?.expires_at
-        ? formatDate(subscription.expires_at, DATETIME_ISO_SQL_FORMAT, {
+        ? formatDate(subscription.expires_at, DATETIME_DAY_MONTH_24H_FORMAT, {
             in: tz(timezone),
           }) || subscription.expires_at
         : subscription?.expires_at;

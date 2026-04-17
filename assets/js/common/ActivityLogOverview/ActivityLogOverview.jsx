@@ -20,7 +20,7 @@ import {
   LEVEL_CRITICAL,
   logLevelToLabel,
 } from '@lib/model/activityLog';
-import { DATETIME_ISO_SQL_FORMAT } from '@lib/timezones';
+import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
@@ -38,7 +38,7 @@ export const logLevelToIcon = {
 export const toRenderedEntry = (entry, timezone) => ({
   id: entry.id,
   type: entry.type,
-  time: formatDate(entry.occurred_on, DATETIME_ISO_SQL_FORMAT, {
+  time: formatDate(entry.occurred_on, DATETIME_DAY_MONTH_24H_FORMAT, {
     in: tz(timezone),
   }),
   message: toMessage(entry),

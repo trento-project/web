@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -113,9 +113,12 @@ function ProfileForm({
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
-  const timezoneOptions = generateTimezoneOptions();
-  const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+  // Generate timezone options and find selected timezone object
+  const timezoneOptions = useMemo(() => generateTimezoneOptions(), []);
+  const selectedTimezone = useMemo(
+    () => timezoneOptions.find((opt) => opt.value === timezoneState) || null,
+    [timezoneOptions, timezoneState]
+  );
 
   return (
     <div>

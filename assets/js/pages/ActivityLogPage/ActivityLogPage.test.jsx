@@ -2,8 +2,6 @@ import React, { act } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { TZDate } from '@date-fns/tz';
-import { parseISO } from 'date-fns';
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -21,10 +19,9 @@ import ActivityLogPage from './ActivityLogPage';
 
 const axiosMock = new MockAdapter(networkClient);
 
-const parseDateTimeLocalToUtcIso = (dateTimeLocalValue, timezone) =>
-  new Date(
-    TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime()
-  ).toISOString();
+it('test environment time should always be UTC', () => {
+  expect(new Date().getTimezoneOffset()).toBe(0);
+});
 
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
@@ -182,10 +179,7 @@ describe('ActivityLogPage', () => {
     fireEvent.change(input, { target: { value: '2024-08-14T21:00' } });
     await user.click(screen.getByText('Apply Filter'));
 
-    const expectedToDate = parseDateTimeLocalToUtcIso(
-      '2024-08-14T21:00',
-      timezone
-    );
+    const expectedToDate = '2024-08-14T07:00:00.000Z';
 
     expect(onGetSpy).toHaveBeenLastCalledWith(
       '/activity_log',

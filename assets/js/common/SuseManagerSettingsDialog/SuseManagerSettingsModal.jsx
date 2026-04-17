@@ -3,7 +3,7 @@ import { capitalize, noop } from 'lodash';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
-import { DATE_DAY_MONTH_YEAR_PADDED_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 
 import {
   SUMA_PRODUCT_LABEL,
@@ -121,7 +121,7 @@ function SuseManagerSettingsModal({
               <div>Certificate Uploaded</div>
               <div className="text-xs">
                 Uploaded:{' '}
-                {formatDate(certUploadDate, DATE_DAY_MONTH_YEAR_PADDED_FORMAT, {
+                {formatDate(certUploadDate, DATE_DAY_MONTH_YEAR_FORMAT, {
                   in: tz(timezone),
                 })}
               </div>

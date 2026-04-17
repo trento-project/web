@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { noop } from 'lodash';
-
 import Button from '@common/Button';
 import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
-import { DATETIME_LOCALE_LONG_FORMAT, DEFAULT_TIMEZONE } from '@lib/timezones';
+import {
+  DATETIME_DAY_MONTH_24H_FORMAT,
+  DEFAULT_TIMEZONE,
+} from '@lib/timezones';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
@@ -145,9 +147,12 @@ function UserForm({
     setConfirmPassword(newPassword);
   };
 
-  const timezoneOptions = generateTimezoneOptions();
-  const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+  // Generate timezone options and find selected timezone object
+  const timezoneOptions = useMemo(() => generateTimezoneOptions(), []);
+  const selectedTimezone = useMemo(
+    () => timezoneOptions.find((opt) => opt.value === timezoneState) || null,
+    [timezoneOptions, timezoneState]
+  );
 
   return (
     <div>
@@ -346,20 +351,20 @@ function UserForm({
                 <>
                   <Label className="col-start-1 col-span-2">Created</Label>
                   <span className="col-start-3 col-span-4">
-                    {formatDate(createdAt, DATETIME_LOCALE_LONG_FORMAT, {
+                    {formatDate(createdAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                       in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Updated</Label>
                   <span className="col-start-3 col-span-4">
-                    {formatDate(updatedAt, DATETIME_LOCALE_LONG_FORMAT, {
+                    {formatDate(updatedAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                       in: tz(timezone),
                     })}
                   </span>
                   <Label className="col-start-1 col-span-2">Last Login</Label>
                   <span className="col-start-3 col-span-4">
                     {lastLoginAt
-                      ? formatDate(lastLoginAt, DATETIME_LOCALE_LONG_FORMAT, {
+                      ? formatDate(lastLoginAt, DATETIME_DAY_MONTH_24H_FORMAT, {
                           in: tz(timezone),
                         })
                       : '-'}
