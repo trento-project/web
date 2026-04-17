@@ -163,8 +163,9 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   const tableCell = (rowIndex, columnIndex) =>
     `tbody tr:nth-child(odd):eq(${rowIndex}) td:eq(${columnIndex})`;
 
-  return cy.wrap(availableSAPSystems).each(
-    ({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
+  return cy
+    .wrap(availableSAPSystems)
+    .each(({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
       cy.get(tableCell(rowIndex, 3)).should('have.text', attachedDatabase.sid);
       cy.get(tableCell(rowIndex, 4)).should(
         'have.text',
@@ -175,8 +176,7 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
         'have.text',
         attachedDatabase.dbAddress
       );
-    }
-  );
+    });
 };
 
 export const sapSystemNwdIsDisplayed = () =>
@@ -206,8 +206,9 @@ export const nwpSystemIsNotDisplayed = () =>
     .should('not.exist');
 
 export const eachSystemHasItsDatabaseWorkingLink = () => {
-  return cy.wrap(availableSAPSystems).each(
-    ({ attachedDatabase: attachedDatabase }, index) => {
+  return cy
+    .wrap(availableSAPSystems)
+    .each(({ attachedDatabase: attachedDatabase }, index) => {
       const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
       cy.get(databaseSidLink).should('be.visible').click();
       validateUrl(`/databases/${attachedDatabase.id}`);
@@ -215,8 +216,7 @@ export const eachSystemHasItsDatabaseWorkingLink = () => {
       validateUrl();
       pageTitleIsCorrectlyDisplayed();
       cy.get(sapSystemsTableRows).should('be.visible');
-    }
-  );
+    });
 };
 
 const validateInstanceRowData = (instance, rowIndex) => {
