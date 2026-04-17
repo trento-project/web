@@ -398,9 +398,7 @@ describe('HostDetails component', () => {
       );
 
       expect(screen.getByText(passingCount)).toBeInTheDocument();
-      expect(
-        screen.getByText('11 Jan 2024, 13:30:00')
-      ).toBeInTheDocument();
+      expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeInTheDocument();
     });
 
     it('should display nothing if lastExecution is an empty object', () => {

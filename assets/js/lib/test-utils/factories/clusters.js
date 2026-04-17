@@ -171,7 +171,10 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     health: healthEnum(),
     selected_checks: [],
     provider: cloudProviderEnum(),
-    cib_last_written: format(faker.date.recent(), DATETIME_DAY_MONTH_24H_FORMAT),
+    cib_last_written: format(
+      faker.date.recent(),
+      DATETIME_DAY_MONTH_24H_FORMAT
+    ),
     state: stateEnum(),
     details,
   };
