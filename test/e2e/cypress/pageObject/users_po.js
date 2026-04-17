@@ -76,6 +76,8 @@ const neverShowAgainCheckbox = 'div input[type="checkbox"]';
 const analyticsOptInSwitch = 'label:contains("Analytics Opt-in") + div button';
 const timezoneInputField = 'input#timezone';
 const timezoneStoredValue = 'input[name="timezone"]';
+const profileTimezoneWarning =
+  'div:contains("The Trento UI will always use your profile timezone to display timestamps")';
 
 // AI Configuration Selectors
 
@@ -466,6 +468,20 @@ export const selectTimezone = (timezone) =>
 
 export const timezoneValueIsDisplayed = (timezone) =>
   cy.get(timezoneStoredValue).should('have.value', timezone);
+
+export const profileTimezoneWarningIsDisplayed = (
+  browserOffset,
+  profileOffset
+) => {
+  cy.contains(
+    'div',
+    `Warning: Your browser UTC offset is ${browserOffset}, but your profile timezone offset is ${profileOffset}.`
+  ).should('be.visible');
+  cy.get(profileTimezoneWarning).should(
+    'contain',
+    "The Trento UI will always use your profile timezone to display timestamps, not your browser's."
+  );
+};
 
 // API
 export const interceptDeleteUser = () =>

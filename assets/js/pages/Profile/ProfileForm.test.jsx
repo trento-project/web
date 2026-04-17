@@ -472,6 +472,61 @@ describe('ProfileForm', () => {
     );
   });
 
+  it('should display a timezone warning when browser and profile offsets differ', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const browserOffsetSpy = jest
+      .spyOn(Date.prototype, 'getTimezoneOffset')
+      .mockReturnValue(-120);
+    const timezone = 'Pacific/Port_Moresby';
+    const expectedWarning =
+      "Warning: Your browser UTC offset is +02:00, but your profile timezone offset is +10:00. The Trento UI will always use your profile timezone to display timestamps, not your browser's.";
+
+    try {
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          timezone={timezone}
+        />
+      );
+
+      const warning = await screen.findByTestId('timezone-warning');
+      expect(warning).toBeVisible();
+      expect(warning).toHaveTextContent(expectedWarning);
+    } finally {
+      browserOffsetSpy.mockRestore();
+    }
+  });
+
+  it('should not display a timezone warning when browser and profile offsets match', () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const browserOffsetSpy = jest
+      .spyOn(Date.prototype, 'getTimezoneOffset')
+      .mockReturnValue(0);
+
+    try {
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          timezone={DEFAULT_TIMEZONE}
+        />
+      );
+
+      expect(
+        screen.queryByText(
+          /The Trento UI will always use your profile timezone/i
+        )
+      ).not.toBeInTheDocument();
+    } finally {
+      browserOffsetSpy.mockRestore();
+    }
+  });
+
   it('should set timezone error when timezone error is provided', async () => {
     const errors = [
       {
