@@ -76,7 +76,7 @@ const pageTitle = 'h1:contains("SAP Systems")';
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url);
-  basePage.waitForRequest('databasesRequest', 10000);
+  return basePage.waitForRequest('databasesRequest', 10000);
 };
 
 export const tagSapSystems = () => {
@@ -102,7 +102,7 @@ export const clickCleanUpModalConfirmationButton = () =>
 
 const clickAllRows = () => {
   const expandTableElement = 'td svg[class*="cursor"]';
-  cy.get(expandTableElement).each((cell, index) => {
+  return cy.get(expandTableElement).each((cell, index) => {
     if (cell.hasClass('closed')) {
       cy.wrap(cell).click();
     } else {
@@ -126,7 +126,7 @@ export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) =>
-  cy.location('pathname').should('eq', _url);
+  cy.location('pathname', { timeout: 30000 }).should('eq', _url);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);
@@ -141,15 +141,18 @@ export const expectedSidsAreDisplayed = () => {
 };
 
 export const eachSystemHasItsExpectedWorkingLink = () => {
-  availableSAPSystems.forEach(({ sid: sid, id: id }) => {
-    cy.get(`td:contains("${sid}")`).click();
+  return cy.wrap(availableSAPSystems).each(({ sid, id }) => {
+    cy.get(`td:contains("${sid}")`).should('be.visible').click();
     basePage.validateUrl(`${url}/${id}`);
     cy.go('back');
+    validateUrl();
+    pageTitleIsCorrectlyDisplayed();
+    cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
 export const eachSystemHasExpectedHealth = () => {
-  availableSAPSystems.forEach(({ health: health }, index) => {
+  return cy.wrap(availableSAPSystems).each(({ health: health }, index) => {
     const healthClass = healthMap[health];
     const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(1) svg`;
     cy.get(healthCellSelector).should('have.class', healthClass);
@@ -160,7 +163,7 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
   const tableCell = (rowIndex, columnIndex) =>
     `tbody tr:nth-child(odd):eq(${rowIndex}) td:eq(${columnIndex})`;
 
-  availableSAPSystems.forEach(
+  return cy.wrap(availableSAPSystems).each(
     ({ attachedDatabase: attachedDatabase, type: type }, rowIndex) => {
       cy.get(tableCell(rowIndex, 3)).should('have.text', attachedDatabase.sid);
       cy.get(tableCell(rowIndex, 4)).should(
@@ -203,12 +206,15 @@ export const nwpSystemIsNotDisplayed = () =>
     .should('not.exist');
 
 export const eachSystemHasItsDatabaseWorkingLink = () => {
-  availableSAPSystems.forEach(
+  return cy.wrap(availableSAPSystems).each(
     ({ attachedDatabase: attachedDatabase }, index) => {
       const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
-      cy.get(databaseSidLink).click();
+      cy.get(databaseSidLink).should('be.visible').click();
       validateUrl(`/databases/${attachedDatabase.id}`);
       cy.go('back');
+      validateUrl();
+      pageTitleIsCorrectlyDisplayed();
+      cy.get(sapSystemsTableRows).should('be.visible');
     }
   );
 };
@@ -255,7 +261,7 @@ const validateInstanceRowData = (instance, rowIndex) => {
 
 export const instanceDataIsTheExpected = () => {
   clickAllRows();
-  instancesData.forEach((instance, rowIndex) => {
+  return cy.wrap(instancesData).each((instance, rowIndex) => {
     validateInstanceRowData(instance, rowIndex);
   });
 };
@@ -267,21 +273,26 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
   const hanaInstances = instancesData.filter(
     (instance) => instance.clusterID !== ''
   );
-  cy.wrap(hanaInstances).each((hanaInstance, index) => {
+  return cy.wrap(hanaInstances).each((hanaInstance, index) => {
     clickAllRows();
-    cy.get(`${hanaClusterLinks}:eq(${index})`).click();
+    cy.get(hanaClusterLinks).eq(index).should('be.visible').click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
     cy.go('back');
+    validateUrl();
     pageTitleIsCorrectlyDisplayed();
+    cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
 export const eachInstanceHasItsHostWorkingLink = () => {
-  instancesData.forEach((instance, rowIndex) => {
+  return cy.wrap(instancesData).each((instance, rowIndex) => {
     clickAllRows();
-    cy.get(`${instanceHostLinks}:eq(${rowIndex})`).click();
+    cy.get(instanceHostLinks).eq(rowIndex).should('be.visible').click();
     validateUrl(`/hosts/${instance.hostID}`);
     cy.go('back');
+    validateUrl();
+    pageTitleIsCorrectlyDisplayed();
+    cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
