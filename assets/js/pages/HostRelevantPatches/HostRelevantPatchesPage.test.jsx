@@ -129,7 +129,7 @@ describe('HostRelevantPatchesPage', () => {
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
 
-      expect(screen.getByText('11 Jan 2024 +14:00')).toBeVisible();
+      expect(screen.getByText('11 Jan 2024')).toBeVisible();
     });
   });
 

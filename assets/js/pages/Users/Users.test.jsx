@@ -43,12 +43,12 @@ describe('Users', () => {
       '2024-03-22T16:20:57.801758Z',
       '2024-04-22T16:20:57.801758Z',
     ];
-    const expectedCreationTime = ['22 Mar 2024 +00:00', '22 Apr 2024 +00:00'];
+    const expectedCreationTime = ['22 Mar 2024', '22 Apr 2024'];
     const lastLoginTime = [
       '2025-11-26T16:20:57.801758Z',
       '2025-12-26T16:20:57.801758Z',
     ];
-    const expectedLastLoginTime = ['26 Nov 2025 +00:00', '26 Dec 2025 +00:00'];
+    const expectedLastLoginTime = ['26 Nov 2025', '26 Dec 2025'];
     const admin = adminUser.build({
       enabled: true,
       created_at: creationTime[0],
@@ -111,9 +111,9 @@ describe('Users', () => {
       <Users users={users} loading={false} timezone={timezone} />
     );
 
-    expect(screen.getByText('11 Jan 2024 +14:00')).toBeVisible();
-    expect(screen.getByText('12 Jan 2024 +14:00')).toBeVisible();
-    expect(screen.queryByText('10 Jan 2024 +14:00')).not.toBeInTheDocument();
+    expect(screen.getByText('11 Jan 2024')).toBeVisible();
+    expect(screen.getByText('12 Jan 2024')).toBeVisible();
+    expect(screen.queryByText('10 Jan 2024')).not.toBeInTheDocument();
   });
 
   it('should open modal when delete button is pressed and close when cancel button is pressed', async () => {

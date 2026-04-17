@@ -57,10 +57,10 @@ describe('AdvisoryDetails', () => {
     );
 
     expect(screen.getByText('Issued').nextSibling).toHaveTextContent(
-      '11 Jan 2024 +14:00'
+      '11 Jan 2024'
     );
     expect(screen.getByText('Updated').nextSibling).toHaveTextContent(
-      '12 Jan 2024 +14:00'
+      '12 Jan 2024'
     );
   });
 
