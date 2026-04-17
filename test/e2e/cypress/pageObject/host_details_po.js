@@ -592,20 +592,42 @@ export const startAgentHeartbeat = () =>
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
 
-export const restoreHostAndWait = () => {
-  const waitForHost = (retries = 30) => {
-    if (retries === 0) throw new Error('Host not restored in time');
+export const waitForHostRestoration = () => {
+  if (Cypress.config().baseUrl.includes('localhost')) return;
+  const maxRetries = 12;
+  const retryRestoreHostAtAttempt = Math.floor(maxRetries / 3);
 
-    restoreHost();
+  const pollHost = (retries = maxRetries) => {
+    const attempt = maxRetries - retries + 1;
+    if (retries === 0)
+      throw new Error(
+        `Host ${selectedHost.hostName} hasn't been restored in time`
+      );
+
+    if (attempt === retryRestoreHostAtAttempt) {
+      cy.task(
+        'log',
+        `!!! [EXCEPTIONAL RETRY] Host ${selectedHost.hostName} not found after ${attempt} attempts. Sending restoreHost() again.`
+      );
+      restoreHost();
+    }
+
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
 
     basePage.isHostRegistered(selectedHost.agentId).then((isRegistered) => {
-      if (!isRegistered) waitForHost(retries - 1);
+      if (!isRegistered) {
+        pollHost(retries - 1);
+      } else if (attempt >= retryRestoreHostAtAttempt) {
+        cy.task(
+          'log',
+          `>>> [SUCCESS] Host ${selectedHost.hostName} found AFTER exceptional retry on attempt ${attempt}.`
+        );
+      }
     });
   };
 
-  waitForHost();
+  pollHost();
 };
 
 export const interceptDeleteHost = () => {
