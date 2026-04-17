@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { format } from 'date-fns';
 import { flatMap } from 'lodash';
+import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
 
 import {
   healthEnum,
@@ -170,7 +171,10 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     health: healthEnum(),
     selected_checks: [],
     provider: cloudProviderEnum(),
-    cib_last_written: format(faker.date.recent(), 'EEE MMM d h:mm:ss yyyy'),
+    cib_last_written: format(
+      faker.date.recent(),
+      DATETIME_DAY_MONTH_24H_FORMAT
+    ),
     state: stateEnum(),
     details,
   };

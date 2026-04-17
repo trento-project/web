@@ -72,7 +72,7 @@ describe('PersonalAccessTokens', () => {
       />
     );
 
-    expect(screen.getByText('Expires: 11 Jan 2024 +14:00')).toBeInTheDocument();
+    expect(screen.getByText('Expires: 11 Jan 2024')).toBeInTheDocument();
   });
 
   it('should show expired tokens with a red color', () => {
