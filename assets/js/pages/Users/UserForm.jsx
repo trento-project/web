@@ -120,13 +120,13 @@ function UserForm({
     }),
     abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
     ...(totpEnabledAt && !totpState && { totp_disabled: true }),
-    ...(editing && { timezone: timezoneState }),
+    timezone: timezoneState,
   });
 
   const buildSSOUserPayload = () => ({
     enabled: statusState === USER_ENABLED,
     abilities: abilities.filter(({ id }) => selectedAbilities.includes(id)),
-    ...(editing && { timezone: timezoneState }),
+    timezone: timezoneState,
   });
 
   const onSaveClicked = () => {
@@ -286,32 +286,32 @@ function UserForm({
               }}
             />
           </div>
+          <Label
+            htmlFor="timezone"
+            className="col-start-1 col-span-2 sm:pt-2"
+            info={'Aligns timestamps according to timezone selection'}
+          >
+            Timezone
+          </Label>
+          <div className="col-start-3 col-span-4">
+            <MultiSelect
+              inputId="timezone"
+              name="timezone"
+              value={selectedTimezone}
+              options={timezoneOptions}
+              onChange={(option) => {
+                setTimezone(option ? option.value : '');
+                setTimezoneError(null);
+              }}
+              isMulti={false}
+              disabled={!saveEnabled || saving}
+              placeholder="Select timezone..."
+              noOptionsMessage={() => 'No timezones found'}
+            />
+            {timezoneErrorState && errorMessage(timezoneErrorState)}
+          </div>
           {editing && (
             <>
-              <Label
-                htmlFor="timezone"
-                className="col-start-1 col-span-2 sm:pt-2"
-                info={'Aligns timestamps according to timezone selection'}
-              >
-                Timezone
-              </Label>
-              <div className="col-start-3 col-span-4">
-                <MultiSelect
-                  inputId="timezone"
-                  name="timezone"
-                  value={selectedTimezone}
-                  options={timezoneOptions}
-                  onChange={(option) => {
-                    setTimezone(option ? option.value : '');
-                    setTimezoneError(null);
-                  }}
-                  isMulti={false}
-                  disabled={!saveEnabled || saving}
-                  placeholder="Select timezone..."
-                  noOptionsMessage={() => 'No timezones found'}
-                />
-                {timezoneErrorState && errorMessage(timezoneErrorState)}
-              </div>
               {!singleSignOnEnabled && (
                 <>
                   <Label
