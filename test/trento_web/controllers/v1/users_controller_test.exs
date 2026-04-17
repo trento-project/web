@@ -7,6 +7,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   import Trento.Factory
   import Trento.Support.Helpers.AbilitiesTestHelper
 
+  alias Faker.{Address, Internet, Person, Pokemon}
+
   @endpoint TrentoWeb.Endpoint
 
   setup :setup_api_spec_v1
@@ -104,12 +106,13 @@ defmodule TrentoWeb.V1.UsersControllerTest do
   describe "create user" do
     test "should create the user when parameters are valid", %{conn: conn, api_spec: api_spec} do
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
-        username: Faker.Pokemon.name(),
+        fullname: Person.name(),
+        email: Internet.email(),
+        username: Pokemon.name(),
         enabled: true,
         password: "testpassword89",
-        password_confirmation: "testpassword89"
+        password_confirmation: "testpassword89",
+        timezone: Address.En.time_zone()
       }
 
       conn =
@@ -117,9 +120,12 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> put_req_header("content-type", "application/json")
         |> post("/api/v1/users", valid_params)
 
-      conn
-      |> json_response(:created)
-      |> assert_schema("UserItemV1", api_spec)
+      resp =
+        conn
+        |> json_response(:created)
+        |> assert_schema("UserItemV1", api_spec)
+
+      assert resp.timezone == valid_params.timezone
 
       [etag] = get_resp_header(conn, "etag")
       assert etag == "1"
@@ -129,12 +135,13 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{id: id, name: name, resource: resource, label: label} = insert(:ability)
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
-        username: Faker.Pokemon.name(),
+        fullname: Person.name(),
+        email: Internet.email(),
+        username: Pokemon.name(),
         enabled: true,
         password: "testpassword89",
         password_confirmation: "testpassword89",
+        timezone: Address.En.time_zone(),
         abilities: [%{id: id, name: name, resource: resource, label: label}]
       }
 
@@ -150,9 +157,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       api_spec: api_spec
     } do
       invalid_request_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
-        username: Faker.Pokemon.name(),
+        fullname: Person.name(),
+        email: Internet.email(),
+        username: Pokemon.name(),
         password: "testpassword89",
         password_confirmation: "testpassword89"
       }
@@ -180,9 +187,9 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{email: already_taken_email} = insert(:user)
 
       valid_params = %{
-        fullname: Faker.Person.name(),
+        fullname: Person.name(),
         email: already_taken_email,
-        username: Faker.Pokemon.name(),
+        username: Pokemon.name(),
         enabled: true,
         password: "testpassword89",
         password_confirmation: "notequal"
@@ -323,8 +330,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
+        fullname: Person.name(),
+        email: Internet.email(),
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
@@ -348,8 +355,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
         |> subscribe_and_join(TrentoWeb.UserChannel, "users:#{id}")
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
+        fullname: Person.name(),
+        email: Internet.email(),
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
@@ -383,8 +390,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{id: user_id, lock_version: lock_version} = insert(:user)
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
+        fullname: Person.name(),
+        email: Internet.email(),
         enabled: false,
         password: "testpassword89",
         password_confirmation: "testpassword89",
@@ -411,8 +418,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{id: user_id, lock_version: lock_version} = insert(:user, locked_at: DateTime.utc_now())
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
+        fullname: Person.name(),
+        email: Internet.email(),
         enabled: true,
         password: "testpassword89",
         password_confirmation: "testpassword89",
@@ -449,8 +456,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
       %{id: user_id, lock_version: lock_version} = insert(:user)
 
       valid_params = %{
-        fullname: Faker.Person.name(),
-        email: Faker.Internet.email(),
+        fullname: Person.name(),
+        email: Internet.email(),
         password: "testpassword89",
         password_confirmation: "testpassword89",
         timezone: "Europe/Berlin"
@@ -473,7 +480,8 @@ defmodule TrentoWeb.V1.UsersControllerTest do
     end
 
     test "should disable the TOTP feature for a user", %{conn: conn, api_spec: api_spec} do
-      %{id: user_id, lock_version: lock_version} = insert(:user, totp_enabled_at: DateTime.utc_now())
+      %{id: user_id, lock_version: lock_version} =
+        insert(:user, totp_enabled_at: DateTime.utc_now())
 
       valid_params = %{
         totp_disabled: true

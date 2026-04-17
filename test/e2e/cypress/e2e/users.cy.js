@@ -54,6 +54,26 @@ describe('Users', () => {
       usersPage.newUserIsDisplayed();
     });
 
+    it('should create user with timezone properly', () => {
+      const timezone = 'Pacific/Auckland';
+      usersPage.typeUserFullName();
+      usersPage.typeUserEmail();
+      usersPage.typeUserName();
+      usersPage.typeUserPassword();
+      usersPage.typeUserPasswordConfirmation();
+      usersPage.selectTimezone(timezone);
+      usersPage.clickSubmitUserCreationButton();
+      usersPage.userCreatedSuccessfullyToasterIsDisplayed();
+
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+      usersPage.newUserIsDisplayed();
+
+      // Verify timezone was saved by editing the user
+      usersPage.clickNewUser();
+      usersPage.pageTitleIsCorrectlyDisplayed('Edit User');
+      usersPage.timezoneValueIsDisplayed(timezone);
+    });
+
     it('should not allow creating the user with the same data', () => {
       usersPage.apiCreateUser();
       usersPage.typeUserFullName();

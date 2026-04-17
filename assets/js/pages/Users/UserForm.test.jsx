@@ -31,7 +31,7 @@ describe('UserForm', () => {
     expect(screen.getByText('Generate Password')).toBeVisible();
     expect(screen.getByText('Permissions')).toBeVisible();
     expect(screen.getByText('Status')).toBeVisible();
-    expect(screen.queryByText('Timezone')).not.toBeInTheDocument();
+    expect(screen.getByText('Timezone')).toBeVisible();
     expect(screen.queryByText('TOTP')).not.toBeInTheDocument();
     expect(screen.queryByText('Analytics Opt-in')).not.toBeInTheDocument();
     expect(screen.queryByText('Created')).not.toBeInTheDocument();
@@ -178,17 +178,27 @@ describe('UserForm', () => {
 
   it('should save the user', async () => {
     const user = userEvent.setup();
-    const { fullname, email, username } = userFactory.build();
+    const { fullname, email, username, timezone } = userFactory.build();
     const password = faker.internet.password();
     const mockOnSave = jest.fn();
 
-    render(<UserForm saveText="Save" onSave={mockOnSave} />);
+    render(
+      <UserForm
+        saveText="Save"
+        onSave={mockOnSave}
+        timezone={DEFAULT_TIMEZONE}
+      />
+    );
 
     await user.type(screen.getByPlaceholderText('Enter full name'), fullname);
     await user.type(screen.getByPlaceholderText('Enter email address'), email);
     await user.type(screen.getByPlaceholderText('Enter username'), username);
     await user.type(screen.getByPlaceholderText('Enter password'), password);
     await user.type(screen.getByPlaceholderText('Re-enter password'), password);
+    const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    await user.click(timezoneSelectorInput);
+    await user.type(timezoneSelectorInput, timezone);
+    await user.click(await screen.findByText(getTimezoneLabel(timezone)));
 
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
@@ -200,6 +210,7 @@ describe('UserForm', () => {
       password_confirmation: password,
       enabled: true,
       abilities: [],
+      timezone,
     });
   });
 
