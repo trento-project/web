@@ -216,6 +216,18 @@ describe('Users', () => {
       usersPage.timezoneValueIsDisplayed(timezone);
     });
 
+    it('should display a warning when the browser and profile timezone offsets differ', () => {
+      const timezone = 'Pacific/Port_Moresby';
+
+      basePage.clickUserDropdownProfileButton();
+      cy.window().then((win) => {
+        cy.stub(win.Date.prototype, 'getTimezoneOffset').returns(-120);
+      });
+
+      usersPage.selectTimezone(timezone);
+      usersPage.profileTimezoneWarningIsDisplayed('+02:00', '+10:00');
+    });
+
     it('should fail editing user password if current password is wrong', () => {
       basePage.clickUserDropdownProfileButton();
       usersPage.clickChangePasswordButton();
