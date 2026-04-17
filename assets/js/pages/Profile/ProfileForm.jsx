@@ -273,13 +273,16 @@ function ProfileForm({
             />
             {timezoneErrorState && errorMessage(timezoneErrorState)}
             {showTimezoneWarning && (
-              <div className="mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-sm">
-                <strong>Note:</strong> Your browser UTC offset is{' '}
+              <div
+                className="mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-sm"
+                data-testid="timezone-warning"
+              >
+                <strong>Warning:</strong> Your browser UTC offset is{' '}
                 <b>{formatOffset(browserOffsetMin)}</b>, but your profile
-                timezone offset is <b>{formatOffset(profileOffsetMin)}</b>.
+                timezone offset is <b>{formatOffset(profileOffsetMin)}</b>.{' '}
                 <br />
-                Trento will always use your profile timezone, not your
-                browser&apos;s.
+                The Trento UI will always use your profile timezone to display
+                timestamps, not your browser&apos;s.
               </div>
             )}
           </div>
