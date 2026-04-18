@@ -5085,5 +5085,21 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-18T03:55:13Z",
+    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
+    "run_id": "24596065451",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
+        "score": 0.05001
+      }
+    ]
   }
 ]
