@@ -106,9 +106,6 @@ export const waitForInitialEndpoints = () => {
   return basePage.waitForRequest(catalogEndpointAlias);
 };
 
-export const waitForCatalogEndpoint = () =>
-  basePage.waitForRequest(catalogEndpointAlias);
-
 export const visitAvailableHanaCluster = (wait = true) =>
   visit(availableHanaCluster.id, wait);
 
