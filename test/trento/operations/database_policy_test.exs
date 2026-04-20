@@ -127,6 +127,26 @@ defmodule Trento.Operations.DatabasePolicyTest do
     end
   end
 
+  test "should forbid operation if the requested site is not found" do
+    site = "unknown"
+
+    database =
+      build(:database,
+        database_instances: build_list(2, :database_instance)
+      )
+
+    for operation <- DatabaseOperations.values() do
+      assert {:error,
+              [
+                %{
+                  message: "Requested site #{site} is not found in the database",
+                  metadata: []
+                }
+              ]} ==
+               DatabasePolicy.authorize_operation(operation, database, %{site: site})
+    end
+  end
+
   describe "database_start" do
     test "should forbid operation if the database cluster is not in maintenance" do
       %{
