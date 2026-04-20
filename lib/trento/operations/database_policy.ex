@@ -25,21 +25,9 @@ defmodule Trento.Operations.DatabasePolicy do
         params
       )
       when operation in DatabaseOperations.values() do
-    site_instances = filter_by_site(instances, params)
-
-    sites_without_passing_heartbeat =
-      site_instances
-      |> Enum.group_by(& &1.system_replication_site)
-      |> Enum.reject(fn {_site, grouped_instances} ->
-        Enum.any?(grouped_instances, fn %DatabaseInstanceReadModel{
-                                          host: %HostReadModel{heartbeat: heartbeat}
-                                        } ->
-          heartbeat == :passing
-        end)
-      end)
-      |> Enum.map(fn {site, _} -> site end)
-
-    with :ok <- validate_site_exists(site_instances, params),
+    with site_instances <- filter_by_site(instances, params),
+         :ok <- validate_site_exists(site_instances, params),
+         sites_without_passing_heartbeat <- get_sites_without_heartbeats(site_instances),
          :ok <- validate_heartbeats(sites_without_passing_heartbeat) do
       do_authorize_operation(operation, database, params)
     end
@@ -63,6 +51,19 @@ defmodule Trento.Operations.DatabasePolicy do
        ]}
 
   defp validate_site_exists(_instances, _params), do: :ok
+
+  defp get_sites_without_heartbeats(site_instances) do
+    site_instances
+    |> Enum.group_by(& &1.system_replication_site)
+    |> Enum.reject(fn {_site, grouped_instances} ->
+      Enum.any?(grouped_instances, fn %DatabaseInstanceReadModel{
+                                        host: %HostReadModel{heartbeat: heartbeat}
+                                      } ->
+        heartbeat == :passing
+      end)
+    end)
+    |> Enum.map(fn {site, _} -> site end)
+  end
 
   defp validate_heartbeats([]), do: :ok
 
