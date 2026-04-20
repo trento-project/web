@@ -5340,5 +5340,41 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-20T04:16:58Z",
+    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
+    "run_id": "24647765014",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Change Saptune Solution operation disabled",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      }
+    ]
   }
 ]
