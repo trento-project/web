@@ -5324,5 +5324,21 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-20T04:03:28Z",
+    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
+    "run_id": "24647459672",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
+      }
+    ]
   }
 ]
