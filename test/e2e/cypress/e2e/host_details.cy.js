@@ -156,8 +156,7 @@ context('Host Details', () => {
 
   describe("Node exporter status should be 'running'", () => {
     beforeEach(() => {
-      const isTrentoRealInstance =
-        !Cypress.config().baseUrl.includes('localhost');
+      const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
       if (isTrentoRealInstance) {
         hostDetailsPage.interceptNodeExporterStatusMockedForRealInstance();
       }

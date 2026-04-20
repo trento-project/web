@@ -545,7 +545,7 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 
 // API
 export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
-  const isTrentoRealInstance = !Cypress.config().baseUrl.includes('localhost');
+  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
 
   if (isTrentoRealInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
@@ -556,7 +556,7 @@ export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
 };
 
 export const interceptSumaRequestsMockedForRealInstance = () => {
-  const isTrentoRealInstance = !Cypress.config().baseUrl.includes('localhost');
+  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
 
   if (isTrentoRealInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
@@ -600,7 +600,7 @@ export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
 
 export const waitForHostRestoration = () => {
-  if (Cypress.config().baseUrl.includes('localhost')) return;
+  if (Cypress.env('web_mode') === 'dev') return;
   const maxRetries = 12;
   const retryRestoreHostAtAttempt = Math.floor(maxRetries / 3);
 

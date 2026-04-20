@@ -279,7 +279,7 @@ export const loadScenario = (scenario) => {
     return cy.exec(photofinishCommand, { timeout: 360000 });
   };
 
-  if (baseUrl.includes('localhost')) return runPhotofinish();
+  if (Cypress.env('web_mode') === 'dev') return runPhotofinish();
   else return getApiKey().then((apiKey) => runPhotofinish(apiKey));
 };
 
@@ -313,7 +313,7 @@ const isTestDataLoaded = () =>
 export const startAgentsHeartbeat = (agents) => {
   const baseUrl = Cypress.config().baseUrl;
 
-  if (baseUrl.includes('localhost')) {
+  if (Cypress.env('web_mode') === 'dev') {
     return cy.task('startAgentHeartbeat', { agents });
   }
 
