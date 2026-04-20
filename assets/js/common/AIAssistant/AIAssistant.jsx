@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Rnd } from 'react-rnd';
 
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';
@@ -8,9 +8,11 @@ import { AssistantChatProvider } from './AssistantChatProvider';
 import { AssistantThread } from './AssistantThread';
 
 function AIAssistant() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <AssistantChatProvider>
-      <AssistantModalPrimitive.Root>
+      <AssistantModalPrimitive.Root open={isOpen} onOpenChange={setIsOpen}>
         <AssistantModalPrimitive.Anchor className="fixed right-6 bottom-20 size-12 z-40">
           <AssistantModalPrimitive.Trigger asChild>
             <button
@@ -30,9 +32,9 @@ function AIAssistant() {
             bounds="window"
             default={{
               width: 384,
-              height: 450,
+              height: 650,
               x: -400,
-              y: -450,
+              y: -650,
             }}
             minWidth={300}
             minHeight={400}
@@ -41,10 +43,7 @@ function AIAssistant() {
             dragHandleClassName="drag-handle"
             className="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 shadow-2xl flex flex-col overflow-hidden"
           >
-            {/* <div className="drag-handle absolute top-1.5 left-4 right-4 h-[12px] cursor-move z-40 bg-transparent flex items-center justify-center">
-              <div className="w-10 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors" />
-            </div> */}
-            <AssistantThread />
+            <AssistantThread onClose={() => setIsOpen(false)} />
           </Rnd>
         </AssistantModalPrimitive.Content>
       </AssistantModalPrimitive.Root>
