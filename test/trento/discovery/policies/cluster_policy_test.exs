@@ -6409,6 +6409,39 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
     end
+
+    test "should detect the majority maker node in the hana-scale-out-with-majority-maker scenario" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  type: :hana_scale_out,
+                  details: %HanaClusterDetails{nodes: nodes}
+                }
+              ]} =
+               "ha_cluster_discovery_hana_scale_out_with_majority_maker"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      majority_makers =
+        nodes
+        |> Enum.filter(& &1.is_majority_maker)
+        |> Enum.map(& &1.name)
+
+      non_majority_makers =
+        nodes
+        |> Enum.reject(& &1.is_majority_maker)
+        |> Enum.map(& &1.name)
+        |> Enum.sort()
+
+      assert majority_makers == ["hana-s-mm"]
+
+      assert non_majority_makers == [
+               "hana-s1-db1",
+               "hana-s1-db2",
+               "hana-s2-db1",
+               "hana-s2-db2"
+             ]
+    end
   end
 
   describe "Angi architecture" do
