@@ -92,12 +92,9 @@ export const defaultClassNames = {
     ),
 };
 
-// composeOpts compose old style options and default values
+// composeOpt composes old style options and default values
 // examples:
-// ['Enabled', 'Disabled'] => [
-// {value: 'Enabled', label: 'Enabled'},
-// {value: 'Disabled', label: 'Disabled'}
-// ]
+// 'Enabled' to {value: 'Enabled', label: 'Enabled'},
 const composeOpt = (opt) =>
   has(opt, 'value') ? opt : { value: opt, label: opt };
 
