@@ -3,7 +3,7 @@
   "description": "E2E testing for Trento",
   "scripts": {
     "cypress:open": "cypress open",
-    "lint": "eslint . --ext js,jsx",
+    "lint": "eslint .",
     "format:check": "prettier --check .",
     "format": "prettier --write ."
   },
