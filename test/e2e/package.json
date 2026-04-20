@@ -21,6 +21,6 @@
     "date-fns": "^4.1.0",
     "lodash": "^4.18.1",
     "npm": "^11.12.1",
-    "totp-generator": "^1.0.0"
+    "totp-generator": "^2.0.1"
   }
 }

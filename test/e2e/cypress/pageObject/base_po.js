@@ -105,12 +105,13 @@ export const typeNextGeneratedTotpCode = (
   const timeToWait = _getTotpWaitTime(forceNext);
 
   return cy.wait(timeToWait).then(() => {
-    const { otp } = TOTP.generate(totpSecret);
-    return cy
-      .get(inputField)
-      .clear()
-      .type(otp)
-      .then(() => otp);
+    return cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
+      return cy
+        .get(inputField)
+        .clear()
+        .type(otp)
+        .then(() => otp);
+    });
   });
 };
 
