@@ -5300,5 +5300,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-20T04:00:35Z",
+    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
+    "run_id": "24647459672",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
