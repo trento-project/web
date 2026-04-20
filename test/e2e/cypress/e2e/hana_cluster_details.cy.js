@@ -302,10 +302,7 @@ context('HANA cluster details', () => {
     const CHECK_SBD = 'SBD';
 
     before(function () {
-      const isWandaRealInstance = !Cypress.env('wandaUrl').includes(
-        'http://localhost:4001'
-      );
-      if (isWandaRealInstance) this.skip();
+      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
     });
 
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());

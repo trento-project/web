@@ -19,6 +19,8 @@ module.exports = defineConfig({
     login_user: 'admin',
     login_password: 'adminpassword',
     idp_url: 'http://localhost:8081',
+    wanda_mode: 'demo', //demo: local dev instance / real: real instance installed via rpm
+    web_mode: 'dev', //dev: local dev instance / real: real instance installed via rpm
   },
   e2e: {
     // We've imported your old cypress plugins here.
