@@ -25,34 +25,11 @@ defmodule Trento.Operations.DatabasePolicy do
         params
       )
       when operation in DatabaseOperations.values() do
-    sites_without_passing_heartbeat =
-      instances
-      |> filter_by_site(params)
-      |> Enum.group_by(& &1.system_replication_site)
-      |> Enum.reject(fn {_site, grouped_instances} ->
-        Enum.any?(grouped_instances, fn %DatabaseInstanceReadModel{
-                                          host: %HostReadModel{heartbeat: heartbeat}
-                                        } ->
-          heartbeat == :passing
-        end)
-      end)
-      |> Enum.map(fn {site, _} -> site end)
-
-    if Enum.empty?(sites_without_passing_heartbeat) do
+    with site_instances <- filter_by_site(instances, params),
+         :ok <- validate_site_exists(site_instances, params),
+         sites_without_passing_heartbeat <- get_sites_without_heartbeats(site_instances),
+         :ok <- validate_heartbeats(sites_without_passing_heartbeat) do
       do_authorize_operation(operation, database, params)
-    else
-      {:error,
-       Enum.map(sites_without_passing_heartbeat, fn
-         nil ->
-           OperationsHelper.build_error(
-             "Trento agent is not currently running in any of the hosts in the database"
-           )
-
-         site ->
-           OperationsHelper.build_error(
-             "Trento agent is not currently running in any of the hosts in the database site #{site}"
-           )
-       end)}
     end
   end
 
@@ -65,6 +42,45 @@ defmodule Trento.Operations.DatabasePolicy do
     do: Enum.filter(instances, fn %{system_replication_site: site} -> site == params_site end)
 
   defp filter_by_site(instances, _), do: instances
+
+  defp validate_site_exists([], %{site: site}),
+    do:
+      {:error,
+       [
+         OperationsHelper.build_error("Requested site #{site} is not found in the database")
+       ]}
+
+  defp validate_site_exists(_instances, _params), do: :ok
+
+  defp get_sites_without_heartbeats(site_instances) do
+    site_instances
+    |> Enum.group_by(& &1.system_replication_site)
+    |> Enum.reject(fn {_site, grouped_instances} ->
+      Enum.any?(grouped_instances, fn %DatabaseInstanceReadModel{
+                                        host: %HostReadModel{heartbeat: heartbeat}
+                                      } ->
+        heartbeat == :passing
+      end)
+    end)
+    |> Enum.map(fn {site, _} -> site end)
+  end
+
+  defp validate_heartbeats([]), do: :ok
+
+  defp validate_heartbeats(sites_without_passing_heartbeat) do
+    {:error,
+     Enum.map(sites_without_passing_heartbeat, fn
+       nil ->
+         OperationsHelper.build_error(
+           "Trento agent is not currently running in any of the hosts in the database"
+         )
+
+       site ->
+         OperationsHelper.build_error(
+           "Trento agent is not currently running in any of the hosts in the database site #{site}"
+         )
+     end)}
+  end
 
   defp do_authorize_operation(
          :database_start,
