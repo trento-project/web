@@ -357,7 +357,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
       site1 = "Site1"
       site2 = "Site2"
       site3 = "Site3"
-      site4 = "Site3"
+      site4 = "Site4"
 
       %{sid: sid} =
         database =

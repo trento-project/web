@@ -185,7 +185,7 @@ defmodule Trento.Operations.DatabasePolicy do
          _
        ) do
     database_instances
-    |> Enum.filter(fn %{system_replication_source_site: soure_site} -> site == soure_site end)
+    |> Enum.filter(fn %{system_replication_source_site: source_site} -> site == source_site end)
     |> Enum.all?(fn %{health: health} -> health == :unknown end)
     |> if do
       :ok
