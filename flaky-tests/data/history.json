@@ -5484,5 +5484,37 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-21T04:11:58Z",
+    "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
+    "run_id": "24703130333",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
+        "score": 0.05001
+      },
+      {
+        "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as false",
+        "score": 0.02501
+      }
+    ]
   }
 ]
