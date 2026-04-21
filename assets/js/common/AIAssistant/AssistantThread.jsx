@@ -12,6 +12,7 @@ import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
 import Spinner from '@common/Spinner';
+import { useAIConnectionStatus } from './AssistantChatProvider';
 
 function CustomMarkdownText(props) {
   return (
@@ -62,14 +63,32 @@ export function AssistantThread({ onClose }) {
 
 function ChatHeader({ onClose }) {
   const aui = useAui();
+  const connectionStatus = useAIConnectionStatus();
+
+  const isConnected = connectionStatus === 'connected';
+  const isConnecting = connectionStatus === 'connecting';
+
+  const statusText = isConnected
+    ? 'Online'
+    : isConnecting
+    ? 'Connecting...'
+    : 'Offline';
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">
       <div className="flex items-center gap-3">
-        <div className="w-2.5 h-2.5 rounded-full bg-white mt-1 shadow-sm ml-1" />
+        <div
+          className={`w-2.5 h-2.5 rounded-full mt-1 shadow-sm ml-1 ${
+            isConnected
+              ? 'bg-white'
+              : isConnecting
+              ? 'bg-yellow-300 animate-pulse'
+              : 'bg-red-400'
+          }`}
+        />
         <div className="flex flex-col leading-tight">
           <span className="font-bold text-lg">Liz</span>
-          <span className="text-sm font-medium opacity-95">Online</span>
+          <span className="text-sm font-medium opacity-95">{statusText}</span>
         </div>
       </div>
       <div className="flex items-center gap-3">
@@ -124,12 +143,21 @@ function ThreadWelcome() {
 }
 
 function Composer() {
+  const connectionStatus = useAIConnectionStatus();
+  const isConnected = connectionStatus === 'connected';
+  const placeholder = isConnected
+    ? "How can I help you?"
+    : connectionStatus === 'connecting'
+    ? "Connecting..."
+    : "Offline - waiting to reconnect...";
+
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
       <ComposerPrimitive.AttachmentDropzone className="relative flex w-full flex-col outline-none">
         <ComposerPrimitive.Input
-          placeholder="How can I help you?"
-          className="w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm"
+          placeholder={placeholder}
+          disabled={!isConnected}
+          className="w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed"
           aria-label="Message input"
         />
       </ComposerPrimitive.AttachmentDropzone>
@@ -151,13 +179,18 @@ function Composer() {
 }
 
 function ComposerAction() {
+  const connectionStatus = useAIConnectionStatus();
+  const isConnected = connectionStatus === 'connected';
+
   return (
     <AuiIf condition={({ thread }) => !thread.isRunning}>
       <ComposerPrimitive.Send asChild>
         <button
           type="submit"
+          disabled={!isConnected}
           className="rounded-lg bg-[#2fb371] px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[#279c61] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           aria-label="Send message"
+          title={!isConnected ? 'Waiting for connection...' : 'Send message'}
         >
           Send
         </button>

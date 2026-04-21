@@ -8,8 +8,13 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias Trento.Users
 
   @impl true
-  def join("ai_assistant:" <> user_id, _session, socket) do
-    current_user_id = socket.assigns.current_scope.user.id
+  def join("ai_assistant:" <> user_id, session, %{assigns: %{current_user_id: current_user_id}} = socket) do
+
+    # IO.inspect("User #{user_id} joined AI Assistant channel")
+    # IO.inspect("Current socket: #{inspect(socket)}")
+    # IO.inspect("Session data: #{inspect(session)}")
+
+    # current_user_id = socket.assigns.current_scope.user.id
 
     case allowed?(user_id, current_user_id) do
       # For new conversations, agent_id will be set when conversation is created
@@ -19,6 +24,7 @@ defmodule TrentoWeb.AIAssistantChannel do
           |> IntegrationHelpers.init_agent_state()
           |> assign(:page_title, "Agents Demo")
           |> assign(:timezone, "UTC")
+          |> assign(:current_scope, %{user: %{id: current_user_id}})
 
         send(self(), {:reinit_params, %{}})
         {:ok, updated_socket}
@@ -28,13 +34,34 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 
+  def join("ai_assistant:" <> _user_id, _payload, _socket) do
+    {:error, :user_not_logged}
+  end
+
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
+  # Generate a unique run ID for AG UI protocol
+  defp generate_run_id do
+    :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
+  end
+
   @impl true
-  def handle_in("send_message", %{"message" => message_text}, socket) do
+  def handle_in("send_message", %{"message" => message_text} = params, socket) do
     message_text = String.trim(message_text)
     current_user_id = socket.assigns.current_scope.user.id
-    _user = Users.get_user(current_user_id)
+    {:ok, %{ai_configuration: %{
+      model: model,
+      api_key: api_key
+    }}} = user = Users.get_user(current_user_id)
+
+    IO.inspect(user, label: "Current user")
+
+    IO.inspect(model, label: "Current model")
+    IO.inspect(api_key, label: "Current API key")
+
+    # Store run_id for tracking this execution (generate if not provided)
+    run_id = params["run_id"] || generate_run_id()
+    thread_id = params["thread_id"]
 
     if message_text == "" or socket.assigns.loading do
       {:noreply, socket}
@@ -55,8 +82,8 @@ defmodule TrentoWeb.AIAssistantChannel do
 
       model_config =
         AgenticRuntime.build_googleai_model_config(
-          "gemini-2.5-flash",
-          System.get_env("GEMINI_API_KEY")
+          model,
+          api_key
         )
 
       base_system_prompt = "You are helpful AI assistant."
@@ -84,7 +111,9 @@ defmodule TrentoWeb.AIAssistantChannel do
               {:noreply,
                socket
                |> assign(:input, "")
-               |> assign(:loading, true)}
+               |> assign(:loading, true)
+               |> assign(:current_run_id, run_id)
+               |> assign(:current_thread_id, thread_id)}
 
             # Display happens when we receive {:display_message_saved, msg} event
             {:error, reason} ->
@@ -156,6 +185,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   @impl true
   def handle_info({:reinit_params, params}, socket) do
+    IO.inspect("reinit_params")
     conversation_id = params[:conversation_id]
     previous_conversation_id = socket.assigns.conversation_id
 
@@ -200,8 +230,15 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_info({:agent, {:status_changed, :idle, _data}}, socket) do
+  def handle_info({:agent, {:status_changed, :idle, data}}, socket) do
     Logger.info("Agent returned to idle state (execution completed)")
+
+    IO.inspect(data, label: "Idle status data")
+
+    # Emit AG UI protocol event for completion
+    # run_id = socket.assigns[:current_run_id]
+    # push(socket, "agent_complete", %{run_id: run_id})
+
     {:noreply, IntegrationHelpers.handle_status_idle(socket)}
   end
 
@@ -216,18 +253,56 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
+
+    # Emit AG UI protocol event for error
+    # run_id = socket.assigns[:current_run_id]
+    # push(socket, "agent_error", %{
+    #   error: inspect(reason),
+    #   run_id: run_id
+    # })
+
     {:noreply, IntegrationHelpers.handle_status_error(socket, reason)}
   end
 
   @impl true
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
+    IO.inspect(deltas, label: "Received LLM deltas")
     updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
-    push(socket, "scroll-to-bottom", %{})
+    # push(socket, "scroll-to-bottom", %{})
+
+    # Emit AG UI protocol event for streaming deltas
+    run_id = socket.assigns[:current_run_id]
+    push(updated_socket, "agent_delta", %{
+      delta: %{text: deltas},
+      run_id: run_id
+    })
+
     {:noreply, updated_socket}
   end
 
   @impl true
-  def handle_info({:agent, {:llm_message, _message}}, socket) do
+  def handle_info({:agent, {:llm_message, message}}, socket) do
+    # Emit AG UI protocol event for complete message
+    run_id = socket.assigns[:current_run_id]
+
+    IO.inspect(message, label: "LLM message content")
+
+    # Extract text content from LangChain message
+    message_text = case message do
+      %{content: content} when is_binary(content) -> content
+      %{content: parts} when is_list(parts) ->
+        parts
+        |> Enum.filter(&match?(%{type: "text"}, &1))
+        |> Enum.map(& &1.text)
+        |> Enum.join("\n")
+      _ -> ""
+    end
+
+    push(socket, "agent_message", %{
+      message: message_text,
+      run_id: run_id
+    })
+
     {:noreply, IntegrationHelpers.handle_llm_message_complete(socket)}
   end
 
@@ -276,6 +351,16 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
     push(updated_socket, "scroll-to-bottom", %{tool_info: tool_info})
+
+    # Emit AG UI protocol event for tool call
+    # run_id = socket.assigns[:current_run_id]
+    # push(updated_socket, "tool_call", %{
+    #   tool_name: tool_info[:name] || tool_info["name"],
+    #   tool_arguments: tool_info[:arguments] || tool_info["arguments"],
+    #   tool_call_id: tool_info[:id] || tool_info["id"],
+    #   run_id: run_id
+    # })
+
     {:noreply, updated_socket}
   end
 
@@ -283,6 +368,17 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:tool_execution_update, status, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_execution_update(socket, status, tool_info)
     push(updated_socket, "scroll-to-bottom", %{status: status, tool_info: tool_info})
+
+    # Emit AG UI protocol event for tool result (when execution completes)
+    # if status == :complete do
+    #   run_id = socket.assigns[:current_run_id]
+    #   push(updated_socket, "tool_result", %{
+    #     tool_call_id: tool_info[:id] || tool_info["id"],
+    #     result: tool_info[:result] || tool_info["result"] || %{},
+    #     run_id: run_id
+    #   })
+    # end
+
     {:noreply, updated_socket}
   end
 
@@ -433,3 +529,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 end
+
+require Protocol
+Protocol.derive(Jason.Encoder, LangChain.MessageDelta)
+Protocol.derive(Jason.Encoder, LangChain.TokenUsage)
+Protocol.derive(Jason.Encoder, LangChain.Message.ToolCall)
