@@ -1,6 +1,6 @@
 import * as aboutPage from '../pageObject/about_po';
 
-describe('User account page', () => {
+describe('About page', () => {
   before(() => {
     aboutPage.preloadTestData();
   });
@@ -23,6 +23,12 @@ describe('User account page', () => {
   });
 
   it('should display number of SLES subscriptions found', () => {
-    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed();
+    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed(27);
+  });
+
+  it('should update number of SLES subscriptions when a host is deregistered', () => {
+    aboutPage.apiDeregisterHost();
+    aboutPage.visit();
+    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed(26);
   });
 });
