@@ -5544,5 +5544,57 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-21T06:45:43Z",
+    "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
+    "run_id": "24703868699",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 16
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.09920
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
+        "score": 0.05001
+      },
+      {
+        "name": "should show a warning message in the check selection view::HANA cluster details Cluster with unknown provider should show a warning message in the check selection view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show a warning message in the checks results view::HANA cluster details Cluster with unknown provider should show a warning message in the checks results view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.05001
+      },
+      {
+        "name": "should complete host deregistration when all instances are moved out::Hosts Overview Deregistration Clean-up button should deregister a host Movement of application instances on hosts should complete host deregistration when all instances are moved out",
+        "score": 0.02501
+      }
+    ]
   }
 ]
