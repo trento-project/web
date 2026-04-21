@@ -70,6 +70,12 @@ defmodule Trento.Hosts.PolicyTest do
         assert Policy.authorize(@operation, user, HostReadModel)
       end
 
+      test "should allow #{operation} operation if the user has operation:all ability" do
+        user = %User{abilities: [%Ability{name: "operation", resource: "all"}]}
+
+        assert Policy.authorize(@operation, user, HostReadModel)
+      end
+
       test "should disallow #{operation} operation if the user does not have #{operation}:host ability" do
         user = %User{abilities: []}
 
