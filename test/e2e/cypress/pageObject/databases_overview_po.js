@@ -82,7 +82,9 @@ export const activePillIsDisplayedInTheRightHost = () =>
   cy.wrap(hdqDatabase.instances).each((instance) => {
     cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
       const isHostActive = instance.state === 'ACTIVE';
-      cy.get(activePill).should(isHostActive ? 'be.visible' : 'not.exist');
+      return cy
+        .get(activePill)
+        .should(isHostActive ? 'be.visible' : 'not.exist');
     });
   });
 
@@ -192,16 +194,17 @@ const apiGetDatabases = () =>
     });
   });
 
-export const apiRemoveAllDatabaseTags = () => {
-  return apiGetDatabases()
+export const apiRemoveAllDatabaseTags = () =>
+  apiGetDatabases()
     .then((response) => {
       const databaseTags = basePage.getResourceTags(response.body);
-      Object.entries(databaseTags).forEach(([databaseId, tags]) => {
-        tags.forEach((tag) => apiRemoveTagByDatabaseId(databaseId, tag));
-      });
+      return cy
+        .wrap(Object.entries(databaseTags))
+        .each(([databaseId, tags]) =>
+          cy.wrap(tags).each((tag) => apiRemoveTagByDatabaseId(databaseId, tag))
+        );
     })
     .then(() => basePage.refresh());
-};
 
 const apiRemoveTagByDatabaseId = (databaseId, tagId) =>
   basePage.apiLogin().then(({ accessToken }) =>

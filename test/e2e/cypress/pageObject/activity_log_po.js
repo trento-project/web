@@ -209,14 +209,13 @@ export const validateResponsePagination = (amountOfItems) =>
     .its('response.body.pagination.first')
     .should('eq', amountOfItems);
 
-export const responseMatchesFirstPageContent = (expectedResponse) => {
-  return waitForActivityLogRequest().then(({ response }) => {
+export const responseMatchesFirstPageContent = (expectedResponse) =>
+  waitForActivityLogRequest().then(({ response }) => {
     expect(response.body.pagination).to.have.property('last', 20);
     expectedResponse.body.data.forEach((element, i) => {
       expect(element.id).to.eq(response.body.data[i].id);
     });
   });
-};
 
 export const apiCallDoesNotContainRefreshRate = (refreshRate) =>
   waitForActivityLogRequest().then(({ response }) => {

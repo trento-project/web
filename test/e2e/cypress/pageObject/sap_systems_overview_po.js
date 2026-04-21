@@ -80,9 +80,9 @@ export const visit = () => {
 };
 
 export const tagSapSystems = () =>
-  availableSAPSystems.forEach(({ sid, tag }) => {
-    basePage.addTagByColumnValue(sid, tag);
-  });
+  cy
+    .wrap(availableSAPSystems)
+    .each(({ sid, tag }) => basePage.addTagByColumnValue(sid, tag));
 
 export const expandSystemToRemove = () =>
   cy.get(systemToRemoveCollapsibleCell).click();
@@ -131,9 +131,11 @@ export const movedSystemIsNotDisplayed = () =>
   cy.get(`td:contains('${sapSystemNwd.hostname}')`).should('not.exist');
 
 export const expectedSidsAreDisplayed = () =>
-  availableSAPSystems.forEach(({ sid: sid }) =>
-    cy.get(`td:contains('${sid}')`).should('be.visible')
-  );
+  cy
+    .wrap(availableSAPSystems)
+    .each(({ sid: sid }) =>
+      cy.get(`td:contains('${sid}')`).should('be.visible')
+    );
 
 export const eachSystemHasItsExpectedWorkingLink = () =>
   cy.wrap(availableSAPSystems).each(({ sid, id }) => {
@@ -142,7 +144,7 @@ export const eachSystemHasItsExpectedWorkingLink = () =>
     cy.go('back');
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
-    cy.get(sapSystemsTableRows).should('be.visible');
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 
 export const eachSystemHasExpectedHealth = () =>
@@ -165,10 +167,9 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
         attachedDatabase.tenant
       );
       cy.get(tableCell(rowIndex, 5)).should('have.text', type);
-      cy.get(tableCell(rowIndex, 6)).should(
-        'have.text',
-        attachedDatabase.dbAddress
-      );
+      return cy
+        .get(tableCell(rowIndex, 6))
+        .should('have.text', attachedDatabase.dbAddress);
     });
 };
 
@@ -208,7 +209,7 @@ export const eachSystemHasItsDatabaseWorkingLink = () =>
       cy.go('back');
       validateUrl();
       pageTitleIsCorrectlyDisplayed();
-      cy.get(sapSystemsTableRows).should('be.visible');
+      return cy.get(sapSystemsTableRows).should('be.visible');
     });
 
 const validateInstanceRowData = (instance, rowIndex) => {
@@ -248,14 +249,14 @@ const validateInstanceRowData = (instance, rowIndex) => {
   cy.get(clusterNameSelector).should('have.text', clusterNameExpected);
 
   const hostnameExpected = instance.hostname;
-  cy.get(hostnameSelector).should('have.text', hostnameExpected);
+  return cy.get(hostnameSelector).should('have.text', hostnameExpected);
 };
 
 export const instanceDataIsTheExpected = () => {
   clickAllRows();
-  return cy.wrap(instancesData).each((instance, rowIndex) => {
-    validateInstanceRowData(instance, rowIndex);
-  });
+  return cy
+    .wrap(instancesData)
+    .each((instance, rowIndex) => validateInstanceRowData(instance, rowIndex));
 };
 
 const pageTitleIsCorrectlyDisplayed = () =>
@@ -303,7 +304,7 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
   const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
 
-  return Object.entries(healthMap).forEach(([state, health], index) => {
+  return cy.wrap(Object.entries(healthMap)).each(([state, health], index) => {
     basePage.loadScenario(`sap-systems-overview-${state}`);
 
     const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
@@ -312,7 +313,7 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
     const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
       index + 1
     }) div[class*="cell"]:eq(0) svg`;
-    cy.get(appLayerInstanceHealthBadge).should('have.class', health);
+    return cy.get(appLayerInstanceHealthBadge).should('have.class', health);
   });
 };
 
@@ -380,9 +381,11 @@ export const apiRemoveAllSapSystemsTags = () =>
   apiGetSapSystems()
     .then((response) => {
       const sapSystemTags = getSapSystemTags(response.body);
-      Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
-        tags.forEach((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
-      });
+      return cy
+        .wrap(Object.entries(sapSystemTags))
+        .each(([clusterId, tags]) =>
+          cy.wrap(tags).each((tag) => apiRemoveTagBySapSystemId(clusterId, tag))
+        );
     })
     .then(() => basePage.refresh());
 
@@ -426,9 +429,9 @@ export const loadJavaScenario = () => {
 };
 
 export const apiDeregisterJavaSystems = () =>
-  availableJavaSystem.instances.forEach(({ hostID }) => {
-    basePage.apiDeregisterHost(hostID);
-  });
+  cy
+    .wrap(availableJavaSystem.instances)
+    .each(({ hostID }) => basePage.apiDeregisterHost(hostID));
 
 export const revertNotMovedScenario = () =>
   basePage.loadScenario('sap-systems-overview-revert-not-moved');
@@ -447,7 +450,7 @@ const apiDeregisterInstance = (sapSystemdId, hostId, instanceNumber) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  basePage.apiLogin().then(({ accessToken }) => {
+  return basePage.apiLogin().then(({ accessToken }) => {
     const url = `${
       Cypress.config().baseUrl
     }/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;

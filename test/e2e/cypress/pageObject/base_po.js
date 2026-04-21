@@ -58,7 +58,7 @@ export const addTagByColumnValue = (columnValue, tagValue) =>
     .get(`td:contains(${columnValue})`)
     .parents('tr')
     .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+      return cy.get(addTagButtons).type(`${tagValue}{enter}`);
     });
 
 export const clickActivityLogNavigationItem = () =>
@@ -221,32 +221,27 @@ export const apiDeleteAllUsers = () =>
         method: 'GET',
         auth: { bearer: accessToken },
       })
-      .then(({ body: users }) => {
-        users.forEach(({ id }) => {
-          if (id !== 1) apiDeleteUser(id, accessToken);
-        });
-      })
+      .then(({ body: users }) =>
+        cy.wrap(users).each(({ id }) => {
+          if (id !== 1) return apiDeleteUser(id, accessToken);
+        })
+      )
   );
 
 export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
 
-export const preloadTestData = ({
-  isDataLoadedFunc = isTestDataLoaded,
-} = {}) => {
+export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
   /**
    * Preload required test data.
    * It must run photofinish scenario twice as the order of sent payloads is relevant
    * and the tests require a fully loaded scenario which only happens when the
    * scenario is sent in the second time.
    */
-  return isDataLoadedFunc().then((isLoaded) => {
-    if (!isLoaded) {
-      loadScenario('healthy-27-node-SAP-cluster');
-    }
+  isDataLoadedFunc().then((isLoaded) => {
+    if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
     return loadScenario('healthy-27-node-SAP-cluster');
   });
-};
 
 export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary] = [
@@ -306,9 +301,9 @@ export const startAgentsHeartbeat = (agents) => {
     return cy.task('startAgentHeartbeat', { agents });
   }
 
-  return getApiKey().then((apiKey) => {
-    cy.task('startAgentHeartbeat', { agents, apiKey });
-  });
+  return getApiKey().then((apiKey) =>
+    cy.task('startAgentHeartbeat', { agents, apiKey })
+  );
 };
 
 export const apiCreateUserWithAbilities = (abilities) =>

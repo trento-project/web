@@ -378,9 +378,9 @@ export const personalAccessTokensAreDisplayed = (tokens) => {
   if (tokens.length === 0) {
     return cy.get(emptyListAccessTokens).should('be.visible');
   } else {
-    return cy.wrap(tokens).each(({ name }) => {
-      cy.get(accessTokenName).should('have.text', name);
-    });
+    return cy
+      .wrap(tokens)
+      .each(({ name }) => cy.get(accessTokenName).should('have.text', name));
   }
 };
 
@@ -487,16 +487,14 @@ export const apiGetProfileInfo = (
   );
 
 export const apiDisableUser = () =>
-  apiGetProfileInfo().then(({ id }) => {
-    apiPatchUser(id, { enabled: false });
-  });
+  apiGetProfileInfo().then(({ id }) => apiPatchUser(id, { enabled: false }));
 
 export const apiApplyAllUsersPermission = () =>
-  apiGetProfileInfo().then(({ id }) => {
-    return apiPatchUser(id, {
+  apiGetProfileInfo().then(({ id }) =>
+    apiPatchUser(id, {
       abilities: [{ id: 2, name: 'all', resource: 'users', label: 'test' }],
-    });
-  });
+    })
+  );
 
 export const apiCreateUser = () =>
   basePage.apiLogin().then(({ accessToken }) => {
@@ -566,17 +564,13 @@ export const apiDeletePersonalAccessToken = (id) =>
 export const apiPersonalAccessTokenAuthorized = (
   accessToken,
   url = '/api/v1/hosts'
-) => {
-  _assertAuthenticationStatusCode(accessToken, 200, url);
-};
+) => _assertAuthenticationStatusCode(accessToken, 200, url);
 
-export const apiPersonalAccessTokenUnauthorized = (accessToken) => {
+export const apiPersonalAccessTokenUnauthorized = (accessToken) =>
   _assertAuthenticationStatusCode(accessToken, 401);
-};
 
-export const apiPersonalAccessTokenForbidden = (accessToken) => {
+export const apiPersonalAccessTokenForbidden = (accessToken) =>
   _assertAuthenticationStatusCode(accessToken, 403, usersEndpoint);
-};
 
 export const apiCreateAIConfiguration = (provider, model, apiKey) =>
   basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
