@@ -302,8 +302,6 @@ const isTestDataLoaded = () =>
   );
 
 export const startAgentsHeartbeat = (agents) => {
-  const baseUrl = Cypress.config().baseUrl;
-
   if (Cypress.env('web_mode') === 'dev') {
     return cy.task('startAgentHeartbeat', { agents });
   }
