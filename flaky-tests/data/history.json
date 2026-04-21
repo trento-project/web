@@ -5464,5 +5464,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-21T03:59:19Z",
+    "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
+    "run_id": "24702847600",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
