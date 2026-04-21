@@ -44,11 +44,15 @@ defmodule Trento.HostsTest do
     end
 
     test "Detects the correct number of SLES4SAP Subscriptions" do
-      insert_list(6, :sles_subscription, identifier: "SLES_SAP")
-      insert_list(6, :sles_subscription, identifier: "sle-module-server-applications")
+      [%{id: host_id_1}, %{id: host_id_2}] = insert_list(2, :host)
+      %{id: deregistered_host_id} = insert(:host, deregistered_at: DateTime.utc_now())
+      insert(:sles_subscription, host_id: host_id_1, identifier: "SLES_SAP")
+      insert(:sles_subscription, host_id: host_id_2, identifier: "SLES_SAP")
+      insert(:sles_subscription, host_id: deregistered_host_id, identifier: "SLES_SAP")
+      insert(:sles_subscription, identifier: "sle-module-server-applications")
 
-      assert 12 = SlesSubscriptionReadModel |> Repo.all() |> length()
-      assert 6 = Hosts.get_all_sles_subscriptions()
+      assert 4 = SlesSubscriptionReadModel |> Repo.all() |> length()
+      assert 2 = Hosts.get_all_sles_subscriptions()
     end
   end
 
