@@ -104,7 +104,7 @@ export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
 export const waitForInitialEndpoints = () => {
   basePage.waitForRequest(lastExecutionEndpointAlias);
   return basePage.waitForRequest(catalogEndpointAlias);
-}
+};
 
 export const visitAvailableHanaCluster = (wait = true) =>
   visit(availableHanaCluster.id, wait);
