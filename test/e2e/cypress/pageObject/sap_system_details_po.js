@@ -32,7 +32,7 @@ const sapSystemsRows = 'div[class="mt-16"]:contains("Layout") table tbody tr';
 export const visit = () => {
   cy.intercept('/api/v1/hosts').as('hostsEndpoint');
   basePage.visit(`/sap_systems/${selectedSystem.Id}`);
-  cy.wait('@hostsEndpoint');
+  return cy.wait('@hostsEndpoint');
 };
 export const visitNonExistentSapSystem = () =>
   basePage.visit('/sap_systems/other', { failOnStatusCode: false });
@@ -52,12 +52,11 @@ export const notFoundLabelIsDisplayed = () =>
   cy.get(notFoundLabel).should('be.visible');
 
 export const layoutTableShowsExpectedData = () => {
-  selectedSystem.Hosts.forEach((instance, index) => {
+  return cy.wrap(selectedSystem.Hosts).each((instance, index) => {
     const keys = Object.keys(instance);
 
-    for (let i = 0; i < keys.length; i++) {
+    return cy.wrap(keys).each((key, i) => {
       const tableCellSelector = `div[class="mt-16"]:contains("Layout") table tbody tr:eq(${index}) td:eq(${i})`;
-      const key = keys[i];
       const rawExpectedValue = instance[key];
       const expectedValue = _getFormattedExpectedValue(key, rawExpectedValue);
 
@@ -67,7 +66,7 @@ export const layoutTableShowsExpectedData = () => {
           'have.class',
           healthMap[instance.Status]
         );
-    }
+    });
   });
 };
 
@@ -78,45 +77,44 @@ const _getFormattedExpectedValue = (key, value) => {
 };
 
 export const shouldDisplayExpectedHealthStatusChanges = () => {
-  Object.entries(healthMap).forEach(([state, health]) => {
+  return cy.wrap(Object.entries(healthMap)).each(([state, health]) => {
     basePage.loadScenario(`sap-system-detail-${state.toUpperCase()}`);
     cy.get(thirdRowStatusCellSelector).should(
       'have.text',
       `SAPControl: ${state}`
     );
-    cy.get(`${thirdRowStatusCellSelector} svg`).should('have.class', health);
+    return cy.get(`${thirdRowStatusCellSelector} svg`).should('have.class', health);
   });
 };
 
 export const eachHostHasTheExpectedLink = () => {
-  attachedHosts.forEach((host, index) => {
+  return cy.wrap(attachedHosts).each((host, index) => {
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(0) a`;
     cy.get(tableCellSelector).click();
     basePage.validateUrl(`/hosts/${host.AgentId}`);
-    cy.go('back');
+    return cy.go('back');
   });
 };
 
 export const eachHostHasTheExpectedData = () => {
-  attachedHosts.forEach((host, index) => {
-    delete host.AgentId;
-    const keys = Object.keys(host);
-    keys.forEach((key, rowIndex) => {
+  return cy.wrap(attachedHosts).each((host, index) => {
+    const keys = Object.keys(host).filter((key) => key !== 'AgentId');
+    return cy.wrap(keys).each((key, rowIndex) => {
       const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(${rowIndex})`;
       const expectedValue =
         key === 'Addresses' ? host[key].join('') : host[key];
-      cy.get(tableCellSelector).should('have.text', expectedValue);
+      return cy.get(tableCellSelector).should('have.text', expectedValue);
     });
   });
 };
 
 export const hostToDeregisterIsDisplayed = () => {
   cy.get(hostToDeregisterName).should('be.visible');
-  cy.get(hostToDeregisterFeatures).should('be.visible');
+  return cy.get(hostToDeregisterFeatures).should('be.visible');
 };
 export const hostToDeregisterIsNotDisplayed = () => {
   cy.get(hostToDeregisterName).should('not.exist');
-  cy.get(hostToDeregisterFeatures).should('not.exist');
+  return cy.get(hostToDeregisterFeatures).should('not.exist');
 };
 
 export const cleanUpButtonIsEnabled = () =>
@@ -128,7 +126,7 @@ export const cleanUpButtonIsDisabled = () =>
 export const newSapSystemIsDisplayed = () => {
   cy.get(sapSystemsRows).should('have.length', 5);
   cy.get('div:contains("sapnwdaas1")').should('be.visible');
-  cy.get('div:contains("99")').should('be.visible');
+  return cy.get('div:contains("99")').should('be.visible');
 };
 
 // API

@@ -65,7 +65,11 @@ export const clickFilterTypeButton = () =>
 
 export const clickAutoRefreshRateButton = () => {
   basePage.clickOutside();
+<<<<<<< Updated upstream
   cy.get(refreshRateFilter).click();
+=======
+  return cy.get(autoRefreshIntervalButton).click();
+>>>>>>> Stashed changes
 };
 
 export const clickFilterNewerThanButton = () =>

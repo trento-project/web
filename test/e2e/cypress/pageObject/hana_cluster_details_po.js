@@ -122,7 +122,7 @@ export const clickStartExecutionButtonWithoutForce = () =>
 
 export const clickAllUncheckedCategorySwitches = () =>
   cy.get(checkCategorySwitch).each((switchButton) => {
-    cy.wrap(switchButton)
+    return cy.wrap(switchButton)
       .invoke('attr', 'aria-checked')
       .then((value) => {
         if (value === 'false') cy.wrap(switchButton).click();
@@ -178,7 +178,7 @@ export const expectedResultRowsAreDisplayed = () => {
       },
     }) => {
       const amountOfChecks = check_results.length;
-      cy.get(checkResultRows).should('have.length', amountOfChecks);
+      return cy.get(checkResultRows).should('have.length', amountOfChecks);
     }
   );
 };
@@ -187,8 +187,8 @@ export const expectedCheckIsDisplayed = (checkNameValue) =>
   cy.get(checkName(checkNameValue), { timeout: 60000 }).should('be.visible');
 
 export const validateExpectedCheckResults = (expectedCheckResults) => {
-  expectedCheckResults.forEach((result) => {
-    cy.get(`td:contains("${result[0]}") + td + td svg`).should(
+  return cy.wrap(expectedCheckResults).each((result) => {
+    return cy.get(`td:contains("${result[0]}") + td + td svg`).should(
       `have.class`,
       `${result[1]}`
     );
@@ -208,17 +208,17 @@ export const expectedClusterNameIsDisplayedInHeader = () =>
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
-  cy.get(providerLabel).should('have.text', provider);
+  return cy.get(providerLabel).should('have.text', provider);
 };
 
 export const hasExpectedSidAndHrefAttribute = (clusterType) => {
   const systemId = getPropertyFromClusterType(clusterType, 'systemID');
-  cy.get(clusterSid).should('have.attr', 'href', `/databases/${systemId}`);
+  return cy.get(clusterSid).should('have.attr', 'href', `/databases/${systemId}`);
 };
 
 export const hasExpectedSidsAndHrefAttributes = () =>
   cy.get(clusterSid).each((sid, index) => {
-    cy.wrap(sid).should(
+    return cy.wrap(sid).should(
       'have.attr',
       'href',
       `/databases/${availableHanaClusterCostOpt.systemID[index]}`
@@ -230,7 +230,7 @@ export const hasExpectedClusterType = (clusterType) => {
     clusterType,
     'clusterType'
   );
-  cy.get(clusterTypeLabel).should('contain', clusterTypeProperty);
+  return cy.get(clusterTypeLabel).should('contain', clusterTypeProperty);
 };
 
 export const architectureTooltipIsDisplayed = (clusterType) => {
@@ -239,7 +239,7 @@ export const architectureTooltipIsDisplayed = (clusterType) => {
     'architectureType'
   );
   const architectureTypeLabel = `span:contains("${architectureType}")`;
-  cy.get(architectureTypeLabel).should('be.visible');
+  return cy.get(architectureTypeLabel).should('be.visible');
 };
 
 export const expectedReplicationModeIsDisplayed = (clusterType) => {
@@ -247,12 +247,12 @@ export const expectedReplicationModeIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSystemReplicationMode'
   );
-  cy.get(logReplicationModeLabel).should('have.text', replicationMode);
+  return cy.get(logReplicationModeLabel).should('have.text', replicationMode);
 };
 
 export const expectedFencingTypeIsDisplayed = (clusterType) => {
   const fencingType = getPropertyFromClusterType(clusterType, 'fencingType');
-  cy.get(fencingTypeLabel).should('have.text', fencingType);
+  return cy.get(fencingTypeLabel).should('have.text', fencingType);
 };
 
 export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
@@ -260,7 +260,7 @@ export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSecondarySyncState'
   );
-  cy.get(hanaSecondarySyncStateLabel, { timeout: 60000 }).should(
+  return cy.get(hanaSecondarySyncStateLabel, { timeout: 60000 }).should(
     'contain',
     hanaSecondarySyncState
   );
@@ -271,7 +271,7 @@ export const expectedMaintenanceModeIsDisplayed = (clusterType) => {
     clusterType,
     'maintenanceMode'
   );
-  cy.get(maintenanceModeLabel).should(
+  return cy.get(maintenanceModeLabel).should(
     'have.text',
     capitalize(maintenanceMode.toString())
   );
@@ -282,7 +282,7 @@ export const expectedHanaLogOperationModeIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSystemReplicationOperationMode'
   );
-  cy.get(hanaLogOperationModeLabel).should(
+  return cy.get(hanaLogOperationModeLabel).should(
     'have.text',
     hanaSystemReplicationOperationMode
   );
@@ -293,7 +293,7 @@ export const expectedCibLastWrittenValueIsDisplayed = (clusterType) => {
     clusterType,
     'cibLastWritten'
   );
-  cy.get(cibLastWrittenLabel).should('have.text', cibLastWritten);
+  return cy.get(cibLastWrittenLabel).should('have.text', cibLastWritten);
 };
 
 export const expectedPassingChecksCountIsDisplayed = () =>
@@ -307,8 +307,8 @@ export const expectedCriticalChecksCountIsDisplayed = () =>
 
 export const allExpectedVirtualIPsAreDisplayed = () => {
   const virtualIps = getHostsProperty('virtualIps');
-  cy.wrap(virtualIps).each(({ siteName, virtualIp }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td`)
+  return cy.wrap(virtualIps).each(({ siteName, virtualIp }) => {
+    return cy.get(`.tn-site-details-${siteName} tbody td`)
       .eq(4)
       .should('contain', virtualIp);
   });
@@ -316,8 +316,8 @@ export const allExpectedVirtualIPsAreDisplayed = () => {
 
 export const allExpectedIndexServerRolesAreDisplayed = () => {
   const indexServerRoles = getHostsProperty('indexserver_actual_role');
-  cy.wrap(indexServerRoles).each(({ siteName, indexserver_actual_role }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td`)
+  return cy.wrap(indexServerRoles).each(({ siteName, indexserver_actual_role }) => {
+    return cy.get(`.tn-site-details-${siteName} tbody td`)
       .eq(2)
       .should('have.text', capitalize(indexserver_actual_role));
   });
@@ -325,8 +325,8 @@ export const allExpectedIndexServerRolesAreDisplayed = () => {
 
 export const allExpectedNameServerRolesAreDisplayed = () => {
   const nameServerRoles = getHostsProperty('nameserver_actual_role');
-  cy.wrap(nameServerRoles).each(({ siteName, nameserver_actual_role }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td`)
+  return cy.wrap(nameServerRoles).each(({ siteName, nameserver_actual_role }) => {
+    return cy.get(`.tn-site-details-${siteName} tbody td`)
       .eq(1)
       .should('have.text', capitalize(nameserver_actual_role));
   });
@@ -334,8 +334,8 @@ export const allExpectedNameServerRolesAreDisplayed = () => {
 
 export const allExpectedStatusesAreDisplayed = () => {
   const hostsStatuses = getHostsProperty('status');
-  cy.wrap(hostsStatuses).each(({ siteName, status }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td svg`).should(
+  return cy.wrap(hostsStatuses).each(({ siteName, status }) => {
+    return cy.get(`.tn-site-details-${siteName} tbody td svg`).should(
       'have.class',
       status
     );
@@ -344,14 +344,14 @@ export const allExpectedStatusesAreDisplayed = () => {
 
 export const allExpectedIPsAreDisplayed = () => {
   const ips = getHostsProperty('ips');
-  cy.wrap(ips).each(({ siteName, ip }) => {
-    cy.get(`.tn-site-details-${siteName} tbody td`).eq(3).should('contain', ip);
+  return cy.wrap(ips).each(({ siteName, ip }) => {
+    return cy.get(`.tn-site-details-${siteName} tbody td`).eq(3).should('contain', ip);
   });
 };
 
 export const expectedSiteStatesAreDisplayed = () => {
-  cy.wrap(availableHanaCluster.sites).each((site) => {
-    cy.get(`.tn-site-details-${site.name} h3 + span`).should(
+  return cy.wrap(availableHanaCluster.sites).each((site) => {
+    return cy.get(`.tn-site-details-${site.name} h3 + span`).should(
       'have.text',
       site.state
     );
@@ -359,14 +359,14 @@ export const expectedSiteStatesAreDisplayed = () => {
 };
 
 export const expectedSiteNamesAreDisplayed = () => {
-  cy.wrap(availableHanaCluster.sites).each((site) => {
-    cy.get(`.tn-site-details-${site.name} h3`).should('have.text', site.name);
+  return cy.wrap(availableHanaCluster.sites).each((site) => {
+    return cy.get(`.tn-site-details-${site.name} h3`).should('have.text', site.name);
   });
 };
 
 export const expectedSrHealthStatesAreDisplayed = () => {
-  cy.wrap(availableHanaCluster.sites).each((site) => {
-    cy.get(`.tn-site-details-${site.name} svg`).should(
+  return cy.wrap(availableHanaCluster.sites).each((site) => {
+    return cy.get(`.tn-site-details-${site.name} svg`).should(
       'have.class',
       site.srHealthState
     );
@@ -374,7 +374,7 @@ export const expectedSrHealthStatesAreDisplayed = () => {
 };
 
 export const expectedResourcesDisplayed = () => {
-  cy.wrap(availableHanaCluster.resources).each((resource, index) => {
+  return cy.wrap(availableHanaCluster.resources).each((resource, index) => {
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
       .eq(1)
       .should('contain', resource.failCount);
@@ -393,7 +393,7 @@ export const expectedResourcesDisplayed = () => {
     cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
       .eq(6)
       .should('contain', resource.managed);
-    cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
+    return cy.get(`${resourcesTable} tr:nth-child(${index + 1}) td`)
       .eq(7)
       .should('contain', resource.type);
   });
@@ -402,7 +402,7 @@ export const expectedResourcesDisplayed = () => {
 export const expectedClusterStateIsDisplayed = (state) => {
   const { displayedText, icon } = clusterStates[state];
   cy.get(clusterStateLabel, { timeout: 60000 }).contains(displayedText);
-  cy.get(clusterStateBadge)
+  return cy.get(clusterStateBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain(icon);
@@ -410,8 +410,8 @@ export const expectedClusterStateIsDisplayed = (state) => {
 };
 
 export const sbdClusterHasExpectedNameAndStatus = () => {
-  availableHanaCluster.sbd.forEach((item) => {
-    cy.get('.tn-sbd-details')
+  return cy.wrap(availableHanaCluster.sbd).each((item) => {
+    return cy.get('.tn-sbd-details')
       .contains(item.deviceName)
       .children()
       .contains(item.status);
@@ -434,8 +434,8 @@ export const availableHanaAngiHeaderIsDisplayed = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableAngiCluster.name);
 
 export const bothHanaCostOptSidsAreDisplayed = () => {
-  cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
-    cy.get(`td:contains("${availableHanaClusterCostOpt.name}") + td`).should(
+  return cy.wrap(availableHanaClusterCostOpt.sids).each((sid) => {
+    return cy.get(`td:contains("${availableHanaClusterCostOpt.name}") + td`).should(
       'contain',
       sid
     );
@@ -449,8 +449,8 @@ export const saveChecksSelectionButtonIsDisplayed = () =>
   cy.get(saveChecksSelectionButton).should('be.visible');
 
 export const hanaAngiClusterSitesAreDisplayed = () => {
-  cy.wrap(availableAngiCluster.sites).each((site) => {
-    cy.get(`.tn-site-details-${site.name} h3 + span`).should(
+  return cy.wrap(availableAngiCluster.sites).each((site) => {
+    return cy.get(`.tn-site-details-${site.name} h3 + span`).should(
       'have.text',
       site.state
     );
@@ -464,20 +464,20 @@ export const hanaAngiSitesHaveExpectedStateAfterFailover = () => {
     'have.text',
     'Failed'
   );
-  cy.get(`.tn-site-details-${site2.name} h3 + span`).should(
+  return cy.get(`.tn-site-details-${site2.name} h3 + span`).should(
     'have.text',
     site1.state
   );
 };
 
 export const linkToDeregisteredHostIsNotAvailable = () => {
-  cy.get(
+  return cy.get(
     `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td span:contains("${hostToDeregister.name}")`
   ).should('not.have.attr', 'href');
 };
 
 export const linkToDeregisteredHostIsAvailable = () => {
-  cy.get(
+  return cy.get(
     `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`,
     { timeout: 90000 }
   ).should('have.attr', 'href');
@@ -487,11 +487,11 @@ export const startExecutionButtonIsDisabled = () =>
   cy.get(startExecutionButton).should('be.disabled');
 
 export const notAuthorizedTooltipIsDisplayed = () => {
-  cy.get(actionNotAuthorizedTooltip).should('be.visible');
+  return cy.get(actionNotAuthorizedTooltip).should('be.visible');
 };
 
 export const notAuthorizedTooltipIsNotDisplayed = () => {
-  cy.get(actionNotAuthorizedTooltip).should('not.exist');
+  return cy.get(actionNotAuthorizedTooltip).should('not.exist');
 };
 
 // API
@@ -508,7 +508,7 @@ export const interceptLastExecutionRequestMocked = () => {
   const lastExecutionURL = `${Cypress.env(
     'wandaUrl'
   )}/api/v2/checks/groups/**/executions/last`;
-  cy.intercept(lastExecutionURL, {
+  return cy.intercept(lastExecutionURL, {
     body: lastExecution,
   }).as(lastExecutionEndpointAlias);
 };
@@ -517,12 +517,12 @@ export const interceptLastExecutionRequest = () => {
   const lastExecutionURL = `${Cypress.env(
     'wandaUrl'
   )}/api/v2/checks/groups/**/executions/last`;
-  cy.intercept(lastExecutionURL).as(lastExecutionEndpointAlias);
+  return cy.intercept(lastExecutionURL).as(lastExecutionEndpointAlias);
 };
 
 export const interceptCatalogRequestMocked = () => {
   const catalogURL = `${Cypress.env('wandaUrl')}/api/v3/checks/catalog*`;
-  cy.intercept(catalogURL, { body: { items: catalog } }).as(
+  return cy.intercept(catalogURL, { body: { items: catalog } }).as(
     catalogEndpointAlias
   );
 };
@@ -552,12 +552,12 @@ export const apiCreateUserWithChecksSelectionAbility = () => {
 };
 
 export const deregisterHanaClusterCostOptHosts = () =>
-  availableHanaClusterCostOpt.hosts.forEach(({ id }) =>
+  cy.wrap(availableHanaClusterCostOpt.hosts).each(({ id }) =>
     basePage.apiDeregisterHost(id)
   );
 
 export const deregisterAngiClusterCostOptHosts = () =>
-  availableAngiCluster.hosts.forEach(({ id }) =>
+  cy.wrap(availableAngiCluster.hosts).each(({ id }) =>
     basePage.apiDeregisterHost(id)
   );
 

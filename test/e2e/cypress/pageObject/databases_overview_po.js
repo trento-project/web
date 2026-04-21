@@ -80,9 +80,9 @@ export const bothDatabaseInstancesAreDisplayed = () => {
 
 export const activePillIsDisplayedInTheRightHost = () => {
   return cy.wrap(hdqDatabase.instances).each((instance) => {
-    cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
+    return cy.get(`div.table-row:contains("${instance.name}")`).within(() => {
       const isHostActive = instance.state === 'ACTIVE';
-      cy.get(activePill).should(isHostActive ? 'be.visible' : 'not.exist');
+      return cy.get(activePill).should(isHostActive ? 'be.visible' : 'not.exist');
     });
   });
 };
@@ -162,13 +162,13 @@ export const restoreHdqDatabasePrimaryInstance = () =>
   basePage.loadScenario(`host-${hdqDatabase.instances[0].name}-restore`);
 
 export const markHddDatabaseAsAbsent = () => {
-  basePage.loadScenario(
+  return basePage.loadScenario(
     `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
   );
 };
 
 export const markHddDatabaseAsPresent = () => {
-  basePage.loadScenario(
+  return basePage.loadScenario(
     `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
   );
 };
@@ -200,8 +200,10 @@ export const apiRemoveAllDatabaseTags = () => {
   return apiGetDatabases()
     .then((response) => {
       const databaseTags = basePage.getResourceTags(response.body);
-      Object.entries(databaseTags).forEach(([databaseId, tags]) => {
-        tags.forEach((tag) => apiRemoveTagByDatabaseId(databaseId, tag));
+      return cy.wrap(Object.entries(databaseTags)).each(([databaseId, tags]) => {
+        return cy
+          .wrap(tags)
+          .each((tag) => apiRemoveTagByDatabaseId(databaseId, tag));
       });
     })
     .then(() => basePage.refresh());

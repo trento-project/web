@@ -220,151 +220,151 @@ export const hostNavigationItemIsHighlighted = () =>
     .should('eq', 'page');
 
 const _checkText = (selector, expectedText) => {
-  cy.get(selector).should('have.text', expectedText);
+  return cy.get(selector).should('have.text', expectedText);
 };
 
 export const expectedProviderIsDisplayed = (cloudProvider) => {
   const provider = selectedHost[`${cloudProvider}CloudDetails`].provider;
   const expectedProvider =
     cloudProvider === 'kvm' ? `On-premises / ${provider}` : provider;
-  _checkText(providerDetails.provider, expectedProvider);
+  return _checkText(providerDetails.provider, expectedProvider);
 };
 
 export const expectedVmNameIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.vmName,
     selectedHost[`${cloudProvider}CloudDetails`].vmName
   );
 };
 
 export const expectedResourceGroupIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.resourceGroup,
     selectedHost[`${cloudProvider}CloudDetails`].resourceGroup
   );
 };
 
 export const expectedLocationIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.location,
     selectedHost[`${cloudProvider}CloudDetails`].location
   );
 };
 
 export const expectedVmSizeIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.vmSize,
     selectedHost[`${cloudProvider}CloudDetails`].vmSize
   );
 };
 
 export const expectedDataDiskNumberIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.dataDiskNumber,
     selectedHost[`${cloudProvider}CloudDetails`].dataDiskNumber
   );
 };
 
 export const expectedOfferIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.offer,
     selectedHost[`${cloudProvider}CloudDetails`].offer
   );
 };
 
 export const expectedSkuIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.sku,
     selectedHost[`${cloudProvider}CloudDetails`].sku
   );
 };
 
 export const expectedRegionIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.region,
     selectedHost[`${cloudProvider}CloudDetails`].region
   );
 };
 
 export const expectedInstanceTypeIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.instanceType,
     selectedHost[`${cloudProvider}CloudDetails`].instanceType
   );
 };
 
 export const expectedInstanceIdIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.instanceId,
     selectedHost[`${cloudProvider}CloudDetails`].instanceId
   );
 };
 
 export const expectedAccountIdIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.accountId,
     selectedHost[`${cloudProvider}CloudDetails`].accountId
   );
 };
 
 export const expectedAmiIdIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.amiId,
     selectedHost[`${cloudProvider}CloudDetails`].amiId
   );
 };
 
 export const expectedVpcIdIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.vpcId,
     selectedHost[`${cloudProvider}CloudDetails`].vpcId
   );
 };
 
 export const expectedInstanceNameIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.instanceName,
     selectedHost[`${cloudProvider}CloudDetails`].instanceName
   );
 };
 
 export const expectedProjectIdIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.projectId,
     selectedHost[`${cloudProvider}CloudDetails`].projectId
   );
 };
 
 export const expectedZoneIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.zone,
     selectedHost[`${cloudProvider}CloudDetails`].zone
   );
 };
 
 export const expectedMachineTypeIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.machineType,
     selectedHost[`${cloudProvider}CloudDetails`].machineType
   );
 };
 
 export const expectedDiskNumberIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.diskNumber,
     selectedHost[`${cloudProvider}CloudDetails`].diskNumber
   );
 };
 
 export const expectedImageIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.image,
     selectedHost[`${cloudProvider}CloudDetails`].image
   );
 };
 
 export const expectedNetworkIsDisplayed = (cloudProvider) => {
-  _checkText(
+  return _checkText(
     providerDetails.network,
     selectedHost[`${cloudProvider}CloudDetails`].network
   );
@@ -387,7 +387,7 @@ export const validateSaptuneStatus = (installationStatus) => {
   cy.get(saptuneSummaryLabel).should('be.visible');
   cy.get(saptuneInstallationStatus).should('have.text', packageVersion);
   cy.get(saptuneConfiguredVersion).should('have.text', configuredVersion);
-  cy.get(saptuneTuningLabel).should('have.text', tuningStatus);
+  return cy.get(saptuneTuningLabel).should('have.text', tuningStatus);
 };
 
 export const notRecognizedProviderIsDisplayed = () =>
@@ -414,7 +414,7 @@ const _getTableHeaders = (tableName) => {
 
 export const agentStatusIsCorrectlyDisplayed = () => {
   cy.get(agentRunningLabel, { timeout: 20000 }).should('be.visible');
-  cy.get(agentRunningBadge)
+  return cy.get(agentRunningBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain('jungle-green');
@@ -456,11 +456,11 @@ export const cleanUpModalTitleIsDisplayed = () =>
   cy.get(cleanUpModalTitle).should('be.visible');
 
 export const cleanuUpModalIsNotDisplayed = () => {
-  cy.get(cleanUpModal).should('not.exist');
+  return cy.get(cleanUpModal).should('not.exist');
 };
 
 export const cleanedUpHostIsNotDisplayed = () => {
-  cy.get(cleanedUpHost).should('not.exist');
+  return cy.get(cleanedUpHost).should('not.exist');
 };
 
 export const startExecutionButtonIsDisabled = () =>
@@ -470,12 +470,12 @@ export const notAuthorizedMessageIsNotDisplayed = () => {
   cy.get(startExecutionButton).trigger('mouseover', {
     force: true,
   });
-  cy.get(notAuthorizedMessage).should('not.exist');
+  return cy.get(notAuthorizedMessage).should('not.exist');
 };
 
 export const notAuthorizedMessageIsDisplayed = () => {
   cy.get(startExecutionButton).click({ force: true });
-  cy.get(notAuthorizedMessage).should('be.visible');
+  return cy.get(notAuthorizedMessage).should('be.visible');
 };
 
 export const saveChecksSelectionButtonIsDisabled = () =>
@@ -506,12 +506,12 @@ const _genericTableValidation = (tableName, expectationsObject) => {
     tableName,
     expectationsObject
   );
-  expectedValuesArray.forEach((rowExpectedValues, rowIndex) => {
+  return cy.wrap(expectedValuesArray).each((rowExpectedValues, rowIndex) => {
     _getTableHeaders(tableName).then((headers) => {
-      headers.forEach((header) => {
+      return cy.wrap(headers).each((header) => {
         const attributeName = _processAttributeName(header);
         let expectedValue = rowExpectedValues[attributeName];
-        _validateCell(tableName, header, rowIndex, expectedValue);
+        return _validateCell(tableName, header, rowIndex, expectedValue);
       });
     });
   });
@@ -521,13 +521,13 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
   const tableHeaderSelector = `div[class*="mt-"]:contains("${tableName}") th:contains("${header}")`;
   const tableRowSelector = `div[class*="mt-"]:contains("${tableName}") tbody tr`;
 
-  cy.get(tableHeaderSelector)
+  return cy.get(tableHeaderSelector)
     .invoke('index')
     .then((i) => {
       const isPropertyArray = Array.isArray(expectedValue);
       if (isPropertyArray) {
         cy.wrap(expectedValue).each((value) => {
-          cy.get(tableRowSelector)
+          return cy.get(tableRowSelector)
             .eq(rowIndex)
             .find('td')
             .eq(i)
@@ -587,7 +587,7 @@ export const interceptNodeExporterStatusMockedForRealInstance = () =>
 
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
-  basePage.loadScenario(`host-${hostName}-saptune-${state}`);
+  return basePage.loadScenario(`host-${hostName}-saptune-${state}`);
 };
 
 export const loadAwsHostDetails = () =>
@@ -622,7 +622,7 @@ export const waitForHostRestoration = () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
 
-    basePage.isHostRegistered(selectedHost.agentId).then((isRegistered) => {
+    return basePage.isHostRegistered(selectedHost.agentId).then((isRegistered) => {
       if (!isRegistered) {
         pollHost(retries - 1);
       } else if (attempt >= retryRestoreHostAtAttempt) {
@@ -638,20 +638,20 @@ export const waitForHostRestoration = () => {
 };
 
 export const interceptDeleteHost = () => {
-  cy.intercept('DELETE', `/api/v1/hosts/${selectedHost.agentId}`).as(
+  return cy.intercept('DELETE', `/api/v1/hosts/${selectedHost.agentId}`).as(
     'deleteHost'
   );
 };
 
 export const waitForDeleteHostRequest = () => {
-  basePage
+  return basePage
     .waitForRequest('deleteHost', { timeout: 30000 })
     .its('response.statusCode')
     .should('eq', 204);
 };
 
 export const validateHostsListUrl = () => {
-  cy.location('pathname', { timeout: 30000 }).should('eq', '/hosts');
+  return cy.location('pathname', { timeout: 30000 }).should('eq', '/hosts');
 };
 
 export const apiCreateUserWithHostChecksExecutionAbilities = () =>

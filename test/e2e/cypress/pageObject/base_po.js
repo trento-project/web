@@ -58,7 +58,7 @@ export const addTagByColumnValue = (columnValue, tagValue) => {
     .get(`td:contains(${columnValue})`)
     .parents('tr')
     .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
+      return cy.get(addTagButtons).type(`${tagValue}{enter}`);
     });
 };
 
@@ -146,7 +146,7 @@ export const accessForbiddenMessageIsDisplayed = () =>
 
 export const validateItemNotPresentInNavigationMenu = (itemName) => {
   return cy.get(navigation.navigationItems).each(($element) => {
-    cy.wrap($element).should('not.include.text', itemName);
+    return cy.wrap($element).should('not.include.text', itemName);
   });
 };
 
@@ -211,7 +211,7 @@ export const logout = () => {
     win.localStorage.removeItem('access_token');
     win.localStorage.removeItem('refresh_token');
   });
-  Cypress.session.clearAllSavedSessions();
+  return Cypress.session.clearAllSavedSessions();
 };
 
 export const apiDeleteUser = (id, accessToken) => {
@@ -224,15 +224,17 @@ export const apiDeleteUser = (id, accessToken) => {
 
 export const apiDeleteAllUsers = () => {
   return apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/users',
-      method: 'GET',
-      auth: { bearer: accessToken },
-    }).then(({ body: users }) => {
-      users.forEach(({ id }) => {
-        if (id !== 1) apiDeleteUser(id, accessToken);
+    return cy
+      .request({
+        url: '/api/v1/users',
+        method: 'GET',
+        auth: { bearer: accessToken },
+      })
+      .then(({ body: users }) => {
+        return cy.wrap(users).each(({ id }) => {
+          if (id !== 1) apiDeleteUser(id, accessToken);
+        });
       });
-    });
   });
 };
 
@@ -316,7 +318,7 @@ export const startAgentsHeartbeat = (agents) => {
   }
 
   return getApiKey().then((apiKey) => {
-    cy.task('startAgentHeartbeat', { agents, apiKey });
+    return cy.task('startAgentHeartbeat', { agents, apiKey });
   });
 };
 

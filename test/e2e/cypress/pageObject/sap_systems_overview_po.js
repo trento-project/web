@@ -80,8 +80,8 @@ export const visit = () => {
 };
 
 export const tagSapSystems = () => {
-  availableSAPSystems.forEach(({ sid, tag }) => {
-    basePage.addTagByColumnValue(sid, tag);
+  return cy.wrap(availableSAPSystems).each(({ sid, tag }) => {
+    return basePage.addTagByColumnValue(sid, tag);
   });
 };
 
@@ -135,8 +135,8 @@ export const movedSystemIsNotDisplayed = () =>
   cy.get(`td:contains('${sapSystemNwd.hostname}')`).should('not.exist');
 
 export const expectedSidsAreDisplayed = () => {
-  availableSAPSystems.forEach(({ sid: sid }) => {
-    cy.get(`td:contains('${sid}')`).should('be.visible');
+  return cy.wrap(availableSAPSystems).each(({ sid: sid }) => {
+    return cy.get(`td:contains('${sid}')`).should('be.visible');
   });
 };
 
@@ -147,7 +147,7 @@ export const eachSystemHasItsExpectedWorkingLink = () => {
     cy.go('back');
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
-    cy.get(sapSystemsTableRows).should('be.visible');
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
@@ -155,7 +155,7 @@ export const eachSystemHasExpectedHealth = () => {
   return cy.wrap(availableSAPSystems).each(({ health: health }, index) => {
     const healthClass = healthMap[health];
     const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(1) svg`;
-    cy.get(healthCellSelector).should('have.class', healthClass);
+    return cy.get(healthCellSelector).should('have.class', healthClass);
   });
 };
 
@@ -172,7 +172,7 @@ export const eachAttachedDatabaseDetailsAreTheExpected = () => {
         attachedDatabase.tenant
       );
       cy.get(tableCell(rowIndex, 5)).should('have.text', type);
-      cy.get(tableCell(rowIndex, 6)).should(
+      return cy.get(tableCell(rowIndex, 6)).should(
         'have.text',
         attachedDatabase.dbAddress
       );
@@ -215,7 +215,7 @@ export const eachSystemHasItsDatabaseWorkingLink = () => {
       cy.go('back');
       validateUrl();
       pageTitleIsCorrectlyDisplayed();
-      cy.get(sapSystemsTableRows).should('be.visible');
+      return cy.get(sapSystemsTableRows).should('be.visible');
     });
 };
 
@@ -256,13 +256,13 @@ const validateInstanceRowData = (instance, rowIndex) => {
   cy.get(clusterNameSelector).should('have.text', clusterNameExpected);
 
   const hostnameExpected = instance.hostname;
-  cy.get(hostnameSelector).should('have.text', hostnameExpected);
+  return cy.get(hostnameSelector).should('have.text', hostnameExpected);
 };
 
 export const instanceDataIsTheExpected = () => {
   clickAllRows();
   return cy.wrap(instancesData).each((instance, rowIndex) => {
-    validateInstanceRowData(instance, rowIndex);
+    return validateInstanceRowData(instance, rowIndex);
   });
 };
 
@@ -280,7 +280,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
     cy.go('back');
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
-    cy.get(sapSystemsTableRows).should('be.visible');
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
@@ -292,7 +292,7 @@ export const eachInstanceHasItsHostWorkingLink = () => {
     cy.go('back');
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
-    cy.get(sapSystemsTableRows).should('be.visible');
+    return cy.get(sapSystemsTableRows).should('be.visible');
   });
 };
 
@@ -312,7 +312,7 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
   const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
 
-  Object.entries(healthMap).forEach(([state, health], index) => {
+  return cy.wrap(Object.entries(healthMap)).each(([state, health], index) => {
     basePage.loadScenario(`sap-systems-overview-${state}`);
 
     const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
@@ -321,7 +321,7 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
     const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
       index + 1
     }) div[class*="cell"]:eq(0) svg`;
-    cy.get(appLayerInstanceHealthBadge).should('have.class', health);
+    return cy.get(appLayerInstanceHealthBadge).should('have.class', health);
   });
 };
 
@@ -339,12 +339,12 @@ export const sapSystemHealthChangesToRedAsExpected = () => {
 
   const appLayerInstanceHealthBadge =
     'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(4)';
-  cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
+  return cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
 };
 
 export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
   basePage.loadScenario('sap-systems-overview-DAA');
-  cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
+  return cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
 };
 
 export const systemNwdIsVisible = () =>
@@ -390,8 +390,10 @@ export const apiRemoveAllSapSystemsTags = () => {
   return apiGetSapSystems()
     .then((response) => {
       const sapSystemTags = getSapSystemTags(response.body);
-      Object.entries(sapSystemTags).forEach(([clusterId, tags]) => {
-        tags.forEach((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
+      return cy.wrap(Object.entries(sapSystemTags)).each(([clusterId, tags]) => {
+        return cy
+          .wrap(tags)
+          .each((tag) => apiRemoveTagBySapSystemId(clusterId, tag));
       });
     })
     .then(() => basePage.refresh());
@@ -435,12 +437,12 @@ const getSapSystemTags = (jsonData) => {
 
 export const loadJavaScenario = () => {
   basePage.loadScenario('multi-tenant');
-  basePage.loadScenario('java-system');
+  return basePage.loadScenario('java-system');
 };
 
 export const apiDeregisterJavaSystems = () =>
-  availableJavaSystem.instances.forEach(({ hostID }) => {
-    basePage.apiDeregisterHost(hostID);
+  cy.wrap(availableJavaSystem.instances).each(({ hostID }) => {
+    return basePage.apiDeregisterHost(hostID);
   });
 
 export const revertNotMovedScenario = () =>
@@ -460,11 +462,11 @@ const apiDeregisterInstance = (sapSystemdId, hostId, instanceNumber) => {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  basePage.apiLogin().then(({ accessToken }) => {
+  return basePage.apiLogin().then(({ accessToken }) => {
     const url = `${
       Cypress.config().baseUrl
     }/api/v1/sap_systems/${sapSystemdId}/hosts/${hostId}/instances/${instanceNumber}`;
-    cy.request({
+    return cy.request({
       method: 'DELETE',
       url: url,
       headers: headers,
@@ -483,7 +485,7 @@ export const apiDeregisterNwqHost = () =>
 
 export const apiDeregisterNwdInstances = () => {
   basePage.apiDeregisterHost(sapSystemNwd.applicationInstances[0].id);
-  basePage.apiDeregisterHost(sapSystemNwd.applicationInstances[1].id);
+  return basePage.apiDeregisterHost(sapSystemNwd.applicationInstances[1].id);
 };
 
 export const restoreNwdHost = () =>
@@ -521,12 +523,12 @@ export const apiCreateUserWithSapSystemTagsAbility = () =>
 
 export const loadAppCleanUpPermissionsScenario = () => {
   basePage.loadScenario('sap-systems-overview-NWD-00-absent');
-  basePage.loadScenario('sap-systems-overview-HDD-10-present');
+  return basePage.loadScenario('sap-systems-overview-HDD-10-present');
 };
 
 export const loadDatabaseCleanUpPermissionsScenario = () => {
   basePage.loadScenario('sap-systems-overview-NWD-00-present');
-  basePage.loadScenario('sap-systems-overview-HDD-10-absent');
+  return basePage.loadScenario('sap-systems-overview-HDD-10-absent');
 };
 
 export const apiCreateUserWithAppInstanceCleanUpAbility = () =>

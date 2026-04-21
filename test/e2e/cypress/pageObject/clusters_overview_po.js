@@ -54,8 +54,8 @@ export const waitForClustersEndpoint = () =>
 // UI Interactions
 
 export const setClusterTags = () => {
-  taggingRules.forEach(([clusterName, tag]) => {
-    basePage.addTagByColumnValue(clusterName, tag);
+  return cy.wrap(taggingRules).each(([clusterName, tag]) => {
+    return basePage.addTagByColumnValue(clusterName, tag);
   });
 };
 
@@ -117,7 +117,7 @@ export const clusterHealthIconHasExpectedClass = (clusterName, className) => {
 };
 
 export const eachClusterTagsIsCorrectlyDisplayed = () => {
-  return taggingRules.forEach(([tag]) =>
+  return cy.wrap(taggingRules).each(([tag]) =>
     cy.get(`span span:contains(${tag})`).should('be.visible')
   );
 };
@@ -126,7 +126,7 @@ export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('not.exist');
 
 export const clusterNameIsDisplayed = () => {
-  cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
+  return cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
 };
 
 // Helpers
@@ -163,8 +163,8 @@ export const apiRemoveAllClusterTags = () => {
   return _apiGetClusters()
     .then((response) => {
       const clusterTags = _getClusterTags(response.body);
-      Object.entries(clusterTags).forEach(([clusterId, tags]) => {
-        tags.forEach((tag) => _apiRemoveTagByClusterId(clusterId, tag));
+      return cy.wrap(Object.entries(clusterTags)).each(([clusterId, tags]) => {
+        return cy.wrap(tags).each((tag) => _apiRemoveTagByClusterId(clusterId, tag));
       });
     })
     .then(() => basePage.refresh());
@@ -181,8 +181,9 @@ const _getClusterTags = (jsonData) => {
   return clusterTags;
 };
 
-export const apiDeregisterAllClusterHosts = () =>
-  hanaCluster1.hosts.forEach((hostId) => basePage.apiDeregisterHost(hostId));
+export const apiDeregisterAllClusterHosts = () => {
+  return cy.wrap(hanaCluster1.hosts).each((hostId) => basePage.apiDeregisterHost(hostId));
+};
 
 export const apiRestoreClusterHosts = () =>
   basePage.loadScenario(`cluster-${hanaCluster1.name}-restore`);
@@ -196,13 +197,13 @@ export const apiSetTagsHanaCluster1 = () => {
   const tagsForCluster1 = taggingRules
     .filter(([cluster]) => cluster === 'hana_cluster_1')
     .map(([, tag]) => tag);
-  return tagsForCluster1.forEach((tag) => _apiSetTag('hana_cluster_1', tag));
+  return cy.wrap(tagsForCluster1).each((tag) => _apiSetTag('hana_cluster_1', tag));
 };
 
 const apiRequestChecksExecution = (clusterId) => {
   return basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks/request_execution`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       auth: {
