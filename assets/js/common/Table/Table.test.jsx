@@ -1,13 +1,8 @@
 import React from 'react';
 
 import { noop } from 'lodash';
-import {
-  screen,
-  fireEvent,
-  render,
-  waitFor,
-  within,
-} from '@testing-library/react';
+import { screen, render, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -168,6 +163,7 @@ describe('Table component', () => {
     });
 
     it('should reset the pagination and go the 1st page when a filter is selected', async () => {
+      const user = userEvent.setup();
       const data = [].concat(
         tableDataFactory.buildList(15),
         tableDataFactory.buildList(1, { column3: 'value3' })
@@ -179,7 +175,7 @@ describe('Table component', () => {
 
       const pages = screen.getByTestId('pagination');
       const page2Button = within(pages).getByLabelText('next-page');
-      fireEvent.click(page2Button);
+      await user.click(page2Button);
 
       filterTable('Column3', 'value3');
 
@@ -189,7 +185,8 @@ describe('Table component', () => {
       });
     });
 
-    it('should display the correct items per page', () => {
+    it('should display the correct items per page', async () => {
+      const user = userEvent.setup();
       const data = tableDataFactory.buildList(11);
 
       render(
@@ -201,13 +198,14 @@ describe('Table component', () => {
 
       const pages = screen.getByTestId('pagination');
       const page2Button = within(pages).getByLabelText('next-page');
-      fireEvent.click(page2Button);
+      await user.click(page2Button);
 
       const page2 = screen.getByRole('table');
       expect(page2.querySelectorAll('tbody > tr')).toHaveLength(1);
     });
 
-    it('should be able to change the items per page', () => {
+    it('should be able to change the items per page', async () => {
+      const user = userEvent.setup();
       const data = tableDataFactory.buildList(11);
 
       render(
@@ -217,8 +215,8 @@ describe('Table component', () => {
       const pageOriginal = screen.getByRole('table');
       expect(pageOriginal.querySelectorAll('tbody > tr')).toHaveLength(10);
 
-      fireEvent.click(screen.getByRole('button', { name: '10' }));
-      fireEvent.click(screen.getByRole('option', { name: '20' }));
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '20' }));
 
       const pageMoreItems = screen.getByRole('table');
       expect(pageMoreItems.querySelectorAll('tbody > tr')).toHaveLength(11);
@@ -327,6 +325,7 @@ describe('Table component', () => {
 
   describe('collapsible row', () => {
     it('should display the collapsed row when chevron is clicked', async () => {
+      const user = userEvent.setup();
       const data = tableDataFactory.buildList(1);
       const content = 'This is a collapsible row data';
 
@@ -346,7 +345,7 @@ describe('Table component', () => {
       );
       expect(screen.queryByText(content)).not.toBeVisible();
 
-      fireEvent.click(collapsibleCell);
+      await user.click(collapsibleCell);
       expect(screen.queryByText(content)).toBeVisible();
     });
 

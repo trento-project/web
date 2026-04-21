@@ -6,7 +6,8 @@ const activityLogEndpoint = '/api/v1/activity_log*';
 
 //Selectors
 const filteringElements = 'div[class="relative"]';
-const refreshRateFilter = 'button[class*="refresh-rate"] ';
+const refreshRateLabel = '[aria-label="refresh-rate"]';
+const refreshRateFilter = basePage.getSelectControlValue(refreshRateLabel);
 const metadataSearchInput = 'input[name="metadata-search"]';
 
 const filterOlderThanButton = 'button:contains("Filter older than...")';
@@ -26,11 +27,10 @@ const previousPageButton = '[aria-label="prev-page"]';
 const firstPageButton = '[aria-label="first-page"]';
 const lastPageButton = '[aria-label="last-page"]';
 
-const selectPaginationButton =
-  'div[class*="flex justify-between"] button[aria-haspopup="listbox"]';
-
-const autoRefreshIntervalButton = 'button[class*="refresh-rate"]';
-const availableRefreshRates = 'button[class*="refresh-rate"] + div div';
+const selectPaginationLabel = '[aria-label="per-page"]';
+const selectPaginationButton = basePage.getSelectControlValue(
+  selectPaginationLabel
+);
 
 //Test data
 const expectedRefreshRates = ['Off', '5s', '10s', '30s', '1m', '5m', '30m'];
@@ -65,7 +65,7 @@ export const clickFilterTypeButton = () =>
 
 export const clickAutoRefreshRateButton = () => {
   basePage.clickOutside();
-  cy.get(autoRefreshIntervalButton).click();
+  cy.get(refreshRateFilter).click();
 };
 
 export const clickFilterNewerThanButton = () =>
@@ -103,7 +103,10 @@ export const typeMetadataFilter = (searchValue) =>
 
 export const selectPagination = (amountOfItems) => {
   cy.get(selectPaginationButton).click();
-  return cy.get(`span:contains("${amountOfItems}")`).first().click();
+  return cy
+    .get(`${basePage.selectOptions}:contains("${amountOfItems}")`)
+    .first()
+    .click();
 };
 
 export const selectRefreshRate = (refreshRate) => {
@@ -120,13 +123,13 @@ export const filterTypeOptionsAreDisplayed = () =>
   cy.get(`${filterTypeButton} + div`).should('be.visible');
 
 export const autoRefreshIntervalButtonHasTheExpectedValue = (refreshRate) =>
-  cy.get(autoRefreshIntervalButton).should('have.text', refreshRate);
+  cy.get(refreshRateFilter).should('have.text', refreshRate);
 
 export const autoRefreshButtonIsEnabled = () =>
-  cy.get(autoRefreshIntervalButton).should('be.enabled');
+  cy.get(refreshRateLabel).should('be.enabled');
 
 export const autoRefreshIntervalButtonIsDisabled = () =>
-  cy.get(autoRefreshIntervalButton).should('be.disabled');
+  cy.get(refreshRateLabel).should('be.disabled');
 
 export const filteredActionsAreTheExpectedOnes = (filteredActions) => {
   return cy
@@ -231,7 +234,7 @@ export const apiCallDoesNotContainRefreshRate = (refreshRate) => {
 
 export const expectedRefreshRatesAreAvailable = () => {
   clickAutoRefreshRateButton();
-  cy.get(availableRefreshRates).each(($element, index) =>
+  cy.get(basePage.selectOptions).each(($element, index) =>
     expect(expectedRefreshRates[index]).to.eq($element.text())
   );
   return clickAutoRefreshRateButton();

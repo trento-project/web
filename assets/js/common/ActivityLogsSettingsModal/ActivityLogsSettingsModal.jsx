@@ -46,9 +46,9 @@ function TimeSpan({ time: initialTime, error = false, onChange = noop }) {
       <div className="flex w-1/4">
         <Select
           className="min-w-24 max-w-fit"
-          optionsName=""
+          aria-label="time"
           options={timeUnitOptions}
-          value={time.unit || defaultTimeUnit}
+          initialValues={[time.unit || defaultTimeUnit]}
           error={error}
           onChange={(unit) => {
             const newTime = { ...time, unit };
