@@ -57,9 +57,11 @@ function OperationForbiddenModal({
       onClose={onCancel}
     >
       <Banner type="error">
-        Unable to run {operation} operation. Some of the conditions are not met.
+        Unable to run {operation} operation. Some pre-requisites are not met.
       </Banner>
-      <p className="text-sm mb-1">Some of the next conditions are not met:</p>
+      <p className="text-sm mb-1">
+        Some of the following pre-requisites are not met:
+      </p>
       <ul className="list-disc list-inside space-y-1 mb-1">
         {errors.map(({ detail, metadata }) => (
           <li key={detail} className="text-sm">
