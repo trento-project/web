@@ -35,7 +35,10 @@ const aiAssistantSlice = createSlice({
 
       if (newStatus === 'connected') {
         state.lastConnectedAt = new Date().toISOString();
-      } else if (newStatus === 'disconnected' && previousStatus === 'connected') {
+      } else if (
+        newStatus === 'disconnected' &&
+        previousStatus === 'connected'
+      ) {
         state.lastDisconnectedAt = new Date().toISOString();
       }
     },

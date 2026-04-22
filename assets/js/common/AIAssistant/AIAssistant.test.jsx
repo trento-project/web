@@ -37,15 +37,15 @@ describe('AIAssistant', () => {
   it('clicking on the trigger opens/closes the ai assistant modal', async () => {
     const user = userEvent.setup();
     render(<AIAssistant />);
-    
+
     // initially not open
     expect(screen.queryByText('Liz')).not.toBeInTheDocument();
-    
+
     // click trigger to open
     const trigger = screen.getByTestId('ai-assistant-trigger');
     await user.click(trigger);
     expect(screen.getByText('Liz')).toBeInTheDocument();
-    
+
     // click trigger again to close
     await user.click(trigger);
     await waitFor(() => {
@@ -55,14 +55,14 @@ describe('AIAssistant', () => {
 
   it('clicking on the close icon closes the ai assistant modal', async () => {
     const { user } = await setupAndOpen();
-    
+
     // modal is open
     expect(screen.getByText('Liz')).toBeInTheDocument();
-    
+
     // click close icon
     const closeBtn = screen.getByLabelText('Close');
     await user.click(closeBtn);
-    
+
     await waitFor(() => {
       expect(screen.queryByText('Liz')).not.toBeInTheDocument();
     });
@@ -70,14 +70,14 @@ describe('AIAssistant', () => {
 
   it('when the thread is empty, the send button should be disabled', async () => {
     await setupAndOpen();
-    
+
     const sendBtn = screen.getByLabelText('Send message');
     expect(sendBtn).toBeDisabled();
   });
 
   it('writing a prompt should enable the send button and clicking that button triggers a function call', async () => {
     const { user } = await setupAndOpen();
-    
+
     const sendBtn = screen.getByLabelText('Send message');
     expect(sendBtn).toBeDisabled();
 
@@ -101,7 +101,7 @@ describe('AIAssistant', () => {
 
   it('clicking on "New chat" starts a new chat', async () => {
     const { user } = await setupAndOpen();
-    
+
     // Type and send a message to make it a non-empty thread
     const input = screen.getByLabelText('Message input');
     await user.type(input, 'This is an existing chat');
@@ -125,7 +125,8 @@ describe('AIAssistant', () => {
       expect(HttpAgent.mock.calls.length).toBeGreaterThan(1);
     });
 
-    const newThreadId = HttpAgent.mock.calls[HttpAgent.mock.calls.length - 1][0].threadId;
+    const newThreadId =
+      HttpAgent.mock.calls[HttpAgent.mock.calls.length - 1][0].threadId;
     expect(newThreadId).not.toBe(originalThreadId);
 
     // Check if send button is disabled again (empty thread state)

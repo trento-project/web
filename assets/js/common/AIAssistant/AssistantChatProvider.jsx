@@ -33,10 +33,7 @@ export function AssistantChatProvider({ children }) {
     // If no socket exists yet, create one
     // This ensures the socket is available even if saga hasn't run yet
     if (!socket) {
-      console.log('[AssistantChatProvider] Creating new socket instance');
       socket = initSocketConnection();
-    } else {
-      console.log('[AssistantChatProvider] Using existing socket instance');
     }
 
     socketRef.current = socket;
@@ -62,31 +59,19 @@ export function AssistantChatProvider({ children }) {
 
   // Create WebSocketAIAgent for AG-UI protocol
   const agent = useMemo(() => {
-    console.log('[AssistantChatProvider] Creating agent...', {
-      socketReady,
-      hasSocket: !!socketRef.current,
-      userId,
-      currentThreadId,
-    });
-
     if (!socketReady || !socketRef.current) {
-      console.warn('[AssistantChatProvider] Socket not ready for agent creation');
       return null;
     }
 
     if (!userId) {
-      console.warn('[AssistantChatProvider] No userId available for agent creation');
       return null;
     }
-
-    console.log('[AssistantChatProvider] ✅ Creating WebSocketAIAgent instance');
 
     return new WebSocketAIAgent({
       socket: socketRef.current,
       userId,
       threadId: currentThreadId,
       onConnectionChange: (status) => {
-        console.log('[AssistantChatProvider] Connection status changed:', status);
         setConnectionStatus(status);
       },
     });
@@ -95,23 +80,19 @@ export function AssistantChatProvider({ children }) {
   // Initialize agent connection when agent is created
   useEffect(() => {
     if (!agent) {
-      console.log('[AssistantChatProvider] No agent yet, waiting...');
       return;
     }
 
-    console.log('[AssistantChatProvider] Agent created, initializing connection...');
-
-    agent.initialize()
+    agent
+      .initialize()
       .then(() => {
-        console.log('[AssistantChatProvider] Agent initialized successfully');
+        // Agent initialized successfully
       })
-      .catch((error) => {
-        console.error('[AssistantChatProvider] Failed to initialize agent:', error);
+      .catch((_error) => {
         // Try to reconnect after a delay
         setTimeout(() => {
-          console.log('[AssistantChatProvider] Retrying connection...');
-          agent.initialize().catch(err => {
-            console.error('[AssistantChatProvider] Retry failed:', err);
+          agent.initialize().catch(() => {
+            // Retry failed
           });
         }, 2000);
       });
@@ -119,7 +100,6 @@ export function AssistantChatProvider({ children }) {
     // Cleanup on unmount
     return () => {
       if (agent) {
-        console.log('[AssistantChatProvider] Disconnecting agent...');
         agent.disconnect();
       }
     };

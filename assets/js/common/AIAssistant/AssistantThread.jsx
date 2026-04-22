@@ -68,23 +68,25 @@ function ChatHeader({ onClose }) {
   const isConnected = connectionStatus === 'connected';
   const isConnecting = connectionStatus === 'connecting';
 
-  const statusText = isConnected
-    ? 'Online'
-    : isConnecting
-    ? 'Connecting...'
-    : 'Offline';
+  let statusText = 'Offline';
+  if (isConnected) {
+    statusText = 'Online';
+  } else if (isConnecting) {
+    statusText = 'Connecting...';
+  }
+
+  let dotClassName = 'bg-red-400';
+  if (isConnected) {
+    dotClassName = 'bg-white';
+  } else if (isConnecting) {
+    dotClassName = 'bg-yellow-300 animate-pulse';
+  }
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">
       <div className="flex items-center gap-3">
         <div
-          className={`w-2.5 h-2.5 rounded-full mt-1 shadow-sm ml-1 ${
-            isConnected
-              ? 'bg-white'
-              : isConnecting
-              ? 'bg-yellow-300 animate-pulse'
-              : 'bg-red-400'
-          }`}
+          className={`w-2.5 h-2.5 rounded-full mt-1 shadow-sm ml-1 ${dotClassName}`}
         />
         <div className="flex flex-col leading-tight">
           <span className="font-bold text-lg">Liz</span>
@@ -145,11 +147,13 @@ function ThreadWelcome() {
 function Composer() {
   const connectionStatus = useAIConnectionStatus();
   const isConnected = connectionStatus === 'connected';
-  const placeholder = isConnected
-    ? "How can I help you?"
-    : connectionStatus === 'connecting'
-    ? "Connecting..."
-    : "Offline - waiting to reconnect...";
+
+  let placeholder = 'Offline - waiting to reconnect...';
+  if (isConnected) {
+    placeholder = 'How can I help you?';
+  } else if (connectionStatus === 'connecting') {
+    placeholder = 'Connecting...';
+  }
 
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">

@@ -12,7 +12,6 @@ export class WebSocketAIAgent extends AbstractAgent {
     super(options);
 
     this._agentInstanceId = crypto.randomUUID().substring(0, 8);
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🆕 New agent instance created`);
 
     this.socket = socket;
     this.userId = userId;
@@ -29,23 +28,19 @@ export class WebSocketAIAgent extends AbstractAgent {
    */
   async initialize() {
     if (this.channel) {
-      console.log('[WebSocketAIAgent] Already initialized, skipping');
       return; // Already initialized
     }
 
     if (!this.socket) {
-      console.error('[WebSocketAIAgent] No socket available!');
       this._setConnectionStatus('disconnected');
       throw new Error('No socket available');
     }
 
     if (!this.userId) {
-      console.error('[WebSocketAIAgent] No userId available!');
       this._setConnectionStatus('disconnected');
       throw new Error('No userId available');
     }
 
-    console.log('[WebSocketAIAgent] Initializing channel for user:', this.userId);
     this._setConnectionStatus('connecting');
 
     // Create channel for this user
@@ -56,22 +51,17 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     // Join the channel
     return new Promise((resolve, reject) => {
-      console.log('[WebSocketAIAgent] Joining channel ai_assistant:' + this.userId);
-
       this.channel
         .join()
-        .receive('ok', (resp) => {
-          console.log('[WebSocketAIAgent] ✅ Successfully joined AI assistant channel', resp);
+        .receive('ok', (_resp) => {
           this._setConnectionStatus('connected');
           resolve();
         })
         .receive('error', (resp) => {
-          console.error('[WebSocketAIAgent] ❌ Failed to join channel', resp);
           this._setConnectionStatus('disconnected');
-          reject(new Error('Failed to join channel: ' + JSON.stringify(resp)));
+          reject(new Error(`Failed to join channel: ${JSON.stringify(resp)}`));
         })
         .receive('timeout', () => {
-          console.error('[WebSocketAIAgent] ⏱️ Channel join timeout');
           this._setConnectionStatus('disconnected');
           reject(new Error('Channel join timeout'));
         });
@@ -84,7 +74,6 @@ export class WebSocketAIAgent extends AbstractAgent {
   _setupChannelHandlers() {
     // Listen to the single ag_ui_event and route based on type
     this.channel.on('ag_ui_event', (payload) => {
-      console.log('[WebSocketAIAgent] Received ag_ui_event:', payload);
       this._handleAgUiEvent(payload);
     });
 
@@ -95,12 +84,10 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     // Handle channel errors and disconnections
     this.channel.onError(() => {
-      console.error('[WebSocketAIAgent] Channel error');
       this._setConnectionStatus('disconnected');
     });
 
     this.channel.onClose(() => {
-      console.log('[WebSocketAIAgent] Channel closed');
       this._setConnectionStatus('disconnected');
     });
   }
@@ -109,34 +96,25 @@ export class WebSocketAIAgent extends AbstractAgent {
    * Route AG-UI events based on type field
    */
   _handleAgUiEvent(event) {
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Event received:`, event.type);
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Active run ID:`, this._activeRunId);
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Message handlers keys:`, Array.from(this._messageHandlers.keys()));
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Event runId:`, event.runId);
-
     const handler = this._messageHandlers.get(this._activeRunId);
     if (!handler || !handler.subscriber) {
-      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ No handler for event:`, event.type);
-      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ Handler exists:`, !!handler);
-      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ Has subscriber:`, handler?.subscriber ? 'yes' : 'no');
       return;
     }
 
     // Forward the event as-is to the Observable subscriber
     // The AG-UI runtime will process it based on the type field
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] ✅ Forwarding event to subscriber:`, event.type);
     handler.subscriber.next(event);
 
     // Handle terminal events (complete or error the stream)
     if (event.type === 'RUN_FINISHED') {
-      console.log('[WebSocketAIAgent] Run finished, completing Observable');
       handler.subscriber.complete();
       this._messageHandlers.delete(this._activeRunId);
       this._activeRunId = null;
       this._messageStarted = false;
     } else if (event.type === 'RUN_ERROR') {
-      console.error('[WebSocketAIAgent] Run error, erroring Observable');
-      handler.subscriber.error(new Error(event.message || 'Agent execution failed'));
+      handler.subscriber.error(
+        new Error(event.message || 'Agent execution failed')
+      );
       this._messageHandlers.delete(this._activeRunId);
       this._activeRunId = null;
       this._messageStarted = false;
@@ -149,17 +127,12 @@ export class WebSocketAIAgent extends AbstractAgent {
    * @returns {Observable<BaseEvent>} Observable stream of AG UI events
    */
   run(runAgentInput) {
-    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] run() called with:`, runAgentInput);
-
     return new Observable((subscriber) => {
-      console.log(`[WebSocketAIAgent:${this._agentInstanceId}] Creating new Observable for run`);
-
       // Setup the run
       const setupRun = async () => {
         try {
           // Ensure channel is connected
           if (!this.channel || this._connectionStatus !== 'connected') {
-            console.log('[WebSocketAIAgent] Channel not connected, initializing...');
             await this.initialize();
           }
 
@@ -167,15 +140,12 @@ export class WebSocketAIAgent extends AbstractAgent {
           this._activeRunId = crypto.randomUUID();
           this._messageStarted = false; // Reset message started flag
 
-          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🚀 Starting run with ID:`, this._activeRunId);
-
           const { messages, threadId } = runAgentInput;
 
           // Get the last message (user's latest input)
           const lastMessage = messages[messages.length - 1];
 
           if (!lastMessage || lastMessage.role !== 'user') {
-            console.error(`[WebSocketAIAgent:${this._agentInstanceId}] Invalid message format`);
             subscriber.error(new Error('Invalid message format'));
             return;
           }
@@ -183,30 +153,24 @@ export class WebSocketAIAgent extends AbstractAgent {
           // Extract text content from the message
           const messageText = this._extractMessageText(lastMessage);
 
-          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 📝 Message text:`, messageText);
-          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🧵 Thread ID:`, threadId);
-
           // Store the subscriber for this run so we can emit events to it
           this._messageHandlers.set(this._activeRunId, { subscriber });
-          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 💾 Subscriber stored for run ID:`, this._activeRunId);
 
           // Send message to Phoenix channel (server will emit RunStarted event)
-          this.channel.push('send_message', {
-            message: messageText,
-            thread_id: threadId,
-            run_id: this._activeRunId,
-          })
+          this.channel
+            .push('send_message', {
+              message: messageText,
+              thread_id: threadId,
+              run_id: this._activeRunId,
+            })
             .receive('ok', () => {
-              console.log('[WebSocketAIAgent] ✅ Message sent successfully to server');
+              // Message sent successfully
             })
             .receive('error', (error) => {
-              console.error('[WebSocketAIAgent] ❌ Failed to send message', error);
               this._messageHandlers.delete(this._activeRunId);
               subscriber.error(error);
             });
-
         } catch (error) {
-          console.error('[WebSocketAIAgent] Error in run setup:', error);
           subscriber.error(error);
         }
       };
@@ -215,7 +179,6 @@ export class WebSocketAIAgent extends AbstractAgent {
 
       // Cleanup function when Observable is unsubscribed
       return () => {
-        console.log('[WebSocketAIAgent] Observable unsubscribed for run:', this._activeRunId);
         this._messageHandlers.delete(this._activeRunId);
       };
     });
@@ -241,8 +204,8 @@ export class WebSocketAIAgent extends AbstractAgent {
     if (Array.isArray(message.content)) {
       // Handle multi-part content (text + attachments)
       const textParts = message.content
-        .filter(part => part.type === 'text')
-        .map(part => part.text);
+        .filter((part) => part.type === 'text')
+        .map((part) => part.text);
       return textParts.join('\n');
     }
 

@@ -10,31 +10,31 @@ export function ConnectionStatusIndicator({ className = '' }) {
   const isConnected = connectionStatus === 'connected';
   const isConnecting = connectionStatus === 'connecting';
 
+  let dotClassName = 'bg-red-500';
+  if (isConnected) {
+    dotClassName = 'bg-green-500';
+  } else if (isConnecting) {
+    dotClassName = 'bg-yellow-500 animate-pulse';
+  }
+
+  let title = 'Disconnected';
+  if (isConnected) {
+    title = 'Connected';
+  } else if (isConnecting) {
+    title = 'Connecting...';
+  }
+
+  let statusText = 'Offline';
+  if (isConnected) {
+    statusText = 'Online';
+  } else if (isConnecting) {
+    statusText = 'Connecting...';
+  }
+
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <div
-        className={`h-2 w-2 rounded-full ${
-          isConnected
-            ? 'bg-green-500'
-            : isConnecting
-            ? 'bg-yellow-500 animate-pulse'
-            : 'bg-red-500'
-        }`}
-        title={
-          isConnected
-            ? 'Connected'
-            : isConnecting
-            ? 'Connecting...'
-            : 'Disconnected'
-        }
-      />
-      <span className="text-sm text-gray-600">
-        {isConnected
-          ? 'Online'
-          : isConnecting
-          ? 'Connecting...'
-          : 'Offline'}
-      </span>
+      <div className={`h-2 w-2 rounded-full ${dotClassName}`} title={title} />
+      <span className="text-sm text-gray-600">{statusText}</span>
     </div>
   );
 }

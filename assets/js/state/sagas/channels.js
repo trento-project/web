@@ -60,7 +60,6 @@ import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
 
 import { getUserProfile } from '@state/selectors/user';
-import { createAction } from '@reduxjs/toolkit';
 
 const CLOSE_CHANNEL_EVENT = 'close';
 
@@ -260,15 +259,6 @@ const activityLogEvents = [
   },
 ];
 
-const aiAssistantResponseReceived = createAction('AI_ASSISTANT_RESPONSE_RECEIVED');
-
-const aiAssistantEvents = [
-  {
-    name: 'ai_assistant_response',
-    action: aiAssistantResponseReceived,
-  },
-];
-
 const createEventChannel = (channel, events) =>
   eventChannel((emitter) => {
     events.forEach((event) => {
@@ -321,6 +311,5 @@ export function* watchSocketEvents(socket) {
       `activity_log:${userID}`,
       activityLogEvents
     ),
-    fork(watchChannelEvents, socket, `ai_assistant:${userID}`, aiAssistantEvents),
   ]);
 }
