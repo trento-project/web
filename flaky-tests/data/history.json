@@ -5664,5 +5664,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-22T04:07:25Z",
+    "commit": "289d8dfd6d86889b5fbbafde1f7f4dbd9a6b4233",
+    "run_id": "24759173635",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
+      },
+      {
+        "name": "Settings sagas › checkApiKeyExpiration saga::should dispatch a dismissable notification if the api key is to expire in less than 30 days",
+        "score": 0.02501
+      }
+    ]
   }
 ]
