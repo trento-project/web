@@ -281,8 +281,6 @@ defmodule TrentoWeb.Router do
         get "/hosts/:id/memory", ChartController, :host_memory
         get "/hosts/:id/filesystem", ChartController, :host_filesystem
       end
-
-      post "/ai_agent", AIAgentController, :stream
     end
 
     scope "/v2", TrentoWeb.V2 do
