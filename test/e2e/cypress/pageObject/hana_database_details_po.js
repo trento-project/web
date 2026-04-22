@@ -61,14 +61,18 @@ export const pageNotFoundLabelIsDisplayed = () =>
 const hostNameHasExpectedInstanceNumber = (hostName) => {
   const instanceNumber = getHostAttribute(hostName, 'Instance');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector).next().should('have.text', instanceNumber);
+  return cy
+    .get(hostNameCellSelector)
+    .next()
+    .should('have.text', instanceNumber);
 };
 
 const hostNameHasExpectedFeatures = (hostName) => {
   const features = getHostAttribute(hostName, 'Features');
   const formattedFeatures = features.replace(/\|/g, '');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(1)
     .should('have.text', formattedFeatures);
@@ -77,19 +81,28 @@ const hostNameHasExpectedFeatures = (hostName) => {
 const hostHasExpectedHttpPort = (hostName) => {
   const httpPort = getHostAttribute(hostName, 'HttpPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector).nextAll().eq(2).should('have.text', httpPort);
+  return cy
+    .get(hostNameCellSelector)
+    .nextAll()
+    .eq(2)
+    .should('have.text', httpPort);
 };
 
 const hostHasExpectedHttpsPort = (hostName) => {
   const httpsPort = getHostAttribute(hostName, 'HttpsPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector).nextAll().eq(3).should('have.text', httpsPort);
+  return cy
+    .get(hostNameCellSelector)
+    .nextAll()
+    .eq(3)
+    .should('have.text', httpsPort);
 };
 
 const hostHasExpectedStartPriority = (hostName) => {
   const startPriority = getHostAttribute(hostName, 'StartPriority');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(4)
     .should('have.text', startPriority);
@@ -132,7 +145,8 @@ const siteHasExpectedOperationMode = (site, operationMode) => {
 
 const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(5)
     .find('svg')
@@ -141,7 +155,8 @@ const validateHostClass = (hostName, status) => {
 
 const validateHostStatus = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(5)
     .should('have.text', `SAPControl: ${status}`);
@@ -213,13 +228,17 @@ const hostHostHasExpectedAddresses = (hostName) => {
     hostName,
     'Addresses'
   ).join('');
-  return cy.get(hostNameCellSelector).next().should('have.text', expectedAddresses);
+  return cy
+    .get(hostNameCellSelector)
+    .next()
+    .should('have.text', expectedAddresses);
 };
 
 const hostHasExpectedProvider = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedProviderValue = getAttachedHostAttribute(hostName, 'Provider');
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(1)
     .should('have.text', expectedProviderValue);
@@ -228,7 +247,8 @@ const hostHasExpectedProvider = (hostName) => {
 const hostHasExpectedClusterValue = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedCluster = getAttachedHostAttribute(hostName, 'Cluster');
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(2)
     .should('contain', expectedCluster);
@@ -237,7 +257,8 @@ const hostHasExpectedClusterValue = (hostName) => {
 const hostHasExpectedVersion = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedVersion = getAttachedHostAttribute(hostName, 'Version');
-  return cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(3)
     .should('have.text', expectedVersion);

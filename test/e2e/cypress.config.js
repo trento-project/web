@@ -2,8 +2,7 @@ const { defineConfig } = require('cypress');
 
 const calculateWandaUrl = (config) => {
   if (config.env.wandaUrl) return config.env.wandaUrl;
-
-  return config.baseUrl && config.baseUrl.includes('localhost')
+  return config.env.wanda_mode === 'demo'
     ? 'http://localhost:4001'
     : `${config.baseUrl}/wanda`;
 };
