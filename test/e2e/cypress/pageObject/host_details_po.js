@@ -555,10 +555,15 @@ export const interceptSumaRequestsMockedForRealInstance = () => {
   }
 };
 
-export const interceptNodeExporterStatusMockedForRealInstance = () =>
-  cy.intercept('/api/v1/hosts/*/exporters_status', {
-    body: { 'Node Exporter': 'passing' },
-  });
+export const interceptNodeExporterStatusMockedForRealInstance = () => {
+  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
+
+  if (isTrentoRealInstance) {
+    return cy.intercept('/api/v1/hosts/*/exporters_status', {
+      body: { 'Node Exporter': 'passing' },
+    });
+  }
+};
 
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;

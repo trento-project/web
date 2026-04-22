@@ -40,6 +40,7 @@ const clusterStates = {
 //Attributes
 
 const url = '/clusters';
+const wandaUrl = Cypress.env('wandaUrl');
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 const getChecksEndpointAlias = 'getChecks';
@@ -517,17 +518,13 @@ export const notAuthorizedTooltipIsNotDisplayed = () =>
 // API
 
 export const interceptGetChecks = () =>
-  cy
-    .intercept('GET', `${Cypress.env('wandaUrl')}/api/v1/groups/*/checks?*`)
-    .as(getChecksEndpointAlias);
+  cy.intercept('GET', `${wandaUrl}/api/v1/groups/*/checks?*`).as(getChecksEndpointAlias);
 
 export const waitForGetChecksEndpoint = () =>
   basePage.waitForRequest(getChecksEndpointAlias, { timeout: 80000 });
 
 export const interceptLastExecutionRequestMocked = () => {
-  const lastExecutionURL = `${Cypress.env(
-    'wandaUrl'
-  )}/api/v2/checks/groups/**/executions/last`;
+  const lastExecutionURL = `${wandaUrl}/api/v2/checks/groups/**/executions/last`;
   return cy
     .intercept(lastExecutionURL, {
       body: lastExecution,
@@ -536,14 +533,12 @@ export const interceptLastExecutionRequestMocked = () => {
 };
 
 export const interceptLastExecutionRequest = () => {
-  const lastExecutionURL = `${Cypress.env(
-    'wandaUrl'
-  )}/api/v2/checks/groups/**/executions/last`;
+  const lastExecutionURL = `${wandaUrl}/api/v2/checks/groups/**/executions/last`;
   return cy.intercept(lastExecutionURL).as(lastExecutionEndpointAlias);
 };
 
 export const interceptCatalogRequestMocked = () => {
-  const catalogURL = `${Cypress.env('wandaUrl')}/api/v3/checks/catalog*`;
+  const catalogURL = `${wandaUrl}/api/v3/checks/catalog*`;
   return cy
     .intercept(catalogURL, { body: { items: catalog } })
     .as(catalogEndpointAlias);

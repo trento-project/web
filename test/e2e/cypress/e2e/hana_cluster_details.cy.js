@@ -354,8 +354,7 @@ context('HANA cluster details', () => {
 
   describe('Cluster with kvm provider', () => {
     before(() => {
-      Cypress.session.clearAllSavedSessions();
-      hanaClusterDetailsPage.apiLoginAndCreateSession();
+      hanaClusterDetailsPage.refreshLoginToken();
       hanaClusterDetailsPage.loadScenario('cluster-kvm-provider');
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });

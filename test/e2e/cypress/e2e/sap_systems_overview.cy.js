@@ -119,8 +119,7 @@ context('SAP Systems Overview', () => {
 
   describe('Deregistration', () => {
     before(() => {
-      Cypress.session.clearAllSavedSessions();
-      sapSystemsOverviewPage.apiLoginAndCreateSession();
+      sapSystemsOverviewPage.refreshLoginToken();
     });
 
     it('should not display SAP System after deregistering the primary instance', () => {
