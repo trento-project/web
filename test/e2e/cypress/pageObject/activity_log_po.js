@@ -55,8 +55,8 @@ export const spyActivityLogRequest = () => {
   );
 };
 
-export const waitForActivityLogRequest = (timeout = 10000) =>
-  basePage.waitForRequest(activityLogEndpointAlias, timeout);
+export const waitForActivityLogRequest = () =>
+  basePage.waitForRequest(activityLogEndpointAlias);
 
 // UI Interactions
 export const clickFilterTypeButton = () =>
