@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
@@ -345,10 +345,15 @@ describe('HostsLists component', () => {
             ),
           },
           sapSystemsList: {
+            sapSystems: [],
             applicationInstances: [
               { sid: 'PRD', host_id: 'host1' },
               { sid: 'QAS', host_id: 'host3' },
             ],
+            databaseInstances: [],
+          },
+          databasesList: {
+            databases: [],
             databaseInstances: [
               { sid: 'PRD', host_id: 'host2' },
               { sid: 'QAS', host_id: 'host4' },
@@ -372,28 +377,73 @@ describe('HostsLists component', () => {
         },
         expectedRows: 2,
       },
+      {
+        filter: 'Agent version',
+        options: ['1.0.0', '2.0.0'],
+        state: {
+          ...cleanInitialState,
+          hostsList: {
+            hosts: [].concat(
+              hostFactory.buildList(2, { agent_version: '1.0.0' }),
+              hostFactory.buildList(2, { agent_version: '2.0.0' }),
+              hostFactory.buildList(1, { agent_version: '2.1.0' })
+            ),
+          },
+        },
+        expectedRows: 2,
+      },
     ];
 
     it.each(scenarios)(
       'should filter the table content by $filter filter',
-      ({ filter, options, state, expectedRows }) => {
+      async ({ filter, options, state, expectedRows }) => {
         const [StatefulHostsList] = withState(<HostsList />, state);
 
         renderWithRouter(StatefulHostsList);
 
-        options.forEach(async (option) => {
+        for (const option of options) {
           filterTable(filter, option);
-          screen.getByRole('table');
-          const table = await waitFor(() =>
+          const table = screen.getByRole('table');
+          await waitFor(() => {
             expect(table.querySelectorAll('tbody > tr')).toHaveLength(
               expectedRows
-            )
-          );
+            );
+          });
 
           clearFilter(filter);
-        });
+        }
       }
     );
+
+    it('should list agent version filter options sorted by semver ascending', async () => {
+      const user = userEvent.setup();
+      const state = {
+        ...cleanInitialState,
+        hostsList: {
+          hosts: [].concat(
+            hostFactory.buildList(1, { agent_version: '2.10.0' }),
+            hostFactory.buildList(1, { agent_version: '1.0.0' }),
+            hostFactory.buildList(1, { agent_version: '2.2.0' }),
+            hostFactory.buildList(1, { agent_version: '0.9.0' })
+          ),
+        },
+      };
+
+      const [StatefulHostsList] = withState(<HostsList />, state);
+      renderWithRouter(StatefulHostsList);
+
+      await user.click(screen.getByTestId('filter-Agent version'));
+
+      const optionsList = await screen.findByTestId(
+        'filter-Agent version-options'
+      );
+      const options = await within(optionsList).findAllByRole('option', {
+        hidden: true,
+      });
+      const labels = options.map((li) => li.textContent.trim());
+
+      expect(labels).toEqual(['0.9.0', '1.0.0', '2.2.0', '2.10.0']);
+    });
 
     it('should put the filters values in the query string when filters are selected', () => {
       const hosts = hostFactory.buildList(1, {

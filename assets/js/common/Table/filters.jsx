@@ -42,13 +42,14 @@ const listToMap = (list) =>
 const filterOptionsFromTableConfig = (config, data, value) =>
   config.columns
     .filter(({ filter }) => Boolean(filter))
-    .map(({ key, title }) => {
+    .map(({ key, title, filterOptionsSorter = () => 1 }) => {
       const filterValue = value[key];
       const filterOptions = uniq(
         data
           .map(({ [key]: option }) => option)
           .flat(Infinity)
           .concat(filterValue)
+          .sort(filterOptionsSorter)
       );
 
       return {
