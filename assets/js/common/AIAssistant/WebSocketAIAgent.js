@@ -1,4 +1,5 @@
 import { AbstractAgent } from '@ag-ui/client';
+import { Observable } from 'rxjs';
 
 /**
  * WebSocket-based AI Agent that implements the AG UI protocol over Phoenix channels.
@@ -10,6 +11,9 @@ export class WebSocketAIAgent extends AbstractAgent {
   constructor({ socket, userId, onConnectionChange, ...options }) {
     super(options);
 
+    this._agentInstanceId = crypto.randomUUID().substring(0, 8);
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🆕 New agent instance created`);
+
     this.socket = socket;
     this.userId = userId;
     this.channel = null;
@@ -17,6 +21,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._connectionStatus = 'disconnected'; // 'connected' | 'disconnected' | 'connecting'
     this._messageHandlers = new Map();
     this._activeRunId = null;
+    this._messageStarted = false; // Track if TextMessageStartEvent has been emitted
   }
 
   /**
@@ -74,40 +79,16 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   /**
-   * Setup Phoenix channel event handlers
+   * Setup Phoenix channel event handlers for AG-UI protocol events
    */
   _setupChannelHandlers() {
-    // Handle agent streaming deltas (text chunks)
-    this.channel.on('agent_delta', (payload) => {
-      this._handleAgentDelta(payload);
+    // Listen to the single ag_ui_event and route based on type
+    this.channel.on('ag_ui_event', (payload) => {
+      console.log('[WebSocketAIAgent] Received ag_ui_event:', payload);
+      this._handleAgUiEvent(payload);
     });
 
-    // Handle complete agent messages
-    this.channel.on('agent_message', (payload) => {
-      this._handleAgentMessage(payload);
-    });
-
-    // Handle tool calls
-    this.channel.on('tool_call', (payload) => {
-      this._handleToolCall(payload);
-    });
-
-    // Handle tool results
-    this.channel.on('tool_result', (payload) => {
-      this._handleToolResult(payload);
-    });
-
-    // Handle errors
-    this.channel.on('agent_error', (payload) => {
-      this._handleAgentError(payload);
-    });
-
-    // Handle agent execution completion
-    this.channel.on('agent_complete', (payload) => {
-      this._handleAgentComplete(payload);
-    });
-
-    // Handle agent cancellation
+    // Handle agent cancellation (custom event, not AG-UI)
     this.channel.on('agent-execution-cancelled', () => {
       this._handleAgentCancelled();
     });
@@ -125,61 +106,129 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   /**
-   * Implement the AG UI protocol run() method
-   * This is called by assistant-ui when user sends a message
+   * Route AG-UI events based on type field
    */
-  async run(runAgentInput) {
-    console.log('[WebSocketAIAgent] run() called with:', runAgentInput);
+  _handleAgUiEvent(event) {
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Event received:`, event.type);
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Active run ID:`, this._activeRunId);
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Message handlers keys:`, Array.from(this._messageHandlers.keys()));
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🔹 Event runId:`, event.runId);
 
-    // Ensure channel is connected
-    if (!this.channel || this._connectionStatus !== 'connected') {
-      await this.initialize();
-    }
-
-    // Generate a unique run ID for this execution
-    this._activeRunId = crypto.randomUUID();
-
-    const { messages, threadId } = runAgentInput;
-
-    // Get the last message (user's latest input)
-    const lastMessage = messages[messages.length - 1];
-
-    if (!lastMessage || lastMessage.role !== 'user') {
-      console.error('[WebSocketAIAgent] Invalid message format');
+    const handler = this._messageHandlers.get(this._activeRunId);
+    if (!handler || !handler.subscriber) {
+      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ No handler for event:`, event.type);
+      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ Handler exists:`, !!handler);
+      console.warn(`[WebSocketAIAgent:${this._agentInstanceId}] ❌ Has subscriber:`, handler?.subscriber ? 'yes' : 'no');
       return;
     }
 
-    // Extract text content from the message
-    const messageText = this._extractMessageText(lastMessage);
+    // Forward the event as-is to the Observable subscriber
+    // The AG-UI runtime will process it based on the type field
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] ✅ Forwarding event to subscriber:`, event.type);
+    handler.subscriber.next(event);
 
-    // Send message to Phoenix channel
-    return new Promise((resolve, reject) => {
-      this._messageHandlers.set(this._activeRunId, { resolve, reject });
+    // Handle terminal events (complete or error the stream)
+    if (event.type === 'RUN_FINISHED') {
+      console.log('[WebSocketAIAgent] Run finished, completing Observable');
+      handler.subscriber.complete();
+      this._messageHandlers.delete(this._activeRunId);
+      this._activeRunId = null;
+      this._messageStarted = false;
+    } else if (event.type === 'RUN_ERROR') {
+      console.error('[WebSocketAIAgent] Run error, erroring Observable');
+      handler.subscriber.error(new Error(event.message || 'Agent execution failed'));
+      this._messageHandlers.delete(this._activeRunId);
+      this._activeRunId = null;
+      this._messageStarted = false;
+    }
+  }
 
-      this.channel.push('send_message', {
-        message: messageText,
-        thread_id: threadId,
-        run_id: this._activeRunId,
-      })
-        .receive('ok', () => {
-          console.log('[WebSocketAIAgent] Message sent successfully');
-        })
-        .receive('error', (error) => {
-          console.error('[WebSocketAIAgent] Failed to send message', error);
-          this._messageHandlers.delete(this._activeRunId);
-          reject(error);
-        });
+  /**
+   * Implement the AG UI protocol run() method
+   * This is called by assistant-ui when user sends a message
+   * @returns {Observable<BaseEvent>} Observable stream of AG UI events
+   */
+  run(runAgentInput) {
+    console.log(`[WebSocketAIAgent:${this._agentInstanceId}] run() called with:`, runAgentInput);
+
+    return new Observable((subscriber) => {
+      console.log(`[WebSocketAIAgent:${this._agentInstanceId}] Creating new Observable for run`);
+
+      // Setup the run
+      const setupRun = async () => {
+        try {
+          // Ensure channel is connected
+          if (!this.channel || this._connectionStatus !== 'connected') {
+            console.log('[WebSocketAIAgent] Channel not connected, initializing...');
+            await this.initialize();
+          }
+
+          // Generate a unique run ID for this execution
+          this._activeRunId = crypto.randomUUID();
+          this._messageStarted = false; // Reset message started flag
+
+          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🚀 Starting run with ID:`, this._activeRunId);
+
+          const { messages, threadId } = runAgentInput;
+
+          // Get the last message (user's latest input)
+          const lastMessage = messages[messages.length - 1];
+
+          if (!lastMessage || lastMessage.role !== 'user') {
+            console.error(`[WebSocketAIAgent:${this._agentInstanceId}] Invalid message format`);
+            subscriber.error(new Error('Invalid message format'));
+            return;
+          }
+
+          // Extract text content from the message
+          const messageText = this._extractMessageText(lastMessage);
+
+          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 📝 Message text:`, messageText);
+          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 🧵 Thread ID:`, threadId);
+
+          // Store the subscriber for this run so we can emit events to it
+          this._messageHandlers.set(this._activeRunId, { subscriber });
+          console.log(`[WebSocketAIAgent:${this._agentInstanceId}] 💾 Subscriber stored for run ID:`, this._activeRunId);
+
+          // Send message to Phoenix channel (server will emit RunStarted event)
+          this.channel.push('send_message', {
+            message: messageText,
+            thread_id: threadId,
+            run_id: this._activeRunId,
+          })
+            .receive('ok', () => {
+              console.log('[WebSocketAIAgent] ✅ Message sent successfully to server');
+            })
+            .receive('error', (error) => {
+              console.error('[WebSocketAIAgent] ❌ Failed to send message', error);
+              this._messageHandlers.delete(this._activeRunId);
+              subscriber.error(error);
+            });
+
+        } catch (error) {
+          console.error('[WebSocketAIAgent] Error in run setup:', error);
+          subscriber.error(error);
+        }
+      };
+
+      setupRun();
+
+      // Cleanup function when Observable is unsubscribed
+      return () => {
+        console.log('[WebSocketAIAgent] Observable unsubscribed for run:', this._activeRunId);
+        this._messageHandlers.delete(this._activeRunId);
+      };
     });
   }
 
   /**
    * Cancel the current agent execution
    */
-  async cancel() {
-    if (this.channel && this._activeRunId) {
-      this.channel.push('cancel_agent', { run_id: this._activeRunId });
-    }
-  }
+  // async cancel() {
+  //   if (this.channel && this._activeRunId) {
+  //     this.channel.push('cancel_agent', { run_id: this._activeRunId });
+  //   }
+  // }
 
   /**
    * Extract text content from AG UI message format
@@ -201,112 +250,19 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   /**
-   * Handle streaming delta from agent
-   */
-  _handleAgentDelta(payload) {
-    const { delta, run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    // Emit AG UI protocol event for streaming text
-    this.emit('textDelta', { delta: delta.text || delta });
-  }
-
-  /**
-   * Handle complete agent message
-   */
-  _handleAgentMessage(payload) {
-    const { message, run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    // Emit AG UI protocol event for complete message
-    this.emit('message', {
-      role: 'assistant',
-      content: message,
-    });
-  }
-
-  /**
-   * Handle tool call from agent
-   */
-  _handleToolCall(payload) {
-    const { tool_name, tool_arguments, tool_call_id, run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    // Emit AG UI protocol event for tool call
-    this.emit('toolCall', {
-      toolCallId: tool_call_id,
-      toolName: tool_name,
-      args: tool_arguments,
-    });
-  }
-
-  /**
-   * Handle tool result
-   */
-  _handleToolResult(payload) {
-    const { tool_call_id, result, run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    // Emit AG UI protocol event for tool result
-    this.emit('toolResult', {
-      toolCallId: tool_call_id,
-      result,
-    });
-  }
-
-  /**
-   * Handle agent error
-   */
-  _handleAgentError(payload) {
-    const { error, run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    const handler = this._messageHandlers.get(this._activeRunId);
-    if (handler) {
-      handler.reject(new Error(error));
-      this._messageHandlers.delete(this._activeRunId);
-    }
-
-    this.emit('error', { error });
-  }
-
-  /**
-   * Handle agent execution completion
-   */
-  _handleAgentComplete(payload) {
-    const { run_id } = payload;
-
-    if (run_id !== this._activeRunId) return;
-
-    const handler = this._messageHandlers.get(this._activeRunId);
-    if (handler) {
-      handler.resolve();
-      this._messageHandlers.delete(this._activeRunId);
-    }
-
-    this.emit('done', {});
-    this._activeRunId = null;
-  }
-
-  /**
    * Handle agent cancellation
    */
   _handleAgentCancelled() {
     if (!this._activeRunId) return;
 
     const handler = this._messageHandlers.get(this._activeRunId);
-    if (handler) {
-      handler.reject(new Error('Agent execution cancelled'));
-      this._messageHandlers.delete(this._activeRunId);
-    }
+    if (!handler || !handler.subscriber) return;
 
-    this.emit('cancelled', {});
+    // Error the observable with cancellation
+    handler.subscriber.error(new Error('Agent execution cancelled'));
+    this._messageHandlers.delete(this._activeRunId);
     this._activeRunId = null;
+    this._messageStarted = false;
   }
 
   /**

@@ -7,6 +7,21 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias AgenticRuntime.IntegrationHelpers
   alias Trento.Users
 
+  # AG-UI event structs
+  alias AgUi.Core.Events.{
+    RunStarted,
+    RunFinished,
+    RunError,
+    TextMessageStart,
+    TextMessageContent,
+    TextMessageEnd,
+    ToolCallStart,
+    ToolCallArgs,
+    ToolCallEnd,
+    ToolCallResult
+  }
+  alias AgUi.Encoder.EventEncoder
+
   @impl true
   def join("ai_assistant:" <> user_id, session, %{assigns: %{current_user_id: current_user_id}} = socket) do
 
@@ -108,12 +123,21 @@ defmodule TrentoWeb.AIAssistantChannel do
             :ok ->
               Logger.info("Agent execution started")
 
+              # Emit AG UI RunStarted event
+              push_ag_ui_event(socket, %RunStarted{
+                thread_id: thread_id,
+                run_id: run_id
+              })
+
               {:noreply,
                socket
                |> assign(:input, "")
                |> assign(:loading, true)
                |> assign(:current_run_id, run_id)
-               |> assign(:current_thread_id, thread_id)}
+               |> assign(:current_thread_id, thread_id)
+               |> assign(:message_id, run_id)
+               |> assign(:message_started, false)
+               |> assign(:run_has_started, false)}
 
             # Display happens when we receive {:display_message_saved, msg} event
             {:error, reason} ->
@@ -226,7 +250,13 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:status_changed, :running, nil}}, socket) do
     Logger.info("Agent is running")
-    {:noreply, IntegrationHelpers.handle_status_running(socket)}
+
+    # Mark that this run has started running
+    # This helps us ignore stale :idle events
+    {:noreply,
+     socket
+     |> IntegrationHelpers.handle_status_running()
+     |> assign(:run_has_started, true)}
   end
 
   @impl true
@@ -235,11 +265,90 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     IO.inspect(data, label: "Idle status data")
 
-    # Emit AG UI protocol event for completion
-    # run_id = socket.assigns[:current_run_id]
-    # push(socket, "agent_complete", %{run_id: run_id})
+    # Ignore stale :idle events that arrive before :running
+    run_has_started = socket.assigns[:run_has_started] || false
 
-    {:noreply, IntegrationHelpers.handle_status_idle(socket)}
+    if !run_has_started do
+      Logger.warning("Ignoring stale :idle event - run hasn't started yet")
+      {:noreply, socket}
+    else
+      # Emit TEXT_MESSAGE_END and RUN_FINISHED when agent completes
+      # But ONLY if we've started streaming (message_started = true)
+      # This prevents race conditions where :idle arrives before :llm_deltas
+      message_id = socket.assigns[:message_id]
+      run_id = socket.assigns[:current_run_id]
+      thread_id = socket.assigns[:current_thread_id]
+      message_started = socket.assigns[:message_started] || false
+
+      Logger.info("Idle handler - message_started: #{message_started}")
+
+      # Only emit completion events if streaming actually started
+      if message_started do
+        # Emit TEXT_MESSAGE_END (with runId and threadId)
+        if message_id do
+          event = %TextMessageEnd{message_id: message_id}
+          push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
+        end
+
+        # Emit RUN_FINISHED (already has runId and threadId in the struct)
+        if run_id && thread_id do
+          push_ag_ui_event(socket, %RunFinished{
+            thread_id: thread_id,
+            run_id: run_id
+          })
+        end
+
+        {:noreply,
+         socket
+         |> IntegrationHelpers.handle_status_idle()
+         |> assign(:message_started, false)
+         |> assign(:run_has_started, false)}
+      else
+        # Message hasn't started streaming yet - :idle came too early
+        # Schedule a delayed check to emit completion events
+        Logger.warning("Idle arrived before message started - scheduling delayed completion")
+        Process.send_after(self(), {:delayed_completion, run_id, thread_id, message_id}, 500)
+
+        {:noreply, IntegrationHelpers.handle_status_idle(socket)}
+      end
+    end
+  end
+
+  @impl true
+  def handle_info({:delayed_completion, run_id, thread_id, message_id}, socket) do
+    Logger.info("Delayed completion check")
+
+    # Check if message has started now
+    message_started = socket.assigns[:message_started] || false
+
+    if message_started do
+      # Emit completion events now
+      if message_id do
+        event = %TextMessageEnd{message_id: message_id}
+        push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
+      end
+
+      if run_id && thread_id do
+        push_ag_ui_event(socket, %RunFinished{
+          thread_id: thread_id,
+          run_id: run_id
+        })
+      end
+
+      {:noreply, assign(socket, :message_started, false)}
+    else
+      # Still no message - emit RUN_FINISHED without TEXT_MESSAGE_END
+      Logger.warning("No message started even after delay - completing run without text message")
+
+      if run_id && thread_id do
+        push_ag_ui_event(socket, %RunFinished{
+          thread_id: thread_id,
+          run_id: run_id
+        })
+      end
+
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -254,54 +363,88 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
-    # Emit AG UI protocol event for error
-    # run_id = socket.assigns[:current_run_id]
-    # push(socket, "agent_error", %{
-    #   error: inspect(reason),
-    #   run_id: run_id
-    # })
+    run_id = socket.assigns[:current_run_id]
+    thread_id = socket.assigns[:current_thread_id]
 
-    {:noreply, IntegrationHelpers.handle_status_error(socket, reason)}
+    # Emit AG UI RunError event (with runId and threadId)
+    event = %RunError{
+      message: inspect(reason)
+    }
+    push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
+
+    {:noreply,
+     socket
+     |> IntegrationHelpers.handle_status_error(reason)
+     |> assign(:message_started, false)}
   end
 
   @impl true
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
     IO.inspect(deltas, label: "Received LLM deltas")
     updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
-    # push(socket, "scroll-to-bottom", %{})
 
-    # Emit AG UI protocol event for streaming deltas
     run_id = socket.assigns[:current_run_id]
-    push(updated_socket, "agent_delta", %{
-      delta: %{text: deltas},
-      run_id: run_id
-    })
+    thread_id = socket.assigns[:current_thread_id]
+    message_id = socket.assigns[:message_id]
+    message_started = socket.assigns[:message_started] || false
+
+    # Extract text content from LangChain.MessageDelta structs
+    delta_text = case deltas do
+      deltas when is_binary(deltas) ->
+        deltas
+
+      deltas when is_list(deltas) ->
+        deltas
+        |> Enum.map(fn
+          # LangChain.MessageDelta with ContentPart
+          %{content: %{type: :text, content: text}} -> text
+          # LangChain.MessageDelta with string content
+          %{content: text} when is_binary(text) -> text
+          # Plain string
+          text when is_binary(text) -> text
+          # Fallback
+          _ -> ""
+        end)
+        |> Enum.join("")
+
+      _ ->
+        ""
+    end
+
+    IO.inspect(delta_text, label: "Extracted delta text")
+
+    # Emit TextMessageStart on first delta
+    updated_socket = if !message_started do
+      # Add runId and threadId to the event
+      event = %TextMessageStart{
+        message_id: message_id,
+        role: "assistant"
+      }
+      push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+      assign(updated_socket, :message_started, true)
+    else
+      updated_socket
+    end
+
+    # Emit TextMessageContent for the delta (only if there's actual text)
+    if delta_text != "" do
+      event = %TextMessageContent{
+        message_id: message_id,
+        delta: delta_text
+      }
+      push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+    end
 
     {:noreply, updated_socket}
   end
 
   @impl true
   def handle_info({:agent, {:llm_message, message}}, socket) do
-    # Emit AG UI protocol event for complete message
-    run_id = socket.assigns[:current_run_id]
-
     IO.inspect(message, label: "LLM message content")
 
-    # Extract text content from LangChain message
-    message_text = case message do
-      %{content: content} when is_binary(content) -> content
-      %{content: parts} when is_list(parts) ->
-        parts
-        |> Enum.filter(&match?(%{type: "text"}, &1))
-        |> Enum.map(& &1.text)
-        |> Enum.join("\n")
-      _ -> ""
-    end
-
-    push(socket, "agent_message", %{
-      message: message_text,
-      run_id: run_id
-    })
+    # Don't emit AG-UI events here!
+    # The llm_message event can arrive before or during llm_deltas streaming
+    # We'll emit TEXT_MESSAGE_END and RUN_FINISHED when status changes to :idle
 
     {:noreply, IntegrationHelpers.handle_llm_message_complete(socket)}
   end
@@ -309,7 +452,6 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:display_message_saved, display_msg}}, socket) do
     updated_socket = IntegrationHelpers.handle_display_message_saved(socket, display_msg)
-    push(updated_socket, "scroll-to-bottom", %{display_msg: display_msg})
 
     {:noreply, updated_socket}
   end
@@ -350,16 +492,36 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
-    push(updated_socket, "scroll-to-bottom", %{tool_info: tool_info})
 
-    # Emit AG UI protocol event for tool call
-    # run_id = socket.assigns[:current_run_id]
-    # push(updated_socket, "tool_call", %{
-    #   tool_name: tool_info[:name] || tool_info["name"],
-    #   tool_arguments: tool_info[:arguments] || tool_info["arguments"],
-    #   tool_call_id: tool_info[:id] || tool_info["id"],
-    #   run_id: run_id
-    # })
+    # Emit AG UI protocol events for tool call
+    run_id = socket.assigns[:current_run_id]
+    thread_id = socket.assigns[:current_thread_id]
+    message_id = socket.assigns[:message_id]
+    tool_call_id = tool_info[:id] || tool_info["id"]
+    tool_name = tool_info[:name] || tool_info["name"]
+    tool_arguments = tool_info[:arguments] || tool_info["arguments"]
+
+    # ToolCallStart (with runId and threadId)
+    event = %ToolCallStart{
+      tool_call_id: tool_call_id,
+      tool_call_name: tool_name,
+      parent_message_id: message_id
+    }
+    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+
+    # ToolCallArgs with JSON-encoded arguments (with runId and threadId)
+    args_json = Jason.encode!(tool_arguments)
+    event = %ToolCallArgs{
+      tool_call_id: tool_call_id,
+      delta: args_json
+    }
+    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+
+    # ToolCallEnd (with runId and threadId)
+    event = %ToolCallEnd{
+      tool_call_id: tool_call_id
+    }
+    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
 
     {:noreply, updated_socket}
   end
@@ -367,17 +529,28 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:tool_execution_update, status, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_execution_update(socket, status, tool_info)
-    push(updated_socket, "scroll-to-bottom", %{status: status, tool_info: tool_info})
 
-    # Emit AG UI protocol event for tool result (when execution completes)
-    # if status == :complete do
-    #   run_id = socket.assigns[:current_run_id]
-    #   push(updated_socket, "tool_result", %{
-    #     tool_call_id: tool_info[:id] || tool_info["id"],
-    #     result: tool_info[:result] || tool_info["result"] || %{},
-    #     run_id: run_id
-    #   })
-    # end
+    # Emit AG UI ToolCallResult event when execution completes
+    if status == :complete do
+      run_id = socket.assigns[:current_run_id]
+      thread_id = socket.assigns[:current_thread_id]
+      tool_call_id = tool_info[:id] || tool_info["id"]
+      result = tool_info[:result] || tool_info["result"] || %{}
+
+      # Generate a message ID for the tool result
+      result_message_id = "tool_result_#{tool_call_id}"
+
+      # Encode result as JSON string
+      result_json = Jason.encode!(result)
+
+      event = %ToolCallResult{
+        message_id: result_message_id,
+        tool_call_id: tool_call_id,
+        content: result_json,
+        role: "tool"
+      }
+      push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+    end
 
     {:noreply, updated_socket}
   end
@@ -385,7 +558,6 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:agent, {:display_message_updated, updated_msg}}, socket) do
     updated_socket = IntegrationHelpers.handle_display_message_updated(socket, updated_msg)
-    push(updated_socket, "scroll-to-bottom", %{updated_msg: updated_msg})
     {:noreply, updated_socket}
   end
 
@@ -424,7 +596,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
         socket
         |> assign(:page_title, page_title)
-        |> push("scroll-to-bottom", %{})
 
       {:error, socket} ->
         # Conversation not found - navigate to fresh state
@@ -527,6 +698,61 @@ defmodule TrentoWeb.AIAssistantChannel do
         socket
         |> assign(:put_flash, "Error: Failed to create conversation")
     end
+  end
+
+  # Helper to push AG-UI protocol events to the client
+  # Encodes the event to JSON with camelCase keys (AG-UI protocol standard)
+  defp push_ag_ui_event(socket, event) do
+    # Encode event to JSON map with camelCase keys
+    # The type field stays in SCREAMING_SNAKE_CASE (e.g., "RUN_STARTED")
+    event_json =
+      event
+      |> Map.from_struct()
+      |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+      |> Enum.map(fn {k, v} -> {to_camel_case(k), v} end)
+      |> Map.new()
+
+    # Log for debugging
+    IO.inspect(event_json, label: "🔷 Pushing AG-UI event")
+
+    # Push as a single "ag_ui_event" that the client listens to
+    # The client will route based on the type field
+    push(socket, "ag_ui_event", event_json)
+    socket
+  end
+
+  # Helper to push AG-UI events with runId and threadId added
+  # Some events don't include these fields by default, but the client needs them
+  defp push_ag_ui_event_with_ids(socket, event, run_id, thread_id) do
+    # Encode event to JSON map with camelCase keys
+    event_json =
+      event
+      |> Map.from_struct()
+      |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+      |> Enum.map(fn {k, v} -> {to_camel_case(k), v} end)
+      |> Map.new()
+      # Add runId and threadId to every event
+      |> Map.put("runId", run_id)
+      |> Map.put("threadId", thread_id)
+
+    # Log for debugging
+    IO.inspect(event_json, label: "🔷 Pushing AG-UI event (with IDs)")
+
+    # Push as a single "ag_ui_event" that the client listens to
+    push(socket, "ag_ui_event", event_json)
+    socket
+  end
+
+  # Convert atom or string from snake_case to camelCase
+  defp to_camel_case(atom) when is_atom(atom) do
+    atom
+    |> Atom.to_string()
+    |> to_camel_case()
+  end
+
+  defp to_camel_case(string) when is_binary(string) do
+    [first | rest] = String.split(string, "_")
+    first <> Enum.map_join(rest, "", &String.capitalize/1)
   end
 end
 
