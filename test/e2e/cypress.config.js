@@ -12,7 +12,6 @@ module.exports = defineConfig({
     photofinish_binary: 'photofinish',
     login_user: 'admin',
     login_password: 'adminpassword',
-    destination_environment: 'dev',
     idp_url: 'http://localhost:8081',
   },
   e2e: {

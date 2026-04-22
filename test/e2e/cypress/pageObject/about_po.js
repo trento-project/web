@@ -1,6 +1,7 @@
 export * from './base_po';
 import * as basePage from './base_po';
-import { getValue } from '../support/common.js';
+
+const hostToDeregister = '7269ee51-5007-5849-aaa7-7c4a98b0c9ce';
 
 const url = '/about';
 const pageTitle = 'h2';
@@ -29,9 +30,12 @@ export const expectedGithubUrlIsDisplayed = () => {
     .should('have.text', 'https://github.com/trento-project/web');
 };
 
-export const expectedSlesForSapSubscriptionsAreDisplayed = () => {
-  const subscriptions = getValue('subscriptions');
+export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) => {
   return cy
     .get(amountOfSlesForSapSubscriptionsLabel)
     .should('have.text', `${subscriptions} found`);
+};
+
+export const apiDeregisterHost = () => {
+  basePage.apiDeregisterHost(hostToDeregister);
 };
