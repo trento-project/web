@@ -5640,5 +5640,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-22T04:06:38Z",
+    "commit": "289d8dfd6d86889b5fbbafde1f7f4dbd9a6b4233",
+    "run_id": "24759173635",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.5
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
