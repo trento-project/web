@@ -518,7 +518,9 @@ export const notAuthorizedTooltipIsNotDisplayed = () =>
 // API
 
 export const interceptGetChecks = () =>
-  cy.intercept('GET', `${wandaUrl}/api/v1/groups/*/checks?*`).as(getChecksEndpointAlias);
+  cy
+    .intercept('GET', `${wandaUrl}/api/v1/groups/*/checks?*`)
+    .as(getChecksEndpointAlias);
 
 export const waitForGetChecksEndpoint = () =>
   basePage.waitForRequest(getChecksEndpointAlias, { timeout: 80000 });
