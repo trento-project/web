@@ -1,17 +1,21 @@
 defmodule TrentoWeb.AIAssistantTools do
+  @moduledoc """
+  AI Assistant tools for querying Trento infrastructure resources.
+  """
+
   require Logger
-  alias Trento.Hosts
-  alias Trento.SapSystems
-  alias Trento.Databases
   alias Trento.Clusters
-  alias Trento.Infrastructure.Prometheus
-  alias TrentoWeb.V1
-  alias TrentoWeb.V2
-  alias Trento.Hosts.Projections.HostReadModel
-  alias Trento.SapSystems.Projections.SapSystemReadModel
-  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases
+  alias Trento.Databases.Projections.DatabaseReadModel
+  alias Trento.Hosts
+  alias Trento.Hosts.Projections.HostReadModel
+  alias Trento.Infrastructure.Prometheus
+  alias Trento.SapSystems
+  alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Users
+
+  alias TrentoWeb.{V1, V2}
 
   def tools do
     [
@@ -24,7 +28,7 @@ defmodule TrentoWeb.AIAssistantTools do
     ]
   end
 
-  defp host_list_tool() do
+  defp host_list_tool do
     AgenticRuntime.new_tool!(%{
       name: "Host_list",
       summary: "List hosts.",
@@ -38,8 +42,7 @@ defmodule TrentoWeb.AIAssistantTools do
           true ->
             hosts = Hosts.get_all_hosts()
 
-            V1.HostJSON.hosts(%{hosts: hosts})
-            |> Jason.encode!()
+            Jason.encode!(V1.HostJSON.hosts(%{hosts: hosts}))
 
           _ ->
             "unauthorized"
@@ -48,7 +51,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  defp sap_system_list_tool() do
+  defp sap_system_list_tool do
     AgenticRuntime.new_tool!(%{
       name: "Sap_system_list",
       summary: "List SAP Systems.",
@@ -62,8 +65,7 @@ defmodule TrentoWeb.AIAssistantTools do
           true ->
             sap_systems = SapSystems.get_all_sap_systems()
 
-            V1.SapSystemJSON.sap_systems(%{sap_systems: sap_systems})
-            |> Jason.encode!()
+            Jason.encode!(V1.SapSystemJSON.sap_systems(%{sap_systems: sap_systems}))
 
           _ ->
             "unauthorized"
@@ -72,7 +74,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  defp databases_list_tool() do
+  defp databases_list_tool do
     AgenticRuntime.new_tool!(%{
       name: "Database_list",
       summary: "List HANA Databases.",
@@ -86,8 +88,7 @@ defmodule TrentoWeb.AIAssistantTools do
           true ->
             databases = Databases.get_all_databases()
 
-            V1.DatabaseJSON.databases(%{databases: databases})
-            |> Jason.encode!()
+            Jason.encode!(V1.DatabaseJSON.databases(%{databases: databases}))
 
           _ ->
             "unauthorized"
@@ -96,7 +97,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  defp clusters_list_tool() do
+  defp clusters_list_tool do
     AgenticRuntime.new_tool!(%{
       name: "Cluster_list",
       summary: "List Pacemaker Clusters.",
@@ -110,8 +111,7 @@ defmodule TrentoWeb.AIAssistantTools do
           true ->
             clusters = Clusters.get_all_clusters()
 
-            V2.ClusterJSON.clusters(%{clusters: clusters})
-            |> Jason.encode!()
+            Jason.encode!(V2.ClusterJSON.clusters(%{clusters: clusters}))
 
           _ ->
             "unauthorized"
@@ -120,7 +120,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  defp instant_query_host_metrics_tool() do
+  defp instant_query_host_metrics_tool do
     AgenticRuntime.new_tool!(%{
       name: "Instant_query_host_prometheus_metrics",
       summary: "Execute a PromQL query scoped to a host at a specific point in time.",
@@ -178,7 +178,7 @@ defmodule TrentoWeb.AIAssistantTools do
     })
   end
 
-  defp range_query_host_metrics_tool() do
+  defp range_query_host_metrics_tool do
     AgenticRuntime.new_tool!(%{
       name: "Range_query_host_prometheus_metrics",
       summary: "Execute a PromQL query scoped to a host over a specified time period.",
@@ -228,7 +228,7 @@ defmodule TrentoWeb.AIAssistantTools do
             query = Map.get(args, "query")
             from = Map.get(args, "from")
             to = Map.get(args, "to")
-            result = Prometheus.query(host_id, query, %{from: from, to: to})
+            result = Prometheus.query_range(host_id, query, from, to)
 
             case result do
               {:ok, %{"data" => %{"result" => query_results}}} ->
