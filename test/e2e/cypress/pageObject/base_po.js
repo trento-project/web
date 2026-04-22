@@ -144,9 +144,9 @@ export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');
 
 export const validateItemNotPresentInNavigationMenu = (itemName) =>
-  cy.get(navigation.navigationItems).each(($element) => {
-    cy.wrap($element).should('not.include.text', itemName);
-  });
+  cy.get(navigation.navigationItems).each(($element) => 
+    cy.wrap($element).should('not.include.text', itemName)
+  );
 
 export const validateItemPresentInNavigationMenu = (navigationMenuItem) =>
   cy.get(`a:contains("${navigationMenuItem}")`).should('be.visible');

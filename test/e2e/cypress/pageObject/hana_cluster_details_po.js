@@ -384,12 +384,13 @@ export const expectedSiteNamesAreDisplayed = () =>
     );
 
 export const expectedSrHealthStatesAreDisplayed = () =>
-  cy.wrap(availableHanaCluster.sites).each((site) => {
-    cy.get(`.tn-site-details-${site.name} svg`).should(
-      'have.class',
-      site.srHealthState
+  cy
+    .wrap(availableHanaCluster.sites)
+    .each((site) =>
+      cy
+        .get(`.tn-site-details-${site.name} svg`)
+        .should('have.class', site.srHealthState)
     );
-  });
 
 export const expectedResourcesDisplayed = () =>
   cy.wrap(availableHanaCluster.resources).each((resource, index) => {

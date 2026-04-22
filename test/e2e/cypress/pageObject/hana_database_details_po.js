@@ -173,7 +173,8 @@ export const hostHasStatus = (status) =>
 export const hostHasClass = (status) =>
   validateHostClass(selectedDatabase.Hosts[0].Hostname, status);
 
-export const eachHostNameHasExpectedValues = () => cy.wrap(selectedDatabase.Hosts).each((host) => {
+export const eachHostNameHasExpectedValues = () =>
+  cy.wrap(selectedDatabase.Hosts).each((host) => {
     const hostName = host.Hostname;
     hostNameHasExpectedInstanceNumber(hostName);
     hostNameHasExpectedFeatures(hostName);
@@ -184,7 +185,8 @@ export const eachHostNameHasExpectedValues = () => cy.wrap(selectedDatabase.Host
     return hostStatusHasExpectedClass(hostName);
   });
 
-export const eachSiteHasExpectedValues = (sites) => cy.wrap(sites).each((site) => {
+export const eachSiteHasExpectedValues = (sites) =>
+  cy.wrap(sites).each((site) => {
     siteHasExpectedName(site.Name);
     siteHasExpectedSystemReplication(site.Name, site.SystemReplication);
     siteHasExpectedTier(site.Name, site.Tier);
@@ -196,11 +198,14 @@ export const eachSiteHasExpectedValues = (sites) => cy.wrap(sites).each((site) =
       siteHasExpectedOperationMode(site.Name, site.OperationMode);
   });
 
-export const runningSitesHaveExpectedValues = () => eachSiteHasExpectedValues(selectedDatabase.Sites);
+export const runningSitesHaveExpectedValues = () =>
+  eachSiteHasExpectedValues(selectedDatabase.Sites);
 
-export const secondaryStoppedSitesHaveExpectedValues = () => eachSiteHasExpectedValues(secondaryStoppedSites);
+export const secondaryStoppedSitesHaveExpectedValues = () =>
+  eachSiteHasExpectedValues(secondaryStoppedSites);
 
-export const stoppedSitesHaveExpectedValues = () => eachSiteHasExpectedValues(allStoppedSites);
+export const stoppedSitesHaveExpectedValues = () =>
+  eachSiteHasExpectedValues(allStoppedSites);
 
 const getHostAttribute = (hostname, attribute) => {
   const host = selectedDatabase.Hosts.find((h) => h.Hostname === hostname);
@@ -264,7 +269,8 @@ const hostHasExpectedWorkingLink = (host) => {
   return cy.go('back');
 };
 
-export const eachAttachedHostHasExpectedValues = () => cy.wrap(attachedHosts).each((host) => {
+export const eachAttachedHostHasExpectedValues = () =>
+  cy.wrap(attachedHosts).each((host) => {
     hostHostHasExpectedAddresses(host.Name);
     hostHasExpectedProvider(host.Name);
     hostHasExpectedClusterValue(host.Name);

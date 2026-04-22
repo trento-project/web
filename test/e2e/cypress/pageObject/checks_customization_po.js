@@ -118,7 +118,6 @@ export const clickResetModalButton = () => cy.get(resetButton).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
 export const clickModalSaveButton = () => cy.get(saveButtonModal).click();
-
 const _setInputValue = (valueName, newValue) =>
   cy
     .get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
@@ -241,13 +240,11 @@ export const waitForCustomizedCheckElements = () => {
     .find(modifiedResultCriticalIcon)
     .should('be.visible');
 };
-
 export const validateCheckStatus = () =>
   cy
     .get(evaluationResultsStatus)
     .should('be.visible')
     .and('have.text', checkStatus);
-
 export const validateEvaluationResultsDescription = () =>
   cy
     .get(evaluationResultsLabel)
@@ -282,7 +279,6 @@ const _resetCheck = (groupId, checkId) =>
 
 const _resetChecks = (checks) =>
   cy.wrap(checks).each(({ id }) => _resetCheck(availableHanaCluster.id, id));
-
 export const apiResetAllChecks = () => _resetChecks(checkList);
 
 export const apiResetCheckSelection = () =>
