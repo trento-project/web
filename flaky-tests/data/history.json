@@ -5616,5 +5616,29 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-22T03:54:14Z",
+    "commit": "289d8dfd6d86889b5fbbafde1f7f4dbd9a6b4233",
+    "run_id": "24758881165",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.6667
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users create_user with abilities attaches the abilities to the user",
+        "score": 0.02501
+      }
+    ]
   }
 ]
