@@ -57,9 +57,9 @@ export const addTagByColumnValue = (columnValue, tagValue) =>
   cy
     .get(`td:contains(${columnValue})`)
     .parents('tr')
-    .within(() => {
-      return cy.get(addTagButtons).type(`${tagValue}{enter}`);
-    });
+    .within(() => 
+       cy.get(addTagButtons).type(`${tagValue}{enter}`)
+    );
 
 export const clickActivityLogNavigationItem = () =>
   cy.get(navigation.activityLog).click();

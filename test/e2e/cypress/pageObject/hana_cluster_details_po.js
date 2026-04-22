@@ -324,22 +324,24 @@ export const allExpectedIndexServerRolesAreDisplayed = () => {
   const indexServerRoles = getHostsProperty('indexserver_actual_role');
   return cy
     .wrap(indexServerRoles)
-    .each(({ siteName, indexserver_actual_role }) => {
-      cy.get(`.tn-site-details-${siteName} tbody td`)
+    .each(({ siteName, indexserver_actual_role }) =>
+      cy
+        .get(`.tn-site-details-${siteName} tbody td`)
         .eq(2)
-        .should('have.text', capitalize(indexserver_actual_role));
-    });
+        .should('have.text', capitalize(indexserver_actual_role))
+    );
 };
 
 export const allExpectedNameServerRolesAreDisplayed = () => {
   const nameServerRoles = getHostsProperty('nameserver_actual_role');
   return cy
     .wrap(nameServerRoles)
-    .each(({ siteName, nameserver_actual_role }) => {
-      cy.get(`.tn-site-details-${siteName} tbody td`)
+    .each(({ siteName, nameserver_actual_role }) =>
+      cy
+        .get(`.tn-site-details-${siteName} tbody td`)
         .eq(1)
-        .should('have.text', capitalize(nameserver_actual_role));
-    });
+        .should('have.text', capitalize(nameserver_actual_role))
+    );
 };
 
 export const allExpectedStatusesAreDisplayed = () => {
