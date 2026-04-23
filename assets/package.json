@@ -79,7 +79,7 @@
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.4",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.0"
   },
   "overrides": {
     "eos-icons-react": {
