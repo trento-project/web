@@ -313,6 +313,8 @@ Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Ins
 Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.html
 Trento.Infrastructure.Commanded.RollUp.Queries.html
 Trento.Infrastructure.Commanded.RollUp.RollUp.html
+Trento.Infrastructure.ComponentVersions.Gen.html
+Trento.Infrastructure.ComponentVersions.html
 Trento.Infrastructure.Discovery.AMQP.Publisher.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer.html
 Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher.html
@@ -561,7 +563,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-9AD972D6.js
-dist/sidebar_items-4C618C26.js
+dist/search_data-2685BE97.js
+dist/sidebar_items-F720D608.js
 index.html
 search.html
