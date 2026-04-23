@@ -5776,5 +5776,29 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-23T04:13:21Z",
+    "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
+    "run_id": "24815824984",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
+        "score": 0.02501
+      }
+    ]
   }
 ]
