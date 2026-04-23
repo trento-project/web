@@ -856,7 +856,7 @@ export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
 export const showExpectedErrors = (errConfig) =>
-  errConfig.forEach(({ selector, error }) =>
+  cy.wrap(errConfig).each(({ selector, error }) =>
     cy.get(selector).should('have.text', error)
   );
 

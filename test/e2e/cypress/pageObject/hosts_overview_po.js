@@ -389,7 +389,7 @@ export const apiDeleteAllHostsTags = () =>
         );
     })
     .then(() => basePage.refresh());
-    
+
 const apiGetHosts = () =>
   basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/hosts';

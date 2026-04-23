@@ -148,7 +148,7 @@ export const eachSystemHasItsExpectedWorkingLink = () =>
   });
 
 export const eachSystemHasExpectedHealth = () =>
-  availableSAPSystems.forEach(({ health: health }, index) => {
+  cy.wrap(availableSAPSystems).each(({ health: health }, index) => {
     const healthClass = healthMap[health];
     const healthCellSelector = `tbody tr:nth-child(odd):eq(${index}) td:eq(1) svg`;
     return cy.get(healthCellSelector).should('have.class', healthClass);
