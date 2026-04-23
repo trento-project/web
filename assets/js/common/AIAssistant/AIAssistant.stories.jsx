@@ -7,7 +7,7 @@ export default {
   component: AIAssistantModal,
 };
 
-const MockProvider = ({ children, initialMessages = [] }) => {
+function MockProvider({ children, initialMessages = [] }) {
   const runtime = useLocalRuntime({
     initialMessages,
   });
@@ -16,25 +16,39 @@ const MockProvider = ({ children, initialMessages = [] }) => {
       {children}
     </AssistantRuntimeProvider>
   );
-};
+}
 
-export const Default = () => (
-  <MockProvider>
-    <div className="h-[800px] w-full bg-gray-100 p-8">
-      <AIAssistantModal />
-    </div>
-  </MockProvider>
-);
+export function Default() {
+  return (
+    <MockProvider>
+      <div className="h-[800px] w-full bg-gray-100 p-8">
+        <AIAssistantModal />
+      </div>
+    </MockProvider>
+  );
+}
 
-export const WithMessages = () => (
-  <MockProvider
-    initialMessages={[
-      { id: '1', role: 'user', content: [{ type: 'text', text: 'Hello, what is the status of the cluster?' }] },
-      { id: '2', role: 'assistant', content: [{ type: 'text', text: 'The cluster is running smoothly.' }] },
-    ]}
-  >
-    <div className="h-[800px] w-full bg-gray-100 p-8">
-      <AIAssistantModal />
-    </div>
-  </MockProvider>
-);
+export function WithMessages() {
+  return (
+    <MockProvider
+      initialMessages={[
+        {
+          id: '1',
+          role: 'user',
+          content: [
+            { type: 'text', text: 'Hello, what is the status of the cluster?' },
+          ],
+        },
+        {
+          id: '2',
+          role: 'assistant',
+          content: [{ type: 'text', text: 'The cluster is running smoothly.' }],
+        },
+      ]}
+    >
+      <div className="h-[800px] w-full bg-gray-100 p-8">
+        <AIAssistantModal />
+      </div>
+    </MockProvider>
+  );
+}
