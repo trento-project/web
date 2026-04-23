@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import {
@@ -155,13 +156,16 @@ describe('ClustersList component', () => {
 
     it.each(scenarios)(
       'should filter the table content by $filter filter',
-      ({ filter, options, state, expectedRows }) => {
+      async ({ filter, options, state, expectedRows }) => {
+        const user = userEvent.setup();
+
         const [StatefulClustersList] = withState(<ClustersList />, state);
 
         renderWithRouter(StatefulClustersList);
 
-        options.forEach(async (option) => {
-          filterTable(filter, option);
+        for (const option of options) {
+          await filterTable(user, filter, option);
+
           const table = screen.getByRole('table');
           await waitFor(() =>
             expect(table.querySelectorAll('tbody > tr')).toHaveLength(
@@ -169,8 +173,8 @@ describe('ClustersList component', () => {
             )
           );
 
-          clearFilter(filter);
-        });
+          await clearFilter(user, filter);
+        }
       }
     );
 
@@ -195,7 +199,9 @@ describe('ClustersList component', () => {
       expect(screen.getByText('HA2')).toBeVisible();
     });
 
-    it('should put the filters values in the query string when filters are selected', () => {
+    it('should put the filters values in the query string when filters are selected', async () => {
+      const user = userEvent.setup();
+
       const tag = 'Tag1';
       const sap_instance = clusteredSapInstanceFactory.build();
       const clusters = clusterFactory.buildList(1, {
@@ -219,24 +225,30 @@ describe('ClustersList component', () => {
       const [StatefulClustersList] = withState(<ClustersList />, state);
       renderWithRouter(StatefulClustersList);
 
-      [
+      const filters = [
         ['Health', health],
         ['Name', name],
         ['SID', sid],
         ['Type', type],
         ['Tags', tag],
-      ].forEach(([filter, option]) => {
-        filterTable(filter, option);
-      });
+      ];
 
-      expect(window.location.search).toEqual(
-        `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
+      for (const [filter, option] of filters) {
+        await filterTable(user, filter, option);
+      }
+
+      await waitFor(() =>
+        expect(window.location.search).toEqual(
+          `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
+        )
       );
     });
   });
 
   describe('cluster type', () => {
     it('should add not supported tooltip to HANA+ASCS/ERS cluster types', async () => {
+      const user = userEvent.setup();
+
       const state = {
         ...cleanInitialState,
         clustersList: {
@@ -252,9 +264,8 @@ describe('ClustersList component', () => {
 
       const typeLabel = screen.getByText('HANA+ASCS/ERS');
       expect(typeLabel).toBeInTheDocument();
-      // Cannot user userEvent, as other tests in suite are using fireEvent in the
-      // filterTable function, and it messes up everything
-      fireEvent.mouseOver(typeLabel);
+
+      await user.hover(typeLabel);
       expect(
         screen.getByText(
           'Cluster managing HANA and ASCS/ERS together is not supported by Trento'
