@@ -55,6 +55,10 @@ describe('SapSystemLink', () => {
       systemType: undefined,
       expectedTooltip: 'System currently not registered',
     },
+    {
+      systemType: null,
+      expectedTooltip: 'System currently not registered',
+    },
   ])(
     `renders $systemType tooltip when sapSystemId or systemType are not provided`,
     async ({ systemType, expectedTooltip }) => {
