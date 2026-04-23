@@ -520,9 +520,9 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 
 // API
 export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
-  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
+  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
-  if (isTrentoRealInstance) {
+  if (isTrentoProdInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
       statusCode: 422,
       body: sumaMocks.getHostNotFoundError(),
@@ -531,9 +531,9 @@ export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
 };
 
 export const interceptSumaRequestsMockedForRealInstance = () => {
-  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
+  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
-  if (isTrentoRealInstance) {
+  if (isTrentoProdInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
       body: sumaMocks.getSoftwareUpdatesList(),
     });
@@ -556,9 +556,9 @@ export const interceptSumaRequestsMockedForRealInstance = () => {
 };
 
 export const interceptNodeExporterStatusMockedForRealInstance = () => {
-  const isTrentoRealInstance = Cypress.env('web_mode') === 'real';
+  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
-  if (isTrentoRealInstance) {
+  if (isTrentoProdInstance) {
     return cy.intercept('/api/v1/hosts/*/exporters_status', {
       body: { 'Node Exporter': 'passing' },
     });

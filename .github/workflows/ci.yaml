@@ -657,6 +657,7 @@ jobs:
           SPLIT_INDEX: ${{ strategy.job-index }}
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
+          cypress_wanda_mode: "demo"
         with:
           working-directory: test/e2e
           wait-on-timeout: 30
