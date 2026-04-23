@@ -40,13 +40,12 @@ export const visit = (queryString = '') =>
 
 // Network Interception
 
-export const interceptActivityLogEndpoint = () => {
-  return cy
+export const interceptActivityLogEndpoint = () =>
+  cy
     .intercept({
       url: activityLogEndpoint,
     })
     .as(activityLogEndpointAlias);
-};
 
 export const spyActivityLogRequest = () => {
   cy.clock();
@@ -131,13 +130,12 @@ export const autoRefreshButtonIsEnabled = () =>
 export const autoRefreshIntervalButtonIsDisabled = () =>
   cy.get(refreshRateLabel).should('be.disabled');
 
-export const filteredActionsAreTheExpectedOnes = (filteredActions) => {
-  return cy
+export const filteredActionsAreTheExpectedOnes = (filteredActions) =>
+  cy
     .get(filteringElements)
     .eq(1)
     .find('span span')
     .should('have.text', filteredActions);
-};
 
 export const filterNewerThanHasTheExpectedValue = (filterValue) => {
   let expectedValue;
@@ -176,12 +174,11 @@ export const filterTypeHasNothingSelected = () =>
 export const refreshRateFilterHasTheExpectedValue = (refreshRate) =>
   cy.get(refreshRateFilter).should('have.text', refreshRate);
 
-export const metadataSearchHasTheExpectedPlaceholder = () => {
-  return cy
+export const metadataSearchHasTheExpectedPlaceholder = () =>
+  cy
     .get(metadataSearchInput)
     .should('have.attr', 'placeholder', 'Filter by metadata')
     .should('be.visible');
-};
 
 export const metadataSearchHasTheExpectedValue = (searchValue) =>
   cy.get(metadataSearchInput).should('have.value', searchValue);
@@ -195,12 +192,8 @@ export const activityLogEndpointIsCalledOnlyOnce = () => {
   return cy.get(`@${activityLogEndpointAlias}.all`).should('have.length', 1);
 };
 
-export const activityLogRequestHasExpectedStatusCode = (statusCode) => {
-  return basePage.validateResponseStatusCode(
-    activityLogEndpointAlias,
-    statusCode
-  );
-};
+export const activityLogRequestHasExpectedStatusCode = (statusCode) =>
+  basePage.validateResponseStatusCode(activityLogEndpointAlias, statusCode);
 
 export const paginationPropertiesAreTheExpected = (response) => {
   expect(response.body).to.have.property('pagination');
@@ -210,12 +203,11 @@ export const paginationPropertiesAreTheExpected = (response) => {
   expect(response.body.pagination).to.have.property('first', 20);
 };
 
-export const validateResponsePagination = (amountOfItems) => {
-  return basePage
+export const validateResponsePagination = (amountOfItems) =>
+  basePage
     .waitForRequest(activityLogEndpointAlias)
     .its('response.body.pagination.first')
     .should('eq', amountOfItems);
-};
 
 export const responseMatchesFirstPageContent = (expectedResponse) => {
   waitForActivityLogRequest().then(({ response }) => {
@@ -226,11 +218,10 @@ export const responseMatchesFirstPageContent = (expectedResponse) => {
   });
 };
 
-export const apiCallDoesNotContainRefreshRate = (refreshRate) => {
-  return waitForActivityLogRequest().then(({ response }) => {
+export const apiCallDoesNotContainRefreshRate = (refreshRate) =>
+  waitForActivityLogRequest().then(({ response }) => {
     expect(response.url).to.not.contain(refreshRate);
   });
-};
 
 export const expectedRefreshRatesAreAvailable = () => {
   clickAutoRefreshRateButton();

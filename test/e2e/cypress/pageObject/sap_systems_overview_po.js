@@ -385,18 +385,17 @@ export const apiRemoveAllSapSystemsTags = () => {
   return basePage.refresh();
 };
 
-const apiRemoveTagBySapSystemId = (systemId, tagId) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+const apiRemoveTagBySapSystemId = (systemId, tagId) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/sap_systems/${systemId}/tags/${tagId}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
-const apiGetSapSystems = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+const apiGetSapSystems = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/sap_systems';
     return cy
       .request({
@@ -408,7 +407,6 @@ const apiGetSapSystems = () => {
       })
       .then((response) => response);
   });
-};
 
 const getSapSystemTags = (jsonData) => {
   const clusterTags = {};

@@ -100,9 +100,7 @@ const hostStatusHasExpectedClass = (hostName) => {
   validateHostClass(hostName, status);
 };
 
-const getSiteContainer = (site) => {
-  return cy.get(siteHeader(site));
-};
+const getSiteContainer = (site) => cy.get(siteHeader(site));
 
 const siteHasExpectedName = (site) => {
   getSiteContainer(site).should('include.text', site);

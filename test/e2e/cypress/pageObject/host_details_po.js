@@ -397,16 +397,11 @@ const _processAttributeName = (attributeHeaderName) => {
   else return splittedAttribute;
 };
 
-const _getTableHeaders = (tableName) => {
-  return cy
-    .get(`div[class*="mt-"]:contains("${tableName}") th`)
-    .then((headers) => {
-      const headerTexts = [...headers].map((header) =>
-        header.textContent.trim()
-      );
-      return cy.wrap(headerTexts);
-    });
-};
+const _getTableHeaders = (tableName) =>
+  cy.get(`div[class*="mt-"]:contains("${tableName}") th`).then((headers) => {
+    const headerTexts = [...headers].map((header) => header.textContent.trim());
+    return cy.wrap(headerTexts);
+  });
 
 export const agentStatusIsCorrectlyDisplayed = () => {
   cy.get(agentRunningLabel).should('be.visible');

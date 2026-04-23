@@ -279,12 +279,11 @@ export const hostsTableContentsAreTheExpected = () => {
   });
 };
 
-const _getTableHeaders = () => {
-  return cy.get('thead th').then((headers) => {
+const _getTableHeaders = () =>
+  cy.get('thead th').then((headers) => {
     const headerTexts = [...headers].map((header) => header.textContent.trim());
     return cy.wrap(headerTexts);
   });
-};
 
 const _processAttributeName = (attributeHeaderName) => {
   const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
@@ -366,15 +365,14 @@ export const apiDeregisterHost = () => {
   basePage.apiDeregisterHost(id);
 };
 
-const apiRemoveTagByHostId = (hostId, tagId) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+const apiRemoveTagByHostId = (hostId, tagId) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/hosts/${hostId}/tags/${tagId}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
 export const apiDeleteAllHostsTags = () => {
   apiGetHosts().then((response) => {
@@ -386,8 +384,8 @@ export const apiDeleteAllHostsTags = () => {
   return basePage.refresh();
 };
 
-const apiGetHosts = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+const apiGetHosts = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/hosts';
     return cy
       .request({
@@ -399,7 +397,6 @@ const apiGetHosts = () => {
       })
       .then((response) => response);
   });
-};
 
 const getHostTags = (jsonData) => {
   const clusterTags = {};

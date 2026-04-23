@@ -322,12 +322,11 @@ export const authenticatorAppSwitchIsEnabled = () =>
 export const totpEnabledToasterIsDisplayed = () =>
   cy.get(totpEnabledToaster).should('be.visible');
 
-export const enableTotpOptionIsDisabled = () => {
-  return cy
+export const enableTotpOptionIsDisabled = () =>
+  cy
     .get(enableUserTotpOption)
     .invoke('attr', 'aria-disabled')
     .should('eq', 'true');
-};
 
 export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
   getTotpSecret().then((newTotpSecret) => {
@@ -474,20 +473,17 @@ export const waitForTotpEnrollmentEndpoint = () =>
 export const apiGetProfileInfo = (
   username = USER.username,
   password = PASSWORD
-) => {
-  return basePage.apiLogin(username, password).then(({ accessToken }) => {
-    return cy
+) =>
+  basePage.apiLogin(username, password).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile',
         method: 'GET',
         auth: { bearer: accessToken },
         body: {},
       })
-      .then(({ body: profile }) => {
-        return profile;
-      });
-  });
-};
+      .then(({ body: profile }) => profile)
+  );
 
 export const apiDisableUser = () =>
   apiGetProfileInfo().then(({ id }) => {
@@ -501,8 +497,8 @@ export const apiApplyAllUsersPermission = () =>
     });
   });
 
-export const apiCreateUser = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+export const apiCreateUser = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const body = {
       fullname: USER.fullname,
       email: USER.email,
@@ -519,10 +515,9 @@ export const apiCreateUser = () => {
       body,
     });
   });
-};
 
-export const apiPatchUser = (id, payload) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+export const apiPatchUser = (id, payload) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy
       .request({
         url: `${usersEndpoint}/${id}`,
@@ -539,14 +534,13 @@ export const apiPatchUser = (id, payload) => {
         });
       })
   );
-};
 
 export const apiCreatePersonalAccessToken = (
   name = DEFAULT_TOKEN_NAME,
   expiresAt = DEFAULT_TOKEN_EXPIRES_AT
-) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
-    return cy
+) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile/tokens',
         method: 'POST',
@@ -556,21 +550,17 @@ export const apiCreatePersonalAccessToken = (
           expires_at: expiresAt,
         },
       })
-      .then(({ body: token }) => {
-        return token;
-      });
-  });
-};
+      .then(({ body: token }) => token)
+  );
 
-export const apiDeletePersonalAccessToken = (id) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+export const apiDeletePersonalAccessToken = (id) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/profile/tokens/${id}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
 export const apiPersonalAccessTokenAuthorized = (
   accessToken,
@@ -587,9 +577,9 @@ export const apiPersonalAccessTokenForbidden = (accessToken) => {
   _assertAuthenticationStatusCode(accessToken, 403, usersEndpoint);
 };
 
-export const apiCreateAIConfiguration = (provider, model, apiKey) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
-    return cy
+export const apiCreateAIConfiguration = (provider, model, apiKey) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile/ai_configuration',
         method: 'POST',
@@ -600,11 +590,8 @@ export const apiCreateAIConfiguration = (provider, model, apiKey) => {
           api_key: apiKey,
         },
       })
-      .then(({ body: aiConfiguration }) => {
-        return aiConfiguration;
-      });
-  });
-};
+      .then(({ body: aiConfiguration }) => aiConfiguration)
+  );
 
 export const aiConfigurationSectionIsDisplayed = () => {
   cy.get(aiConfigurationSection).should('be.visible');
@@ -685,8 +672,8 @@ const _assertAuthenticationStatusCode = (
   accessToken,
   expectedStatusCode,
   url = '/api/v1/hosts'
-) => {
-  return cy
+) =>
+  cy
     .request({
       method: 'GET',
       url: url,
@@ -698,4 +685,3 @@ const _assertAuthenticationStatusCode = (
         expectedStatusCode
       );
     });
-};
