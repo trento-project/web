@@ -196,18 +196,6 @@ export const apiLoginAndCreateSession = (
     });
   });
 
-export const refreshLoginToken = (
-  username = DEFAULT_USERNAME,
-  password = DEFAULT_PASSWORD
-) => {
-  if (Cypress.env('web_mode') === 'dev') {
-    return;
-  }
-
-  Cypress.session.clearAllSavedSessions();
-  return apiLoginAndCreateSession(username, password);
-};
-
 export const logout = () => {
   cy.window().then((win) => {
     win.localStorage.removeItem('access_token');

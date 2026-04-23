@@ -354,7 +354,6 @@ context('HANA cluster details', () => {
 
   describe('Cluster with kvm provider', () => {
     before(() => {
-      hanaClusterDetailsPage.refreshLoginToken();
       hanaClusterDetailsPage.loadScenario('cluster-kvm-provider');
       hanaClusterDetailsPage.visitAvailableHanaCluster();
     });

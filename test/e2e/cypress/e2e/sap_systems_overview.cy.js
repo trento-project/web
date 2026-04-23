@@ -118,10 +118,6 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Deregistration', () => {
-    before(() => {
-      sapSystemsOverviewPage.refreshLoginToken();
-    });
-
     it('should not display SAP System after deregistering the primary instance', () => {
       sapSystemsOverviewPage.nwpSystemIsDisplayed();
       sapSystemsOverviewPage.apiDeregisterNwpHost();
