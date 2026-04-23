@@ -156,7 +156,7 @@ context('Host Details', () => {
 
   describe("Node exporter status should be 'running'", () => {
     beforeEach(() => {
-      hostDetailsPage.interceptNodeExporterStatusMockedForRealInstance();
+      hostDetailsPage.interceptNodeExporterStatusMockedForProdInstance();
       hostDetailsPage.visitSelectedHost();
     });
 

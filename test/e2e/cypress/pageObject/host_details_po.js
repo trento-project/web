@@ -519,7 +519,7 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 };
 
 // API
-export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
+export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
   const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
@@ -530,7 +530,7 @@ export const interceptSoftwareUpdatesRequestsMockedForRealInstance = () => {
   }
 };
 
-export const interceptSumaRequestsMockedForRealInstance = () => {
+export const interceptSumaRequestsMockedForProdInstance = () => {
   const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
@@ -555,7 +555,7 @@ export const interceptSumaRequestsMockedForRealInstance = () => {
   }
 };
 
-export const interceptNodeExporterStatusMockedForRealInstance = () => {
+export const interceptNodeExporterStatusMockedForProdInstance = () => {
   const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
