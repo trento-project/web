@@ -4,12 +4,8 @@ context('SUSE Manager overviews', () => {
   before(() => hostDetailsPage.preloadTestData());
 
   beforeEach(() => {
-    const isDevEnvironment =
-      Cypress.config().baseUrl.includes('localhost:4000');
-    if (isDevEnvironment) {
-      hostDetailsPage.clearSUMASettings();
-      hostDetailsPage.saveSUMASettingsForAdmin();
-    }
+    hostDetailsPage.clearSUMASettings();
+    hostDetailsPage.saveSUMASettingsForAdmin();
   });
 
   describe('navigates and display SUSE Manager based infos', () => {
