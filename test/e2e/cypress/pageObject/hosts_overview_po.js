@@ -67,7 +67,7 @@ export const visit = (params) => {
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
-  cy.wait('@clustersEndpoint');
+  return cy.wait('@clustersEndpoint');
 };
 
 export const validateUrl = () => basePage.validateUrl(url);
@@ -75,7 +75,7 @@ export const validateUrl = () => basePage.validateUrl(url);
 export const selectHostnameFilter = (hostname) => {
   cy.get(hostnameFilterButton).click();
   cy.get(hostnameFilterOptions).find(`li`).contains(hostname).click();
-  cy.get(hostnameFilterButton).click();
+  return cy.get(hostnameFilterButton).click();
 };
 
 export const hostsListedAre = (amount) =>
@@ -95,7 +95,7 @@ export const selectItemsPerPage = (amountOfItems) => {
 
 export const addTagToHost = () => {
   const host = _getHostToDeregisterData(hostToDeregister);
-  basePage.addTagByColumnValue(host.name, host.tag);
+  return basePage.addTagByColumnValue(host.name, host.tag);
 };
 
 export const clickCleanupOnHostToDeregister = () =>
@@ -106,9 +106,8 @@ export const clickCleanupConfirmationButton = () =>
 
 // UI Validations
 
-export const hostsIsHighglightedInSidebar = () => {
+export const hostsIsHighglightedInSidebar = () =>
   cy.get(basePage.navigation.hosts).should('have.attr', 'aria-current', 'page');
-};
 
 export const expectedPaginationIsDisplayed = (expectedPaginationDetails) =>
   cy
@@ -118,15 +117,14 @@ export const expectedPaginationIsDisplayed = (expectedPaginationDetails) =>
 export const nextPageButtonIsDisabled = () =>
   cy.get(nextPageSelector).should('be.disabled');
 
-export const everyLinkGoesToExpectedHostDetailsPage = () => {
+export const everyLinkGoesToExpectedHostDetailsPage = () =>
   availableHosts.slice(0, 10).forEach((host) => {
     cy.get(`a[href*="${host.id}"]`).click();
     basePage.validateUrl(`${url}/${host.id}`);
     cy.go('back');
   });
-};
 
-export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
+export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
   availableHosts.slice(0, 10).forEach((host, index) => {
     cy.get(clusterTableHeader)
       .invoke('index')
@@ -138,9 +136,8 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
         }
       });
   });
-};
 
-export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
+export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
   availableHosts.slice(0, 10).forEach((host, index) => {
     cy.get(sidTableHeader)
       .invoke('index')
@@ -153,7 +150,6 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
         }
       });
   });
-};
 
 export const expectedWarningHostsAreDisplayed = (amount) =>
   cy.get(hostsWithWarning).should('have.text', amount);
@@ -168,9 +164,11 @@ export const expectedAmountOfWarningsIsDisplayed = (amount) =>
   cy.get(warningHostBadge).should('have.length', amount);
 
 export const expectedAmountOfCriticalsIsDisplayed = (amount) => {
-  if (amount === 0) cy.get(criticalHostBadge).should('not.exist');
+  if (amount === 0) return cy.get(criticalHostBadge).should('not.exist');
   else {
-    cy.get(criticalHostBadge, { timeout: 20000 }).should('have.length', amount);
+    return cy
+      .get(criticalHostBadge, { timeout: 20000 })
+      .should('have.length', amount);
   }
 };
 
@@ -197,9 +195,8 @@ export const hostWithSaptuneNotTunedHasExpectedStatus = () =>
 export const hostWithSaptuneCompliantHasExpectedStatus = () =>
   _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
 
-export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () => {
+export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () =>
   cy.get(hostToDeregisterCleanupButton, { timeout: 20000 }).should('not.exist');
-};
 
 export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
   cy.get(hostToDeregisterCleanupButton).should('be.visible');
@@ -219,19 +216,19 @@ export const deregisterModalTitleIsDisplayed = () =>
 
 export const deregisteredHostIsNotVisible = () => {
   const host = _getHostToDeregisterData();
-  cy.get(`#host-${host.id}`).should('not.exist');
+  return cy.get(`#host-${host.id}`).should('not.exist');
 };
 
 export const restoredHostIsDisplayed = () => {
   const host = _getHostToDeregisterData();
-  cy.get(`#host-${host.id}`, { timeout: 20000 }).should('be.visible');
+  return cy.get(`#host-${host.id}`, { timeout: 20000 }).should('be.visible');
 };
 
 export const tagOfRestoredHostIsDisplayed = () => {
   const host = _getHostToDeregisterData();
-  cy.get(`tr:contains("${host.name}") td:contains("${host.tag}")`).should(
-    'be.visible'
-  );
+  return cy
+    .get(`tr:contains("${host.name}") td:contains("${host.tag}")`)
+    .should('be.visible');
 };
 
 export const sapSystemHasExpectedAmountOfHosts = (expectedHosts) =>
@@ -279,12 +276,11 @@ export const hostsTableContentsAreTheExpected = () => {
   });
 };
 
-const _getTableHeaders = () => {
-  return cy.get('thead th').then((headers) => {
+const _getTableHeaders = () =>
+  cy.get('thead th').then((headers) => {
     const headerTexts = [...headers].map((header) => header.textContent.trim());
     return cy.wrap(headerTexts);
   });
-};
 
 const _processAttributeName = (attributeHeaderName) => {
   const splittedAttribute = attributeHeaderName.toLowerCase().split(' ');
@@ -300,20 +296,25 @@ const _validateCell = (header, rowIndex, expectedValue) => {
   const tableHeaderSelector = `thead th:contains("${header}")`;
   const tableRowSelector = `tbody tr`;
 
-  cy.get(tableHeaderSelector)
+  return cy
+    .get(tableHeaderSelector)
     .invoke('index')
     .then((i) => {
       const isPropertyArray = Array.isArray(expectedValue);
       if (isPropertyArray) {
-        cy.wrap(expectedValue).each((value) => {
-          cy.get(tableRowSelector)
-            .eq(rowIndex)
-            .find('td')
-            .eq(i)
-            .should('contain', value);
-        });
+        return cy
+          .wrap(expectedValue)
+          .each((value) =>
+            cy
+              .get(tableRowSelector)
+              .eq(rowIndex)
+              .find('td')
+              .eq(i)
+              .should('contain', value)
+          );
       } else {
-        cy.get(tableRowSelector)
+        return cy
+          .get(tableRowSelector)
           .eq(rowIndex)
           .find('td')
           .eq(i)
@@ -337,7 +338,7 @@ const _getHostToDeregisterData = () => {
 // API
 export const startAgentHeartbeat = () => {
   const hostToDeregister = _getHostToDeregisterData();
-  cy.task('startAgentHeartbeat', [hostToDeregister.id]);
+  return cy.task('startAgentHeartbeat', [hostToDeregister.id]);
 };
 
 export const startAgentsHeartbeat = () =>
@@ -363,18 +364,17 @@ export const apiRestoreCleanedUpHost = () =>
 
 export const apiDeregisterHost = () => {
   const { id } = _getHostToDeregisterData();
-  basePage.apiDeregisterHost(id);
+  return basePage.apiDeregisterHost(id);
 };
 
-const apiRemoveTagByHostId = (hostId, tagId) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+const apiRemoveTagByHostId = (hostId, tagId) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/hosts/${hostId}/tags/${tagId}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
 export const apiDeleteAllHostsTags = () => {
   apiGetHosts().then((response) => {
@@ -386,8 +386,8 @@ export const apiDeleteAllHostsTags = () => {
   return basePage.refresh();
 };
 
-const apiGetHosts = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+const apiGetHosts = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v1/hosts';
     return cy
       .request({
@@ -399,7 +399,6 @@ const apiGetHosts = () => {
       })
       .then((response) => response);
   });
-};
 
 const getHostTags = (jsonData) => {
   const clusterTags = {};
@@ -420,7 +419,7 @@ export const apiDeregisterSapSystemHost = () =>
 
 export const loadSapSystemsOverviewMovedScenario = () => {
   restoreSapSystem();
-  basePage.loadScenario('sap-systems-overview-moved');
+  return basePage.loadScenario('sap-systems-overview-moved');
 };
 
 export const apiDeregisterMovedHost = () =>
@@ -434,9 +433,8 @@ export const apiSetTag = () => {
   return basePage.apiSetTag('hosts', host.id, host.tag);
 };
 
-export const apiCreateUserWithHostTagsAbility = () => {
+export const apiCreateUserWithHostTagsAbility = () =>
   basePage.apiCreateUserWithAbilities([{ name: 'all', resource: 'host_tags' }]);
-};
 
 export const apiCreateUserWithHostCleanupAbility = () =>
   basePage.apiCreateUserWithAbilities([{ name: 'cleanup', resource: 'host' }]);

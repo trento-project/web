@@ -53,23 +53,21 @@ export const waitForClustersEndpoint = () =>
 
 // UI Interactions
 
-export const setClusterTags = () => {
+export const setClusterTags = () =>
   taggingRules.forEach(([clusterName, tag]) => {
     basePage.addTagByColumnValue(clusterName, tag);
   });
-};
 
 // Validations
 
-export const hanaCluster1TagsAreDisplayed = () => {
-  return cy
+export const hanaCluster1TagsAreDisplayed = () =>
+  cy
     .get(`tr:contains("${hanaCluster1.name}")`)
     .within(() =>
       cy
         .get(`span span:contains("${clusterTags[hanaCluster1.name]}")`)
         .should('be.visible')
     );
-};
 
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = _clusterIdByName(clusterName);
@@ -84,16 +82,15 @@ export const allRegisteredClustersAreDisplayed = () =>
 export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');
 
-export const clustersDataIsDisplayedAsExpected = () => {
-  return waitForClustersEndpoint().then(() => {
-    return cy.get(tableRows).each(($row, index) => {
+export const clustersDataIsDisplayedAsExpected = () =>
+  waitForClustersEndpoint().then(() =>
+    cy.get(tableRows).each(($row, index) => {
       const cluster = availableClusters[index];
       cy.wrap($row).find('td').eq(1).should('have.text', cluster.name);
       cy.wrap($row).find('td').eq(2).should('have.text', cluster.sid);
       return cy.wrap($row).find('td').eq(5).should('have.text', cluster.type);
-    });
-  });
-};
+    })
+  );
 
 export const healthyClusterNameDisplaysHealthyState = () =>
   clusterHealthIconHasExpectedClass(
@@ -107,45 +104,41 @@ export const unhealthyClusterNameDisplaysUnhealthyState = () =>
     'fill-red-500'
   );
 
-export const clusterHealthIconHasExpectedClass = (clusterName, className) => {
-  return cy
+export const clusterHealthIconHasExpectedClass = (clusterName, className) =>
+  cy
     .get(`td:contains("${clusterName}")`)
     .parents('tr')
     .within(() =>
       cy.get('td').eq(0).find('svg').should('have.class', className)
     );
-};
 
-export const eachClusterTagsIsCorrectlyDisplayed = () => {
-  return taggingRules.forEach(([tag]) =>
+export const eachClusterTagsIsCorrectlyDisplayed = () =>
+  taggingRules.forEach(([tag]) =>
     cy.get(`span span:contains(${tag})`).should('be.visible')
   );
-};
 
 export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('not.exist');
 
-export const clusterNameIsDisplayed = () => {
+export const clusterNameIsDisplayed = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
-};
 
 // Helpers
 const _clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
 
 // API Interactions
-const _apiRemoveTagByClusterId = (clusterId, tagId) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+const _apiRemoveTagByClusterId = (clusterId, tagId) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/clusters/${clusterId}/tags/${tagId}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
-const _apiGetClusters = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+const _apiGetClusters = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const url = '/api/v2/clusters';
     return cy
       .request({
@@ -157,7 +150,6 @@ const _apiGetClusters = () => {
       })
       .then((response) => response);
   });
-};
 
 export const apiRemoveAllClusterTags = () => {
   _apiGetClusters().then((response) => {
@@ -198,10 +190,10 @@ export const apiSetTagsHanaCluster1 = () => {
   return tagsForCluster1.forEach((tag) => _apiSetTag('hana_cluster_1', tag));
 };
 
-const apiRequestChecksExecution = (clusterId) => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+const apiRequestChecksExecution = (clusterId) =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks/request_execution`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       auth: {
@@ -209,7 +201,6 @@ const apiRequestChecksExecution = (clusterId) => {
       },
     });
   });
-};
 
 export const apiSelectChecksForHealthyCluster = () =>
   basePage.apiSelectChecks(

@@ -53,14 +53,13 @@ export const validateUrl = (url = '/') =>
 
 export const refresh = () => cy.reload();
 
-export const addTagByColumnValue = (columnValue, tagValue) => {
-  return cy
+export const addTagByColumnValue = (columnValue, tagValue) =>
+  cy
     .get(`td:contains(${columnValue})`)
     .parents('tr')
     .within(() => {
       cy.get(addTagButtons).type(`${tagValue}{enter}`);
     });
-};
 
 export const clickActivityLogNavigationItem = () =>
   cy.get(navigation.activityLog).click();
@@ -104,15 +103,15 @@ export const typeNextGeneratedTotpCode = (
 ) => {
   const timeToWait = _getTotpWaitTime(forceNext);
 
-  return cy.wait(timeToWait).then(() => {
-    return cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) => {
-      return cy
+  return cy.wait(timeToWait).then(() =>
+    cy.wrap(TOTP.generate(totpSecret)).then(({ otp }) =>
+      cy
         .get(inputField)
         .clear()
         .type(otp)
-        .then(() => otp);
-    });
-  });
+        .then(() => otp)
+    )
+  );
 };
 
 export const selectOptions = '[role="listbox"] [role="option"]';
@@ -144,11 +143,10 @@ export const pageTitleIsCorrectlyDisplayed = (title) =>
 export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');
 
-export const validateItemNotPresentInNavigationMenu = (itemName) => {
-  return cy.get(navigation.navigationItems).each(($element) => {
+export const validateItemNotPresentInNavigationMenu = (itemName) =>
+  cy.get(navigation.navigationItems).each(($element) => {
     cy.wrap($element).should('not.include.text', itemName);
   });
-};
 
 export const validateItemPresentInNavigationMenu = (navigationMenuItem) =>
   cy.get(`a:contains("${navigationMenuItem}")`).should('be.visible');
@@ -167,21 +165,17 @@ export const removeTagButtonIsEnabled = () =>
 
 // API Interactions & Validations
 
-export const validateResponseStatusCode = (
-  endpointAlias,
-  expectedStatusCode
-) => {
-  return cy
+export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
+  cy
     .wait(`@${endpointAlias}`)
     .its('response.statusCode')
     .should('eq', expectedStatusCode);
-};
 
 export const apiLogin = (
   username = DEFAULT_USERNAME,
   password = DEFAULT_PASSWORD
-) => {
-  return cy
+) =>
+  cy
     .request({
       method: 'POST',
       url: '/api/session',
@@ -192,49 +186,47 @@ export const apiLogin = (
         response.body;
       return { accessToken, refreshToken };
     });
-};
 
 export const apiLoginAndCreateSession = (
   username = DEFAULT_USERNAME,
   password = DEFAULT_PASSWORD
-) => {
-  return cy.session([username, password], () => {
+) =>
+  cy.session([username, password], () => {
     apiLogin(username, password).then(({ accessToken, refreshToken }) => {
       window.localStorage.setItem('access_token', accessToken);
       window.localStorage.setItem('refresh_token', refreshToken);
     });
   });
-};
 
 export const logout = () => {
   cy.window().then((win) => {
     win.localStorage.removeItem('access_token');
     win.localStorage.removeItem('refresh_token');
   });
-  Cypress.session.clearAllSavedSessions();
+  return Cypress.session.clearAllSavedSessions();
 };
 
-export const apiDeleteUser = (id, accessToken) => {
-  return cy.request({
+export const apiDeleteUser = (id, accessToken) =>
+  cy.request({
     url: `/api/v1/users/${id}`,
     method: 'DELETE',
     auth: { bearer: accessToken },
   });
-};
 
-export const apiDeleteAllUsers = () => {
-  return apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/users',
-      method: 'GET',
-      auth: { bearer: accessToken },
-    }).then(({ body: users }) => {
-      users.forEach(({ id }) => {
-        if (id !== 1) apiDeleteUser(id, accessToken);
-      });
-    });
-  });
-};
+export const apiDeleteAllUsers = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/users',
+        method: 'GET',
+        auth: { bearer: accessToken },
+      })
+      .then(({ body: users }) => {
+        users.forEach(({ id }) => {
+          if (id !== 1) apiDeleteUser(id, accessToken);
+        });
+      })
+  );
 
 export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
@@ -263,11 +255,11 @@ export const loadScenario = (scenario) => {
   ];
   if (photofinishBinary) {
     cy.log(`Loading scenario "${scenario}"...`);
-    cy.exec(
+    return cy.exec(
       `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`
     );
   } else {
-    cy.log(`Photofinish is not used.`);
+    return cy.log(`Photofinish is not used.`);
   }
 };
 
@@ -284,8 +276,8 @@ const isTestDataLoaded = () =>
       .then(({ body }) => body.length !== 0)
   );
 
-export const apiCreateUserWithAbilities = (abilities) => {
-  return apiLogin().then(({ accessToken }) =>
+export const apiCreateUserWithAbilities = (abilities) =>
+  apiLogin().then(({ accessToken }) =>
     cy
       .request({
         url: '/api/v1/abilities',
@@ -301,7 +293,7 @@ export const apiCreateUserWithAbilities = (abilities) => {
           ),
         }));
 
-        cy.request({
+        return cy.request({
           url: '/api/v1/users',
           method: 'POST',
           auth: { bearer: accessToken },
@@ -309,24 +301,22 @@ export const apiCreateUserWithAbilities = (abilities) => {
         });
       })
   );
-};
 
 export const apiAcceptAnalyticsEula = (
   username = user.username,
   pass = password
-) => {
-  return apiLogin(username, pass).then(({ accessToken }) => {
-    return cy.request({
+) =>
+  apiLogin(username, pass).then(({ accessToken }) =>
+    cy.request({
       url: '/api/v1/profile',
       method: 'PATCH',
       auth: { bearer: accessToken },
       body: { analytics_eula_accepted: true },
-    });
-  });
-};
+    })
+  );
 
-export const apiDeregisterHost = (hostId) => {
-  return isHostRegistered(hostId).then((isRegistered) => {
+export const apiDeregisterHost = (hostId) =>
+  isHostRegistered(hostId).then((isRegistered) => {
     if (isRegistered) {
       return apiLogin().then(({ accessToken }) => {
         const url = `/api/v1/hosts/${hostId}`;
@@ -340,15 +330,14 @@ export const apiDeregisterHost = (hostId) => {
       });
     } else return;
   });
-};
 
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 
-export const isHostRegistered = (hostId) => {
-  return apiLogin()
+export const isHostRegistered = (hostId) =>
+  apiLogin()
     .then(({ accessToken }) => {
       const url = '/api/v1/hosts/';
-      cy.request({
+      return cy.request({
         method: 'GET',
         url: url,
         auth: {
@@ -357,7 +346,6 @@ export const isHostRegistered = (hostId) => {
       });
     })
     .then(({ body }) => body.some((host) => host.id === hostId));
-};
 
 export const loginWithoutAbilities = () =>
   apiLoginAndCreateSession(user.username, password);
@@ -378,8 +366,8 @@ export const getResourceTags = (resourceResponse) => {
   return resourceTags;
 };
 
-export const apiSetTag = (resource, resourceId, tag) => {
-  return apiLogin().then(({ accessToken }) =>
+export const apiSetTag = (resource, resourceId, tag) =>
+  apiLogin().then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/${resource}/${resourceId}/tags`,
       method: 'POST',
@@ -387,7 +375,6 @@ export const apiSetTag = (resource, resourceId, tag) => {
       body: { value: tag },
     })
   );
-};
 
 export const apiSelectChecks = (clusterId, checks) => {
   const checksBody = JSON.stringify({
@@ -400,7 +387,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 
   return apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       body: checksBody,
@@ -413,7 +400,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 };
 
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  clearSUMASettings().then(() => {
+  clearSUMASettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
@@ -428,8 +415,8 @@ export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
           ...(ca_cert && { ca_cert }),
         },
       })
-    );
-  });
+    )
+  );
 
 export const clearSUMASettings = () =>
   apiLogin().then(({ accessToken }) =>
@@ -442,8 +429,8 @@ export const clearSUMASettings = () =>
     })
   );
 
-export const getAlertingSettings = () => {
-  return apiLogin().then(({ accessToken }) =>
+export const getAlertingSettings = () =>
+  apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/alerting',
       method: 'GET',
@@ -453,4 +440,3 @@ export const getAlertingSettings = () => {
       failOnStatusCode: false,
     })
   );
-};

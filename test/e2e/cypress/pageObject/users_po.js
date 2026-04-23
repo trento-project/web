@@ -322,18 +322,16 @@ export const authenticatorAppSwitchIsEnabled = () =>
 export const totpEnabledToasterIsDisplayed = () =>
   cy.get(totpEnabledToaster).should('be.visible');
 
-export const enableTotpOptionIsDisabled = () => {
-  return cy
+export const enableTotpOptionIsDisabled = () =>
+  cy
     .get(enableUserTotpOption)
     .invoke('attr', 'aria-disabled')
     .should('eq', 'true');
-};
 
-export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
-  getTotpSecret().then((newTotpSecret) => {
-    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
-  });
-};
+export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) =>
+  getTotpSecret().then((newTotpSecret) =>
+    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret)
+  );
 
 export const plainUserFullNameIsDisplayed = () =>
   _expectedFullNameIsDisplayed(basePage.plainUser.fullname);
@@ -378,9 +376,9 @@ export const adminUserPermissionsAreDisplayed = () =>
 
 export const personalAccessTokensAreDisplayed = (tokens) => {
   if (tokens.length === 0) {
-    cy.get(emptyListAccessTokens).should('be.visible');
+    return cy.get(emptyListAccessTokens).should('be.visible');
   } else {
-    tokens.forEach(({ name }) => {
+    return cy.wrap(tokens).each(({ name }) => {
       cy.get(accessTokenName).should('have.text', name);
     });
   }
@@ -397,20 +395,18 @@ export const newAccessTokenIsDisplayed = () => {
 export const modalCopyAccessTokenButtonIsDisplayed = () =>
   cy.get(modalCopyAccessTokenButton).should('be.visible');
 
-export const lastLoginShouldBeEmpty = () => {
+export const lastLoginShouldBeEmpty = () =>
   cy.get(newUserLastLogin).should('contain', '-');
-};
 
-export const lastLoginShouldNotBeEmpty = () => {
+export const lastLoginShouldNotBeEmpty = () =>
   cy.get(newUserLastLogin).should('not.contain', '-');
-};
 
-export const lastLoginUserViewShouldBeEmpty = () => {
+export const lastLoginUserViewShouldBeEmpty = () =>
   cy.get(userViewLastLoginField).should('contain', '-');
-};
 
-export const lastLoginUserViewShouldHaveUpdatedDate = () => {
-  cy.get(userViewLastLoginField)
+export const lastLoginUserViewShouldHaveUpdatedDate = () =>
+  cy
+    .get(userViewLastLoginField)
     .invoke('text')
     .then((dateText) => {
       const date = Number(new Date(dateText));
@@ -419,7 +415,6 @@ export const lastLoginUserViewShouldHaveUpdatedDate = () => {
       // 5 seconds delta
       expect(date).to.be.closeTo(today, 5000);
     });
-};
 
 export const ifAnalyticsModalIsDisplayed = (callback, neverShowAgain) =>
   cy.get('body').then(($body) => {
@@ -433,13 +428,13 @@ export const analyticsModalIsNotDisplayed = () => {
   // the intercept is needed to wait until the page is loaded
   cy.intercept('GET', '/api/v1/profile').as(profileEndpointAlias);
   basePage.waitForRequest(profileEndpointAlias);
-  cy.get(analyticsModal).should('not.exist');
+  return cy.get(analyticsModal).should('not.exist');
 };
 
 export const clickEnableAnalytics = () => {
   cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
   cy.get(enableAnalyticsButton).click();
-  basePage.waitForRequest(profileEndpointAlias);
+  return basePage.waitForRequest(profileEndpointAlias);
 };
 
 export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
@@ -447,10 +442,15 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
     cy.get(neverShowAgainCheckbox).click();
     cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
   }
-  cy.get(continueWithoutAnalyticsButton).click();
-  if (neverShowAgain) {
-    basePage.waitForRequest(profileEndpointAlias);
-  }
+
+  return cy
+    .get(continueWithoutAnalyticsButton)
+    .click()
+    .then(() => {
+      if (neverShowAgain) {
+        return basePage.waitForRequest(profileEndpointAlias);
+      }
+    });
 };
 
 export const clickAnalyticsOptInSwitch = () =>
@@ -474,20 +474,17 @@ export const waitForTotpEnrollmentEndpoint = () =>
 export const apiGetProfileInfo = (
   username = USER.username,
   password = PASSWORD
-) => {
-  return basePage.apiLogin(username, password).then(({ accessToken }) => {
-    return cy
+) =>
+  basePage.apiLogin(username, password).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile',
         method: 'GET',
         auth: { bearer: accessToken },
         body: {},
       })
-      .then(({ body: profile }) => {
-        return profile;
-      });
-  });
-};
+      .then(({ body: profile }) => profile)
+  );
 
 export const apiDisableUser = () =>
   apiGetProfileInfo().then(({ id }) => {
@@ -501,8 +498,8 @@ export const apiApplyAllUsersPermission = () =>
     });
   });
 
-export const apiCreateUser = () => {
-  return basePage.apiLogin().then(({ accessToken }) => {
+export const apiCreateUser = () =>
+  basePage.apiLogin().then(({ accessToken }) => {
     const body = {
       fullname: USER.fullname,
       email: USER.email,
@@ -519,34 +516,32 @@ export const apiCreateUser = () => {
       body,
     });
   });
-};
 
-export const apiPatchUser = (id, payload) => {
-  return basePage.apiLogin().then(({ accessToken }) =>
+export const apiPatchUser = (id, payload) =>
+  basePage.apiLogin().then(({ accessToken }) =>
     cy
       .request({
         url: `${usersEndpoint}/${id}`,
         method: 'GET',
         auth: { bearer: accessToken },
       })
-      .then(({ headers: { etag } }) => {
+      .then(({ headers: { etag } }) =>
         cy.request({
           url: `${usersEndpoint}/${id}`,
           method: 'PATCH',
           auth: { bearer: accessToken },
           body: payload,
           headers: { 'if-match': etag },
-        });
-      })
+        })
+      )
   );
-};
 
 export const apiCreatePersonalAccessToken = (
   name = DEFAULT_TOKEN_NAME,
   expiresAt = DEFAULT_TOKEN_EXPIRES_AT
-) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
-    return cy
+) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile/tokens',
         method: 'POST',
@@ -556,21 +551,17 @@ export const apiCreatePersonalAccessToken = (
           expires_at: expiresAt,
         },
       })
-      .then(({ body: token }) => {
-        return token;
-      });
-  });
-};
+      .then(({ body: token }) => token)
+  );
 
-export const apiDeletePersonalAccessToken = (id) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+export const apiDeletePersonalAccessToken = (id) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
     cy.request({
       url: `/api/v1/profile/tokens/${id}`,
       method: 'DELETE',
       auth: { bearer: accessToken },
     })
   );
-};
 
 export const apiPersonalAccessTokenAuthorized = (
   accessToken,
@@ -587,9 +578,9 @@ export const apiPersonalAccessTokenForbidden = (accessToken) => {
   _assertAuthenticationStatusCode(accessToken, 403, usersEndpoint);
 };
 
-export const apiCreateAIConfiguration = (provider, model, apiKey) => {
-  return basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) => {
-    return cy
+export const apiCreateAIConfiguration = (provider, model, apiKey) =>
+  basePage.apiLogin(USER.username, PASSWORD).then(({ accessToken }) =>
+    cy
       .request({
         url: '/api/v1/profile/ai_configuration',
         method: 'POST',
@@ -600,29 +591,23 @@ export const apiCreateAIConfiguration = (provider, model, apiKey) => {
           api_key: apiKey,
         },
       })
-      .then(({ body: aiConfiguration }) => {
-        return aiConfiguration;
-      });
-  });
-};
+      .then(({ body: aiConfiguration }) => aiConfiguration)
+  );
 
 export const aiConfigurationSectionIsDisplayed = () => {
   cy.get(aiConfigurationSection).should('be.visible');
   cy.get(aiConfigurationSectionDescription).should('be.visible');
-  cy.get(aiConfigurationEditButton).should('be.visible');
+  return cy.get(aiConfigurationEditButton).should('be.visible');
 };
 
-export const aiConfigurationModelProviderShouldBe = (expectedContent) => {
+export const aiConfigurationModelProviderShouldBe = (expectedContent) =>
   cy.get(aiConfigurationModelProvider).should('contain', expectedContent);
-};
 
-export const aiConfigurationModelShouldBe = (expectedContent) => {
+export const aiConfigurationModelShouldBe = (expectedContent) =>
   cy.get(aiConfigurationModel).should('contain', expectedContent);
-};
 
-export const aiConfigurationApiKeyShouldBe = (expectedContent) => {
+export const aiConfigurationApiKeyShouldBe = (expectedContent) =>
   cy.get(aiConfigurationApiKey).should('contain', expectedContent);
-};
 
 export const requiredAPIKeyErrorIsDisplayed = (
   errorMessage = 'Required field'
@@ -677,16 +662,14 @@ const _getUserIdFromPath = () =>
 export const apiLoginAndCreateSession = (
   username = USER.username,
   password = PASSWORD
-) => {
-  basePage.apiLoginAndCreateSession(username, password);
-};
+) => basePage.apiLoginAndCreateSession(username, password);
 
 const _assertAuthenticationStatusCode = (
   accessToken,
   expectedStatusCode,
   url = '/api/v1/hosts'
-) => {
-  return cy
+) =>
+  cy
     .request({
       method: 'GET',
       url: url,
@@ -698,4 +681,3 @@ const _assertAuthenticationStatusCode = (
         expectedStatusCode
       );
     });
-};

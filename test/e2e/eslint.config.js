@@ -25,6 +25,8 @@ module.exports = [
     rules: {
       'no-console': 'error',
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'arrow-body-style': ['error', 'as-needed'],
+      'prefer-arrow-callback': 'error',
       'mocha/no-mocha-arrows': 0,
       'mocha/no-setup-in-describe': 0,
       'mocha/no-exclusive-tests': 'error',

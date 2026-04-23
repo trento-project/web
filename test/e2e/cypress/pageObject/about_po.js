@@ -13,29 +13,24 @@ const versionFilePath = '../../VERSION';
 
 export const visit = () => basePage.visit(url);
 
-export const pageTitleIsDisplayed = () => {
-  return cy.get(pageTitle).should('have.text', 'About Trento Console');
-};
+export const pageTitleIsDisplayed = () =>
+  cy.get(pageTitle).should('have.text', 'About Trento Console');
 
-export const expectedServerVersionIsDisplayed = () => {
-  return cy.readFile(versionFilePath, 'utf8').then((version) => {
+export const expectedServerVersionIsDisplayed = () =>
+  cy.readFile(versionFilePath, 'utf8').then((version) => {
     version = version.trim();
     return cy.get(versionLabel).should('have.text', version);
   });
-};
 
-export const expectedGithubUrlIsDisplayed = () => {
-  return cy
+export const expectedGithubUrlIsDisplayed = () =>
+  cy
     .get(githubRepositoryLabel)
     .should('have.text', 'https://github.com/trento-project/web');
-};
 
-export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) => {
-  return cy
+export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
+  cy
     .get(amountOfSlesForSapSubscriptionsLabel)
     .should('have.text', `${subscriptions} found`);
-};
 
-export const apiDeregisterHost = () => {
+export const apiDeregisterHost = () =>
   basePage.apiDeregisterHost(hostToDeregister);
-};

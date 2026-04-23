@@ -30,7 +30,7 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 
 export const cleanBrowserData = () => {
   cy.clearAllLocalStorage();
-  cy.clearAllCookies();
+  return cy.clearAllCookies();
 };
 
 export const ssoLoginPlainUser = () =>
@@ -68,8 +68,8 @@ const _assertSessionStatusCode = (
   username,
   password,
   expectedStatusCode = 401
-) => {
-  return cy
+) =>
+  cy
     .request({
       method: 'POST',
       url: '/api/session',
@@ -85,7 +85,6 @@ const _assertSessionStatusCode = (
         'Session endpoint has the expected status code'
       ).to.eq(expectedStatusCode);
     });
-};
 export const loginFailsIfOtpNotProvided = (username, password) =>
   _assertSessionStatusCode(username, password, 422);
 
