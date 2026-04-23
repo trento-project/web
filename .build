@@ -125,6 +125,8 @@ Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Master.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.html
+Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints.RscLocation.html
+Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.html
 Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.html
@@ -559,7 +561,7 @@ dist/lato-latin-ext-300-normal-VPGGJKJL.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-NKANDIL5.woff2
-dist/search_data-B9DE18EA.js
-dist/sidebar_items-0DD56847.js
+dist/search_data-9AD972D6.js
+dist/sidebar_items-4C618C26.js
 index.html
 search.html
