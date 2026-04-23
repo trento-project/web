@@ -18,6 +18,26 @@ describe('About page', () => {
     aboutPage.expectedServerVersionIsDisplayed();
   });
 
+  it('should show the Wanda version', () => {
+    aboutPage.expectedWandaVersionIsDisplayed();
+  });
+
+  it('should show the Checks version', () => {
+    aboutPage.expectedChecksVersionIsDisplayed();
+  });
+
+  it('should show the PostgreSQL version', () => {
+    aboutPage.expectedPostgresVersionIsDisplayed();
+  });
+
+  it('should show the RabbitMQ version', () => {
+    aboutPage.expectedRabbitmqVersionIsDisplayed();
+  });
+
+  it('should show the Prometheus version', () => {
+    aboutPage.expectedPrometheusVersionIsDisplayed();
+  });
+
   it('should show the github project link', () => {
     aboutPage.expectedGithubUrlIsDisplayed();
   });

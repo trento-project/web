@@ -73,6 +73,11 @@ export const healthSummaryFactory = Factory.define(() => ({
 export const aboutFactory = Factory.define(() => ({
   sles_subscriptions: faker.number.int(),
   version: faker.system.networkInterface(),
+  wanda_version: faker.system.semver(),
+  checks_version: faker.system.semver(),
+  postgres_version: faker.system.semver(),
+  rabbitmq_version: faker.system.semver(),
+  prometheus_version: faker.system.semver(),
 }));
 
 export const objectTreeFactory = Factory.define(() => ({
