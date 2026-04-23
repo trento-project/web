@@ -5800,5 +5800,25 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-04-23T04:14:14Z",
+    "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
+    "run_id": "24815824984",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.05001
+      },
+      {
+        "name": "PatchList::renders the content correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
