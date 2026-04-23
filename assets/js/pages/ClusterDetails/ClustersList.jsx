@@ -104,7 +104,10 @@ function ClustersList() {
             return (
               <span key={singleSid}>
                 <SapSystemLink
-                  systemType={getSapSystemType(sapSystemData?.type, clusterType)}
+                  systemType={getSapSystemType(
+                    sapSystemData?.type,
+                    clusterType
+                  )}
                   sapSystemId={getInstanceID(sapSystemData)}
                 >
                   {singleSid}
