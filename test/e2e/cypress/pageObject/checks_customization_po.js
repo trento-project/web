@@ -127,10 +127,8 @@ const _setInputValue = (valueName, newValue) =>
 
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
-
 export const clickStartExecutionButton = () =>
   cy.get(startExecutionButton).click();
-
 export const inputCheckValue = (valueName, newValue) =>
   _setInputValue(valueName, newValue);
 

@@ -359,7 +359,7 @@ export const apiDeregisterHost = (hostId) =>
     } else return;
   });
 
-export const apiDeregisterRealHost = () =>
+export const apiDeregisterProdHost = () =>
   apiLogin().then(({ accessToken }) =>
     cy
       .request({

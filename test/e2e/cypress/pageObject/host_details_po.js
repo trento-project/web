@@ -523,10 +523,12 @@ export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
   const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
-    cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
-      statusCode: 422,
-      body: sumaMocks.getHostNotFoundError(),
-    }).as('getSoftwareUpdatesNotFound');
+    return cy
+      .intercept('GET', '/api/v1/hosts/*/software_updates', {
+        statusCode: 422,
+        body: sumaMocks.getHostNotFoundError(),
+      })
+      .as('getSoftwareUpdatesNotFound');
   }
 };
 
@@ -549,7 +551,7 @@ export const interceptSumaRequestsMockedForProdInstance = () => {
     cy.intercept('POST', '/api/v1/settings/suse_manager', {
       statusCode: 201,
     });
-    cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
+    return cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
       statusCode: 204,
     });
   }

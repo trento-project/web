@@ -26,11 +26,6 @@ module.exports = (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
-    log(message) {
-      // eslint-disable-next-line no-console
-      console.log(message);
-      return null;
-    },
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
     startAgentHeartbeat({ agents, apiKey }) {
