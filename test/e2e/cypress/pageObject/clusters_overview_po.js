@@ -53,11 +53,10 @@ export const waitForClustersEndpoint = () =>
 
 // UI Interactions
 
-export const setClusterTags = () => {
+export const setClusterTags = () =>
   taggingRules.forEach(([clusterName, tag]) => {
     basePage.addTagByColumnValue(clusterName, tag);
   });
-};
 
 // Validations
 
@@ -121,9 +120,8 @@ export const eachClusterTagsIsCorrectlyDisplayed = () =>
 export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('not.exist');
 
-export const clusterNameIsDisplayed = () => {
+export const clusterNameIsDisplayed = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
-};
 
 // Helpers
 const _clusterIdByName = (clusterName) =>
@@ -195,7 +193,7 @@ export const apiSetTagsHanaCluster1 = () => {
 const apiRequestChecksExecution = (clusterId) =>
   basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks/request_execution`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       auth: {

@@ -328,11 +328,10 @@ export const enableTotpOptionIsDisabled = () =>
     .invoke('attr', 'aria-disabled')
     .should('eq', 'true');
 
-export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) => {
-  getTotpSecret().then((newTotpSecret) => {
-    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret);
-  });
-};
+export const newIssuedTotpSecretIsDifferent = (originalTotpSecret) =>
+  getTotpSecret().then((newTotpSecret) =>
+    cy.wrap(newTotpSecret).should('not.equal', originalTotpSecret)
+  );
 
 export const plainUserFullNameIsDisplayed = () =>
   _expectedFullNameIsDisplayed(basePage.plainUser.fullname);
@@ -377,9 +376,9 @@ export const adminUserPermissionsAreDisplayed = () =>
 
 export const personalAccessTokensAreDisplayed = (tokens) => {
   if (tokens.length === 0) {
-    cy.get(emptyListAccessTokens).should('be.visible');
+    return cy.get(emptyListAccessTokens).should('be.visible');
   } else {
-    tokens.forEach(({ name }) => {
+    return cy.wrap(tokens).each(({ name }) => {
       cy.get(accessTokenName).should('have.text', name);
     });
   }
@@ -396,20 +395,18 @@ export const newAccessTokenIsDisplayed = () => {
 export const modalCopyAccessTokenButtonIsDisplayed = () =>
   cy.get(modalCopyAccessTokenButton).should('be.visible');
 
-export const lastLoginShouldBeEmpty = () => {
+export const lastLoginShouldBeEmpty = () =>
   cy.get(newUserLastLogin).should('contain', '-');
-};
 
-export const lastLoginShouldNotBeEmpty = () => {
+export const lastLoginShouldNotBeEmpty = () =>
   cy.get(newUserLastLogin).should('not.contain', '-');
-};
 
-export const lastLoginUserViewShouldBeEmpty = () => {
+export const lastLoginUserViewShouldBeEmpty = () =>
   cy.get(userViewLastLoginField).should('contain', '-');
-};
 
-export const lastLoginUserViewShouldHaveUpdatedDate = () => {
-  cy.get(userViewLastLoginField)
+export const lastLoginUserViewShouldHaveUpdatedDate = () =>
+  cy
+    .get(userViewLastLoginField)
     .invoke('text')
     .then((dateText) => {
       const date = Number(new Date(dateText));
@@ -418,7 +415,6 @@ export const lastLoginUserViewShouldHaveUpdatedDate = () => {
       // 5 seconds delta
       expect(date).to.be.closeTo(today, 5000);
     });
-};
 
 export const ifAnalyticsModalIsDisplayed = (callback, neverShowAgain) =>
   cy.get('body').then(($body) => {
@@ -432,13 +428,13 @@ export const analyticsModalIsNotDisplayed = () => {
   // the intercept is needed to wait until the page is loaded
   cy.intercept('GET', '/api/v1/profile').as(profileEndpointAlias);
   basePage.waitForRequest(profileEndpointAlias);
-  cy.get(analyticsModal).should('not.exist');
+  return cy.get(analyticsModal).should('not.exist');
 };
 
 export const clickEnableAnalytics = () => {
   cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
   cy.get(enableAnalyticsButton).click();
-  basePage.waitForRequest(profileEndpointAlias);
+  return basePage.waitForRequest(profileEndpointAlias);
 };
 
 export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
@@ -446,10 +442,15 @@ export const clickContinueWithoutAnalytics = (neverShowAgain = true) => {
     cy.get(neverShowAgainCheckbox).click();
     cy.intercept('PATCH', '/api/v1/profile').as(profileEndpointAlias);
   }
-  cy.get(continueWithoutAnalyticsButton).click();
-  if (neverShowAgain) {
-    basePage.waitForRequest(profileEndpointAlias);
-  }
+
+  return cy
+    .get(continueWithoutAnalyticsButton)
+    .click()
+    .then(() => {
+      if (neverShowAgain) {
+        return basePage.waitForRequest(profileEndpointAlias);
+      }
+    });
 };
 
 export const clickAnalyticsOptInSwitch = () =>
@@ -524,15 +525,15 @@ export const apiPatchUser = (id, payload) =>
         method: 'GET',
         auth: { bearer: accessToken },
       })
-      .then(({ headers: { etag } }) => {
+      .then(({ headers: { etag } }) =>
         cy.request({
           url: `${usersEndpoint}/${id}`,
           method: 'PATCH',
           auth: { bearer: accessToken },
           body: payload,
           headers: { 'if-match': etag },
-        });
-      })
+        })
+      )
   );
 
 export const apiCreatePersonalAccessToken = (
@@ -596,20 +597,17 @@ export const apiCreateAIConfiguration = (provider, model, apiKey) =>
 export const aiConfigurationSectionIsDisplayed = () => {
   cy.get(aiConfigurationSection).should('be.visible');
   cy.get(aiConfigurationSectionDescription).should('be.visible');
-  cy.get(aiConfigurationEditButton).should('be.visible');
+  return cy.get(aiConfigurationEditButton).should('be.visible');
 };
 
-export const aiConfigurationModelProviderShouldBe = (expectedContent) => {
+export const aiConfigurationModelProviderShouldBe = (expectedContent) =>
   cy.get(aiConfigurationModelProvider).should('contain', expectedContent);
-};
 
-export const aiConfigurationModelShouldBe = (expectedContent) => {
+export const aiConfigurationModelShouldBe = (expectedContent) =>
   cy.get(aiConfigurationModel).should('contain', expectedContent);
-};
 
-export const aiConfigurationApiKeyShouldBe = (expectedContent) => {
+export const aiConfigurationApiKeyShouldBe = (expectedContent) =>
   cy.get(aiConfigurationApiKey).should('contain', expectedContent);
-};
 
 export const requiredAPIKeyErrorIsDisplayed = (
   errorMessage = 'Required field'
@@ -664,9 +662,7 @@ const _getUserIdFromPath = () =>
 export const apiLoginAndCreateSession = (
   username = USER.username,
   password = PASSWORD
-) => {
-  basePage.apiLoginAndCreateSession(username, password);
-};
+) => basePage.apiLoginAndCreateSession(username, password);
 
 const _assertAuthenticationStatusCode = (
   accessToken,

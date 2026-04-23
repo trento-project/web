@@ -203,7 +203,7 @@ export const logout = () => {
     win.localStorage.removeItem('access_token');
     win.localStorage.removeItem('refresh_token');
   });
-  Cypress.session.clearAllSavedSessions();
+  return Cypress.session.clearAllSavedSessions();
 };
 
 export const apiDeleteUser = (id, accessToken) =>
@@ -214,17 +214,19 @@ export const apiDeleteUser = (id, accessToken) =>
   });
 
 export const apiDeleteAllUsers = () =>
-  apiLogin().then(({ accessToken }) => {
-    cy.request({
-      url: '/api/v1/users',
-      method: 'GET',
-      auth: { bearer: accessToken },
-    }).then(({ body: users }) => {
-      users.forEach(({ id }) => {
-        if (id !== 1) apiDeleteUser(id, accessToken);
-      });
-    });
-  });
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/users',
+        method: 'GET',
+        auth: { bearer: accessToken },
+      })
+      .then(({ body: users }) => {
+        users.forEach(({ id }) => {
+          if (id !== 1) apiDeleteUser(id, accessToken);
+        });
+      })
+  );
 
 export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
@@ -253,11 +255,11 @@ export const loadScenario = (scenario) => {
   ];
   if (photofinishBinary) {
     cy.log(`Loading scenario "${scenario}"...`);
-    cy.exec(
+    return cy.exec(
       `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`
     );
   } else {
-    cy.log(`Photofinish is not used.`);
+    return cy.log(`Photofinish is not used.`);
   }
 };
 
@@ -291,7 +293,7 @@ export const apiCreateUserWithAbilities = (abilities) =>
           ),
         }));
 
-        cy.request({
+        return cy.request({
           url: '/api/v1/users',
           method: 'POST',
           auth: { bearer: accessToken },
@@ -335,7 +337,7 @@ export const isHostRegistered = (hostId) =>
   apiLogin()
     .then(({ accessToken }) => {
       const url = '/api/v1/hosts/';
-      cy.request({
+      return cy.request({
         method: 'GET',
         url: url,
         auth: {
@@ -385,7 +387,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 
   return apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks`;
-    cy.request({
+    return cy.request({
       method: 'POST',
       url: url,
       body: checksBody,
@@ -398,7 +400,7 @@ export const apiSelectChecks = (clusterId, checks) => {
 };
 
 export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  clearSUMASettings().then(() => {
+  clearSUMASettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
@@ -413,8 +415,8 @@ export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
           ...(ca_cert && { ca_cert }),
         },
       })
-    );
-  });
+    )
+  );
 
 export const clearSUMASettings = () =>
   apiLogin().then(({ accessToken }) =>

@@ -32,6 +32,5 @@ export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
     .get(amountOfSlesForSapSubscriptionsLabel)
     .should('have.text', `${subscriptions} found`);
 
-export const apiDeregisterHost = () => {
+export const apiDeregisterHost = () =>
   basePage.apiDeregisterHost(hostToDeregister);
-};

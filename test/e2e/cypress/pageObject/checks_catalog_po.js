@@ -172,11 +172,11 @@ export const expectedTargetTypeClusterIconsAreDisplayed = () =>
     .parents(checkGroups)
     .within(() => cy.get(targetIcon).should('have.length', group1Checks));
 
-export const expectedTargetTypeHostIconsAreDisplayed = () => {
-  cy.get(`h3:contains("${hostChecksGroup}")`)
+export const expectedTargetTypeHostIconsAreDisplayed = () =>
+  cy
+    .get(`h3:contains("${hostChecksGroup}")`)
     .parents(checkGroups)
     .within(() => cy.get(targetIcon).should('have.length', group2Checks));
-};
 
 export const checkPanelIsNotVisible = () =>
   cy.get(checkPanels).should('not.exist');

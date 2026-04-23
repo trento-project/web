@@ -359,12 +359,11 @@ export const expectedImageIsDisplayed = (cloudProvider) => {
   );
 };
 
-export const expectedNetworkIsDisplayed = (cloudProvider) => {
+export const expectedNetworkIsDisplayed = (cloudProvider) =>
   _checkText(
     providerDetails.network,
     selectedHost[`${cloudProvider}CloudDetails`].network
   );
-};
 
 export const validateSaptuneStatus = (installationStatus) => {
   let installationData;
@@ -383,7 +382,7 @@ export const validateSaptuneStatus = (installationStatus) => {
   cy.get(saptuneSummaryLabel).should('be.visible');
   cy.get(saptuneInstallationStatus).should('have.text', packageVersion);
   cy.get(saptuneConfiguredVersion).should('have.text', configuredVersion);
-  cy.get(saptuneTuningLabel).should('have.text', tuningStatus);
+  return cy.get(saptuneTuningLabel).should('have.text', tuningStatus);
 };
 
 export const notRecognizedProviderIsDisplayed = () =>
@@ -405,7 +404,8 @@ const _getTableHeaders = (tableName) =>
 
 export const agentStatusIsCorrectlyDisplayed = () => {
   cy.get(agentRunningLabel).should('be.visible');
-  cy.get(agentRunningBadge)
+  return cy
+    .get(agentRunningBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain('jungle-green');
@@ -414,7 +414,8 @@ export const agentStatusIsCorrectlyDisplayed = () => {
 
 export const nodeExporterStatusIsCorrectlyDisplayed = () => {
   cy.get(nodeExporterLabel).should('be.visible');
-  cy.get(nodeExporterBadge)
+  return cy
+    .get(nodeExporterBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain('jungle-green');
@@ -445,13 +446,11 @@ export const cleanUpUnhealthyHostButtonNotVisible = () =>
 export const cleanUpModalTitleIsDisplayed = () =>
   cy.get(cleanUpModalTitle).should('be.visible');
 
-export const cleanuUpModalIsNotDisplayed = () => {
+export const cleanuUpModalIsNotDisplayed = () =>
   cy.get(cleanUpModal).should('not.exist');
-};
 
-export const cleanedUpHostIsNotDisplayed = () => {
+export const cleanedUpHostIsNotDisplayed = () =>
   cy.get(cleanedUpHost).should('not.exist');
-};
 
 export const startExecutionButtonIsDisabled = () =>
   cy.get(startExecutionButton).should('be.disabled');
@@ -460,12 +459,12 @@ export const notAuthorizedMessageIsNotDisplayed = () => {
   cy.get(startExecutionButton).trigger('mouseover', {
     force: true,
   });
-  cy.get(notAuthorizedMessage).should('not.exist');
+  return cy.get(notAuthorizedMessage).should('not.exist');
 };
 
 export const notAuthorizedMessageIsDisplayed = () => {
   cy.get(startExecutionButton).click({ force: true });
-  cy.get(notAuthorizedMessage).should('be.visible');
+  return cy.get(notAuthorizedMessage).should('be.visible');
 };
 
 export const saveChecksSelectionButtonIsDisabled = () =>
@@ -536,7 +535,7 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 // API
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
-  basePage.loadScenario(`host-${hostName}-saptune-${state}`);
+  return basePage.loadScenario(`host-${hostName}-saptune-${state}`);
 };
 
 export const loadAwsHostDetails = () =>

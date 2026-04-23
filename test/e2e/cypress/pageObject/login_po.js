@@ -30,7 +30,7 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 
 export const cleanBrowserData = () => {
   cy.clearAllLocalStorage();
-  cy.clearAllCookies();
+  return cy.clearAllCookies();
 };
 
 export const ssoLoginPlainUser = () =>

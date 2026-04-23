@@ -268,7 +268,7 @@ export const eachAttachedHostHasExpectedWorkingLink = () =>
 export const newInstanceIsDisplayed = () => {
   const newInstanceSelector = `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}")`;
   cy.get(newInstanceSelector).eq(1).should('be.visible');
-  cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
+  return cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
 };
 
 export const tableHasExpectedAmountOfRows = (expectedAmountOfRows) =>

@@ -160,17 +160,15 @@ export const deregisterNwqSystemAscsInstance = () =>
 export const restoreHdqDatabasePrimaryInstance = () =>
   basePage.loadScenario(`host-${hdqDatabase.instances[0].name}-restore`);
 
-export const markHddDatabaseAsAbsent = () => {
+export const markHddDatabaseAsAbsent = () =>
   basePage.loadScenario(
     `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-absent`
   );
-};
 
-export const markHddDatabaseAsPresent = () => {
+export const markHddDatabaseAsPresent = () =>
   basePage.loadScenario(
     `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
   );
-};
 
 export const apiCreateUserWithDatabaseTagsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
