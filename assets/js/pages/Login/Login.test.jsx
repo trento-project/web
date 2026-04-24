@@ -45,7 +45,7 @@ describe('Login component', () => {
 
     renderWithRouter(StatefulLogin);
 
-    await waitFor(() => screen.getByText('Invalid credentials'));
+    await screen.findByText('Invalid credentials');
 
     const username = screen.getByTestId(`login-username`);
     expect(username).toHaveClass('border-red-500');
