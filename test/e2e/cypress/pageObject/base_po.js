@@ -226,7 +226,7 @@ export const apiDeleteAllUsers = () =>
       )
   );
 
-export const waitForRequest = (requestAlias, timeout = 10000) =>
+export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
 
 export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
@@ -261,7 +261,7 @@ export const loadScenario = (scenario) => {
       ? `${photofinishCommand} "${apiKey}"`
       : photofinishCommand;
     cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
-    return cy.exec(photofinishCommand, { timeout: 360000 });
+    return cy.exec(photofinishCommand);
   };
 
   if (Cypress.env('web_mode') === 'dev') return runPhotofinish();

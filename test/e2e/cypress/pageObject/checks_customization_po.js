@@ -230,7 +230,7 @@ export const modalCloseButtonShouldBeEnabled = () =>
 
 export const waitForCustomizedCheckElements = () => {
   cy.contains(modifiedCheckID, firstCheck.id).should('be.visible', {
-    timeout: 60000,
+    timeout: 20000,
   });
   cy.contains(modifiedPillLabel).should('be.visible');
   return cy

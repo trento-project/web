@@ -147,7 +147,7 @@ export const clickCriticalChecksButton = () =>
   cy.get(criticalChecksButton).click();
 
 export const clickCheckSelectionButton = () =>
-  cy.get(checkSelectionButton, { timeout: 50000 }).click();
+  cy.get(checkSelectionButton).click();
 
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
@@ -168,9 +168,7 @@ export const checkInputValueIsTheExpected = (value) =>
   cy.get(checkInputExpectedValue).should('have.value', value);
 
 export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
-  cy
-    .get(checkSettingsWarningMessage, { timeout: 90000 })
-    .should('have.text', expectedWarningMessage);
+  cy.get(checkSettingsWarningMessage).should('have.text', expectedWarningMessage);
 
 export const expectedResultRowsAreDisplayed = () =>
   basePage.waitForRequest(lastExecutionEndpointAlias).then(
@@ -185,7 +183,7 @@ export const expectedResultRowsAreDisplayed = () =>
   );
 
 export const expectedCheckIsDisplayed = (checkNameValue) =>
-  cy.get(checkName(checkNameValue), { timeout: 60000 }).should('be.visible');
+  cy.get(checkName(checkNameValue)).should('be.visible');
 
 export const validateExpectedCheckResults = (expectedCheckResults) =>
   cy
@@ -267,9 +265,7 @@ export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSecondarySyncState'
   );
-  return cy
-    .get(hanaSecondarySyncStateLabel, { timeout: 60000 })
-    .should('contain', hanaSecondarySyncState);
+  return cy.get(hanaSecondarySyncStateLabel).should('contain', hanaSecondarySyncState);
 };
 
 export const expectedMaintenanceModeIsDisplayed = (clusterType) => {
@@ -421,7 +417,7 @@ export const expectedResourcesDisplayed = () =>
 
 export const expectedClusterStateIsDisplayed = (state) => {
   const { displayedText, icon } = clusterStates[state];
-  cy.get(clusterStateLabel, { timeout: 60000 }).contains(displayedText);
+  cy.get(clusterStateLabel).contains(displayedText);
   return cy
     .get(clusterStateBadge)
     .invoke('attr', 'class')
@@ -523,7 +519,7 @@ export const interceptGetChecks = () =>
     .as(getChecksEndpointAlias);
 
 export const waitForGetChecksEndpoint = () =>
-  basePage.waitForRequest(getChecksEndpointAlias, { timeout: 80000 });
+  basePage.waitForRequest(getChecksEndpointAlias);
 
 export const interceptLastExecutionRequestMocked = () => {
   const lastExecutionURL = `${wandaUrl}/api/v2/checks/groups/**/executions/last`;

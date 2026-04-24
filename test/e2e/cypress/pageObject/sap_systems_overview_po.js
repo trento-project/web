@@ -122,7 +122,7 @@ export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) =>
-  cy.location('pathname', { timeout: 30000 }).should('eq', _url);
+  cy.location('pathname').should('eq', _url);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);

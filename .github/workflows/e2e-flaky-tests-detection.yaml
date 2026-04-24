@@ -202,7 +202,6 @@ jobs:
           cypress_db_host: postgres
           cypress_db_port: 5432
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
-          cypress_wanda_mode: "demo"
         with:
           command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           working-directory: test/e2e

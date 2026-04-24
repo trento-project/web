@@ -115,7 +115,7 @@ export const clickSelectedHost = () =>
 export const clickClusterNameLabel = () => cy.get(clusterNameLabel).click();
 
 export const clickCleanUpUnhealthyHostButton = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).click();
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).click();
 
 export const clickCleanUpConfirmationButton = () =>
   cy.get(cleanUpModalConfirmationButton).click();
@@ -133,7 +133,7 @@ export const clickFirstRelatedPackage = () =>
 
 //Validations
 export const restoredHostIsDisplayed = () =>
-  cy.get(cleanedUpHost, { timeout: 90000 }).should('be.visible');
+  cy.get(cleanedUpHost).should('be.visible');
 
 export const advisoryDetailsAffectedSystemsAreTheExpected = () =>
   cy
@@ -387,7 +387,7 @@ const _getTableHeaders = (tableName) =>
   });
 
 export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentRunningLabel, { timeout: 20000 }).should('be.visible');
+  cy.get(agentRunningLabel).should('be.visible');
   return cy
     .get(agentRunningBadge)
     .invoke('attr', 'class')
@@ -416,13 +416,13 @@ export const heartbeatFailingToasterIsDisplayed = () =>
   cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisplayed = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.visible');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.visible');
 
 export const cleanUpUnhealthyHostButtonIsDisabled = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.disabled');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.disabled');
 
 export const cleanUpUnhealthyHostButtonIsEnabled = () =>
-  cy.get(cleanUpUnhealthyHostButton, { timeout: 30000 }).should('be.enabled');
+  cy.get(cleanUpUnhealthyHostButton, { timeout: 15000 }).should('be.enabled');
 
 export const cleanUpUnhealthyHostButtonNotVisible = () =>
   cy.get(cleanUpUnhealthyHostButton).should('not.exist');
@@ -588,12 +588,12 @@ export const interceptDeleteHost = () =>
 
 export const waitForDeleteHostRequest = () =>
   basePage
-    .waitForRequest('deleteHost', { timeout: 30000 })
+    .waitForRequest('deleteHost')
     .its('response.statusCode')
     .should('eq', 204);
 
 export const validateHostsListUrl = () =>
-  cy.location('pathname', { timeout: 30000 }).should('eq', '/hosts');
+  cy.location('pathname').should('eq', '/hosts');
 
 export const apiCreateUserWithHostChecksExecutionAbilities = () =>
   basePage.apiCreateUserWithAbilities([
