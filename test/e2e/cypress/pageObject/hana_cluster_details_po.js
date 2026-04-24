@@ -168,7 +168,9 @@ export const checkInputValueIsTheExpected = (value) =>
   cy.get(checkInputExpectedValue).should('have.value', value);
 
 export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
-  cy.get(checkSettingsWarningMessage).should('have.text', expectedWarningMessage);
+  cy
+    .get(checkSettingsWarningMessage)
+    .should('have.text', expectedWarningMessage);
 
 export const expectedResultRowsAreDisplayed = () =>
   basePage.waitForRequest(lastExecutionEndpointAlias).then(
@@ -265,7 +267,9 @@ export const expectedHanaSecondarySyncStateIsDisplayed = (clusterType) => {
     clusterType,
     'hanaSecondarySyncState'
   );
-  return cy.get(hanaSecondarySyncStateLabel).should('contain', hanaSecondarySyncState);
+  return cy
+    .get(hanaSecondarySyncStateLabel)
+    .should('contain', hanaSecondarySyncState);
 };
 
 export const expectedMaintenanceModeIsDisplayed = (clusterType) => {
