@@ -225,6 +225,38 @@ describe('Table component', () => {
       expect(within(pages).queryByText('2')).toBeNull();
     });
 
+    it('should sort filter options with filterOptionsSorter when provided', async () => {
+      const user = userEvent.setup();
+      const data = [
+        { column1: 'zeta', column2: [], column3: 'c' },
+        { column1: 'alpha', column2: [], column3: 'c' },
+        { column1: 'mike', column2: [], column3: 'c' },
+      ];
+
+      const sortedConfig = {
+        ...tableConfig,
+        columns: tableConfig.columns.map((c) =>
+          c.key === 'column1'
+            ? { ...c, filterOptionsSorter: (a, b) => a.localeCompare(b) }
+            : c
+        ),
+      };
+
+      render(
+        <Table config={sortedConfig} data={data} setSearchParams={() => {}} />
+      );
+
+      await user.click(screen.getByTestId('filter-Column1'));
+
+      const labels = Array.from(
+        screen
+          .getByTestId('filter-Column1-options')
+          .querySelectorAll('li > div > span')
+      ).map((span) => span.textContent);
+
+      expect(labels).toEqual(['alpha', 'mike', 'zeta']);
+    });
+
     it('should return empty state message when data is empty', () => {
       const data = [];
       const emptyStateText = faker.lorem.words(5);
