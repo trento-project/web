@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-03-11T04:10:08Z",
-    "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
-    "run_id": "22935882618",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 13
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.1403
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
-        "score": 0.09051
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.05001
-      },
-      {
-        "name": "search::should not match not included words",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
-        "score": 0.02501
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-11T04:10:57Z",
     "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
     "run_id": "22935882618",
@@ -6056,6 +6012,38 @@
       },
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-25T03:59:43Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24921768160",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Host reboot operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show system/database operation sap_system_stop in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should enable Saptune change solution operation button based on user abilities",
+        "score": 0.02501
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
         "score": 0.02501
       }
     ]
