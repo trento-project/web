@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-11T06:48:39Z",
-    "commit": "d758b86f0cc0e9fa1e2f62663b69360e1d66e76a",
-    "run_id": "22936441022",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should not be able to login with deleted user::Users Delete user should not be able to login with deleted user",
-        "score": 0.1471
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-12T03:46:05Z",
     "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
     "run_id": "22985322860",
@@ -6041,6 +6021,66 @@
       {
         "name": "GenericSystemDetails::should show instance operations",
         "score": 0.2276
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-25T06:35:24Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24922231118",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 34
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
+        "score": 0.2091
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.09549
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.07658
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.07658
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.07251
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05158
+      },
+      {
+        "name": "should discover a Angi cluster with failover::HANA cluster details Angi architecture should discover a Angi cluster with failover",
+        "score": 0.05001
+      },
+      {
+        "name": "should show Red badge in instance when SAPControl-RED state is received::HANA database details The database layout shows all the running instances should show Red badge in instance when SAPControl-RED state is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
+        "score": 0.02501
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve per_page when coming back from another page::Hosts Overview Pagination and browser navigation should preserve per_page when coming back from another page",
+        "score": 0.02501
       }
     ]
   }
