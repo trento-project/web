@@ -16,7 +16,7 @@
     "eslint-plugin-cypress": "^6.2.2",
     "eslint-plugin-mocha": "^11.2.0",
     "mocha-junit-reporter": "^2.2.1",
-    "prettier": "3.8.1"
+    "prettier": "3.8.2"
   },
   "dependencies": {
     "@cypress/webpack-preprocessor": "^5.16.1",
