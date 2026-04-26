@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-12T03:46:56Z",
-    "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
-    "run_id": "22985322860",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should clear a previously tracked software updates discovery result",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-12T06:36:41Z",
     "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
     "run_id": "22986410376",
@@ -6084,6 +6064,30 @@
       },
       {
         "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-26T04:10:45Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24947671833",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should move an application instance if the host_id changed and the instance number already exists and the application is clustered",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
         "score": 0.02501
       }
     ]
