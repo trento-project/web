@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-03-12T03:46:05Z",
-    "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
-    "run_id": "22985322860",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users update_user/2 deletes the user abilities",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-12T03:46:56Z",
     "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
     "run_id": "22985322860",
@@ -6080,6 +6064,26 @@
       },
       {
         "name": "should preserve per_page when coming back from another page::Hosts Overview Pagination and browser navigation should preserve per_page when coming back from another page",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-26T04:09:52Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24947671833",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
         "score": 0.02501
       }
     ]
