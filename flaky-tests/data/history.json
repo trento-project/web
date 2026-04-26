@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-03-12T08:34:44Z",
-    "commit": "ddeaa18a270af1c4eb910f11b205df6c3c40c000",
-    "run_id": "22985917491",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Label Component::should display an info tooltip if specified",
-        "score": 0.02501
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.02501
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-13T03:41:23Z",
     "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
     "run_id": "23034854883",
@@ -6092,6 +6060,46 @@
       },
       {
         "name": "GenericSystemDetails::should clean up an instance on request",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-26T06:41:18Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24948300517",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 36
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
+        "score": 0.2256
+      },
+      {
+        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
+        "score": 0.1660
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.1130
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1130
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.1066
+      },
+      {
+        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
+        "score": 0.05453
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
         "score": 0.02501
       }
     ]
