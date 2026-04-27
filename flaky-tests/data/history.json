@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-03-13T04:12:53Z",
-    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
-    "run_id": "23035465712",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 9
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.5
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune apply solution operation button based on user abilities",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "checksUtils::should get host expectation statements results",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.04141
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-13T04:13:32Z",
     "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
     "run_id": "23035465712",
@@ -6077,6 +6033,38 @@
       {
         "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-27T04:27:10Z",
+    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
+    "run_id": "24976109847",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.5
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.1977
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
+        "score": 0.02501
       }
     ]
   }
