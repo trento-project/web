@@ -20,6 +20,7 @@ export const userFactory = Factory.define(() => ({
   totp_enabled_at: formatISO(faker.date.past()),
   analytics_enabled: faker.datatype.boolean(),
   analytics_eula_enabled: faker.datatype.boolean(),
+  timezone: faker.location.timeZone(),
   last_login_at: formatISO(faker.date.past()),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
@@ -35,6 +36,7 @@ export const profileFactory = Factory.define(() => ({
   totp_enabled: faker.datatype.boolean(),
   analytics_enabled: faker.datatype.boolean(),
   analytics_eula_accepted: faker.datatype.boolean(),
+  timezone: faker.location.timeZone(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));

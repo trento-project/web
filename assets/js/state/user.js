@@ -15,6 +15,7 @@ export const initialState = {
   authInProgress: false,
   analytics_enabled: undefined,
   analytics_eula_accepted: undefined,
+  timezone: undefined,
 };
 
 export const userSlice = createSlice({
@@ -48,6 +49,7 @@ export const userSlice = createSlice({
           password_change_requested,
           analytics_enabled,
           analytics_eula_accepted,
+          timezone,
         },
       }
     ) {
@@ -61,6 +63,7 @@ export const userSlice = createSlice({
       state.password_change_requested = password_change_requested;
       state.analytics_enabled = analytics_enabled;
       state.analytics_eula_accepted = analytics_eula_accepted;
+      state.timezone = timezone;
     },
   },
 });

@@ -112,6 +112,7 @@ function EditUserPage() {
     totp_enabled_at: totpEnabledAt,
     last_login_at: lastLoginAt,
     analytics_enabled: analyticsEnabled,
+    timezone,
   } = userState;
 
   return (
@@ -141,6 +142,7 @@ function EditUserPage() {
         lastLoginAt={lastLoginAt}
         analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
+        timezone={timezone}
         saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}
@@ -154,6 +156,7 @@ function EditUserPage() {
         personalAccessTokens={personalAccessTokens}
         generateTokenAvailable={false}
         onDeleteToken={onDeleteToken}
+        timezone={timezone}
       />
     </div>
   );
