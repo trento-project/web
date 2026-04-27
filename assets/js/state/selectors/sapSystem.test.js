@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker';
+
 import { clusterFactory } from '@lib/test-utils/factories/clusters';
 import {
   databaseFactory,
@@ -9,12 +11,15 @@ import {
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories/sapSystems';
 
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+
 import {
   getEnrichedApplicationInstances,
   getEnrichedDatabaseInstances,
   getEnrichedSapSystemDetails,
   getEnrichedDatabaseDetails,
   getAllSAPInstances,
+  getInstancesOnHost,
 } from './sapSystem';
 
 describe('sapSystem selector', () => {
@@ -242,12 +247,37 @@ describe('sapSystem selector', () => {
     };
 
     const expectedOutput = [
-      { id: 1, name: 'APP1', type: 'sap_systems' },
-      { id: 2, name: 'APP2', type: 'sap_systems' },
-      { id: 3, name: 'DB1', type: 'databases' },
-      { id: 4, name: 'DB2', type: 'databases' },
+      { id: 1, name: 'APP1', type: APPLICATION_TYPE },
+      { id: 2, name: 'APP2', type: APPLICATION_TYPE },
+      { id: 3, name: 'DB1', type: DATABASE_TYPE },
+      { id: 4, name: 'DB2', type: DATABASE_TYPE },
     ];
 
     expect(getAllSAPInstances(state)).toEqual(expectedOutput);
+  });
+
+  it('should get all instances in host', () => {
+    const hostID = faker.string.uuid();
+    const state = {
+      sapSystemsList: {
+        applicationInstances: [
+          { id: 1, name: 'APP1', host_id: hostID },
+          { id: 2, name: 'APP2', host_id: faker.string.uuid() },
+        ],
+      },
+      databasesList: {
+        databaseInstances: [
+          { id: 3, name: 'DB1', host_id: hostID },
+          { id: 4, name: 'DB2', host_id: faker.string.uuid() },
+        ],
+      },
+    };
+
+    const expectedOutput = [
+      { id: 1, name: 'APP1', type: APPLICATION_TYPE, host_id: hostID },
+      { id: 3, name: 'DB1', type: DATABASE_TYPE, host_id: hostID },
+    ];
+
+    expect(getInstancesOnHost(state, hostID)).toEqual(expectedOutput);
   });
 });
