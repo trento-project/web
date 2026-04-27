@@ -1,12 +1,13 @@
-ARG OS_VER=15.7
+ARG OS_VER=16.0
 FROM registry.suse.com/bci/bci-base:${OS_VER} AS elixir-build
 ARG OS_VER
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
-RUN zypper ar https://download.opensuse.org/repositories/devel:sap:trento:builddeps/${OS_VER} builddeps
+# RUN zypper ar https://download.opensuse.org/repositories/devel:sap:trento:builddeps/${OS_VER} builddeps
+RUN zypper ar http://cdn.opensuse.org/distribution/leap/16.0/repo/oss/x86_64 oss
 RUN zypper -n --gpg-auto-import-keys ref
-RUN zypper -n in make gcc git-core elixir==1.15 elixir-hex erlang==26 erlang-rebar3
+RUN zypper -n in make gcc git-core elixir elixir-hex erlang erlang-rebar3
 COPY . /build
 WORKDIR /build
 ARG MIX_ENV=prod
