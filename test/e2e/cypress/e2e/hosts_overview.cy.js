@@ -4,7 +4,7 @@ import * as basePage from '../pageObject/base_po';
 import { availableHosts } from '../fixtures/hosts-overview/available_hosts';
 
 context('Hosts Overview', () => {
-  // before(() => hostsOverviewPage.preloadTestData());
+  before(() => hostsOverviewPage.preloadTestData());
 
   beforeEach(() => hostsOverviewPage.visit());
 
