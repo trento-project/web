@@ -126,6 +126,8 @@ describe('Table component', () => {
 
   describe('filtering', () => {
     it('should filter by the chosen filter option with default filter', async () => {
+      const user = userEvent.setup();
+
       const data = tableDataFactory.buildList(10);
       const { column1: value1 } = data[0];
 
@@ -133,7 +135,7 @@ describe('Table component', () => {
         <Table config={tableConfig} data={data} setSearchParams={() => {}} />
       );
 
-      filterTable('Column1', value1);
+      await filterTable(user, 'Column1', value1);
 
       await waitFor(() => {
         const table = screen.getByRole('table');
@@ -142,6 +144,8 @@ describe('Table component', () => {
     });
 
     it('should filter by the chosen filter option with custom filter', async () => {
+      const user = userEvent.setup();
+
       const data = [].concat(
         tableDataFactory.buildList(5),
         tableDataFactory.buildList(1, { column2: ['value1'] }),
@@ -153,8 +157,8 @@ describe('Table component', () => {
         <Table config={tableConfig} data={data} setSearchParams={() => {}} />
       );
 
-      filterTable('Column2', 'value1');
-      filterTable('Column2', 'value2');
+      await filterTable(user, 'Column2', 'value1');
+      await filterTable(user, 'Column2', 'value2');
 
       await waitFor(() => {
         const table = screen.getByRole('table');
@@ -177,7 +181,7 @@ describe('Table component', () => {
       const page2Button = within(pages).getByLabelText('next-page');
       await user.click(page2Button);
 
-      filterTable('Column3', 'value3');
+      await filterTable(user, 'Column3', 'value3');
 
       await waitFor(() => {
         const table = screen.getByRole('table');
