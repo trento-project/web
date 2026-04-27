@@ -68,7 +68,8 @@ export const visit = (params) => {
   return cy.wait('@clustersEndpoint');
 };
 
-export const validateUrl = () => basePage.validateUrl(url);
+export const validateUrl = (params) =>
+  basePage.validateUrl(`${url}${params ? '?' + params : ''}`);
 
 export const selectHostnameFilter = (hostname) => {
   cy.get(hostnameFilterButton).click();
@@ -326,6 +327,11 @@ const _getHostToDeregisterData = () => {
 };
 
 // API
+export const interceptGetHosts = () =>
+  cy.intercept('/api/v1/hosts').as('hosts');
+
+export const waitForGetHosts = () => basePage.waitForRequest('hosts');
+
 export const startAgentHeartbeat = () => {
   const hostToDeregister = _getHostToDeregisterData();
   return basePage.startAgentsHeartbeat([hostToDeregister.id]);
