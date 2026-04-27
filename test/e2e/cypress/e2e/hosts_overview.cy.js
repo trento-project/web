@@ -1,8 +1,10 @@
 import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
+import * as basePage from '../pageObject/base_po';
+
 import { availableHosts } from '../fixtures/hosts-overview/available_hosts';
 
 context('Hosts Overview', () => {
-  before(() => hostsOverviewPage.preloadTestData());
+  // before(() => hostsOverviewPage.preloadTestData());
 
   beforeEach(() => hostsOverviewPage.visit());
 
@@ -207,57 +209,48 @@ context('Hosts Overview', () => {
     it('should update the URL with filter params when a filter is selected', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
-      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
     });
 
     it('should preserve filters when coming back', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
-      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
-
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
-
-      cy.go('back');
-
-      cy.url().should('contain', '/hosts');
-      cy.url().should('contain', `hostname=${hostname}`);
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
+      hostsOverviewPage.goBack();
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
     });
 
     it('should preserve filters when going forward', () => {
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
 
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
-      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
 
-      cy.go('back');
-      cy.url().should('contain', anyPageUrl);
+      hostsOverviewPage.goBack();
+      basePage.validateUrl(anyPageUrl);
 
-      cy.go('forward');
-      cy.url().should('contain', '/hosts');
-      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.goForward();
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
     });
 
     it('should allow navigating back to previous page', () => {
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
-
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
       hostsOverviewPage.visit();
       hostsOverviewPage.hostsListedAre(10);
-
       hostsOverviewPage.selectHostnameFilter(hostname);
       hostsOverviewPage.hostsListedAre(1);
-
-      cy.go('back');
-
-      cy.url().should('contain', anyPageUrl);
+      hostsOverviewPage.goBack();
+      basePage.validateUrl(anyPageUrl);
     });
 
     it('should render filtered results when visiting a URL with filter params', () => {
@@ -266,19 +259,19 @@ context('Hosts Overview', () => {
     });
 
     it('should not produce duplicate history entries when filters are applied', () => {
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
 
       hostsOverviewPage.visit();
-
       hostsOverviewPage.selectHostnameFilter(hostname);
-      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.validateUrl(`hostname=${hostname}`);
 
       hostsOverviewPage.selectHostnameFilter(anotherHostname);
-      cy.url().should('contain', `hostname=${anotherHostname}`);
+      const expectedParams = `hostname=${hostname}&hostname=${anotherHostname}`;
+      hostsOverviewPage.validateUrl(expectedParams);
 
-      cy.go('back');
-      cy.url().should('contain', anyPageUrl);
+      hostsOverviewPage.goBack();
+      basePage.validateUrl(anyPageUrl);
     });
   });
 
@@ -288,48 +281,47 @@ context('Hosts Overview', () => {
     it('should update the URL with page param when navigating pages', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.clickNextPageButton();
-      cy.url().should('contain', 'page=2');
-      cy.url().should('contain', 'per_page=10');
+      const expectedParams = 'page=2&per_page=10';
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
     });
 
     it('should update the URL with per_page param when changing items per page', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectItemsPerPage(20);
-      cy.url().should('contain', 'per_page=20');
-      cy.url().should('contain', 'page=1');
+      const expectedParams = 'page=1&per_page=20';
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.hostsListedAre(20);
     });
 
     it('should preserve pagination when coming back from another page', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.clickNextPageButton();
-      cy.url().should('contain', 'page=2');
+      const expectedParams = 'page=2&per_page=10';
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
-
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
-
-      cy.go('back');
-
-      cy.url().should('contain', '/hosts');
-      cy.url().should('contain', 'page=2');
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
+      hostsOverviewPage.interceptGetHosts();
+      hostsOverviewPage.goBack();
+      hostsOverviewPage.waitForGetHosts();
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
     });
 
     it('should preserve per_page when coming back from another page', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectItemsPerPage(20);
-      cy.url().should('contain', 'per_page=20');
+      const expectedParams = 'page=1&per_page=20';
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.hostsListedAre(20);
 
-      cy.visit(anyPageUrl);
-      cy.url().should('contain', anyPageUrl);
+      basePage.visit(anyPageUrl);
+      basePage.validateUrl(anyPageUrl);
 
-      cy.go('back');
+      hostsOverviewPage.goBack();
 
-      cy.url().should('contain', '/hosts');
-      cy.url().should('contain', 'per_page=20');
+      hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.hostsListedAre(20);
     });
 
