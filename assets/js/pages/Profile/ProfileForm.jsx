@@ -8,7 +8,7 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
-import MultiSelect from '@common/MultiSelect';
+import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
 import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
@@ -225,16 +225,17 @@ function ProfileForm({
             Timezone
           </Label>
           <div className="col-start-3 col-span-4">
-            <MultiSelect
+            <Select
               inputId="timezone"
               name="timezone"
               value={selectedTimezone}
               options={timezoneOptions}
-              onChange={(option) => {
-                setTimezone(option ? option.value : '');
+              onChange={(value) => {
+                setTimezone(value || '');
                 setTimezoneError(null);
               }}
               isMulti={false}
+              isSearchable
               disabled={loading || disableForm}
               placeholder="Select timezone..."
               noOptionsMessage={() => 'No timezones found'}

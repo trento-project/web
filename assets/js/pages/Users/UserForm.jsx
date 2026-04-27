@@ -7,7 +7,6 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
-import MultiSelect from '@common/MultiSelect';
 import Switch from '@common/Switch';
 import Tooltip from '@common/Tooltip';
 import {
@@ -287,16 +286,17 @@ function UserForm({
                 Timezone
               </Label>
               <div className="col-start-3 col-span-4">
-                <MultiSelect
+                <Select
                   inputId="timezone"
                   name="timezone"
                   value={selectedTimezone}
                   options={timezoneOptions}
-                  onChange={(option) => {
-                    setTimezone(option ? option.value : '');
+                  onChange={(value) => {
+                    setTimezone(value || '');
                     setTimezoneError(null);
                   }}
                   isMulti={false}
+                  isSearchable
                   disabled={!saveEnabled || saving}
                   placeholder="Select timezone..."
                   noOptionsMessage={() => 'No timezones found'}
