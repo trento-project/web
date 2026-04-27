@@ -246,6 +246,8 @@ export const loadScenario = (scenario) => {
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
   ];
+  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const photofinishExecTimeout = isTrentoProdInstance ? 180000 : 60000;
 
   const baseUrl = Cypress.config().baseUrl;
 
@@ -261,7 +263,9 @@ export const loadScenario = (scenario) => {
       ? `${photofinishCommand} "${apiKey}"`
       : photofinishCommand;
     cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
-    return cy.exec(photofinishCommand);
+    return cy.exec(photofinishCommand, {
+      timeout: photofinishExecTimeout,
+    });
   };
 
   if (Cypress.env('web_mode') === 'dev') return runPhotofinish();
