@@ -10,6 +10,8 @@ context('SUSE Manager overviews', () => {
 
   describe('navigates and display SUSE Manager based infos', () => {
     it('host is found on SUSE Manager and has vulnerabilities', () => {
+      hostDetailsPage.interceptSumaRequestsMockedForProdInstance();
+
       hostDetailsPage.visitVmdrbddev01Host();
       hostDetailsPage.expectedRelevantPatchesAreDisplayed(' 2');
 
@@ -44,6 +46,8 @@ context('SUSE Manager overviews', () => {
     });
 
     it('host is not found on SUSE Manager', () => {
+      hostDetailsPage.interceptSoftwareUpdatesRequestsMockedForProdInstance();
+
       hostDetailsPage.visitVmdrbddev02Host();
       hostDetailsPage.expectedRelevantPatchesAreDisplayed(
         ' Host not found in SUSE Manager'

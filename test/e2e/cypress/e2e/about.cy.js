@@ -1,6 +1,6 @@
 import * as aboutPage from '../pageObject/about_po';
 
-describe('User account page', () => {
+describe('About page', () => {
   before(() => {
     aboutPage.preloadTestData();
   });
@@ -18,11 +18,37 @@ describe('User account page', () => {
     aboutPage.expectedServerVersionIsDisplayed();
   });
 
+  it('should show the Wanda version', () => {
+    aboutPage.expectedWandaVersionIsDisplayed();
+  });
+
+  it('should show the Checks version', () => {
+    aboutPage.expectedChecksVersionIsDisplayed();
+  });
+
+  it('should show the PostgreSQL version', () => {
+    aboutPage.expectedPostgresVersionIsDisplayed();
+  });
+
+  it('should show the RabbitMQ version', () => {
+    aboutPage.expectedRabbitmqVersionIsDisplayed();
+  });
+
+  it('should show the Prometheus version', () => {
+    aboutPage.expectedPrometheusVersionIsDisplayed();
+  });
+
   it('should show the github project link', () => {
     aboutPage.expectedGithubUrlIsDisplayed();
   });
 
   it('should display number of SLES subscriptions found', () => {
-    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed();
+    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed(27);
+  });
+
+  it('should update number of SLES subscriptions when a host is deregistered', () => {
+    aboutPage.apiDeregisterHost();
+    aboutPage.visit();
+    aboutPage.expectedSlesForSapSubscriptionsAreDisplayed(26);
   });
 });

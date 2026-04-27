@@ -214,7 +214,7 @@ function ProfileForm({
               userAbilities={abilities}
               abilities={abilities}
               placeholder=""
-              disabled
+              isDisabled
             />
           </div>
           <Label

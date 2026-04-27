@@ -1,9 +1,9 @@
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 
-export const filterTable = (name, option) => {
+export const filterTable = async (user, name, option) => {
   const filterContainer = screen.getByTestId(`filter-${name}`);
 
-  fireEvent.click(filterContainer);
+  await user.click(filterContainer);
 
   const optionContainer = Array.from(
     screen
@@ -11,12 +11,12 @@ export const filterTable = (name, option) => {
       .querySelectorAll('li > div > span')
   ).find((f) => f.textContent === option);
 
-  fireEvent.click(optionContainer);
-  fireEvent.click(screen.getByTestId(`filter-${name}`));
+  await user.click(optionContainer);
+  await user.click(screen.getByTestId(`filter-${name}`));
 };
 
-export const clearFilter = (name) => {
+export const clearFilter = async (user, name) => {
   const filterContainer = screen.getByTestId(`filter-${name}-clear`);
 
-  fireEvent.click(filterContainer);
+  await user.click(filterContainer);
 };

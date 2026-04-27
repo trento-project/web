@@ -142,7 +142,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       const expectItemEnabled = (itemExpectedEnabled) =>
         expect(
           screen.getByText(itemExpectedEnabled).closest('div')
-        ).not.toHaveAttribute('aria-disabled');
+        ).toHaveAttribute('aria-disabled', 'false');
 
       if (expectEnabled) {
         expectItemEnabled(expectEnabled);

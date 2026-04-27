@@ -155,7 +155,10 @@ context('Host Details', () => {
   });
 
   describe("Node exporter status should be 'running'", () => {
-    beforeEach(() => hostDetailsPage.visitSelectedHost());
+    beforeEach(() => {
+      hostDetailsPage.interceptNodeExporterStatusMockedForProdInstance();
+      hostDetailsPage.visitSelectedHost();
+    });
 
     it("should show the status as 'running'", () => {
       hostDetailsPage.nodeExporterStatusIsCorrectlyDisplayed();
@@ -203,9 +206,10 @@ context('Host Details', () => {
       it('should allow to deregister a host after clean-up confirmation', () => {
         hostDetailsPage.clickCleanUpUnhealthyHostButton();
         hostDetailsPage.cleanUpModalTitleIsDisplayed();
+        hostDetailsPage.interceptDeleteHost();
         hostDetailsPage.clickCleanUpConfirmationButton();
+        hostDetailsPage.waitForDeleteHostRequest();
         hostDetailsPage.cleanuUpModalIsNotDisplayed();
-        hostDetailsPage.validateUrl('/hosts');
         hostDetailsPage.cleanedUpHostIsNotDisplayed();
       });
     });

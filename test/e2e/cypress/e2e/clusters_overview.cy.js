@@ -32,7 +32,7 @@ context('Clusters Overview', () => {
       after(() => clustersOverviewPage.restoreClusterName());
     });
 
-    // eslint-disable-next-line mocha/no-skipped-tests
+    // eslint-disable-next-line mocha/no-pending-tests
     describe.skip('Health status for each cluster is correct', () => {
       before(() => {
         clustersOverviewPage.apiSelectChecksForHealthyCluster();

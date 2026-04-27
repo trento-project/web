@@ -49,7 +49,9 @@ describe('GenerateTokenModal', () => {
 
       await user.type(screen.getByRole('textbox'), tokenName);
       await user.type(screen.getByRole('spinbutton'), '{backspace}3');
-      await user.click(screen.getByRole('button', { name: 'months' }));
+      await user.click(
+        screen.getByRole('combobox', { name: 'generate-key-expiration-time' })
+      );
       await user.click(screen.getByRole('option', { name: dateType }));
       await user.click(screen.getByRole('button', { name: 'Generate Token' }));
 

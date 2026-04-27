@@ -30,7 +30,7 @@ export const clickLoginWithSsoButton = () => cy.get(loginWithSsoButton).click();
 
 export const cleanBrowserData = () => {
   cy.clearAllLocalStorage();
-  cy.clearAllCookies();
+  return cy.clearAllCookies();
 };
 
 export const ssoLoginPlainUser = () =>
@@ -41,16 +41,16 @@ export const ssoLoginAdminUser = () =>
 
 const _loginWithSSO = (username, password) => {
   const args = [username, password];
-  cy.session(args, () => {
+  return cy.session(args, () => {
     cy.visit('/');
     cy.get('button').contains('Login with Single Sign-on').click();
     cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {
       cy.get('[id="username"]').type(username);
       cy.get('[id="password"]').type(password);
-      cy.get('input').contains('Sign In').click();
+      return cy.get('input').contains('Sign In').click();
     });
     cy.url().should('contain', `/auth/${ssoType}_callback`);
-    cy.get('h1:contains("At a glance")').should('be.visible');
+    return cy.get('h1:contains("At a glance")').should('be.visible');
   });
 };
 
@@ -68,8 +68,8 @@ const _assertSessionStatusCode = (
   username,
   password,
   expectedStatusCode = 401
-) => {
-  return cy
+) =>
+  cy
     .request({
       method: 'POST',
       url: '/api/session',
@@ -85,7 +85,6 @@ const _assertSessionStatusCode = (
         'Session endpoint has the expected status code'
       ).to.eq(expectedStatusCode);
     });
-};
 export const loginFailsIfOtpNotProvided = (username, password) =>
   _assertSessionStatusCode(username, password, 422);
 

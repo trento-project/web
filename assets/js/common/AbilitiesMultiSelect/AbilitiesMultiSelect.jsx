@@ -1,8 +1,8 @@
 import React from 'react';
-import { assign, find } from 'lodash';
+import { assign, find, orderBy, startsWith } from 'lodash';
 import { getFromConfig } from '@lib/config';
 
-import MultiSelect from '@common/MultiSelect';
+import Select from '@common/Select';
 
 const groupedAbilities = [
   {
@@ -51,24 +51,39 @@ const groupedAbilities = [
     ],
   },
   {
-    ability: 'operation:all',
-    tooltip: 'Permits running operations in all resources',
+    ability: 'operation:host',
+    tooltip: 'Permits running operations in hosts',
     groupAbilities: [
       'saptune_solution_apply:host',
       'saptune_solution_change:host',
+      'reboot:host',
+    ],
+  },
+  {
+    ability: 'operation:cluster',
+    tooltip: 'Permits running operations in clusters',
+    groupAbilities: [
       'maintenance_change:cluster',
       'cluster_host_start:cluster',
       'cluster_host_stop:cluster',
-      'reboot:host',
       'pacemaker_enable:cluster',
       'pacemaker_disable:cluster',
+      'resource_refresh:cluster',
+    ],
+  },
+  {
+    ability: 'operation:database',
+    tooltip: 'Permits running operations in databases',
+    groupAbilities: ['start:database', 'stop:database'],
+  },
+  {
+    ability: 'operation:sap_system',
+    tooltip: 'Permits running operations in SAP systems',
+    groupAbilities: [
       'start:application_instance',
       'stop:application_instance',
       'start:sap_system',
       'stop:sap_system',
-      'start:database',
-      'stop:database',
-      'resource_refresh:cluster',
     ],
   },
 ];
@@ -85,7 +100,10 @@ const mapAbilities = (abilities, operationsEnabled) =>
     }
 
     // remove operations abilities by now
-    if (!operationsEnabled && groupedAbility.ability === 'operation:all') {
+    if (
+      !operationsEnabled &&
+      startsWith(groupedAbility.ability, 'operation:')
+    ) {
       return acc;
     }
 
@@ -102,9 +120,6 @@ const mapAbilities = (abilities, operationsEnabled) =>
     });
   }, []);
 
-const unmapAbilities = (abilities) =>
-  abilities.map(({ value }) => value).flat();
-
 function AbilitiesMultiSelect({
   abilities,
   userAbilities,
@@ -114,12 +129,14 @@ function AbilitiesMultiSelect({
   ...props
 }) {
   return (
-    <MultiSelect
+    <Select
+      isMulti
+      isClearable
       aria-label="permissions"
       placeholder={placeholder}
-      values={mapAbilities(userAbilities, operationsEnabled)}
-      options={mapAbilities(abilities, operationsEnabled)}
-      onChange={(values) => setAbilities(unmapAbilities(values))}
+      initialValues={mapAbilities(userAbilities, operationsEnabled)}
+      options={orderBy(mapAbilities(abilities, operationsEnabled), ['label'])}
+      onChange={setAbilities}
       getOptionValue={(option) => option.value.toString()}
       {...props}
     />

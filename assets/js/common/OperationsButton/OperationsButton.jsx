@@ -1,6 +1,6 @@
 import React, { useRef, Fragment } from 'react';
 import classNames from 'classnames';
-import { some } from 'lodash';
+import { concat, some } from 'lodash';
 import {
   Menu,
   MenuButton,
@@ -90,7 +90,7 @@ function OperationsButton({
               <MenuItem>
                 <DisabledGuard
                   userAbilities={userAbilities}
-                  permitted={permitted}
+                  permitted={concat(permitted, 'operation:all')}
                   tooltipWrap
                 >
                   <CustomMenuButton

@@ -130,7 +130,7 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.nwqSystemIsNotDisplayed();
     });
 
-    it('should not display SAP System ${sapSystemNwd.sid} after deregistering both application instances', () => {
+    it('should not display SAP System after deregistering both application instances', () => {
       sapSystemsOverviewPage.sapSystemNwdIsDisplayed();
       sapSystemsOverviewPage.apiDeregisterNwdInstances();
       sapSystemsOverviewPage.sapSystemNwdIsNotDisplayed();

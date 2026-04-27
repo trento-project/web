@@ -15,7 +15,10 @@ describe('AbilitiesMultiSelect Component', () => {
       'all:checks_selection',
       'all:checks_execution',
       'cleanup:all',
-      'operation:all',
+      'operation:cluster',
+      'operation:database',
+      'operation:host',
+      'operation:sap_system',
     ];
     const abilities = [
       { id: 1, name: 'all', resource: 'host_checks_selection' },
@@ -74,7 +77,13 @@ describe('AbilitiesMultiSelect Component', () => {
     await user.click(screen.getByLabelText('permissions'));
     await user.click(screen.getByText('all:settings'));
     await user.click(screen.getByLabelText('permissions'));
-    await user.click(screen.getByText('operation:all'));
+    await user.click(screen.getByText('operation:cluster'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('operation:database'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('operation:host'));
+    await user.click(screen.getByLabelText('permissions'));
+    await user.click(screen.getByText('operation:sap_system'));
     await user.click(screen.getByLabelText('permissions'));
 
     expect(screen.getByText('No options')).toBeVisible();
@@ -151,7 +160,10 @@ describe('AbilitiesMultiSelect Component', () => {
 
     screen.getByText('all:checks_selection');
     screen.getByText('all:all');
-    screen.getByText('operation:all');
+    screen.getByText('operation:cluster');
+    screen.getByText('operation:database');
+    screen.getByText('operation:host');
+    screen.getByText('operation:sap_system');
     expect(
       screen.queryByText('all:host_checks_selection')
     ).not.toBeInTheDocument();

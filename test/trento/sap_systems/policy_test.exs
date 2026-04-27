@@ -57,6 +57,12 @@ defmodule Trento.SapSystems.PolicyTest do
         assert Policy.authorize(@operation, user, ApplicationInstanceReadModel)
       end
 
+      test "should allow #{operation} operation if the user has operation:all ability" do
+        user = %User{abilities: [%Ability{name: "operation", resource: "all"}]}
+
+        assert Policy.authorize(@operation, user, ApplicationInstanceReadModel)
+      end
+
       test "should disallow #{operation} operation if the user does not have #{ability}:application_instance ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "other_resource"}]}
 
@@ -89,6 +95,12 @@ defmodule Trento.SapSystems.PolicyTest do
 
       test "should allow #{operation} operation if the user has all:all ability" do
         user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
+
+        assert Policy.authorize(@operation, user, SapSystemReadModel)
+      end
+
+      test "should allow #{operation} operation if the user has operation:all ability" do
+        user = %User{abilities: [%Ability{name: "operation", resource: "all"}]}
 
         assert Policy.authorize(@operation, user, SapSystemReadModel)
       end

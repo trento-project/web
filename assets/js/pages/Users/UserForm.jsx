@@ -271,12 +271,10 @@ function UserForm({
           <div className="col-start-3 col-span-4">
             <Select
               className="w-full"
-              optionsName="status"
+              aria-label="status"
               options={['Enabled', 'Disabled']}
-              value={statusState}
-              onChange={(value) => {
-                setStatus(value);
-              }}
+              initialValues={[statusState]}
+              onChange={setStatus}
             />
           </div>
           {editing && (
@@ -317,14 +315,18 @@ function UserForm({
                   <div className="col-start-3 col-span-4">
                     <Select
                       className="w-full"
-                      optionsName="totp"
+                      aria-label="totp-status"
                       options={[
-                        { value: 'Enabled', disabled: !totpEnabledAt },
+                        {
+                          value: 'Enabled',
+                          label: 'Enabled',
+                          isDisabled: !totpEnabledAt,
+                        },
                         'Disabled',
                       ]}
-                      value={totpState ? 'Enabled' : 'Disabled'}
-                      onChange={(value) => {
-                        setTotpState(value === 'Enabled');
+                      initialValues={[totpState ? 'Enabled' : 'Disabled']}
+                      onChange={(state) => {
+                        setTotpState(state === 'Enabled');
                       }}
                     />
                   </div>

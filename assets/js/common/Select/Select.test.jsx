@@ -1,90 +1,135 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { map } from 'lodash';
 
 import userEvent from '@testing-library/user-event';
 import Select, { createOptionRenderer } from '.';
 
+const options = [
+  { value: 1, label: 'Orange', tooltip: 'A nice orange' },
+  { value: 2, label: 'Apple', tooltip: 'A nice apple' },
+  { value: 3, label: 'Banana', tooltip: 'A nice banana' },
+];
+
 describe('Select Component', () => {
-  const scenarios = [
-    {
-      optionsName: 'foos',
-      options: ['foo1', 'foo2', 'foo3'],
-      value: 'foo3',
-      selectedValue: 'foo3',
-      allOptions: ['foo1', 'foo2', 'foo3'],
-    },
-    {
-      optionsName: 'bars',
-      options: ['all', 'bar1', 'bar2', 'bar3'],
-      value: 'all',
-      selectedValue: 'all',
-      allOptions: ['all', 'bar1', 'bar2', 'bar3'],
-    },
-    {
-      optionsName: 'foobars',
-      options: ['all', 'foobar1', 'foobar2', 'foobar3'],
-      value: 'foobar1',
-      selectedValue: 'foobar1',
-      allOptions: ['all', 'foobar1', 'foobar2', 'foobar3'],
-    },
-    {
-      optionsName: 'structured options',
-      options: [
-        { value: 'all' },
-        { value: 'structured option 1' },
-        { value: 'structured option 2' },
-        { value: 'structured option 3' },
-      ],
-      value: 'structured option 1',
-      selectedValue: 'structured option 1',
-      allOptions: [
-        'all',
-        'structured option 1',
-        'structured option 2',
-        'structured option 3',
-      ],
-    },
-  ];
+  it('should display options', async () => {
+    const user = userEvent.setup();
 
-  it.each(scenarios)(
-    'should render the selected option',
-    ({ optionsName, options, value, selectedValue, allOptions }) => {
-      render(
-        <Select optionsName={optionsName} options={options} value={value} />
-      );
-      expect(screen.getByRole('button')).toHaveTextContent(selectedValue);
+    render(<Select options={options} />);
 
-      allOptions
-        .filter((option) => option !== selectedValue)
-        .forEach((option) => {
-          expect(screen.queryByText(option)).not.toBeInTheDocument();
-        });
-    }
-  );
+    await user.click(screen.getByText('Select...'));
+    options.forEach(({ label }) => {
+      expect(screen.getByText(label)).toBeVisible();
+    });
+  });
 
-  it.each(scenarios)(
-    'should render all the options when opened',
-    async ({ optionsName, options, value, selectedValue, allOptions }) => {
-      const user = userEvent.setup();
-      render(
-        <Select optionsName={optionsName} options={options} value={value} />
-      );
-      await user.click(screen.getByText(selectedValue));
+  it('should display options using simple strings', async () => {
+    const user = userEvent.setup();
+    const simpleOptions = ['Orange', 'Apple'];
 
-      expect(screen.getAllByText(selectedValue)).toHaveLength(2);
+    render(<Select options={simpleOptions} />);
 
-      allOptions
-        .filter((option) => option !== selectedValue)
-        .forEach((option) => {
-          expect(screen.getByText(option)).toBeInTheDocument();
-        });
-    }
-  );
+    await user.click(screen.getByText('Select...'));
+    simpleOptions.forEach((opt) => {
+      expect(screen.getByText(opt)).toBeVisible();
+    });
+  });
+
+  it('should display initial single value', () => {
+    render(<Select options={options} initialValues={[options[0]]} />);
+
+    expect(screen.getByText(options[0].label)).toBeVisible();
+  });
+
+  it('should display initial values in multi-select option', () => {
+    const values = options.slice(0, 1);
+
+    render(<Select options={options} initialValues={values} isMulti />);
+
+    expect(screen.getByText(values[0].label)).toBeVisible();
+  });
+
+  it('should disable the component', () => {
+    render(<Select options={options} isDisabled />);
+
+    const disabled = document.querySelector('[aria-disabled="true"]');
+
+    expect(disabled).toBeInTheDocument();
+  });
+
+  it('should change single value', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+
+    render(<Select options={options} onChange={mockOnChange} />);
+
+    await user.click(screen.getByText('Select...'));
+    await user.click(screen.getByText(options[0].label));
+
+    expect(mockOnChange).toHaveBeenCalledWith(options[0].value);
+  });
+
+  it('should change the values in a multi select option', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+
+    render(<Select options={options} onChange={mockOnChange} isMulti />);
+
+    await user.click(screen.getByText('Select...'));
+    await user.click(screen.getByText(options[0].label));
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      map(options.slice(0, 1), 'value')
+    );
+
+    await user.click(screen.getByText(options[0].label));
+    await user.click(screen.getByText(options[1].label));
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      map(options.slice(0, 2), 'value')
+    );
+
+    const deleteIcons = screen.getAllByRole('button');
+    await user.click(deleteIcons[0]);
+
+    expect(mockOnChange).toHaveBeenCalledWith(
+      map(options.slice(1, 2), 'value')
+    );
+
+    const deleteAll = document.querySelector('[data-slot="icon"]');
+    await user.click(deleteAll);
+
+    expect(mockOnChange).toHaveBeenCalledWith([]);
+    expect(screen.getByText('Select...')).toBeVisible();
+  });
+
+  it('should render disabled options', async () => {
+    const user = userEvent.setup();
+
+    const optionsWithDisabled = [
+      'all',
+      { label: 'option1', value: 'option1', isDisabled: true },
+      'option2',
+      'option3',
+    ];
+
+    render(<Select options={optionsWithDisabled} initialValues={['all']} />);
+
+    await user.click(screen.getByText('all'));
+    expect(screen.getByText('option1')).toHaveAttribute(
+      'aria-disabled',
+      'true'
+    );
+    expect(screen.getByText('option3')).toHaveAttribute(
+      'aria-disabled',
+      'false'
+    );
+  });
 
   it('should render options via a custom option renderer', async () => {
     const user = userEvent.setup();
-    const options = ['option1', 'option2', 'option3'];
+    const simpleOptions = ['option1', 'option2', 'option3'];
 
     const optionRenderer = createOptionRenderer(
       'All foobars',
@@ -93,80 +138,16 @@ describe('Select Component', () => {
 
     render(
       <Select
-        optionsName="foobars"
-        options={['all', ...options]}
-        value="all"
+        options={['all', ...simpleOptions]}
+        initialValues={['all']}
         renderOption={optionRenderer}
       />
     );
 
     await user.click(screen.getByText('All foobars'));
 
-    options.forEach((option) => {
+    simpleOptions.forEach((option) => {
       expect(screen.getByText(`custom ${option}`)).toBeInTheDocument();
     });
-  });
-
-  it('should notify about a new option being selected', async () => {
-    const user = userEvent.setup();
-    const mockOnChange = jest.fn();
-
-    const options = ['option1', 'option2', 'option3'];
-
-    render(
-      <Select
-        optionsName="foobars"
-        options={options}
-        value="option1"
-        onChange={mockOnChange}
-      />
-    );
-
-    await user.click(screen.getByText('option1'));
-    await user.click(screen.getByText('option2'));
-
-    expect(mockOnChange).toHaveBeenCalledWith('option2');
-  });
-
-  it('should render a disabled select', async () => {
-    const user = userEvent.setup();
-
-    const options = ['option1', 'option2', 'option3'];
-
-    render(
-      <Select
-        optionsName="foobars"
-        options={options}
-        value="option1"
-        disabled
-      />
-    );
-
-    expect(screen.getByRole('button')).toBeDisabled();
-
-    await user.click(screen.getByText('option1'));
-    expect(screen.queryByText('option2')).not.toBeInTheDocument();
-  });
-
-  it('should render disabled options', async () => {
-    const user = userEvent.setup();
-
-    const options = [
-      'all',
-      { value: 'option1', disabled: true },
-      'option2',
-      'option3',
-    ];
-
-    render(<Select optionsName="foobars" options={options} value="all" />);
-
-    await user.click(screen.getByText('all'));
-    expect(screen.getByText('option1').parentNode).toHaveAttribute(
-      'aria-disabled',
-      'true'
-    );
-    expect(screen.getByText('option3').parentNode).not.toHaveAttribute(
-      'aria-disabled'
-    );
   });
 });

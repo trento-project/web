@@ -157,12 +157,19 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
 
   return (
     <Select
-      disabled={disabled}
-      optionsName="refresh-rate"
+      isDisabled={disabled}
+      aria-label="refresh-rate"
       options={refreshRateOptions}
       value={refreshRate}
+      initialValues={[refreshRate]}
       renderOption={createOptionRenderer(null, (value) => (
         <span className="text-center block">
+          {refreshRateOptionsToLabel[value]}
+        </span>
+      ))}
+      renderControlOption={createOptionRenderer(null, (value) => (
+        <span className="text-center block">
+          <EOS_UPDATE_FILLED className="absolute" />
           {refreshRateOptionsToLabel[value]}
         </span>
       ))}
@@ -170,7 +177,6 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
         setRefreshRate(newRefreshRate);
         onChange(newRefreshRate);
       }}
-      selectedItemPrefix={<EOS_UPDATE_FILLED className="absolute" />}
     />
   );
 }

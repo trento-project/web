@@ -84,25 +84,6 @@ export const getEnrichedDatabaseDetails = createSelector(
   }
 );
 
-export const getInstancesOnHost = createSelector(
-  [
-    (state) => state.sapSystemsList.applicationInstances,
-    (state) => state.databasesList.databaseInstances,
-    (_, hostID) => hostID,
-  ],
-  (applicationInstances, databaseInstances, hostID) => {
-    const foundDatabaseInstances = filter(databaseInstances, {
-      host_id: hostID,
-    }).map((instance) => ({ ...instance, type: DATABASE_TYPE }));
-
-    const foundApplicationInstances = filter(applicationInstances, {
-      host_id: hostID,
-    }).map((instance) => ({ ...instance, type: APPLICATION_TYPE }));
-
-    return [...foundApplicationInstances, ...foundDatabaseInstances];
-  }
-);
-
 export const getAllSAPInstances = createSelector(
   [
     (state) => state.sapSystemsList.applicationInstances,
@@ -110,11 +91,19 @@ export const getAllSAPInstances = createSelector(
   ],
   (applicationInstances, databaseInstances) =>
     applicationInstances
-      .map((instance) => ({ ...instance, type: 'sap_systems' }))
+      .map((instance) => ({ ...instance, type: APPLICATION_TYPE }))
       .concat(
         databaseInstances.map((instance) => ({
           ...instance,
-          type: 'databases',
+          type: DATABASE_TYPE,
         }))
       )
+);
+
+export const getInstancesOnHost = createSelector(
+  [getAllSAPInstances, (_, hostID) => hostID],
+  (instances, hostID) =>
+    filter(instances, {
+      host_id: hostID,
+    })
 );
