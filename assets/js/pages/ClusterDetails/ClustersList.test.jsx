@@ -6,9 +6,17 @@ import '@testing-library/jest-dom';
 import {
   clusterFactory,
   clusteredSapInstanceFactory,
+  sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { renderWithRouter, withState } from '@lib/test-utils';
+
+import {
+  ASCS_ERS,
+  HANA_ASCS_ERS,
+  HANA_SCALE_UP,
+  HANA_SCALE_OUT,
+} from '@lib/model/clusters';
 
 import ClustersList from './ClustersList';
 
@@ -272,5 +280,74 @@ describe('ClustersList component', () => {
         )
       ).toBeInTheDocument();
     });
+  });
+
+  describe('clustered SAP systems', () => {
+    it('should identify SAP instance type correctly when SAP instance available', async () => {
+      const sid = 'PRD';
+
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: clusterFactory.buildList(1, {
+            sap_instances: [{ sid }],
+          }),
+        },
+        sapSystemsList: {
+          applicationInstances: sapSystemApplicationInstanceFactory.buildList(
+            1,
+            { sid }
+          ),
+        },
+        databasesList: {
+          databaseInstances: [],
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+
+      renderWithRouter(StatefulClustersList);
+
+      expect(screen.getByRole('link', { name: sid })).toBeInTheDocument();
+    });
+
+    it.each([
+      { type: ASCS_ERS, tooltip: 'SAP system currently not registered' },
+      { type: HANA_ASCS_ERS, tooltip: 'System currently not registered' },
+      {
+        type: HANA_SCALE_UP,
+        tooltip: 'HANA database currently not registered',
+      },
+      {
+        type: HANA_SCALE_OUT,
+        tooltip: 'HANA database currently not registered',
+      },
+    ])(
+      'should identify $type instance type correctly when SAP instance is not available',
+      async ({ type, tooltip }) => {
+        const user = userEvent.setup();
+        const sid = 'PRD';
+
+        const state = {
+          ...cleanInitialState,
+          clustersList: {
+            clusters: clusterFactory.buildList(1, {
+              type,
+              sap_instances: [{ sid }],
+            }),
+          },
+        };
+
+        const [StatefulClustersList] = withState(<ClustersList />, state);
+
+        renderWithRouter(StatefulClustersList);
+
+        const sidLabel = screen.getByText(sid);
+        expect(sidLabel).toBeInTheDocument();
+
+        await user.hover(sidLabel);
+        await expect(screen.getByText(tooltip)).toBeInTheDocument();
+      }
+    );
   });
 });
