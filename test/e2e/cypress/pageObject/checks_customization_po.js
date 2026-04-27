@@ -118,19 +118,19 @@ export const clickResetModalButton = () => cy.get(resetButton).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
 export const clickModalSaveButton = () => cy.get(saveButtonModal).click();
-const _setInputValue = (valueName, newValue) => {
-  cy.get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
+const _setInputValue = (valueName, newValue) =>
+  cy
+    .get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
     .clear()
     .type(newValue)
     .should('have.value', newValue);
-};
+
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
 export const clickStartExecutionButton = () =>
   cy.get(startExecutionButton).click();
-export const inputCheckValue = (valueName, newValue) => {
+export const inputCheckValue = (valueName, newValue) =>
   _setInputValue(valueName, newValue);
-};
 
 export const clickCorosyncSelectionToggle = () =>
   cy.get(corosyncheckSelectionToggle).click();
@@ -165,35 +165,33 @@ export const modalWarningCheckBoxShouldBeChecked = () =>
   cy.get(modalCheckbox).should('be.checked');
 export const validateWarningMessage = () =>
   cy.get(modalSpan).should('contain', modalWarningCheckboxLabel);
-const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
-  cy.get(modalValueDefault)
+const _validateValueNameAndDefaultValue = (valueName, defaultValue) =>
+  cy
+    .get(modalValueDefault)
     .should('contain', valueName)
     .and('contain', defaultValue);
-};
 
 export const validateFirstCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     firstCheckValueName,
     firstCheckDefaultValue
   );
-export const validateSecondCheckValueNameAndDefaultValue = () => {
+export const validateSecondCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     secondCheckValueName,
     secondCheckDefaultValue
   );
-};
 
 export const validateCurrentValueFromWandaFirstCheck = () =>
   _validateModalInputValue(modalInput, firstCurrentCheckValue);
-export const validateCustomizedValue = () => {
+export const validateCustomizedValue = () =>
   _validateModalInputValue(modalInput, customValue);
-};
 
-const _validateModalInputValue = (element, expectedValue) => {
-  cy.get(`${element}[value="${expectedValue}"]`)
+const _validateModalInputValue = (element, expectedValue) =>
+  cy
+    .get(`${element}[value="${expectedValue}"]`)
     .should('be.visible')
     .and('have.value', expectedValue);
-};
 
 export const validateProviderLabel = () =>
   cy.get(modalProvider).should('have.text', modalProviderLabel);
@@ -269,18 +267,16 @@ const _resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       method: 'DELETE',
-      url: `${Cypress.config(
+      url: `${Cypress.env(
         'wandaUrl'
       )}/api/v1/groups/${groupId}/checks/${checkId}/customization`,
       auth: { bearer: accessToken },
       failOnStatusCode: false,
     })
   );
-const _resetChecks = (checks) => {
-  checks.forEach(({ id }) => {
-    _resetCheck(availableHanaCluster.id, id);
-  });
-};
+
+const _resetChecks = (checks) =>
+  cy.wrap(checks).each(({ id }) => _resetCheck(availableHanaCluster.id, id));
 export const apiResetAllChecks = () => _resetChecks(checkList);
 
 export const apiResetCheckSelection = () =>

@@ -14,7 +14,10 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import { apiLoginAndCreateSession } from '../pageObject/base_po';
+import {
+  apiLoginAndCreateSession,
+  apiDeregisterProdHost,
+} from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -26,4 +29,12 @@ before(() => {
   if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
     apiLoginAndCreateSession();
   }
+
+  // This is required to not break cypress tests when running against a prod instance (which installs a real agent)
+  if (Cypress.config().baseUrl.includes('target')) apiDeregisterProdHost();
+});
+
+// This is needed because requests that depend on Prometheus in a real environment return a 500 in SLES16, this can be removed once TRNT-4344 is done.
+Cypress.on('uncaught:exception', () => {
+  if (Cypress.config().baseUrl.includes('target16sp0')) return false;
 });

@@ -100,7 +100,9 @@ export const onlyFirstCheckGroupIsExpanded = () =>
 
 export const expectedCheckGroupsAreIncluded = () => {
   const groups = getCheckGroupsNames();
-  return groups.forEach((group) => cy.get(groupNames).should('contain', group));
+  return cy
+    .wrap(groups)
+    .each((group) => cy.get(groupNames).should('contain', group));
 };
 
 export const eachGroupShouldBeExpanded = () => {
@@ -161,9 +163,9 @@ export const eachGroupHasExpectedCheckIds = () => {
   expandAllGroups();
   const catalogIds = catalog.map((item) => item.id);
 
-  return catalogIds.forEach((id) => {
-    cy.get(`p:contains("${id}")`).should('be.visible');
-  });
+  return cy
+    .wrap(catalogIds)
+    .each((id) => cy.get(`p:contains("${id}")`).should('be.visible'));
 };
 
 export const expectedTargetTypeClusterIconsAreDisplayed = () =>

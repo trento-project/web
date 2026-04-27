@@ -40,7 +40,7 @@ export const emailIsReceived = (type) =>
     .then((result) => cy.wrap(result.length).should('equal', 1));
 
 export const triggerHostAlertingEmail = () => {
-  cy.task('startAgentHeartbeat', ['9cd46919-5f19-59aa-993e-cf3736c71053']);
+  basePage.startAgentsHeartbeat(['9cd46919-5f19-59aa-993e-cf3736c71053']);
   return basePage.stopAgentsHeartbeat();
 };
 
@@ -55,5 +55,6 @@ export const triggerSapSystemAlertingEmail = () =>
 export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
 
-export const deleteAllEmailsFromMailpit = () =>
-  cy.task('deleteAllEmailsFromMailpit');
+export const deleteAllEmailsFromMailpit = () => {
+  if (Cypress.env('ALERTING_TESTS')) cy.task('deleteAllEmailsFromMailpit');
+};

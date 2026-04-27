@@ -57,9 +57,7 @@ export const addTagByColumnValue = (columnValue, tagValue) =>
   cy
     .get(`td:contains(${columnValue})`)
     .parents('tr')
-    .within(() => {
-      cy.get(addTagButtons).type(`${tagValue}{enter}`);
-    });
+    .within(() => cy.get(addTagButtons).type(`${tagValue}{enter}`));
 
 export const clickActivityLogNavigationItem = () =>
   cy.get(navigation.activityLog).click();
@@ -144,9 +142,9 @@ export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');
 
 export const validateItemNotPresentInNavigationMenu = (itemName) =>
-  cy.get(navigation.navigationItems).each(($element) => {
-    cy.wrap($element).should('not.include.text', itemName);
-  });
+  cy
+    .get(navigation.navigationItems)
+    .each(($element) => cy.wrap($element).should('not.include.text', itemName));
 
 export const validateItemPresentInNavigationMenu = (navigationMenuItem) =>
   cy.get(`a:contains("${navigationMenuItem}")`).should('be.visible');
@@ -221,19 +219,17 @@ export const apiDeleteAllUsers = () =>
         method: 'GET',
         auth: { bearer: accessToken },
       })
-      .then(({ body: users }) => {
-        users.forEach(({ id }) => {
-          if (id !== 1) apiDeleteUser(id, accessToken);
-        });
-      })
+      .then(({ body: users }) =>
+        cy.wrap(users).each(({ id }) => {
+          if (id !== 1) return apiDeleteUser(id, accessToken);
+        })
+      )
   );
 
 export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
 
-export const preloadTestData = ({
-  isDataLoadedFunc = isTestDataLoaded,
-} = {}) => {
+export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
   /**
    * Preload required test data.
    * It must run photofinish scenario twice as the order of sent payloads is relevant
@@ -242,26 +238,52 @@ export const preloadTestData = ({
    */
   isDataLoadedFunc().then((isLoaded) => {
     if (!isLoaded) loadScenario('healthy-27-node-SAP-cluster');
+    return loadScenario('healthy-27-node-SAP-cluster');
   });
-  loadScenario('healthy-27-node-SAP-cluster');
-};
 
 export const loadScenario = (scenario) => {
-  const [projectRoot, photofinishBinary, webAPIHost, webAPIPort] = [
+  const [projectRoot, photofinishBinary] = [
     Cypress.env('project_root'),
     Cypress.env('photofinish_binary'),
-    Cypress.env('web_api_host'),
-    Cypress.env('web_api_port'),
   ];
-  if (photofinishBinary) {
-    cy.log(`Loading scenario "${scenario}"...`);
-    return cy.exec(
-      `cd ${projectRoot} && ${photofinishBinary} run --url "http://${webAPIHost}:${webAPIPort}/api/v1/collect" ${scenario}`
-    );
-  } else {
-    return cy.log(`Photofinish is not used.`);
+  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const photofinishExecTimeout = isTrentoProdInstance ? 180000 : 60000;
+
+  const baseUrl = Cypress.config().baseUrl;
+
+  if (!photofinishBinary) {
+    cy.log('Photofinish binary not present');
+    return;
   }
+
+  let photofinishCommand = `cd ${projectRoot} && ${photofinishBinary} run --url "${baseUrl}/api/v1/collect" ${scenario}`;
+
+  const runPhotofinish = (apiKey) => {
+    photofinishCommand = apiKey
+      ? `${photofinishCommand} "${apiKey}"`
+      : photofinishCommand;
+    cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
+    return cy.exec(photofinishCommand, {
+      timeout: photofinishExecTimeout,
+    });
+  };
+
+  if (Cypress.env('web_mode') === 'dev') return runPhotofinish();
+  else return getApiKey().then((apiKey) => runPhotofinish(apiKey));
 };
+
+export const getApiKey = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/settings/api_key',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then((response) => response.body.generated_api_key)
+  );
 
 const isTestDataLoaded = () =>
   apiLogin().then(({ accessToken }) =>
@@ -275,6 +297,16 @@ const isTestDataLoaded = () =>
       })
       .then(({ body }) => body.length !== 0)
   );
+
+export const startAgentsHeartbeat = (agents) => {
+  if (Cypress.env('web_mode') === 'dev') {
+    return cy.task('startAgentHeartbeat', { agents });
+  }
+
+  return getApiKey().then((apiKey) =>
+    cy.task('startAgentHeartbeat', { agents, apiKey })
+  );
+};
 
 export const apiCreateUserWithAbilities = (abilities) =>
   apiLogin().then(({ accessToken }) =>
@@ -330,6 +362,22 @@ export const apiDeregisterHost = (hostId) =>
       });
     } else return;
   });
+
+export const apiDeregisterProdHost = () =>
+  apiLogin().then(({ accessToken }) =>
+    cy
+      .request({
+        url: '/api/v1/hosts',
+        method: 'GET',
+        auth: {
+          bearer: accessToken,
+        },
+      })
+      .then(({ body }) => {
+        const hostId = body[0].id;
+        return apiDeregisterHost(hostId);
+      })
+  );
 
 export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
 

@@ -243,10 +243,7 @@ export const setAlertingEnabledEditSwitch = (value) =>
     .invoke('attr', 'aria-checked')
     .then((checked) => {
       const currentlyChecked = checked == 'true';
-      if (currentlyChecked == value) {
-        return;
-      }
-
+      if (currentlyChecked == value) return;
       return cy.get(alertingEnabledEditSwitch).click();
     });
 
@@ -481,27 +478,29 @@ export const expectedSavingValidationsAreDisplayed = () => {
     },
   ];
 
-  return savingValidationScenarios.forEach(({ values, expectedErrors }) => {
-    clickSumaEditSettingsButton();
-    values.forEach(({ selector, value }) =>
-      cy.get(selector).type(value, { delay: 0 })
-    );
+  return cy
+    .wrap(savingValidationScenarios)
+    .each(({ values, expectedErrors }) => {
+      clickSumaEditSettingsButton();
+      cy.wrap(values).each(({ selector, value }) =>
+        cy.get(selector).type(value, { delay: 0 })
+      );
 
-    clickSumaSettingsModalSaveButton();
-    basePage.waitForRequest('settingsEndpoint');
+      clickSumaSettingsModalSaveButton();
+      basePage.waitForRequest('settingsEndpoint');
 
-    expectedErrors.forEach(({ selector, error }) => {
-      const errorMessageSelector = `${selector.split('+')[0]} + div p`;
-      error
-        ? cy.get(errorMessageSelector).should('have.text', error)
-        : cy.get(errorMessageSelector).should('not.exist');
+      cy.wrap(expectedErrors).each(({ selector, error }) => {
+        const errorMessageSelector = `${selector.split('+')[0]} + div p`;
+        error
+          ? cy.get(errorMessageSelector).should('have.text', error)
+          : cy.get(errorMessageSelector).should('not.exist');
+      });
+      clickModalCancelButton();
+      sumaUrlHasExpectedValue('https://');
+      sumaCaCertUploadDateHasExpectedValue('-');
+      sumaUsernameHasExpectedValue('.....');
+      sumaPasswordHasExpectedValue('.....');
     });
-    clickModalCancelButton();
-    sumaUrlHasExpectedValue('https://');
-    sumaCaCertUploadDateHasExpectedValue('-');
-    sumaUsernameHasExpectedValue('.....');
-    sumaPasswordHasExpectedValue('.....');
-  });
 };
 
 export const eachSaveSettingsScenarioWorkAsExpected = () => {
@@ -528,9 +527,9 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
     },
   ];
 
-  return savingScenarios.forEach(({ values, expectCertUploadDate }) => {
+  return cy.wrap(savingScenarios).each(({ values, expectCertUploadDate }) => {
     clickSumaEditSettingsButton();
-    values.forEach(({ selector, value }) =>
+    cy.wrap(values).each(({ selector, value }) =>
       cy.get(selector).type(value, { delay: 0 })
     );
 
@@ -546,7 +545,7 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
     sumaPasswordHasExpectedValue('•••••');
 
     basePage.clearSUMASettings();
-    basePage.refresh();
+    return basePage.refresh();
   });
 };
 
@@ -562,7 +561,7 @@ export const editFormIsDisplayedAsExpected = () => {
     },
   ];
 
-  return initialEditFormScenarios.forEach(({ settings }) => {
+  return cy.wrap(initialEditFormScenarios).each(({ settings }) => {
     basePage.saveSUMASettings(settings);
     basePage.refresh();
     clickSumaEditSettingsButton();
@@ -579,7 +578,7 @@ export const editFormIsDisplayedAsExpected = () => {
     cy.get(sumaSettingsModal.passwordInput).should('not.exist');
     _removePasswordButtonIsDisplayed();
     clickModalCancelButton();
-    basePage.clearSUMASettings();
+    return basePage.clearSUMASettings();
   });
 };
 
@@ -639,49 +638,51 @@ export const changingSettingsValidationsWorkAsExpected = () => {
     },
   ];
 
-  return changingValidationScenarios.forEach(
-    ({
-      withInitialCert = false,
-      changeInitialPassword = false,
-      newValues,
-      expectedErrors,
-    }) => {
-      const initialSettings = {
-        ...baseInitialSettings,
-        ...(withInitialCert && { ca_cert: validCertificate }),
-      };
-      basePage.saveSUMASettings(initialSettings);
-      basePage.refresh();
-      basePage.waitForRequest('settingsEndpoint');
-      clickSumaEditSettingsButton();
+  return cy
+    .wrap(changingValidationScenarios)
+    .each(
+      ({
+        withInitialCert = false,
+        changeInitialPassword = false,
+        newValues,
+        expectedErrors,
+      }) => {
+        const initialSettings = {
+          ...baseInitialSettings,
+          ...(withInitialCert && { ca_cert: validCertificate }),
+        };
+        basePage.saveSUMASettings(initialSettings);
+        basePage.refresh();
+        basePage.waitForRequest('settingsEndpoint');
+        clickSumaEditSettingsButton();
 
-      if (withInitialCert) _clickRemoveSumaCaCertButton();
-      if (changeInitialPassword) _clickRemovePasswordButton();
+        if (withInitialCert) _clickRemoveSumaCaCertButton();
+        if (changeInitialPassword) _clickRemovePasswordButton();
 
-      newValues.forEach(({ selector, value }) => {
-        cy.get(selector).clear().type(value, { delay: 0 });
-      });
+        cy.wrap(newValues).each(({ selector, value }) =>
+          cy.get(selector).clear().type(value, { delay: 0 })
+        );
 
-      clickSumaSettingsModalSaveButton();
-      basePage.waitForRequest('settingsEndpoint');
+        clickSumaSettingsModalSaveButton();
+        basePage.waitForRequest('settingsEndpoint');
 
-      expectedErrors.forEach(({ selector, error }) => {
-        const errorMessageSelector = `${selector.split('+')[0]} + div p`;
-        error
-          ? cy.get(errorMessageSelector).should('have.text', error)
-          : cy.get(errorMessageSelector).should('not.exist');
-      });
-      clickModalCancelButton();
-      sumaUrlHasExpectedValue(baseInitialSettings.url);
-      const expectedSumaCaCertValue = withInitialCert
-        ? 'Certificate Uploaded'
-        : '-';
-      sumaCaCertUploadDateHasExpectedValue(expectedSumaCaCertValue);
-      sumaUsernameHasExpectedValue(baseInitialSettings.username);
-      sumaPasswordHasExpectedValue('•••••');
-      basePage.clearSUMASettings();
-    }
-  );
+        cy.wrap(expectedErrors).each(({ selector, error }) => {
+          const errorMessageSelector = `${selector.split('+')[0]} + div p`;
+          error
+            ? cy.get(errorMessageSelector).should('have.text', error)
+            : cy.get(errorMessageSelector).should('not.exist');
+        });
+        clickModalCancelButton();
+        sumaUrlHasExpectedValue(baseInitialSettings.url);
+        const expectedSumaCaCertValue = withInitialCert
+          ? 'Certificate Uploaded'
+          : '-';
+        sumaCaCertUploadDateHasExpectedValue(expectedSumaCaCertValue);
+        sumaUsernameHasExpectedValue(baseInitialSettings.username);
+        sumaPasswordHasExpectedValue('•••••');
+        return basePage.clearSUMASettings();
+      }
+    );
 };
 
 export const sumaSettingsAreCorrectlyChanged = () => {
@@ -739,7 +740,7 @@ export const sumaSettingsAreCorrectlyChanged = () => {
     },
   ];
 
-  return changingSettingsScenarios.forEach((scenario) => {
+  return cy.wrap(changingSettingsScenarios).each((scenario) => {
     const {
       withInitialCert = false,
       changeInitialPassword = false,
@@ -763,7 +764,7 @@ export const sumaSettingsAreCorrectlyChanged = () => {
     if (changeInitialCaCert) _clickRemoveSumaCaCertButton();
     if (changeInitialPassword) _clickRemovePasswordButton();
 
-    newValues.forEach(({ selector, value }) =>
+    cy.wrap(newValues).each(({ selector, value }) =>
       cy.get(selector).clear().type(value, { delay: 0 })
     );
 
@@ -783,7 +784,7 @@ export const sumaSettingsAreCorrectlyChanged = () => {
       : baseInitialSettings.username;
     sumaUsernameHasExpectedValue(expectedUsername);
     sumaPasswordHasExpectedValue('•••••');
-    basePage.clearSUMASettings();
+    return basePage.clearSUMASettings();
   });
 };
 
@@ -855,9 +856,9 @@ export const copyToClipboardButtonIsDisplayed = () =>
   cy.get(copyToClipboardButton).should('be.visible');
 
 export const showExpectedErrors = (errConfig) =>
-  errConfig.forEach(({ selector, error }) => {
-    cy.get(selector).should('have.text', error);
-  });
+  cy
+    .wrap(errConfig)
+    .each(({ selector, error }) => cy.get(selector).should('have.text', error));
 
 const alertingConfigDisplaysSettings = ({
   enabled,
@@ -873,7 +874,7 @@ const alertingConfigDisplaysSettings = ({
   cy.get(alertingUsername).should('have.text', smtpUsername);
   cy.get(alertingPassword).should('have.text', '•••••');
   cy.get(alertingSender).should('have.text', senderEmail);
-  cy.get(alertingRecipient).should('have.text', recipientEmail);
+  return cy.get(alertingRecipient).should('have.text', recipientEmail);
 };
 
 export const alertingConfigDisplaysDevEnvValues = () =>
@@ -938,7 +939,9 @@ const alertingEditFormDisplaysSettings = ({
   cy.get(alertingPasswordDisplayField).should('have.text', '•••••');
   alertingRemovePasswordButtonIsVisible();
   cy.get(alertingSenderEditField).should('have.value', senderEmail);
-  cy.get(alertingRecipientEditField).should('have.value', recipientEmail);
+  return cy
+    .get(alertingRecipientEditField)
+    .should('have.value', recipientEmail);
 };
 
 export const alertingEditFormDisplaysInitialSettings = () =>
