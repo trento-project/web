@@ -32,12 +32,9 @@ import ClusterLink from './ClusterLink';
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);
 
-// getSapSystemType gets the current SAP system type.
-// if the SAP system is not found, it evaluates the
-// cluster type.
-const getSapSystemType = (systemType, clusterType) => {
-  if (systemType) return systemType;
-
+// getSapSystemType gets the current SAP system type
+// evaluating the cluster type.
+const getSapSystemType = (clusterType) => {
   switch (clusterType) {
     case ASCS_ERS:
       return APPLICATION_TYPE;
@@ -104,10 +101,9 @@ function ClustersList() {
             return (
               <span key={singleSid}>
                 <SapSystemLink
-                  systemType={getSapSystemType(
-                    sapSystemData?.type,
-                    clusterType
-                  )}
+                  systemType={
+                    sapSystemData?.type ?? getSapSystemType(clusterType)
+                  }
                   sapSystemId={getInstanceID(sapSystemData)}
                 >
                   {singleSid}
