@@ -17,7 +17,7 @@ describe('SapSystemLink', () => {
       </SapSystemLink>
     );
 
-    const sapSystemLinkElement = screen.getByRole('link', { sid });
+    const sapSystemLinkElement = screen.getByRole('link', { name: sid });
 
     expect(sapSystemLinkElement).toBeInTheDocument();
     expect(sapSystemLinkElement).toHaveAttribute('href', `/databases/${id}`);
@@ -32,7 +32,7 @@ describe('SapSystemLink', () => {
       </SapSystemLink>
     );
 
-    const sapSystemLinkElement = screen.getByRole('link', { sid });
+    const sapSystemLinkElement = screen.getByRole('link', { name: sid });
 
     expect(sapSystemLinkElement).toBeInTheDocument();
     expect(sapSystemLinkElement).toHaveAttribute('href', `/sap_systems/${id}`);
