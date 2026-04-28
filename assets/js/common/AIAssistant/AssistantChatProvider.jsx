@@ -2,52 +2,20 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
-import { WebSocketAIAgent } from './WebSocketAIAgent';
-import { getSocketInstance, initSocketConnection } from '@lib/network/socket';
 import { useSelector } from 'react-redux';
+
+import { useSocket } from '@common/SocketProvider';
 import { getUserProfile } from '@state/selectors/user';
+
+import { WebSocketAIAgent } from './WebSocketAIAgent';
 
 export function AssistantChatProvider({ children }) {
   const user = useSelector(getUserProfile);
   const userId = user?.id;
-
-  // Phoenix socket instance (singleton)
-  const socketRef = useRef(null);
-
-  // Track when socket is ready
-  const [socketReady, setSocketReady] = useState(false);
+  const socket = useSocket();
 
   // Connection status state
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
-
-  // Initialize Phoenix socket
-  useEffect(() => {
-    if (!userId) {
-      setSocketReady(false);
-      return;
-    }
-
-    // Try to get existing socket first (created by Redux saga)
-    let socket = getSocketInstance();
-
-    // If no socket exists yet, create one
-    // This ensures the socket is available even if saga hasn't run yet
-    if (!socket) {
-      socket = initSocketConnection();
-    }
-
-    socketRef.current = socket;
-    setSocketReady(true);
-
-    // Cleanup on unmount
-    return () => {
-      if (socketRef.current) {
-        // Don't disconnect the socket as it's shared across the app
-        // socketRef.current.disconnect();
-      }
-      setSocketReady(false);
-    };
-  }, [userId]);
 
   // In-memory thread storage for multi-thread support
   const threadsRef = useRef(new Map());
@@ -59,23 +27,17 @@ export function AssistantChatProvider({ children }) {
 
   // Create WebSocketAIAgent for AG-UI protocol
   const agent = useMemo(() => {
-    if (!socketReady || !socketRef.current) {
-      return null;
-    }
-
-    if (!userId) {
+    if (!socket || !userId) {
       return null;
     }
 
     return new WebSocketAIAgent({
-      socket: socketRef.current,
+      socket,
       userId,
       threadId: currentThreadId,
-      onConnectionChange: (status) => {
-        setConnectionStatus(status);
-      },
+      onConnectionChange: setConnectionStatus,
     });
-  }, [socketReady, userId, currentThreadId]);
+  }, [socket, userId, currentThreadId]);
 
   // Initialize agent connection when agent is created
   useEffect(() => {
@@ -129,10 +91,6 @@ export function AssistantChatProvider({ children }) {
   // Create AG-UI runtime
   const runtime = useAgUiRuntime({
     agent,
-    // logger: {
-    //   debug: (...a) => console.debug('[ag-ui]', ...a),
-    //   error: (...a) => console.error('[ag-ui]', ...a),
-    // },
     adapters: {
       threadList: threadListAdapter,
     },

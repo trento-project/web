@@ -4,9 +4,8 @@ import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 
-jest.mock('@lib/network/socket', () => ({
-  getSocketInstance: jest.fn(),
-  initSocketConnection: jest.fn(),
+jest.mock('@common/SocketProvider', () => ({
+  useSocket: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/react-ag-ui', () => ({
@@ -37,7 +36,7 @@ jest.mock('./WebSocketAIAgent', () => {
   };
 });
 
-import { getSocketInstance, initSocketConnection } from '@lib/network/socket';
+import { useSocket } from '@common/SocketProvider';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import * as agentModule from './WebSocketAIAgent';
 import {
@@ -86,7 +85,7 @@ beforeEach(() => {
     connect: jest.fn(),
     disconnect: jest.fn(),
   };
-  getSocketInstance.mockReturnValue(fakeSocket);
+  useSocket.mockReturnValue(fakeSocket);
 });
 
 afterEach(() => {
@@ -99,13 +98,11 @@ describe('AssistantChatProvider', () => {
     expect(screen.getByTestId('child')).toBeVisible();
   });
 
-  it('initialises a new socket when none is available', () => {
-    getSocketInstance.mockReturnValue(null);
-    initSocketConnection.mockReturnValue(fakeSocket);
-
+  it('does not create the agent when no socket is available', () => {
+    useSocket.mockReturnValue(null);
     renderWithProvider(userStore());
-
-    expect(initSocketConnection).toHaveBeenCalledTimes(1);
+    expect(lastRuntimeOptions().agent).toBeNull();
+    expect(agentModule.__getInstances()).toHaveLength(0);
   });
 
   it('does not create the agent when there is no user id', () => {
