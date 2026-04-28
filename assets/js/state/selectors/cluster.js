@@ -1,4 +1,4 @@
-import { get, find, uniq, has, includes } from 'lodash';
+import { get, find, uniq, has } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
 import {
@@ -149,12 +149,11 @@ export const getClustersWithEnrichedSapInstances = createSelector(
         .map(getHostID);
 
       const enrichedSapInstances = cluster.sap_instances.map((sapInstance) => {
-        const instanceData = find(
-          allInstances,
+        const instanceData = allInstances.find(
           ({ sid, instance_number: instanceNumber, host_id: hostID }) =>
             sid === sapInstance.sid &&
             instanceNumber === sapInstance.instance_number &&
-            includes(clusterHostIDs, hostID)
+            clusterHostIDs.includes(hostID)
         );
         return { ...sapInstance, ...instanceData };
       });
