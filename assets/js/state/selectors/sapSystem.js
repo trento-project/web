@@ -2,12 +2,12 @@ import { filter } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { getCluster } from '@state/selectors/cluster';
-import { getHost } from '@state/selectors/host';
 
-const enrichInstance = (instance) => (state) => {
-  const host = getHost(instance.host_id)(state);
-  const cluster = getCluster(host?.cluster_id)(state);
+const enrichInstance = (instance, hosts, clusters) => {
+  const host = hosts.find(({ id: hostID }) => hostID === instance.host_id);
+  const cluster = clusters.find(
+    ({ id: clusterID }) => clusterID === host.cluster_id
+  );
 
   return {
     ...instance,
@@ -18,20 +18,25 @@ const enrichInstance = (instance) => (state) => {
   };
 };
 
-const enrichInstances = (instances) => (state) =>
-  instances.map((instance) => enrichInstance(instance)(state));
+const enrichInstances = (instances, hosts, clusters) =>
+  instances.map((instance) => enrichInstance(instance, hosts, clusters));
 
 export const getEnrichedApplicationInstances = createSelector(
   [
-    (state) =>
-      enrichInstances(state.sapSystemsList.applicationInstances)(state),
+    (state) => state.sapSystemsList.applicationInstances,
+    (state) => state.hostsList.hosts,
+    (state) => state.clustersList.clusters,
   ],
-  (enrichedInstances) => enrichedInstances
+  (instances, hosts, clusters) => enrichInstances(instances, hosts, clusters)
 );
 
 export const getEnrichedDatabaseInstances = createSelector(
-  [(state) => enrichInstances(state.databasesList.databaseInstances)(state)],
-  (enrichedInstances) => enrichedInstances
+  [
+    (state) => state.databasesList.databaseInstances,
+    (state) => state.hostsList.hosts,
+    (state) => state.clustersList.clusters,
+  ],
+  (instances, hosts, clusters) => enrichInstances(instances, hosts, clusters)
 );
 
 export const getSapSystem = (sapSystemID) => (state) =>
@@ -45,20 +50,20 @@ export const getDatabase = (databaseID) => (state) =>
 export const getEnrichedSapSystemDetails = createSelector(
   [
     (state, sapSystemID) => getSapSystem(sapSystemID)(state),
-    (state, sapSystemID) =>
-      enrichInstances(
-        filter(state.sapSystemsList.applicationInstances, {
-          sap_system_id: sapSystemID,
-        })
-      )(state),
+    getEnrichedApplicationInstances,
+    (_state, sapSystemID) => sapSystemID,
   ],
-  (system, instances) => {
+  (system, enrichedInstances, sapSystemID) => {
     if (!system) return null;
+
+    const filteredInstances = filter(enrichedInstances, {
+      sap_system_id: sapSystemID,
+    });
 
     return {
       ...system,
-      instances,
-      hosts: instances?.flatMap((instance) => instance.host),
+      instances: filteredInstances,
+      hosts: filteredInstances?.flatMap((instance) => instance.host),
     };
   }
 );
@@ -66,20 +71,20 @@ export const getEnrichedSapSystemDetails = createSelector(
 export const getEnrichedDatabaseDetails = createSelector(
   [
     (state, databaseID) => getDatabase(databaseID)(state),
-    (state, databaseID) =>
-      enrichInstances(
-        filter(state.databasesList.databaseInstances, {
-          database_id: databaseID,
-        })
-      )(state),
+    getEnrichedDatabaseInstances,
+    (_state, databaseID) => databaseID,
   ],
-  (database, instances) => {
+  (database, enrichedInstances, databaseID) => {
     if (!database) return null;
+
+    const filteredInstances = filter(enrichedInstances, {
+      database_id: databaseID,
+    });
 
     return {
       ...database,
-      instances,
-      hosts: instances?.flatMap((instance) => instance.host),
+      instances: filteredInstances,
+      hosts: filteredInstances?.flatMap((instance) => instance.host),
     };
   }
 );
