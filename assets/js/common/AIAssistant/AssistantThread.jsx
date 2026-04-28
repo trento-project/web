@@ -56,8 +56,8 @@ function WelcomePanel() {
         prompt="What is the API key for adding agents?"
         className={SUGGESTION_CLASS_NAME}
       >
-        <span className="font-bold text-gray-600">What is the API key</span>{' '}
-        for adding agents?
+        <span className="font-bold text-gray-600">What is the API key</span> for
+        adding agents?
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion
         prompt="What is the check results that was run recently?"

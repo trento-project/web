@@ -90,7 +90,10 @@ async function connectedAgent({ userId = 'u', onConnectionChange } = {}) {
 describe('WebSocketAIAgent', () => {
   describe('constructor', () => {
     it('starts in the disconnected state', () => {
-      const agent = new WebSocketAIAgent({ socket: makeMockSocket(), userId: 'u' });
+      const agent = new WebSocketAIAgent({
+        socket: makeMockSocket(),
+        userId: 'u',
+      });
       expect(agent.getConnectionStatus()).toBe('disconnected');
       expect(agent.isConnected()).toBe(false);
     });
@@ -100,7 +103,11 @@ describe('WebSocketAIAgent', () => {
     it('joins ai_assistant:{userId} and transitions disconnected → connecting → connected', async () => {
       const onConnectionChange = jest.fn();
       const socket = makeMockSocket();
-      const agent = new WebSocketAIAgent({ socket, userId: 'u42', onConnectionChange });
+      const agent = new WebSocketAIAgent({
+        socket,
+        userId: 'u42',
+        onConnectionChange,
+      });
 
       const p = agent.initialize();
 
@@ -122,7 +129,9 @@ describe('WebSocketAIAgent', () => {
       const agent = new WebSocketAIAgent({ socket, userId: 'u' });
       const p = agent.initialize();
 
-      socket.channels.get('ai_assistant:u').joinPush.fire('error', { reason: 'boom' });
+      socket.channels
+        .get('ai_assistant:u')
+        .joinPush.fire('error', { reason: 'boom' });
 
       await expect(p).rejects.toThrow(/Failed to join channel/);
       expect(agent.getConnectionStatus()).toBe('disconnected');
@@ -146,7 +155,10 @@ describe('WebSocketAIAgent', () => {
     });
 
     it('throws when no userId is provided', async () => {
-      const agent = new WebSocketAIAgent({ socket: makeMockSocket(), userId: undefined });
+      const agent = new WebSocketAIAgent({
+        socket: makeMockSocket(),
+        userId: undefined,
+      });
       await expect(agent.initialize()).rejects.toThrow(/No userId available/);
     });
 
@@ -264,7 +276,9 @@ describe('WebSocketAIAgent', () => {
 
       channel.emit('ag_ui_event', { type: 'RUN_ERROR', message: 'oops' });
 
-      expect(onError).toHaveBeenCalledWith(expect.objectContaining({ message: 'oops' }));
+      expect(onError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'oops' })
+      );
       expect(agent._messageHandlers.size).toBe(0);
     });
 
@@ -423,7 +437,10 @@ describe('WebSocketAIAgent', () => {
     });
 
     it('is a no-op when never connected', () => {
-      const agent = new WebSocketAIAgent({ socket: makeMockSocket(), userId: 'u' });
+      const agent = new WebSocketAIAgent({
+        socket: makeMockSocket(),
+        userId: 'u',
+      });
       expect(() => agent.disconnect()).not.toThrow();
       expect(agent.getConnectionStatus()).toBe('disconnected');
     });

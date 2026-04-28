@@ -2,12 +2,17 @@ import React from 'react';
 
 const STATUS_LABELS = {
   connected: { title: 'Connected', text: 'Online', dot: 'bg-green-500' },
-  connecting: { title: 'Connecting...', text: 'Connecting...', dot: 'bg-yellow-500 animate-pulse' },
+  connecting: {
+    title: 'Connecting...',
+    text: 'Connecting...',
+    dot: 'bg-yellow-500 animate-pulse',
+  },
   disconnected: { title: 'Disconnected', text: 'Offline', dot: 'bg-red-500' },
 };
 
 export function ConnectionStatusIndicator({ status, className = '' }) {
-  const { title, text, dot } = STATUS_LABELS[status] ?? STATUS_LABELS.disconnected;
+  const { title, text, dot } =
+    STATUS_LABELS[status] ?? STATUS_LABELS.disconnected;
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>

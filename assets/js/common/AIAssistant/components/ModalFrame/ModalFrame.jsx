@@ -27,7 +27,9 @@ export function ModalFrame({
   return (
     <AssistantModalPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <AssistantModalPrimitive.Anchor className="fixed right-6 bottom-20 size-12 z-40">
-        <AssistantModalPrimitive.Trigger asChild>{trigger}</AssistantModalPrimitive.Trigger>
+        <AssistantModalPrimitive.Trigger asChild>
+          {trigger}
+        </AssistantModalPrimitive.Trigger>
       </AssistantModalPrimitive.Anchor>
 
       <AssistantModalPrimitive.Content

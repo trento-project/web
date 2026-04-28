@@ -12,7 +12,9 @@ jest.mock('@assistant-ui/react', () => ({
     condition({ thread: { isRunning: mockIsRunning } }) ? children : null,
   ComposerPrimitive: {
     Root: ({ children, ...props }) => <form {...props}>{children}</form>,
-    AttachmentDropzone: ({ children, ...props }) => <div {...props}>{children}</div>,
+    AttachmentDropzone: ({ children, ...props }) => (
+      <div {...props}>{children}</div>
+    ),
     Input: ({ disabled, placeholder, ...props }) => (
       <textarea disabled={disabled} placeholder={placeholder} {...props} />
     ),
@@ -32,12 +34,18 @@ describe('ComposerContainer', () => {
   it.each([
     { status: 'connected', placeholder: 'How can I help you?' },
     { status: 'connecting', placeholder: 'Connecting...' },
-    { status: 'disconnected', placeholder: 'Offline - waiting to reconnect...' },
-  ])('uses the $placeholder placeholder when status is $status', ({ status, placeholder }) => {
-    useAIConnectionStatus.mockReturnValue(status);
-    render(<ComposerContainer />);
-    expect(screen.getByPlaceholderText(placeholder)).toBeVisible();
-  });
+    {
+      status: 'disconnected',
+      placeholder: 'Offline - waiting to reconnect...',
+    },
+  ])(
+    'uses the $placeholder placeholder when status is $status',
+    ({ status, placeholder }) => {
+      useAIConnectionStatus.mockReturnValue(status);
+      render(<ComposerContainer />);
+      expect(screen.getByPlaceholderText(placeholder)).toBeVisible();
+    }
+  );
 
   it('disables the input and the send button when not connected', () => {
     useAIConnectionStatus.mockReturnValue('disconnected');
@@ -50,7 +58,9 @@ describe('ComposerContainer', () => {
     useAIConnectionStatus.mockReturnValue('connected');
     render(<ComposerContainer />);
     expect(screen.getByLabelText('Message input')).not.toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Send message' })).not.toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: 'Send message' })
+    ).not.toBeDisabled();
   });
 
   it('hides the send button while the thread is running', () => {

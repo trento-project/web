@@ -18,7 +18,9 @@ jest.mock('../AssistantChatProvider', () => ({
 
 describe('ChatHeaderContainer', () => {
   it('passes the current connection status to the header', () => {
-    useAui.mockReturnValue({ threads: () => ({ switchToNewThread: jest.fn() }) });
+    useAui.mockReturnValue({
+      threads: () => ({ switchToNewThread: jest.fn() }),
+    });
     useAIConnectionStatus.mockReturnValue('connecting');
 
     render(<ChatHeaderContainer onClose={() => {}} />);
@@ -39,7 +41,9 @@ describe('ChatHeaderContainer', () => {
   });
 
   it('forwards onClose to the close button', async () => {
-    useAui.mockReturnValue({ threads: () => ({ switchToNewThread: jest.fn() }) });
+    useAui.mockReturnValue({
+      threads: () => ({ switchToNewThread: jest.fn() }),
+    });
     useAIConnectionStatus.mockReturnValue('connected');
     const onClose = jest.fn();
     const user = userEvent.setup();

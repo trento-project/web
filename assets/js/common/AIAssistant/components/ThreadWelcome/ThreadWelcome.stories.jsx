@@ -23,10 +23,14 @@ export const Default = {
   render: () => (
     <ThreadWelcome>
       <button type="button" className={suggestionClassName}>
-        <span className="font-bold text-gray-600">What is the API key</span> for adding agents?
+        <span className="font-bold text-gray-600">What is the API key</span> for
+        adding agents?
       </button>
       <button type="button" className={suggestionClassName}>
-        <span className="font-bold text-gray-600">What is the check results</span> that was run recently?
+        <span className="font-bold text-gray-600">
+          What is the check results
+        </span>{' '}
+        that was run recently?
       </button>
     </ThreadWelcome>
   ),

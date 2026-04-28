@@ -10,12 +10,15 @@ const STATUS_VIEW = {
 const stopPointerDown = (e) => e.stopPropagation();
 
 export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
-  const { text, dot } = STATUS_VIEW[connectionStatus] ?? STATUS_VIEW.disconnected;
+  const { text, dot } =
+    STATUS_VIEW[connectionStatus] ?? STATUS_VIEW.disconnected;
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">
       <div className="flex items-center gap-3">
-        <div className={`w-2.5 h-2.5 rounded-full mt-1 shadow-sm ml-1 ${dot}`} />
+        <div
+          className={`w-2.5 h-2.5 rounded-full mt-1 shadow-sm ml-1 ${dot}`}
+        />
         <div className="flex flex-col leading-tight">
           <span className="font-bold text-lg">Liz</span>
           <span className="text-sm font-medium opacity-95">{text}</span>

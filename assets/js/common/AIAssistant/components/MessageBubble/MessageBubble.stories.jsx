@@ -40,7 +40,13 @@ export const AssistantWithRichContent = {
         <ol className="list-decimal pl-5">
           <li>Open the agents page.</li>
           <li>Click the copy button next to the key.</li>
-          <li>Run <code className="bg-gray-100 px-1 rounded">trento-agent install</code>.</li>
+          <li>
+            Run{' '}
+            <code className="bg-gray-100 px-1 rounded">
+              trento-agent install
+            </code>
+            .
+          </li>
         </ol>
       </div>
     ),

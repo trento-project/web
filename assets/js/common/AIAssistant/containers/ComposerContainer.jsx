@@ -3,10 +3,10 @@ import { AuiIf, ComposerPrimitive } from '@assistant-ui/react';
 
 import { useAIConnectionStatus } from '../AssistantChatProvider';
 import {
-  ComposerChrome,
+  PromptComposer,
   COMPOSER_INPUT_CLASS_NAME,
   COMPOSER_SEND_BUTTON_CLASS_NAME,
-} from '../components/ComposerChrome';
+} from '../components/PromptComposer';
 
 const PLACEHOLDERS = {
   connected: 'How can I help you?',
@@ -39,7 +39,7 @@ export function ComposerContainer() {
 
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
-      <ComposerChrome
+      <PromptComposer
         inputSlot={
           <ComposerPrimitive.AttachmentDropzone className="relative flex w-full flex-col outline-none">
             <ComposerPrimitive.Input

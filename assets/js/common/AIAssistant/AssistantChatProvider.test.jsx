@@ -37,10 +37,7 @@ jest.mock('./WebSocketAIAgent', () => {
   };
 });
 
-import {
-  getSocketInstance,
-  initSocketConnection,
-} from '@lib/network/socket';
+import { getSocketInstance, initSocketConnection } from '@lib/network/socket';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import * as agentModule from './WebSocketAIAgent';
 import {
@@ -157,7 +154,9 @@ describe('AssistantChatProvider', () => {
     it('seeds the initial thread id from crypto.randomUUID', () => {
       jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('initial-thread');
       renderWithProvider(userStore());
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe('initial-thread');
+      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
+        'initial-thread'
+      );
     });
 
     it('mints a fresh id and re-passes the new threadList on switch-to-new-thread', async () => {
@@ -167,13 +166,17 @@ describe('AssistantChatProvider', () => {
         .mockReturnValueOnce('thread-B');
 
       renderWithProvider(userStore());
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe('thread-A');
+      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
+        'thread-A'
+      );
 
       await act(async () => {
         await lastRuntimeOptions().adapters.threadList.onSwitchToNewThread();
       });
 
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe('thread-B');
+      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
+        'thread-B'
+      );
     });
 
     it('returns persisted messages when switching back to a known thread', async () => {
@@ -197,9 +200,10 @@ describe('AssistantChatProvider', () => {
 
       let result;
       await act(async () => {
-        result = await lastRuntimeOptions().adapters.threadList.onSwitchToThread(
-          'thread-A'
-        );
+        result =
+          await lastRuntimeOptions().adapters.threadList.onSwitchToThread(
+            'thread-A'
+          );
       });
       expect(result).toEqual({ messages: ['m1', 'm2'] });
     });

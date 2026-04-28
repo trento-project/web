@@ -12,7 +12,9 @@ export function MessageBubble({ variant, children }) {
 
   return (
     <div className="bg-white px-5 py-4">
-      <div className="break-words text-gray-800 text-base leading-relaxed">{children}</div>
+      <div className="break-words text-gray-800 text-base leading-relaxed">
+        {children}
+      </div>
     </div>
   );
 }

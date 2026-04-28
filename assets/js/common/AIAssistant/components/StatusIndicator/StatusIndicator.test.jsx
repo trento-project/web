@@ -15,6 +15,8 @@ describe('StatusIndicator', () => {
 
   it('renders a spinner alongside the label', () => {
     const { container } = render(<StatusIndicator label="Thinking..." />);
-    expect(container.querySelector('svg, [role="status"], .animate-spin')).not.toBeNull();
+    expect(
+      container.querySelector('svg, [role="status"], .animate-spin')
+    ).not.toBeNull();
   });
 });

@@ -25,7 +25,9 @@ jest.mock('@assistant-ui/react-markdown', () => ({
   MarkdownTextPrimitive: () => null,
 }));
 
-jest.mock('@assistant-ui/react-markdown/styles/dot.css', () => ({}), { virtual: true });
+jest.mock('@assistant-ui/react-markdown/styles/dot.css', () => ({}), {
+  virtual: true,
+});
 
 describe('MessageContainer', () => {
   describe('UserMessageContainer', () => {
@@ -40,7 +42,9 @@ describe('MessageContainer', () => {
   describe('AssistantMessageContainer', () => {
     it('renders the assistant bubble with the parts and error slots', () => {
       const { container } = render(<AssistantMessageContainer />);
-      expect(container.querySelector('[data-role="assistant"]')).toBeInTheDocument();
+      expect(
+        container.querySelector('[data-role="assistant"]')
+      ).toBeInTheDocument();
       expect(screen.queryByText('You')).toBeNull();
       expect(screen.getByTestId('parts')).toBeVisible();
       expect(screen.getByTestId('error-slot')).toBeInTheDocument();

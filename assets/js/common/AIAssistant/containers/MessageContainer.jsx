@@ -12,7 +12,11 @@ const ROOT_CLASS_NAME =
 
 function MarkdownText(props) {
   return (
-    <MarkdownTextPrimitive remarkPlugins={[remarkGfm]} className="aui-md" {...props} />
+    <MarkdownTextPrimitive
+      remarkPlugins={[remarkGfm]}
+      className="aui-md"
+      {...props}
+    />
   );
 }
 

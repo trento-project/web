@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-  ComposerChrome,
+  PromptComposer,
   COMPOSER_INPUT_CLASS_NAME,
   COMPOSER_SEND_BUTTON_CLASS_NAME,
-} from './ComposerChrome';
+} from './PromptComposer';
 
 const renderInput = ({ placeholder, disabled }) => (
   <textarea
@@ -15,14 +15,18 @@ const renderInput = ({ placeholder, disabled }) => (
 );
 
 const renderSend = ({ disabled }) => (
-  <button type="submit" disabled={disabled} className={COMPOSER_SEND_BUTTON_CLASS_NAME}>
+  <button
+    type="submit"
+    disabled={disabled}
+    className={COMPOSER_SEND_BUTTON_CLASS_NAME}
+  >
     Send
   </button>
 );
 
 export default {
-  title: 'Components/AIAssistant/ComposerChrome',
-  component: ComposerChrome,
+  title: 'Components/AIAssistant/PromptComposer',
+  component: PromptComposer,
   parameters: {
     layout: 'padded',
   },
@@ -30,8 +34,11 @@ export default {
 
 export const Idle = {
   render: () => (
-    <ComposerChrome
-      inputSlot={renderInput({ placeholder: 'How can I help you?', disabled: false })}
+    <PromptComposer
+      inputSlot={renderInput({
+        placeholder: 'How can I help you?',
+        disabled: false,
+      })}
       actionSlot={renderSend({ disabled: false })}
     />
   ),
@@ -39,7 +46,7 @@ export const Idle = {
 
 export const Disabled = {
   render: () => (
-    <ComposerChrome
+    <PromptComposer
       inputSlot={renderInput({
         placeholder: 'Offline - waiting to reconnect...',
         disabled: true,
@@ -51,8 +58,11 @@ export const Disabled = {
 
 export const Sending = {
   render: () => (
-    <ComposerChrome
-      inputSlot={renderInput({ placeholder: 'How can I help you?', disabled: false })}
+    <PromptComposer
+      inputSlot={renderInput({
+        placeholder: 'How can I help you?',
+        disabled: false,
+      })}
     />
   ),
 };

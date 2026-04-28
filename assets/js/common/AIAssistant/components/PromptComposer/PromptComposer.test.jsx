@@ -2,12 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { ComposerChrome } from './ComposerChrome';
+import { PromptComposer } from './PromptComposer';
 
-describe('ComposerChrome', () => {
+describe('PromptComposer', () => {
   it('renders the inputSlot inside the input region', () => {
     render(
-      <ComposerChrome
+      <PromptComposer
         inputSlot={<textarea aria-label="composer-input" />}
         actionSlot={<button type="submit">Send</button>}
       />
@@ -17,7 +17,7 @@ describe('ComposerChrome', () => {
 
   it('renders the actionSlot in the footer row when provided', () => {
     render(
-      <ComposerChrome
+      <PromptComposer
         inputSlot={<textarea aria-label="composer-input" />}
         actionSlot={<button type="submit">Send</button>}
       />
@@ -26,12 +26,16 @@ describe('ComposerChrome', () => {
   });
 
   it('omits the actionSlot when none is provided', () => {
-    render(<ComposerChrome inputSlot={<textarea aria-label="composer-input" />} />);
+    render(
+      <PromptComposer inputSlot={<textarea aria-label="composer-input" />} />
+    );
     expect(screen.queryByRole('button')).toBeNull();
   });
 
   it('renders the default footnote with the documentation link', () => {
-    render(<ComposerChrome inputSlot={<textarea aria-label="composer-input" />} />);
+    render(
+      <PromptComposer inputSlot={<textarea aria-label="composer-input" />} />
+    );
     expect(screen.getByText(/AI assistants can make mistakes/)).toBeVisible();
     expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
       'href',
@@ -41,7 +45,7 @@ describe('ComposerChrome', () => {
 
   it('renders a custom footnote when provided', () => {
     render(
-      <ComposerChrome
+      <PromptComposer
         inputSlot={<textarea aria-label="composer-input" />}
         footnote={<span>Custom note.</span>}
       />

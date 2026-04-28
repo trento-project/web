@@ -6,9 +6,24 @@ import { ConnectionStatusIndicator } from './ConnectionStatusIndicator';
 
 describe('ConnectionStatusIndicator', () => {
   it.each([
-    { status: 'connected', text: 'Online', dot: 'bg-green-500', title: 'Connected' },
-    { status: 'connecting', text: 'Connecting...', dot: 'bg-yellow-500', title: 'Connecting...' },
-    { status: 'disconnected', text: 'Offline', dot: 'bg-red-500', title: 'Disconnected' },
+    {
+      status: 'connected',
+      text: 'Online',
+      dot: 'bg-green-500',
+      title: 'Connected',
+    },
+    {
+      status: 'connecting',
+      text: 'Connecting...',
+      dot: 'bg-yellow-500',
+      title: 'Connecting...',
+    },
+    {
+      status: 'disconnected',
+      text: 'Offline',
+      dot: 'bg-red-500',
+      title: 'Disconnected',
+    },
   ])('renders the $status status', ({ status, text, dot, title }) => {
     const { container } = render(<ConnectionStatusIndicator status={status} />);
     expect(screen.getByText(text)).toBeVisible();
