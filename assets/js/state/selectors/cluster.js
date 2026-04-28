@@ -143,7 +143,7 @@ export const getClustersWithEnrichedSapInstances = createSelector(
   [
     (state) => state.clustersList.clusters,
     (state) => state.hostsList.hosts,
-    getAllSAPInstances,
+    (state) => getAllSAPInstances(state),
   ],
   (clusters, hosts, allInstances) =>
     clusters.map((cluster) => {
