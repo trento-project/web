@@ -207,6 +207,7 @@ describe('ProfileForm', () => {
           analyticsEnabled={analytics_enabled}
           analyticsEulaAccepted={analytics_eula_accepted}
           onSave={mockOnSave}
+          timezones={timezones}
         />
       );
 
@@ -415,6 +416,7 @@ describe('ProfileForm', () => {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        timezones={timezones}
       />
     );
 
@@ -434,6 +436,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         timezone={timezone}
+        timezones={timezones}
       />
     );
 
@@ -455,6 +458,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
         onSave={mockOnSave}
       />
     );
@@ -481,7 +485,7 @@ describe('ProfileForm', () => {
       },
     ];
 
-    render(<ProfileForm errors={errors} />);
+    render(<ProfileForm errors={errors} timezones={timezones}/>);
 
     expect(
       await screen.findByText(/is not a valid IANA timezone/i)
@@ -535,6 +539,7 @@ describe('ProfileForm', () => {
           emailAddress={email}
           username={username}
           abilities={abilities}
+          timezones={timezones}
           singleSignOnEnabled
         />
       );
@@ -557,6 +562,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           onSave={mockOnSave}
+          timezones={timezones}
           singleSignOnEnabled
           analyticsEnabledConfig
         />
@@ -587,6 +593,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           timezone={DEFAULT_TIMEZONE}
+          timezones={timezones}
           onSave={mockOnSave}
           singleSignOnEnabled
           analyticsEnabledConfig

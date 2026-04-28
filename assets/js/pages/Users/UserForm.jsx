@@ -16,7 +16,7 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -38,6 +38,7 @@ function UserForm({
   analyticsEnabledConfig = false,
   analyticsEnabled,
   timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,

@@ -11,7 +11,7 @@ import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
-import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -41,6 +41,7 @@ function ProfileForm({
   analyticsEnabled = false,
   analyticsEulaAccepted = false,
   timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors,
   loading,
   disableForm,

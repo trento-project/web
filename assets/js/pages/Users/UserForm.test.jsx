@@ -67,6 +67,7 @@ describe('UserForm', () => {
         analytics_enabled={analyticsEnabled}
         lastLoginAt={lastLoginAt}
         timezone={timezone}
+        timezones={timezones}
         editing
       />
     );
@@ -229,6 +230,7 @@ describe('UserForm', () => {
         editing
         onSave={mockOnSave}
         timezone={timezone}
+        timezones={timezones}
       />
     );
 
@@ -270,6 +272,7 @@ describe('UserForm', () => {
         totpEnabledAt={totpEnabledAt}
         editing
         onSave={mockOnSave}
+        timezones={timezones}
       />
     );
     await user.click(screen.getAllByText('Enabled')[1]);
@@ -346,6 +349,7 @@ describe('UserForm', () => {
         userAbilities={userAbilities}
         createdAt={createdAt}
         updatedAt={updatedAt}
+        timezones={timezones}
         editing
       />
     );
@@ -408,6 +412,7 @@ describe('UserForm', () => {
         createdAt={createdAt}
         updatedAt={updatedAt}
         editing
+        timezones={timezones}
       />
     );
 
@@ -438,6 +443,7 @@ describe('UserForm', () => {
         createdAt={createdAt}
         updatedAt={updatedAt}
         timezone={timezone}
+        timezones={timezones}
         editing
         onSave={mockOnSave}
       />
@@ -478,6 +484,7 @@ describe('UserForm', () => {
         createdAt={createdAt}
         updatedAt={updatedAt}
         timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
         editing
         onSave={mockOnSave}
       />
@@ -519,6 +526,7 @@ describe('UserForm', () => {
         updatedAt={updatedAt}
         editing
         onSave={mockOnSave}
+        timezones={timezones}
       />
     );
 
@@ -558,6 +566,7 @@ describe('UserForm', () => {
         updatedAt={updatedAt}
         errors={errors}
         editing
+        timezones={timezones}
       />
     );
 
@@ -608,6 +617,7 @@ describe('UserForm', () => {
           abilities={abilities}
           userAbilities={userAbilities}
           timezone={timezone}
+          timezones={timezones}
           singleSignOnEnabled
         />
       );
