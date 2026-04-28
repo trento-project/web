@@ -485,7 +485,7 @@ describe('ProfileForm', () => {
       },
     ];
 
-    render(<ProfileForm errors={errors} timezones={timezones}/>);
+    render(<ProfileForm errors={errors} timezones={timezones} />);
 
     expect(
       await screen.findByText(/is not a valid IANA timezone/i)
