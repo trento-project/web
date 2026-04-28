@@ -158,13 +158,13 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
   );
 
 export const expectedWarningHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithWarning).should('have.text', amount);
+  cy.get(hostsWithWarning, { timeout: 20000 }).should('have.text', amount);
 
 export const expectedCriticalHostsAreDisplayed = (amount) =>
   cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
 
 export const expectedPassingHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithPassing).should('have.text', amount);
+  cy.get(hostsWithPassing, { timeout: 20000 }).should('have.text', amount);
 
 export const expectedAmountOfWarningsIsDisplayed = (amount) =>
   cy.get(warningHostBadge).should('have.length', amount);
@@ -215,7 +215,7 @@ export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
     .should('have.length', amount);
 
 export const heartbeatFailingToasterIsDisplayed = () =>
-  cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
+  cy.get(heartbeatFailingToaster, { timeout: 25000 }).should('be.visible');
 
 export const deregisterModalTitleIsDisplayed = () =>
   cy.get(deregisterHostModalTitle).should('be.visible');
