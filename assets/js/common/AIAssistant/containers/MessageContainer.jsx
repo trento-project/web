@@ -4,7 +4,7 @@ import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
 
-import { MessageBubble } from '../components/MessageBubble';
+import { MessageBubble } from '../MessageBubble';
 import { StatusIndicatorContainer } from './StatusIndicatorContainer';
 
 const ROOT_CLASS_NAME =

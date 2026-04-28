@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useAui } from '@assistant-ui/react';
 
 import { useAIConnectionStatus } from '../AssistantChatProvider';
-import { ChatHeader } from '../components/ChatHeader';
+import { ChatHeader } from '../ChatHeader';
 
 export function ChatHeaderContainer({ onClose }) {
   const aui = useAui();

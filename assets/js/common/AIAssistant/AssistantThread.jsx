@@ -7,7 +7,7 @@ import {
   AssistantMessageContainer,
   UserMessageContainer,
 } from './containers/MessageContainer';
-import { ThreadWelcome } from './components/ThreadWelcome';
+import { ThreadWelcome } from './ThreadWelcome';
 
 const SUGGESTION_CLASS_NAME =
   'text-left bg-[#f8f9fa] border border-gray-200 rounded-lg p-3.5 text-gray-500 hover:bg-gray-100 transition-colors text-[15px]';

@@ -4,7 +4,7 @@ import { AuiIf, ComposerPrimitive } from '@assistant-ui/react';
 import Button from '@common/Button';
 
 import { useAIConnectionStatus } from '../AssistantChatProvider';
-import { PromptComposer, PromptInput } from '../components/PromptComposer';
+import { PromptComposer, PromptInput } from '../PromptComposer';
 
 const PLACEHOLDERS = {
   connected: 'How can I help you?',

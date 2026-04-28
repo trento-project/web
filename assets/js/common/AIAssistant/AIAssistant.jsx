@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { AssistantChatProvider } from './AssistantChatProvider';
 import { AssistantThread } from './AssistantThread';
-import { ModalFrame } from './components/ModalFrame';
+import { ModalFrame } from './ModalFrame';
 
 function AIAssistant() {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AuiIf, useAuiState } from '@assistant-ui/react';
 
-import { StatusIndicator } from '../components/StatusIndicator';
+import { StatusIndicator } from '../StatusIndicator';
 
 export function deriveStatusLabel(content) {
   const toolCalls = content.filter((part) => part.type === 'tool-call');
