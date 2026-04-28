@@ -7,5 +7,4 @@ export {
   AssistantChatProvider,
   useAIConnectionStatus,
 } from './AssistantChatProvider';
-export { WebSocketAIAgent } from './WebSocketAIAgent';
 export { AssistantThread } from './AssistantThread';

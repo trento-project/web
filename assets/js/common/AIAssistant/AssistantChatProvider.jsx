@@ -5,9 +5,8 @@ import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import { useSelector } from 'react-redux';
 
 import { useSocket } from '@common/SocketProvider';
+import { CONNECTION_STATUS, WebSocketAIAgent } from '@lib/ai';
 import { getUserProfile } from '@state/selectors/user';
-
-import { WebSocketAIAgent } from './WebSocketAIAgent';
 
 export function AssistantChatProvider({ children }) {
   const user = useSelector(getUserProfile);
@@ -15,7 +14,9 @@ export function AssistantChatProvider({ children }) {
   const socket = useSocket();
 
   // Connection status state
-  const [connectionStatus, setConnectionStatus] = useState('disconnected');
+  const [connectionStatus, setConnectionStatus] = useState(
+    CONNECTION_STATUS.DISCONNECTED
+  );
 
   // In-memory thread storage for multi-thread support
   const threadsRef = useRef(new Map());
@@ -123,7 +124,9 @@ export function AssistantChatProvider({ children }) {
 }
 
 // Context for connection status
-const ConnectionStatusContext = React.createContext('disconnected');
+const ConnectionStatusContext = React.createContext(
+  CONNECTION_STATUS.DISCONNECTED
+);
 
 // Hook to access connection status in child components
 export function useAIConnectionStatus() {

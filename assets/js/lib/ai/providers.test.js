@@ -1,6 +1,6 @@
-import { getProviderLabel, getProviderIcon } from '.';
+import { getProviderLabel, getProviderIcon } from './providers';
 
-describe('aizz', () => {
+describe('providers', () => {
   describe('getProviderLabel', () => {
     it('should return the provider label', () => {
       expect(getProviderLabel('googleai')).toBe('Google Gemini');

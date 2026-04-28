@@ -3,20 +3,25 @@ import { EOS_CLOSE } from 'eos-icons-react';
 import { useAui } from '@assistant-ui/react';
 
 import Button from '@common/Button';
+import { CONNECTION_STATUS } from '@lib/ai';
 
 import { useAIConnectionStatus } from '../AssistantChatProvider';
 
 const STATUS_VIEW = {
-  connected: { text: 'Online', dot: 'bg-white' },
-  connecting: { text: 'Connecting...', dot: 'bg-yellow-300 animate-pulse' },
-  disconnected: { text: 'Offline', dot: 'bg-red-400' },
+  [CONNECTION_STATUS.CONNECTED]: { text: 'Online', dot: 'bg-white' },
+  [CONNECTION_STATUS.CONNECTING]: {
+    text: 'Connecting...',
+    dot: 'bg-yellow-300 animate-pulse',
+  },
+  [CONNECTION_STATUS.DISCONNECTED]: { text: 'Offline', dot: 'bg-red-400' },
 };
 
 const stopPointerDown = (e) => e.stopPropagation();
 
 export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
   const { text, dot } =
-    STATUS_VIEW[connectionStatus] ?? STATUS_VIEW.disconnected;
+    STATUS_VIEW[connectionStatus] ??
+    STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">

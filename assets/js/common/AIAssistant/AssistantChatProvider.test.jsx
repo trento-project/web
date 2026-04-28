@@ -17,7 +17,7 @@ jest.mock('@assistant-ui/react', () => ({
   useAui: () => ({}),
 }));
 
-jest.mock('./WebSocketAIAgent', () => {
+jest.mock('@lib/ai', () => {
   const instances = [];
   class WebSocketAIAgent {
     constructor(opts) {
@@ -29,6 +29,11 @@ jest.mock('./WebSocketAIAgent', () => {
   }
   return {
     WebSocketAIAgent,
+    CONNECTION_STATUS: Object.freeze({
+      CONNECTED: 'connected',
+      CONNECTING: 'connecting',
+      DISCONNECTED: 'disconnected',
+    }),
     __getInstances: () => instances,
     __resetInstances: () => {
       instances.length = 0;
@@ -38,7 +43,7 @@ jest.mock('./WebSocketAIAgent', () => {
 
 import { useSocket } from '@common/SocketProvider';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
-import * as agentModule from './WebSocketAIAgent';
+import * as agentModule from '@lib/ai';
 import {
   AssistantChatProvider,
   useAIConnectionStatus,

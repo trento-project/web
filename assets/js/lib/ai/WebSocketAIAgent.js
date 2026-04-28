@@ -1,6 +1,9 @@
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
 
+import { CONNECTION_STATUS } from './connectionStatus';
+import { EVENT_TYPES } from './eventTypes';
+
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userId}
 // topic.
@@ -12,7 +15,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.userId = userId;
     this.channel = null;
     this.onConnectionChange = onConnectionChange;
-    this._connectionStatus = 'disconnected';
+    this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
   }
@@ -21,16 +24,16 @@ export class WebSocketAIAgent extends AbstractAgent {
     if (this.channel) return undefined;
 
     if (!this.socket) {
-      this._setConnectionStatus('disconnected');
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No socket available');
     }
 
     if (!this.userId) {
-      this._setConnectionStatus('disconnected');
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No userId available');
     }
 
-    this._setConnectionStatus('connecting');
+    this._setConnectionStatus(CONNECTION_STATUS.CONNECTING);
     this.channel = this.socket.channel(`ai_assistant:${this.userId}`, {});
     this._setupChannelHandlers();
 
@@ -38,15 +41,15 @@ export class WebSocketAIAgent extends AbstractAgent {
       this.channel
         .join()
         .receive('ok', () => {
-          this._setConnectionStatus('connected');
+          this._setConnectionStatus(CONNECTION_STATUS.CONNECTED);
           resolve();
         })
         .receive('error', (resp) => {
-          this._setConnectionStatus('disconnected');
+          this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
           reject(new Error(`Failed to join channel: ${JSON.stringify(resp)}`));
         })
         .receive('timeout', () => {
-          this._setConnectionStatus('disconnected');
+          this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
           reject(new Error('Channel join timeout'));
         });
     });
@@ -57,8 +60,12 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.channel.on('agent-execution-cancelled', () =>
       this._handleAgentCancelled()
     );
-    this.channel.onError(() => this._setConnectionStatus('disconnected'));
-    this.channel.onClose(() => this._setConnectionStatus('disconnected'));
+    this.channel.onError(() =>
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED)
+    );
+    this.channel.onClose(() =>
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED)
+    );
   }
 
   _handleAgUiEvent(event) {
@@ -67,10 +74,10 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     subscriber.next(event);
 
-    if (event.type === 'RUN_FINISHED') {
+    if (event.type === EVENT_TYPES.RUN_FINISHED) {
       subscriber.complete();
       this._clearActiveRun();
-    } else if (event.type === 'RUN_ERROR') {
+    } else if (event.type === EVENT_TYPES.RUN_ERROR) {
       subscriber.error(new Error(event.message || 'Agent execution failed'));
       this._clearActiveRun();
     }
@@ -84,7 +91,10 @@ export class WebSocketAIAgent extends AbstractAgent {
 
       const setupRun = async () => {
         try {
-          if (!this.channel || this._connectionStatus !== 'connected') {
+          if (
+            !this.channel ||
+            this._connectionStatus !== CONNECTION_STATUS.CONNECTED
+          ) {
             await this.initialize();
           }
 
@@ -160,7 +170,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     if (this.channel) {
       this.channel.leave();
       this.channel = null;
-      this._setConnectionStatus('disconnected');
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
     }
   }
 }
