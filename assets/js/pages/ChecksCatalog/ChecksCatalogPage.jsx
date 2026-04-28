@@ -28,7 +28,7 @@ function ChecksCatalogPage() {
     filteredCatalog,
     error: catalogError,
     loading,
-  } = useSelector(getCatalog());
+  } = useSelector(getCatalog);
 
   return (
     <ChecksCatalog
