@@ -219,7 +219,11 @@ context('Hosts Overview', () => {
     const anotherHostname = availableHosts[1].name;
     const anyPageUrl = '/any-page';
 
-    before(() => hostsOverviewPage.restoreSapSystem());
+    before(() => {
+      Cypress.session.clearAllSavedSessions();
+      hostsOverviewPage.apiLoginAndCreateSession();
+      hostsOverviewPage.restoreSapSystem();
+    });
 
     it('should update the URL with filter params when a filter is selected', () => {
       hostsOverviewPage.visit();
