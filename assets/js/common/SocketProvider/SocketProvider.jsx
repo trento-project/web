@@ -4,7 +4,9 @@ import { useSelector } from 'react-redux';
 import { initSocketConnection } from '@lib/network/socket';
 import { getUserProfile } from '@state/selectors/user';
 
-const SocketContext = createContext(null);
+// Exported so test/story scaffolding can short-circuit SocketProvider and
+// inject a fake socket directly via SocketContext.Provider.
+export const SocketContext = createContext(null);
 
 export function SocketProvider({ children }) {
   const user = useSelector(getUserProfile);
