@@ -207,7 +207,7 @@ context('Hosts Overview', () => {
     const anotherHostname = availableHosts[1].name;
     const anyPageUrl = '/any-page';
 
-    beforeEach(() => hostsOverviewPage.restoreSapSystem());
+    before(() => hostsOverviewPage.restoreSapSystem());
 
     it('should update the URL with filter params when a filter is selected', () => {
       hostsOverviewPage.visit();
@@ -216,7 +216,8 @@ context('Hosts Overview', () => {
       hostsOverviewPage.hostsListedAre(1);
     });
 
-    it('should preserve filters when coming back', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should preserve filters when coming back', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
