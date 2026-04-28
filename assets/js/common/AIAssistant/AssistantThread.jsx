@@ -37,8 +37,6 @@ export function AssistantThread({ onClose }) {
             AssistantMessage: AssistantMessageContainer,
           }}
         />
-
-        <ThreadSuggestions />
         <div className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible bg-white pt-4">
           <ThreadPrimitive.ViewportFooter className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible">
             <ComposerContainer />
@@ -69,13 +67,5 @@ function WelcomePanel() {
         that was run recently?
       </ThreadPrimitive.Suggestion>
     </ThreadWelcome>
-  );
-}
-
-function ThreadSuggestions() {
-  return (
-    <AuiIf condition={({ thread }) => !thread.isRunning && !thread.isEmpty}>
-      <div className="mx-auto mt-4 flex w-full max-w-[var(--thread-max-width)] flex-wrap gap-2 px-2 mb-2" />
-    </AuiIf>
   );
 }
