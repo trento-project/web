@@ -1,0 +1,32 @@
+import React from 'react';
+
+const defaultFootnote = (
+  <>
+    AI assistants can make mistakes.
+    <br />
+    <a
+      href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
+      className="underline hover:text-gray-500"
+    >
+      Learn more
+    </a>
+  </>
+);
+
+export const COMPOSER_INPUT_CLASS_NAME =
+  'w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed';
+
+export const COMPOSER_SEND_BUTTON_CLASS_NAME =
+  'rounded-lg bg-[#2fb371] px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[#279c61] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
+
+export function ComposerChrome({ inputSlot, actionSlot, footnote = defaultFootnote }) {
+  return (
+    <>
+      <div className="relative flex w-full flex-col outline-none">{inputSlot}</div>
+      <div className="flex justify-between items-center w-full mt-4">
+        <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
+        {actionSlot}
+      </div>
+    </>
+  );
+}
