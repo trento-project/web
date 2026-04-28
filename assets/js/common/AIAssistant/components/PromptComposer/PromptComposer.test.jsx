@@ -4,6 +4,12 @@ import '@testing-library/jest-dom';
 
 import { PromptComposer } from './PromptComposer';
 
+jest.mock('@assistant-ui/react', () => ({
+  ComposerPrimitive: {
+    Input: ({ ...props }) => <textarea {...props} />,
+  },
+}));
+
 describe('PromptComposer', () => {
   it('renders the inputSlot inside the input region', () => {
     render(

@@ -1,4 +1,6 @@
 import React from 'react';
+import classNames from 'classnames';
+import { ComposerPrimitive } from '@assistant-ui/react';
 
 const defaultFootnote = (
   <>
@@ -13,8 +15,21 @@ const defaultFootnote = (
   </>
 );
 
-export const COMPOSER_INPUT_CLASS_NAME =
+const COMPOSER_INPUT_CLASS_NAME =
   'w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed';
+
+export function PromptInput({
+  as: Component = ComposerPrimitive.Input,
+  className,
+  ...props
+}) {
+  return (
+    <Component
+      className={classNames(COMPOSER_INPUT_CLASS_NAME, className)}
+      {...props}
+    />
+  );
+}
 
 export function PromptComposer({
   inputSlot,

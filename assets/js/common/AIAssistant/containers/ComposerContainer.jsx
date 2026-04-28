@@ -4,10 +4,7 @@ import { AuiIf, ComposerPrimitive } from '@assistant-ui/react';
 import Button from '@common/Button';
 
 import { useAIConnectionStatus } from '../AssistantChatProvider';
-import {
-  PromptComposer,
-  COMPOSER_INPUT_CLASS_NAME,
-} from '../components/PromptComposer';
+import { PromptComposer, PromptInput } from '../components/PromptComposer';
 
 const PLACEHOLDERS = {
   connected: 'How can I help you?',
@@ -43,10 +40,9 @@ export function ComposerContainer() {
       <PromptComposer
         inputSlot={
           <ComposerPrimitive.AttachmentDropzone className="relative flex w-full flex-col outline-none">
-            <ComposerPrimitive.Input
+            <PromptInput
               placeholder={placeholder}
               disabled={!isConnected}
-              className={COMPOSER_INPUT_CLASS_NAME}
               aria-label="Message input"
             />
           </ComposerPrimitive.AttachmentDropzone>

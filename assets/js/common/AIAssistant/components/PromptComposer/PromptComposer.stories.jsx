@@ -2,13 +2,13 @@ import React from 'react';
 
 import Button from '@common/Button';
 
-import { PromptComposer, COMPOSER_INPUT_CLASS_NAME } from './PromptComposer';
+import { PromptComposer, PromptInput } from './PromptComposer';
 
 const renderInput = ({ placeholder, disabled }) => (
-  <textarea
+  <PromptInput
+    as="textarea"
     placeholder={placeholder}
     disabled={disabled}
-    className={COMPOSER_INPUT_CLASS_NAME}
     aria-label="Message input"
   />
 );

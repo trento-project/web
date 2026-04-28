@@ -1,1 +1,1 @@
-export { PromptComposer, COMPOSER_INPUT_CLASS_NAME } from './PromptComposer';
+export { PromptComposer, PromptInput } from './PromptComposer';
