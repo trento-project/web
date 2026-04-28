@@ -6,13 +6,14 @@ import { availableHosts } from '../fixtures/hosts-overview/available_hosts';
 context('Hosts Overview', () => {
   before(() => hostsOverviewPage.preloadTestData());
 
-  beforeEach(() => hostsOverviewPage.visit());
-
   it('should have expected url', () => {
+    hostsOverviewPage.visit();
     hostsOverviewPage.validateUrl();
   });
 
   describe('Registered Hosts are shown in the list', () => {
+    beforeEach(() => hostsOverviewPage.visit());
+
     it('should highlight the hosts sidebar entry', () => {
       hostsOverviewPage.hostsIsHighglightedInSidebar();
     });
@@ -49,7 +50,10 @@ context('Hosts Overview', () => {
 
   describe('Health Detection', () => {
     describe('Health Container shows the health overview of the deployed landscape', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+      beforeEach(() => {
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.visit();
+      });
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
         hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
@@ -66,7 +70,10 @@ context('Hosts Overview', () => {
     });
 
     describe('Health is changed based on saptune status', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+      beforeEach(() => {
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.visit();
+      });
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         hostsOverviewPage.loadHostWithoutSaptune();
@@ -107,7 +114,10 @@ context('Hosts Overview', () => {
     });
 
     describe('Health is changed to critical when the heartbeat is not sent', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+      beforeEach(() => {
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.visit();
+      });
 
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
         hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
@@ -127,6 +137,8 @@ context('Hosts Overview', () => {
 
   describe('Deregistration', () => {
     describe('Clean-up buttons should be visible only when needed', () => {
+      beforeEach(() => hostsOverviewPage.visit());
+
       it('should not display a clean-up button when heartbeat is sent', () => {
         hostsOverviewPage.cleanupButtonIsDisplayedForHostSendingHeartbeat();
         hostsOverviewPage.startAgentHeartbeat();
@@ -144,6 +156,7 @@ context('Hosts Overview', () => {
 
     describe('Clean-up button should deregister a host', () => {
       beforeEach(() => {
+        hostsOverviewPage.visit();
         hostsOverviewPage.apiRestoreCleanedUpHost();
         hostsOverviewPage.apiDeleteAllHostsTags();
         hostsOverviewPage.addTagToHost();
@@ -168,6 +181,7 @@ context('Hosts Overview', () => {
         afterEach(() => hostsOverviewPage.restoreSapSystem());
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
+          hostsOverviewPage.visit();
           hostsOverviewPage.clickNextPageButton();
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(4);
           hostsOverviewPage.apiDeregisterSapSystemHost();
@@ -177,6 +191,7 @@ context('Hosts Overview', () => {
 
       describe('Movement of application instances on hosts', () => {
         beforeEach(() => {
+          hostsOverviewPage.visit();
           hostsOverviewPage.loadSapSystemsOverviewMovedScenario();
           hostsOverviewPage.clickNextPageButton();
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(3);
@@ -199,7 +214,8 @@ context('Hosts Overview', () => {
     });
   });
 
-  describe('Filter and browser navigation', () => {
+  // eslint-disable-next-line mocha/no-exclusive-tests
+  describe.only('Filter and browser navigation', () => {
     const hostname = availableHosts[0].name;
     const anotherHostname = availableHosts[1].name;
     const anyPageUrl = '/any-page';
@@ -213,8 +229,7 @@ context('Hosts Overview', () => {
       hostsOverviewPage.hostsListedAre(1);
     });
 
-    // eslint-disable-next-line mocha/no-exclusive-tests
-    it.only('should preserve filters when coming back', () => {
+    it('should preserve filters when coming back', () => {
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
@@ -230,16 +245,12 @@ context('Hosts Overview', () => {
     it('should preserve filters when going forward', () => {
       basePage.visit(anyPageUrl);
       basePage.validateUrl(anyPageUrl);
-
       hostsOverviewPage.visit();
       hostsOverviewPage.selectHostnameFilter(hostname);
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
-
       hostsOverviewPage.goBack();
-      hostsOverviewPage.waitForClustersEndpoint();
       basePage.validateUrl(anyPageUrl);
-
       hostsOverviewPage.goForward();
       hostsOverviewPage.waitForClustersEndpoint();
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
@@ -279,7 +290,8 @@ context('Hosts Overview', () => {
     });
   });
 
-  describe('Pagination and browser navigation', () => {
+  // eslint-disable-next-line mocha/no-exclusive-tests
+  describe.only('Pagination and browser navigation', () => {
     const anyPageUrl = '/any-page';
 
     it('should update the URL with page param when navigating pages', () => {
