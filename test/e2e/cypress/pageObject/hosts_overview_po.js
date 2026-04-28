@@ -67,8 +67,11 @@ export const visit = (params) => {
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
-  return cy.wait('@clustersEndpoint');
+  return waitForClustersEndpoint();
 };
+
+export const waitForClustersEndpoint = () =>
+  basePage.waitForRequest('clustersEndpoint');
 
 export const validateUrl = (params) =>
   basePage.validateUrl(`${url}${params ? '?' + params : ''}`);
@@ -339,11 +342,6 @@ const _getHostToDeregisterData = () => {
 };
 
 // API
-export const interceptGetHosts = () =>
-  cy.intercept('/api/v1/hosts').as('hosts');
-
-export const waitForGetHosts = () => basePage.waitForRequest('hosts');
-
 export const startAgentHeartbeat = () => {
   const hostToDeregister = _getHostToDeregisterData();
   return basePage.startAgentsHeartbeat([hostToDeregister.id]);
