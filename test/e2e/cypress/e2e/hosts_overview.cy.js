@@ -220,8 +220,7 @@ context('Hosts Overview', () => {
     const anyPageUrl = '/any-page';
 
     before(() => {
-      Cypress.session.clearAllSavedSessions();
-      hostsOverviewPage.apiLoginAndCreateSession();
+      hostsOverviewPage.refreshLogin();
       hostsOverviewPage.restoreSapSystem();
     });
 

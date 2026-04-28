@@ -200,6 +200,11 @@ export const apiLoginAndCreateSession = (
     });
   });
 
+export const refreshLogin = () => {
+  Cypress.session.clearAllSavedSessions();
+  return apiLoginAndCreateSession();
+};
+
 export const logout = () => {
   cy.window().then((win) => {
     win.localStorage.removeItem('access_token');
