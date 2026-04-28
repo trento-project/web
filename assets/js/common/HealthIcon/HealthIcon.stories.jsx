@@ -9,16 +9,16 @@ export default {
       control: 'boolean',
     },
     health: {
-      description: ""
+      description: "The health status to display (passing, warning, critical, absent, pending, or unknown)"
     },
     centered: {
-      description: ""
+      description: "Whether to apply centering styles to the health icon"
     },
     hoverOpacity: {
-      description: ""
+      description: "Whether to apply opacity change on hover"
     },
     size: {
-      description: ""
+      description: "The icon size (xs, s, m, l, xl, or similar EOS icon size)"
     }
   },
 };

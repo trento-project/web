@@ -20,34 +20,34 @@ export default {
       description: 'Abilities that allow tag deletion',
     },
     onClick: {
-      description: ""
+      description: "Callback function invoked when a tag pill element is clicked"
     },
     disabled: {
-      description: ""
+      description: "Whether tag deletion buttons are disabled"
     },
     tag: {
-      description: ""
+      description: "The tag string identifier for deletion operations"
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the tags container element"
     },
     tags: {
-      description: ""
+      description: "Array of tag strings to display as individual tag pills"
     },
     onAdd: {
-      description: ""
+      description: "Callback function invoked when a new tag is added to the collection"
     },
     onRemove: {
-      description: ""
+      description: "Callback function invoked when an existing tag is removed"
     },
     resourceId: {
-      description: ""
+      description: "Unique identifier for the resource to which tags are associated"
     },
     userAbilities: {
-      description: ""
+      description: "Array of user ability objects to determine if tag operations are permitted"
     },
     validationMessage: {
-      description: ""
+      description: "Custom validation message displayed when tag input contains invalid characters"
     }
   },
 };

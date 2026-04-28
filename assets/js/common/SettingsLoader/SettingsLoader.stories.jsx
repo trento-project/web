@@ -29,7 +29,7 @@ export default {
       },
     },
     children: {
-      description: ""
+      description: "React elements or content displayed when the settings loader status is READY"
     }
   },
   render: (args) => (

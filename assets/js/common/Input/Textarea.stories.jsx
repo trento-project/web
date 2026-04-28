@@ -43,13 +43,13 @@ export default {
       },
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the textarea element"
     },
     initialValue: {
-      description: ""
+      description: "The initial value to populate the textarea with when the component mounts"
     },
     onChange: {
-      description: ""
+      description: "Callback function invoked when the textarea value changes"
     }
   },
 };

@@ -34,10 +34,10 @@ export default {
         'If specified, force to show or hide the tooltip regardless of the trigger event',
     },
     className: {
-      description: ""
+      description: "Custom CSS classes applied to the tooltip overlay element for additional styling"
     },
     children: {
-      description: ""
+      description: "React element(s) to be wrapped by the tooltip component; the element that triggers the tooltip on hover"
     }
   },
   render: (args) => (

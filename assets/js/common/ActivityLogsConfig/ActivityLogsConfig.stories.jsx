@@ -19,9 +19,6 @@ export default {
     userAbilities: {
       description: 'Users abilities that allow editing activity logs settings',
       control: 'array',
-    },
-    time: {
-      description: ""
     }
   },
 };

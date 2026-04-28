@@ -18,7 +18,7 @@ export default {
       control: { type: 'number' },
     },
     className: {
-      description: ""
+      description: "CSS class name applied to the component container for styling"
     }
   },
   render: (args) => <SwapUsageChart {...args} className="w-full h-[400px]" />,

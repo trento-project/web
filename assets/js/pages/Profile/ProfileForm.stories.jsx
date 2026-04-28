@@ -90,31 +90,31 @@ export default {
       control: { type: 'boolean' },
     },
     analyticsEulaAccepted: {
-      description: ""
+      description: "Boolean indicating if user has accepted analytics EULA"
     },
     loading: {
-      description: ""
+      description: "Loading state, disables all form controls"
     },
     disableForm: {
-      description: ""
+      description: "Disables all form inputs and buttons"
     },
     passwordModalOpen: {
-      description: ""
+      description: "Controls visibility of password change modal"
     },
     toggleTotpBox: {
-      description: ""
+      description: "Callback to toggle TOTP enrollment box open/closed"
     },
     togglePasswordModal: {
-      description: ""
+      description: "Callback to toggle password modal open/closed"
     },
     onResetTotp: {
-      description: ""
+      description: "Callback to reset/disable TOTP authentication"
     },
     onVerifyTotp: {
-      description: ""
+      description: "Callback to verify TOTP code during enrollment"
     },
     onEnableTotp: {
-      description: ""
+      description: "Callback to enable TOTP authentication"
     }
   },
   render: (args) => (

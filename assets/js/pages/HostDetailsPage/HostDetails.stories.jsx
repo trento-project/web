@@ -174,34 +174,34 @@ export default {
       description: 'Navigate function',
     },
     chartsEnabled: {
-      description: ""
+      description: "Whether to render system performance charts (CPU, memory, disk space)"
     },
     lastBootTimestamp: {
-      description: ""
+      description: "Timestamp of when the host was last rebooted"
     },
     sapInstances: {
-      description: ""
+      description: "List of SAP application and database instances running on the host"
     },
     relevantPatches: {
-      description: ""
+      description: "Patches available for installation on the host"
     },
     upgradablePackages: {
-      description: ""
+      description: "Packages on the host that have newer versions available"
     },
     softwareUpdatesLoading: {
-      description: ""
+      description: "Whether software update data is currently being loaded"
     },
     softwareUpdatesSettingsSaved: {
-      description: ""
+      description: "Whether the host's software update settings have been saved"
     },
     softwareUpdatesErrorMessage: {
-      description: ""
+      description: "Error message displayed when software updates fail"
     },
     softwareUpdatesTooltip: {
-      description: ""
+      description: "Tooltip text providing additional information about software updates"
     },
     cleanForbiddenOperation: {
-      description: ""
+      description: "Callback function to close the operation forbidden error modal"
     }
   },
   decorators: [

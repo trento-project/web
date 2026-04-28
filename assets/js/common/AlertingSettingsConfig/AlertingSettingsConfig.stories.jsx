@@ -23,16 +23,16 @@ export default {
       control: { type: 'function' },
     },
     label: {
-      description: ""
+      description: "Text label to display for an alerting settings field"
     },
     value: {
-      description: ""
+      description: "The current value of an alerting settings field"
     },
     ariaLabel: {
-      description: ""
+      description: "Accessibility label for the settings value element"
     },
     addClasses: {
-      description: ""
+      description: "Additional CSS classes to apply to the settings value element"
     }
   },
 };

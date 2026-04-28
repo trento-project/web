@@ -69,13 +69,13 @@ export default {
       },
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the input wrapper"
     },
     initialValue: {
-      description: ""
+      description: "The initial default value to populate the input with when the component mounts"
     },
     onChange: {
-      description: ""
+      description: "Callback function invoked when the input value changes"
     }
   },
 };

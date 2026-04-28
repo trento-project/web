@@ -43,19 +43,19 @@ export default {
       control: { type: 'radio' },
     },
     value: {
-      description: ""
+      description: "The display label or identifier for the operation menu item"
     },
     running: {
-      description: ""
+      description: "Boolean indicating whether the operation is currently executing"
     },
     onClick: {
-      description: ""
+      description: "Callback function invoked when the operation menu item is clicked"
     },
     text: {
-      description: ""
+      description: "Display text for the main operations button"
     },
     transparent: {
-      description: ""
+      description: "Boolean determining whether the button uses transparent styling"
     }
   },
 };

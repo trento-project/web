@@ -32,10 +32,10 @@ export default {
       description: 'Tooltip place',
     },
     tooltipWrap: {
-      description: ""
+      description: "Determines if the tooltip content should wrap or stay on a single line"
     },
     children: {
-      description: ""
+      description: "The element to be guarded, which becomes disabled if the user lacks authorization"
     }
   },
 };

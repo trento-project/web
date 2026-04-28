@@ -48,10 +48,10 @@ export default {
       },
     },
     className: {
-      description: ""
+      description: "CSS classes to apply to the accordion container"
     },
     headerClassnames: {
-      description: ""
+      description: "CSS classes to apply to the accordion header"
     }
   },
 };

@@ -24,7 +24,7 @@ export default {
       description: 'Edit button click handler',
     },
     className: {
-      description: ""
+      description: "CSS classes to apply to the AI configuration container"
     }
   },
   args: {

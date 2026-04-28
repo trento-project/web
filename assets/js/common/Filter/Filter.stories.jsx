@@ -29,13 +29,13 @@ export default {
       control: { type: null },
     },
     icon: {
-      description: ""
+      description: "An icon element to be displayed alongside the filter label in the dropdown options"
     },
     label: {
-      description: ""
+      description: "The text label displayed next to the icon in filter options"
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the root filter container"
     }
   },
   render: (args) => {

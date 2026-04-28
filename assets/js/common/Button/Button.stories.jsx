@@ -16,19 +16,19 @@ export default {
       },
     },
     children: {
-      description: ""
+      description: "Content or text displayed inside the button"
     },
     className: {
-      description: ""
+      description: "Additional CSS classes applied to the button element"
     },
     type: {
-      description: ""
+      description: "Style variant of the button (e.g., primary, secondary, danger, link)"
     },
     disabled: {
-      description: ""
+      description: "Boolean indicating whether the button is disabled"
     },
     asSubmit: {
-      description: ""
+      description: "Boolean determining whether the button's type is submit or button"
     }
   },
 };

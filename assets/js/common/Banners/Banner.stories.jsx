@@ -32,7 +32,7 @@ export default {
       },
     },
     children: {
-      description: ""
+      description: "The text or content to display inside the banner"
     }
   },
 };

@@ -24,10 +24,10 @@ export default {
       control: false,
     },
     onCleanUp: {
-      description: ""
+      description: "Callback function triggered when the user clicks the Clean up button; handles deregistration"
     },
     onCancel: {
-      description: ""
+      description: "Callback function triggered when the user clicks the Cancel button; closes the modal"
     }
   },
 };

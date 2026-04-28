@@ -30,34 +30,34 @@ export default {
       },
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the password input wrapper"
     },
     id: {
-      description: ""
+      description: "The id attribute of the underlying input element"
     },
     name: {
-      description: ""
+      description: "The name attribute of the underlying input element"
     },
     type: {
-      description: ""
+      description: "The type attribute of the input, toggled between password and text"
     },
     value: {
-      description: ""
+      description: "The controlled value of the password input"
     },
     initialValue: {
-      description: ""
+      description: "The initial default value to populate the password input with on mount"
     },
     prefix: {
-      description: ""
+      description: "An icon or element to display at the start of the input field"
     },
     suffix: {
-      description: ""
+      description: "An icon or element to display at the end of the input field"
     },
     allowClear: {
-      description: ""
+      description: "Whether to display a clear icon that empties the input when clicked"
     },
     onChange: {
-      description: ""
+      description: "Callback function invoked when the password input value changes"
     }
   },
 };

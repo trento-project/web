@@ -63,37 +63,37 @@ export default {
       description: 'Deregister and clean up an absent instance',
     },
     label: {
-      description: ""
+      description: "Label text displayed before a data pill in system replication information sections"
     },
     data: {
-      description: ""
+      description: "Data content to be rendered inside a colored pill next to the label"
     },
     className: {
-      description: ""
+      description: "CSS classes for styling the pill container"
     },
     title: {
-      description: ""
+      description: "Main page title displayed at the top of the SAP/Database system details view"
     },
     type: {
-      description: ""
+      description: "System type indicator: APPLICATION_TYPE for SAP systems or DATABASE_TYPE for HANA databases"
     },
     operationsEnabled: {
-      description: ""
+      description: "Boolean flag that determines whether operation buttons are rendered for system start/stop actions"
     },
     runningOperations: {
-      description: ""
+      description: "Array of currently executing operations on the system"
     },
     getSystemOperations: {
-      description: ""
+      description: "Callback function that returns available system-level operations"
     },
     getSiteOperations: {
-      description: ""
+      description: "Callback function that returns site-level operations for system replication"
     },
     onRequestOperation: {
-      description: ""
+      description: "Callback invoked when a user requests an operation"
     },
     onCleanForbiddenOperation: {
-      description: ""
+      description: "Callback invoked when a forbidden operation modal is dismissed"
     }
   },
   decorators: [

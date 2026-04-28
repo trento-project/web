@@ -56,10 +56,10 @@ export default {
       description: 'Content of the tooltip, if it is rendered',
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the component's container"
     },
     errorMessage: {
-      description: ""
+      description: "Error message displayed when software updates data is unavailable"
     }
   },
 };

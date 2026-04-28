@@ -29,10 +29,10 @@ export default {
       control: { type: null },
     },
     prefilled: {
-      description: ""
+      description: "Whether to include preconfigured date filter options in the list"
     },
     className: {
-      description: ""
+      description: "CSS classes to apply to the date filter container"
     }
   },
   render: (args) => {

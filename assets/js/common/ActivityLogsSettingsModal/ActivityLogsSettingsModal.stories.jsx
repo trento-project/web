@@ -21,28 +21,28 @@ export default {
       description: 'The validation error to be shown',
     },
     time: {
-      description: ""
+      description: "The initial retention time object with {value, unit} structure for the TimeSpan component"
     },
     error: {
-      description: ""
+      description: "Boolean flag indicating whether a validation error exists for the retention time input field"
     },
     onChange: {
-      description: ""
+      description: "Callback function invoked when the retention time value or unit is changed by the user"
     },
     text: {
-      description: ""
+      description: "The error message text to display in the Error component for validation or global errors"
     },
     loading: {
-      description: ""
+      description: "Boolean flag indicating whether a save operation is in progress to disable the Save Settings button"
     },
     onSave: {
-      description: ""
+      description: "Callback function invoked when the Save Settings button is clicked"
     },
     onCancel: {
-      description: ""
+      description: "Callback function invoked when the Cancel button is clicked or the modal is closed"
     },
     onClearErrors: {
-      description: ""
+      description: "Callback function invoked when the retention time is modified to clear previous validation errors"
     }
   },
 };

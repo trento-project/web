@@ -64,22 +64,22 @@ export default {
       },
     },
     components: {
-      description: ""
+      description: "Custom React Select component replacements for rendering Option, DropdownIndicator, ClearIndicator, and other select parts"
     },
     selectClassNames: {
-      description: ""
+      description: "Custom className generator functions for styling Select components"
     },
     unstyled: {
-      description: ""
+      description: "Whether to use unstyled react-select components and handle all styling externally"
     },
     renderControlOption: {
-      description: ""
+      description: "Custom renderer function for displaying the selected option in the control"
     },
     filterOption: {
-      description: ""
+      description: "Custom filter function to determine which options match the search input"
     },
     className: {
-      description: ""
+      description: "Additional CSS classes to apply to the Select container wrapper"
     }
   },
 };

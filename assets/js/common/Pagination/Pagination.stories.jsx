@@ -22,19 +22,19 @@ export default {
       defaultValue: [10],
     },
     onChange: {
-      description: ""
+      description: "Callback function triggered when pagination state changes"
     },
     onSelect: {
-      description: ""
+      description: "Callback function invoked with page navigation action"
     },
     pageStats: {
-      description: ""
+      description: "Component or content displayed to show current page statistics"
     },
     className: {
-      description: ""
+      description: "Additional CSS classes applied to the pagination container"
     },
     onChangeItemsPerPage: {
-      description: ""
+      description: "Callback function invoked when the items per page selection is changed"
     }
   },
   render: (args) => (

@@ -26,16 +26,16 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      description: ""
+      description: "Additional CSS classes applied to the filter container"
     },
     filters: {
-      description: ""
+      description: "Array of filter configuration objects defining the filters to compose"
     },
     resetValue: {
-      description: ""
+      description: "Object containing the default filter values used when reset is applied"
     },
     children: {
-      description: ""
+      description: "Additional React elements displayed after the filters when not in autoApply mode"
     }
   },
   render: ({ filters, value, onChange, autoApply }) => {

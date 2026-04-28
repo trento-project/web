@@ -11,13 +11,13 @@ export default {
       options: ['horizontal', 'vertical'],
     },
     className: {
-      description: ""
+      description: "Additional CSS classes applied to the list view container"
     },
     data: {
-      description: ""
+      description: "Array of objects containing title, content, and rendering configuration for each list item"
     },
     titleClassName: {
-      description: ""
+      description: "CSS classes applied to individual item titles"
     }
   },
   args: {

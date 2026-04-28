@@ -60,19 +60,19 @@ export default {
         'Callback called with the selected/zoomed time interval, check the console',
     },
     chartRef: {
-      description: ""
+      description: "Reference to the Chart.js instance for direct chart manipulation"
     },
     yAxisMaxValue: {
-      description: ""
+      description: "Maximum value for the Y axis scale"
     },
     yAxisLabelFormatter: {
-      description: ""
+      description: "Function to format Y axis tick labels"
     },
     yAxisScaleType: {
-      description: ""
+      description: "The type of scale for the Y axis (e.g., linear or logarithmic)"
     },
     chart: {
-      description: ""
+      description: "Chart.js configuration and instance data"
     }
   },
 };
