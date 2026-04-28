@@ -80,7 +80,7 @@ export default {
         type: 'text',
       },
     },
-    udpatedAt: {
+    updatedAt: {
       description: 'User last update timestamp',
       control: {
         type: 'text',
@@ -98,6 +98,18 @@ export default {
         type: 'text',
       },
     },
+    analyticsEnabledConfig: {
+      description: 'Toggles visibility of Analytics switch. Analytics config is enabled',
+      control: {
+        type: 'boolean'
+      },
+    },
+    analyticsEnabled: {
+      description: 'Toggles tracking user analytics',
+      control: {
+        type: 'boolean'
+      },
+    },
     timezone: {
       description: 'User timezone',
       control: {
@@ -108,6 +120,12 @@ export default {
       description: 'User is being edited',
       control: {
         type: 'boolean',
+      },
+    },
+    timezones: {
+      description: 'Available timezones',
+      control: {
+        type: 'object',
       },
     },
     saving: {
@@ -172,6 +190,7 @@ export const Editing = {
     timezone,
     editing: true,
     saveText: 'Save',
+    timezones: ["GMT+00:00", "GMT+01:00", "GMT+02:00"],
   },
 };
 
