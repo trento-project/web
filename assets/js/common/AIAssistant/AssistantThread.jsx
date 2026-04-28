@@ -22,7 +22,7 @@ export function AssistantThread({ onClose }) {
       <ChatHeader onClose={onClose} />
       <ThreadPrimitive.Viewport
         turnAnchor="top"
-        className="relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth px-6 pt-4 pb-6"
+        className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto scroll-smooth px-6 pt-4"
       >
         <AuiIf condition={({ thread }) => thread.isEmpty}>
           <WelcomePanel />
@@ -34,11 +34,9 @@ export function AssistantThread({ onClose }) {
             AssistantMessage,
           }}
         />
-        <div className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible bg-white pt-4">
-          <ThreadPrimitive.ViewportFooter className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible">
-            <PromptComposer />
-          </ThreadPrimitive.ViewportFooter>
-        </div>
+        <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
+          <PromptComposer />
+        </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>
     </ThreadPrimitive.Root>
   );
