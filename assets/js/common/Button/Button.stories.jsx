@@ -15,6 +15,21 @@ export default {
         defaultValue: { summary: 'small' },
       },
     },
+    children: {
+      description: ""
+    },
+    className: {
+      description: ""
+    },
+    type: {
+      description: ""
+    },
+    disabled: {
+      description: ""
+    },
+    asSubmit: {
+      description: ""
+    }
   },
 };
 

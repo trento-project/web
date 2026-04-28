@@ -47,6 +47,12 @@ export default {
         type: 'boolean',
       },
     },
+    className: {
+      description: ""
+    },
+    headerClassnames: {
+      description: ""
+    }
   },
 };
 

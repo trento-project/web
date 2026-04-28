@@ -20,6 +20,30 @@ export default {
     errors: {
       description: 'The validation error to be shown',
     },
+    time: {
+      description: ""
+    },
+    error: {
+      description: ""
+    },
+    onChange: {
+      description: ""
+    },
+    text: {
+      description: ""
+    },
+    loading: {
+      description: ""
+    },
+    onSave: {
+      description: ""
+    },
+    onCancel: {
+      description: ""
+    },
+    onClearErrors: {
+      description: ""
+    }
   },
 };
 

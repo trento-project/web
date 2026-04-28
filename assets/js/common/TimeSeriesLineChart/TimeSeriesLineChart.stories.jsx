@@ -59,6 +59,21 @@ export default {
       description:
         'Callback called with the selected/zoomed time interval, check the console',
     },
+    chartRef: {
+      description: ""
+    },
+    yAxisMaxValue: {
+      description: ""
+    },
+    yAxisLabelFormatter: {
+      description: ""
+    },
+    yAxisScaleType: {
+      description: ""
+    },
+    chart: {
+      description: ""
+    }
   },
 };
 

@@ -68,6 +68,15 @@ export default {
         type: 'boolean',
       },
     },
+    className: {
+      description: ""
+    },
+    initialValue: {
+      description: ""
+    },
+    onChange: {
+      description: ""
+    }
   },
 };
 

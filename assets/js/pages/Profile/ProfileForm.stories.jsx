@@ -89,6 +89,33 @@ export default {
       description: 'Toggles tracking user analytics',
       control: { type: 'boolean' },
     },
+    analyticsEulaAccepted: {
+      description: ""
+    },
+    loading: {
+      description: ""
+    },
+    disableForm: {
+      description: ""
+    },
+    passwordModalOpen: {
+      description: ""
+    },
+    toggleTotpBox: {
+      description: ""
+    },
+    togglePasswordModal: {
+      description: ""
+    },
+    onResetTotp: {
+      description: ""
+    },
+    onVerifyTotp: {
+      description: ""
+    },
+    onEnableTotp: {
+      description: ""
+    }
   },
   render: (args) => (
     <ContainerWrapper>

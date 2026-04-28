@@ -79,12 +79,6 @@ export default {
         type: 'text',
       },
     },
-    udpatedAt: {
-      description: 'User last update timestamp',
-      control: {
-        type: 'text',
-      },
-    },
     totpEnabledAt: {
       description: 'User enablement of totp feature',
       control: {
@@ -136,6 +130,15 @@ export default {
       action: 'Cancel user creation',
       description: 'Cancel user creation',
     },
+    updatedAt: {
+      description: ""
+    },
+    analyticsEnabledConfig: {
+      description: ""
+    },
+    analyticsEnabled: {
+      description: ""
+    }
   },
   decorators: [
     (Story) => (

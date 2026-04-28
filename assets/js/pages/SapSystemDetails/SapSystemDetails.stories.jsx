@@ -62,6 +62,39 @@ export default {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
     },
+    label: {
+      description: ""
+    },
+    data: {
+      description: ""
+    },
+    className: {
+      description: ""
+    },
+    title: {
+      description: ""
+    },
+    type: {
+      description: ""
+    },
+    operationsEnabled: {
+      description: ""
+    },
+    runningOperations: {
+      description: ""
+    },
+    getSystemOperations: {
+      description: ""
+    },
+    getSiteOperations: {
+      description: ""
+    },
+    onRequestOperation: {
+      description: ""
+    },
+    onCleanForbiddenOperation: {
+      description: ""
+    }
   },
   decorators: [
     (Story) => (

@@ -15,6 +15,9 @@ export default {
       },
       description: 'A list of patches',
     },
+    onNavigate: {
+      description: ""
+    }
   },
   decorators: [
     (Story) => (

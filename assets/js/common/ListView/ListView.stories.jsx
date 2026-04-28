@@ -10,6 +10,15 @@ export default {
       control: 'select',
       options: ['horizontal', 'vertical'],
     },
+    className: {
+      description: ""
+    },
+    data: {
+      description: ""
+    },
+    titleClassName: {
+      description: ""
+    }
   },
   args: {
     orientation: 'horizontal',

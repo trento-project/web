@@ -12,18 +12,28 @@ export default {
         type: 'object',
       },
     },
-
     userAbilities: {
       description: 'Abilities of the current user',
       control: {
         type: 'array',
       },
     },
-
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',
       control: { type: 'function' },
     },
+    label: {
+      description: ""
+    },
+    value: {
+      description: ""
+    },
+    ariaLabel: {
+      description: ""
+    },
+    addClasses: {
+      description: ""
+    }
   },
 };
 

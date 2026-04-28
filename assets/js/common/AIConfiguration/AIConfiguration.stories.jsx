@@ -23,6 +23,9 @@ export default {
       type: 'function',
       description: 'Edit button click handler',
     },
+    className: {
+      description: ""
+    }
   },
   args: {
     aiConfiguration: {},

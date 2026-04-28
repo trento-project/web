@@ -63,6 +63,9 @@ export default {
         type: 'function',
       },
     },
+    onTestConnection: {
+      description: ""
+    }
   },
 };
 

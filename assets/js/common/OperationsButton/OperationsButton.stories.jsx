@@ -42,6 +42,21 @@ export default {
       options: PLACES,
       control: { type: 'radio' },
     },
+    value: {
+      description: ""
+    },
+    running: {
+      description: ""
+    },
+    onClick: {
+      description: ""
+    },
+    text: {
+      description: ""
+    },
+    transparent: {
+      description: ""
+    }
   },
 };
 

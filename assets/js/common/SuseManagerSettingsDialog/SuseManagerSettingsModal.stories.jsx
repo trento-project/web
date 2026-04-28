@@ -37,6 +37,15 @@ export default {
     errors: {
       description: 'OpenAPI errors coming from backend validation',
     },
+    onSave: {
+      description: ""
+    },
+    onCancel: {
+      description: ""
+    },
+    onClearErrors: {
+      description: ""
+    }
   },
 };
 

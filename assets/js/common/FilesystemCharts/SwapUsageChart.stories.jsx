@@ -17,6 +17,9 @@ export default {
       description: 'Total swap in bytes',
       control: { type: 'number' },
     },
+    className: {
+      description: ""
+    }
   },
   render: (args) => <SwapUsageChart {...args} className="w-full h-[400px]" />,
 };

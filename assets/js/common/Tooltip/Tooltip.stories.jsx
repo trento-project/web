@@ -33,6 +33,12 @@ export default {
       description:
         'If specified, force to show or hide the tooltip regardless of the trigger event',
     },
+    className: {
+      description: ""
+    },
+    children: {
+      description: ""
+    }
   },
   render: (args) => (
     <div className="p-12 flex items-center justify-center">

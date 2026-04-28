@@ -18,29 +18,17 @@ export default {
         defaultValue: { summary: 'host' },
       },
     },
-    hostname: {
-      type: 'string',
-      description:
-        'The host name to confirm deregistration of. Only used in host deregistration modal',
-      control: { type: 'text' },
-    },
-    sid: {
-      type: 'string',
-      description:
-        'The sid of the deregistered instance. Only used in application and database deregistratio modals',
-      control: { type: 'text' },
-    },
-    instanceNumber: {
-      type: 'string',
-      description:
-        'The sid of the deregistered instance. Only used in application and database deregistratio modals',
-      control: { type: 'text' },
-    },
     isOpen: {
       type: 'boolean',
       description: 'Sets the visibility of the modal',
       control: false,
     },
+    onCleanUp: {
+      description: ""
+    },
+    onCancel: {
+      description: ""
+    }
   },
 };
 

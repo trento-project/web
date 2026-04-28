@@ -26,10 +26,6 @@ export default {
         type: 'object',
       },
     },
-    onCreate: {
-      type: 'function',
-      description: 'Creates or updates AI configuration',
-    },
     onUpdate: {
       type: 'function',
       description: 'Updates AI configuration',
@@ -50,6 +46,9 @@ export default {
         type: 'object',
       },
     },
+    onSave: {
+      description: ""
+    }
   },
   args: {
     open: false,

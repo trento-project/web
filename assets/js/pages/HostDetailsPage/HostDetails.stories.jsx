@@ -117,10 +117,6 @@ export default {
       control: 'object',
       description: 'The discovered CSP data',
     },
-    sapSystems: {
-      control: { type: 'array' },
-      description: 'SAP systems running on the host',
-    },
     saptuneStatus: {
       control: 'object',
       description: 'Saptune status data',
@@ -177,6 +173,36 @@ export default {
     navigate: {
       description: 'Navigate function',
     },
+    chartsEnabled: {
+      description: ""
+    },
+    lastBootTimestamp: {
+      description: ""
+    },
+    sapInstances: {
+      description: ""
+    },
+    relevantPatches: {
+      description: ""
+    },
+    upgradablePackages: {
+      description: ""
+    },
+    softwareUpdatesLoading: {
+      description: ""
+    },
+    softwareUpdatesSettingsSaved: {
+      description: ""
+    },
+    softwareUpdatesErrorMessage: {
+      description: ""
+    },
+    softwareUpdatesTooltip: {
+      description: ""
+    },
+    cleanForbiddenOperation: {
+      description: ""
+    }
   },
   decorators: [
     (Story) => (

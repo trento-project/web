@@ -28,6 +28,9 @@ export default {
         type: 'function',
       },
     },
+    children: {
+      description: ""
+    }
   },
   render: (args) => (
     <SettingsLoader {...args}>

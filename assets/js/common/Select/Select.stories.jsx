@@ -30,13 +30,6 @@ export default {
         type: 'array',
       },
     },
-    isDisabled: {
-      type: 'boolean',
-      description: 'Component is disabled or not',
-      control: {
-        type: 'boolean',
-      },
-    },
     isMulti: {
       type: 'boolean',
       description: 'Component is multi value',
@@ -70,6 +63,24 @@ export default {
         type: { summary: '() => {}' },
       },
     },
+    components: {
+      description: ""
+    },
+    selectClassNames: {
+      description: ""
+    },
+    unstyled: {
+      description: ""
+    },
+    renderControlOption: {
+      description: ""
+    },
+    filterOption: {
+      description: ""
+    },
+    className: {
+      description: ""
+    }
   },
 };
 

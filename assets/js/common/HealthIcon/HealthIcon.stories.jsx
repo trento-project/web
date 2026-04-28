@@ -8,6 +8,18 @@ export default {
     isLink: {
       control: 'boolean',
     },
+    health: {
+      description: ""
+    },
+    centered: {
+      description: ""
+    },
+    hoverOpacity: {
+      description: ""
+    },
+    size: {
+      description: ""
+    }
   },
 };
 

@@ -28,6 +28,12 @@ export default {
       description: 'Function to call when the selected options change',
       control: { type: null },
     },
+    prefilled: {
+      description: ""
+    },
+    className: {
+      description: ""
+    }
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);

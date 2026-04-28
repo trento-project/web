@@ -31,6 +31,12 @@ export default {
       options: PLACES,
       description: 'Tooltip place',
     },
+    tooltipWrap: {
+      description: ""
+    },
+    children: {
+      description: ""
+    }
   },
 };
 

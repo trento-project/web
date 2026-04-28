@@ -9,6 +9,9 @@ export default {
       description: 'An object containing information about each mountpoint',
       control: { type: 'object' },
     },
+    className: {
+      description: ""
+    }
   },
   render: (args) => <MountpointsChart {...args} className="w-full h-[400px]" />,
 };

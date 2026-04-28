@@ -121,6 +121,9 @@ export default {
       type: 'function',
       description: 'Resets the customized checks values and closes the modal',
     },
+    customizationStatus: {
+      description: ""
+    }
   },
 };
 

@@ -55,6 +55,12 @@ export default {
       type: 'string',
       description: 'Content of the tooltip, if it is rendered',
     },
+    className: {
+      description: ""
+    },
+    errorMessage: {
+      description: ""
+    }
   },
 };
 

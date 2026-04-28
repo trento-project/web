@@ -5,11 +5,6 @@ export default {
   title: 'Components/UpgradablePackagesList',
   component: UpgradablePackagesList,
   argTypes: {
-    hostname: {
-      type: 'string',
-      control: { type: 'text' },
-      description: 'The name of the host',
-    },
     onPatchClick: {
       action: 'patch clicked',
       description: 'Callback when patch is clicked',
@@ -23,6 +18,12 @@ export default {
     patchesLoading: {
       description: 'Are patches loading?',
     },
+    sortDirection: {
+      description: ""
+    },
+    toggleSortDirection: {
+      description: ""
+    }
   },
 };
 

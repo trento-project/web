@@ -19,6 +19,36 @@ export default {
       control: 'array',
       description: 'Abilities that allow tag deletion',
     },
+    onClick: {
+      description: ""
+    },
+    disabled: {
+      description: ""
+    },
+    tag: {
+      description: ""
+    },
+    className: {
+      description: ""
+    },
+    tags: {
+      description: ""
+    },
+    onAdd: {
+      description: ""
+    },
+    onRemove: {
+      description: ""
+    },
+    resourceId: {
+      description: ""
+    },
+    userAbilities: {
+      description: ""
+    },
+    validationMessage: {
+      description: ""
+    }
   },
 };
 

@@ -29,6 +29,36 @@ export default {
         type: { summary: 'boolean' },
       },
     },
+    className: {
+      description: ""
+    },
+    id: {
+      description: ""
+    },
+    name: {
+      description: ""
+    },
+    type: {
+      description: ""
+    },
+    value: {
+      description: ""
+    },
+    initialValue: {
+      description: ""
+    },
+    prefix: {
+      description: ""
+    },
+    suffix: {
+      description: ""
+    },
+    allowClear: {
+      description: ""
+    },
+    onChange: {
+      description: ""
+    }
   },
 };
 

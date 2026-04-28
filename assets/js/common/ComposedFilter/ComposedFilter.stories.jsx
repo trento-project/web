@@ -7,12 +7,6 @@ export default {
   title: 'Components/ComposedFilter',
   component: ComposedFilter,
   argTypes: {
-    options: {
-      type: { name: 'array', required: true, defaultValue: [] },
-      description:
-        'Describe the list of filters to be composed. Filters are displayed in order.',
-      control: { type: 'object' },
-    },
     value: {
       type: { name: 'object', required: false, defaultValue: {} },
       description:
@@ -31,6 +25,18 @@ export default {
         'If true, onChange is called on every filter change; otherwise, an apply button is shown',
       control: { type: 'boolean' },
     },
+    className: {
+      description: ""
+    },
+    filters: {
+      description: ""
+    },
+    resetValue: {
+      description: ""
+    },
+    children: {
+      description: ""
+    }
   },
   render: ({ filters, value, onChange, autoApply }) => {
     const [v, setValue] = useState(value);

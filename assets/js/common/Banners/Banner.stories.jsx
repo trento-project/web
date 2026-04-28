@@ -31,6 +31,9 @@ export default {
         defaultValue: { summary: true },
       },
     },
+    children: {
+      description: ""
+    }
   },
 };
 

@@ -21,6 +21,21 @@ export default {
       },
       defaultValue: [10],
     },
+    onChange: {
+      description: ""
+    },
+    onSelect: {
+      description: ""
+    },
+    pageStats: {
+      description: ""
+    },
+    className: {
+      description: ""
+    },
+    onChangeItemsPerPage: {
+      description: ""
+    }
   },
   render: (args) => (
     <Pagination
