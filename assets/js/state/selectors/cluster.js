@@ -8,6 +8,7 @@ import {
 } from '@lib/model/clusters';
 
 import { getHostID } from './host';
+import { getAllSAPInstances } from './sapSystem';
 import { getInstanceID } from '../instances';
 
 export const getCluster =
@@ -125,4 +126,38 @@ export const getFilesystemType = createSelector(
 export const getClusterSelectedChecks = createSelector(
   [(state, clusterID) => getCluster(clusterID)(state)],
   (cluster) => get(cluster, 'selected_checks', [])
+);
+
+// getClustersWithEnrichedSapInstances enriches the sap_instances field
+// of the clusters. It looks for already registered SAP and database
+// instances, and if any of them matches with the SAP instance by SID,
+// instance number and the host where the instance is running is part
+// of the cluster, the data is included.
+// In HANA system replication setup, as the SID and instance number are
+// the same and both instances belong to the cluster, only the first found
+// instance data is attached.
+export const getClustersWithEnrichedSapInstances = createSelector(
+  [
+    (state) => state.clustersList.clusters,
+    (state) => state.hostsList.hosts,
+    (state) => getAllSAPInstances(state),
+  ],
+  (clusters, hosts, allInstances) =>
+    clusters.map((cluster) => {
+      const clusterHostIDs = hosts
+        .filter(({ cluster_id: clusterID }) => cluster.id === clusterID)
+        .map(getHostID);
+
+      const enrichedSapInstances = cluster.sap_instances.map((sapInstance) => {
+        const instanceData = allInstances.find(
+          ({ sid, instance_number: instanceNumber, host_id: hostID }) =>
+            sid === sapInstance.sid &&
+            instanceNumber === sapInstance.instance_number &&
+            clusterHostIDs.includes(hostID)
+        );
+        return { ...sapInstance, ...instanceData };
+      });
+
+      return { ...cluster, sap_instances: enrichedSapInstances };
+    })
 );
