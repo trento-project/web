@@ -17,6 +17,7 @@ const {
   updated_at: updatedAt,
   totp_enabled_at: totpEnabledAt,
   last_login_at: lastLoginAt,
+  timezone,
 } = userFactory.build();
 
 const {
@@ -97,6 +98,12 @@ export default {
         type: 'text',
       },
     },
+    timezone: {
+      description: 'User timezone',
+      control: {
+        type: 'text',
+      },
+    },
     editing: {
       description: 'User is being edited',
       control: {
@@ -162,6 +169,7 @@ export const Editing = {
     updatedAt,
     totpEnabledAt,
     lastLoginAt,
+    timezone,
     editing: true,
     saveText: 'Save',
   },

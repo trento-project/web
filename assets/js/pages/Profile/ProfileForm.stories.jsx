@@ -12,6 +12,7 @@ const {
   updated_at: updatedAt,
   abilities,
   analytics_enabled: analyticsEnabled,
+  timezone,
 } = userFactory.build();
 
 function ContainerWrapper({ children }) {
@@ -76,6 +77,12 @@ export default {
         type: 'text',
       },
     },
+    timezone: {
+      description: 'User timezone',
+      control: {
+        type: 'text',
+      },
+    },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',
       control: { type: 'boolean' },
@@ -108,6 +115,7 @@ export const Default = {
       'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
     analyticsEnabledConfig: true,
     analyticsEnabled,
+    timezone,
   },
 };
 
@@ -121,6 +129,7 @@ export const Loading = {
     updatedAt,
     analyticsEnabledConfig: true,
     loading: true,
+    timezone,
   },
 };
 
