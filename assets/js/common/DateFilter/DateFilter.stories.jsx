@@ -29,11 +29,16 @@ export default {
       control: { type: null },
     },
     prefilled: {
-      description: "Whether to include preconfigured date filter options in the list"
+      type: 'boolean',
+      description:
+        'Whether to include preconfigured date filter options in the list',
+      control: { type: 'boolean' },
     },
     className: {
-      description: "CSS classes to apply to the date filter container"
-    }
+      type: 'string',
+      description: 'CSS classes to apply to the date filter container',
+      control: { type: 'text' },
+    },
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);

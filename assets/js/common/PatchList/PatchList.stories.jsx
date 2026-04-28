@@ -16,8 +16,10 @@ export default {
       description: 'A list of patches',
     },
     onNavigate: {
-      description: "Callback function invoked when a patch is selected for navigation"
-    }
+      type: 'function',
+      description:
+        'Callback function invoked when a patch is selected for navigation',
+    },
   },
   decorators: [
     (Story) => (

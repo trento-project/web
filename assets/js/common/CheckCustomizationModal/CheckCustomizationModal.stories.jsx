@@ -122,8 +122,11 @@ export default {
       description: 'Resets the customized checks values and closes the modal',
     },
     customizationStatus: {
-      description: "Status of the check customization operation (ongoing, failed, or invalid)"
-    }
+      type: 'string',
+      description:
+        'Status of the check customization operation (ongoing, failed, or invalid)',
+      control: { type: 'text' },
+    },
   },
 };
 

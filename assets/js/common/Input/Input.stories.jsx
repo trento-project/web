@@ -69,14 +69,20 @@ export default {
       },
     },
     className: {
-      description: "Additional CSS classes to apply to the input wrapper"
+      type: 'string',
+      description: 'Additional CSS classes to apply to the input wrapper',
+      control: { type: 'text' },
     },
     initialValue: {
-      description: "The initial default value to populate the input with when the component mounts"
+      type: 'string',
+      description:
+        'The initial default value to populate the input with when the component mounts',
+      control: { type: 'text' },
     },
     onChange: {
-      description: "Callback function invoked when the input value changes"
-    }
+      type: 'function',
+      description: 'Callback function invoked when the input value changes',
+    },
   },
 };
 

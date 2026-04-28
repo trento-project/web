@@ -9,17 +9,26 @@ export default {
       control: 'boolean',
     },
     health: {
-      description: "The health status to display (passing, warning, critical, absent, pending, or unknown)"
+      type: 'string',
+      description:
+        'The health status to display (passing, warning, critical, absent, pending, or unknown)',
+      control: { type: 'text' },
     },
     centered: {
-      description: "Whether to apply centering styles to the health icon"
+      type: 'boolean',
+      description: 'Whether to apply centering styles to the health icon',
+      control: { type: 'boolean' },
     },
     hoverOpacity: {
-      description: "Whether to apply opacity change on hover"
+      type: 'boolean',
+      description: 'Whether to apply opacity change on hover',
+      control: { type: 'boolean' },
     },
     size: {
-      description: "The icon size (xs, s, m, l, xl, or similar EOS icon size)"
-    }
+      type: 'string',
+      description: 'The icon size (xs, s, m, l, xl, or similar EOS icon size)',
+      control: { type: 'text' },
+    },
   },
 };
 

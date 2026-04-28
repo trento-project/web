@@ -90,32 +90,45 @@ export default {
       control: { type: 'boolean' },
     },
     analyticsEulaAccepted: {
-      description: "Boolean indicating if user has accepted analytics EULA"
+      type: 'boolean',
+      description: 'Boolean indicating if user has accepted analytics EULA',
+      control: { type: 'boolean' },
     },
     loading: {
-      description: "Loading state, disables all form controls"
+      type: 'boolean',
+      description: 'Loading state, disables all form controls',
+      control: { type: 'boolean' },
     },
     disableForm: {
-      description: "Disables all form inputs and buttons"
+      type: 'boolean',
+      description: 'Disables all form inputs and buttons',
+      control: { type: 'boolean' },
     },
     passwordModalOpen: {
-      description: "Controls visibility of password change modal"
+      type: 'boolean',
+      description: 'Controls visibility of password change modal',
+      control: { type: 'boolean' },
     },
     toggleTotpBox: {
-      description: "Callback to toggle TOTP enrollment box open/closed"
+      type: 'function',
+      description: 'Callback to toggle TOTP enrollment box open/closed',
     },
     togglePasswordModal: {
-      description: "Callback to toggle password modal open/closed"
+      type: 'function',
+      description: 'Callback to toggle password modal open/closed',
     },
     onResetTotp: {
-      description: "Callback to reset/disable TOTP authentication"
+      type: 'function',
+      description: 'Callback to reset/disable TOTP authentication',
     },
     onVerifyTotp: {
-      description: "Callback to verify TOTP code during enrollment"
+      type: 'function',
+      description: 'Callback to verify TOTP code during enrollment',
     },
     onEnableTotp: {
-      description: "Callback to enable TOTP authentication"
-    }
+      type: 'function',
+      description: 'Callback to enable TOTP authentication',
+    },
   },
   render: (args) => (
     <ContainerWrapper>

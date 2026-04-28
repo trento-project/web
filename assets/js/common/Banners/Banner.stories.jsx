@@ -32,8 +32,9 @@ export default {
       },
     },
     children: {
-      description: "The text or content to display inside the banner"
-    }
+      type: 'element',
+      description: 'The text or content to display inside the banner',
+    },
   },
 };
 

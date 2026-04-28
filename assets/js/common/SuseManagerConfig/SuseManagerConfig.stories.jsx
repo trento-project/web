@@ -64,8 +64,9 @@ export default {
       },
     },
     onTestConnection: {
-      description: "Callback function to test the SUSE Manager connection"
-    }
+      type: 'function',
+      description: 'Callback function to test the SUSE Manager connection',
+    },
   },
 };
 

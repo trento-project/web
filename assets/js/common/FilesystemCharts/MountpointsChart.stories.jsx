@@ -10,8 +10,10 @@ export default {
       control: { type: 'object' },
     },
     className: {
-      description: "Additional CSS classes applied to the chart container"
-    }
+      type: 'string',
+      description: 'Additional CSS classes applied to the chart container',
+      control: { type: 'text' },
+    },
   },
   render: (args) => <MountpointsChart {...args} className="w-full h-[400px]" />,
 };

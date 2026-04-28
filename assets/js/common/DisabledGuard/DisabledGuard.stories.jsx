@@ -32,11 +32,16 @@ export default {
       description: 'Tooltip place',
     },
     tooltipWrap: {
-      description: "Determines if the tooltip content should wrap or stay on a single line"
+      type: 'boolean',
+      description:
+        'Determines if the tooltip content should wrap or stay on a single line',
+      control: { type: 'boolean' },
     },
     children: {
-      description: "The element to be guarded, which becomes disabled if the user lacks authorization"
-    }
+      type: 'element',
+      description:
+        'The element to be guarded, which becomes disabled if the user lacks authorization',
+    },
   },
 };
 

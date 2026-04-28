@@ -18,8 +18,11 @@ export default {
       control: { type: 'number' },
     },
     className: {
-      description: "CSS class name applied to the component container for styling"
-    }
+      type: 'string',
+      description:
+        'CSS class name applied to the component container for styling',
+      control: { type: 'text' },
+    },
   },
   render: (args) => <SwapUsageChart {...args} className="w-full h-[400px]" />,
 };

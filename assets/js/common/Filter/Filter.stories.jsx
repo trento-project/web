@@ -29,14 +29,22 @@ export default {
       control: { type: null },
     },
     icon: {
-      description: "An icon element to be displayed alongside the filter label in the dropdown options"
+      type: 'element',
+      description:
+        'An icon element to be displayed alongside the filter label in the dropdown options',
     },
     label: {
-      description: "The text label displayed next to the icon in filter options"
+      type: 'string',
+      description:
+        'The text label displayed next to the icon in filter options',
+      control: { type: 'text' },
     },
     className: {
-      description: "Additional CSS classes to apply to the root filter container"
-    }
+      type: 'string',
+      description:
+        'Additional CSS classes to apply to the root filter container',
+      control: { type: 'text' },
+    },
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);

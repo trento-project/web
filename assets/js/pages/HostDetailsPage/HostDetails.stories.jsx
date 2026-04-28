@@ -174,35 +174,59 @@ export default {
       description: 'Navigate function',
     },
     chartsEnabled: {
-      description: "Whether to render system performance charts (CPU, memory, disk space)"
+      type: 'boolean',
+      description:
+        'Whether to render system performance charts (CPU, memory, disk space)',
+      control: { type: 'boolean' },
     },
     lastBootTimestamp: {
-      description: "Timestamp of when the host was last rebooted"
+      type: 'string',
+      description: 'Timestamp of when the host was last rebooted',
+      control: { type: 'text' },
     },
     sapInstances: {
-      description: "List of SAP application and database instances running on the host"
+      type: 'array',
+      description:
+        'List of SAP application and database instances running on the host',
+      control: { type: 'object' },
     },
     relevantPatches: {
-      description: "Patches available for installation on the host"
+      type: 'number',
+      description: 'Patches available for installation on the host',
+      control: { type: 'number' },
     },
     upgradablePackages: {
-      description: "Packages on the host that have newer versions available"
+      type: 'number',
+      description: 'Packages on the host that have newer versions available',
+      control: { type: 'number' },
     },
     softwareUpdatesLoading: {
-      description: "Whether software update data is currently being loaded"
+      type: 'boolean',
+      description: 'Whether software update data is currently being loaded',
+      control: { type: 'boolean' },
     },
     softwareUpdatesSettingsSaved: {
-      description: "Whether the host's software update settings have been saved"
+      type: 'boolean',
+      description:
+        "Whether the host's software update settings have been saved",
+      control: { type: 'boolean' },
     },
     softwareUpdatesErrorMessage: {
-      description: "Error message displayed when software updates fail"
+      type: 'string',
+      description: 'Error message displayed when software updates fail',
+      control: { type: 'text' },
     },
     softwareUpdatesTooltip: {
-      description: "Tooltip text providing additional information about software updates"
+      type: 'string',
+      description:
+        'Tooltip text providing additional information about software updates',
+      control: { type: 'text' },
     },
     cleanForbiddenOperation: {
-      description: "Callback function to close the operation forbidden error modal"
-    }
+      type: 'function',
+      description:
+        'Callback function to close the operation forbidden error modal',
+    },
   },
   decorators: [
     (Story) => (

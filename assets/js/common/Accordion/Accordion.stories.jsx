@@ -48,11 +48,15 @@ export default {
       },
     },
     className: {
-      description: "CSS classes to apply to the accordion container"
+      type: 'string',
+      description: 'CSS classes to apply to the accordion container',
+      control: { type: 'text' },
     },
     headerClassnames: {
-      description: "CSS classes to apply to the accordion header"
-    }
+      type: 'string',
+      description: 'CSS classes to apply to the accordion header',
+      control: { type: 'text' },
+    },
   },
 };
 

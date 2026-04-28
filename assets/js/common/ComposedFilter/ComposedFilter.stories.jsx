@@ -26,17 +26,27 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      description: "Additional CSS classes applied to the filter container"
+      type: 'string',
+      description: 'Additional CSS classes applied to the filter container',
+      control: { type: 'text' },
     },
     filters: {
-      description: "Array of filter configuration objects defining the filters to compose"
+      type: 'array',
+      description:
+        'Array of filter configuration objects defining the filters to compose',
+      control: { type: 'object' },
     },
     resetValue: {
-      description: "Object containing the default filter values used when reset is applied"
+      type: 'object',
+      description:
+        'Object containing the default filter values used when reset is applied',
+      control: { type: 'object' },
     },
     children: {
-      description: "Additional React elements displayed after the filters when not in autoApply mode"
-    }
+      type: 'element',
+      description:
+        'Additional React elements displayed after the filters when not in autoApply mode',
+    },
   },
   render: ({ filters, value, onChange, autoApply }) => {
     const [v, setValue] = useState(value);

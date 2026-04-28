@@ -131,14 +131,23 @@ export default {
       description: 'Cancel user creation',
     },
     updatedAt: {
-      description: "ISO timestamp string representing when the user was last updated"
+      type: 'string',
+      description:
+        'ISO timestamp string representing when the user was last updated',
+      control: { type: 'text' },
     },
     analyticsEnabledConfig: {
-      description: "Boolean flag controlling whether the analytics opt-in toggle is shown in the form"
+      type: 'boolean',
+      description:
+        'Boolean flag controlling whether the analytics opt-in toggle is shown in the form',
+      control: { type: 'boolean' },
     },
     analyticsEnabled: {
-      description: "Boolean flag indicating whether analytics is enabled for the user"
-    }
+      type: 'boolean',
+      description:
+        'Boolean flag indicating whether analytics is enabled for the user',
+      control: { type: 'boolean' },
+    },
   },
   decorators: [
     (Story) => (

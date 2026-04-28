@@ -47,8 +47,10 @@ export default {
       },
     },
     onSave: {
-      description: "Callback function triggered when saving a new AI configuration"
-    }
+      type: 'function',
+      description:
+        'Callback function triggered when saving a new AI configuration',
+    },
   },
   args: {
     open: false,

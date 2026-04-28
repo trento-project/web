@@ -63,38 +63,64 @@ export default {
       description: 'Deregister and clean up an absent instance',
     },
     label: {
-      description: "Label text displayed before a data pill in system replication information sections"
+      type: 'string',
+      description:
+        'Label text displayed before a data pill in system replication information sections',
+      control: { type: 'text' },
     },
     data: {
-      description: "Data content to be rendered inside a colored pill next to the label"
+      type: 'string',
+      description:
+        'Data content to be rendered inside a colored pill next to the label',
+      control: { type: 'text' },
     },
     className: {
-      description: "CSS classes for styling the pill container"
+      type: 'string',
+      description: 'CSS classes for styling the pill container',
+      control: { type: 'text' },
     },
     title: {
-      description: "Main page title displayed at the top of the SAP/Database system details view"
+      type: 'string',
+      description:
+        'Main page title displayed at the top of the SAP/Database system details view',
+      control: { type: 'text' },
     },
     type: {
-      description: "System type indicator: APPLICATION_TYPE for SAP systems or DATABASE_TYPE for HANA databases"
+      type: 'string',
+      description:
+        'System type indicator: APPLICATION_TYPE for SAP systems or DATABASE_TYPE for HANA databases',
+      control: { type: 'text' },
     },
     operationsEnabled: {
-      description: "Boolean flag that determines whether operation buttons are rendered for system start/stop actions"
+      type: 'boolean',
+      description:
+        'Boolean flag that determines whether operation buttons are rendered for system start/stop actions',
+      control: { type: 'boolean' },
     },
     runningOperations: {
-      description: "Array of currently executing operations on the system"
+      type: 'array',
+      description: 'Array of currently executing operations on the system',
+      control: { type: 'object' },
     },
     getSystemOperations: {
-      description: "Callback function that returns available system-level operations"
+      type: 'function',
+      description:
+        'Callback function that returns available system-level operations',
     },
     getSiteOperations: {
-      description: "Callback function that returns site-level operations for system replication"
+      type: 'function',
+      description:
+        'Callback function that returns site-level operations for system replication',
     },
     onRequestOperation: {
-      description: "Callback invoked when a user requests an operation"
+      type: 'function',
+      description: 'Callback invoked when a user requests an operation',
     },
     onCleanForbiddenOperation: {
-      description: "Callback invoked when a forbidden operation modal is dismissed"
-    }
+      type: 'function',
+      description:
+        'Callback invoked when a forbidden operation modal is dismissed',
+    },
   },
   decorators: [
     (Story) => (

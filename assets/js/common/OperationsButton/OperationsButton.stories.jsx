@@ -43,20 +43,33 @@ export default {
       control: { type: 'radio' },
     },
     value: {
-      description: "The display label or identifier for the operation menu item"
+      type: 'string',
+      description:
+        'The display label or identifier for the operation menu item',
+      control: { type: 'text' },
     },
     running: {
-      description: "Boolean indicating whether the operation is currently executing"
+      type: 'boolean',
+      description:
+        'Boolean indicating whether the operation is currently executing',
+      control: { type: 'boolean' },
     },
     onClick: {
-      description: "Callback function invoked when the operation menu item is clicked"
+      type: 'function',
+      description:
+        'Callback function invoked when the operation menu item is clicked',
     },
     text: {
-      description: "Display text for the main operations button"
+      type: 'string',
+      description: 'Display text for the main operations button',
+      control: { type: 'text' },
     },
     transparent: {
-      description: "Boolean determining whether the button uses transparent styling"
-    }
+      type: 'boolean',
+      description:
+        'Boolean determining whether the button uses transparent styling',
+      control: { type: 'boolean' },
+    },
   },
 };
 

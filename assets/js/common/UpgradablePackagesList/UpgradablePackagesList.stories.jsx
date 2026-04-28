@@ -19,11 +19,16 @@ export default {
       description: 'Are patches loading?',
     },
     sortDirection: {
-      description: "Specifies the current sort order (asc or desc) for the Latest Package column"
+      type: 'string',
+      description:
+        'Specifies the current sort order (asc or desc) for the Latest Package column',
+      control: { type: 'text' },
     },
     toggleSortDirection: {
-      description: "Callback function invoked when the Latest Package column header is clicked to toggle sort order"
-    }
+      type: 'function',
+      description:
+        'Callback function invoked when the Latest Package column header is clicked to toggle sort order',
+    },
   },
 };
 

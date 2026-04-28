@@ -21,29 +21,49 @@ export default {
       description: 'The validation error to be shown',
     },
     time: {
-      description: "The initial retention time object with {value, unit} structure for the TimeSpan component"
+      type: 'object',
+      description:
+        'The initial retention time object with {value, unit} structure for the TimeSpan component',
+      control: { type: 'object' },
     },
     error: {
-      description: "Boolean flag indicating whether a validation error exists for the retention time input field"
+      type: 'boolean',
+      description:
+        'Boolean flag indicating whether a validation error exists for the retention time input field',
+      control: { type: 'boolean' },
     },
     onChange: {
-      description: "Callback function invoked when the retention time value or unit is changed by the user"
+      type: 'function',
+      description:
+        'Callback function invoked when the retention time value or unit is changed by the user',
     },
     text: {
-      description: "The error message text to display in the Error component for validation or global errors"
+      type: 'string',
+      description:
+        'The error message text to display in the Error component for validation or global errors',
+      control: { type: 'text' },
     },
     loading: {
-      description: "Boolean flag indicating whether a save operation is in progress to disable the Save Settings button"
+      type: 'boolean',
+      description:
+        'Boolean flag indicating whether a save operation is in progress to disable the Save Settings button',
+      control: { type: 'boolean' },
     },
     onSave: {
-      description: "Callback function invoked when the Save Settings button is clicked"
+      type: 'function',
+      description:
+        'Callback function invoked when the Save Settings button is clicked',
     },
     onCancel: {
-      description: "Callback function invoked when the Cancel button is clicked or the modal is closed"
+      type: 'function',
+      description:
+        'Callback function invoked when the Cancel button is clicked or the modal is closed',
     },
     onClearErrors: {
-      description: "Callback function invoked when the retention time is modified to clear previous validation errors"
-    }
+      type: 'function',
+      description:
+        'Callback function invoked when the retention time is modified to clear previous validation errors',
+    },
   },
 };
 

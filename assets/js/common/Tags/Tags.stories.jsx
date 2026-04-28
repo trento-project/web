@@ -20,35 +20,58 @@ export default {
       description: 'Abilities that allow tag deletion',
     },
     onClick: {
-      description: "Callback function invoked when a tag pill element is clicked"
+      type: 'function',
+      description:
+        'Callback function invoked when a tag pill element is clicked',
     },
     disabled: {
-      description: "Whether tag deletion buttons are disabled"
+      type: 'boolean',
+      description: 'Whether tag deletion buttons are disabled',
+      control: { type: 'boolean' },
     },
     tag: {
-      description: "The tag string identifier for deletion operations"
+      type: 'string',
+      description: 'The tag string identifier for deletion operations',
+      control: { type: 'text' },
     },
     className: {
-      description: "Additional CSS classes to apply to the tags container element"
+      type: 'string',
+      description:
+        'Additional CSS classes to apply to the tags container element',
+      control: { type: 'text' },
     },
     tags: {
-      description: "Array of tag strings to display as individual tag pills"
+      type: 'array',
+      description: 'Array of tag strings to display as individual tag pills',
+      control: { type: 'object' },
     },
     onAdd: {
-      description: "Callback function invoked when a new tag is added to the collection"
+      type: 'function',
+      description:
+        'Callback function invoked when a new tag is added to the collection',
     },
     onRemove: {
-      description: "Callback function invoked when an existing tag is removed"
+      type: 'function',
+      description: 'Callback function invoked when an existing tag is removed',
     },
     resourceId: {
-      description: "Unique identifier for the resource to which tags are associated"
+      type: 'string',
+      description:
+        'Unique identifier for the resource to which tags are associated',
+      control: { type: 'text' },
     },
     userAbilities: {
-      description: "Array of user ability objects to determine if tag operations are permitted"
+      type: 'array',
+      description:
+        'Array of user ability objects to determine if tag operations are permitted',
+      control: { type: 'object' },
     },
     validationMessage: {
-      description: "Custom validation message displayed when tag input contains invalid characters"
-    }
+      type: 'string',
+      description:
+        'Custom validation message displayed when tag input contains invalid characters',
+      control: { type: 'text' },
+    },
   },
 };
 

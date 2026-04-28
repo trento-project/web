@@ -21,14 +21,17 @@ export default {
     isOpen: {
       type: 'boolean',
       description: 'Sets the visibility of the modal',
-      control: false,
     },
     onCleanUp: {
-      description: "Callback function triggered when the user clicks the Clean up button; handles deregistration"
+      type: 'function',
+      description:
+        'Callback function triggered when the user clicks the Clean up button; handles deregistration',
     },
     onCancel: {
-      description: "Callback function triggered when the user clicks the Cancel button; closes the modal"
-    }
+      type: 'function',
+      description:
+        'Callback function triggered when the user clicks the Cancel button; closes the modal',
+    },
   },
 };
 

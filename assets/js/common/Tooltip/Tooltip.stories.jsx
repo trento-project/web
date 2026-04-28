@@ -34,11 +34,16 @@ export default {
         'If specified, force to show or hide the tooltip regardless of the trigger event',
     },
     className: {
-      description: "Custom CSS classes applied to the tooltip overlay element for additional styling"
+      type: 'string',
+      description:
+        'Custom CSS classes applied to the tooltip overlay element for additional styling',
+      control: { type: 'text' },
     },
     children: {
-      description: "React element(s) to be wrapped by the tooltip component; the element that triggers the tooltip on hover"
-    }
+      type: 'element',
+      description:
+        'React element(s) to be wrapped by the tooltip component; the element that triggers the tooltip on hover',
+    },
   },
   render: (args) => (
     <div className="p-12 flex items-center justify-center">

@@ -29,8 +29,10 @@ export default {
       },
     },
     children: {
-      description: "React elements or content displayed when the settings loader status is READY"
-    }
+      type: 'element',
+      description:
+        'React elements or content displayed when the settings loader status is READY',
+    },
   },
   render: (args) => (
     <SettingsLoader {...args}>

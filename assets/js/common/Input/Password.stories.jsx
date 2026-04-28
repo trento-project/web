@@ -30,35 +30,59 @@ export default {
       },
     },
     className: {
-      description: "Additional CSS classes to apply to the password input wrapper"
+      type: 'string',
+      description:
+        'Additional CSS classes to apply to the password input wrapper',
+      control: { type: 'text' },
     },
     id: {
-      description: "The id attribute of the underlying input element"
+      type: 'string',
+      description: 'The id attribute of the underlying input element',
+      control: { type: 'text' },
     },
     name: {
-      description: "The name attribute of the underlying input element"
+      type: 'string',
+      description: 'The name attribute of the underlying input element',
+      control: { type: 'text' },
     },
     type: {
-      description: "The type attribute of the input, toggled between password and text"
+      type: 'string',
+      description:
+        'The type attribute of the input, toggled between password and text',
+      control: { type: 'text' },
     },
     value: {
-      description: "The controlled value of the password input"
+      type: 'string',
+      description: 'The controlled value of the password input',
+      control: { type: 'text' },
     },
     initialValue: {
-      description: "The initial default value to populate the password input with on mount"
+      type: 'string',
+      description:
+        'The initial default value to populate the password input with on mount',
+      control: { type: 'text' },
     },
     prefix: {
-      description: "An icon or element to display at the start of the input field"
+      type: 'element',
+      description:
+        'An icon or element to display at the start of the input field',
     },
     suffix: {
-      description: "An icon or element to display at the end of the input field"
+      type: 'element',
+      description:
+        'An icon or element to display at the end of the input field',
     },
     allowClear: {
-      description: "Whether to display a clear icon that empties the input when clicked"
+      type: 'boolean',
+      description:
+        'Whether to display a clear icon that empties the input when clicked',
+      control: { type: 'boolean' },
     },
     onChange: {
-      description: "Callback function invoked when the password input value changes"
-    }
+      type: 'function',
+      description:
+        'Callback function invoked when the password input value changes',
+    },
   },
 };
 
