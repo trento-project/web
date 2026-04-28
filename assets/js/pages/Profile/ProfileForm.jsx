@@ -11,7 +11,7 @@ import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -113,9 +113,8 @@ function ProfileForm({
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
-  const timezoneOptions = generateTimezoneOptions();
   const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+    timezones.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -229,7 +228,7 @@ function ProfileForm({
               inputId="timezone"
               name="timezone"
               value={selectedTimezone}
-              options={timezoneOptions}
+              options={timezones}
               onChange={(value) => {
                 setTimezone(value || '');
                 setTimezoneError(null);

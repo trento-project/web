@@ -7,10 +7,10 @@ import { faker } from '@faker-js/faker';
 import { profileFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
 
 const getTimezoneLabel = (timezone) =>
-  generateTimezoneOptions().find((option) => option.value === timezone)?.label;
+  timezones.find((option) => option.value === timezone)?.label;
 
 const userTimezone = 'Europe/Berlin';
 

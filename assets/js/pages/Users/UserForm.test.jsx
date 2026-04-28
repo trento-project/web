@@ -7,12 +7,12 @@ import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 
 import { abilityFactory, userFactory } from '@lib/test-utils/factories/users';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
 
 import UserForm from './UserForm';
 
 const getTimezoneLabel = (timezone) =>
-  generateTimezoneOptions().find((option) => option.value === timezone)?.label;
+  timezones.find((option) => option.value === timezone)?.label;
 
 describe('UserForm', () => {
   it('should display an empty user form', () => {

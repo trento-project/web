@@ -16,7 +16,7 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -142,9 +142,8 @@ function UserForm({
     setConfirmPassword(newPassword);
   };
 
-  const timezoneOptions = generateTimezoneOptions();
   const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+    timezones.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -290,7 +289,7 @@ function UserForm({
                   inputId="timezone"
                   name="timezone"
                   value={selectedTimezone}
-                  options={timezoneOptions}
+                  options={timezones}
                   onChange={(value) => {
                     setTimezone(value || '');
                     setTimezoneError(null);
