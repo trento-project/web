@@ -13,6 +13,7 @@ import {
   FS_TYPE_SIMPLE_MOUNT,
   FS_TYPE_MIXED,
 } from '@lib/model/clusters';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import {
   getClusterHostIDs,
@@ -21,6 +22,7 @@ import {
   getClusterSapSystems,
   getClusterSelectedChecks,
   getClusterIDs,
+  getClustersWithEnrichedSapInstances,
   getFilesystemType,
   getEnsaVersion,
   MIXED_VERSIONS,
@@ -462,5 +464,54 @@ describe('Cluster selector', () => {
     };
 
     expect(getFilesystemType(state, clusterID)).toEqual(FS_TYPE_MIXED);
+  });
+
+  it('should return clusters with enriched SAP and database instances', () => {
+    const appInstance = sapSystemApplicationInstanceFactory.build();
+    const dbInstance = databaseInstanceFactory.build();
+    const instanceInOtherCluster = sapSystemApplicationInstanceFactory.build();
+
+    const cluster = clusterFactory.build({
+      sap_instances: [
+        { sid: appInstance.sid, instance_number: appInstance.instance_number },
+        { sid: dbInstance.sid, instance_number: dbInstance.instance_number },
+        {
+          sid: instanceInOtherCluster.sid,
+          instance_number: instanceInOtherCluster.instance_number,
+        },
+        { sid: 'Unknown', instance_number: '100' },
+      ],
+    });
+
+    const hosts = [
+      hostFactory.build({ id: appInstance.host_id, cluster_id: cluster.id }),
+      hostFactory.build({ id: dbInstance.host_id, cluster_id: cluster.id }),
+      hostFactory.build({ id: instanceInOtherCluster.host_id }),
+    ];
+
+    const state = {
+      clustersList: {
+        clusters: [cluster],
+      },
+      hostsList: {
+        hosts,
+      },
+      databasesList: {
+        databaseInstances: [dbInstance],
+      },
+      sapSystemsList: {
+        applicationInstances: [appInstance],
+      },
+    };
+
+    const enrichedClusters = getClustersWithEnrichedSapInstances(state);
+    const sapInstances = enrichedClusters[0].sap_instances;
+
+    expect(sapInstances[0].sap_system_id).toEqual(appInstance.sap_system_id);
+    expect(sapInstances[0].type).toEqual(APPLICATION_TYPE);
+    expect(sapInstances[1].database_id).toEqual(dbInstance.database_id);
+    expect(sapInstances[1].type).toEqual(DATABASE_TYPE);
+    expect(sapInstances[2].type).toEqual(undefined);
+    expect(sapInstances[3].type).toEqual(undefined);
   });
 });
