@@ -22,6 +22,15 @@ import { selectHostChecks, selectClusterChecks } from './checksSelection';
 const axiosMock = new MockAdapter(networkClient);
 
 describe('Checks Selection saga', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   describe('Host Checks Selection', () => {
     it('should successfully save check selection for a host', async () => {
       const { id: hostID, hostname: hostName } = hostFactory.build();
