@@ -217,8 +217,7 @@ context('Hosts Overview', () => {
     });
   });
 
-  // eslint-disable-next-line mocha/no-exclusive-tests
-  describe.only('Filter and browser navigation', () => {
+  describe('Filter and browser navigation', () => {
     const hostname = availableHosts[0].name;
     const anotherHostname = availableHosts[1].name;
     const anyPageUrl = '/any-page';
@@ -293,8 +292,7 @@ context('Hosts Overview', () => {
     });
   });
 
-  // eslint-disable-next-line mocha/no-exclusive-tests
-  describe.only('Pagination and browser navigation', () => {
+  describe('Pagination and browser navigation', () => {
     const anyPageUrl = '/any-page';
 
     it('should update the URL with page param when navigating pages', () => {
