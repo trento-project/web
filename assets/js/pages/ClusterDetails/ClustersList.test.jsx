@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import {
   clusterFactory,
   clusteredSapInstanceFactory,
+  hostFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
@@ -285,18 +286,24 @@ describe('ClustersList component', () => {
   describe('clustered SAP systems', () => {
     it('should identify SAP instance type correctly when SAP instance available', async () => {
       const sid = 'PRD';
+      const instanceNumber = '00';
+      const clusters = clusterFactory.buildList(1, {
+        sap_instances: [{ sid, instance_number: instanceNumber }],
+      });
+      const hosts = hostFactory.buildList(1, { cluster_id: clusters[0].id });
 
       const state = {
         ...cleanInitialState,
         clustersList: {
-          clusters: clusterFactory.buildList(1, {
-            sap_instances: [{ sid }],
-          }),
+          clusters,
+        },
+        hostsList: {
+          hosts,
         },
         sapSystemsList: {
           applicationInstances: sapSystemApplicationInstanceFactory.buildList(
             1,
-            { sid }
+            { sid, instance_number: instanceNumber, host_id: hosts[0].id }
           ),
         },
         databasesList: {

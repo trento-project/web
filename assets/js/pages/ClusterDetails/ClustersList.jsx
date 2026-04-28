@@ -12,7 +12,7 @@ import {
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
-import { getAllSAPInstances } from '@state/selectors/sapSystem';
+import { getClustersWithEnrichedSapInstances } from '@state/selectors/cluster';
 import { getInstanceID } from '@state/instances';
 
 import { getUserProfile } from '@state/selectors/user';
@@ -56,8 +56,7 @@ const removeTag = (tag, clusterId) => {
 };
 
 function ClustersList() {
-  const clusters = useSelector((state) => state.clustersList.clusters);
-  const allInstances = useSelector(getAllSAPInstances);
+  const clusters = useSelector(getClustersWithEnrichedSapInstances);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const { abilities } = useSelector(getUserProfile);
@@ -94,9 +93,12 @@ function ClustersList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (_, { sid, type: clusterType }) => {
+        render: (
+          _,
+          { sid, type: clusterType, sap_instances: sapInstances }
+        ) => {
           const sidsArray = sid.map((singleSid) => {
-            const sapSystemData = getSapSystemBySID(allInstances, singleSid);
+            const sapSystemData = getSapSystemBySID(sapInstances, singleSid);
 
             return (
               <span key={singleSid}>
@@ -180,6 +182,7 @@ function ClustersList() {
     name: cluster.name,
     id: cluster.id,
     sid: getClusterSids(cluster),
+    sap_instances: cluster.sap_instances || [],
     type: cluster.type,
     hosts_number: cluster.hosts_number,
     resources_number: cluster.resources_number,
