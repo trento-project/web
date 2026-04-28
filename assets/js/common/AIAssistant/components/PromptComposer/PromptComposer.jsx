@@ -16,9 +16,6 @@ const defaultFootnote = (
 export const COMPOSER_INPUT_CLASS_NAME =
   'w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed';
 
-export const COMPOSER_SEND_BUTTON_CLASS_NAME =
-  'rounded-lg bg-[#2fb371] px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-[#279c61] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer';
-
 export function PromptComposer({
   inputSlot,
   actionSlot,

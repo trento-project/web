@@ -1,6 +1,8 @@
 import React from 'react';
 import { EOS_CLOSE } from 'eos-icons-react';
 
+import Button from '@common/Button';
+
 const STATUS_VIEW = {
   connected: { text: 'Online', dot: 'bg-white' },
   connecting: { text: 'Connecting...', dot: 'bg-yellow-300 animate-pulse' },
@@ -25,23 +27,24 @@ export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <button
-          type="button"
+        <Button
+          type="link"
+          size="none"
           onPointerDown={stopPointerDown}
           onClick={onNewChat}
-          className="text-sm font-medium hover:underline cursor-pointer"
+          className="text-sm !text-white hover:!text-white hover:underline"
         >
           New chat
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          type="icon"
+          size="none"
           onPointerDown={stopPointerDown}
           onClick={onClose}
-          className="hover:opacity-80 transition-opacity cursor-pointer flex items-center justify-center"
           aria-label="Close"
         >
           <EOS_CLOSE className="h-6 w-6 fill-current" />
-        </button>
+        </Button>
       </div>
     </div>
   );

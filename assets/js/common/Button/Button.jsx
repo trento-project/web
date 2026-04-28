@@ -7,6 +7,8 @@ const getSizeClasses = (size) => {
       return 'py-1 px-2 text-sm';
     case 'fit':
       return 'text-sm';
+    case 'none':
+      return '';
     default:
       return 'py-2 px-4 text-base';
   }
@@ -30,6 +32,10 @@ const getButtonClasses = (type) => {
       return 'bg-red-500 hover:opacity-75 focus:outline-none text-white border border-red-500 transition ease-in duration-200 text-center font-semibold rounded shadow';
     case 'link':
       return 'cursor-pointer text-jungle-green-500 hover:text-jungle-green-300';
+    case 'icon':
+      return 'bg-transparent hover:opacity-80 focus:outline-none transition-opacity flex items-center justify-center cursor-pointer';
+    case 'fab':
+      return 'bg-jungle-green-500 hover:opacity-90 focus:outline-none text-white shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 rounded-full';
     default:
       return 'bg-jungle-green-500 hover:opacity-75 focus:outline-none text-white w-full transition ease-in duration-200 text-center font-semibold rounded shadow disabled:bg-gray-400 disabled:text-gray-200';
   }

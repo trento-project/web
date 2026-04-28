@@ -65,3 +65,26 @@ export function SmallSecondary() {
 export function Disabled() {
   return <Button disabled>Hello world!</Button>;
 }
+
+export function Icon() {
+  return (
+    <Button type="icon" size="none" aria-label="Close">
+      <span className="text-2xl leading-none">×</span>
+    </Button>
+  );
+}
+
+export function FloatingActionButton() {
+  return (
+    <div className="size-12">
+      <Button
+        type="fab"
+        size="none"
+        className="size-full"
+        aria-label="Open assistant"
+      >
+        <span className="text-xl leading-none">+</span>
+      </Button>
+    </div>
+  );
+}

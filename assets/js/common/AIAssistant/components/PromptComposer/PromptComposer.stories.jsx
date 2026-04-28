@@ -1,9 +1,8 @@
 import React from 'react';
-import {
-  PromptComposer,
-  COMPOSER_INPUT_CLASS_NAME,
-  COMPOSER_SEND_BUTTON_CLASS_NAME,
-} from './PromptComposer';
+
+import Button from '@common/Button';
+
+import { PromptComposer, COMPOSER_INPUT_CLASS_NAME } from './PromptComposer';
 
 const renderInput = ({ placeholder, disabled }) => (
   <textarea
@@ -15,13 +14,9 @@ const renderInput = ({ placeholder, disabled }) => (
 );
 
 const renderSend = ({ disabled }) => (
-  <button
-    type="submit"
-    disabled={disabled}
-    className={COMPOSER_SEND_BUTTON_CLASS_NAME}
-  >
+  <Button asSubmit type="default-fit" disabled={disabled}>
     Send
-  </button>
+  </Button>
 );
 
 export default {

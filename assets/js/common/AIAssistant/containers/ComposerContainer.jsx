@@ -1,11 +1,12 @@
 import React from 'react';
 import { AuiIf, ComposerPrimitive } from '@assistant-ui/react';
 
+import Button from '@common/Button';
+
 import { useAIConnectionStatus } from '../AssistantChatProvider';
 import {
   PromptComposer,
   COMPOSER_INPUT_CLASS_NAME,
-  COMPOSER_SEND_BUTTON_CLASS_NAME,
 } from '../components/PromptComposer';
 
 const PLACEHOLDERS = {
@@ -18,15 +19,15 @@ function SendButton({ disabled }) {
   return (
     <AuiIf condition={({ thread }) => !thread.isRunning}>
       <ComposerPrimitive.Send asChild>
-        <button
-          type="submit"
+        <Button
+          asSubmit
+          type="default-fit"
           disabled={disabled}
-          className={COMPOSER_SEND_BUTTON_CLASS_NAME}
           aria-label="Send message"
           title={disabled ? 'Waiting for connection...' : 'Send message'}
         >
           Send
-        </button>
+        </Button>
       </ComposerPrimitive.Send>
     </AuiIf>
   );
