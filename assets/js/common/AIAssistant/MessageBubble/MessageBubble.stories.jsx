@@ -1,9 +1,9 @@
 import React from 'react';
-import { MessageBubble } from './MessageBubble';
+import { MessageBubbleView } from './MessageBubble';
 
 export default {
   title: 'Components/AIAssistant/MessageBubble',
-  component: MessageBubble,
+  component: MessageBubbleView,
   argTypes: {
     variant: {
       description: 'Whether the bubble belongs to the user or the assistant',

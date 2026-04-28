@@ -2,7 +2,7 @@ import React from 'react';
 
 import Button from '@common/Button';
 
-import { PromptComposer, PromptInput } from './PromptComposer';
+import { PromptComposerView, PromptInput } from './PromptComposer';
 
 const renderInput = ({ placeholder, disabled }) => (
   <PromptInput
@@ -21,7 +21,7 @@ const renderSend = ({ disabled }) => (
 
 export default {
   title: 'Components/AIAssistant/PromptComposer',
-  component: PromptComposer,
+  component: PromptComposerView,
   parameters: {
     layout: 'padded',
   },
@@ -29,7 +29,7 @@ export default {
 
 export const Idle = {
   render: () => (
-    <PromptComposer
+    <PromptComposerView
       inputSlot={renderInput({
         placeholder: 'How can I help you?',
         disabled: false,
@@ -41,7 +41,7 @@ export const Idle = {
 
 export const Disabled = {
   render: () => (
-    <PromptComposer
+    <PromptComposerView
       inputSlot={renderInput({
         placeholder: 'Offline - waiting to reconnect...',
         disabled: true,
@@ -53,7 +53,7 @@ export const Disabled = {
 
 export const Sending = {
   render: () => (
-    <PromptComposer
+    <PromptComposerView
       inputSlot={renderInput({
         placeholder: 'How can I help you?',
         disabled: false,

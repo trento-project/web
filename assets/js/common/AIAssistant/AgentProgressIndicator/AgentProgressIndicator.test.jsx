@@ -4,9 +4,10 @@ import '@testing-library/jest-dom';
 
 import { useAuiState } from '@assistant-ui/react';
 import {
-  StatusIndicatorContainer,
-  deriveStatusLabel,
-} from './StatusIndicatorContainer';
+  AgentProgressIndicator,
+  AgentProgressIndicatorView,
+  deriveProgressLabel,
+} from './AgentProgressIndicator';
 
 let mockThread = { isRunning: true };
 
@@ -16,15 +17,36 @@ jest.mock('@assistant-ui/react', () => ({
   useAuiState: jest.fn(),
 }));
 
-describe('deriveStatusLabel', () => {
+describe('AgentProgressIndicatorView', () => {
+  it.each(['Thinking...', 'Calling get_hosts...', 'Preparing response...'])(
+    'renders the "%s" label',
+    (label) => {
+      render(<AgentProgressIndicatorView label={label} />);
+      expect(screen.getByText(label)).toBeVisible();
+    }
+  );
+
+  it('renders a spinner alongside the label', () => {
+    const { container } = render(
+      <AgentProgressIndicatorView label="Thinking..." />
+    );
+    expect(
+      container.querySelector('svg, [role="status"], .animate-spin')
+    ).not.toBeNull();
+  });
+});
+
+describe('deriveProgressLabel', () => {
   it('returns "Thinking..." when there are no tool calls', () => {
-    expect(deriveStatusLabel([])).toBe('Thinking...');
-    expect(deriveStatusLabel([{ type: 'text', text: '' }])).toBe('Thinking...');
+    expect(deriveProgressLabel([])).toBe('Thinking...');
+    expect(deriveProgressLabel([{ type: 'text', text: '' }])).toBe(
+      'Thinking...'
+    );
   });
 
   it('returns the latest tool name when tool calls are present', () => {
     expect(
-      deriveStatusLabel([
+      deriveProgressLabel([
         { type: 'tool-call', toolName: 'get_hosts' },
         { type: 'tool-call', toolName: 'get_clusters' },
       ])
@@ -32,11 +54,13 @@ describe('deriveStatusLabel', () => {
   });
 
   it('falls back to "tool" when toolName is missing', () => {
-    expect(deriveStatusLabel([{ type: 'tool-call' }])).toBe('Calling tool...');
+    expect(deriveProgressLabel([{ type: 'tool-call' }])).toBe(
+      'Calling tool...'
+    );
   });
 });
 
-describe('StatusIndicatorContainer', () => {
+describe('AgentProgressIndicator', () => {
   beforeEach(() => {
     mockThread = { isRunning: true };
   });
@@ -44,7 +68,7 @@ describe('StatusIndicatorContainer', () => {
   it('renders nothing when the thread is not running', () => {
     mockThread = { isRunning: false };
     useAuiState.mockReturnValue({ content: [] });
-    const { container } = render(<StatusIndicatorContainer />);
+    const { container } = render(<AgentProgressIndicator />);
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -52,13 +76,13 @@ describe('StatusIndicatorContainer', () => {
     useAuiState.mockReturnValue({
       content: [{ type: 'text', text: 'partial answer' }],
     });
-    const { container } = render(<StatusIndicatorContainer />);
+    const { container } = render(<AgentProgressIndicator />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
     useAuiState.mockReturnValue({ content: [] });
-    render(<StatusIndicatorContainer />);
+    render(<AgentProgressIndicator />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
 
@@ -66,7 +90,7 @@ describe('StatusIndicatorContainer', () => {
     useAuiState.mockReturnValue({
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
     });
-    render(<StatusIndicatorContainer />);
+    render(<AgentProgressIndicator />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
   });
 });

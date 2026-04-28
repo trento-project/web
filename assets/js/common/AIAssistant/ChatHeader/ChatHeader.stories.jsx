@@ -1,9 +1,9 @@
 import { action } from 'storybook/actions';
-import { ChatHeader } from './ChatHeader';
+import { ChatHeaderView } from './ChatHeader';
 
 export default {
   title: 'Components/AIAssistant/ChatHeader',
-  component: ChatHeader,
+  component: ChatHeaderView,
   argTypes: {
     connectionStatus: {
       description: 'Current connection status of the AI assistant',

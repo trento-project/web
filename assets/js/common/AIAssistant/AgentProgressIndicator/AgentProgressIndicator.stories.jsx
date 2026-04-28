@@ -1,8 +1,8 @@
-import { StatusIndicator } from './StatusIndicator';
+import { AgentProgressIndicatorView } from './AgentProgressIndicator';
 
 export default {
-  title: 'Components/AIAssistant/StatusIndicator',
-  component: StatusIndicator,
+  title: 'Components/AIAssistant/AgentProgressIndicator',
+  component: AgentProgressIndicatorView,
   argTypes: {
     label: {
       description: 'Label rendered next to the spinner',

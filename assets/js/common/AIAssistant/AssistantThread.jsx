@@ -1,12 +1,9 @@
 import React from 'react';
 import { AuiIf, ThreadPrimitive } from '@assistant-ui/react';
 
-import { ChatHeaderContainer } from './containers/ChatHeaderContainer';
-import { ComposerContainer } from './containers/ComposerContainer';
-import {
-  AssistantMessageContainer,
-  UserMessageContainer,
-} from './containers/MessageContainer';
+import { ChatHeader } from './ChatHeader';
+import { PromptComposer } from './PromptComposer';
+import { AssistantMessage, UserMessage } from './MessageBubble';
 import { ThreadWelcome } from './ThreadWelcome';
 
 const SUGGESTION_CLASS_NAME =
@@ -22,7 +19,7 @@ export function AssistantThread({ onClose }) {
         '--accent-foreground': '#ffffff',
       }}
     >
-      <ChatHeaderContainer onClose={onClose} />
+      <ChatHeader onClose={onClose} />
       <ThreadPrimitive.Viewport
         turnAnchor="top"
         className="relative flex flex-1 flex-col overflow-x-auto overflow-y-scroll scroll-smooth px-6 pt-4 pb-6"
@@ -33,13 +30,13 @@ export function AssistantThread({ onClose }) {
 
         <ThreadPrimitive.Messages
           components={{
-            UserMessage: UserMessageContainer,
-            AssistantMessage: AssistantMessageContainer,
+            UserMessage,
+            AssistantMessage,
           }}
         />
         <div className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible bg-white pt-4">
           <ThreadPrimitive.ViewportFooter className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col overflow-visible">
-            <ComposerContainer />
+            <PromptComposer />
           </ThreadPrimitive.ViewportFooter>
         </div>
       </ThreadPrimitive.Viewport>

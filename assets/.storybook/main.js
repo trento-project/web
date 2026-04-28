@@ -15,6 +15,10 @@ module.exports = {
       '@pages': path.resolve(__dirname, '../js/pages'),
       '@state': path.resolve(__dirname, '../js/state'),
       '@static': path.resolve(__dirname, '../static'),
+      // phoenix is loaded transitively via SocketProvider/AssistantChatProvider
+      // when AIAssistant components are rendered in stories — alias to the
+      // same mock Jest uses so Storybook can build.
+      phoenix: path.resolve(__dirname, '../mocks/phoenix.js'),
     };
 
     config.resolve.roots = [path.resolve(__dirname, '../../priv/static')];

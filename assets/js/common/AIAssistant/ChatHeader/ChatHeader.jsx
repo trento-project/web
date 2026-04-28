@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { EOS_CLOSE } from 'eos-icons-react';
+import { useAui } from '@assistant-ui/react';
 
 import Button from '@common/Button';
+
+import { useAIConnectionStatus } from '../AssistantChatProvider';
 
 const STATUS_VIEW = {
   connected: { text: 'Online', dot: 'bg-white' },
@@ -11,7 +14,7 @@ const STATUS_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
+export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
   const { text, dot } =
     STATUS_VIEW[connectionStatus] ?? STATUS_VIEW.disconnected;
 
@@ -47,5 +50,22 @@ export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
         </Button>
       </div>
     </div>
+  );
+}
+
+export function ChatHeader({ onClose }) {
+  const aui = useAui();
+  const connectionStatus = useAIConnectionStatus();
+
+  const onNewChat = useCallback(() => {
+    aui.threads().switchToNewThread();
+  }, [aui]);
+
+  return (
+    <ChatHeaderView
+      connectionStatus={connectionStatus}
+      onNewChat={onNewChat}
+      onClose={onClose}
+    />
   );
 }

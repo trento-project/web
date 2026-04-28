@@ -1,1 +1,1 @@
-export { MessageBubble } from './MessageBubble';
+export { UserMessage, AssistantMessage } from './MessageBubble';
