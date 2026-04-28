@@ -31,71 +31,10 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 }));
 
 import { useSocket } from '@common/SocketProvider';
+import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
+import { buildAssistantTurn } from '@lib/test-utils/aguiEvents';
 import { AssistantChatProvider } from './AssistantChatProvider';
 import { AssistantThread } from './AssistantThread';
-
-// ----- Phoenix channel test doubles ------------------------------------------
-
-function makePush() {
-  const handlers = {};
-  const push = {
-    receive: (event, cb) => {
-      handlers[event] = cb;
-      return push;
-    },
-    fire: (event, payload) => handlers[event]?.(payload),
-  };
-  return push;
-}
-
-class MockChannel {
-  constructor() {
-    this.listeners = new Map();
-    this.errorHandlers = [];
-    this.closeHandlers = [];
-    this.pushed = [];
-    this.joinPush = makePush();
-    this.leave = jest.fn();
-  }
-
-  on(event, cb) {
-    if (!this.listeners.has(event)) this.listeners.set(event, []);
-    this.listeners.get(event).push(cb);
-  }
-
-  emit(event, payload) {
-    (this.listeners.get(event) || []).forEach((cb) => cb(payload));
-  }
-
-  push(event, payload) {
-    const push = makePush();
-    this.pushed.push({ event, payload, push });
-    return push;
-  }
-
-  join() {
-    return this.joinPush;
-  }
-
-  onError(cb) {
-    this.errorHandlers.push(cb);
-  }
-
-  onClose(cb) {
-    this.closeHandlers.push(cb);
-  }
-}
-
-function makeMockSocket() {
-  const channels = new Map();
-  return {
-    channels,
-    channel: jest.fn((topic) => {
-      if (!channels.has(topic)) channels.set(topic, new MockChannel());
-      return channels.get(topic);
-    }),
-  };
-}
 
 const mockStore = configureStore([]);
 
@@ -169,27 +108,13 @@ async function renderAssistant({ userId = 'user-1' } = {}) {
     return sent[sent.length - 1].payload;
   };
 
-  // Streams a complete assistant turn through the channel: RUN_STARTED →
-  // TEXT_MESSAGE_START → TEXT_MESSAGE_CONTENT (per delta) → TEXT_MESSAGE_END
-  // → RUN_FINISHED. Returns the messageId used.
-  const streamAssistantTurn = async ({
-    threadId,
-    runId,
-    messageId,
-    deltas,
-  }) => {
-    await emitAgUi({ type: 'RUN_STARTED', threadId, runId });
-    await emitAgUi({
-      type: 'TEXT_MESSAGE_START',
-      messageId,
-      role: 'assistant',
-    });
-    for (const delta of deltas) {
-      await emitAgUi({ type: 'TEXT_MESSAGE_CONTENT', messageId, delta });
+  // Streams a complete assistant turn (RUN_STARTED → text → RUN_FINISHED)
+  // through the channel one event at a time so each is wrapped in act().
+  const streamAssistantTurn = async (params) => {
+    for (const event of buildAssistantTurn(params)) {
+      await emitAgUi(event);
     }
-    await emitAgUi({ type: 'TEXT_MESSAGE_END', messageId });
-    await emitAgUi({ type: 'RUN_FINISHED', threadId, runId });
-    return messageId;
+    return params.messageId;
   };
 
   return {

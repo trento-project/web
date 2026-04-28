@@ -1,74 +1,20 @@
+import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { WebSocketAIAgent } from './WebSocketAIAgent';
 
-function makePush() {
-  const handlers = {};
-  const push = {
-    receive: (event, cb) => {
-      handlers[event] = cb;
-      return push;
-    },
-    fire: (event, payload) => {
-      if (handlers[event]) handlers[event](payload);
-    },
-  };
-  return push;
-}
-
-class MockChannel {
-  constructor() {
-    this.listeners = new Map();
-    this.errorHandlers = [];
-    this.closeHandlers = [];
-    this.pushed = [];
-    this.joinPush = makePush();
-    this.leave = jest.fn();
-  }
-
-  on(event, cb) {
-    if (!this.listeners.has(event)) this.listeners.set(event, []);
-    this.listeners.get(event).push(cb);
-  }
-
-  emit(event, payload) {
-    (this.listeners.get(event) || []).forEach((cb) => cb(payload));
-  }
-
-  push(event, payload) {
-    const push = makePush();
-    this.pushed.push({ event, payload, push });
-    return push;
-  }
-
-  join() {
-    return this.joinPush;
-  }
-
-  onError(cb) {
-    this.errorHandlers.push(cb);
-  }
-
-  onClose(cb) {
-    this.closeHandlers.push(cb);
-  }
-
-  triggerError() {
-    this.errorHandlers.forEach((cb) => cb());
-  }
-
-  triggerClose() {
-    this.closeHandlers.forEach((cb) => cb());
-  }
-}
-
-function makeMockSocket() {
-  const channels = new Map();
-  return {
-    channels,
-    channel: jest.fn((topic) => {
-      if (!channels.has(topic)) channels.set(topic, new MockChannel());
-      return channels.get(topic);
-    }),
-  };
+// Wrap socket.channel + each channel.leave with jest.fn so the existing
+// `toHaveBeenCalled` / `mockClear` assertions still apply. The shared
+// makeMockSocket stays jest-free so stories can use it too.
+function makeJestSocket() {
+  const socket = makeMockSocket();
+  const original = socket.channel;
+  socket.channel = jest.fn((topic) => {
+    const channel = original(topic);
+    if (!jest.isMockFunction(channel.leave)) {
+      channel.leave = jest.fn(channel.leave);
+    }
+    return channel;
+  });
+  return socket;
 }
 
 const flush = async () => {
@@ -78,7 +24,7 @@ const flush = async () => {
 };
 
 async function connectedAgent({ userId = 'u', onConnectionChange } = {}) {
-  const socket = makeMockSocket();
+  const socket = makeJestSocket();
   const agent = new WebSocketAIAgent({ socket, userId, onConnectionChange });
   const p = agent.initialize();
   const channel = socket.channels.get(`ai_assistant:${userId}`);
@@ -91,7 +37,7 @@ describe('WebSocketAIAgent', () => {
   describe('initialize', () => {
     it('joins ai_assistant:{userId} and reports connecting → connected', async () => {
       const onConnectionChange = jest.fn();
-      const socket = makeMockSocket();
+      const socket = makeJestSocket();
       const agent = new WebSocketAIAgent({
         socket,
         userId: 'u42',
@@ -112,7 +58,7 @@ describe('WebSocketAIAgent', () => {
 
     it('rejects on join error and reports disconnected', async () => {
       const onConnectionChange = jest.fn();
-      const socket = makeMockSocket();
+      const socket = makeJestSocket();
       const agent = new WebSocketAIAgent({
         socket,
         userId: 'u',
@@ -130,7 +76,7 @@ describe('WebSocketAIAgent', () => {
 
     it('rejects on join timeout and reports disconnected', async () => {
       const onConnectionChange = jest.fn();
-      const socket = makeMockSocket();
+      const socket = makeJestSocket();
       const agent = new WebSocketAIAgent({
         socket,
         userId: 'u',
@@ -157,7 +103,7 @@ describe('WebSocketAIAgent', () => {
 
     it('throws when no userId is provided', async () => {
       const agent = new WebSocketAIAgent({
-        socket: makeMockSocket(),
+        socket: makeJestSocket(),
         userId: undefined,
       });
       await expect(agent.initialize()).rejects.toThrow(/No userId available/);
@@ -197,7 +143,7 @@ describe('WebSocketAIAgent', () => {
     it('only invokes onConnectionChange when the status actually changes', () => {
       const onConnectionChange = jest.fn();
       const agent = new WebSocketAIAgent({
-        socket: makeMockSocket(),
+        socket: makeJestSocket(),
         userId: 'u',
         onConnectionChange,
       });
@@ -339,7 +285,7 @@ describe('WebSocketAIAgent', () => {
 
     it('initializes the channel lazily when run() is called before initialize()', async () => {
       const onConnectionChange = jest.fn();
-      const socket = makeMockSocket();
+      const socket = makeJestSocket();
       const agent = new WebSocketAIAgent({
         socket,
         userId: 'u2',
@@ -413,7 +359,7 @@ describe('WebSocketAIAgent', () => {
   describe('_extractMessageText', () => {
     let agent;
     beforeEach(() => {
-      agent = new WebSocketAIAgent({ socket: makeMockSocket(), userId: 'u' });
+      agent = new WebSocketAIAgent({ socket: makeJestSocket(), userId: 'u' });
     });
 
     it('returns string content as-is', () => {
@@ -454,7 +400,7 @@ describe('WebSocketAIAgent', () => {
     it('is a no-op when never connected', () => {
       const onConnectionChange = jest.fn();
       const agent = new WebSocketAIAgent({
-        socket: makeMockSocket(),
+        socket: makeJestSocket(),
         userId: 'u',
         onConnectionChange,
       });
