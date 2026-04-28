@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-03-14T06:34:42Z",
-    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
-    "run_id": "23080196381",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.05001
-      },
-      {
-        "name": "should render saptune details not found if saptune version is unsupported::Saptune Details page should render saptune details not found if saptune version is unsupported",
-        "score": 0.05001
-      },
-      {
-        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.05001
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-15T04:03:18Z",
     "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
     "run_id": "23102801324",
@@ -6085,6 +6053,54 @@
       {
         "name": "GenericSystemDetails::should show instance operations",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-28T06:51:19Z",
+    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
+    "run_id": "25034395186",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 22
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve per_page when coming back from another page::Hosts Overview Pagination and browser navigation should preserve per_page when coming back from another page",
+        "score": 0.1001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.08281
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.06823
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.06477
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
+        "score": 0.05001
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.04323
       }
     ]
   }
