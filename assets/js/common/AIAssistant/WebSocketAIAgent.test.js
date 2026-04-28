@@ -88,19 +88,8 @@ async function connectedAgent({ userId = 'u', onConnectionChange } = {}) {
 }
 
 describe('WebSocketAIAgent', () => {
-  describe('constructor', () => {
-    it('starts in the disconnected state', () => {
-      const agent = new WebSocketAIAgent({
-        socket: makeMockSocket(),
-        userId: 'u',
-      });
-      expect(agent.getConnectionStatus()).toBe('disconnected');
-      expect(agent.isConnected()).toBe(false);
-    });
-  });
-
   describe('initialize', () => {
-    it('joins ai_assistant:{userId} and transitions disconnected → connecting → connected', async () => {
+    it('joins ai_assistant:{userId} and reports connecting → connected', async () => {
       const onConnectionChange = jest.fn();
       const socket = makeMockSocket();
       const agent = new WebSocketAIAgent({
@@ -112,21 +101,23 @@ describe('WebSocketAIAgent', () => {
       const p = agent.initialize();
 
       expect(socket.channel).toHaveBeenCalledWith('ai_assistant:u42', {});
-      expect(agent.getConnectionStatus()).toBe('connecting');
+      expect(onConnectionChange).toHaveBeenNthCalledWith(1, 'connecting');
 
       const channel = socket.channels.get('ai_assistant:u42');
       channel.joinPush.fire('ok');
       await p;
 
-      expect(agent.getConnectionStatus()).toBe('connected');
-      expect(agent.isConnected()).toBe(true);
-      expect(onConnectionChange).toHaveBeenNthCalledWith(1, 'connecting');
       expect(onConnectionChange).toHaveBeenNthCalledWith(2, 'connected');
     });
 
-    it('rejects on join error and reverts status to disconnected', async () => {
+    it('rejects on join error and reports disconnected', async () => {
+      const onConnectionChange = jest.fn();
       const socket = makeMockSocket();
-      const agent = new WebSocketAIAgent({ socket, userId: 'u' });
+      const agent = new WebSocketAIAgent({
+        socket,
+        userId: 'u',
+        onConnectionChange,
+      });
       const p = agent.initialize();
 
       socket.channels
@@ -134,24 +125,34 @@ describe('WebSocketAIAgent', () => {
         .joinPush.fire('error', { reason: 'boom' });
 
       await expect(p).rejects.toThrow(/Failed to join channel/);
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+      expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
     });
 
-    it('rejects on join timeout and reverts status to disconnected', async () => {
+    it('rejects on join timeout and reports disconnected', async () => {
+      const onConnectionChange = jest.fn();
       const socket = makeMockSocket();
-      const agent = new WebSocketAIAgent({ socket, userId: 'u' });
+      const agent = new WebSocketAIAgent({
+        socket,
+        userId: 'u',
+        onConnectionChange,
+      });
       const p = agent.initialize();
 
       socket.channels.get('ai_assistant:u').joinPush.fire('timeout');
 
       await expect(p).rejects.toThrow(/Channel join timeout/);
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+      expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
     });
 
-    it('throws when no socket is provided', async () => {
-      const agent = new WebSocketAIAgent({ socket: undefined, userId: 'u' });
+    it('throws when no socket is provided and never reports a status change', async () => {
+      const onConnectionChange = jest.fn();
+      const agent = new WebSocketAIAgent({
+        socket: undefined,
+        userId: 'u',
+        onConnectionChange,
+      });
       await expect(agent.initialize()).rejects.toThrow(/No socket available/);
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+      expect(onConnectionChange).not.toHaveBeenCalled();
     });
 
     it('throws when no userId is provided', async () => {
@@ -173,21 +174,24 @@ describe('WebSocketAIAgent', () => {
   });
 
   describe('connection status changes', () => {
-    it('marks status disconnected on channel error', async () => {
+    it('reports disconnected on channel error', async () => {
       const onConnectionChange = jest.fn();
-      const { agent, channel } = await connectedAgent({ onConnectionChange });
+      const { channel } = await connectedAgent({ onConnectionChange });
       onConnectionChange.mockClear();
 
       channel.triggerError();
 
-      expect(agent.getConnectionStatus()).toBe('disconnected');
       expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
     });
 
-    it('marks status disconnected on channel close', async () => {
-      const { agent, channel } = await connectedAgent();
+    it('reports disconnected on channel close', async () => {
+      const onConnectionChange = jest.fn();
+      const { channel } = await connectedAgent({ onConnectionChange });
+      onConnectionChange.mockClear();
+
       channel.triggerClose();
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+
+      expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
     });
 
     it('only invokes onConnectionChange when the status actually changes', () => {
@@ -245,7 +249,7 @@ describe('WebSocketAIAgent', () => {
       expect(events).toEqual([evt]);
     });
 
-    it('completes the observable on RUN_FINISHED and clears the handler', async () => {
+    it('completes the observable on RUN_FINISHED and clears active run state', async () => {
       const { agent, channel } = await connectedAgent();
       const onComplete = jest.fn();
 
@@ -259,11 +263,11 @@ describe('WebSocketAIAgent', () => {
       channel.emit('ag_ui_event', { type: 'RUN_FINISHED' });
 
       expect(onComplete).toHaveBeenCalledTimes(1);
-      expect(agent._messageHandlers.size).toBe(0);
+      expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });
 
-    it('errors the observable on RUN_ERROR and clears the handler', async () => {
+    it('errors the observable on RUN_ERROR and clears active run state', async () => {
       const { agent, channel } = await connectedAgent();
       const onError = jest.fn();
 
@@ -279,7 +283,7 @@ describe('WebSocketAIAgent', () => {
       expect(onError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'oops' })
       );
-      expect(agent._messageHandlers.size).toBe(0);
+      expect(agent._activeSubscriber).toBeNull();
     });
 
     it('falls back to a default error message when RUN_ERROR has none', async () => {
@@ -330,11 +334,17 @@ describe('WebSocketAIAgent', () => {
       channel.pushed[0].push.fire('error', { reason: 'rejected' });
 
       expect(onError).toHaveBeenCalledWith({ reason: 'rejected' });
+      expect(agent._activeSubscriber).toBeNull();
     });
 
     it('initializes the channel lazily when run() is called before initialize()', async () => {
+      const onConnectionChange = jest.fn();
       const socket = makeMockSocket();
-      const agent = new WebSocketAIAgent({ socket, userId: 'u2' });
+      const agent = new WebSocketAIAgent({
+        socket,
+        userId: 'u2',
+        onConnectionChange,
+      });
 
       agent
         .run({
@@ -345,7 +355,7 @@ describe('WebSocketAIAgent', () => {
 
       const channel = socket.channels.get('ai_assistant:u2');
       expect(channel).toBeDefined();
-      expect(agent.getConnectionStatus()).toBe('connecting');
+      expect(onConnectionChange).toHaveBeenCalledWith('connecting');
 
       channel.joinPush.fire('ok');
       await flush();
@@ -354,7 +364,7 @@ describe('WebSocketAIAgent', () => {
       expect(channel.pushed[0].event).toBe('send_message');
     });
 
-    it('removes the handler when the subscription is unsubscribed', async () => {
+    it('clears active run state when the subscription is unsubscribed', async () => {
       const { agent } = await connectedAgent();
 
       const sub = agent
@@ -364,11 +374,12 @@ describe('WebSocketAIAgent', () => {
         })
         .subscribe({ next: () => {} });
 
-      expect(agent._messageHandlers.size).toBe(1);
+      expect(agent._activeSubscriber).not.toBeNull();
 
       sub.unsubscribe();
 
-      expect(agent._messageHandlers.size).toBe(0);
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
     });
   });
 
@@ -389,7 +400,7 @@ describe('WebSocketAIAgent', () => {
       expect(onError).toHaveBeenCalledWith(
         expect.objectContaining({ message: 'Agent execution cancelled' })
       );
-      expect(agent._messageHandlers.size).toBe(0);
+      expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });
 
@@ -428,21 +439,27 @@ describe('WebSocketAIAgent', () => {
   });
 
   describe('disconnect', () => {
-    it('leaves the channel and resets status', async () => {
-      const { agent, channel } = await connectedAgent();
+    it('leaves the channel and reports disconnected', async () => {
+      const onConnectionChange = jest.fn();
+      const { agent, channel } = await connectedAgent({ onConnectionChange });
+      onConnectionChange.mockClear();
+
       agent.disconnect();
+
       expect(channel.leave).toHaveBeenCalled();
       expect(agent.channel).toBeNull();
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+      expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
     });
 
     it('is a no-op when never connected', () => {
+      const onConnectionChange = jest.fn();
       const agent = new WebSocketAIAgent({
         socket: makeMockSocket(),
         userId: 'u',
+        onConnectionChange,
       });
       expect(() => agent.disconnect()).not.toThrow();
-      expect(agent.getConnectionStatus()).toBe('disconnected');
+      expect(onConnectionChange).not.toHaveBeenCalled();
     });
   });
 });
