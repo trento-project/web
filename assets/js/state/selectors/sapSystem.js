@@ -51,13 +51,12 @@ export const getEnrichedSapSystemDetails = createSelector(
   [
     (state, sapSystemID) => getSapSystem(sapSystemID)(state),
     getEnrichedApplicationInstances,
-    (_state, sapSystemID) => sapSystemID,
   ],
-  (system, enrichedInstances, sapSystemID) => {
+  (system, enrichedInstances) => {
     if (!system) return null;
 
     const filteredInstances = filter(enrichedInstances, {
-      sap_system_id: sapSystemID,
+      sap_system_id: system.id,
     });
 
     return {
@@ -72,13 +71,12 @@ export const getEnrichedDatabaseDetails = createSelector(
   [
     (state, databaseID) => getDatabase(databaseID)(state),
     getEnrichedDatabaseInstances,
-    (_state, databaseID) => databaseID,
   ],
-  (database, enrichedInstances, databaseID) => {
+  (database, enrichedInstances) => {
     if (!database) return null;
 
     const filteredInstances = filter(enrichedInstances, {
-      database_id: databaseID,
+      database_id: database.id,
     });
 
     return {
