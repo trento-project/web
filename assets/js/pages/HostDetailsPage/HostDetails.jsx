@@ -121,6 +121,16 @@ function HostDetails({
   const saptuneTuning = get(saptuneStatus, 'tuning_state');
   const currentlyAppliedSolution = get(saptuneStatus, 'applied_solution.id');
 
+  // Format SLES subscriptions dates to be displayed in user's timezone
+  const formatSlesSubscriptionsTimes = (subs) =>
+    (subs || []).map((subscription) => {
+      return {
+        ...subscription,
+        starts_at: formatDateTime(subscription?.starts_at, timezone),
+        expires_at: formatDateTime(subscription?.expires_at, timezone),
+      };
+    });
+
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
       <StatusPill
@@ -144,17 +154,6 @@ function HostDetails({
   const runningOperationName = get(runningOperation, 'operation', null);
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
-
-  // Format SLES subscriptions dates to be displayed in user's timezone
-  const formattedSlesSubscriptions = (slesSubscriptions || []).map(
-    (subscription) => {
-      return {
-        ...subscription,
-        starts_at: formatDateTime(subscription.starts_at, timezone),
-        expires_at: formatDateTime(subscription.expires_at, timezone),
-      };
-    }
-  );
 
   const timeNow = new Date();
 
@@ -433,7 +432,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={formattedSlesSubscriptions}
+            data={formatSlesSubscriptionsTimes(slesSubscriptions)}
           />
         </div>
       </div>
