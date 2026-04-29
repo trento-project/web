@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { noop } from 'lodash';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { availableSelectTimeOptions, normalizeDate } from '@lib/date';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import { InputNumber } from '@common/Input';
@@ -166,11 +164,7 @@ function ApiKeySettingsModal({
 
                   <div className="mt-2 text-gray-600 text-sm">
                     {generatedApiKeyExpiration
-                      ? `Key will expire ${formatDate(
-                          generatedApiKeyExpiration,
-                          DATE_DAY_MONTH_YEAR_FORMAT,
-                          { in: tz(timezone) }
-                        )}`
+                      ? `Key will expire ${formatDateOnly(generatedApiKeyExpiration, timezone)}`
                       : 'Key will never expire'}
                   </div>
                 </div>

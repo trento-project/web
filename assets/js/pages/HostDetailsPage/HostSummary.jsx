@@ -1,10 +1,8 @@
 import React from 'react';
 import { chunk } from 'lodash';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 
 import HealthIcon from '@common/HealthIcon';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { formatDateTime } from '@lib/timezones';
 import ListView from '@common/ListView';
 import Tooltip from '@common/Tooltip';
 
@@ -43,9 +41,7 @@ function HostSummary({
   timezone,
 }) {
   const formattedLastBoot = lastBootTimestamp
-    ? formatDate(lastBootTimestamp, DATETIME_DAY_MONTH_24H_FORMAT, {
-        in: tz(timezone),
-      })
+    ? formatDateTime(lastBootTimestamp, timezone)
     : 'N/A';
 
   return (

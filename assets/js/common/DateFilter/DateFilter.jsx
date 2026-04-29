@@ -5,8 +5,8 @@ import { TZDate, tz } from '@date-fns/tz';
 
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
-import { format as formatDate, subDays, subHours } from 'date-fns';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { format, subDays, subHours } from 'date-fns';
+import { formatDateTime } from '@lib/timezones';
 
 import Input from '@common/Input';
 
@@ -15,14 +15,6 @@ const preconfiguredOptions = {
   '24h ago': () => subHours(new Date(), 24),
   '7d ago': () => subDays(new Date(), 7),
   '30d ago': () => subDays(new Date(), 30),
-};
-
-const toHumanDate = (date, timezone) => {
-  if (!(date instanceof Date)) {
-    return null;
-  }
-
-  return formatDate(date, DATETIME_DAY_MONTH_24H_FORMAT, { in: tz(timezone) });
 };
 
 const renderOptionItem = (option, placeholder) => {
@@ -62,7 +54,7 @@ const getSelectedOption = (options, value, timezone) => {
   const selectedId = Array.isArray(value) ? value[0] : value;
   if (selectedId === 'custom') {
     const date = new Date(value[1]);
-    return ['custom', date, () => toHumanDate(date, timezone)];
+    return ['custom', date, () => formatDateTime(date, timezone)];
   }
   if (typeof selectedId === 'string') {
     return options.find((option) => option[0] === selectedId);
@@ -123,10 +115,7 @@ function DateTimeInput({ value, onChange, timezone }) {
 
     // Example: the UTC date "2009-10-09T15:00, GMT+2" is transformed to the string "2026-04-16T18:21"
     // This format is internal to the "datetime-local"
-    const dateFormattedtext = formatDate(date, "yyyy-MM-dd'T'HH:mm", {
-      in: tz(timezone),
-    });
-    return dateFormattedtext;
+    return format(date, "yyyy-MM-dd'T'HH:mm", { in: tz(timezone) });
   };
 
   return (

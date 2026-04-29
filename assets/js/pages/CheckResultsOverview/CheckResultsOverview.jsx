@@ -1,9 +1,7 @@
 import React from 'react';
 
 import Spinner from '@common/Spinner';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { formatDateTime } from '@lib/timezones';
 import {
   REQUESTED_EXECUTION_STATE,
   RUNNING_EXECUTION_STATE,
@@ -68,9 +66,7 @@ function CheckResultsOverview({
     <div className="flex flex-col items-center">
       <h1 className="text-center text-2xl font-bold">Check Results</h1>
       <h6 className="opacity-60 text-xs">
-        {formatDate(data.completed_at, DATETIME_DAY_MONTH_24H_FORMAT, {
-          in: tz(timezone),
-        })}
+        {formatDateTime(data.completed_at, timezone)}
       </h6>
 
       <div className="flex flex-col self-start w-full px-4 mt-2">

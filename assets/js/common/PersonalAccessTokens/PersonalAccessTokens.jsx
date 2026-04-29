@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 
 import { noop } from 'lodash';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import { isAfter } from 'date-fns';
 import classNames from 'classnames';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 import Button from '@common/Button';
 
@@ -98,9 +96,7 @@ function PersonalAccessTokens({
                       >
                         Expires:{' '}
                         {expiresAt
-                          ? formatDate(expiresAt, DATE_DAY_MONTH_YEAR_FORMAT, {
-                              in: tz(timezone),
-                            })
+                          ? formatDateOnly(expiresAt, timezone)
                           : 'Never'}
                       </p>
                     </div>

@@ -1,26 +1,22 @@
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import {
-  DATE_DAY_MONTH_YEAR_FORMAT,
-  DATETIME_DAY_MONTH_24H_FORMAT,
-  DEFAULT_TIMEZONE,
-  TIME_24H_HH_MM_FORMAT,
-  parseDateTimeLocalToUtc,
-} from './index';
+import { DEFAULT_TIMEZONE, parseDateTimeLocalToUtc } from './index';
+
+import { formatDateTime, formatDateOnly, formatTimeOnly } from './index';
 
 describe('timezone format constants', () => {
   const sampleDate = new Date('2024-08-04T10:21:00.123Z');
-  const formatInDefaultTimezone = (pattern) =>
-    formatDate(sampleDate, pattern, { in: tz(DEFAULT_TIMEZONE) });
 
-  it('has an example output for every datetime/date/time format constant', () => {
-    expect(formatInDefaultTimezone(DATETIME_DAY_MONTH_24H_FORMAT)).toBe(
+  it('formatDateTime returns correct string', () => {
+    expect(formatDateTime(sampleDate, DEFAULT_TIMEZONE)).toBe(
       '04 Aug 2024, 10:21:00'
     );
-    expect(formatInDefaultTimezone(DATE_DAY_MONTH_YEAR_FORMAT)).toBe(
-      '04 Aug 2024'
-    );
-    expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21:00');
+  });
+
+  it('formatDateOnly returns correct string', () => {
+    expect(formatDateOnly(sampleDate, DEFAULT_TIMEZONE)).toBe('04 Aug 2024');
+  });
+
+  it('formatTimeOnly returns correct string', () => {
+    expect(formatTimeOnly(sampleDate, DEFAULT_TIMEZONE)).toBe('10:21:00');
   });
 });
 

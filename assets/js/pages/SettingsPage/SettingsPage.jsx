@@ -5,9 +5,7 @@ import { isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 
 import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
@@ -55,13 +53,7 @@ function ApiKeyExpireInfo({ apiKeyExpiration, timezone }) {
 
     const expireDate = parseISO(apiKeyExpiration);
     if (apiKeyExpiration && isBefore(new Date(), expireDate)) {
-      return `Key will expire ${formatDate(
-        expireDate,
-        DATE_DAY_MONTH_YEAR_FORMAT,
-        {
-          in: tz(timezone),
-        }
-      )}`;
+      return `Key will expire ${formatDateOnly(expireDate, timezone)}`;
     }
 
     return 'Key expired';

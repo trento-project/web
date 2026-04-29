@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { clusterFactory } from '@lib/test-utils/factories';
 import HostSummary from './HostSummary';
-import { DEFAULT_TIMEZONE } from '../../lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 describe('HostSummary', () => {
   it('should render the content correctly', () => {

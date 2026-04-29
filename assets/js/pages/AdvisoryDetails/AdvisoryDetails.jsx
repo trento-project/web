@@ -1,7 +1,5 @@
 import React from 'react';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
@@ -55,9 +53,7 @@ function AdvisoryDetails({
             data={[
               {
                 title: 'Issued',
-                content: formatDate(issueDate, DATE_DAY_MONTH_YEAR_FORMAT, {
-                  in: tz(timezone),
-                }),
+                content: formatDateOnly(issueDate, timezone),
               },
               {
                 title: 'Status',
@@ -65,9 +61,7 @@ function AdvisoryDetails({
               },
               {
                 title: 'Updated',
-                content: formatDate(updateDate, DATE_DAY_MONTH_YEAR_FORMAT, {
-                  in: tz(timezone),
-                }),
+                content: formatDateOnly(updateDate, timezone),
               },
               {
                 title: 'Reboot Required',

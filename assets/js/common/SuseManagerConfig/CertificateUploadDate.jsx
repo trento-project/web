@@ -1,8 +1,6 @@
 import React from 'react';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 function CertificateUploadDate({ date, timezone }) {
   if (!date) {
@@ -16,10 +14,7 @@ function CertificateUploadDate({ date, timezone }) {
       <div>
         <div>Certificate Uploaded</div>
         <div className="text-xs">
-          Uploaded:{' '}
-          {formatDate(date, DATE_DAY_MONTH_YEAR_FORMAT, {
-            in: tz(timezone),
-          })}
+          Uploaded: {formatDateOnly(date, timezone)}
         </div>
       </div>
     </div>
