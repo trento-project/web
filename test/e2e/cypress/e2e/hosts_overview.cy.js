@@ -220,7 +220,7 @@ context('Hosts Overview', () => {
     const anyPageUrl = '/any-page';
 
     before(() => {
-      hostsOverviewPage.refreshLogin();
+      // hostsOverviewPage.refreshLogin();
       hostsOverviewPage.restoreSapSystem();
     });
 
