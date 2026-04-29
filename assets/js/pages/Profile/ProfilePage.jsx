@@ -27,6 +27,7 @@ import {
 import { dismissNotification } from '@state/notifications';
 import { getAnalyticsEnabledConfig } from '@lib/analytics';
 import { getFromConfig } from '@lib/config';
+import { timezones } from '@lib/timezones';
 
 const analyticsEnabledConfig = getAnalyticsEnabledConfig();
 
@@ -210,6 +211,7 @@ function ProfilePage() {
     analytics_enabled: analyticsEnabled,
     analytics_eula_accepted: analyticsEulaAccepted,
     totp_enabled: totpEnabled,
+    timezone,
   } = userState;
   const isDefaultAdmin = isAdmin(userState);
 
@@ -227,6 +229,8 @@ function ProfilePage() {
         analyticsEnabled={analyticsEnabled}
         analyticsEulaAccepted={analyticsEulaAccepted}
         totpEnabled={totpEnabled}
+        timezone={timezone}
+        timezones={timezones}
         totpSecret={totpEnrollmentSecret}
         totpQrData={totpEnrollmentQrData}
         errors={errorsState}
@@ -250,6 +254,7 @@ function ProfilePage() {
         onCloseGeneratedTokenModal={setGeneratedAccessToken}
         onDeleteToken={deleteToken}
         onGenerateToken={generateToken}
+        timezone={timezone}
       />
       {getFromConfig('aiEnabled') && (
         <AIConfiguration
