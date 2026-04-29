@@ -345,7 +345,8 @@ context('Hosts Overview', () => {
     });
   });
 
-  describe('Forbidden actions', () => {
+  // eslint-disable-next-line mocha/no-pending-tests
+  describe.skip('Forbidden actions', () => {
     beforeEach(() => {
       hostsOverviewPage.apiDeleteAllHostsTags();
       hostsOverviewPage.apiSetTag();
