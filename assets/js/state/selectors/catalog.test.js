@@ -18,6 +18,6 @@ describe('Catalog selector', () => {
       error: null,
     };
 
-    expect(getCatalog()(state)).toEqual(expectedState);
+    expect(getCatalog(state)).toEqual(expectedState);
   });
 });

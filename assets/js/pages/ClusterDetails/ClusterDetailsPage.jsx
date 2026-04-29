@@ -66,7 +66,7 @@ export function ClusterDetailsPage() {
   const architectureType = get(cluster, 'details.architecture_type');
   const hanaScenario = get(cluster, 'details.hana_scenario');
 
-  const catalog = useSelector(getCatalog());
+  const catalog = useSelector(getCatalog);
 
   const lastExecution = useSelector(getLastExecution(clusterID));
 
