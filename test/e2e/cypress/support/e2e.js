@@ -27,10 +27,7 @@ const logBrowserClearCredentials = (win) => {
 
     const message = args.map(String).join(' ');
     if (message.includes('clear_credentials_reached')) {
-      const testTitle =
-        Cypress.currentTest?.titlePath?.().join(' > ') ||
-        Cypress.currentTest?.title ||
-        'unknown test';
+      const testTitle = Cypress.currentTest?.title || 'unknown test';
 
       cy.task(
         'browserLog',
