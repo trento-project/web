@@ -58,32 +58,6 @@ function runAgent(agent, input = { threadId: 't', messages: [userMessage()] }) {
   return { subscription, next, error, complete };
 }
 
-// Minimal stand-in for the parts of AbortController/AbortSignal that the
-// agent uses: `signal.aborted`, `addEventListener('abort', cb, {once})`,
-// `removeEventListener`. Built locally so the suite doesn't depend on the
-// host runtime exposing AbortController.
-function makeAbortController() {
-  const listeners = new Set();
-  const signal = {
-    aborted: false,
-    addEventListener: (type, cb) => {
-      if (type === 'abort') listeners.add(cb);
-    },
-    removeEventListener: (type, cb) => {
-      if (type === 'abort') listeners.delete(cb);
-    },
-  };
-  return {
-    signal,
-    abort: () => {
-      if (signal.aborted) return;
-      signal.aborted = true;
-      listeners.forEach((cb) => cb());
-      listeners.clear();
-    },
-  };
-}
-
 describe('WebSocketAIAgent', () => {
   describe('initialize', () => {
     it('joins ai_assistant:{userId} and reports connecting → connected', async () => {
@@ -298,93 +272,6 @@ describe('WebSocketAIAgent', () => {
 
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
-    });
-  });
-
-  describe('agent-execution-cancelled', () => {
-    it('errors the active subscriber with a cancellation message', async () => {
-      const { agent, channel } = await connectedAgent();
-      const { error } = runAgent(agent);
-
-      channel.emit('agent-execution-cancelled');
-
-      expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Agent execution cancelled' })
-      );
-      expect(agent._activeSubscriber).toBeNull();
-      expect(agent._activeRunId).toBeNull();
-    });
-
-    it('is a no-op when no run is active', async () => {
-      const { channel } = await connectedAgent();
-      expect(() => channel.emit('agent-execution-cancelled')).not.toThrow();
-    });
-  });
-
-  describe('cancellation', () => {
-    it('abortRun pushes cancel_agent for the active run and errors the subscriber', async () => {
-      const { agent, channel } = await connectedAgent();
-      const { error } = runAgent(agent);
-      const runId = agent._activeRunId;
-
-      agent.abortRun();
-
-      expect(channel.pushed).toContainEqual(
-        expect.objectContaining({
-          event: 'cancel_agent',
-          payload: { run_id: runId },
-        })
-      );
-      expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Agent execution cancelled' })
-      );
-      expect(agent._activeSubscriber).toBeNull();
-      expect(agent._activeRunId).toBeNull();
-    });
-
-    it('abortRun is a no-op when no run is active', async () => {
-      const { agent, channel } = await connectedAgent();
-      expect(() => agent.abortRun()).not.toThrow();
-      expect(channel.pushed).toHaveLength(0);
-    });
-
-    it('runAgent forwards an abort signal to abortRun', async () => {
-      const { agent } = await connectedAgent();
-      const abortSpy = jest.spyOn(agent, 'abortRun').mockImplementation(() => {
-        // Avoid the full cancel side-effects in this isolated wiring test.
-      });
-      const controller = makeAbortController();
-      // Make super.runAgent resolve immediately so we just exercise the wiring.
-      const superRun = jest
-        .spyOn(Object.getPrototypeOf(WebSocketAIAgent).prototype, 'runAgent')
-        .mockResolvedValue({ result: undefined, newMessages: [] });
-
-      const promise = agent.runAgent({}, {}, { signal: controller.signal });
-      controller.abort();
-      await promise;
-
-      expect(abortSpy).toHaveBeenCalledTimes(1);
-      superRun.mockRestore();
-    });
-
-    it('runAgent short-circuits when the signal is already aborted', async () => {
-      const { agent } = await connectedAgent();
-      const superRun = jest.spyOn(
-        Object.getPrototypeOf(WebSocketAIAgent).prototype,
-        'runAgent'
-      );
-      const controller = makeAbortController();
-      controller.abort();
-
-      const result = await agent.runAgent(
-        {},
-        {},
-        { signal: controller.signal }
-      );
-
-      expect(result).toBeUndefined();
-      expect(superRun).not.toHaveBeenCalled();
-      superRun.mockRestore();
     });
   });
 

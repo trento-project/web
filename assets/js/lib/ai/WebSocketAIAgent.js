@@ -117,9 +117,6 @@ export class WebSocketAIAgent extends AbstractAgent {
     };
 
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
-    this.channel.on('agent-execution-cancelled', () =>
-      this._handleAgentCancelled()
-    );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
   }
@@ -186,34 +183,6 @@ export class WebSocketAIAgent extends AbstractAgent {
         if (this._activeRunId === runId) this._clearActiveRun();
       };
     });
-  }
-
-  // The assistant-ui runtime calls `runAgent(input, subscriber, { signal })`
-  // and aborts that signal when the user cancels. AbstractAgent ignores the
-  // third arg, so we need to wire the signal to abortRun ourselves.
-  async runAgent(parameters, subscriber, opts) {
-    const signal = opts?.signal;
-    if (!signal) return super.runAgent(parameters, subscriber);
-    if (signal.aborted) return undefined;
-
-    const onAbort = () => this.abortRun();
-    signal.addEventListener('abort', onAbort, { once: true });
-    try {
-      return await super.runAgent(parameters, subscriber);
-    } finally {
-      signal.removeEventListener('abort', onAbort);
-    }
-  }
-
-  abortRun() {
-    if (!this._activeRunId) return;
-    const runId = this._activeRunId;
-    this.channel?.push('cancel_agent', { run_id: runId });
-    this._failActiveRun(new Error('Agent execution cancelled'));
-  }
-
-  _handleAgentCancelled() {
-    this._failActiveRun(new Error('Agent execution cancelled'));
   }
 
   _failActiveRun(error) {
