@@ -2,12 +2,8 @@ import React, { useState } from 'react';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { TZDate } from '@date-fns/tz';
-import { parseISO } from 'date-fns';
+import { parseDateTimeLocalToUtc } from '@lib/timezones';
 import ComposedFilter from '.';
-
-const parseDateTimeLocalToUtc = (dateTimeLocalValue, timezone) =>
-  new Date(TZDate.tz(timezone, parseISO(dateTimeLocalValue)).getTime());
 
 jest.setTimeout(100000);
 describe('ComposedFilter component', () => {

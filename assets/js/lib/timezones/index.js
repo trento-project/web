@@ -1,6 +1,5 @@
 import tzdata from 'tzdata';
-import { tzName, tzOffset } from '@date-fns/tz';
-
+import { tzName, TZDate, tzOffset } from '@date-fns/tz';
 const DEFAULT_TIMEZONE = 'Etc/UTC';
 
 export const DATETIME_ISO_SQL_FORMAT = 'yyyy-MM-dd HH:mm:ss';
@@ -71,6 +70,22 @@ function generateTimezoneOptions() {
 
   return timezoneOptions;
 }
+
+// Parse datetime-local string (YYYY-MM-DDTHH:mm) as a date in timezone
+function parseDateTimeLocalToUtc(dateTimeLocalValue, timezone) {
+  const [datePart, timePart] = dateTimeLocalValue.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
+
+  const zonedDate = new TZDate(year, month - 1, day, hour, minute, 0, timezone);
+  return new Date(zonedDate.getTime());
+}
+
 const timezones = generateTimezoneOptions();
 
-export { DEFAULT_TIMEZONE, generateTimezoneOptions, timezones };
+export {
+  DEFAULT_TIMEZONE,
+  generateTimezoneOptions,
+  timezones,
+  parseDateTimeLocalToUtc,
+};
