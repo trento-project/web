@@ -19,7 +19,6 @@ import {
   alertingSettingsFactory,
   alertingSettingsToApiData,
 } from '../../lib/test-utils/factories/alertingSettings';
-import { DEFAULT_TIMEZONE } from '../../lib/timezones';
 
 const axiosMock = new MockAdapter(networkClient);
 

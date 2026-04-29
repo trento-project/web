@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
@@ -10,7 +10,7 @@ import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 describe('Users', () => {
   it('should render a loading table with a disabled create user button', () => {
-    renderWithRouter(<Users loading />);
+    render(<Users loading />);
 
     const headers = [
       'Username',

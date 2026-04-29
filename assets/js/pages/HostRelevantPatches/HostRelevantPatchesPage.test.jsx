@@ -54,7 +54,6 @@ describe('HostRelevantPatchesPage', () => {
         />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
       const advisorySelect = screen.getByRole('combobox', {
         name: 'advisories',
       });
@@ -77,8 +76,6 @@ describe('HostRelevantPatchesPage', () => {
         <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
-
       expect(screen.getByRole('textbox')).toBeVisible();
     });
 
@@ -86,8 +83,6 @@ describe('HostRelevantPatchesPage', () => {
       renderWithRouter(
         <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
-
-      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       expect(
         screen.getByRole('button', { name: 'Download CSV' })
@@ -98,8 +93,6 @@ describe('HostRelevantPatchesPage', () => {
       renderWithRouter(
         <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
-
-      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       expect(
         screen.getByRole('row', { name: 'Type Advisory Synopsis Updated' })
@@ -137,8 +130,6 @@ describe('HostRelevantPatchesPage', () => {
         />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
-
       patches.forEach((patch) => {
         expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
       });
@@ -163,7 +154,6 @@ describe('HostRelevantPatchesPage', () => {
         />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
       const advisorySelect = screen.getByRole('combobox', {
         name: 'advisories',
       });
@@ -188,8 +178,6 @@ describe('HostRelevantPatchesPage', () => {
           timezone={DEFAULT_TIMEZONE}
         />
       );
-
-      const { container } = renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const searchInput = screen.getByRole('textbox');
       await user.click(searchInput);
@@ -225,8 +213,6 @@ describe('HostRelevantPatchesPage', () => {
         />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
-
       const csvButton = screen.getByText('Download CSV');
 
       expect(csvButton).toBeDisabled();
@@ -256,8 +242,6 @@ describe('HostRelevantPatchesPage', () => {
           timezone={DEFAULT_TIMEZONE}
         />
       );
-
-      renderWithRouter(StatefulHostRelevantPatchesPage);
 
       const csvButton = screen.getByText('Download CSV');
       user.click(csvButton);

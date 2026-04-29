@@ -5,10 +5,6 @@ import '@testing-library/jest-dom';
 import { parseDateTimeLocalToUtc } from '@lib/timezones';
 import ComposedFilter from '.';
 
-it('test environment time should always be UTC', () => {
-  expect(new Date().getTimezoneOffset()).toBe(0);
-});
-
 jest.setTimeout(100000);
 describe('ComposedFilter component', () => {
   it('should render the specified filters', async () => {

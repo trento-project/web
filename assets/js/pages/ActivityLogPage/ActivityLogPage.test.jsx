@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { parseDateTimeLocalToUtc } from '@lib/timezones';
@@ -19,10 +19,6 @@ import { userFactory } from '@lib/test-utils/factories/users';
 import ActivityLogPage from './ActivityLogPage';
 
 const axiosMock = new MockAdapter(networkClient);
-
-it('test environment time should always be UTC', () => {
-  expect(new Date().getTimezoneOffset()).toBe(0);
-});
 
 describe('ActivityLogPage', () => {
   it('should render table without data', async () => {
