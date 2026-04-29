@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { SocketProvider } from '@common/SocketProvider';
+
 import { AssistantChatProvider } from './AssistantChatProvider';
 import { AssistantThread } from './AssistantThread';
 import { ModalFrame } from './ModalFrame';
@@ -9,11 +11,13 @@ function AIAssistant() {
   const handleClose = () => setIsOpen(false);
 
   return (
-    <AssistantChatProvider>
-      <ModalFrame open={isOpen} onOpenChange={setIsOpen}>
-        <AssistantThread onClose={handleClose} />
-      </ModalFrame>
-    </AssistantChatProvider>
+    <SocketProvider>
+      <AssistantChatProvider>
+        <ModalFrame open={isOpen} onOpenChange={setIsOpen}>
+          <AssistantThread onClose={handleClose} />
+        </ModalFrame>
+      </AssistantChatProvider>
+    </SocketProvider>
   );
 }
 

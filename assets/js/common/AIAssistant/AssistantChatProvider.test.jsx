@@ -4,6 +4,14 @@ import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 
+import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
+import * as agentModule from '@lib/ai';
+import { useSocket } from '@common/SocketProvider';
+import {
+  AssistantChatProvider,
+  useAIConnectionStatus,
+} from './AssistantChatProvider';
+
 jest.mock('@common/SocketProvider', () => ({
   useSocket: jest.fn(),
 }));
@@ -40,14 +48,6 @@ jest.mock('@lib/ai', () => {
     },
   };
 });
-
-import { useSocket } from '@common/SocketProvider';
-import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
-import * as agentModule from '@lib/ai';
-import {
-  AssistantChatProvider,
-  useAIConnectionStatus,
-} from './AssistantChatProvider';
 
 const mockStore = configureStore([]);
 
