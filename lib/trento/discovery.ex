@@ -89,6 +89,16 @@ defmodule Trento.Discovery do
   end
 
   @doc """
+  Prune all discovery events (regular and discarded) older than the given number of days.
+  """
+  @spec prune_discovery_events(number) :: :ok
+  def prune_discovery_events(days) do
+    prune_events(days)
+    prune_discarded_discovery_events(days)
+    :ok
+  end
+
+  @doc """
   Prune the discovery events log by removing the events older than the given number of days.
   """
   @spec prune_events(number) :: non_neg_integer()

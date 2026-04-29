@@ -157,9 +157,17 @@ config :trento, Trento.Scheduler,
       task: {Trento.ActivityLog, :clear_expired_logs, []},
       run_strategy: {Quantum.RunStrategy.Random, :cluster},
       overlap: false
+    ],
+    prune_discovery_events: [
+      schedule: "0 0 * * *",
+      task: {Trento.Discovery, :prune_discovery_events, [10]},
+      run_strategy: {Quantum.RunStrategy.Random, :cluster},
+      overlap: false
     ]
   ],
   debug_logging: false
+
+config :trento, prune_events_cronjob_schedule: "0 0 * * *"
 
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
