@@ -1,11 +1,10 @@
-import React, { Fragment, useState, useRef } from 'react';
+import React, { Fragment, useState, useRef, useEffect } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
-import { TZDate } from '@date-fns/tz';
-
 import useOnClickOutside from '@hooks/useOnClickOutside';
+import { parseDateTimeLocalToUtc } from '@lib/timezones';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
-import { format as formatDate, parseISO, subDays, subHours } from 'date-fns';
+import { format as formatDate, subDays, subHours } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import {
   DATETIME_US_12H_FORMAT,
@@ -86,21 +85,33 @@ function DateTimeInput({ value, onChange, timezone }) {
   const dateToValue = (date) =>
     formatDate(date, DATETIME_ISO_LOCAL_MILLIS_FORMAT, { in: tz(timezone) });
 
-  return (
-    <Input
-      value={value && dateToValue(value)}
-      onChange={(e) => {
-        // parseISO handles "normalization" (missing seconds or
-        // milliseconds in the string) and returns UTCDate, we then
-        // convert it to normal Date.
-        const zonedDate = TZDate.tz(timezone, parseISO(e.target.value));
+  const [inputValue, setInputValue] = useState(value ? dateToValue(value) : '');
 
-        if (!Number.isNaN(zonedDate.getTime())) {
-          onChange(new Date(zonedDate.getTime()));
+  // Sync date when it changes from outside or a new timezone is set
+  useEffect(() => {
+    if (value) {
+      setInputValue(dateToValue(value));
+    }
+  }, [value, timezone]);
+
+  const handleChange = (e) => {
+    const rawInput = e.target.value;
+    setInputValue(rawInput);
+
+    if (rawInput) {
+      try {
+        const date = parseDateTimeLocalToUtc(rawInput, timezone);
+        if (!Number.isNaN(date.getTime())) {
+          onChange(date);
         }
-      }}
-      type="datetime-local"
-    />
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  };
+
+  return (
+    <Input value={inputValue} onChange={handleChange} type="datetime-local" />
   );
 }
 
