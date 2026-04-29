@@ -105,7 +105,7 @@ describe('SapStartStopOperationModal', () => {
       );
 
       expect(screen.getByText('Request')).toBeEnabled();
-      await user.click(screen.getByText('All instances'));
+      await user.click(screen.getByRole('combobox', { name: 'instance_type' }));
       await user.click(screen.getByRole('option', { name: option }));
       await user.click(screen.getByText('Request'));
 

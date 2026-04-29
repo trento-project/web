@@ -8,10 +8,10 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
-import MultiSelect from '@common/MultiSelect';
+import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -41,6 +41,7 @@ function ProfileForm({
   analyticsEnabled = false,
   analyticsEulaAccepted = false,
   timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors,
   loading,
   disableForm,
@@ -113,9 +114,8 @@ function ProfileForm({
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
-  const timezoneOptions = generateTimezoneOptions();
   const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+    timezones.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -214,7 +214,7 @@ function ProfileForm({
               userAbilities={abilities}
               abilities={abilities}
               placeholder=""
-              disabled
+              isDisabled
             />
           </div>
           <Label
@@ -225,16 +225,17 @@ function ProfileForm({
             Timezone
           </Label>
           <div className="col-start-3 col-span-4">
-            <MultiSelect
+            <Select
               inputId="timezone"
               name="timezone"
               value={selectedTimezone}
-              options={timezoneOptions}
-              onChange={(option) => {
-                setTimezone(option ? option.value : '');
+              options={timezones}
+              onChange={(value) => {
+                setTimezone(value || '');
                 setTimezoneError(null);
               }}
               isMulti={false}
+              isSearchable
               disabled={loading || disableForm}
               placeholder="Select timezone..."
               noOptionsMessage={() => 'No timezones found'}

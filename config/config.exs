@@ -210,6 +210,8 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
     ]
   ]
 
+config :trento, :component_versions, adapter: Trento.Infrastructure.ComponentVersions
+
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
