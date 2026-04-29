@@ -223,7 +223,7 @@ describe('WebSocketAIAgent', () => {
       }
     );
 
-    it('errors when the last message is not from the user', async () => {
+    it('errors when there is no new user message to start the run with', async () => {
       const { agent } = await connectedAgent();
       const { error } = runAgent(agent, {
         threadId: 't',
@@ -231,7 +231,9 @@ describe('WebSocketAIAgent', () => {
       });
 
       expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'Invalid message format' })
+        expect.objectContaining({
+          message: 'Cannot start a run without a new user message',
+        })
       );
     });
 
@@ -358,7 +360,10 @@ describe('WebSocketAIAgent', () => {
       agent.disconnect();
 
       expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'AI assistant disconnected' })
+        expect.objectContaining({
+          name: 'AbortError',
+          message: 'AI assistant disconnected',
+        })
       );
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();

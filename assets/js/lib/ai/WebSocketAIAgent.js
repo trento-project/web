@@ -19,6 +19,13 @@ export function extractMessageText({ content } = {}) {
   return '';
 }
 
+class AbortError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'AbortError';
+  }
+}
+
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userId}
 // topic.
@@ -122,7 +129,9 @@ export class WebSocketAIAgent extends AbstractAgent {
 
           const lastMessage = messages[messages.length - 1];
           if (!lastMessage || lastMessage.role !== 'user') {
-            subscriber.error(new Error('Invalid message format'));
+            subscriber.error(
+              new Error('Cannot start a run without a new user message')
+            );
             return;
           }
 
@@ -176,7 +185,11 @@ export class WebSocketAIAgent extends AbstractAgent {
     if (!this.channel) return;
     this.channel.leave();
     this.channel = null;
-    this._failActiveRun(new Error('AI assistant disconnected'));
+    // Tag the teardown error as an AbortError so AbstractAgent's `onError`
+    // treats it as an expected unmount/cancel.
+    //
+    // (See AbstractAgent.onError's allowlist in @ag-ui/client.)
+    this._failActiveRun(new AbortError('AI assistant disconnected'));
     this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
   }
 }

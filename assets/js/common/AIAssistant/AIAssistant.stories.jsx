@@ -7,11 +7,6 @@ import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { buildAssistantTurn } from '@lib/test-utils/aguiEvents';
 
 import AIAssistant from './AIAssistant';
-import { AssistantChatProvider } from './AssistantChatProvider';
-import { AssistantThread } from './AssistantThread';
-import { ModalFrame } from './ModalFrame';
-
-// ---------- Story scaffolding -----------------------------------------------
 
 const USER_ID = 1;
 const TOPIC = `ai_assistant:${USER_ID}`;
@@ -26,29 +21,49 @@ function StoryProviders({ socket, children }) {
   );
 }
 
-function OpenAssistant({ children }) {
-  return (
-    <AssistantChatProvider>
-      <ModalFrame open onOpenChange={() => {}}>
-        <AssistantThread onClose={() => {}} />
-      </ModalFrame>
-      {children}
-    </AssistantChatProvider>
-  );
+function useFreshSocket() {
+  const [socket] = useState(makeMockSocket());
+  return socket;
 }
 
-// Drives the composer via DOM and emits a simulated assistant turn back
-// through the channel. `stepDelayMs > 0` reveals deltas progressively for
-// the streaming demo; 0 fires synchronously for a frozen conversation.
-function useSimulatedTurn(socket, { userText, assistantDeltas, stepDelayMs }) {
+// Drives the channel into the connection state requested by the story.
+//
+//  - 'fireOk'             — fire join 'ok' once the channel exists, then idle.
+//  - 'dropAfterConnect'   — connect, then drop the transport after a short delay.
+//  - 'none'               — leave the channel pending (status stays 'connecting').
+function useChannelScript(socket, script) {
   useEffect(() => {
+    const channel = socket.channels.get(TOPIC);
+    if (!channel) return undefined;
+
+    if (script === 'fireOk' || script === 'dropAfterConnect') {
+      channel.joinPush.fire('ok');
+    }
+    if (script === 'dropAfterConnect') {
+      const t = setTimeout(
+        () => channel.errorHandlers.forEach((cb) => cb()),
+        50
+      );
+      return () => clearTimeout(t);
+    }
+    return undefined;
+  }, [socket, script]);
+}
+
+// Types the user's prompt into the composer, hits send, then plays an
+// assistant turn back through the channel. Assumes useChannelScript has
+// already brought the channel up. `turn.stepDelayMs > 0` reveals deltas
+// progressively for the streaming demo; 0 fires synchronously for a frozen
+// conversation.
+function useSimulatedTurn(socket, turn) {
+  useEffect(() => {
+    if (!turn) return undefined;
+
     let cancelled = false;
     const timers = [];
 
     const channel = socket.channels.get(TOPIC);
     if (!channel) return undefined;
-
-    channel.joinPush.fire('ok');
 
     const setNativeValue = (el, value) => {
       const setter = Object.getOwnPropertyDescriptor(
@@ -68,7 +83,7 @@ function useSimulatedTurn(socket, { userText, assistantDeltas, stepDelayMs }) {
       const send = document.querySelector('[aria-label="Send message"]');
       if (!composer || !send) return;
 
-      setNativeValue(composer, userText);
+      setNativeValue(composer, turn.userText);
       send.click();
 
       // Wait for WebSocketAIAgent to push send_message back to the channel.
@@ -85,17 +100,17 @@ function useSimulatedTurn(socket, { userText, assistantDeltas, stepDelayMs }) {
         threadId,
         runId,
         messageId: 'asst-1',
-        deltas: assistantDeltas,
+        deltas: turn.assistantDeltas,
       });
 
       const fire = (e) => channel.emit('ag_ui_event', e);
 
-      if (stepDelayMs > 0) {
+      if (turn.stepDelayMs > 0) {
         events.forEach((event, i) => {
           timers.push(
             setTimeout(() => {
               if (!cancelled) fire(event);
-            }, i * stepDelayMs)
+            }, i * turn.stepDelayMs)
           );
         });
       } else {
@@ -109,129 +124,95 @@ function useSimulatedTurn(socket, { userText, assistantDeltas, stepDelayMs }) {
       cancelled = true;
       timers.forEach(clearTimeout);
     };
-    // userText / assistantDeltas / stepDelayMs are set per-story and never
-    // change for the lifetime of a story render — re-running on changes would
-    // restart the simulated turn, which is not what we want.
+    // The turn config is captured at mount; restarting on field changes is
+    // never what we want here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socket]);
 }
 
-function useFreshSocket() {
-  const [socket] = useState(makeMockSocket);
-  return socket;
-}
-
-function useFireJoinOk(socket) {
-  useEffect(() => {
-    const channel = socket.channels.get(TOPIC);
-    if (channel) channel.joinPush.fire('ok');
-  }, [socket]);
-}
-
-function useDropAfterConnect(socket) {
-  useEffect(() => {
-    const channel = socket.channels.get(TOPIC);
-    if (!channel) return undefined;
-    channel.joinPush.fire('ok');
-    const t = setTimeout(() => channel.errorHandlers.forEach((cb) => cb()), 50);
-    return () => clearTimeout(t);
-  }, [socket]);
-}
-
-// ---------- Stories ---------------------------------------------------------
-
 export default {
   title: 'Components/AIAssistant/AIAssistant',
+  component: AIAssistant,
   parameters: {
     layout: 'fullscreen',
     docs: {
       story: { inline: false, iframeHeight: 720 },
     },
+    aiAssistant: {
+      script: 'fireOk',
+      turn: null,
+    },
   },
+  decorators: [
+    (Story, context) => {
+      const socket = useFreshSocket();
+      const { script, turn } = context.parameters.aiAssistant ?? {};
+      useChannelScript(socket, script);
+      useSimulatedTurn(socket, turn);
+      return (
+        <StoryProviders socket={socket}>
+          <Story />
+        </StoryProviders>
+      );
+    },
+  ],
 };
 
 export const Closed = {
   name: 'Closed (FAB only)',
-  render: () => {
-    const socket = useFreshSocket();
-    useFireJoinOk(socket);
-    return (
-      <StoryProviders socket={socket}>
-        <AIAssistant />
-      </StoryProviders>
-    );
-  },
+  args: { open: false },
 };
 
 export const OpenEmpty = {
   name: 'Open — empty thread',
-  render: () => {
-    const socket = useFreshSocket();
-    useFireJoinOk(socket);
-    return (
-      <StoryProviders socket={socket}>
-        <OpenAssistant />
-      </StoryProviders>
-    );
-  },
+  args: { open: true },
 };
 
 export const OpenConversation = {
   name: 'Open — with conversation',
-  render: () => {
-    const socket = useFreshSocket();
-    useSimulatedTurn(socket, {
-      userText: 'What is the API key for adding agents?',
-      assistantDeltas: [
-        'You can find the API key on the **Settings → Agents** page. ',
-        'Copy it and paste it into the agent installer.',
-      ],
-      stepDelayMs: 0,
-    });
-    return (
-      <StoryProviders socket={socket}>
-        <OpenAssistant />
-      </StoryProviders>
-    );
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      turn: {
+        userText: 'What is the API key for adding agents?',
+        assistantDeltas: [
+          'You can find the API key on the **Settings → Agents** page. ',
+          'Copy it and paste it into the agent installer.',
+        ],
+        stepDelayMs: 0,
+      },
+    },
   },
 };
 
 export const OpenDisconnected = {
   name: 'Open — disconnected',
-  render: () => {
-    const socket = useFreshSocket();
-    useDropAfterConnect(socket);
-    return (
-      <StoryProviders socket={socket}>
-        <OpenAssistant />
-      </StoryProviders>
-    );
+  args: { open: true },
+  parameters: {
+    aiAssistant: { script: 'dropAfterConnect' },
   },
 };
 
 export const OpenStreaming = {
   name: 'Open — streaming response (interactive)',
-  render: () => {
-    const socket = useFreshSocket();
-    useSimulatedTurn(socket, {
-      userText: 'Walk me through the trento deployment.',
-      assistantDeltas: [
-        'The deployment ',
-        'consists of two ',
-        'main parts: ',
-        '**web** ',
-        '(this UI + control plane) ',
-        'and **wanda** ',
-        '(the checks engine).\n\n',
-        'Both run as Elixir releases, ',
-        'usually behind a reverse proxy.',
-      ],
-      stepDelayMs: 250,
-    });
-    return (
-      <StoryProviders socket={socket}>
-        <OpenAssistant />
-      </StoryProviders>
-    );
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      turn: {
+        userText: 'Walk me through the trento deployment.',
+        assistantDeltas: [
+          'The deployment ',
+          'consists of two ',
+          'main parts: ',
+          '**web** ',
+          '(this UI + control plane) ',
+          'and **wanda** ',
+          '(the checks engine).\n\n',
+          'Both run as Elixir releases, ',
+          'usually behind a reverse proxy.',
+        ],
+        stepDelayMs: 250,
+      },
+    },
   },
 };
