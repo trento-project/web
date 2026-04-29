@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-03-15T04:33:52Z",
-    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
-    "run_id": "23103177058",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 7
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune apply solution operation button based on user abilities",
-        "score": 0.07501
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.07251
-      },
-      {
-        "name": "Label Component::should display an info tooltip if specified",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-15T04:34:39Z",
     "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
     "run_id": "23103177058",
@@ -6101,6 +6061,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-29T04:29:50Z",
+    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
+    "run_id": "25090465347",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
       }
     ]
   }
