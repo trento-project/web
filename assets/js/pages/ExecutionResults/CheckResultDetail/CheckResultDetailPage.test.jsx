@@ -1,6 +1,7 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
+import { Route } from 'react-router';
 
 import '@testing-library/jest-dom';
 
@@ -28,9 +29,11 @@ describe('CheckResultDetailPage Component', () => {
     ] = hostsList;
 
     const checksCatalog = catalogCheckFactory.buildList(2);
+    const firstCheckExpectations = checksCatalog[0].expectations;
     const completedExecution = checksExecutionCompletedForTargetsFactory.build({
       targets: [agent1, agent2],
       check_id: [checksCatalog[0].id, checksCatalog[1].id],
+      expectations: firstCheckExpectations,
     });
 
     const initialState = {
@@ -92,6 +95,7 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${falseClusterID}/executions/last/${validCheckID}/${validTargetType}/${validTargetName}`,
+      children: <Route path={'/clusters'} element={<></>} />,
     });
 
     expect(screen.getByText('Go back to clusters overview')).toBeTruthy();
@@ -112,6 +116,12 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${falseCheckID}/${validTargetType}/${validTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
 
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
@@ -133,6 +143,12 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${invalidTargetType}/${validTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
     fireEvent.click(screen.getByText('Go back to last execution'));
@@ -153,6 +169,12 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${validTargetType}/${invalidTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
     fireEvent.click(screen.getByText('Go back to last execution'));
