@@ -1,22 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
+import Select, { createOptionRenderer } from '.';
 
 import { providers } from '@lib/model';
 import ProviderLabel from '@common/ProviderLabel';
 
-import Select, { createOptionRenderer } from '.';
-
 export default {
   title: 'Components/Select',
-  components: Select,
+  component: Select,
   argTypes: {
-    optionsName: {
-      type: 'string',
-      description:
-        'The name of the options to be used in the "All `optionsName`" option',
-      control: {
-        type: 'text',
-      },
-    },
     options: {
       type: 'array',
       description: 'The list of options to be rendered in the dropdown',
@@ -25,10 +16,46 @@ export default {
       },
     },
     value: {
-      type: 'string',
-      description: 'The currently selected option',
+      description:
+        'Control value. Used to change select value after it is mounted',
       control: {
-        type: 'text',
+        type: 'object',
+      },
+    },
+    initialValues: {
+      type: 'array',
+      description:
+        'Initially selected values. Used only to prepopulate the select on mount',
+      control: {
+        type: 'array',
+      },
+    },
+    isDisabled: {
+      type: 'boolean',
+      description: 'Component is disabled or not',
+      control: {
+        type: 'boolean',
+      },
+    },
+    isMulti: {
+      type: 'boolean',
+      description: 'Component is multi value',
+      control: {
+        type: 'boolean',
+      },
+    },
+    isSearchable: {
+      type: 'boolean',
+      description: 'Component is searchable',
+      control: {
+        type: 'boolean',
+      },
+    },
+    isClearable: {
+      type: 'boolean',
+      description: 'Component selected options are clearable',
+      control: {
+        type: 'boolean',
       },
     },
     renderOption: {
@@ -38,43 +65,30 @@ export default {
       },
     },
     onChange: {
-      description: 'A function to be called when the selected option changes',
+      description: 'A function to be called when selected options are changed',
       table: {
         type: { summary: '() => {}' },
       },
     },
-    className: {
-      type: 'string',
-      description: 'Extra classes to be applied to the component',
-      control: {
-        type: 'text',
-      },
-    },
-    disabled: {
-      type: 'boolean',
-      description: 'Whether the Select is disabled or not',
-      control: {
-        type: 'boolean',
-      },
-    },
-    args: {
-      disabled: false,
-    },
-  },
-  render: (args) => {
-    const [value, setValue] = useState(args.value);
-
-    return <Select value={value} onChange={setValue} {...args} />;
   },
 };
 
-const options = ['foo', 'bar', 'baz', 'qux'];
+const options = [
+  { value: 1, label: 'orange' },
+  { value: 2, label: 'apple' },
+  { value: 3, label: 'banana' },
+];
+
+const optionsWithTooltip = [
+  { value: 1, label: 'orange', tooltip: 'A nice orange' },
+  { value: 2, label: 'apple', tooltip: 'A nice apple' },
+  { value: 3, label: 'banana', tooltip: 'A nice banana' },
+];
 
 export const Default = {
   args: {
-    optionsName: 'optionz',
     options,
-    value: 'bar',
+    className: 'w-96',
   },
 };
 
@@ -85,11 +99,24 @@ export const WithAllOption = {
   },
 };
 
+export const WithTooltip = {
+  args: {
+    ...Default.args,
+    options: optionsWithTooltip,
+  },
+};
+
+export const WithInitialValues = {
+  args: {
+    ...Default.args,
+    initialValues: [options[0]],
+  },
+};
+
 const optionsToLabel = {
-  foo: '😁 Foo',
-  bar: '😛 Bar',
-  baz: '🤪 Baz',
-  qux: '🧐 Qux',
+  orange: '😁 Foo',
+  apple: '😛 Bar',
+  banana: '🤪 Baz',
 };
 
 const itemsOptionRenderer = createOptionRenderer('All Emojis!', (item) => (
@@ -98,7 +125,7 @@ const itemsOptionRenderer = createOptionRenderer('All Emojis!', (item) => (
 
 export const WithCustomOptionRenderer = {
   args: {
-    ...WithAllOption.args,
+    ...Default.args,
     renderOption: itemsOptionRenderer,
   },
 };
@@ -110,39 +137,51 @@ const providerOptionRenderer = createOptionRenderer(
 
 export const ProviderSelectionSample = {
   args: {
-    optionsName: 'providers',
+    ...Default.args,
     options: ['all', ...providers],
-    value: 'all',
+    initialValues: ['all'],
     renderOption: providerOptionRenderer,
   },
 };
 
-const structuredOptions = [
+export const Disabled = {
+  args: {
+    ...WithInitialValues.args,
+    isDisabled: true,
+  },
+};
+
+const disabledOptions = [
   'foo',
-  { value: 'bar', disabled: true },
+  { label: 'bar', value: 'bar', isDisabled: true },
   'baz',
   'qux',
 ];
 
 export const WithDisabledOption = {
   args: {
-    optionsName: 'structured emojis',
-    options: ['all', ...structuredOptions],
-    value: 'baz',
-    renderOption: itemsOptionRenderer,
+    ...Default.args,
+    options: ['all', ...disabledOptions],
   },
 };
 
-export const Disabled = {
+export const Multi = {
   args: {
     ...Default.args,
-    disabled: true,
+    isMulti: true,
   },
 };
 
-export const WithSelectedItemPrefix = {
+export const Searchable = {
   args: {
     ...Default.args,
-    selectedItemPrefix: '👉 ',
+    isSearchable: true,
+  },
+};
+
+export const Clearable = {
+  args: {
+    ...Multi.args,
+    isClearable: true,
   },
 };

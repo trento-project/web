@@ -17,7 +17,6 @@
  */
 
 const cypressSplit = require('cypress-split');
-const http = require('http');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = [];
 
@@ -29,26 +28,32 @@ module.exports = (on, config) => {
   on('task', {
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
-    startAgentHeartbeat(agents) {
-      const { web_api_host, web_api_port, heartbeat_interval } = config.env;
-      const heartbeat = (agentId) =>
-        http
+    startAgentHeartbeat({ agents, apiKey }) {
+      const url = new URL(config.baseUrl);
+      const isHttps = url.protocol === 'https:';
+      const transport = isHttps ? require('https') : require('http');
+
+      const heartbeat = (agentId) => {
+        transport
           .request({
-            host: web_api_host,
+            host: url.hostname,
             path: `/api/v1/hosts/${agentId}/heartbeat`,
-            port: web_api_port,
+            port: url.port || (isHttps ? 443 : 80),
             method: 'POST',
+            headers: apiKey ? { 'X-Trento-ApiKey': apiKey } : {},
           })
           .end();
+      };
 
       agents.forEach((agentId) => {
         heartbeat(agentId);
         let interval = setInterval(
           () => heartbeat(agentId),
-          heartbeat_interval
+          config.env.heartbeat_interval
         );
         heartbeatsIntervals.push(interval);
       });
+
       return null;
     },
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
@@ -548,7 +548,7 @@ describe('ExecutionResults', () => {
 
     const { remediation, description } = catalog[0];
     expect(screen.getByText(description).textContent).toBe(description);
-    userEvent.click(screen.getByText(description));
+    await act(() => userEvent.click(screen.getByText(description)));
     expect(screen.queryByText(remediation)).not.toBeInTheDocument();
   });
 
