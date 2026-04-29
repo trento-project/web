@@ -27,7 +27,15 @@ const logBrowserClearCredentials = (win) => {
 
     const message = args.map(String).join(' ');
     if (message.includes('clear_credentials_reached')) {
-      cy.task('browserLog', `[browser-console] ${message}`);
+      const testTitle =
+        Cypress.currentTest?.titlePath?.().join(' > ') ||
+        Cypress.currentTest?.title ||
+        'unknown test';
+
+      cy.task(
+        'browserLog',
+        `[browser-console][${Cypress.spec.relative}][${testTitle}] ${message}`
+      );
     }
   };
 };
