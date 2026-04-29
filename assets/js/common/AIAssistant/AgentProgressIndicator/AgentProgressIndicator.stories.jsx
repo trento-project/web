@@ -18,7 +18,3 @@ export const Thinking = {
 export const CallingTool = {
   args: { label: 'Calling get_hosts...' },
 };
-
-export const PreparingResponse = {
-  args: { label: 'Preparing response...' },
-};

@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuiIf, useAuiState } from '@assistant-ui/react';
+import { filter, isUndefined, last } from 'lodash';
 
 import Spinner from '@common/Spinner';
 
@@ -13,16 +14,9 @@ export function AgentProgressIndicatorView({ label }) {
 }
 
 export function deriveProgressLabel(content) {
-  const toolCalls = content.filter((part) => part.type === 'tool-call');
-
-  if (toolCalls.length > 0) {
-    const latestTool = toolCalls[toolCalls.length - 1];
-    const toolName = latestTool.toolName || 'tool';
-    return `Calling ${toolName}...`;
-  }
-  if (toolCalls.some((tc) => tc.result !== undefined)) {
-    return 'Preparing response...';
-  }
+  const lastToolCall = last(filter(content, { type: 'tool-call' }));
+  if (lastToolCall && isUndefined(lastToolCall.result))
+    return `Calling ${lastToolCall.toolName || 'tool'}...`;
   return 'Thinking...';
 }
 

@@ -152,71 +152,15 @@ describe('AssistantChatProvider', () => {
     expect(screen.getByTestId('status')).toHaveTextContent('disconnected');
   });
 
-  describe('thread list adapter', () => {
-    it('seeds the initial thread id from crypto.randomUUID', () => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('initial-thread');
-      renderWithProvider(userStore());
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
-        'initial-thread'
-      );
-    });
-
-    it('mints a fresh id and re-passes the new threadList on switch-to-new-thread', async () => {
-      jest
-        .spyOn(crypto, 'randomUUID')
-        .mockReturnValueOnce('thread-A')
-        .mockReturnValueOnce('thread-B');
-
-      renderWithProvider(userStore());
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
-        'thread-A'
-      );
-
-      await act(async () => {
-        await lastRuntimeOptions().adapters.threadList.onSwitchToNewThread();
-      });
-
-      expect(lastRuntimeOptions().adapters.threadList.threadId).toBe(
-        'thread-B'
-      );
-    });
-
-    it('returns persisted messages when switching back to a known thread', async () => {
-      jest
-        .spyOn(crypto, 'randomUUID')
-        .mockReturnValueOnce('thread-A')
-        .mockReturnValueOnce('thread-B');
-      runtimeStub.thread.getState.mockReturnValue({ messages: ['m1', 'm2'] });
-
-      renderWithProvider(userStore());
-
-      const subscribeCallback =
-        runtimeStub.thread.subscribe.mock.calls[
-          runtimeStub.thread.subscribe.mock.calls.length - 1
-        ][0];
-      act(() => subscribeCallback());
-
-      await act(async () => {
-        await lastRuntimeOptions().adapters.threadList.onSwitchToNewThread();
-      });
-
-      let result;
-      await act(async () => {
-        result =
-          await lastRuntimeOptions().adapters.threadList.onSwitchToThread(
-            'thread-A'
-          );
-      });
-      expect(result).toEqual({ messages: ['m1', 'm2'] });
-    });
-
-    it('rejects when switching to an unknown thread', async () => {
-      jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('thread-A');
-      renderWithProvider(userStore());
-
-      await expect(
-        lastRuntimeOptions().adapters.threadList.onSwitchToThread('nope')
-      ).rejects.toThrow('Thread nope not found');
+  // Per-thread adapter behaviour is covered in useThreadStore.test.js. Here
+  // we just verify the provider wires the adapter into the AG-UI runtime.
+  it('forwards the thread store adapter to useAgUiRuntime', () => {
+    jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('initial-thread');
+    renderWithProvider(userStore());
+    expect(lastRuntimeOptions().adapters.threadList).toMatchObject({
+      threadId: 'initial-thread',
+      onSwitchToNewThread: expect.any(Function),
+      onSwitchToThread: expect.any(Function),
     });
   });
 });

@@ -1,8 +1,30 @@
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
+import { isArray, isString } from 'lodash';
 
 import { CONNECTION_STATUS } from './connectionStatus';
 import { EVENT_TYPES } from './eventTypes';
+
+// Pure helper: collapse a message's content (string or array of parts) to
+// the plain text the server expects in `send_message`.
+export function extractMessageText({ content } = {}) {
+  if (isString(content)) return content;
+  if (isArray(content)) {
+    return content
+      .filter(({ type }) => type === 'text')
+      .map(({ text }) => text)
+      .join('\n');
+  }
+  return '';
+}
+
+// Terminal AG-UI events that close the run's Observable. Adding a new
+// terminal event = add an entry here.
+const TERMINAL_HANDLERS = {
+  [EVENT_TYPES.RUN_FINISHED]: (subscriber) => subscriber.complete(),
+  [EVENT_TYPES.RUN_ERROR]: (subscriber, event) =>
+    subscriber.error(new Error(event.message || 'Agent execution failed')),
+};
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userId}
@@ -27,7 +49,6 @@ export class WebSocketAIAgent extends AbstractAgent {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No socket available');
     }
-
     if (!this.userId) {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No userId available');
@@ -56,16 +77,15 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   _setupChannelHandlers() {
-    this.channel.on('ag_ui_event', (payload) => this._handleAgUiEvent(payload));
+    const dropConnection = () =>
+      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
+
+    this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
     this.channel.on('agent-execution-cancelled', () =>
       this._handleAgentCancelled()
     );
-    this.channel.onError(() =>
-      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED)
-    );
-    this.channel.onClose(() =>
-      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED)
-    );
+    this.channel.onError(dropConnection);
+    this.channel.onClose(dropConnection);
   }
 
   _handleAgUiEvent(event) {
@@ -74,18 +94,16 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     subscriber.next(event);
 
-    if (event.type === EVENT_TYPES.RUN_FINISHED) {
-      subscriber.complete();
-      this._clearActiveRun();
-    } else if (event.type === EVENT_TYPES.RUN_ERROR) {
-      subscriber.error(new Error(event.message || 'Agent execution failed'));
+    const terminate = TERMINAL_HANDLERS[event.type];
+    if (terminate) {
+      terminate(subscriber, event);
       this._clearActiveRun();
     }
   }
 
   // Implements AbstractAgent.run — invoked by assistant-ui when the user
   // submits a message. Returns an Observable of AG-UI events.
-  run(runAgentInput) {
+  run({ messages, threadId }) {
     return new Observable((subscriber) => {
       const runId = crypto.randomUUID();
 
@@ -98,9 +116,7 @@ export class WebSocketAIAgent extends AbstractAgent {
             await this.initialize();
           }
 
-          const { messages, threadId } = runAgentInput;
           const lastMessage = messages[messages.length - 1];
-
           if (!lastMessage || lastMessage.role !== 'user') {
             subscriber.error(new Error('Invalid message format'));
             return;
@@ -111,7 +127,7 @@ export class WebSocketAIAgent extends AbstractAgent {
 
           this.channel
             .push('send_message', {
-              message: this._extractMessageText(lastMessage),
+              message: extractMessageText(lastMessage),
               thread_id: threadId,
               run_id: runId,
             })
@@ -132,19 +148,6 @@ export class WebSocketAIAgent extends AbstractAgent {
         if (this._activeRunId === runId) this._clearActiveRun();
       };
     });
-  }
-
-  _extractMessageText(message) {
-    if (typeof message.content === 'string') return message.content;
-
-    if (Array.isArray(message.content)) {
-      return message.content
-        .filter((part) => part.type === 'text')
-        .map((part) => part.text)
-        .join('\n');
-    }
-
-    return '';
   }
 
   _handleAgentCancelled() {

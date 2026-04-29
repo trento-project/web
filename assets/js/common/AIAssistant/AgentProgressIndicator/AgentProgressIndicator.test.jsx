@@ -18,7 +18,7 @@ jest.mock('@assistant-ui/react', () => ({
 }));
 
 describe('AgentProgressIndicatorView', () => {
-  it.each(['Thinking...', 'Calling get_hosts...', 'Preparing response...'])(
+  it.each(['Thinking...', 'Calling get_hosts...'])(
     'renders the "%s" label',
     (label) => {
       render(<AgentProgressIndicatorView label={label} />);
@@ -37,26 +37,45 @@ describe('AgentProgressIndicatorView', () => {
 });
 
 describe('deriveProgressLabel', () => {
-  it('returns "Thinking..." when there are no tool calls', () => {
-    expect(deriveProgressLabel([])).toBe('Thinking...');
-    expect(deriveProgressLabel([{ type: 'text', text: '' }])).toBe(
-      'Thinking...'
-    );
-  });
-
-  it('returns the latest tool name when tool calls are present', () => {
-    expect(
-      deriveProgressLabel([
+  it.each([
+    {
+      label: 'no parts',
+      content: [],
+      expected: 'Thinking...',
+    },
+    {
+      label: 'only non-tool parts',
+      content: [{ type: 'text', text: '' }],
+      expected: 'Thinking...',
+    },
+    {
+      label: 'tool call in flight',
+      content: [
         { type: 'tool-call', toolName: 'get_hosts' },
         { type: 'tool-call', toolName: 'get_clusters' },
-      ])
-    ).toBe('Calling get_clusters...');
-  });
-
-  it('falls back to "tool" when toolName is missing', () => {
-    expect(deriveProgressLabel([{ type: 'tool-call' }])).toBe(
-      'Calling tool...'
-    );
+      ],
+      expected: 'Calling get_clusters...',
+    },
+    {
+      label: 'in-flight tool call without a name',
+      content: [{ type: 'tool-call' }],
+      expected: 'Calling tool...',
+    },
+    {
+      label: 'tool call has a result (waiting for assistant text)',
+      content: [{ type: 'tool-call', toolName: 'get_hosts', result: [] }],
+      expected: 'Thinking...',
+    },
+    {
+      label: 'an earlier tool completed but a new one is in flight',
+      content: [
+        { type: 'tool-call', toolName: 'get_hosts', result: [] },
+        { type: 'tool-call', toolName: 'get_clusters' },
+      ],
+      expected: 'Calling get_clusters...',
+    },
+  ])('returns "$expected" when $label', ({ content, expected }) => {
+    expect(deriveProgressLabel(content)).toBe(expected);
   });
 });
 

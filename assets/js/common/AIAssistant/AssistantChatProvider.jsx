@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
@@ -8,112 +8,53 @@ import { useSocket } from '@common/SocketProvider';
 import { CONNECTION_STATUS, WebSocketAIAgent } from '@lib/ai';
 import { getUserProfile } from '@state/selectors/user';
 
-export function AssistantChatProvider({ children }) {
-  const user = useSelector(getUserProfile);
-  const userId = user?.id;
-  const socket = useSocket();
+import { useThreadStore } from './useThreadStore';
 
-  // Connection status state
+const RECONNECT_DELAY_MS = 2000;
+
+export function AssistantChatProvider({ children }) {
+  const userId = useSelector(getUserProfile)?.id;
+  const socket = useSocket();
   const [connectionStatus, setConnectionStatus] = useState(
     CONNECTION_STATUS.DISCONNECTED
   );
+  const { adapter: threadListAdapter, persist } = useThreadStore();
 
-  // In-memory thread storage for multi-thread support
-  const threadsRef = useRef(new Map());
-  const [currentThreadId, setCurrentThreadId] = useState(() => {
-    const id = crypto.randomUUID();
-    threadsRef.current.set(id, { id, messages: [] });
-    return id;
-  });
-
-  // Create WebSocketAIAgent for AG-UI protocol
   const agent = useMemo(() => {
-    if (!socket || !userId) {
-      return null;
-    }
-
+    if (!socket || !userId) return null;
     return new WebSocketAIAgent({
       socket,
       userId,
-      threadId: currentThreadId,
+      threadId: threadListAdapter.threadId,
       onConnectionChange: setConnectionStatus,
     });
-  }, [socket, userId, currentThreadId]);
+  }, [socket, userId, threadListAdapter.threadId]);
 
-  // Initialize agent connection when agent is created
   useEffect(() => {
-    if (!agent) {
-      return;
-    }
+    if (!agent) return undefined;
 
-    agent
-      .initialize()
-      .then(() => {
-        // Agent initialized successfully
-      })
-      .catch((_error) => {
-        // Try to reconnect after a delay
-        setTimeout(() => {
-          agent.initialize().catch(() => {
-            // Retry failed
-          });
-        }, 2000);
-      });
+    agent.initialize().catch(() => {
+      setTimeout(() => {
+        agent.initialize().catch(() => {});
+      }, RECONNECT_DELAY_MS);
+    });
 
-    // Cleanup on unmount
-    return () => {
-      if (agent) {
-        agent.disconnect();
-      }
-    };
+    return () => agent.disconnect();
   }, [agent]);
 
-  // Setup thread list adapter for multi-thread support
-  const threadListAdapter = useMemo(
-    () => ({
-      threadId: currentThreadId,
-      onSwitchToNewThread: async () => {
-        const newId = crypto.randomUUID();
-        threadsRef.current.set(newId, { id: newId, messages: [] });
-        setCurrentThreadId(newId);
-      },
-      onSwitchToThread: async (threadId) => {
-        const thread = threadsRef.current.get(threadId);
-        if (!thread) {
-          throw new Error(`Thread ${threadId} not found`);
-        }
-        setCurrentThreadId(threadId);
-        return { messages: thread.messages };
-      },
-    }),
-    [currentThreadId]
-  );
-
-  // Create AG-UI runtime
   const runtime = useAgUiRuntime({
     agent,
-    adapters: {
-      threadList: threadListAdapter,
-    },
+    adapters: { threadList: threadListAdapter },
   });
-
-  // Register all tools
   const aui = useAui();
 
-  // Persist messages to threadsRef when they change
   useEffect(() => {
-    if (!runtime) return;
-
+    if (!runtime) return undefined;
     return runtime.thread.subscribe(() => {
-      threadsRef.current.set(currentThreadId, {
-        id: currentThreadId,
-        messages: runtime.thread.getState().messages,
-      });
+      persist(runtime.thread.getState().messages);
     });
-  }, [runtime, currentThreadId]);
+  }, [runtime, persist]);
 
-  // Always render children (including trigger button), even if agent isn't ready yet
-  // The runtime will handle gracefully if agent is null
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>
       <ConnectionStatusContext.Provider value={connectionStatus}>
@@ -123,12 +64,10 @@ export function AssistantChatProvider({ children }) {
   );
 }
 
-// Context for connection status
 const ConnectionStatusContext = React.createContext(
   CONNECTION_STATUS.DISCONNECTED
 );
 
-// Hook to access connection status in child components
 export function useAIConnectionStatus() {
   return React.useContext(ConnectionStatusContext);
 }
