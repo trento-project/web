@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { format } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -13,7 +11,7 @@ import {
 } from '@lib/test-utils';
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 import { networkClient } from '@lib/network';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
@@ -21,7 +19,6 @@ import {
   alertingSettingsFactory,
   alertingSettingsToApiData,
 } from '../../lib/test-utils/factories/alertingSettings';
-import { DEFAULT_TIMEZONE } from '../../lib/timezones';
 
 const axiosMock = new MockAdapter(networkClient);
 
@@ -91,9 +88,7 @@ describe('Settings Page', () => {
         renderWithRouter(StatefulSettings);
       });
 
-      const expectedDate = format(futureDate, DATE_DAY_MONTH_YEAR_FORMAT, {
-        in: tz('Pacific/Kiritimati'),
-      });
+      const expectedDate = formatDateOnly(futureDate, 'Pacific/Kiritimati');
       expect(screen.getByText(`Key will expire ${expectedDate}`)).toBeVisible();
     });
   });
@@ -165,9 +160,8 @@ describe('Settings Page', () => {
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('Certificate Uploaded')).toBeVisible();
-      const expectedDate = format(ca_uploaded_at, DATE_DAY_MONTH_YEAR_FORMAT, {
-        in: DEFAULT_TIMEZONE,
-      });
+
+      const expectedDate = formatDateOnly(ca_uploaded_at);
       expect(screen.getByText(`Uploaded: ${expectedDate}`)).toBeVisible();
 
       const sumaUsername = screen.getByLabelText('suma-username');

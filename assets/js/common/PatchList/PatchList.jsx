@@ -5,10 +5,8 @@ import {
   EOS_ADD_BOX_OUTLINED,
 } from 'eos-icons-react';
 import classNames from 'classnames';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import { noop } from 'lodash';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 import Button from '@common/Button';
 import Table, {
@@ -144,10 +142,7 @@ export default function PatchList({ patches, timezone, onNavigate = noop }) {
         sortable: true,
         sortDirection: sortingColumn === 'update_date' ? sortDirection : null,
         handleClick: handleUpdateDateColClick,
-        render: (content, _) =>
-          formatDate(content, DATE_DAY_MONTH_YEAR_FORMAT, {
-            in: tz(timezone),
-          }),
+        render: (content, _) => formatDateOnly(content, timezone),
       },
     ],
   };

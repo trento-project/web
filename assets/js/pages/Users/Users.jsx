@@ -3,9 +3,7 @@ import { Link } from 'react-router';
 import { noop } from 'lodash';
 
 import { isAdmin } from '@lib/model/users';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { formatDateOnly } from '@lib/timezones';
 
 import Banner from '@common/Banners';
 import Button from '@common/Button';
@@ -62,11 +60,7 @@ function Users({
         title: 'Created',
         key: 'created_at',
         render: (content, item) => (
-          <span>
-            {formatDate(item.created_at, DATE_DAY_MONTH_YEAR_FORMAT, {
-              in: tz(timezone),
-            })}
-          </span>
+          <span>{formatDateOnly(item.created_at, timezone)}</span>
         ),
       },
       ...(!singleSignOnEnabled
@@ -75,13 +69,7 @@ function Users({
               title: 'Last Login',
               key: 'last_login_at',
               render: (content) => (
-                <span>
-                  {content
-                    ? formatDate(content, DATE_DAY_MONTH_YEAR_FORMAT, {
-                        in: tz(timezone),
-                      })
-                    : '-'}
-                </span>
+                <span>{content ? formatDateOnly(content, timezone) : '-'}</span>
               ),
             },
           ]

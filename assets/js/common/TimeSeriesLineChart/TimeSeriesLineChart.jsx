@@ -13,12 +13,7 @@ import ZoomPlugin from 'chartjs-plugin-zoom';
 import classNames from 'classnames';
 import 'chartjs-adapter-date-fns';
 import { Line } from 'react-chartjs-2';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import {
-  DATETIME_DAY_MONTH_24H_FORMAT,
-  TIME_24H_HH_MM_FORMAT,
-} from '@lib/timezones';
+import { formatDateTime, formatTimeOnly } from '@lib/timezones';
 
 const AVAILABLE_COLORS = [
   {
@@ -144,10 +139,9 @@ function TimeSeriesLineChart({
         autoSkip: true,
         autoSkipPadding: 50,
         maxRotation: 0,
-        callback: (value) =>
-          formatDate(new Date(value), TIME_24H_HH_MM_FORMAT, {
-            in: tz(timezone),
-          }),
+        callback: (value) => {
+          formatTimeOnly(new Date(value), timezone);
+        },
       },
       time: {
         displayFormats: {
@@ -179,17 +173,9 @@ function TimeSeriesLineChart({
         displayColors: 'false',
         callbacks: {
           title: (context) => {
-            if (!context.length) {
-              return '';
-            }
-
-            return formatDate(
-              new Date(context[0].parsed.x),
-              DATETIME_DAY_MONTH_24H_FORMAT,
-              {
-                in: tz(timezone),
-              }
-            );
+            return context.length
+              ? formatDateTime(new Date(context[0].parsed.x), timezone)
+              : '';
           },
         },
       },

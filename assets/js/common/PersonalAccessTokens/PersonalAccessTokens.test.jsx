@@ -2,11 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { format, formatISO } from 'date-fns';
-import { tz } from '@date-fns/tz';
+import { formatISO } from 'date-fns';
 import { faker } from '@faker-js/faker';
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
-import { DEFAULT_TIMEZONE, DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, formatDateOnly } from '@lib/timezones';
 import PersonalAccessTokens from './PersonalAccessTokens';
 
 describe('PersonalAccessTokens', () => {
@@ -25,9 +24,7 @@ describe('PersonalAccessTokens', () => {
       expect(screen.getByText(name)).toBeInTheDocument();
       expect(
         screen.getByText(
-          `Expires: ${format(expiresAt, DATE_DAY_MONTH_YEAR_FORMAT, {
-            in: tz(DEFAULT_TIMEZONE),
-          })}`
+          `Expires: ${formatDateOnly(expiresAt, DEFAULT_TIMEZONE)}`
         )
       ).toBeInTheDocument();
     });
@@ -89,9 +86,7 @@ describe('PersonalAccessTokens', () => {
     expect(
       screen
         .getByText(
-          `Expires: ${format(token.expires_at, DATE_DAY_MONTH_YEAR_FORMAT, {
-            in: tz(DEFAULT_TIMEZONE),
-          })}`
+          `Expires: ${formatDateOnly(token.expires_at, DEFAULT_TIMEZONE)}`
         )
         .classList.toString()
     ).toContain('text-red-500');

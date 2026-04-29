@@ -98,6 +98,7 @@ describe('ProfileForm', () => {
         analyticsEnabled={analytics_enabled}
         analyticsEulaAccepted={analytics_eula_accepted}
         timezone={timezone}
+        timezones={timezones}
         onSave={mockOnSave}
       />
     );
@@ -493,6 +494,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           timezone={timezone}
+          timezones={timezones}
         />
       );
 
@@ -518,6 +520,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           timezone={DEFAULT_TIMEZONE}
+          timezones={timezones}
         />
       );
 

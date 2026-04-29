@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
 import {
   EOS_KEYBOARD_ARROW_RIGHT_FILLED,
   EOS_BUG_REPORT_OUTLINED,
@@ -20,7 +18,7 @@ import {
   LEVEL_CRITICAL,
   logLevelToLabel,
 } from '@lib/model/activityLog';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { formatDateTime } from '@lib/timezones';
 
 import ActivityLogDetailModal from '@common/ActivityLogDetailsModal';
 
@@ -38,9 +36,7 @@ export const logLevelToIcon = {
 export const toRenderedEntry = (entry, timezone) => ({
   id: entry.id,
   type: entry.type,
-  time: formatDate(entry.occurred_on, DATETIME_DAY_MONTH_24H_FORMAT, {
-    in: tz(timezone),
-  }),
+  time: formatDateTime(entry.occurred_on, timezone),
   message: toMessage(entry),
   user: entry.actor,
   severity: entry.severity ? logLevelToLabel[entry.severity] : LEVEL_INFO,
