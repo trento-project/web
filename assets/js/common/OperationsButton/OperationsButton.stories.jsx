@@ -42,23 +42,6 @@ export default {
       options: PLACES,
       control: { type: 'radio' },
     },
-    value: {
-      type: 'string',
-      description:
-        'The display label or identifier for the operation menu item',
-      control: { type: 'text' },
-    },
-    running: {
-      type: 'boolean',
-      description:
-        'Boolean indicating whether the operation is currently executing',
-      control: { type: 'boolean' },
-    },
-    onClick: {
-      type: 'function',
-      description:
-        'Callback function invoked when the operation menu item is clicked',
-    },
     text: {
       type: 'string',
       description: 'Display text for the main operations button',

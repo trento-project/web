@@ -62,23 +62,6 @@ export default {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
     },
-    label: {
-      type: 'string',
-      description:
-        'Label text displayed before a data pill in system replication information sections',
-      control: { type: 'text' },
-    },
-    data: {
-      type: 'string',
-      description:
-        'Data content to be rendered inside a colored pill next to the label',
-      control: { type: 'text' },
-    },
-    className: {
-      type: 'string',
-      description: 'CSS classes for styling the pill container',
-      control: { type: 'text' },
-    },
     title: {
       type: 'string',
       description:

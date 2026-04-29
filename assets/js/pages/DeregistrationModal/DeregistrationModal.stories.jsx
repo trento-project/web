@@ -18,6 +18,24 @@ export default {
         defaultValue: { summary: 'host' },
       },
     },
+    hostname: {
+      type: 'string',
+      description:
+        'The host name to confirm deregistration of. Only used in host deregistration modal',
+      control: { type: 'text' },
+    },
+    sid: {
+      type: 'string',
+      description:
+        'The sid of the deregistered instance. Only used in application and database deregistratio modals',
+      control: { type: 'text' },
+    },
+    instanceNumber: {
+      type: 'string',
+      description:
+        'The sid of the deregistered instance. Only used in application and database deregistratio modals',
+      control: { type: 'text' },
+    },
     isOpen: {
       type: 'boolean',
       description: 'Sets the visibility of the modal',
@@ -43,9 +61,8 @@ function ButtonToOpenModal({ ...rest }) {
     <>
       <Button
         type="default-fit"
-        className={`inline-block mx-0.5 border-green-500 border w-fit ${
-          deregistered ? 'bg-rose-500' : 'bg-jungle-green-500'
-        }`}
+        className={`inline-block mx-0.5 border-green-500 border w-fit ${deregistered ? 'bg-rose-500' : 'bg-jungle-green-500'
+          }`}
         size="small"
         onClick={() => setOpen(true)}
       >

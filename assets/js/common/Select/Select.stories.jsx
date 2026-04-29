@@ -30,6 +30,13 @@ export default {
         type: 'array',
       },
     },
+    isDisabled: {
+      type: 'boolean',
+      description: 'Component is disabled or not',
+      control: {
+        type: 'boolean',
+      },
+    },
     isMulti: {
       type: 'boolean',
       description: 'Component is multi value',

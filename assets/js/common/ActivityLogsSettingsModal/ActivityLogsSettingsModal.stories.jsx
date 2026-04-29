@@ -20,29 +20,6 @@ export default {
     errors: {
       description: 'The validation error to be shown',
     },
-    time: {
-      type: 'object',
-      description:
-        'The initial retention time object with {value, unit} structure for the TimeSpan component',
-      control: { type: 'object' },
-    },
-    error: {
-      type: 'boolean',
-      description:
-        'Boolean flag indicating whether a validation error exists for the retention time input field',
-      control: { type: 'boolean' },
-    },
-    onChange: {
-      type: 'function',
-      description:
-        'Callback function invoked when the retention time value or unit is changed by the user',
-    },
-    text: {
-      type: 'string',
-      description:
-        'The error message text to display in the Error component for validation or global errors',
-      control: { type: 'text' },
-    },
     loading: {
       type: 'boolean',
       description:

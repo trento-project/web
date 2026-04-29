@@ -45,12 +45,6 @@ export default {
       description: 'The name attribute of the underlying input element',
       control: { type: 'text' },
     },
-    type: {
-      type: 'string',
-      description:
-        'The type attribute of the input, toggled between password and text',
-      control: { type: 'text' },
-    },
     value: {
       type: 'string',
       description: 'The controlled value of the password input',
@@ -61,22 +55,6 @@ export default {
       description:
         'The initial default value to populate the password input with on mount',
       control: { type: 'text' },
-    },
-    prefix: {
-      type: 'element',
-      description:
-        'An icon or element to display at the start of the input field',
-    },
-    suffix: {
-      type: 'element',
-      description:
-        'An icon or element to display at the end of the input field',
-    },
-    allowClear: {
-      type: 'boolean',
-      description:
-        'Whether to display a clear icon that empties the input when clicked',
-      control: { type: 'boolean' },
     },
     onChange: {
       type: 'function',

@@ -21,10 +21,6 @@ export default {
       },
       defaultValue: [10],
     },
-    onChange: {
-      type: 'function',
-      description: 'Callback function triggered when pagination state changes',
-    },
     onSelect: {
       type: 'function',
       description: 'Callback function invoked with page navigation action',

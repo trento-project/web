@@ -28,17 +28,6 @@ export default {
       description: 'Function to call when the selected options change',
       control: { type: null },
     },
-    icon: {
-      type: 'element',
-      description:
-        'An icon element to be displayed alongside the filter label in the dropdown options',
-    },
-    label: {
-      type: 'string',
-      description:
-        'The text label displayed next to the icon in filter options',
-      control: { type: 'text' },
-    },
     className: {
       type: 'string',
       description:

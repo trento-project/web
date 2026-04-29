@@ -79,11 +79,6 @@ export default {
         'The type of scale for the Y axis (e.g., linear or logarithmic)',
       control: { type: 'text' },
     },
-    chart: {
-      type: 'object',
-      description: 'Chart.js configuration and instance data',
-      control: { type: 'object' },
-    },
   },
 };
 

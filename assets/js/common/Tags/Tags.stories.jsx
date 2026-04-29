@@ -19,21 +19,6 @@ export default {
       control: 'array',
       description: 'Abilities that allow tag deletion',
     },
-    onClick: {
-      type: 'function',
-      description:
-        'Callback function invoked when a tag pill element is clicked',
-    },
-    disabled: {
-      type: 'boolean',
-      description: 'Whether tag deletion buttons are disabled',
-      control: { type: 'boolean' },
-    },
-    tag: {
-      type: 'string',
-      description: 'The tag string identifier for deletion operations',
-      control: { type: 'text' },
-    },
     className: {
       type: 'string',
       description:
