@@ -1,16 +1,12 @@
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
-import { TZDate } from '@date-fns/tz';
+import { TZDate, tz } from '@date-fns/tz';
 
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
-import { format as formatDate, parseISO, subDays, subHours } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import {
-  DATETIME_US_12H_FORMAT,
-  DATETIME_ISO_LOCAL_MILLIS_FORMAT,
-} from '@lib/timezones';
+import { format as formatDate, subDays, subHours } from 'date-fns';
+import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
 
 import Input from '@common/Input';
 
@@ -26,7 +22,7 @@ const toHumanDate = (date, timezone) => {
     return null;
   }
 
-  return formatDate(date, DATETIME_US_12H_FORMAT, { in: tz(timezone) });
+  return formatDate(date, DATETIME_DAY_MONTH_24H_FORMAT, { in: tz(timezone) });
 };
 
 const renderOptionItem = (option, placeholder) => {
@@ -83,20 +79,64 @@ function Tick() {
 }
 
 function DateTimeInput({ value, onChange, timezone }) {
-  const dateToValue = (date) =>
-    formatDate(date, DATETIME_ISO_LOCAL_MILLIS_FORMAT, { in: tz(timezone) });
+  // Transforms a datetime-local input value (which is in the user's browser timezone) to a UTC Date object in the user's profile timezone.
+  const dateTimeLocalToUtcDate = (dateTimeLocalValue) => {
+    // Example: user selected in the dropdown "2009-10-09T18:00"
+    // their profile's timezone is GMT+5,
+    // but their browser is set to GMT+2
+    if (!dateTimeLocalValue) {
+      return null;
+    }
+
+    // Parse the text input as a date in the user's local timezone
+    // Example: "2009-10-09T18:00, GMT+2" in GMT+2 is parsed as "2009-10-09T18:00, GMT+2"
+    const parsedDate = new Date(dateTimeLocalValue);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return null;
+    }
+
+    // Transform the parsed date from the user's profile timezone to UTC, accounting for DST if applicable.
+    // Example: "2009-10-09T18:00, GMT+2" in GMT+2 is transformed to UTC to "2009-10-09T15:00, GMT+2"
+    // That is the actual UTC date corresponding to GMT+5, as "18:00"- 5 hours = "13:00" UTC, which is the same instant as "18:00" GMT+5.
+    // This date will be converted by ActivityLogPage/searchParams.js using "toISOString" to the string "2009-10-09T13:00:00.000Z", which is the format expected by the backend.
+    const utcDate = TZDate.tz(
+      timezone,
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate(),
+      parsedDate.getHours(),
+      parsedDate.getMinutes(),
+      parsedDate.getSeconds(),
+      parsedDate.getMilliseconds()
+    );
+
+    return utcDate;
+  };
+
+  // Transforms a date into a string formatted for the datetime-local input, using the user's profile timezone.
+  const dateToValue = (date) => {
+    // Example: "2009-10-09T15:00, GMT+2"
+    if (!(date instanceof Date)) {
+      return '';
+    }
+
+    // Example: the UTC date "2009-10-09T15:00, GMT+2" is transformed to the string "2026-04-16T18:21"
+    // This format is internal to the "datetime-local"
+    const dateFormattedtext = formatDate(date, "yyyy-MM-dd'T'HH:mm", {
+      in: tz(timezone),
+    });
+    return dateFormattedtext;
+  };
 
   return (
     <Input
       value={value && dateToValue(value)}
       onChange={(e) => {
-        // parseISO handles "normalization" (missing seconds or
-        // milliseconds in the string) and returns UTCDate, we then
-        // convert it to normal Date.
-        const zonedDate = TZDate.tz(timezone, parseISO(e.target.value));
+        const utcDate = dateTimeLocalToUtcDate(e.target.value);
 
-        if (!Number.isNaN(zonedDate.getTime())) {
-          onChange(new Date(zonedDate.getTime()));
+        if (utcDate) {
+          onChange(utcDate);
         }
       }}
       type="datetime-local"

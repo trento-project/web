@@ -5,7 +5,7 @@ import { format as formatDate } from 'date-fns';
 import { tz } from '@date-fns/tz';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 import { availableSelectTimeOptions, normalizeDate } from '@lib/date';
-import { DATE_DAY_ABBR_MONTH_YEAR_FORMAT } from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 import { InputNumber } from '@common/Input';
@@ -168,7 +168,7 @@ function ApiKeySettingsModal({
                     {generatedApiKeyExpiration
                       ? `Key will expire ${formatDate(
                           generatedApiKeyExpiration,
-                          DATE_DAY_ABBR_MONTH_YEAR_FORMAT,
+                          DATE_DAY_MONTH_YEAR_FORMAT,
                           { in: tz(timezone) }
                         )}`
                       : 'Key will never expire'}

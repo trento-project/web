@@ -2,6 +2,7 @@ import React, { act } from 'react';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { parseDateTimeLocalToUtc } from '@lib/timezones';
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -152,5 +153,46 @@ describe('ActivityLogPage', () => {
           : expect(autorefreshButton).toBeDisabled();
       }
     );
+  });
+
+  it('should send to_date as timezone-aware ISO when custom date is selected', async () => {
+    const user = userEvent.setup();
+    const timezone = 'Pacific/Kiritimati';
+    const datetime = '2024-08-14T21:00';
+    const onGetSpy = jest.spyOn(networkClient, 'get');
+
+    axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
+
+    const [StatefulActivityLogPage] = withState(<ActivityLogPage />, {
+      ...defaultInitialState,
+      user: {
+        ...defaultInitialState.user,
+        timezone,
+      },
+    });
+
+    await act(() => renderWithRouter(StatefulActivityLogPage));
+
+    await user.click(screen.getByText('Filter newer than...'));
+
+    const input = document.querySelector('input[type="datetime-local"]');
+    await user.type(input, datetime);
+    await user.click(screen.getByText('Apply Filter'));
+
+    const expectedToDate = parseDateTimeLocalToUtc(
+      datetime,
+      timezone
+    ).toISOString();
+
+    expect(onGetSpy).toHaveBeenLastCalledWith(
+      '/activity_log',
+      expect.objectContaining({
+        params: expect.objectContaining({
+          to_date: expectedToDate,
+        }),
+      })
+    );
+
+    onGetSpy.mockRestore();
   });
 });
