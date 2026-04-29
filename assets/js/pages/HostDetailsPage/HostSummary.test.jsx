@@ -98,7 +98,7 @@ describe('HostSummary', () => {
     );
   });
 
-  it('should display last boot timestamp using a non-default timezone', () => {
+  it('should display last boot timestamp using the provided timezone', () => {
     const cluster = clusterFactory.build();
     const lastBootTimestamp = '2024-01-10T23:30:00Z';
 

@@ -5,6 +5,7 @@ import {
   DATETIME_DAY_MONTH_24H_FORMAT,
   DEFAULT_TIMEZONE,
   TIME_24H_HH_MM_FORMAT,
+  parseDateTimeLocalToUtc,
 } from './index';
 
 describe('timezone format constants', () => {
@@ -20,6 +21,25 @@ describe('timezone format constants', () => {
       '04 Aug 2024'
     );
     expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21:00');
+  });
+});
+
+describe('parseDateTimeLocalToUtc', () => {
+  it('parses datetime-local as UTC when timezone is Etc/UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-08-14T21:00', 'Etc/UTC');
+    expect(d.toISOString()).toBe('2024-08-14T21:00:00.000Z');
+  });
+
+  it('parses datetime-local in Europe/Berlin (UTC+02:00) to correct UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-08-14T21:00', 'Europe/Berlin');
+    // 21:00 in Berlin (UTC+2) is 19:00 UTC
+    expect(d.toISOString()).toBe('2024-08-14T19:00:00.000Z');
+  });
+
+  it('parses datetime-local in Pacific/Kiritimati (UTC+14) to correct UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-03-31T03:30', 'Pacific/Kiritimati');
+    // 03:30 in UTC+14 is previous day 13:30 UTC
+    expect(d.toISOString()).toBe('2024-03-30T13:30:00.000Z');
   });
 });
 
