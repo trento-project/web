@@ -223,7 +223,7 @@ describe('Activity Log Overview', () => {
       />
     );
 
-    expect(screen.getByText('2024-01-11 13:30:00')).toBeVisible();
+    expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeVisible();
   });
 
   it('should render entry time in an extreme negative-offset timezone', () => {
@@ -233,6 +233,6 @@ describe('Activity Log Overview', () => {
 
     render(<ActivityLogOverview activityLog={[entry]} timezone="Etc/GMT+12" />);
 
-    expect(screen.getByText('2024-01-09 20:30:00')).toBeVisible();
+    expect(screen.getByText('09 Jan 2024, 20:30:00')).toBeVisible();
   });
 });

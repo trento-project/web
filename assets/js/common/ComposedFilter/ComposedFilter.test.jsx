@@ -316,6 +316,7 @@ describe('ComposedFilter component', () => {
     const user = userEvent.setup();
     const mockOnChange = jest.fn();
     const timezone = 'Pacific/Kiritimati';
+    const datetime = '2024-01-10T09:30';
     const filters = [
       {
         key: 'to_date',
@@ -333,9 +334,9 @@ describe('ComposedFilter component', () => {
     await user.click(screen.getByText('Filter newer than...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
-    await user.type(input, '2024-01-10T23:30');
+    await user.type(input, datetime);
 
-    const expectedDate = parseDateTimeLocalToUtc('2024-01-10T23:30', timezone);
+    const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
 
     expect(mockOnChange).toHaveBeenLastCalledWith({
       to_date: ['custom', expectedDate],

@@ -13,10 +13,7 @@ import {
 } from '@lib/test-utils';
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 import { networkClient } from '@lib/network';
-import {
-  DATE_DAY_ABBR_MONTH_YEAR_FORMAT,
-  DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
-} from '@lib/timezones';
+import { DATE_DAY_MONTH_YEAR_FORMAT } from '@lib/timezones';
 import MockAdapter from 'axios-mock-adapter';
 
 import SettingsPage from './SettingsPage';
@@ -94,7 +91,7 @@ describe('Settings Page', () => {
         renderWithRouter(StatefulSettings);
       });
 
-      const expectedDate = format(futureDate, DATE_DAY_ABBR_MONTH_YEAR_FORMAT, {
+      const expectedDate = format(futureDate, DATE_DAY_MONTH_YEAR_FORMAT, {
         in: tz('Pacific/Kiritimati'),
       });
       expect(screen.getByText(`Key will expire ${expectedDate}`)).toBeVisible();
@@ -168,13 +165,9 @@ describe('Settings Page', () => {
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
       expect(screen.getByText('Certificate Uploaded')).toBeVisible();
-      const expectedDate = format(
-        ca_uploaded_at,
-        DATE_DAY_MONTH_YEAR_PADDED_FORMAT,
-        {
-          in: DEFAULT_TIMEZONE,
-        }
-      );
+      const expectedDate = format(ca_uploaded_at, DATE_DAY_MONTH_YEAR_FORMAT, {
+        in: DEFAULT_TIMEZONE,
+      });
       expect(screen.getByText(`Uploaded: ${expectedDate}`)).toBeVisible();
 
       const sumaUsername = screen.getByLabelText('suma-username');

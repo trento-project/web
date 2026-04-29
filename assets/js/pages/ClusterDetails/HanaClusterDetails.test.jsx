@@ -442,7 +442,7 @@ describe('HanaClusterDetails component', () => {
     );
 
     expect(screen.getByText('CIB last written').nextSibling).toHaveTextContent(
-      'Thu Jan 11 13:30:00 2024'
+      '11 Jan 2024, 13:30:00'
     );
   });
 });
