@@ -21,7 +21,7 @@ describe('DateFilter component', () => {
     // Assert that the title is rendered
     expect(screen.getByText(placeholder)).toBeInTheDocument();
 
-    await act(() => user.click(screen.getByText(placeholder)));
+    await user.click(screen.getByText(placeholder));
 
     // Assert that the options are rendered
     ['1h ago', '24h ago', '7d ago', '30d ago'].forEach((label) => {
@@ -35,9 +35,9 @@ describe('DateFilter component', () => {
 
     render(<DateFilter title="by date" prefilled onChange={mockOnChange} />);
 
-    await act(() => user.click(screen.getByText('Filter by date...')));
+    await user.click(screen.getByText('Filter by date...'));
 
-    await act(() => user.click(screen.getByText('24h ago')));
+    await user.click(screen.getByText('24h ago'));
 
     expect(mockOnChange).toHaveBeenCalledWith(['24h ago', expect.any(Date)]);
   });
@@ -82,7 +82,7 @@ describe('DateFilter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Filter by date...')));
+    await user.click(screen.getByText('Filter by date...'));
 
     expect(screen.getByText('Custom')).toBeInTheDocument();
   });
@@ -106,7 +106,7 @@ describe('DateFilter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Filter by date...')));
+    await user.click(screen.getByText('Filter by date...'));
 
     expect(screen.queryByText(labelToFind)).not.toBeInTheDocument();
   });
@@ -125,8 +125,8 @@ describe('DateFilter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Filter by date...')));
-    await act(() => user.click(screen.getByText('my overridden item')));
+    await user.click(screen.getByText('Filter by date...'));
+    await user.click(screen.getByText('my overridden item'));
 
     expect(mockOnChange).toHaveBeenCalledWith(['30d ago', anyDate]);
   });
@@ -142,9 +142,9 @@ describe('DateFilter component', () => {
         timezone={DEFAULT_TIMEZONE}
       />
     );
-    await act(() => user.click(screen.getByText('Filter by date...')));
+    await user.click(screen.getByText('Filter by date...'));
     const input = container.querySelector('input[type="datetime-local"]');
-    await act(() => user.type(input, '2024-08-14T10:21'));
+    await user.type(input, '2024-08-14T10:21');
 
     const expectedDate = parseDateTimeLocalToUtc(
       '2024-08-14T10:21',
@@ -167,9 +167,9 @@ describe('DateFilter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Filter by date...')));
+    await user.click(screen.getByText('Filter by date...'));
     const input = container.querySelector('input[type="datetime-local"]');
-    await act(() => user.type(input, '2024-03-31T03:30'));
+    await user.type(input, '2024-03-31T03:30');
 
     const expectedDate = parseDateTimeLocalToUtc('2024-03-31T03:30', timezone);
 
