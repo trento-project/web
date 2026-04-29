@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-15T04:04:09Z",
-    "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
-    "run_id": "23102801324",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is MESSAGESERVER without completing a SAP system registration",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-15T04:33:52Z",
     "commit": "c26bfd356c86ee6db17c5c363432e4cf159e676b",
     "run_id": "23103177058",
@@ -6103,5 +6083,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-04-29T04:16:26Z",
+    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
+    "run_id": "25090194322",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      }
+    ]
   }
 ]
