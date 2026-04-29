@@ -19,6 +19,19 @@ import {
   apiDeregisterProdHost,
 } from '../pageObject/base_po';
 
+const logBrowserClearCredentials = (win) => {
+  const originalConsoleLog = win.console.log;
+
+  win.console.log = (...args) => {
+    originalConsoleLog.apply(win.console, args);
+
+    const message = args.map(String).join(' ');
+    if (message.includes('clear_credentials_reached')) {
+      cy.task('browserLog', `[browser-console] ${message}`);
+    }
+  };
+};
+
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
 //
@@ -32,6 +45,11 @@ before(() => {
 
   // This is required to not break cypress tests when running against a prod instance (which installs a real agent)
   if (Cypress.config().baseUrl.includes('target')) apiDeregisterProdHost();
+});
+
+// eslint-disable-next-line mocha/no-top-level-hooks
+beforeEach(() => {
+  cy.on('window:before:load', logBrowserClearCredentials);
 });
 
 // This is needed because requests that depend on Prometheus in a real environment return a 500 in SLES16, this can be removed once TRNT-4344 is done.

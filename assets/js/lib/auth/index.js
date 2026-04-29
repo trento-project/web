@@ -65,6 +65,8 @@ export const getRefreshTokenFromStore = () =>
   window.localStorage.getItem(STORAGE_REFRESH_TOKEN_IDENTIFIER);
 
 export const clearCredentialsFromStore = () => {
+  // eslint-disable-next-line no-console
+  console.log('clear_credentials_reached');
   window.localStorage.removeItem(STORAGE_ACCESS_TOKEN_IDENTIFIER);
   window.localStorage.removeItem(STORAGE_REFRESH_TOKEN_IDENTIFIER);
 };
