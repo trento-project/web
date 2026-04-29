@@ -6,7 +6,7 @@ import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 const enrichInstance = (instance, hosts, clusters) => {
   const host = hosts.find(({ id: hostID }) => hostID === instance.host_id);
   const cluster = clusters.find(
-    ({ id: clusterID }) => clusterID === host.cluster_id
+    ({ id: clusterID }) => clusterID === host?.cluster_id
   );
 
   return {
