@@ -172,6 +172,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Date of user last update.",
             nullable: true,
             example: "2024-01-15T12:00:00Z"
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user, used to align timestamps in the UI.",
+            nullable: false,
+            example: "Europe/Berlin"
           }
         },
         required: [
@@ -195,7 +201,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           analytics_enabled: false,
           totp_enabled: true,
           created_at: "2024-01-15T09:00:00Z",
-          updated_at: "2024-01-15T12:00:00Z"
+          updated_at: "2024-01-15T12:00:00Z",
+          timezone: "Europe/Berlin"
         }
       },
       struct?: false
@@ -254,6 +261,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Whether user analytics EULA is accepted.",
             nullable: false,
             example: false
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user.",
+            nullable: false,
+            example: "Europe/Berlin"
           }
         },
         example: %{
@@ -262,7 +275,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           password: "new_secure_password123",
           current_password: "current_password123",
           password_confirmation: "new_secure_password123",
-          analytics_enabled: true
+          analytics_enabled: true,
+          timezone: "Europe/Berlin"
         }
       },
       struct?: false
@@ -290,10 +304,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             description: "Whether user analytics EULA is accepted.",
             nullable: false,
             example: false
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user.",
+            nullable: false,
+            example: "Europe/Berlin"
           }
         },
         example: %{
-          analytics_enabled: true
+          analytics_enabled: true,
+          timezone: "Europe/Berlin"
         }
       },
       struct?: false
@@ -425,6 +446,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
               "Indicates that the TOTP feature is disabled for the user. The only accepted value here is 'true', supporting multi-factor authentication management.",
             nullable: false,
             example: true
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user.",
+            nullable: false,
+            example: "Europe/Berlin"
           }
         },
         example: %{
@@ -433,7 +460,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           enabled: true,
           password: "new_secure_password123",
           password_confirmation: "new_secure_password123",
-          abilities: []
+          abilities: [],
+          timezone: "Europe/Berlin"
         }
       },
       struct?: false
@@ -529,6 +557,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
               "Date of user last login. It is null if the user hasn't logged in yet or an external IDP is configured.",
             nullable: true,
             example: "2024-01-15T09:00:00Z"
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user.",
+            nullable: false,
+            example: "Europe/Berlin"
           }
         },
         required: [:username, :id, :fullname, :email, :created_at, :personal_access_tokens],
@@ -545,7 +579,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           updated_at: "2024-01-15T10:30:00Z",
           analytics_enabled: false,
           totp_enabled_at: "2024-01-15T09:00:00Z",
-          last_login_at: "2024-01-15T09:00:00Z"
+          last_login_at: "2024-01-15T09:00:00Z",
+          timezone: "Europe/Berlin"
         }
       },
       struct?: false
@@ -574,7 +609,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             updated_at: "2024-01-15T10:30:00Z",
             last_login_at: "2024-01-15T09:00:00Z",
             abilities: [],
-            personal_access_tokens: []
+            personal_access_tokens: [],
+            idp_user: false,
+            analytics_enabled: false,
+            timezone: "Europe/Berlin"
           }
         ]
       },

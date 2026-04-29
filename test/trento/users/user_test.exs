@@ -76,5 +76,41 @@ defmodule Trento.Users.UsersTest do
       assert changeset.changes[:analytics_enabled_at]
       assert changeset.changes[:analytics_eula_accepted_at]
     end
+
+    test "profile_update_changeset/2 validates timezone field is cast properly" do
+      changeset =
+        User.profile_update_changeset(%User{}, %{
+          "timezone" => "Europe/Berlin"
+        })
+
+      assert changeset.changes[:timezone] == "Europe/Berlin"
+    end
+
+    test "profile_update_changeset/2 rejects invalid IANA timezone" do
+      changeset =
+        User.profile_update_changeset(%User{}, %{
+          "timezone" => "US/Pacific-New"
+        })
+
+      assert changeset.errors[:timezone]
+    end
+
+    test "profile_update_sso_enabled_changeset/2 validates timezone field is cast properly" do
+      changeset =
+        User.profile_update_sso_enabled_changeset(%User{}, %{
+          "timezone" => "Europe/Berlin"
+        })
+
+      assert changeset.changes[:timezone] == "Europe/Berlin"
+    end
+
+    test "profile_update_sso_enabled_changeset/2 rejects invalid IANA timezone" do
+      changeset =
+        User.profile_update_sso_enabled_changeset(%User{}, %{
+          "timezone" => "US/Pacific-New"
+        })
+
+      assert changeset.errors[:timezone]
+    end
   end
 end
