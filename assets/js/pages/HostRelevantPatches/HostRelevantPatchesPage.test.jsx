@@ -5,8 +5,9 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { noop } from 'lodash';
 
-import { renderWithRouter, withState } from '@lib/test-utils';
+import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
@@ -24,14 +25,13 @@ describe('HostRelevantPatchesPage', () => {
     it('displays the hostname', () => {
       const host = hostFactory.build();
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage hostName={host.hostname} patches={[]} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          hostName={host.hostname}
+          patches={[]}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
-
-      renderWithRouter(StatefulHostRelevantPatchesPage);
       expect(
         screen.getByRole('heading', {
           name: `Relevant Patches: ${host.hostname}`,
@@ -46,11 +46,12 @@ describe('HostRelevantPatchesPage', () => {
       );
       const user = userEvent.setup();
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage hostName={host.hostname} patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          hostName={host.hostname}
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -72,11 +73,8 @@ describe('HostRelevantPatchesPage', () => {
     });
 
     it('shows an input for searching the patches', () => {
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={[]} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -85,11 +83,8 @@ describe('HostRelevantPatchesPage', () => {
     });
 
     it('shows a button for downloading the data as CSV', () => {
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={[]} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -100,11 +95,8 @@ describe('HostRelevantPatchesPage', () => {
     });
 
     it('shows the relevant patches component', () => {
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={[]} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage patches={[]} timezone={DEFAULT_TIMEZONE} />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -114,23 +106,23 @@ describe('HostRelevantPatchesPage', () => {
       ).toBeVisible();
     });
 
-    it('renders patch update date using user timezone from state', () => {
+    it('renders patch update date according to the provided timezone', () => {
+      const timezone = 'Pacific/Kiritimati';
       const patch = relevantPatchFactory.build({
         update_date: '2024-01-10T23:30:00.000Z',
+        advisory_synopsis: 'timezone test',
       });
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={[patch]} />,
-        {
-          user: {
-            timezone: 'Pacific/Kiritimati',
-          },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          hostName="host"
+          patches={[patch]}
+          timezone={timezone}
+        />
       );
 
-      renderWithRouter(StatefulHostRelevantPatchesPage);
-
       expect(screen.getByText('11 Jan 2024')).toBeVisible();
+      expect(screen.getByText('timezone test')).toBeVisible();
     });
   });
 
@@ -138,11 +130,11 @@ describe('HostRelevantPatchesPage', () => {
     it('shows all patches by default', () => {
       const patches = relevantPatchFactory.buildList(8);
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -164,11 +156,11 @@ describe('HostRelevantPatchesPage', () => {
         (patch) => patch.advisory_type === filteredType
       );
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -190,11 +182,11 @@ describe('HostRelevantPatchesPage', () => {
       const patches = relevantPatchFactory.buildList(8);
       const searchTerm = patches[0].advisory_synopsis;
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      const { container } = renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       const { container } = renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -225,11 +217,12 @@ describe('HostRelevantPatchesPage', () => {
 
       const patches = [];
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage hostName={hostName} patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          hostName={hostName}
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);
@@ -256,11 +249,12 @@ describe('HostRelevantPatchesPage', () => {
         }),
       ];
 
-      const [StatefulHostRelevantPatchesPage] = withState(
-        <HostRelevantPatchesPage hostName={hostName} patches={patches} />,
-        {
-          user: { timezone: faker.location.timeZone() },
-        }
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          hostName={hostName}
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />
       );
 
       renderWithRouter(StatefulHostRelevantPatchesPage);

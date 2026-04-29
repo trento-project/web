@@ -30,7 +30,7 @@ describe('Users', () => {
   });
 
   it('should render an empty table with an enabled create user button', () => {
-    renderWithRouter(<Users loading={false} />, {
+    render(<Users loading={false} />, {
       initialState: { user: { timezone: faker.location.timeZone() } },
     });
     const button = screen.getByRole('button', { name: /Create User/i });
@@ -143,12 +143,12 @@ describe('Users', () => {
 
   describe('Single sign on', () => {
     it('should disable user creation', () => {
-      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      render(<Users users={[]} singleSignOnEnabled />);
       expect(screen.queryByText('Create User')).not.toBeInTheDocument();
     });
 
     it('should not display last login time information', () => {
-      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      render(<Users users={[]} singleSignOnEnabled />);
       expect(screen.queryByText('Last Login')).not.toBeInTheDocument();
     });
   });

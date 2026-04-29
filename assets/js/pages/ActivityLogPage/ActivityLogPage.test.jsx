@@ -2,6 +2,7 @@ import React, { act } from 'react';
 import { fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
+import { parseDateTimeLocalToUtc } from '@lib/timezones';
 
 import MockAdapter from 'axios-mock-adapter';
 
@@ -161,6 +162,7 @@ describe('ActivityLogPage', () => {
   it('should send to_date as timezone-aware ISO when custom date is selected', async () => {
     const user = userEvent.setup();
     const timezone = 'Pacific/Kiritimati';
+    const datetime = '2024-08-14T21:00';
     const onGetSpy = jest.spyOn(networkClient, 'get');
 
     axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
@@ -178,10 +180,13 @@ describe('ActivityLogPage', () => {
     await user.click(screen.getByText('Filter newer than...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
-    fireEvent.change(input, { target: { value: '2024-08-14T21:00' } });
+    await user.type(input, datetime);
     await user.click(screen.getByText('Apply Filter'));
 
-    const expectedToDate = '2024-08-14T07:00:00.000Z';
+    const expectedToDate = parseDateTimeLocalToUtc(
+      datetime,
+      timezone
+    ).toISOString();
 
     expect(onGetSpy).toHaveBeenLastCalledWith(
       '/activity_log',

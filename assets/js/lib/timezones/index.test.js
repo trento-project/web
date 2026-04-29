@@ -1,25 +1,41 @@
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import {
-  DATE_DAY_MONTH_YEAR_FORMAT,
-  DATETIME_DAY_MONTH_24H_FORMAT,
-  DEFAULT_TIMEZONE,
-  TIME_24H_HH_MM_FORMAT,
-} from './index';
+import { DEFAULT_TIMEZONE, parseDateTimeLocalToUtc } from './index';
+
+import { formatDateTime, formatDateOnly, formatTimeOnly } from './index';
 
 describe('timezone format constants', () => {
   const sampleDate = new Date('2024-08-04T10:21:00.123Z');
-  const formatInDefaultTimezone = (pattern) =>
-    formatDate(sampleDate, pattern, { in: tz(DEFAULT_TIMEZONE) });
 
-  it('has an example output for every datetime/date/time format constant', () => {
-    expect(formatInDefaultTimezone(DATETIME_DAY_MONTH_24H_FORMAT)).toBe(
+  it('formatDateTime returns correct string', () => {
+    expect(formatDateTime(sampleDate, DEFAULT_TIMEZONE)).toBe(
       '04 Aug 2024, 10:21:00'
     );
-    expect(formatInDefaultTimezone(DATE_DAY_MONTH_YEAR_FORMAT)).toBe(
-      '04 Aug 2024'
-    );
-    expect(formatInDefaultTimezone(TIME_24H_HH_MM_FORMAT)).toBe('10:21:00');
+  });
+
+  it('formatDateOnly returns correct string', () => {
+    expect(formatDateOnly(sampleDate, DEFAULT_TIMEZONE)).toBe('04 Aug 2024');
+  });
+
+  it('formatTimeOnly returns correct string', () => {
+    expect(formatTimeOnly(sampleDate, DEFAULT_TIMEZONE)).toBe('10:21:00');
+  });
+});
+
+describe('parseDateTimeLocalToUtc', () => {
+  it('parses datetime-local as UTC when timezone is Etc/UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-08-14T21:00', 'Etc/UTC');
+    expect(d.toISOString()).toBe('2024-08-14T21:00:00.000Z');
+  });
+
+  it('parses datetime-local in Europe/Berlin (UTC+02:00) to correct UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-08-14T21:00', 'Europe/Berlin');
+    // 21:00 in Berlin (UTC+2) is 19:00 UTC
+    expect(d.toISOString()).toBe('2024-08-14T19:00:00.000Z');
+  });
+
+  it('parses datetime-local in Pacific/Kiritimati (UTC+14) to correct UTC', () => {
+    const d = parseDateTimeLocalToUtc('2024-03-31T03:30', 'Pacific/Kiritimati');
+    // 03:30 in UTC+14 is previous day 13:30 UTC
+    expect(d.toISOString()).toBe('2024-03-30T13:30:00.000Z');
   });
 });
 

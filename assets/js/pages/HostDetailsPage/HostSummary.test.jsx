@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { clusterFactory } from '@lib/test-utils/factories';
 import HostSummary from './HostSummary';
-import { DEFAULT_TIMEZONE } from '../../lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 describe('HostSummary', () => {
   it('should render the content correctly', () => {
@@ -98,7 +98,7 @@ describe('HostSummary', () => {
     );
   });
 
-  it('should display last boot timestamp using a non-default timezone', () => {
+  it('should display last boot timestamp using the provided timezone', () => {
     const cluster = clusterFactory.build();
     const lastBootTimestamp = '2024-01-10T23:30:00Z';
 

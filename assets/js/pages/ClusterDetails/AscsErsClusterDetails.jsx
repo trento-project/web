@@ -4,9 +4,7 @@ import { capitalize, get, noop } from 'lodash';
 import { OPERATION_NOT_ALLOWED_HOST } from '@lib/operations';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 import { getEnsaVersionLabel, APPLICATION_TYPE } from '@lib/model/sapSystems';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { formatDateTime } from '@lib/timezones';
 
 import DottedPagination from '@common/DottedPagination';
 import ListView from '@common/ListView';
@@ -148,9 +146,7 @@ function AscsErsClusterDetails({
               {
                 title: 'CIB last written',
                 content: cibLastWritten
-                  ? formatDate(cibLastWritten, DATETIME_DAY_MONTH_24H_FORMAT, {
-                      in: tz(timezone),
-                    })
+                  ? formatDateTime(cibLastWritten, timezone)
                   : '-',
               },
             ]}

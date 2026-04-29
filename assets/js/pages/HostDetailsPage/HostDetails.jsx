@@ -18,9 +18,7 @@ import {
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
-import { format as formatDate } from 'date-fns';
-import { tz } from '@date-fns/tz';
-import { DATETIME_DAY_MONTH_24H_FORMAT } from '@lib/timezones';
+import { formatDateTime } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -123,6 +121,16 @@ function HostDetails({
   const saptuneTuning = get(saptuneStatus, 'tuning_state');
   const currentlyAppliedSolution = get(saptuneStatus, 'applied_solution.id');
 
+  // Format SLES subscriptions dates to be displayed in user's timezone
+  const formatSlesSubscriptionsTimes = (subs) =>
+    (subs || []).map((subscription) => {
+      return {
+        ...subscription,
+        starts_at: formatDateTime(subscription?.starts_at, timezone),
+        expires_at: formatDateTime(subscription?.expires_at, timezone),
+      };
+    });
+
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
       <StatusPill
@@ -146,29 +154,6 @@ function HostDetails({
   const runningOperationName = get(runningOperation, 'operation', null);
   const operationForbidden = get(runningOperation, 'forbidden', false);
   const operationForbiddenErrors = get(runningOperation, 'errors', []);
-
-  // Format SLES subscriptions dates to be displayed in user's timezone
-  const formattedSlesSubscriptions = (slesSubscriptions || []).map(
-    (subscription) => {
-      const formattedStartsAt = subscription?.starts_at
-        ? formatDate(subscription.starts_at, DATETIME_DAY_MONTH_24H_FORMAT, {
-            in: tz(timezone),
-          }) || subscription.starts_at
-        : subscription?.starts_at;
-
-      const formattedExpiresAt = subscription?.expires_at
-        ? formatDate(subscription.expires_at, DATETIME_DAY_MONTH_24H_FORMAT, {
-            in: tz(timezone),
-          }) || subscription.expires_at
-        : subscription?.expires_at;
-
-      return {
-        ...subscription,
-        starts_at: formattedStartsAt,
-        expires_at: formattedExpiresAt,
-      };
-    }
-  );
 
   const timeNow = new Date();
 
@@ -447,7 +432,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={formattedSlesSubscriptions}
+            data={formatSlesSubscriptionsTimes(slesSubscriptions)}
           />
         </div>
       </div>
