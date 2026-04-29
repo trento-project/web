@@ -59,6 +59,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
             additionalProperties: %Schema{type: :string}
           },
           virtual_ip: %Schema{type: :string},
+          is_majority_maker: %Schema{type: :boolean},
           resources: %Schema{
             description:
               "A list containing resources associated with the HANA cluster node, supporting infrastructure management.",
@@ -75,6 +76,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
             "hana_prd_srmode" => "sync"
           },
           virtual_ip: "192.168.1.10",
+          is_majority_maker: false,
           resources: [
             %{
               id: "rsc_SAPHana_PRD_HDB00",
@@ -222,6 +224,17 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
               name: "hana01",
               site: "NUREMBERG",
               hana_status: "Primary"
+            },
+            %{
+              name: "hana02",
+              site: "NUREMBERG",
+              hana_status: "Secondary"
+            },
+            %{
+              name: "hana03",
+              site: "",
+              hana_status: "Unknown",
+              is_majority_maker: true
             }
           ],
           sbd_devices: [

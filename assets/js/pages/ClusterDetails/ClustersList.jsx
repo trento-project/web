@@ -4,10 +4,12 @@ import { useSearchParams } from 'react-router';
 
 import { post, del } from '@lib/network';
 import {
+  ASCS_ERS,
   HANA_ASCS_ERS,
   getClusterTypeLabel,
   getClusterSids,
 } from '@lib/model/clusters';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import { addTagToCluster, removeTagFromCluster } from '@state/clusters';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
@@ -29,6 +31,19 @@ import ClusterLink from './ClusterLink';
 
 const getSapSystemBySID = (instances, sid) =>
   instances.find((instance) => instance.sid === sid);
+
+// getSapSystemType gets the current SAP system type
+// evaluating the cluster type.
+const getSapSystemType = (clusterType) => {
+  switch (clusterType) {
+    case ASCS_ERS:
+      return APPLICATION_TYPE;
+    case HANA_ASCS_ERS:
+      return null;
+    default:
+      return DATABASE_TYPE;
+  }
+};
 
 const addTag = (tag, clusterId) => {
   post(`/clusters/${clusterId}/tags`, {
@@ -79,14 +94,16 @@ function ClustersList() {
         filterFromParams: true,
         filter: (filter, key) => (element) =>
           element[key].some((sid) => filter.includes(sid)),
-        render: (_, { sid }) => {
+        render: (_, { sid, type: clusterType }) => {
           const sidsArray = sid.map((singleSid) => {
             const sapSystemData = getSapSystemBySID(allInstances, singleSid);
 
             return (
               <span key={singleSid}>
                 <SapSystemLink
-                  systemType={sapSystemData?.type}
+                  systemType={
+                    sapSystemData?.type ?? getSapSystemType(clusterType)
+                  }
                   sapSystemId={getInstanceID(sapSystemData)}
                 >
                   {singleSid}

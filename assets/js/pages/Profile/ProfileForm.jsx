@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -8,10 +8,10 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
-import MultiSelect from '@common/MultiSelect';
+import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -41,6 +41,7 @@ function ProfileForm({
   analyticsEnabled = false,
   analyticsEulaAccepted = false,
   timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors,
   loading,
   disableForm,
@@ -113,12 +114,8 @@ function ProfileForm({
     setTimezoneError(getError('timezone', errors));
   }, [errors]);
 
-  // Generate timezone options and find selected timezone object
-  const timezoneOptions = useMemo(() => generateTimezoneOptions(), []);
-  const selectedTimezone = useMemo(
-    () => timezoneOptions.find((opt) => opt.value === timezoneState) || null,
-    [timezoneOptions, timezoneState]
-  );
+  const selectedTimezone =
+    timezones.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -217,7 +214,7 @@ function ProfileForm({
               userAbilities={abilities}
               abilities={abilities}
               placeholder=""
-              disabled
+              isDisabled
             />
           </div>
           <Label
@@ -228,16 +225,17 @@ function ProfileForm({
             Timezone
           </Label>
           <div className="col-start-3 col-span-4">
-            <MultiSelect
+            <Select
               inputId="timezone"
               name="timezone"
               value={selectedTimezone}
-              options={timezoneOptions}
-              onChange={(option) => {
-                setTimezone(option ? option.value : '');
+              options={timezones}
+              onChange={(value) => {
+                setTimezone(value || '');
                 setTimezoneError(null);
               }}
               isMulti={false}
+              isSearchable
               disabled={loading || disableForm}
               placeholder="Select timezone..."
               noOptionsMessage={() => 'No timezones found'}

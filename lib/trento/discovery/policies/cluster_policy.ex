@@ -333,10 +333,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
            cluster_type: cluster_type,
            hana_architecture_type: hana_architecture_type,
            cib: %{
-             configuration: %{
-               resources: resources,
-               crm_config: %{cluster_properties: cluster_properties}
-             }
+             configuration:
+               %{
+                 resources: resources,
+                 crm_config: %{cluster_properties: cluster_properties}
+               } = configuration
            },
            crmmon:
              %{
@@ -348,6 +349,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
          },
          sid
        ) do
+    mm_nodes = majority_maker_nodes(configuration)
+
     Enum.map(nodes, fn %{name: name} = node ->
       attributes =
         nodes_with_attributes
@@ -386,7 +389,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
         virtual_ip: virtual_ip,
         nameserver_actual_role: nameserver_actual_role,
         indexserver_actual_role: indexserver_actual_role,
-        status: parse_node_status(node)
+        status: parse_node_status(node),
+        is_majority_maker: MapSet.member?(mm_nodes, name)
       }
 
       hana_status =
@@ -1228,4 +1232,42 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       if id == resource_id, do: instance_attributes
     end)
   end
+
+  @sap_resource_types ~w(SAPHana SAPHanaTopology SAPHanaController)
+
+  defp majority_maker_nodes(%{constraints: %{rsc_locations: rsc_locations}, resources: resources})
+       when is_list(rsc_locations) do
+    sap_resource_ids = sap_clone_master_ids(resources)
+
+    if MapSet.size(sap_resource_ids) == 0 do
+      MapSet.new()
+    else
+      rsc_locations
+      |> Enum.filter(fn %{score: score, resource: resource} ->
+        score == "-INFINITY" and MapSet.member?(sap_resource_ids, resource)
+      end)
+      |> Enum.group_by(fn %{node: node} -> node end)
+      |> Enum.filter(&banned_from_all_sap_resources?(&1, sap_resource_ids))
+      |> Enum.map(fn {node, _} -> node end)
+      |> MapSet.new()
+    end
+  end
+
+  defp majority_maker_nodes(_), do: MapSet.new()
+
+  defp banned_from_all_sap_resources?({_node, constraints}, sap_resource_ids) do
+    constrained_resources = MapSet.new(constraints, fn %{resource: r} -> r end)
+    MapSet.subset?(sap_resource_ids, constrained_resources)
+  end
+
+  defp sap_clone_master_ids(%{clones: clones, masters: masters}) do
+    (clones ++ masters)
+    |> Enum.filter(fn %{primitive: %{type: type}} ->
+      type in @sap_resource_types
+    end)
+    |> Enum.map(fn %{id: id} -> id end)
+    |> MapSet.new()
+  end
+
+  defp sap_clone_master_ids(_), do: MapSet.new()
 end

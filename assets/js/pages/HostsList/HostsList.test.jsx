@@ -349,6 +349,8 @@ describe('HostsLists component', () => {
               { sid: 'PRD', host_id: 'host1' },
               { sid: 'QAS', host_id: 'host3' },
             ],
+          },
+          databasesList: {
             databaseInstances: [
               { sid: 'PRD', host_id: 'host2' },
               { sid: 'QAS', host_id: 'host4' },
@@ -376,26 +378,31 @@ describe('HostsLists component', () => {
 
     it.each(scenarios)(
       'should filter the table content by $filter filter',
-      ({ filter, options, state, expectedRows }) => {
+      async ({ filter, options, state, expectedRows }) => {
+        const user = userEvent.setup();
+
         const [StatefulHostsList] = withState(<HostsList />, state);
 
         renderWithRouter(StatefulHostsList);
 
-        options.forEach(async (option) => {
-          filterTable(filter, option);
-          screen.getByRole('table');
-          const table = await waitFor(() =>
+        for (const option of options) {
+          await filterTable(user, filter, option);
+
+          const table = screen.getByRole('table');
+          await waitFor(() =>
             expect(table.querySelectorAll('tbody > tr')).toHaveLength(
               expectedRows
             )
           );
 
-          clearFilter(filter);
-        });
+          await clearFilter(user, filter);
+        }
       }
     );
 
-    it('should put the filters values in the query string when filters are selected', () => {
+    it('should put the filters values in the query string when filters are selected', async () => {
+      const user = userEvent.setup();
+
       const hosts = hostFactory.buildList(1, {
         id: 'host1',
         tags: [{ value: 'Tag1' }],
@@ -417,17 +424,21 @@ describe('HostsLists component', () => {
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
 
-      [
+      const filters = [
         ['Health', health],
         ['Hostname', hostname],
         ['SID', sid],
         ['Tags', tags[0].value],
-      ].forEach(([filter, option]) => {
-        filterTable(filter, option);
-      });
+      ];
 
-      expect(window.location.search).toEqual(
-        `?health=${health}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
+      for (const [filter, option] of filters) {
+        await filterTable(user, filter, option);
+      }
+
+      await waitFor(() =>
+        expect(window.location.search).toEqual(
+          `?health=${health}&hostname=${hostname}&sid=${sid}&tags=${tags[0].value}`
+        )
       );
     });
   });

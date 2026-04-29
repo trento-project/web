@@ -5,7 +5,7 @@ context('HANA cluster details', () => {
 
   describe('HANA cluster details should be consistent with the state of the cluster', () => {
     beforeEach(() => {
-      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptCatalogRequestMocked();
       hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
@@ -100,7 +100,7 @@ context('HANA cluster details', () => {
   describe('Cluster sites should have the expected hosts', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
-      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptCatalogRequestMocked();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
       hanaClusterDetailsPage.validateAvailableHanaClusterUrl();
@@ -142,7 +142,7 @@ context('HANA cluster details', () => {
   describe('Cluster SBD should have the expected devices with the correct status', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.interceptLastExecutionRequestMocked();
-      hanaClusterDetailsPage.interceptCatalogRequest();
+      hanaClusterDetailsPage.interceptCatalogRequestMocked();
       hanaClusterDetailsPage.visitAvailableHanaCluster();
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
@@ -301,6 +301,10 @@ context('HANA cluster details', () => {
     const CHECK_PACEMAKER = 'Pacemaker';
     const CHECK_SBD = 'SBD';
 
+    before(function () {
+      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+    });
+
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should include the checks catalog in the checks results once enabled', () => {
@@ -323,10 +327,11 @@ context('HANA cluster details', () => {
   });
 
   describe('Cluster with unknown provider', () => {
-    before(() => {
-      hanaClusterDetailsPage.loadScenario('cluster-unknown-provider');
-      hanaClusterDetailsPage.visitAvailableHanaCluster();
-    });
+    before(() =>
+      hanaClusterDetailsPage.loadScenario('cluster-unknown-provider')
+    );
+
+    beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should show a warning message in the check selection view', () => {
       hanaClusterDetailsPage.clickCheckSelectionButton();
@@ -337,8 +342,7 @@ context('HANA cluster details', () => {
       );
     });
 
-    it(`should show a warning message in the checks results view`, () => {
-      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    it('should show a warning message in the checks results view', () => {
       hanaClusterDetailsPage.clickCheckResultsButton();
       const expectedWarningMessage =
         'The following results are valid for on-premise bare metal platforms.If you are running your HANA cluster on a different platform, please use results with caution';
@@ -399,7 +403,7 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.linkToDeregisteredHostIsNotAvailable();
     });
 
-    it(`should show host again with a working link after restoring it`, () => {
+    it('should show host again with a working link after restoring it', () => {
       hanaClusterDetailsPage.apiRestoreWdfHost();
       hanaClusterDetailsPage.linkToDeregisteredHostIsAvailable();
     });

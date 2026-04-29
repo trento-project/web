@@ -110,6 +110,22 @@ describe('OperationsButton', () => {
     ).toBeInTheDocument();
   });
 
+  it('should authorize operation if the user has operation:all ability', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <OperationsButton
+        operations={testOperations}
+        userAbilities={[{ name: 'operation', resource: 'all' }]}
+      />
+    );
+
+    await user.click(screen.getByText('Operations'));
+
+    expect(screen.getByText('Operation 1')).toBeEnabled();
+    expect(screen.getByText('Operation 2')).toBeEnabled();
+  });
+
   it('should show a transparent operations button', () => {
     const buttonText = 'test';
     render(

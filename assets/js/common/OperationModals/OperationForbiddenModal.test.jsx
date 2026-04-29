@@ -20,8 +20,11 @@ describe('OperationForbiddenModal', () => {
     expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Unable to run My operation operation. Some of the conditions are not met.'
+        'Unable to run My operation operation. Some pre-requisites are not met.'
       )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('Some of the following pre-requisites are not met:')
     ).toBeInTheDocument();
 
     const list = screen.getByRole('list');

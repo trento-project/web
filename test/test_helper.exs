@@ -46,6 +46,14 @@ Application.put_env(
   adapter: Trento.Infrastructure.Messaging.Adapter.Mock
 )
 
+Mox.defmock(Trento.Infrastructure.ComponentVersions.Mock,
+  for: Trento.Infrastructure.ComponentVersions.Gen
+)
+
+Application.put_env(:trento, :component_versions,
+  adapter: Trento.Infrastructure.ComponentVersions.Mock
+)
+
 Mox.defmock(GenRMQ.Processor.Mock, for: GenRMQ.Processor)
 
 Mox.defmock(Trento.Support.DateService.Mock, for: Trento.Support.DateService)

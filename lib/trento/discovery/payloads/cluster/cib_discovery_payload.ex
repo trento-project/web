@@ -156,6 +156,16 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
           field :value, :string
         end
       end
+
+      embeds_one :constraints, Constraints do
+        embeds_many :rsc_locations, RscLocation, primary_key: false do
+          field :id, :string
+          field :node, :string
+          field :resource, :string
+          field :role, :string
+          field :score, :string
+        end
+      end
     end
   end
 
@@ -171,6 +181,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     |> cast(attrs, [])
     |> cast_embed(:resources, required: true)
     |> cast_embed(:crm_config, with: &crm_config_changeset/2, required: true)
+    |> cast_embed(:constraints, with: &constraints_changeset/2)
   end
 
   def crm_config_changeset(crm_config, attrs) do
@@ -183,5 +194,24 @@ defmodule Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload do
     cluster_properties
     |> cast(attrs, [:id, :name, :value])
     |> validate_required([:id, :name])
+  end
+
+  def constraints_changeset(constraints, attrs) do
+    transformed_attrs =
+      case attrs do
+        %{"rsc_locations" => rsc_locations} ->
+          Map.put(attrs, "rsc_locations", ListHelper.to_list(rsc_locations))
+
+        _ ->
+          attrs
+      end
+
+    constraints
+    |> cast(transformed_attrs, [])
+    |> cast_embed(:rsc_locations, with: &rsc_location_changeset/2)
+  end
+
+  defp rsc_location_changeset(rsc_location, attrs) do
+    cast(rsc_location, attrs, [:id, :node, :resource, :role, :score])
   end
 end

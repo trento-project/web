@@ -80,7 +80,10 @@ defmodule Trento.Hosts do
   def get_all_sles_subscriptions do
     query =
       from s in SlesSubscriptionReadModel,
+        join: h in HostReadModel,
+        on: s.host_id == h.id,
         where: s.identifier == "SLES_SAP",
+        where: is_nil(h.deregistered_at),
         select: count()
 
     case Repo.one(query) do
