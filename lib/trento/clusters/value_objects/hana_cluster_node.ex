@@ -23,6 +23,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterNode do
     field :nameserver_actual_role, :string
     field :indexserver_actual_role, :string
     field :status, :string
+    field :is_majority_maker, :boolean, default: false
 
     # resources attribute is deprecated, moved to main details
     embeds_many :resources, ClusterResource

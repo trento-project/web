@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -29,7 +29,7 @@ describe('ChecksSelection component', () => {
       />
     );
 
-    const groupItem = await waitFor(() => screen.getByText(group));
+    const groupItem = await screen.findByText(group);
 
     await user.click(groupItem);
 
@@ -59,7 +59,7 @@ describe('ChecksSelection component', () => {
       />
     );
 
-    const groupItem = await waitFor(() => screen.getByText(group));
+    const groupItem = await screen.findByText(group);
 
     await user.click(groupItem);
 
@@ -91,7 +91,7 @@ describe('ChecksSelection component', () => {
       />
     );
 
-    const groupItem = await waitFor(() => screen.getByText(group));
+    const groupItem = await screen.findByText(group);
 
     await user.click(groupItem);
 
@@ -124,7 +124,7 @@ describe('ChecksSelection component', () => {
       />
     );
 
-    const groupItem = await waitFor(() => screen.getByText(group));
+    const groupItem = await screen.findByText(group);
 
     await user.click(groupItem);
 

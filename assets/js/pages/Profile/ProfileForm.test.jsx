@@ -7,10 +7,10 @@ import { faker } from '@faker-js/faker';
 import { profileFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
 
 const getTimezoneLabel = (timezone) =>
-  generateTimezoneOptions().find((option) => option.value === timezone)?.label;
+  timezones.find((option) => option.value === timezone)?.label;
 
 const userTimezone = 'Europe/Berlin';
 
@@ -207,6 +207,7 @@ describe('ProfileForm', () => {
           analyticsEnabled={analytics_enabled}
           analyticsEulaAccepted={analytics_eula_accepted}
           onSave={mockOnSave}
+          timezones={timezones}
         />
       );
 
@@ -415,6 +416,7 @@ describe('ProfileForm', () => {
         emailAddress={email}
         username={username}
         abilities={abilities}
+        timezones={timezones}
       />
     );
 
@@ -434,6 +436,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         timezone={timezone}
+        timezones={timezones}
       />
     );
 
@@ -455,6 +458,7 @@ describe('ProfileForm', () => {
         username={username}
         abilities={abilities}
         timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
         onSave={mockOnSave}
       />
     );
@@ -536,7 +540,7 @@ describe('ProfileForm', () => {
       },
     ];
 
-    render(<ProfileForm errors={errors} />);
+    render(<ProfileForm errors={errors} timezones={timezones} />);
 
     expect(
       await screen.findByText(/is not a valid IANA timezone/i)
@@ -590,6 +594,7 @@ describe('ProfileForm', () => {
           emailAddress={email}
           username={username}
           abilities={abilities}
+          timezones={timezones}
           singleSignOnEnabled
         />
       );
@@ -612,6 +617,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           onSave={mockOnSave}
+          timezones={timezones}
           singleSignOnEnabled
           analyticsEnabledConfig
         />
@@ -642,6 +648,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           timezone={DEFAULT_TIMEZONE}
+          timezones={timezones}
           onSave={mockOnSave}
           singleSignOnEnabled
           analyticsEnabledConfig
