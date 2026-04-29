@@ -6,9 +6,6 @@ import { EventType } from '@ag-ui/core';
 
 import { CONNECTION_STATUS } from './connectionStatus';
 
-const INITIAL_RECONNECT_DELAY_MS = 1000;
-const MAX_RECONNECT_DELAY_MS = 30000;
-
 // Pure helper: collapse a message's content (string or array of parts) to
 // the plain text the server expects in `send_message`.
 export function extractMessageText({ content } = {}) {
@@ -36,22 +33,9 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
-    this._reconnectAttempts = 0;
-    this._reconnectTimer = null;
-    this._intentionallyDisconnected = false;
   }
 
-  // Idempotent. Kicks off the connect loop; on transport drops the agent
-  // will retry with exponential backoff until disconnect() is called. The
-  // returned promise resolves/rejects on the first attempt only — callers
-  // don't need to await subsequent reconnects.
   async initialize() {
-    this._intentionallyDisconnected = false;
-    if (this.channel) return undefined;
-    return this._attemptConnect();
-  }
-
-  async _attemptConnect() {
     if (this.channel) return undefined;
 
     if (!this.socket) {
@@ -71,14 +55,12 @@ export class WebSocketAIAgent extends AbstractAgent {
       const fail = (message) => {
         this.channel = null;
         this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-        this._scheduleReconnect();
         reject(new Error(message));
       };
 
       this.channel
         .join()
         .receive('ok', () => {
-          this._reconnectAttempts = 0;
           this._setConnectionStatus(CONNECTION_STATUS.CONNECTED);
           resolve();
         })
@@ -91,29 +73,11 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
-  _scheduleReconnect() {
-    if (this._intentionallyDisconnected) return;
-    if (this._reconnectTimer) return;
-
-    const delay = Math.min(
-      INITIAL_RECONNECT_DELAY_MS * 2 ** this._reconnectAttempts,
-      MAX_RECONNECT_DELAY_MS
-    );
-    this._reconnectAttempts += 1;
-    this._reconnectTimer = setTimeout(() => {
-      this._reconnectTimer = null;
-      this._attemptConnect().catch(() => {
-        // _attemptConnect already scheduled the next retry on failure.
-      });
-    }, delay);
-  }
-
   _setupChannelHandlers() {
     const dropConnection = () => {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       this._failActiveRun(new Error('AI assistant connection lost'));
       this.channel = null;
-      this._scheduleReconnect();
     };
 
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
@@ -204,11 +168,6 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   disconnect() {
-    this._intentionallyDisconnected = true;
-    if (this._reconnectTimer) {
-      clearTimeout(this._reconnectTimer);
-      this._reconnectTimer = null;
-    }
     if (!this.channel) return;
     this.channel.leave();
     this.channel = null;
