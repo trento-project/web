@@ -1,4 +1,4 @@
-import React, { act } from 'react';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -165,7 +165,7 @@ describe('DateFilter component', () => {
 
     await user.click(screen.getByText('Filter by date...'));
     const input = container.querySelector('input[type="datetime-local"]');
-    await user.type(input, '2024-03-31T03:30');
+    await user.type(input, datetime);
 
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
 

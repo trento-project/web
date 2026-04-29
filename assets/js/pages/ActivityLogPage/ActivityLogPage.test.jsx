@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { fireEvent, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { parseDateTimeLocalToUtc } from '@lib/timezones';
@@ -176,7 +176,7 @@ describe('ActivityLogPage', () => {
     await user.click(screen.getByText('Filter newer than...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
-    fireEvent.change(input, { target: { value: '2024-08-14T21:00' } });
+    await user.type(input, datetime);
     await user.click(screen.getByText('Apply Filter'));
 
     const expectedToDate = parseDateTimeLocalToUtc(
