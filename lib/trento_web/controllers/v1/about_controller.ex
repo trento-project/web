@@ -21,11 +21,23 @@ defmodule TrentoWeb.V1.AboutController do
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
+    versions = component_versions().get_versions()
+
     render(conn, :about,
-      about_info: %{
-        version: @version,
-        sles_subscriptions: Hosts.get_all_sles_subscriptions()
-      }
+      about_info:
+        Map.merge(
+          %{
+            version: @version,
+            sles_subscriptions: Hosts.get_all_sles_subscriptions()
+          },
+          versions
+        )
     )
   end
+
+  defp component_versions,
+    do:
+      Application.fetch_env!(:trento, :component_versions)[
+        :adapter
+      ]
 end

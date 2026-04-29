@@ -21,7 +21,6 @@ import {
 } from '@lib/model/checks';
 import Accordion from '@common/Accordion';
 import PageHeader from '@common/PageHeader';
-import Pill from '@common/Pill';
 import Select, { createOptionRenderer, OPTION_ALL } from '@common/Select';
 import ProviderLabel from '@common/ProviderLabel';
 import TargetIcon from '@common/TargetIcon';
@@ -40,21 +39,10 @@ const architectureOptionRenderer = createOptionRenderer(
 
 const clusterTypeRenderer = createOptionRenderer(
   'All cluster types',
-  ({ type, hanaScenario }, disabled) => (
-    <>
-      {trim(
-        `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
-      )}
-      {disabled && (
-        <Pill
-          size="xs"
-          className="absolute right-2 bg-green-100 text-green-800"
-        >
-          Coming Soon
-        </Pill>
-      )}
-    </>
-  )
+  ({ type, hanaScenario }) =>
+    trim(
+      `${getClusterTypeLabel(type)} ${getClusterScenarioLabel(hanaScenario)}`
+    )
 );
 
 const targetTypeOptionRenderer = createOptionRenderer(
@@ -68,14 +56,6 @@ const targetTypeOptionRenderer = createOptionRenderer(
     >
       {targetType === TARGET_CLUSTER && 'Clusters'}
       {targetType === TARGET_HOST && 'Hosts'}
-      {disabled && (
-        <Pill
-          size="xs"
-          className="absolute right-2 bg-green-100 text-green-800"
-        >
-          Coming Soon
-        </Pill>
-      )}
     </TargetIcon>
   )
 );
@@ -96,48 +76,53 @@ function ChecksCatalog({
     if (targetType !== TARGET_CLUSTER) {
       setSelectedClusterType(OPTION_ALL);
     }
+    if (targetType !== TARGET_HOST) {
+      setSelectedArchitecture(OPTION_ALL);
+    }
     setSelectedTargetType(targetType);
   };
 
   const filters = [
     {
-      optionsName: 'targets',
+      'aria-label': 'targets',
       options: targetTypes.map((targetType) => ({
+        label: targetType,
         value: targetType,
-        disabled: !hasChecksForTarget(completeCatalog, targetType),
+        isDisabled: !hasChecksForTarget(completeCatalog, targetType),
       })),
       renderOption: targetTypeOptionRenderer,
       value: selectedTargetType,
       onChange: onTargetTypeChange,
     },
     {
-      optionsName: 'cluster-types',
+      'aria-label': 'cluster-types',
       options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
+        label: { type, hanaScenario },
         value: { type, hanaScenario },
         key: `${type}_${hanaScenario}`,
-        disabled:
+        isDisabled:
           !hasChecksForClusterType(completeCatalog, type) ||
           !hasChecksForHanaScenario(completeCatalog, hanaScenario),
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
       onChange: setSelectedClusterType,
-      disabled: selectedTargetType !== TARGET_CLUSTER,
+      isDisabled: selectedTargetType !== TARGET_CLUSTER,
     },
     {
-      optionsName: 'providers',
+      'aria-label': 'providers',
       options: providers,
       renderOption: providerOptionRenderer,
       value: selectedProvider,
       onChange: setProviderSelected,
     },
     {
-      optionsName: 'architecture',
+      'aria-label': 'architectures',
       options: architectures,
       renderOption: architectureOptionRenderer,
       value: selectedArchitecture,
       onChange: setSelectedArchitecture,
-      disabled: selectedTargetType !== TARGET_HOST,
+      isDisabled: selectedTargetType !== TARGET_HOST,
     },
   ];
 
@@ -175,7 +160,7 @@ function ChecksCatalog({
         </PageHeader>
         {filters.map((filterProps) => (
           <Select
-            key={filterProps.optionsName}
+            key={filterProps['aria-label']}
             className="ml-auto pb-4 min-w-48 max-w-fit"
             {...filterProps}
             options={[OPTION_ALL, ...filterProps.options]}

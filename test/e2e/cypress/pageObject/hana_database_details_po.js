@@ -61,14 +61,18 @@ export const pageNotFoundLabelIsDisplayed = () =>
 const hostNameHasExpectedInstanceNumber = (hostName) => {
   const instanceNumber = getHostAttribute(hostName, 'Instance');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector).next().should('have.text', instanceNumber);
+  return cy
+    .get(hostNameCellSelector)
+    .next()
+    .should('have.text', instanceNumber);
 };
 
 const hostNameHasExpectedFeatures = (hostName) => {
   const features = getHostAttribute(hostName, 'Features');
   const formattedFeatures = features.replace(/\|/g, '');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(1)
     .should('have.text', formattedFeatures);
@@ -77,19 +81,28 @@ const hostNameHasExpectedFeatures = (hostName) => {
 const hostHasExpectedHttpPort = (hostName) => {
   const httpPort = getHostAttribute(hostName, 'HttpPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector).nextAll().eq(2).should('have.text', httpPort);
+  return cy
+    .get(hostNameCellSelector)
+    .nextAll()
+    .eq(2)
+    .should('have.text', httpPort);
 };
 
 const hostHasExpectedHttpsPort = (hostName) => {
   const httpsPort = getHostAttribute(hostName, 'HttpsPort');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector).nextAll().eq(3).should('have.text', httpsPort);
+  return cy
+    .get(hostNameCellSelector)
+    .nextAll()
+    .eq(3)
+    .should('have.text', httpsPort);
 };
 
 const hostHasExpectedStartPriority = (hostName) => {
   const startPriority = getHostAttribute(hostName, 'StartPriority');
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(4)
     .should('have.text', startPriority);
@@ -97,12 +110,10 @@ const hostHasExpectedStartPriority = (hostName) => {
 
 const hostStatusHasExpectedClass = (hostName) => {
   const status = getHostAttribute(hostName, 'Status');
-  validateHostClass(hostName, status);
+  return validateHostClass(hostName, status);
 };
 
-const getSiteContainer = (site) => {
-  return cy.get(siteHeader(site));
-};
+const getSiteContainer = (site) => cy.get(siteHeader(site));
 
 const siteHasExpectedName = (site) => {
   getSiteContainer(site).should('include.text', site);
@@ -134,7 +145,8 @@ const siteHasExpectedOperationMode = (site, operationMode) => {
 
 const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(5)
     .find('svg')
@@ -143,7 +155,8 @@ const validateHostClass = (hostName, status) => {
 
 const validateHostStatus = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(5)
     .should('have.text', `SAPControl: ${status}`);
@@ -151,7 +164,7 @@ const validateHostStatus = (hostName, status) => {
 
 const hostHasExpectedStatus = (hostName) => {
   const status = getHostAttribute(hostName, 'Status');
-  validateHostStatus(hostName, status);
+  return validateHostStatus(hostName, status);
 };
 
 export const hostHasStatus = (status) =>
@@ -160,8 +173,8 @@ export const hostHasStatus = (status) =>
 export const hostHasClass = (status) =>
   validateHostClass(selectedDatabase.Hosts[0].Hostname, status);
 
-export const eachHostNameHasExpectedValues = () => {
-  selectedDatabase.Hosts.forEach((host) => {
+export const eachHostNameHasExpectedValues = () =>
+  cy.wrap(selectedDatabase.Hosts).each((host) => {
     const hostName = host.Hostname;
     hostNameHasExpectedInstanceNumber(hostName);
     hostNameHasExpectedFeatures(hostName);
@@ -169,12 +182,11 @@ export const eachHostNameHasExpectedValues = () => {
     hostHasExpectedHttpsPort(hostName);
     hostHasExpectedStartPriority(hostName);
     hostHasExpectedStatus(hostName);
-    hostStatusHasExpectedClass(hostName);
+    return hostStatusHasExpectedClass(hostName);
   });
-};
 
-export const eachSiteHasExpectedValues = (sites) => {
-  sites.forEach((site) => {
+export const eachSiteHasExpectedValues = (sites) =>
+  cy.wrap(sites).each((site) => {
     siteHasExpectedName(site.Name);
     siteHasExpectedSystemReplication(site.Name, site.SystemReplication);
     siteHasExpectedTier(site.Name, site.Tier);
@@ -185,19 +197,15 @@ export const eachSiteHasExpectedValues = (sites) => {
     site.OperationMode &&
       siteHasExpectedOperationMode(site.Name, site.OperationMode);
   });
-};
 
-export const runningSitesHaveExpectedValues = () => {
+export const runningSitesHaveExpectedValues = () =>
   eachSiteHasExpectedValues(selectedDatabase.Sites);
-};
 
-export const secondaryStoppedSitesHaveExpectedValues = () => {
+export const secondaryStoppedSitesHaveExpectedValues = () =>
   eachSiteHasExpectedValues(secondaryStoppedSites);
-};
 
-export const stoppedSitesHaveExpectedValues = () => {
+export const stoppedSitesHaveExpectedValues = () =>
   eachSiteHasExpectedValues(allStoppedSites);
-};
 
 const getHostAttribute = (hostname, attribute) => {
   const host = selectedDatabase.Hosts.find((h) => h.Hostname === hostname);
@@ -215,13 +223,17 @@ const hostHostHasExpectedAddresses = (hostName) => {
     hostName,
     'Addresses'
   ).join('');
-  cy.get(hostNameCellSelector).next().should('have.text', expectedAddresses);
+  return cy
+    .get(hostNameCellSelector)
+    .next()
+    .should('have.text', expectedAddresses);
 };
 
 const hostHasExpectedProvider = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedProviderValue = getAttachedHostAttribute(hostName, 'Provider');
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(1)
     .should('have.text', expectedProviderValue);
@@ -230,7 +242,8 @@ const hostHasExpectedProvider = (hostName) => {
 const hostHasExpectedClusterValue = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedCluster = getAttachedHostAttribute(hostName, 'Cluster');
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(2)
     .should('contain', expectedCluster);
@@ -239,7 +252,8 @@ const hostHasExpectedClusterValue = (hostName) => {
 const hostHasExpectedVersion = (hostName) => {
   const hostNameCellSelector = hostsTableHostNameCell(hostName);
   const expectedVersion = getAttachedHostAttribute(hostName, 'Version');
-  cy.get(hostNameCellSelector)
+  return cy
+    .get(hostNameCellSelector)
     .nextAll()
     .eq(3)
     .should('have.text', expectedVersion);
@@ -252,25 +266,24 @@ const hostHasExpectedWorkingLink = (host) => {
   cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
   cy.get(hostNameSelector).click();
   basePage.validateUrl(expectedHref);
-  cy.go('back');
+  return cy.go('back');
 };
 
-export const eachAttachedHostHasExpectedValues = () => {
-  attachedHosts.forEach((host) => {
+export const eachAttachedHostHasExpectedValues = () =>
+  cy.wrap(attachedHosts).each((host) => {
     hostHostHasExpectedAddresses(host.Name);
     hostHasExpectedProvider(host.Name);
     hostHasExpectedClusterValue(host.Name);
-    hostHasExpectedVersion(host.Name);
+    return hostHasExpectedVersion(host.Name);
   });
-};
 
 export const eachAttachedHostHasExpectedWorkingLink = () =>
-  attachedHosts.forEach((host) => hostHasExpectedWorkingLink(host));
+  cy.wrap(attachedHosts).each((host) => hostHasExpectedWorkingLink(host));
 
 export const newInstanceIsDisplayed = () => {
   const newInstanceSelector = `div[class="mt-16"]:contains("Layout") td:contains("${selectedDatabase.Hosts[0].Hostname}")`;
   cy.get(newInstanceSelector).eq(1).should('be.visible');
-  cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
+  return cy.get(`${newInstanceSelector} + td`).eq(1).should('have.text', 11);
 };
 
 export const tableHasExpectedAmountOfRows = (expectedAmountOfRows) =>

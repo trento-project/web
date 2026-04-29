@@ -107,7 +107,7 @@ const gatheredFactsValue = `div[class*="w-full my-4 mr-4"]:contains("Gathered Fa
 export const clickCorosyncCategory = () => cy.get(corosyncCategory).click();
 export const openCheckCustomizationModal = (checkID) => {
   const checksCustomizationSettingsIcon = `a[class*="block"] button[aria-label*="customize-check-${checkID}"]`;
-  cy.get(checksCustomizationSettingsIcon).click();
+  return cy.get(checksCustomizationSettingsIcon).click();
 };
 export const clickOnWarningCheckbox = () => cy.get(modalCheckbox).click();
 export const clickResetCheckModalButton = () =>
@@ -118,42 +118,39 @@ export const clickResetModalButton = () => cy.get(resetButton).click();
 export const clickResetCustomizedCheck = () =>
   cy.get(resetCustomizedCheckIcon).click();
 export const clickModalSaveButton = () => cy.get(saveButtonModal).click();
-const _setInputValue = (valueName, newValue) => {
-  cy.get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
+const _setInputValue = (valueName, newValue) =>
+  cy
+    .get(`div[class*="flex-col"]:contains(${valueName}) + div input`)
     .clear()
     .type(newValue)
     .should('have.value', newValue);
-};
+
 export const clickSaveChecksSelectionButton = () =>
   cy.get(saveChecksSelectionButton).click();
 export const clickStartExecutionButton = () =>
   cy.get(startExecutionButton).click();
-export const inputCheckValue = (valueName, newValue) => {
+export const inputCheckValue = (valueName, newValue) =>
   _setInputValue(valueName, newValue);
-};
 
-export const clickCorosyncSelectionToggle = () => {
+export const clickCorosyncSelectionToggle = () =>
   cy.get(corosyncheckSelectionToggle).click();
-};
 
-export const expandModifiedCheckResult = () => {
+export const expandModifiedCheckResult = () =>
   cy.get(checkResultCollapsibleCell).click();
-};
 
-export const clickModifiedCheckExpectations = () => {
+export const clickModifiedCheckExpectations = () =>
   cy.get(hostExpectationsNotMet).first().click();
-};
 
 // UI validations
 export const resetIconShouldNotExistInOverview = () =>
   cy.get(resetCustomizedCheckIcon).should('not.exist');
 export const checkShouldHaveModifiedPill = (checkID) => {
   const checkIDPill = `div[class*="px-4 py-4"] p:contains(${checkID}) + span`;
-  cy.get(checkIDPill).should('contain', modifiedPillLabel);
+  return cy.get(checkIDPill).should('contain', modifiedPillLabel);
 };
 export const checkShouldNotHaveModifiedPill = (checkID) => {
   const checkIDPill = `div[class*="px-4 py-4"] p:contains(${checkID}) + span`;
-  cy.get(checkIDPill).should('not.exist');
+  return cy.get(checkIDPill).should('not.exist');
 };
 
 const _validateCheckId = (value) =>
@@ -168,45 +165,43 @@ export const modalWarningCheckBoxShouldBeChecked = () =>
   cy.get(modalCheckbox).should('be.checked');
 export const validateWarningMessage = () =>
   cy.get(modalSpan).should('contain', modalWarningCheckboxLabel);
-const _validateValueNameAndDefaultValue = (valueName, defaultValue) => {
-  cy.get(modalValueDefault)
+const _validateValueNameAndDefaultValue = (valueName, defaultValue) =>
+  cy
+    .get(modalValueDefault)
     .should('contain', valueName)
     .and('contain', defaultValue);
-};
 
 export const validateFirstCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     firstCheckValueName,
     firstCheckDefaultValue
   );
-export const validateSecondCheckValueNameAndDefaultValue = () => {
+export const validateSecondCheckValueNameAndDefaultValue = () =>
   _validateValueNameAndDefaultValue(
     secondCheckValueName,
     secondCheckDefaultValue
   );
-};
 
 export const validateCurrentValueFromWandaFirstCheck = () =>
   _validateModalInputValue(modalInput, firstCurrentCheckValue);
-export const validateCustomizedValue = () => {
+export const validateCustomizedValue = () =>
   _validateModalInputValue(modalInput, customValue);
-};
 
-const _validateModalInputValue = (element, expectedValue) => {
-  cy.get(`${element}[value="${expectedValue}"]`)
+const _validateModalInputValue = (element, expectedValue) =>
+  cy
+    .get(`${element}[value="${expectedValue}"]`)
     .should('be.visible')
     .and('have.value', expectedValue);
-};
 
 export const validateProviderLabel = () =>
   cy.get(modalProvider).should('have.text', modalProviderLabel);
 export const validateProviderValue = () =>
   cy.get(modalProviderValueSpan).should('have.text', modalProviderValue);
-export const providerIconShouldBeDisplayed = () => {
-  cy.get(modalProviderSvg)
+export const providerIconShouldBeDisplayed = () =>
+  cy
+    .get(modalProviderSvg)
     .should('be.visible')
     .and('have.attr', 'alt', 'azure');
-};
 export const validateResetModalTitle = () =>
   cy.get(resetModalTitle).should('contain', resetModalTitleLabel);
 export const validateResetModalWarningText = () =>
@@ -238,32 +233,30 @@ export const waitForCustomizedCheckElements = () => {
     timeout: 20000,
   });
   cy.contains(modifiedPillLabel).should('be.visible');
-  cy.contains('tr.tn-check-result-row', firstCheck.description)
+  return cy
+    .contains('tr.tn-check-result-row', firstCheck.description)
     .find(modifiedResultCriticalIcon)
     .should('be.visible');
 };
-export const validateCheckStatus = () => {
-  cy.get(evaluationResultsStatus)
+export const validateCheckStatus = () =>
+  cy
+    .get(evaluationResultsStatus)
     .should('be.visible')
     .and('have.text', checkStatus);
-};
-export const validateEvaluationResultsDescription = () => {
-  cy.get(evaluationResultsLabel)
+export const validateEvaluationResultsDescription = () =>
+  cy
+    .get(evaluationResultsLabel)
     .should('be.visible')
     .and('have.text', evaluationResults);
-};
 
-export const validateEvaluationResultsModifiedPill = () => {
+export const validateEvaluationResultsModifiedPill = () =>
   cy.contains(modifiedPillLabel).should('be.visible');
-};
 
-export const validateCustomValue = () => {
+export const validateCustomValue = () =>
   cy.get(customizedValue).should('have.text', customValue);
-};
 
-export const vailidateGatheredFactsValue = () => {
+export const vailidateGatheredFactsValue = () =>
   cy.get(gatheredFactsValue).should('have.text', firstCheckValue);
-};
 
 // Api
 export const visit = (clusterId = '') =>
@@ -274,18 +267,16 @@ const _resetCheck = (groupId, checkId) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       method: 'DELETE',
-      url: `${Cypress.config(
+      url: `${Cypress.env(
         'wandaUrl'
       )}/api/v1/groups/${groupId}/checks/${checkId}/customization`,
       auth: { bearer: accessToken },
       failOnStatusCode: false,
     })
   );
-const _resetChecks = (checks) => {
-  checks.forEach(({ id }) => {
-    _resetCheck(availableHanaCluster.id, id);
-  });
-};
+
+const _resetChecks = (checks) =>
+  cy.wrap(checks).each(({ id }) => _resetCheck(availableHanaCluster.id, id));
 export const apiResetAllChecks = () => _resetChecks(checkList);
 
 export const apiResetCheckSelection = () =>

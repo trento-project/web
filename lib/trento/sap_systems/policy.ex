@@ -19,31 +19,19 @@ defmodule Trento.SapSystems.Policy do
     do: has_global_ability?(user) or has_cleanup_ability?(user)
 
   def authorize(:sap_instance_start, %User{} = user, ApplicationInstanceReadModel),
-    do: has_global_ability?(user) or has_app_instance_start_ability?(user)
+    do: has_operation_ability?(user, "start", "application_instance")
 
   def authorize(:sap_instance_stop, %User{} = user, ApplicationInstanceReadModel),
-    do: has_global_ability?(user) or has_app_instance_stop_ability?(user)
+    do: has_operation_ability?(user, "stop", "application_instance")
 
   def authorize(:sap_system_start, %User{} = user, SapSystemReadModel),
-    do: has_global_ability?(user) or has_sap_system_start_ability?(user)
+    do: has_operation_ability?(user, "start", "sap_system")
 
   def authorize(:sap_system_stop, %User{} = user, SapSystemReadModel),
-    do: has_global_ability?(user) or has_sap_system_stop_ability?(user)
+    do: has_operation_ability?(user, "stop", "sap_system")
 
   def authorize(_, _, _), do: true
 
   defp has_cleanup_ability?(user),
     do: user_has_ability?(user, %{name: "cleanup", resource: "application_instance"})
-
-  defp has_app_instance_start_ability?(user),
-    do: user_has_ability?(user, %{name: "start", resource: "application_instance"})
-
-  defp has_app_instance_stop_ability?(user),
-    do: user_has_ability?(user, %{name: "stop", resource: "application_instance"})
-
-  defp has_sap_system_start_ability?(user),
-    do: user_has_ability?(user, %{name: "start", resource: "sap_system"})
-
-  defp has_sap_system_stop_ability?(user),
-    do: user_has_ability?(user, %{name: "stop", resource: "sap_system"})
 end

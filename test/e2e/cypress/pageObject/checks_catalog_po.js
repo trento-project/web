@@ -15,10 +15,18 @@ const checkPanels = '.check-panel';
 
 const targetIcon = 'div[aria-label="accordion-panel"] span span:nth-child(1)';
 
-const providersSelectionDropdown = 'button.providers-selection-dropdown';
-const targetsSelectionDropdown = 'button.targets-selection-dropdown';
-const clusterTypesSelectionDropdown = 'button.cluster-types-selection-dropdown';
-const architectureSelectionDropdown = 'button.architecture-selection-dropdown';
+const providersSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="providers"]'
+);
+const targetsSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="targets"]'
+);
+const clusterTypesSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="cluster-types"]'
+);
+const architectureSelectionDropdown = basePage.getSelectControlValue(
+  '[aria-label="architectures"]'
+);
 
 const dropdownSelectedIcon =
   '.absolute.inset-y-0.right-2.end-1.flex.items-center.pl-3.text-green-600';
@@ -60,9 +68,7 @@ const catalog = [...group1, ...group2, ...group3];
 const selectFromCatalogDropdown = (dropdownElementSelector, choice) => {
   cy.get(dropdownElementSelector).click();
   cy.get(dropdownSelectedIcon).should('be.visible');
-  return cy
-    .get(`${dropdownElementSelector} + div div:contains("${choice}")`)
-    .click();
+  return cy.get(`${basePage.selectOptions}:contains("${choice}")`).click();
 };
 
 export const visit = () => basePage.visit(url);
@@ -94,7 +100,9 @@ export const onlyFirstCheckGroupIsExpanded = () =>
 
 export const expectedCheckGroupsAreIncluded = () => {
   const groups = getCheckGroupsNames();
-  return groups.forEach((group) => cy.get(groupNames).should('contain', group));
+  return cy
+    .wrap(groups)
+    .each((group) => cy.get(groupNames).should('contain', group));
 };
 
 export const eachGroupShouldBeExpanded = () => {
@@ -104,20 +112,19 @@ export const eachGroupShouldBeExpanded = () => {
     return cy
       .get(checkGroups)
       .eq(index)
-      .then((checkGroup) => {
-        return cy
+      .then((checkGroup) =>
+        cy
           .wrap(checkGroup)
           .find(checkRows)
-          .should('have.length', checksInGroup[groupText]);
-      });
+          .should('have.length', checksInGroup[groupText])
+      );
   });
 };
 
-export const expandAllGroups = () => {
-  return cy.get(groupNames).each((group, index) => {
+export const expandAllGroups = () =>
+  cy.get(groupNames).each((group, index) => {
     if (index !== 0) cy.wrap(group).click();
   });
-};
 
 export const clickFirstCheckRow = () => cy.get(checkRows).first().click();
 
@@ -141,45 +148,37 @@ export const selectFromArchitectureDropdown = (choice) => {
   return waitForChecksCatalogRequest().then((response) => response.request.url);
 };
 
-export const waitForChecksCatalogRequest = () => {
-  return basePage.waitForRequest(checksCatalogEndpointAlias);
-};
-export const networkErrorLabelIsDisplayed = () => {
-  return cy.get(networkErrorLabel).should('be.visible');
-};
+export const waitForChecksCatalogRequest = () =>
+  basePage.waitForRequest(checksCatalogEndpointAlias);
+export const networkErrorLabelIsDisplayed = () =>
+  cy.get(networkErrorLabel).should('be.visible');
 
-export const tryAgainButtonIsDisplayed = () => {
-  return cy.get(tryAgainButton).should('be.visible');
-};
+export const tryAgainButtonIsDisplayed = () =>
+  cy.get(tryAgainButton).should('be.visible');
 
-export const checkPanelHasTheExpectedText = () => {
-  return cy
-    .get(checkPanels)
-    .first()
-    .should('have.text', catalog[0].remediation);
-};
+export const checkPanelHasTheExpectedText = () =>
+  cy.get(checkPanels).first().should('have.text', catalog[0].remediation);
 
 export const eachGroupHasExpectedCheckIds = () => {
   expandAllGroups();
   const catalogIds = catalog.map((item) => item.id);
 
-  return catalogIds.forEach((id) => {
-    cy.get(`p:contains("${id}")`).should('be.visible');
-  });
+  return cy
+    .wrap(catalogIds)
+    .each((id) => cy.get(`p:contains("${id}")`).should('be.visible'));
 };
 
-export const expectedTargetTypeClusterIconsAreDisplayed = () => {
-  return cy
+export const expectedTargetTypeClusterIconsAreDisplayed = () =>
+  cy
     .get(`h3:contains("${clusterChecksGroup}")`)
     .parents(checkGroups)
     .within(() => cy.get(targetIcon).should('have.length', group1Checks));
-};
 
-export const expectedTargetTypeHostIconsAreDisplayed = () => {
-  cy.get(`h3:contains("${hostChecksGroup}")`)
+export const expectedTargetTypeHostIconsAreDisplayed = () =>
+  cy
+    .get(`h3:contains("${hostChecksGroup}")`)
     .parents(checkGroups)
     .within(() => cy.get(targetIcon).should('have.length', group2Checks));
-};
 
 export const checkPanelIsNotVisible = () =>
   cy.get(checkPanels).should('not.exist');

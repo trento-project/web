@@ -99,6 +99,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             additionalProperties: %Schema{type: :string}
           },
           virtual_ip: %Schema{type: :string, example: "192.168.1.10"},
+          is_majority_maker: %Schema{type: :boolean, example: false},
           resources: %Schema{
             description:
               "A list of cluster resources associated with this HANA cluster node, supporting infrastructure management.",
@@ -128,6 +129,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             "hana_prd_srmode" => "sync"
           },
           virtual_ip: "192.168.1.10",
+          is_majority_maker: false,
           resources: [
             %{
               id: "rsc_SAPHana_PRD_HDB00",

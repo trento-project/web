@@ -31,7 +31,7 @@ const modelOptionRenderer = (option) => {
 const getProviderOptions = (aiProviders) => {
   return Object.keys(aiProviders).map((provider) => ({
     value: provider,
-    label: <AIProviderLabel provider={provider} />,
+    label: provider,
   }));
 };
 
@@ -126,8 +126,8 @@ function AIConfigurationModal({
           </Label>
           <div className="col-start-3 col-span-6">
             <Select
-              optionsName="ai-provider"
-              value={provider}
+              aria-label="ai-provider"
+              initialValues={[provider]}
               options={getProviderOptions(aiProviders)}
               renderOption={providerOptionRenderer}
               onChange={(value) => {
@@ -136,7 +136,7 @@ function AIConfigurationModal({
                   value !== null ? getModelOptions(aiProviders, value) : [];
                 setModel(newModelOptions?.[0]?.value || null);
               }}
-              disabled={saving}
+              isDisabled={saving}
             />
           </div>
 
@@ -145,12 +145,12 @@ function AIConfigurationModal({
           </Label>
           <div className="col-start-3 col-span-6">
             <Select
-              optionsName="ai-model"
-              value={model}
+              aria-label="ai-model"
+              value={{ value: model, label: model }}
               options={provider ? getModelOptions(aiProviders, provider) : []}
               renderOption={modelOptionRenderer}
               onChange={setModel}
-              disabled={!provider || saving}
+              isDisabled={!provider || saving}
             />
           </div>
 

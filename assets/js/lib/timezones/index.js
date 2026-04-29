@@ -1,7 +1,7 @@
 import tzdata from 'tzdata';
 import { tzName, tzOffset } from '@date-fns/tz';
 
-export const DEFAULT_TIMEZONE = 'Etc/UTC';
+const DEFAULT_TIMEZONE = 'Etc/UTC';
 
 export const DATETIME_ISO_SQL_FORMAT = 'yyyy-MM-dd HH:mm:ss';
 export const DATETIME_US_12H_FORMAT = 'MM/dd/yyyy hh:mm:ss a';
@@ -22,16 +22,9 @@ export const TIME_24H_HH_MM_FORMAT = 'HH:mm';
  * Generate timezone options from the IANA tzdata database.
  * Each option includes the timezone name and current UTC offset with DST accounted for.
  * Automatically filters out alias zones by checking if they're references to other zones.
- *
- * Results are cached at module level for performance since timezone data doesn't change at runtime.
  */
-let cachedTimezoneOptions = null;
 
-export function generateTimezoneOptions() {
-  if (cachedTimezoneOptions !== null) {
-    return cachedTimezoneOptions;
-  }
-
+function generateTimezoneOptions() {
   const zoneNames = Object.entries(tzdata?.zones)
     .filter(([zone, data]) => {
       if (typeof data === 'string') {
@@ -47,7 +40,7 @@ export function generateTimezoneOptions() {
     .map(([zone]) => zone);
 
   const now = new Date();
-  cachedTimezoneOptions = zoneNames
+  const timezoneOptions = zoneNames
     .map((zone) => {
       try {
         // Current UTC offset in minutes for the timezone, accounting for DST if applicable.
@@ -76,5 +69,8 @@ export function generateTimezoneOptions() {
     )
     .map(({ offsetMinutes, ...option }) => option);
 
-  return cachedTimezoneOptions;
+  return timezoneOptions;
 }
+const timezones = generateTimezoneOptions();
+
+export { DEFAULT_TIMEZONE, generateTimezoneOptions, timezones };

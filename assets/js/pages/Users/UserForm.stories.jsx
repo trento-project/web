@@ -17,6 +17,7 @@ const {
   updated_at: updatedAt,
   totp_enabled_at: totpEnabledAt,
   last_login_at: lastLoginAt,
+  timezone,
 } = userFactory.build();
 
 const {
@@ -79,7 +80,7 @@ export default {
         type: 'text',
       },
     },
-    udpatedAt: {
+    updatedAt: {
       description: 'User last update timestamp',
       control: {
         type: 'text',
@@ -97,10 +98,35 @@ export default {
         type: 'text',
       },
     },
+    analyticsEnabledConfig: {
+      description:
+        'Toggles visibility of Analytics switch. Analytics config is enabled',
+      control: {
+        type: 'boolean',
+      },
+    },
+    analyticsEnabled: {
+      description: 'Toggles tracking user analytics',
+      control: {
+        type: 'boolean',
+      },
+    },
+    timezone: {
+      description: 'User timezone',
+      control: {
+        type: 'text',
+      },
+    },
     editing: {
       description: 'User is being edited',
       control: {
         type: 'boolean',
+      },
+    },
+    timezones: {
+      description: 'Available timezones',
+      control: {
+        type: 'object',
       },
     },
     saving: {
@@ -162,8 +188,10 @@ export const Editing = {
     updatedAt,
     totpEnabledAt,
     lastLoginAt,
+    timezone,
     editing: true,
     saveText: 'Save',
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
   },
 };
 

@@ -163,6 +163,8 @@ context('Hosts Overview', () => {
       describe('Deregistration of hosts should update remaining hosts data', () => {
         beforeEach(() => hostsOverviewPage.restoreSapSystem());
 
+        afterEach(() => hostsOverviewPage.restoreSapSystem());
+
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
           hostsOverviewPage.clickNextPageButton();
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(4);
@@ -178,7 +180,7 @@ context('Hosts Overview', () => {
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(3);
         });
 
-        after(() => hostsOverviewPage.restoreSapSystem());
+        afterEach(() => hostsOverviewPage.restoreSapSystem());
 
         it('should associate instances to the correct host during deregistration', () => {
           hostsOverviewPage.apiDeregisterMovedHost();
@@ -199,6 +201,8 @@ context('Hosts Overview', () => {
     const hostname = availableHosts[0].name;
     const anotherHostname = availableHosts[1].name;
     const anyPageUrl = '/any-page';
+
+    beforeEach(() => hostsOverviewPage.restoreSapSystem());
 
     it('should update the URL with filter params when a filter is selected', () => {
       hostsOverviewPage.visit();
