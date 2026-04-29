@@ -74,10 +74,15 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   _setupChannelHandlers() {
+    // Keep `this.channel` non-null on transport drops: Phoenix's Socket
+    // auto-rejoins the channel when the WS comes back, and the joinPush's
+    // existing receive('ok') handler will flip status back to CONNECTED.
+    // Channel.push also buffers while the socket is down and flushes on
+    // rejoin, so preserving the reference makes a "drop → recover → prompt"
+    // sequence Just Work.
     const dropConnection = () => {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       this._failActiveRun(new Error('AI assistant connection lost'));
-      this.channel = null;
     };
 
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));

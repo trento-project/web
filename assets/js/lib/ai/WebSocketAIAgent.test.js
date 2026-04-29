@@ -291,6 +291,25 @@ describe('WebSocketAIAgent', () => {
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });
+
+    it('keeps the channel reference after a drop so a later push does not throw', async () => {
+      // Regression: previously dropConnection nulled this.channel, but Phoenix
+      // auto-rejoins and refires the joinPush('ok') callback — flipping status
+      // back to CONNECTED while our reference was stale. The next send_message
+      // push then crashed with "Cannot read properties of null".
+      const { agent, channel } = await connectedAgent();
+      channel.triggerClose();
+      expect(agent.channel).toBe(channel);
+
+      // Simulate Phoenix's auto-rejoin: same channel, same joinPush, fires 'ok' again.
+      channel.joinPush.fire('ok');
+      expect(agent._connectionStatus).toBe('connected');
+
+      runAgent(agent);
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'send_message' })
+      );
+    });
   });
 
   describe('extractMessageText', () => {
