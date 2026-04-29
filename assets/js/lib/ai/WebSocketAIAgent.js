@@ -2,8 +2,12 @@ import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
 import { isArray, isString } from 'lodash';
 
+import { EventType } from '@ag-ui/core';
+
 import { CONNECTION_STATUS } from './connectionStatus';
-import { EVENT_TYPES } from './eventTypes';
+
+const INITIAL_RECONNECT_DELAY_MS = 1000;
+const MAX_RECONNECT_DELAY_MS = 30000;
 
 // Pure helper: collapse a message's content (string or array of parts) to
 // the plain text the server expects in `send_message`.
@@ -17,14 +21,6 @@ export function extractMessageText({ content } = {}) {
   }
   return '';
 }
-
-// Terminal AG-UI events that close the run's Observable. Adding a new
-// terminal event = add an entry here.
-const TERMINAL_HANDLERS = {
-  [EVENT_TYPES.RUN_FINISHED]: (subscriber) => subscriber.complete(),
-  [EVENT_TYPES.RUN_ERROR]: (subscriber, event) =>
-    subscriber.error(new Error(event.message || 'Agent execution failed')),
-};
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userId}
@@ -40,9 +36,22 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._reconnectAttempts = 0;
+    this._reconnectTimer = null;
+    this._intentionallyDisconnected = false;
   }
 
+  // Idempotent. Kicks off the connect loop; on transport drops the agent
+  // will retry with exponential backoff until disconnect() is called. The
+  // returned promise resolves/rejects on the first attempt only — callers
+  // don't need to await subsequent reconnects.
   async initialize() {
+    this._intentionallyDisconnected = false;
+    if (this.channel) return undefined;
+    return this._attemptConnect();
+  }
+
+  async _attemptConnect() {
     if (this.channel) return undefined;
 
     if (!this.socket) {
@@ -59,26 +68,53 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._setupChannelHandlers();
 
     return new Promise((resolve, reject) => {
+      const fail = (message) => {
+        this.channel = null;
+        this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
+        this._scheduleReconnect();
+        reject(new Error(message));
+      };
+
       this.channel
         .join()
         .receive('ok', () => {
+          this._reconnectAttempts = 0;
           this._setConnectionStatus(CONNECTION_STATUS.CONNECTED);
           resolve();
         })
         .receive('error', (resp) => {
-          this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-          reject(new Error(`Failed to join channel: ${JSON.stringify(resp)}`));
+          fail(`Failed to join channel: ${JSON.stringify(resp)}`);
         })
         .receive('timeout', () => {
-          this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-          reject(new Error('Channel join timeout'));
+          fail('Channel join timeout');
         });
     });
   }
 
+  _scheduleReconnect() {
+    if (this._intentionallyDisconnected) return;
+    if (this._reconnectTimer) return;
+
+    const delay = Math.min(
+      INITIAL_RECONNECT_DELAY_MS * 2 ** this._reconnectAttempts,
+      MAX_RECONNECT_DELAY_MS
+    );
+    this._reconnectAttempts += 1;
+    this._reconnectTimer = setTimeout(() => {
+      this._reconnectTimer = null;
+      this._attemptConnect().catch(() => {
+        // _attemptConnect already scheduled the next retry on failure.
+      });
+    }, delay);
+  }
+
   _setupChannelHandlers() {
-    const dropConnection = () =>
+    const dropConnection = () => {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
+      this._failActiveRun(new Error('AI assistant connection lost'));
+      this.channel = null;
+      this._scheduleReconnect();
+    };
 
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
     this.channel.on('agent-execution-cancelled', () =>
@@ -94,9 +130,11 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     subscriber.next(event);
 
-    const terminate = TERMINAL_HANDLERS[event.type];
-    if (terminate) {
-      terminate(subscriber, event);
+    if (event.type === EventType.RUN_FINISHED) {
+      subscriber.complete();
+      this._clearActiveRun();
+    } else if (event.type === EventType.RUN_ERROR) {
+      subscriber.error(new Error(event.message || 'Agent execution failed'));
       this._clearActiveRun();
     }
   }
@@ -150,11 +188,38 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
+  // The assistant-ui runtime calls `runAgent(input, subscriber, { signal })`
+  // and aborts that signal when the user cancels. AbstractAgent ignores the
+  // third arg, so we need to wire the signal to abortRun ourselves.
+  async runAgent(parameters, subscriber, opts) {
+    const signal = opts?.signal;
+    if (!signal) return super.runAgent(parameters, subscriber);
+    if (signal.aborted) return undefined;
+
+    const onAbort = () => this.abortRun();
+    signal.addEventListener('abort', onAbort, { once: true });
+    try {
+      return await super.runAgent(parameters, subscriber);
+    } finally {
+      signal.removeEventListener('abort', onAbort);
+    }
+  }
+
+  abortRun() {
+    if (!this._activeRunId) return;
+    const runId = this._activeRunId;
+    this.channel?.push('cancel_agent', { run_id: runId });
+    this._failActiveRun(new Error('Agent execution cancelled'));
+  }
+
   _handleAgentCancelled() {
+    this._failActiveRun(new Error('Agent execution cancelled'));
+  }
+
+  _failActiveRun(error) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-
-    subscriber.error(new Error('Agent execution cancelled'));
+    subscriber.error(error);
     this._clearActiveRun();
   }
 
@@ -170,10 +235,15 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   disconnect() {
-    if (this.channel) {
-      this.channel.leave();
-      this.channel = null;
-      this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
+    this._intentionallyDisconnected = true;
+    if (this._reconnectTimer) {
+      clearTimeout(this._reconnectTimer);
+      this._reconnectTimer = null;
     }
+    if (!this.channel) return;
+    this.channel.leave();
+    this.channel = null;
+    this._failActiveRun(new Error('AI assistant disconnected'));
+    this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
   }
 }

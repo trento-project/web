@@ -58,6 +58,32 @@ function runAgent(agent, input = { threadId: 't', messages: [userMessage()] }) {
   return { subscription, next, error, complete };
 }
 
+// Minimal stand-in for the parts of AbortController/AbortSignal that the
+// agent uses: `signal.aborted`, `addEventListener('abort', cb, {once})`,
+// `removeEventListener`. Built locally so the suite doesn't depend on the
+// host runtime exposing AbortController.
+function makeAbortController() {
+  const listeners = new Set();
+  const signal = {
+    aborted: false,
+    addEventListener: (type, cb) => {
+      if (type === 'abort') listeners.add(cb);
+    },
+    removeEventListener: (type, cb) => {
+      if (type === 'abort') listeners.delete(cb);
+    },
+  };
+  return {
+    signal,
+    abort: () => {
+      if (signal.aborted) return;
+      signal.aborted = true;
+      listeners.forEach((cb) => cb());
+      listeners.clear();
+    },
+  };
+}
+
 describe('WebSocketAIAgent', () => {
   describe('initialize', () => {
     it('joins ai_assistant:{userId} and reports connecting → connected', async () => {
@@ -295,6 +321,182 @@ describe('WebSocketAIAgent', () => {
     });
   });
 
+  describe('cancellation', () => {
+    it('abortRun pushes cancel_agent for the active run and errors the subscriber', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+      const runId = agent._activeRunId;
+
+      agent.abortRun();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({
+          event: 'cancel_agent',
+          payload: { run_id: runId },
+        })
+      );
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'Agent execution cancelled' })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    it('abortRun is a no-op when no run is active', async () => {
+      const { agent, channel } = await connectedAgent();
+      expect(() => agent.abortRun()).not.toThrow();
+      expect(channel.pushed).toHaveLength(0);
+    });
+
+    it('runAgent forwards an abort signal to abortRun', async () => {
+      const { agent } = await connectedAgent();
+      const abortSpy = jest.spyOn(agent, 'abortRun').mockImplementation(() => {
+        // Avoid the full cancel side-effects in this isolated wiring test.
+      });
+      const controller = makeAbortController();
+      // Make super.runAgent resolve immediately so we just exercise the wiring.
+      const superRun = jest
+        .spyOn(Object.getPrototypeOf(WebSocketAIAgent).prototype, 'runAgent')
+        .mockResolvedValue({ result: undefined, newMessages: [] });
+
+      const promise = agent.runAgent({}, {}, { signal: controller.signal });
+      controller.abort();
+      await promise;
+
+      expect(abortSpy).toHaveBeenCalledTimes(1);
+      superRun.mockRestore();
+    });
+
+    it('runAgent short-circuits when the signal is already aborted', async () => {
+      const { agent } = await connectedAgent();
+      const superRun = jest.spyOn(
+        Object.getPrototypeOf(WebSocketAIAgent).prototype,
+        'runAgent'
+      );
+      const controller = makeAbortController();
+      controller.abort();
+
+      const result = await agent.runAgent(
+        {},
+        {},
+        { signal: controller.signal }
+      );
+
+      expect(result).toBeUndefined();
+      expect(superRun).not.toHaveBeenCalled();
+      superRun.mockRestore();
+    });
+  });
+
+  describe('reconnect', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
+
+    it('schedules a reconnect attempt after a join error', async () => {
+      const { agent, getChannel } = makeAgent();
+      const initPromise = agent.initialize();
+      getChannel().joinPush.fire('error', { reason: 'boom' });
+      await expect(initPromise).rejects.toThrow(/Failed to join channel/);
+
+      // First retry uses INITIAL_RECONNECT_DELAY_MS (1s).
+      expect(jest.getTimerCount()).toBe(1);
+
+      jest.advanceTimersByTime(1000);
+      // The retry called socket.channel(...) again, joining the same topic.
+      expect(getChannel().joinPush).toBeDefined();
+    });
+
+    it('reconnects after an unexpected channel close', async () => {
+      const { agent, channel, socket } = await connectedAgent();
+      socket.channel.mockClear();
+
+      channel.triggerClose();
+      expect(jest.getTimerCount()).toBe(1);
+
+      jest.advanceTimersByTime(1000);
+      expect(socket.channel).toHaveBeenCalledWith(
+        `ai_assistant:${agent.userId}`,
+        {}
+      );
+    });
+
+    it('grows backoff between successive failed reconnect attempts and caps it', async () => {
+      // Spy on setTimeout to capture the delay the agent asks for at each step.
+      const delays = [];
+      const realSetTimeout = global.setTimeout;
+      jest.spyOn(global, 'setTimeout').mockImplementation((fn, ms) => {
+        delays.push(ms);
+        return realSetTimeout(fn, ms);
+      });
+
+      const { channel, getChannel } = await connectedAgent();
+      delays.length = 0; // ignore any timers from setup
+
+      channel.triggerClose();
+      // Run the chain: each iteration fires the pending reconnect timer, then
+      // fails the resulting join — which schedules the next reconnect.
+      for (let i = 0; i < 6; i += 1) {
+        jest.runOnlyPendingTimers();
+        getChannel().joinPush.fire('error', { reason: 'still down' });
+        // Let the rejected _attemptConnect promise's .catch settle.
+
+        await Promise.resolve();
+      }
+
+      // Expected delays: 1s, 2s, 4s, 8s, 16s, 30s (cap), 30s (still capped).
+      expect(delays).toEqual([1000, 2000, 4000, 8000, 16000, 30000, 30000]);
+    });
+
+    it('resets backoff on a successful reconnect', async () => {
+      const { agent, channel, getChannel } = await connectedAgent();
+      // Force a few failed attempts to inflate the backoff counter.
+      channel.triggerClose();
+      jest.advanceTimersByTime(1000);
+      getChannel().joinPush.fire('error', { reason: 'no' });
+      await Promise.resolve();
+      expect(agent._reconnectAttempts).toBeGreaterThan(0);
+
+      // Now succeed.
+      jest.advanceTimersByTime(2000);
+      getChannel().joinPush.fire('ok');
+      await Promise.resolve();
+
+      expect(agent._reconnectAttempts).toBe(0);
+    });
+
+    it('stops reconnecting after disconnect()', async () => {
+      const { agent, channel } = await connectedAgent();
+      channel.triggerClose();
+      expect(jest.getTimerCount()).toBe(1);
+
+      agent.disconnect();
+      expect(jest.getTimerCount()).toBe(0);
+    });
+  });
+
+  describe('connection drops during an active run', () => {
+    it.each([
+      { trigger: 'channel error', method: 'triggerError' },
+      { trigger: 'channel close', method: 'triggerClose' },
+    ])('errors the active subscriber on $trigger', async ({ method }) => {
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      channel[method]();
+
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'AI assistant connection lost' })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+  });
+
   describe('extractMessageText', () => {
     it('returns string content as-is', () => {
       expect(extractMessageText({ content: 'hello' })).toBe('hello');
@@ -332,6 +534,19 @@ describe('WebSocketAIAgent', () => {
       expect(channel.leave).toHaveBeenCalled();
       expect(agent.channel).toBeNull();
       expect(onConnectionChange).toHaveBeenCalledWith('disconnected');
+    });
+
+    it('errors the active subscriber when disconnected mid-run', async () => {
+      const { agent } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      agent.disconnect();
+
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({ message: 'AI assistant disconnected' })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
     });
 
     it('is a no-op when never connected', () => {

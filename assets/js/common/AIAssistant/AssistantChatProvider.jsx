@@ -10,8 +10,6 @@ import { getUserProfile } from '@state/selectors/user';
 
 import { useThreadStore } from './useThreadStore';
 
-const RECONNECT_DELAY_MS = 2000;
-
 export function AssistantChatProvider({ children }) {
   const userId = useSelector(getUserProfile)?.id;
   const socket = useSocket();
@@ -32,13 +30,9 @@ export function AssistantChatProvider({ children }) {
 
   useEffect(() => {
     if (!agent) return undefined;
-
-    agent.initialize().catch(() => {
-      setTimeout(() => {
-        agent.initialize().catch(() => {});
-      }, RECONNECT_DELAY_MS);
-    });
-
+    // Agent owns its own reconnect/backoff loop; we just kick it off and
+    // tear it down on unmount.
+    agent.initialize();
     return () => agent.disconnect();
   }, [agent]);
 
