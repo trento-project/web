@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
@@ -9,7 +9,7 @@ import { faker } from '@faker-js/faker';
 
 describe('Users', () => {
   it('should render a loading table with a disabled create user button', () => {
-    renderWithRouter(<Users loading />);
+    render(<Users loading />);
 
     const headers = [
       'Username',
@@ -140,12 +140,12 @@ describe('Users', () => {
 
   describe('Single sign on', () => {
     it('should disable user creation', () => {
-      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      render(<Users users={[]} singleSignOnEnabled />);
       expect(screen.queryByText('Create User')).not.toBeInTheDocument();
     });
 
     it('should not display last login time information', () => {
-      renderWithRouter(<Users users={[]} singleSignOnEnabled />);
+      render(<Users users={[]} singleSignOnEnabled />);
       expect(screen.queryByText('Last Login')).not.toBeInTheDocument();
     });
   });
