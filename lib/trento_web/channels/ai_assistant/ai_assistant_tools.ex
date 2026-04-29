@@ -34,8 +34,8 @@ defmodule TrentoWeb.AIAssistantTools do
       summary: "List all hosts with their basic information.",
       description:
         "Retrieves a comprehensive list of all hosts discovered on the target infrastructure. " <>
-        "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
-        "Note: To get detailed cluster information (name, type, etc.), use the Cluster_list tool with the cluster_id.",
+          "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
+          "Note: To get detailed cluster information (name, type, etc.), use the Cluster_list tool with the cluster_id.",
       function: fn _args, context ->
         Logger.warning("user_id: #{inspect(context.current_scope)}")
         user = Users.get_user(context.current_scope.user.id)

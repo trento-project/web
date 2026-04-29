@@ -554,7 +554,9 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     # Store tool_call_id mapping for later use (e.g., tool results)
     tool_call_ids = socket.assigns[:tool_call_ids] || %{}
-    updated_socket = assign(updated_socket, :tool_call_ids, Map.put(tool_call_ids, tool_name, tool_call_id))
+
+    updated_socket =
+      assign(updated_socket, :tool_call_ids, Map.put(tool_call_ids, tool_name, tool_call_id))
 
     # ToolCallStart (with runId and threadId)
     event = %ToolCallStart{
@@ -597,7 +599,10 @@ defmodule TrentoWeb.AIAssistantChannel do
 
       # Get the tool_call_id (use call_id from tool_info or the stored mapping)
       tool_call_ids = socket.assigns[:tool_call_ids] || %{}
-      tool_call_id = tool_info[:call_id] || tool_info["call_id"] || tool_call_ids[tool_name] || generate_tool_call_id()
+
+      tool_call_id =
+        tool_info[:call_id] || tool_info["call_id"] || tool_call_ids[tool_name] ||
+          generate_tool_call_id()
 
       result = tool_info[:result] || tool_info["result"] || %{}
 
