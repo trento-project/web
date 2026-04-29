@@ -1,6 +1,8 @@
 import React from 'react';
 import { get, capitalize, sortBy, noop } from 'lodash';
 
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
+
 import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 import ClusterTypeLabel from '@common/ClusterTypeLabel';
@@ -80,7 +82,10 @@ function HanaClusterDetails({
                   <div>
                     {content.map(({ id, sid: sapSystemSid }) => (
                       <span key={sapSystemSid}>
-                        <SapSystemLink sapSystemId={id} systemType="databases">
+                        <SapSystemLink
+                          sapSystemId={id}
+                          systemType={DATABASE_TYPE}
+                        >
                           {sapSystemSid}
                         </SapSystemLink>{' '}
                       </span>

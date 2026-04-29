@@ -3,7 +3,7 @@ import { capitalize, get, noop } from 'lodash';
 
 import { OPERATION_NOT_ALLOWED_HOST } from '@lib/operations';
 import { isHeartbeatPassing } from '@lib/model/hosts';
-import { getEnsaVersionLabel } from '@lib/model/sapSystems';
+import { getEnsaVersionLabel, APPLICATION_TYPE } from '@lib/model/sapSystems';
 
 import DottedPagination from '@common/DottedPagination';
 import ListView from '@common/ListView';
@@ -160,7 +160,7 @@ function AscsErsClusterDetails({
                 render: (content) => (
                   <SapSystemLink
                     sapSystemId={content?.id}
-                    systemType="sap_systems"
+                    systemType={APPLICATION_TYPE}
                   >
                     {content?.sid}
                   </SapSystemLink>

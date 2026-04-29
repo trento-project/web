@@ -7,7 +7,6 @@ import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
 import Select from '@common/Select';
-import MultiSelect from '@common/MultiSelect';
 import Switch from '@common/Switch';
 import Tooltip from '@common/Tooltip';
 import {
@@ -17,7 +16,7 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import { DEFAULT_TIMEZONE, generateTimezoneOptions } from '@lib/timezones';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -39,6 +38,7 @@ function UserForm({
   analyticsEnabledConfig = false,
   analyticsEnabled,
   timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors = defaultErrors,
   saving = false,
   saveEnabled = true,
@@ -143,9 +143,8 @@ function UserForm({
     setConfirmPassword(newPassword);
   };
 
-  const timezoneOptions = generateTimezoneOptions();
   const selectedTimezone =
-    timezoneOptions.find((opt) => opt.value === timezoneState) || null;
+    timezones.find((opt) => opt.value === timezoneState) || null;
 
   return (
     <div>
@@ -271,12 +270,10 @@ function UserForm({
           <div className="col-start-3 col-span-4">
             <Select
               className="w-full"
-              optionsName="status"
+              aria-label="status"
               options={['Enabled', 'Disabled']}
-              value={statusState}
-              onChange={(value) => {
-                setStatus(value);
-              }}
+              initialValues={[statusState]}
+              onChange={setStatus}
             />
           </div>
           {editing && (
@@ -289,16 +286,17 @@ function UserForm({
                 Timezone
               </Label>
               <div className="col-start-3 col-span-4">
-                <MultiSelect
+                <Select
                   inputId="timezone"
                   name="timezone"
                   value={selectedTimezone}
-                  options={timezoneOptions}
-                  onChange={(option) => {
-                    setTimezone(option ? option.value : '');
+                  options={timezones}
+                  onChange={(value) => {
+                    setTimezone(value || '');
                     setTimezoneError(null);
                   }}
                   isMulti={false}
+                  isSearchable
                   disabled={!saveEnabled || saving}
                   placeholder="Select timezone..."
                   noOptionsMessage={() => 'No timezones found'}
@@ -317,14 +315,18 @@ function UserForm({
                   <div className="col-start-3 col-span-4">
                     <Select
                       className="w-full"
-                      optionsName="totp"
+                      aria-label="totp-status"
                       options={[
-                        { value: 'Enabled', disabled: !totpEnabledAt },
+                        {
+                          value: 'Enabled',
+                          label: 'Enabled',
+                          isDisabled: !totpEnabledAt,
+                        },
                         'Disabled',
                       ]}
-                      value={totpState ? 'Enabled' : 'Disabled'}
-                      onChange={(value) => {
-                        setTotpState(value === 'Enabled');
+                      initialValues={[totpState ? 'Enabled' : 'Disabled']}
+                      onChange={(state) => {
+                        setTotpState(state === 'Enabled');
                       }}
                     />
                   </div>

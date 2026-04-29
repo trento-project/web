@@ -9,6 +9,7 @@ import PersonalAccessTokens from '@common/PersonalAccessTokens';
 
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
+import { timezones } from '@lib/timezones';
 
 import { editUser, getUser, deleteUserAccessToken } from '@lib/api/users';
 import { getAnalyticsEnabledConfig } from '@lib/analytics';
@@ -143,6 +144,7 @@ function EditUserPage() {
         analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
         timezone={timezone}
+        timezones={timezones}
         saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}

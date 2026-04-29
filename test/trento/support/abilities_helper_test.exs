@@ -66,4 +66,40 @@ defmodule Trento.Support.AbilitiesHelperTest do
              %{name: "baz", resource: "qux"}
            ])
   end
+
+  test "has_operation_ability?/3 returns true if user has global ability" do
+    first_ability = build(:ability, name: "manage", resource: "things")
+    second_ability = build(:ability, name: "all", resource: "all")
+
+    user = build(:user, abilities: [first_ability, second_ability])
+
+    assert AbilitiesHelper.has_operation_ability?(user, "start", "database")
+  end
+
+  test "has_operation_ability?/3 returns true if user has operations ability" do
+    first_ability = build(:ability, name: "manage", resource: "things")
+    second_ability = build(:ability, name: "operation", resource: "all")
+
+    user = build(:user, abilities: [first_ability, second_ability])
+
+    assert AbilitiesHelper.has_operation_ability?(user, "start", "database")
+  end
+
+  test "has_operation_ability?/3 returns true if user has specific operation ability" do
+    first_ability = build(:ability, name: "manage", resource: "things")
+    second_ability = build(:ability, name: "start", resource: "database")
+
+    user = build(:user, abilities: [first_ability, second_ability])
+
+    assert AbilitiesHelper.has_operation_ability?(user, "start", "database")
+  end
+
+  test "has_operation_ability?/3 returns false if user does not have any of the required abilities" do
+    first_ability = build(:ability, name: "manage", resource: "things")
+    second_ability = build(:ability, name: "read", resource: "things")
+
+    user = build(:user, abilities: [first_ability, second_ability])
+
+    refute AbilitiesHelper.has_operation_ability?(user, "start", "database")
+  end
 end
