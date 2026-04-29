@@ -122,12 +122,13 @@ function HostDetails({
   const currentlyAppliedSolution = get(saptuneStatus, 'applied_solution.id');
 
   // Format SLES subscriptions dates to be displayed in user's timezone
-  const formatSlesSubscriptionsTimes = (subs) =>
+  const formatSlesSubscriptionsTimes = (subs, tz) =>
     (subs || []).map((subscription) => {
+      const format = (date) => (date ? formatDateTime(date, tz) || date : date);
       return {
         ...subscription,
-        starts_at: formatDateTime(subscription?.starts_at, timezone),
-        expires_at: formatDateTime(subscription?.expires_at, timezone),
+        starts_at: format(subscription?.starts_at),
+        expires_at: format(subscription?.expires_at),
       };
     });
 
@@ -432,7 +433,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={formatSlesSubscriptionsTimes(slesSubscriptions)}
+            data={formatSlesSubscriptionsTimes(slesSubscriptions, timezone)}
           />
         </div>
       </div>
