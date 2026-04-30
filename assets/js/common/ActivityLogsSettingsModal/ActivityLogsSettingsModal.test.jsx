@@ -11,6 +11,15 @@ import ActivityLogsSettingsModal from '.';
 const positiveInt = () => faker.number.int({ min: 1 });
 
 describe('ActivityLogsSettingsModal component', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   it('renders correctly', async () => {
     const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
     await act(async () =>
@@ -49,6 +58,13 @@ describe('ActivityLogsSettingsModal component', () => {
     );
 
     expect(errorSpy).toHaveBeenCalled();
+    /* eslint-disable-next-line */
+    expect(console.error).toHaveBeenCalledWith(
+      expect.any(String),
+      TypeError("Cannot read properties of undefined (reading 'value')"),
+      expect.any(String),
+      expect.any(String)
+    );
   });
 
   it('should try to save all the changed fields', async () => {
