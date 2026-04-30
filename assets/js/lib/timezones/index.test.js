@@ -34,8 +34,8 @@ describe('computeTimezoneOffsets', () => {
     const res = computeTimezoneOffsets(null, now);
 
     expect(res).toEqual({
-      browserUtcOffsetMinutes: 120,
-      profileUtcOffsetMinutes: null,
+      browserUtcOffset: 120,
+      profileUtcOffset: null,
     });
   });
 
@@ -46,8 +46,8 @@ describe('computeTimezoneOffsets', () => {
     const res = computeTimezoneOffsets({ value: 'Europe/Berlin' }, now);
 
     expect(res).toEqual({
-      browserUtcOffsetMinutes: 120,
-      profileUtcOffsetMinutes: 120,
+      browserUtcOffset: 120,
+      profileUtcOffset: 120,
     });
   });
 });
