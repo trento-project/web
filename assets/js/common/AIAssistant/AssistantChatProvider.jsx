@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useMemo, useRef } from 'react';
+
 import { noop } from 'lodash';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
