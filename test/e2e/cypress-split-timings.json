@@ -1,0 +1,88 @@
+{
+  "durations": [
+    {
+      "spec": "cypress/e2e/about.cy.js",
+      "duration": 37000
+    },
+    {
+      "spec": "cypress/e2e/activity_log.cy.js",
+      "duration": 51000
+    },
+    {
+      "spec": "cypress/e2e/alerting.cy.js",
+      "duration": 0
+    },
+    {
+      "spec": "cypress/e2e/checks_catalog.cy.js",
+      "duration": 20000
+    },
+    {
+      "spec": "cypress/e2e/checks_customization.cy.js",
+      "duration": 53000
+    },
+    {
+      "spec": "cypress/e2e/clusters_overview.cy.js",
+      "duration": 35000
+    },
+    {
+      "spec": "cypress/e2e/databases_overview.cy.js",
+      "duration": 63000
+    },
+    {
+      "spec": "cypress/e2e/hana_cluster_details.cy.js",
+      "duration": 137000
+    },
+    {
+      "spec": "cypress/e2e/hana_database_details.cy.js",
+      "duration": 42000
+    },
+    {
+      "spec": "cypress/e2e/hana_scale_up_checks.cy.js",
+      "duration": 0
+    },
+    {
+      "spec": "cypress/e2e/home.cy.js",
+      "duration": 39000
+    },
+    {
+      "spec": "cypress/e2e/host_details.cy.js",
+      "duration": 83000
+    },
+    {
+      "spec": "cypress/e2e/hosts_overview.cy.js",
+      "duration": 219000
+    },
+    {
+      "spec": "cypress/e2e/sap_system_details.cy.js",
+      "duration": 37000
+    },
+    {
+      "spec": "cypress/e2e/sap_systems_overview.cy.js",
+      "duration": 137000
+    },
+    {
+      "spec": "cypress/e2e/saptune_details.cy.js",
+      "duration": 39000
+    },
+    {
+      "spec": "cypress/e2e/settings.cy.js",
+      "duration": 152000
+    },
+    {
+      "spec": "cypress/e2e/settings_integration.cy.js",
+      "duration": 0
+    },
+    {
+      "spec": "cypress/e2e/sso_integration.cy.js",
+      "duration": 0
+    },
+    {
+      "spec": "cypress/e2e/suse_manager_overviews.cy.js",
+      "duration": 40000
+    },
+    {
+      "spec": "cypress/e2e/users.cy.js",
+      "duration": 178000
+    }
+  ]
+}

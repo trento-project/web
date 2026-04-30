@@ -655,6 +655,7 @@ jobs:
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
+          SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
           cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
