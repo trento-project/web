@@ -181,4 +181,40 @@ describe('HostDetailsPage', () => {
       screen.queryByText('Please review SUSE Manager settings')
     ).toBeVisible();
   });
+
+  it('passes user timezone to host details rendering', async () => {
+    const host = hostFactory.build({
+      last_boot_timestamp: '2024-01-10T23:30:00Z',
+    });
+    const { id: hostID } = host;
+
+    const state = {
+      ...defaultInitialState,
+      user: {
+        ...defaultInitialState.user,
+        timezone: 'Pacific/Kiritimati',
+      },
+      hostsList: {
+        hosts: [host],
+      },
+      lastExecutions: { data: null, loading: false, errors: null },
+      softwareUpdates: {
+        settingsConfigured: false,
+        softwareUpdates: {},
+      },
+    };
+
+    const [StatefulHostDetails] = withState(<HostDetailsPage />, state);
+
+    await act(async () =>
+      renderWithRouterMatch(StatefulHostDetails, {
+        path: 'hosts/:hostID',
+        route: `/hosts/${hostID}`,
+      })
+    );
+
+    expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
+      '11 Jan 2024, 13:30:00'
+    );
+  });
 });

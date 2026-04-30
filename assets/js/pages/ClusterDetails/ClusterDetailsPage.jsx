@@ -75,7 +75,7 @@ export function ClusterDetailsPage() {
     getFilesystemType(state, clusterID)
   );
 
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   useEffect(() => {
     const env = buildEnv({
@@ -165,6 +165,7 @@ export function ClusterDetailsPage() {
         lastExecution={lastExecution}
         sapSystems={clusterSapSystems}
         userAbilities={abilities}
+        timezone={timezone}
         navigate={navigate}
         // the following props are specific to hana details
         clusterSids={getClusterSids(cluster)}

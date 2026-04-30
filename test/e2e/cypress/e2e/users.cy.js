@@ -110,6 +110,21 @@ describe('Users', () => {
       usersPage.pageTitleIsCorrectlyDisplayed('Users');
       usersPage.userWithModifiedNameIsDisplayed(fullname);
     });
+
+    it('should edit timezone properly', () => {
+      usersPage.apiCreateUser();
+      usersPage.refresh();
+      usersPage.clickNewUser();
+      const timezone = 'Europe/Madrid';
+
+      usersPage.selectTimezone(timezone);
+      usersPage.clickEditUserSaveButton();
+      usersPage.userEditedSuccessfullyToasterIsDisplayed();
+      usersPage.pageTitleIsCorrectlyDisplayed('Users');
+
+      usersPage.clickNewUser();
+      usersPage.timezoneValueIsDisplayed(timezone);
+    });
   });
 
   describe('Admin user profile', () => {
@@ -169,6 +184,16 @@ describe('Users', () => {
       usersPage.typeUserFullName('new_name');
       usersPage.clickEditUserSaveButton();
       usersPage.profileChangesSavedToasterIsDisplayed();
+    });
+
+    it('should edit timezone properly from the profile view', () => {
+      const timezone = 'Europe/Berlin';
+
+      basePage.clickUserDropdownProfileButton();
+      usersPage.selectTimezone(timezone);
+      usersPage.clickEditUserSaveButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
+      usersPage.timezoneValueIsDisplayed(timezone);
     });
 
     it('should fail editing user password if current password is wrong', () => {

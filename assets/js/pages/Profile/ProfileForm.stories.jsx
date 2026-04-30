@@ -46,20 +46,20 @@ export default {
     abilities: {
       description: 'User abilities array',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     onSave: {
       action: 'Save user',
       description: 'Save user action',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     totpEnabled: {
@@ -89,7 +89,7 @@ export default {
     analyticsEulaAccepted: {
       description: 'Whether the user accepted the analytics EULA',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     timezone: {
@@ -99,15 +99,16 @@ export default {
       },
     },
     timezones: {
-      description: 'Available timezone options for the timezone select (array of { value, label })',
+      description:
+        'Available timezone options for the timezone select (array of { value, label })',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     disableForm: {
       description: 'When true, disables all inputs and actions in the form',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     singleSignOnEnabled: {
@@ -126,43 +127,43 @@ export default {
     toggleTotpBox: {
       description: 'Callback to open or close the TOTP enrollment box',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     loading: {
       description: 'Indicates whether the form is in a loading state',
       control: {
-        type: 'boolean'
+        type: 'boolean',
       },
     },
     togglePasswordModal: {
       description: 'Callback to open or close the password change modal',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     onResetTotp: {
       description: "Callback invoked to reset the user's TOTP (disable TOTP)",
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     onVerifyTotp: {
       description: 'Callback invoked to verify a TOTP token during enrollment',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     onEnableTotp: {
       description: 'Callback invoked to start the TOTP enrollment flow',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
     passwordModalOpen: {
       description: 'Whether the change-password modal is currently open',
       control: {
-        type: 'text'
+        type: 'text',
       },
     },
   },
@@ -185,7 +186,7 @@ export const Default = {
     analyticsEnabledConfig: true,
     analyticsEnabled,
     timezone,
-    timezones: ["GMT+00:00", "GMT+01:00", "GMT+02:00"],
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
   },
 };
 

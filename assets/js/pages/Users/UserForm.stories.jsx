@@ -99,15 +99,16 @@ export default {
       },
     },
     analyticsEnabledConfig: {
-      description: 'Toggles visibility of Analytics switch. Analytics config is enabled',
+      description:
+        'Toggles visibility of Analytics switch. Analytics config is enabled',
       control: {
-        type: 'boolean'
+        type: 'boolean',
       },
     },
     analyticsEnabled: {
       description: 'Toggles tracking user analytics',
       control: {
-        type: 'boolean'
+        type: 'boolean',
       },
     },
     timezone: {
@@ -190,7 +191,7 @@ export const Editing = {
     timezone,
     editing: true,
     saveText: 'Save',
-    timezones: ["GMT+00:00", "GMT+01:00", "GMT+02:00"],
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
   },
 };
 

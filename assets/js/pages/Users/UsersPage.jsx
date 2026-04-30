@@ -4,6 +4,8 @@ import { toast } from 'react-hot-toast';
 
 import { listUsers, deleteUser } from '@lib/api/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
+import { useSelector } from 'react-redux';
+import { getUserProfile } from '@state/selectors/user';
 
 import Users from './Users';
 
@@ -15,6 +17,8 @@ function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+
+  const { timezone } = useSelector(getUserProfile);
 
   const navigate = useNavigate();
 
@@ -64,6 +68,7 @@ function UsersPage() {
       users={users}
       loading={loading}
       singleSignOnEnabled={isSingleSignOnEnabled()}
+      timezone={timezone}
     />
   );
 }

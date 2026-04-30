@@ -18,7 +18,7 @@ const filterPatchesByAdvisoryType = (patches, advisoryType) =>
     advisoryType === 'all' ? true : advisory_type === advisoryType
   );
 
-function HostRelevantPatches({ hostName, onNavigate, patches }) {
+function HostRelevantPatches({ hostName, onNavigate, patches, timezone }) {
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
   const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
@@ -106,7 +106,11 @@ function HostRelevantPatches({ hostName, onNavigate, patches }) {
           </a>
         </div>
       </div>
-      <PatchList onNavigate={onNavigate} patches={displayedPatches} />
+      <PatchList
+        onNavigate={onNavigate}
+        patches={displayedPatches}
+        timezone={timezone}
+      />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { capitalize, noop } from 'lodash';
-import { format } from 'date-fns';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
+import { formatDateOnly } from '@lib/timezones';
 
 import {
   SUMA_PRODUCT_LABEL,
@@ -42,6 +42,7 @@ function SuseManagerSettingsModal({
   initialUsername,
   initialUrl,
   certUploadDate,
+  timezone,
   errors = defaultErrors,
   onSave = noop,
   onCancel = noop,
@@ -117,7 +118,7 @@ function SuseManagerSettingsModal({
             <div>
               <div>Certificate Uploaded</div>
               <div className="text-xs">
-                {format(certUploadDate, "'Uploaded:' dd MMM y")}
+                Uploaded: {formatDateOnly(certUploadDate, timezone)}
               </div>
             </div>
             <div className="flex flex-row grow justify-end">

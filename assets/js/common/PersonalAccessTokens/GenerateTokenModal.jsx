@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import { noop } from 'lodash';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
-import { format } from 'date-fns';
+import { formatDateOnly } from '@lib/timezones';
 
 import { availableSelectTimeOptions, normalizeDate } from '@lib/date';
 import Button from '@common/Button';
@@ -19,6 +19,7 @@ function GenerateTokenModal({
   isOpen = false,
   onGenerate = noop,
   onClose = noop,
+  timezone,
 }) {
   const timeOptions = availableSelectTimeOptions.map((o) => o.type);
   const [tokenName, setTokenName] = useState('');
@@ -114,7 +115,7 @@ function GenerateTokenModal({
 
           <div className="mt-2 text-gray-600 text-sm">
             {expirationDate
-              ? `Key will expire ${isValidDate(expirationDate) ? format(expirationDate, 'd LLL yyyy') : ''}`
+              ? `Key will expire ${isValidDate(expirationDate) ? formatDateOnly(expirationDate, timezone) : ''}`
               : 'Key will never expire'}
           </div>
         </div>

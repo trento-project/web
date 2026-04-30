@@ -1,5 +1,5 @@
 import React from 'react';
-import { format } from 'date-fns';
+import { formatDateOnly } from '@lib/timezones';
 
 import PageHeader from '@common/PageHeader';
 import ListView from '@common/ListView';
@@ -16,6 +16,7 @@ function AdvisoryDetails({
   advisoryName,
   errata,
   affectsPackageMaintenanceStack,
+  timezone,
 }) {
   const {
     issue_date: issueDate,
@@ -52,7 +53,7 @@ function AdvisoryDetails({
             data={[
               {
                 title: 'Issued',
-                content: format(issueDate, 'd MMM y'),
+                content: formatDateOnly(issueDate, timezone),
               },
               {
                 title: 'Status',
@@ -60,7 +61,7 @@ function AdvisoryDetails({
               },
               {
                 title: 'Updated',
-                content: format(updateDate, 'd MMM y'),
+                content: formatDateOnly(updateDate, timezone),
               },
               {
                 title: 'Reboot Required',

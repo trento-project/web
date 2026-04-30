@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { format, parseISO } from 'date-fns';
-
 import Button from '@common/Button';
+import { formatDateTime, DEFAULT_TIMEZONE } from '@lib/timezones';
 import Input, { Password } from '@common/Input';
 import Label from '@common/Label';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
@@ -16,7 +15,6 @@ import {
   errorMessage,
 } from '@lib/forms';
 import { getError } from '@lib/api/validationErrors';
-import { DEFAULT_TIMEZONE } from '@lib/timezones';
 import { generateValidPassword } from './generatePassword';
 
 const USER_ENABLED = 'Enabled';
@@ -346,15 +344,15 @@ function UserForm({
                 <>
                   <Label className="col-start-1 col-span-2">Created</Label>
                   <span className="col-start-3 col-span-4">
-                    {format(parseISO(createdAt), 'PPpp')}
+                    {formatDateTime(createdAt, timezone)}
                   </span>
                   <Label className="col-start-1 col-span-2">Updated</Label>
                   <span className="col-start-3 col-span-4">
-                    {format(parseISO(updatedAt), 'PPpp')}
+                    {formatDateTime(updatedAt, timezone)}
                   </span>
                   <Label className="col-start-1 col-span-2">Last Login</Label>
                   <span className="col-start-3 col-span-4">
-                    {lastLoginAt ? format(parseISO(lastLoginAt), 'PPpp') : '-'}
+                    {lastLoginAt ? formatDateTime(lastLoginAt, timezone) : '-'}
                   </span>
                 </>
               )}

@@ -1,26 +1,21 @@
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';
-import { utc } from '@date-fns/utc';
-import { format, parseISO } from 'date-fns';
+import { TZDate, tz } from '@date-fns/tz';
 
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
+import { format, subDays, subHours } from 'date-fns';
+import { DATETIME_LOCAL_FORMAT, formatDateTime } from '@lib/timezones';
 
 import Input from '@common/Input';
 
-const oneHour = 60 * 60 * 1000;
 const preconfiguredOptions = {
-  '1h ago': () => new Date(Date.now() - oneHour),
-  '24h ago': () => new Date(Date.now() - 24 * oneHour),
-  '7d ago': () => new Date(Date.now() - 7 * 24 * oneHour),
-  '30d ago': () => new Date(Date.now() - 30 * 24 * oneHour),
+  '1h ago': () => subHours(new Date(), 1),
+  '24h ago': () => subHours(new Date(), 24),
+  '7d ago': () => subDays(new Date(), 7),
+  '30d ago': () => subDays(new Date(), 30),
 };
-
-const toHumanDate = (date) =>
-  date &&
-  date instanceof Date &&
-  format(date, 'MM/dd/yyyy hh:mm:ss a', { in: utc });
 
 const renderOptionItem = (option, placeholder) => {
   if (!option || !Array.isArray(option)) {
@@ -55,11 +50,11 @@ const parseInputOptions = (options) =>
     )
     .sort((a, b) => b[1]().getTime() - a[1]().getTime());
 
-const getSelectedOption = (options, value) => {
+const getSelectedOption = (options, value, timezone) => {
   const selectedId = Array.isArray(value) ? value[0] : value;
   if (selectedId === 'custom') {
     const date = new Date(value[1]);
-    return ['custom', date, () => toHumanDate(date)];
+    return ['custom', date, () => formatDateTime(date, timezone)];
   }
   if (typeof selectedId === 'string') {
     return options.find((option) => option[0] === selectedId);
@@ -75,18 +70,63 @@ function Tick() {
   );
 }
 
-function DateTimeInput({ value, onChange }) {
-  const dateToValue = (date) =>
-    format(date, "yyyy-MM-dd'T'HH:mm:ss.SSS", { in: utc });
+function DateTimeInput({ value, onChange, timezone }) {
+  // Transforms a datetime-local input value (which is in the user's browser timezone) to a UTC Date object in the user's profile timezone.
+  const dateTimeLocalToUtcDate = (dateTimeLocalValue) => {
+    // Example: user selected in the dropdown "2009-10-09T18:00"
+    // their profile's timezone is GMT+5,
+    // but their browser is set to GMT+2
+    if (!dateTimeLocalValue) {
+      return null;
+    }
+
+    // Parse the text input as a date in the user's local timezone
+    // Example: "2009-10-09T18:00, GMT+2" in GMT+2 is parsed as "2009-10-09T18:00, GMT+2"
+    const parsedDate = new Date(dateTimeLocalValue);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return null;
+    }
+
+    // Transform the parsed date from the user's profile timezone to UTC, accounting for DST if applicable.
+    // Example: "2009-10-09T18:00, GMT+2" in GMT+2 is transformed to UTC to "2009-10-09T15:00, GMT+2"
+    // That is the actual UTC date corresponding to GMT+5, as "18:00"- 5 hours = "13:00" UTC, which is the same instant as "18:00" GMT+5.
+    // This date will be converted by ActivityLogPage/searchParams.js using "toISOString" to the string "2009-10-09T13:00:00.000Z", which is the format expected by the backend.
+    const utcDate = TZDate.tz(
+      timezone,
+      parsedDate.getFullYear(),
+      parsedDate.getMonth(),
+      parsedDate.getDate(),
+      parsedDate.getHours(),
+      parsedDate.getMinutes(),
+      parsedDate.getSeconds(),
+      parsedDate.getMilliseconds()
+    );
+
+    return utcDate;
+  };
+
+  // Transforms a date into a string formatted for the datetime-local input, using the user's profile timezone.
+  const dateToValue = (date) => {
+    // Example: "2009-10-09T15:00, GMT+2"
+    if (!(date instanceof Date)) {
+      return '';
+    }
+
+    // Example: the UTC date "2009-10-09T15:00, GMT+2" is transformed to the string "2026-04-16T18:21"
+    // This format is internal to the "datetime-local"
+    return format(date, DATETIME_LOCAL_FORMAT, { in: tz(timezone) });
+  };
 
   return (
     <Input
       value={value && dateToValue(value)}
       onChange={(e) => {
-        // `parseISO handles "normalization" (missing seconds or
-        // milliseconds in the string) and returns UTCDate, we then
-        // convert it to normal Date.
-        onChange(new Date(parseISO(`${e.target.value}`, { in: utc })));
+        const utcDate = dateTimeLocalToUtcDate(e.target.value);
+
+        if (utcDate) {
+          onChange(utcDate);
+        }
       }}
       type="datetime-local"
     />
@@ -126,6 +166,7 @@ function DateFilter({
   prefilled = true,
   onChange,
   className,
+  timezone,
 }) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
@@ -134,7 +175,7 @@ function DateFilter({
     prefilled ? [...Object.entries(preconfiguredOptions), ...options] : options
   );
 
-  const selectedOption = getSelectedOption(parsedOptions, value);
+  const selectedOption = getSelectedOption(parsedOptions, value, timezone);
 
   useOnClickOutside(ref, () => setOpen(false));
 
@@ -248,6 +289,7 @@ function DateFilter({
                           selectedOption[0] === 'custom' &&
                           selectedOption[1]
                         }
+                        timezone={timezone}
                         onChange={(date) => onChange(['custom', date])}
                       />
                       {selectedOption && selectedOption[0] === 'custom' && (
