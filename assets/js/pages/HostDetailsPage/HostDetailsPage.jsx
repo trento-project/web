@@ -59,7 +59,7 @@ function HostDetailsPage() {
   const { abilities, timezone } = useSelector(getUserProfile);
 
   const lastExecution = useSelector(getLastExecution(hostID));
-  const catalog = useSelector(getCatalog());
+  const catalog = useSelector(getCatalog);
 
   const hostSelectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)

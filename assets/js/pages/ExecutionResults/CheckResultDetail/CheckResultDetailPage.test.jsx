@@ -1,6 +1,8 @@
 import React from 'react';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
+import { Route } from 'react-router';
+import userEvent from '@testing-library/user-event';
 
 import '@testing-library/jest-dom';
 
@@ -28,9 +30,11 @@ describe('CheckResultDetailPage Component', () => {
     ] = hostsList;
 
     const checksCatalog = catalogCheckFactory.buildList(2);
+    const firstCheckExpectations = checksCatalog[0].expectations;
     const completedExecution = checksExecutionCompletedForTargetsFactory.build({
       targets: [agent1, agent2],
       check_id: [checksCatalog[0].id, checksCatalog[1].id],
+      expectations: firstCheckExpectations,
     });
 
     const initialState = {
@@ -80,7 +84,8 @@ describe('CheckResultDetailPage Component', () => {
     return { validClusterID, validCheckID, validTargetType, validTargetName };
   };
 
-  it('should not render CheckResultDetailPage when clusterID in the url is false', () => {
+  it('should not render CheckResultDetailPage when clusterID in the url is false', async () => {
+    const user = userEvent.setup();
     const reduxStore = initialStore();
     const { validCheckID, validTargetName, validTargetType } =
       getValidStoreData(reduxStore);
@@ -92,14 +97,16 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${falseClusterID}/executions/last/${validCheckID}/${validTargetType}/${validTargetName}`,
+      children: <Route path={'/clusters'} element={<></>} />,
     });
 
     expect(screen.getByText('Go back to clusters overview')).toBeTruthy();
-    fireEvent.click(screen.getByText('Go back to clusters overview'));
+    await user.click(screen.getByText('Go back to clusters overview'));
     expect(window.location.pathname).toEqual('/clusters');
   });
 
-  it('should not render CheckResultDetailPage when checkID in the url is false', () => {
+  it('should not render CheckResultDetailPage when checkID in the url is false', async () => {
+    const user = userEvent.setup();
     const reduxStore = initialStore();
     const { validClusterID, validTargetType, validTargetName } =
       getValidStoreData(reduxStore);
@@ -112,16 +119,23 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${falseCheckID}/${validTargetType}/${validTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
 
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
-    fireEvent.click(screen.getByText('Go back to last execution'));
+    await user.click(screen.getByText('Go back to last execution'));
     expect(window.location.pathname).toEqual(
       `/clusters/${validClusterID}/executions/last`
     );
   });
 
-  it('should not render CheckResultDetailPage when targetType in the url is false', () => {
+  it('should not render CheckResultDetailPage when targetType in the url is false', async () => {
+    const user = userEvent.setup();
     const reduxStore = initialStore();
     const { validClusterID, validCheckID, validTargetName } =
       getValidStoreData(reduxStore);
@@ -133,15 +147,22 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${invalidTargetType}/${validTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
-    fireEvent.click(screen.getByText('Go back to last execution'));
+    await user.click(screen.getByText('Go back to last execution'));
     expect(window.location.pathname).toEqual(
       `/clusters/${validClusterID}/executions/last`
     );
   });
 
-  it('should not render CheckResultDetailPage when targetName in the url is false', () => {
+  it('should not render CheckResultDetailPage when targetName in the url is false', async () => {
+    const user = userEvent.setup();
     const reduxStore = initialStore();
     const { validClusterID, validCheckID, validTargetType } =
       getValidStoreData(reduxStore);
@@ -153,9 +174,15 @@ describe('CheckResultDetailPage Component', () => {
     renderWithRouterMatch(StatefulCheckResultDetailPage, {
       path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
       route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${validTargetType}/${invalidTargetName}`,
+      children: (
+        <Route
+          path={`/clusters/${validClusterID}/executions/last`}
+          element={<></>}
+        />
+      ),
     });
     expect(screen.getByText('Go back to last execution')).toBeTruthy();
-    fireEvent.click(screen.getByText('Go back to last execution'));
+    await user.click(screen.getByText('Go back to last execution'));
     expect(window.location.pathname).toEqual(
       `/clusters/${validClusterID}/executions/last`
     );

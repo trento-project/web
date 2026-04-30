@@ -156,30 +156,6 @@ const checkResultForTarget = (agentId) =>
     agent_id: agentId,
   });
 
-export const checksExecutionCompletedForTargetsFactory = Factory.define(
-  ({ params }) => {
-    const targets = params.targets || [
-      faker.string.uuid(),
-      faker.string.uuid(),
-    ];
-
-    const checkResults = params.check_id
-      ? params.check_id.map((checkID) =>
-          checkResultFactory.build({
-            agents_check_results: targets.map(checkResultForTarget),
-            check_id: checkID,
-          })
-        )
-      : checkResultFactory.buildList(2, {
-          agents_check_results: targets.map(checkResultForTarget),
-        });
-
-    return checksExecutionCompletedFactory.build({
-      check_results: checkResults,
-    });
-  }
-);
-
 export const withEmptyExpectations = (checkResult) => {
   const agents = checkResult.agents_check_results.map((agent) => ({
     ...agent,
@@ -254,6 +230,40 @@ export const addCriticalExpectExpectation = (checkResult, expectationName) => {
 };
 export const addPassingExpectSameExpectation = (checkResult, expectationName) =>
   addExpectationWithResult(checkResult, 'expect_same', expectationName, true);
+
+export const checksExecutionCompletedForTargetsFactory = Factory.define(
+  ({ params }) => {
+    const targets = params.targets || [
+      faker.string.uuid(),
+      faker.string.uuid(),
+    ];
+
+    const expectations = params.expectations || [];
+
+    const checkResults = params.check_id
+      ? params.check_id.map((checkID) =>
+          checkResultFactory.build({
+            agents_check_results: targets.map(checkResultForTarget),
+            check_id: checkID,
+          })
+        )
+      : checkResultFactory.buildList(2, {
+          agents_check_results: targets.map(checkResultForTarget),
+        });
+
+    const checkResultsWithExpectations = checkResults.map((checkResult) =>
+      expectations.reduce(
+        (acc, expectation) =>
+          addExpectation(acc, expectation.name, expectation, resultEnum()),
+        checkResult
+      )
+    );
+
+    return checksExecutionCompletedFactory.build({
+      check_results: checkResultsWithExpectations,
+    });
+  }
+);
 
 export const agentsCheckResultsWithHostname = (
   agentsCheckResults,
