@@ -239,7 +239,6 @@ context('Hosts Overview', () => {
       basePage.visit(anyPageUrl);
       basePage.validateUrl(anyPageUrl);
       hostsOverviewPage.goBack();
-      hostsOverviewPage.waitForClustersEndpoint();
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
     });
@@ -254,7 +253,6 @@ context('Hosts Overview', () => {
       hostsOverviewPage.goBack();
       basePage.validateUrl(anyPageUrl);
       hostsOverviewPage.goForward();
-      hostsOverviewPage.waitForClustersEndpoint();
       hostsOverviewPage.validateUrl(`hostname=${hostname}`);
       hostsOverviewPage.hostsListedAre(1);
     });
@@ -320,7 +318,6 @@ context('Hosts Overview', () => {
       basePage.visit(anyPageUrl);
       basePage.validateUrl(anyPageUrl);
       hostsOverviewPage.goBack();
-      hostsOverviewPage.waitForClustersEndpoint();
       hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.expectedPaginationIsDisplayed('Showing 11–20 of 27');
     });
@@ -336,7 +333,6 @@ context('Hosts Overview', () => {
       basePage.validateUrl(anyPageUrl);
 
       hostsOverviewPage.goBack();
-      hostsOverviewPage.waitForClustersEndpoint();
 
       hostsOverviewPage.validateUrl(expectedParams);
       hostsOverviewPage.hostsListedAre(20);

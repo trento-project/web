@@ -65,11 +65,8 @@ export const visit = (params) => {
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
-  return waitForClustersEndpoint();
+  return basePage.waitForRequest('clustersEndpoint');
 };
-
-export const waitForClustersEndpoint = () =>
-  basePage.waitForRequest('clustersEndpoint');
 
 export const validateUrl = (params) =>
   basePage.validateUrl(`${url}${params ? '?' + params : ''}`);
