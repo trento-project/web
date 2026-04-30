@@ -3,9 +3,10 @@ import { format } from 'date-fns';
 import tzdata from 'tzdata';
 
 const DEFAULT_TIMEZONE = 'Etc/UTC';
-const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss';
-const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy';
-const TIME_24H_HH_MM_FORMAT = 'HH:mm:ss';
+const DATETIME_DAY_MONTH_24H_FORMAT = 'dd MMM yyyy, HH:mm:ss'; // For formatting date and time values in the UI (e.g., "01 Jun 2024, 14:30:00")
+const DATE_DAY_MONTH_YEAR_FORMAT = 'dd MMM yyyy'; // For formatting date-only values in the UI (e.g., "01 Jun 2024")
+const TIME_24H_HH_MM_FORMAT = 'HH:mm:ss'; // For formatting time-only values in the UI (e.g., "14:30:00")
+const DATETIME_LOCAL_FORMAT = "yyyy-MM-dd'T'HH:mm"; // For parsing datetime-local input values (e.g., "2024-06-01T14:30")
 
 /**
  * Generate timezone options from the IANA tzdata database.
@@ -94,6 +95,7 @@ function formatTimeOnly(date, timezone = DEFAULT_TIMEZONE) {
 
 export {
   DATETIME_DAY_MONTH_24H_FORMAT,
+  DATETIME_LOCAL_FORMAT,
   DATE_DAY_MONTH_YEAR_FORMAT,
   DEFAULT_TIMEZONE,
   TIME_24H_HH_MM_FORMAT,
