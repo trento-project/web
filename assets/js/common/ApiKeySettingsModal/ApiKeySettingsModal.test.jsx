@@ -217,6 +217,7 @@ describe('ApiKeySettingsModal', () => {
       const user = userEvent.setup();
       const apiKey = faker.string.alpha({ length: { min: 100, max: 100 } });
       const nowISO = new Date().toISOString();
+      jest.spyOn(window, 'prompt').mockReturnValue();
 
       render(
         <ApiKeySettingsModal
@@ -235,6 +236,7 @@ describe('ApiKeySettingsModal', () => {
         screen.getByRole('button', { name: 'copy to clipboard' })
       );
 
+      expect(window.prompt).toHaveBeenCalledWith(expect.anything(), apiKey);
       expect(screen.getByText(apiKey)).toBeVisible();
     });
   });
