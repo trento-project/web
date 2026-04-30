@@ -2,39 +2,39 @@
   "durations": [
     {
       "spec": "cypress/e2e/about.cy.js",
-      "duration": 37323
+      "duration": 37000
     },
     {
       "spec": "cypress/e2e/activity_log.cy.js",
-      "duration": 51084
+      "duration": 51000
     },
     {
       "spec": "cypress/e2e/alerting.cy.js",
-      "duration": 188
+      "duration": 0
     },
     {
       "spec": "cypress/e2e/checks_catalog.cy.js",
-      "duration": 19597
+      "duration": 20000
     },
     {
       "spec": "cypress/e2e/checks_customization.cy.js",
-      "duration": 53299
+      "duration": 53000
     },
     {
       "spec": "cypress/e2e/clusters_overview.cy.js",
-      "duration": 34919
+      "duration": 35000
     },
     {
       "spec": "cypress/e2e/databases_overview.cy.js",
-      "duration": 63361
+      "duration": 63000
     },
     {
       "spec": "cypress/e2e/hana_cluster_details.cy.js",
-      "duration": 136861
+      "duration": 137000
     },
     {
       "spec": "cypress/e2e/hana_database_details.cy.js",
-      "duration": 41612
+      "duration": 42000
     },
     {
       "spec": "cypress/e2e/hana_scale_up_checks.cy.js",
@@ -42,35 +42,35 @@
     },
     {
       "spec": "cypress/e2e/home.cy.js",
-      "duration": 39469
+      "duration": 39000
     },
     {
       "spec": "cypress/e2e/host_details.cy.js",
-      "duration": 82662
+      "duration": 83000
     },
     {
       "spec": "cypress/e2e/hosts_overview.cy.js",
-      "duration": 218727
+      "duration": 219000
     },
     {
       "spec": "cypress/e2e/sap_system_details.cy.js",
-      "duration": 36610
+      "duration": 37000
     },
     {
       "spec": "cypress/e2e/sap_systems_overview.cy.js",
-      "duration": 136724
+      "duration": 137000
     },
     {
       "spec": "cypress/e2e/saptune_details.cy.js",
-      "duration": 39094
+      "duration": 39000
     },
     {
       "spec": "cypress/e2e/settings.cy.js",
-      "duration": 151545
+      "duration": 152000
     },
     {
       "spec": "cypress/e2e/settings_integration.cy.js",
-      "duration": 440
+      "duration": 0
     },
     {
       "spec": "cypress/e2e/sso_integration.cy.js",
@@ -78,11 +78,11 @@
     },
     {
       "spec": "cypress/e2e/suse_manager_overviews.cy.js",
-      "duration": 39770
+      "duration": 40000
     },
     {
       "spec": "cypress/e2e/users.cy.js",
-      "duration": 177501
+      "duration": 178000
     }
   ]
 }
