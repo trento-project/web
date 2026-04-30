@@ -127,6 +127,9 @@ export const getSelectControlValue = (ariaLabel) =>
 
 export const clickOutside = () => cy.get('body').click();
 
+export const goNavigationMenuItem = (item) =>
+  cy.get(`a:contains("${item}")`).click();
+
 // UI Validations
 
 export const shouldRedirectToIdpUrl = () =>
@@ -491,3 +494,29 @@ export const getAlertingSettings = () =>
       failOnStatusCode: false,
     })
   );
+
+export const interceptInitialDataFetch = () => {
+  cy.intercept('/api/v1/hosts').as('hostsInitialFetch');
+  cy.intercept('/api/v1/sap_systems').as('sapSystemsInitialFetch');
+  cy.intercept('/api/v1/databases').as('databasesInitialFetch');
+  return cy.intercept('/api/v2/clusters').as('clustersInitialFetch');
+};
+
+export const waitForInitialDataFetch = () => {
+  waitForRequest('hostsInitialFetch');
+  waitForRequest('sapSystemsInitialFetch');
+  waitForRequest('databasesInitialFetch');
+  return waitForRequest('clustersInitialFetch');
+};
+
+export const interceptRefreshTokenRequest = () =>
+  cy.intercept('/api/session/refresh').as('refreshEndpoint');
+
+export const waitForRefreshRequest = () => waitForRequest('refreshEndpoint');
+
+export const checkRefreshRequestCount = (count) =>
+  cy.get('@refreshEndpoint.all').should('have.length', count);
+
+// Other support helpers
+export const clearAccessTokenFromStorage = () =>
+  cy.clearLocalStorage('access_token');
