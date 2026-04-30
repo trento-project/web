@@ -46,6 +46,11 @@
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
+    "@ag-ui/client": "^0.0.52",
+    "@ag-ui/core": "^0.0.52",
+    "@assistant-ui/react": "^0.12.24",
+    "@assistant-ui/react-ag-ui": "^0.0.25",
+    "@assistant-ui/react-markdown": "^0.12.8",
     "@date-fns/tz": "^1.4.1",
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.7",
@@ -80,6 +85,7 @@
     "react-select": "^5.10.2",
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",
+    "rxjs": "^7.8.1",
     "semver": "^7.7.4",
     "tzdata": "^1.0.48",
     "uuid": "^11.1.0"
