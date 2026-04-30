@@ -15,7 +15,8 @@ export default {
     },
     errata: {
       control: 'object',
-      description: 'Errata object containing details, fixes, CVEs, and affected items',
+      description:
+        'Errata object containing details, fixes, CVEs, and affected items',
       table: {
         type: { summary: 'object' },
       },

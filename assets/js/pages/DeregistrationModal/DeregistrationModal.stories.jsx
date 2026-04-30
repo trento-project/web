@@ -61,8 +61,9 @@ function ButtonToOpenModal({ ...rest }) {
     <>
       <Button
         type="default-fit"
-        className={`inline-block mx-0.5 border-green-500 border w-fit ${deregistered ? 'bg-rose-500' : 'bg-jungle-green-500'
-          }`}
+        className={`inline-block mx-0.5 border-green-500 border w-fit ${
+          deregistered ? 'bg-rose-500' : 'bg-jungle-green-500'
+        }`}
         size="small"
         onClick={() => setOpen(true)}
       >
