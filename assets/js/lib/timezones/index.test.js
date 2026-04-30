@@ -1,6 +1,12 @@
 import { DEFAULT_TIMEZONE, parseDateTimeLocalToUtc } from './index';
 
-import { formatDateTime, formatDateOnly, formatTimeOnly } from './index';
+import {
+  formatDateTime,
+  formatDateOnly,
+  formatTimeOnly,
+  formatOffset,
+  computeTimezoneOffsets,
+} from './index';
 
 describe('timezone format constants', () => {
   const sampleDate = new Date('2024-08-04T10:21:00.123Z');
@@ -17,6 +23,48 @@ describe('timezone format constants', () => {
 
   it('formatTimeOnly returns correct string', () => {
     expect(formatTimeOnly(sampleDate, DEFAULT_TIMEZONE)).toBe('10:21:00');
+  });
+});
+
+describe('computeTimezoneOffsets', () => {
+  it('returns browser offset and null profile when no timezone selected', () => {
+    const now = new Date('2009-10-09T21:00:00.000Z');
+    now.getTimezoneOffset = () => -120;
+
+    const res = computeTimezoneOffsets(null, now);
+
+    expect(res).toEqual({
+      browserUtcOffset: 120,
+      profileUtcOffset: null,
+    });
+  });
+
+  it('returns both browser and profile offsets when timezone selected', () => {
+    const now = new Date('2009-10-09T21:00:00.000Z');
+    now.getTimezoneOffset = () => -120;
+
+    const res = computeTimezoneOffsets({ value: 'Europe/Berlin' }, now);
+
+    expect(res).toEqual({
+      browserUtcOffset: 120,
+      profileUtcOffset: 120,
+    });
+  });
+});
+
+describe('formatOffset', () => {
+  it('formats positive offsets correctly', () => {
+    expect(formatOffset(120)).toBe('+02:00');
+    expect(formatOffset(30)).toBe('+00:30');
+  });
+
+  it('formats negative offsets correctly', () => {
+    expect(formatOffset(-90)).toBe('-01:30');
+    expect(formatOffset(-0)).toBe('+00:00');
+  });
+
+  it('formats zero offset as +00:00', () => {
+    expect(formatOffset(0)).toBe('+00:00');
   });
 });
 
