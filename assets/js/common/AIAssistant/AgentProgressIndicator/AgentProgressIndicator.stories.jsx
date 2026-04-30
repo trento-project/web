@@ -13,6 +13,7 @@ export default {
       control: { type: 'text' },
     },
   },
+
   render: (args) => (
     <AgentProgressIndicatorView>{args.children}</AgentProgressIndicatorView>
   ),

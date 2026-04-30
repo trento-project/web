@@ -6,6 +6,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { useAuiState } from '@assistant-ui/react';
+
 import AgentProgressIndicator, {
   AgentProgressIndicatorView,
   deriveProgressLabel,
