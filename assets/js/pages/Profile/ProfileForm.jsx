@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { computeTimezoneOffsets, formatOffset } from '@lib/timezones';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -116,6 +117,17 @@ function ProfileForm({
 
   const selectedTimezone =
     timezones.find((opt) => opt.value === timezoneState) || null;
+
+  // Compute UTC offsets (in minutes) from helper and evaluate warning locally
+  const { browserUtcOffset, profileUtcOffset } =
+    computeTimezoneOffsets(selectedTimezone);
+
+  // Show warning if browser and profile offsets differ
+  const showTimezoneWarning = Boolean(
+    selectedTimezone &&
+    profileUtcOffset !== null &&
+    browserUtcOffset !== profileUtcOffset
+  );
 
   return (
     <div>
@@ -241,6 +253,19 @@ function ProfileForm({
               noOptionsMessage={() => 'No timezones found'}
             />
             {timezoneErrorState && errorMessage(timezoneErrorState)}
+            {showTimezoneWarning && (
+              <div
+                className="mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-sm"
+                data-testid="timezone-warning"
+              >
+                <strong>Warning:</strong> Your browser UTC offset is{' '}
+                <b>{formatOffset(browserUtcOffset)}</b>, but your profile
+                timezone offset is <b>{formatOffset(profileUtcOffset)}</b>.{' '}
+                <br />
+                The Trento UI will always use your profile timezone to display
+                timestamps, not your browser&apos;s.
+              </div>
+            )}
           </div>
           {analyticsEnabledConfig && (
             <>

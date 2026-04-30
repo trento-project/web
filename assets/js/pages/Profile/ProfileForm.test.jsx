@@ -15,6 +15,9 @@ const getTimezoneLabel = (timezone) =>
 const userTimezone = 'Europe/Berlin';
 
 describe('ProfileForm', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should render a pre-filled form', () => {
     const { username, fullname, email, abilities } = profileFactory.build();
 
@@ -98,6 +101,7 @@ describe('ProfileForm', () => {
         analyticsEnabled={analytics_enabled}
         analyticsEulaAccepted={analytics_eula_accepted}
         timezone={timezone}
+        timezones={timezones}
         onSave={mockOnSave}
       />
     );
@@ -474,6 +478,49 @@ describe('ProfileForm', () => {
     expect(mockOnSave).toHaveBeenCalledWith(
       expect.objectContaining({ timezone })
     );
+  });
+
+  it('should display a timezone warning when browser and profile offsets differ', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+    const timezone = 'Pacific/Port_Moresby';
+    const expectedWarning =
+      "Warning: Your browser UTC offset is +02:00, but your profile timezone offset is +10:00. The Trento UI will always use your profile timezone to display timestamps, not your browser's.";
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={timezone}
+        timezones={timezones}
+      />
+    );
+
+    const warning = await screen.findByTestId('timezone-warning');
+    expect(warning).toBeVisible();
+    expect(warning).toHaveTextContent(expectedWarning);
+  });
+
+  it('should not display a timezone warning when browser and profile offsets match', () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
+      />
+    );
+
+    expect(
+      screen.queryByText(/The Trento UI will always use your profile timezone/i)
+    ).not.toBeInTheDocument();
   });
 
   it('should set timezone error when timezone error is provided', async () => {
