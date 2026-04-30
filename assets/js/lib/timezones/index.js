@@ -93,14 +93,39 @@ function formatTimeOnly(date, timezone = DEFAULT_TIMEZONE) {
   return formatWithTimezone(date, TIME_24H_HH_MM_FORMAT, timezone);
 }
 
+// Compute browser/profile offsets
+function computeTimezoneOffsets(selectedTimezone, now = new Date()) {
+  const browserUtcOffsetMinutes = -now.getTimezoneOffset();
+  const profileUtcOffsetMinutes =
+    selectedTimezone && selectedTimezone.value
+      ? tzOffset(selectedTimezone.value, now)
+      : null;
+
+  return { browserUtcOffsetMinutes, profileUtcOffsetMinutes };
+}
+
+// Directly formats offsets, e.g. -120 -> "-02:00",
+// instead of relying on tzName or format,
+// which can return different formats based on the locale and DST status.
+function formatOffset(offsetMinutes) {
+  const sign = offsetMinutes < 0 ? '-' : '+';
+  const abs = Math.abs(offsetMinutes);
+  const hours = String(Math.trunc(abs / 60)).padStart(2, '0');
+  const minutes = String(abs % 60).padStart(2, '0');
+
+  return `${sign}${hours}:${minutes}`;
+}
+
 export {
   DATETIME_DAY_MONTH_24H_FORMAT,
   DATETIME_LOCAL_FORMAT,
   DATE_DAY_MONTH_YEAR_FORMAT,
   DEFAULT_TIMEZONE,
   TIME_24H_HH_MM_FORMAT,
+  computeTimezoneOffsets,
   formatDateOnly,
   formatDateTime,
+  formatOffset,
   formatTimeOnly,
   generateTimezoneOptions,
   parseDateTimeLocalToUtc,
