@@ -464,7 +464,7 @@ describe('ProfileForm', () => {
       />
     );
 
-    const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    const timezoneSelectorInput = screen.getByRole('combobox', { name: 'Timezone' });
     const timezoneLabel = getTimezoneLabel(timezone);
 
     await user.click(timezoneSelectorInput);
@@ -658,7 +658,7 @@ describe('ProfileForm', () => {
         />
       );
 
-      const timezoneSelectorInput = screen.getByLabelText('Timezone');
+      const timezoneSelectorInput = screen.getByRole('combobox', { name: 'Timezone' });
       const timezoneLabel = getTimezoneLabel(timezone);
 
       await user.click(timezoneSelectorInput);

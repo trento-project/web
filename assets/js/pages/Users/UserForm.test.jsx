@@ -188,6 +188,7 @@ describe('UserForm', () => {
         saveText="Save"
         onSave={mockOnSave}
         timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
       />
     );
 
@@ -196,7 +197,7 @@ describe('UserForm', () => {
     await user.type(screen.getByPlaceholderText('Enter username'), username);
     await user.type(screen.getByPlaceholderText('Enter password'), password);
     await user.type(screen.getByPlaceholderText('Re-enter password'), password);
-    const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    const timezoneSelectorInput = screen.getByRole('combobox', { name: 'Timezone' });
     await user.click(timezoneSelectorInput);
     await user.type(timezoneSelectorInput, timezone);
     await user.click(await screen.findByText(getTimezoneLabel(timezone)));
@@ -501,7 +502,7 @@ describe('UserForm', () => {
       />
     );
 
-    const timezoneSelectorInput = screen.getByLabelText('Timezone');
+    const timezoneSelectorInput = screen.getByRole('combobox', { name: 'Timezone' });
 
     await user.click(timezoneSelectorInput);
     await user.type(timezoneSelectorInput, timezone);
