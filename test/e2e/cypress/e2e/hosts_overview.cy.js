@@ -184,7 +184,6 @@ context('Hosts Overview', () => {
         afterEach(() => hostsOverviewPage.restoreSapSystem());
 
         it('should remove the SAP system sid from hosts belonging the deregistered SAP system', () => {
-          hostsOverviewPage.visit();
           hostsOverviewPage.clickNextPageButton();
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(4);
           hostsOverviewPage.apiDeregisterSapSystemHost();
@@ -194,7 +193,6 @@ context('Hosts Overview', () => {
 
       describe('Movement of application instances on hosts', () => {
         beforeEach(() => {
-          hostsOverviewPage.visit();
           hostsOverviewPage.loadSapSystemsOverviewMovedScenario();
           hostsOverviewPage.clickNextPageButton();
           hostsOverviewPage.sapSystemHasExpectedAmountOfHosts(3);
