@@ -662,7 +662,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: e2e-screenshots-${{ matrix.containers }}
@@ -767,7 +767,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: regression-${{ matrix.test }}-e2e-screenshots
@@ -914,7 +914,7 @@ jobs:
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
       - name: Upload cypress test screenshots
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: integration-${{ matrix.test }}-e2e-screenshots
@@ -1082,7 +1082,7 @@ jobs:
             --text /specs/changes.txt \
             --html /specs/changes.html
       - name: Upload OpenAPI diff report
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: openapi-diff-report-${{ matrix.version }}
