@@ -95,13 +95,13 @@ function formatTimeOnly(date, timezone = DEFAULT_TIMEZONE) {
 
 // Compute browser/profile offsets
 function computeTimezoneOffsets(selectedTimezone, now = new Date()) {
-  const browserUtcOffsetMinutes = -now.getTimezoneOffset();
-  const profileUtcOffsetMinutes =
+  const browserUtcOffset = -now.getTimezoneOffset();
+  const profileUtcOffset =
     selectedTimezone && selectedTimezone.value
       ? tzOffset(selectedTimezone.value, now)
       : null;
 
-  return { browserUtcOffsetMinutes, profileUtcOffsetMinutes };
+  return { browserUtcOffset, profileUtcOffset };
 }
 
 // Directly formats offsets, e.g. -120 -> "-02:00",

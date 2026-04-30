@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { tzOffset } from '@date-fns/tz';
+import { computeTimezoneOffsets, formatOffset } from '@lib/timezones';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -118,33 +118,16 @@ function ProfileForm({
   const selectedTimezone =
     timezones.find((opt) => opt.value === timezoneState) || null;
 
-  // Utility for formatting offsets
-  const formatOffset = (mins) =>
-    `${mins < 0 ? '-' : '+'}${String(Math.trunc(Math.abs(mins) / 60)).padStart(2, '0')}:${String(Math.abs(mins) % 60).padStart(2, '0')}`;
+  // Compute UTC offsets (in minutes) from helper and evaluate warning locally
+  const { browserUtcOffset, profileUtcOffset } =
+    computeTimezoneOffsets(selectedTimezone);
 
-  // State for offsets and warning
-  const [browserOffsetMin, setBrowserOffsetMin] = useState(null);
-  const [profileOffsetMin, setProfileOffsetMin] = useState(null);
-  const [showTimezoneWarning, setShowTimezoneWarning] = useState(false);
-
-  // Compute offsets and warning on timezone change
-  useEffect(() => {
-    const now = new Date();
-    setBrowserOffsetMin(-now.getTimezoneOffset());
-    setProfileOffsetMin(
-      selectedTimezone ? tzOffset(selectedTimezone.value, now) : null
-    );
-  }, [selectedTimezone]);
-
-  // Show warning if browser offset differs from profile offset
-  useEffect(() => {
-    setShowTimezoneWarning(
-      selectedTimezone &&
-        profileOffsetMin !== null &&
-        browserOffsetMin !== null &&
-        browserOffsetMin !== profileOffsetMin
-    );
-  }, [selectedTimezone, profileOffsetMin, browserOffsetMin]);
+  // Show warning if browser and profile offsets differ
+  const showTimezoneWarning = Boolean(
+    selectedTimezone &&
+    profileUtcOffset !== null &&
+    browserUtcOffset !== profileUtcOffset
+  );
 
   return (
     <div>
@@ -276,8 +259,8 @@ function ProfileForm({
                 data-testid="timezone-warning"
               >
                 <strong>Warning:</strong> Your browser UTC offset is{' '}
-                <b>{formatOffset(browserOffsetMin)}</b>, but your profile
-                timezone offset is <b>{formatOffset(profileOffsetMin)}</b>.{' '}
+                <b>{formatOffset(browserUtcOffset)}</b>, but your profile
+                timezone offset is <b>{formatOffset(profileUtcOffset)}</b>.{' '}
                 <br />
                 The Trento UI will always use your profile timezone to display
                 timestamps, not your browser&apos;s.
