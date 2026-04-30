@@ -20,11 +20,14 @@ describe('networkClient', () => {
     axiosMock.reset();
     mockAuthClient.reset();
     jest.spyOn(console, 'error').mockImplementation(() => null);
+    jest.spyOn(console, 'warn').mockImplementation(() => null);
   });
 
   afterEach(() => {
     /* eslint-disable-next-line */
     console.error.mockRestore();
+    /* eslint-disable-next-line */
+    console.warn.mockRestore();
     clearCredentialsFromStore();
   });
 

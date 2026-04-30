@@ -6,7 +6,7 @@ import { TZDate, tz } from '@date-fns/tz';
 import useOnClickOutside from '@hooks/useOnClickOutside';
 import { EOS_CLOSE, EOS_CHECK } from 'eos-icons-react';
 import { format, subDays, subHours } from 'date-fns';
-import { formatDateTime } from '@lib/timezones';
+import { DATETIME_LOCAL_FORMAT, formatDateTime } from '@lib/timezones';
 
 import Input from '@common/Input';
 
@@ -115,7 +115,7 @@ function DateTimeInput({ value, onChange, timezone }) {
 
     // Example: the UTC date "2009-10-09T15:00, GMT+2" is transformed to the string "2026-04-16T18:21"
     // This format is internal to the "datetime-local"
-    return format(date, "yyyy-MM-dd'T'HH:mm", { in: tz(timezone) });
+    return format(date, DATETIME_LOCAL_FORMAT, { in: tz(timezone) });
   };
 
   return (
