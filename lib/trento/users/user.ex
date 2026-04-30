@@ -63,7 +63,8 @@ defmodule Trento.Users.User do
     |> pow_extension_changeset(attrs)
     |> validate_password()
     |> custom_fields_changeset(attrs)
-    |> cast(attrs, [:locked_at, :password_change_requested_at])
+    |> cast(attrs, [:locked_at, :password_change_requested_at, :timezone])
+    |> validate_timezone()
   end
 
   def user_identity_changeset(user_or_changeset, user_identity, attrs, user_id_attrs) do

@@ -338,6 +338,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
           enabled: true,
           password: "secure_password",
           password_confirmation: "secure_password",
+          timezone: "Europe/Berlin",
           abilities: []
         },
         properties: %{
@@ -383,6 +384,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
               "Confirmation of the new user's password, which must match the password field for security.",
             nullable: false,
             example: "secure_password"
+          },
+          timezone: %Schema{
+            type: :string,
+            description: "IANA timezone name for the user.",
+            nullable: false,
+            example: "Europe/Berlin"
           },
           abilities: AbilityCollection
         },
@@ -565,7 +572,15 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
             example: "Europe/Berlin"
           }
         },
-        required: [:username, :id, :fullname, :email, :created_at, :personal_access_tokens],
+        required: [
+          :username,
+          :id,
+          :fullname,
+          :email,
+          :created_at,
+          :personal_access_tokens,
+          :timezone
+        ],
         example: %{
           id: 1,
           fullname: "User Item",
