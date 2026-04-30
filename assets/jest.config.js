@@ -117,6 +117,7 @@ module.exports = {
     'react-markdown': '<rootDir>/mocks/reactMarkdown.js',
     'remark-gfm': '<rootDir>/mocks/remarkPlugin.js',
     '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
+    '\\.css$': '<rootDir>/mocks/fileMock.js',
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -227,7 +228,9 @@ module.exports = {
 
   // Allow transforming ESM-only deps (e.g. @faker-js/faker) inside node_modules.
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: ['/node_modules/(?!(?:@faker-js/faker)/)'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store)/)',
+  ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
