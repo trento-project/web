@@ -39,7 +39,15 @@ const getWebsocketParams = () => ({
   access_token: getAccessTokenFromStore(),
 });
 
+// Singleton socket instance
+let socketInstance = null;
+
 export const initSocketConnection = () => {
+  // Return existing socket if already initialized
+  if (socketInstance) {
+    return socketInstance;
+  }
+
   const socket = new Socket('/socket', {
     params: () => getWebsocketParams(),
   });
@@ -51,5 +59,11 @@ export const initSocketConnection = () => {
   });
   socket.connect();
 
+  // Store singleton instance
+  socketInstance = socket;
+
   return socket;
 };
+
+// Get existing socket instance (returns null if not initialized)
+export const getSocketInstance = () => socketInstance;
