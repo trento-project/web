@@ -81,7 +81,10 @@ export const renderWithRouter = (ui, { route = '/' } = {}) => {
   };
 };
 
-export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
+export function renderWithRouterMatch(
+  ui,
+  { path = '/', route = '/', children } = {}
+) {
   window.history.pushState({}, 'Test page', route);
 
   return {
@@ -89,6 +92,7 @@ export function renderWithRouterMatch(ui, { path = '/', route = '/' } = {}) {
       <BrowserRouter>
         <Routes>
           <Route path={path} element={ui} />
+          {children}
         </Routes>
       </BrowserRouter>
     ),
