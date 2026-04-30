@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -53,13 +53,15 @@ describe('SapStartStopOperationModal', () => {
   ])(
     `should show correct title and description for $operation`,
     async ({ operation, title, site, expectedDescription }) => {
-      render(
-        <SapStartStopOperationModal
-          operation={operation}
-          sid={sid}
-          site={site}
-          isOpen
-        />
+      await act(() =>
+        render(
+          <SapStartStopOperationModal
+            operation={operation}
+            sid={sid}
+            site={site}
+            isOpen
+          />
+        )
       );
 
       expect(screen.getByText(title)).toBeInTheDocument();
@@ -94,14 +96,16 @@ describe('SapStartStopOperationModal', () => {
       const user = userEvent.setup();
       const onRequest = jest.fn();
 
-      render(
-        <SapStartStopOperationModal
-          operation={SAP_SYSTEM_START}
-          sid={sid}
-          type={APPLICATION_TYPE}
-          isOpen
-          onRequest={onRequest}
-        />
+      await act(() =>
+        render(
+          <SapStartStopOperationModal
+            operation={SAP_SYSTEM_START}
+            sid={sid}
+            type={APPLICATION_TYPE}
+            isOpen
+            onRequest={onRequest}
+          />
+        )
       );
 
       expect(screen.getByText('Request')).toBeEnabled();
@@ -120,15 +124,17 @@ describe('SapStartStopOperationModal', () => {
     const user = userEvent.setup();
     const onRequest = jest.fn();
 
-    render(
-      <SapStartStopOperationModal
-        operation={DATABASE_START}
-        sid={sid}
-        type={DATABASE_TYPE}
-        site={systemReplicationSite}
-        isOpen
-        onRequest={onRequest}
-      />
+    await act(() =>
+      render(
+        <SapStartStopOperationModal
+          operation={DATABASE_START}
+          sid={sid}
+          type={DATABASE_TYPE}
+          site={systemReplicationSite}
+          isOpen
+          onRequest={onRequest}
+        />
+      )
     );
 
     expect(screen.getByText('Request')).toBeEnabled();
@@ -144,13 +150,15 @@ describe('SapStartStopOperationModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    render(
-      <SapStartStopOperationModal
-        operation={SAP_SYSTEM_START}
-        sid={sid}
-        isOpen
-        onCancel={onCancel}
-      />
+    await act(() =>
+      render(
+        <SapStartStopOperationModal
+          operation={SAP_SYSTEM_START}
+          sid={sid}
+          isOpen
+          onCancel={onCancel}
+        />
+      )
     );
 
     await user.click(screen.getByText('Cancel'));
