@@ -52,6 +52,7 @@ export class WebSocketAIAgent extends AbstractAgent {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No socket available');
     }
+
     if (!this.userID) {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No userID available');
