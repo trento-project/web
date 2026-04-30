@@ -8,6 +8,7 @@ import '@testing-library/jest-dom';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import * as agentModule from '@lib/ai';
 import { useSocket } from '@common/SocketProvider';
+
 import AssistantChatProvider from './AssistantChatProvider';
 
 jest.mock('@common/SocketProvider', () => ({
