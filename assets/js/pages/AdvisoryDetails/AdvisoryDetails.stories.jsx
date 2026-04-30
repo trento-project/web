@@ -5,7 +5,29 @@ import AdvisoryDetails from './AdvisoryDetails';
 export default {
   title: 'Layouts/AdvisoryDetails',
   components: AdvisoryDetails,
-  argTypes: {},
+  argTypes: {
+    advisoryName: {
+      control: 'text',
+      description: 'Advisory name',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    errata: {
+      control: 'object',
+      description: 'Errata object containing details, fixes, CVEs, and affected items',
+      table: {
+        type: { summary: 'object' },
+      },
+    },
+    affectsPackageMaintenanceStack: {
+      control: 'boolean',
+      description: 'Whether the advisory affects the package maintenance stack',
+      table: {
+        type: { summary: 'boolean' },
+      },
+    },
+  },
   render: (args) => <AdvisoryDetails {...args} />,
 };
 

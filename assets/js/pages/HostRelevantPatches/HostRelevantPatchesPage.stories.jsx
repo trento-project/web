@@ -15,7 +15,29 @@ function ContainerWrapper({ children }) {
 export default {
   title: 'Layouts/HostRelevantPatchesPage',
   components: HostRelevantPatchesPage,
-  argTypes: {},
+  argTypes: {
+    hostName: {
+      control: 'text',
+      description: 'Host name',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    patches: {
+      control: 'object',
+      description: 'Array of patch objects',
+      table: {
+        type: { summary: 'array' },
+      },
+    },
+    onNavigate: {
+      action: 'onNavigate',
+      description: 'Navigation callback handler',
+      table: {
+        type: { summary: 'function' },
+      },
+    },
+  },
   render: (args) => (
     <ContainerWrapper>
       <HostRelevantPatchesPage {...args} />

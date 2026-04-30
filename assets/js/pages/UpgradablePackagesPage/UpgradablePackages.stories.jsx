@@ -8,7 +8,43 @@ import UpgradablePackages from './UpgradablePackages';
 export default {
   title: 'Layouts/UpgradablePackages',
   components: UpgradablePackages,
-  argTypes: {},
+  argTypes: {
+    hostName: {
+      control: 'text',
+      description: 'Host name',
+      table: {
+        type: { summary: 'string' },
+      },
+    },
+    upgradablePackages: {
+      control: 'object',
+      description: 'Array of upgradable package objects',
+      table: {
+        type: { summary: 'array' },
+      },
+    },
+    patchesLoading: {
+      control: 'boolean',
+      description: 'Loading state for patches',
+      table: {
+        type: { summary: 'boolean' },
+      },
+    },
+    onPatchClick: {
+      action: 'onPatchClick',
+      description: 'Callback when a patch is clicked',
+      table: {
+        type: { summary: 'function' },
+      },
+    },
+    onLoad: {
+      action: 'onLoad',
+      description: 'Callback when list is loaded',
+      table: {
+        type: { summary: 'function' },
+      },
+    },
+  },
   render: (args) => <UpgradablePackages {...args} />,
 };
 
