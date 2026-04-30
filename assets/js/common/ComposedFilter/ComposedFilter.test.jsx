@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import ComposedFilter from '.';
@@ -123,7 +123,7 @@ describe('ComposedFilter component', () => {
     expect(screen.getByText('Diavola')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Banana')).toBeInTheDocument();
 
-    await act(() => userEvent.click(screen.getByText('Click me')));
+    await userEvent.click(screen.getByText('Click me'));
 
     expect(screen.getByText('Filter Pasta...')).toBeInTheDocument();
     expect(screen.getByText('Filter Pizza...')).toBeInTheDocument();
@@ -158,22 +158,20 @@ describe('ComposedFilter component', () => {
     );
 
     // select Carbonara and Gricia from pasta filter
-    await act(() => userEvent.click(screen.getByText('Filter Pasta...')));
-    await act(() => userEvent.click(screen.getByText('Carbonara')));
-    await act(() => userEvent.click(screen.getByText('Gricia')));
-    await act(() => userEvent.click(screen.getByText('Carbonara, Gricia')));
+    await userEvent.click(screen.getByText('Filter Pasta...'));
+    await userEvent.click(screen.getByText('Carbonara'));
+    await userEvent.click(screen.getByText('Gricia'));
+    await userEvent.click(screen.getByText('Carbonara, Gricia'));
 
     // select Diavola from pizza filter
-    await act(() => userEvent.click(screen.getByText('Filter Pizza...')));
-    await act(() => userEvent.click(screen.getByText('Diavola')));
-    await act(() => userEvent.click(screen.getAllByText('Diavola')[0]));
+    await userEvent.click(screen.getByText('Filter Pizza...'));
+    await userEvent.click(screen.getByText('Diavola'));
+    await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
     expect(mockOnChange).toHaveBeenCalledTimes(14);
@@ -223,29 +221,27 @@ describe('ComposedFilter component', () => {
     render(<ComposedFilter filters={filters} onChange={mockOnChange} />);
 
     // select Carbonara and Gricia from pasta filter
-    await act(() => userEvent.click(screen.getByText('Filter Pasta...')));
-    await act(() => userEvent.click(screen.getByText('Carbonara')));
-    await act(() => userEvent.click(screen.getByText('Gricia')));
-    await act(() => userEvent.click(screen.getByText('Carbonara, Gricia')));
+    await userEvent.click(screen.getByText('Filter Pasta...'));
+    await userEvent.click(screen.getByText('Carbonara'));
+    await userEvent.click(screen.getByText('Gricia'));
+    await userEvent.click(screen.getByText('Carbonara, Gricia'));
 
     // select Diavola from pizza filter
-    await act(() => userEvent.click(screen.getByText('Filter Pizza...')));
-    await act(() => userEvent.click(screen.getByText('Diavola')));
-    await act(() => userEvent.click(screen.getAllByText('Diavola')[0]));
+    await userEvent.click(screen.getByText('Filter Pizza...'));
+    await userEvent.click(screen.getByText('Diavola'));
+    await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
     // not applied yet
     expect(mockOnChange).not.toHaveBeenCalled();
 
     // apply
-    await act(() => userEvent.click(screen.getByText('Apply Filter')));
+    await userEvent.click(screen.getByText('Apply Filter'));
 
     // after apply
     expect(mockOnChange).toHaveBeenCalledTimes(1);
@@ -282,25 +278,23 @@ describe('ComposedFilter component', () => {
     render(<ComposedFilter filters={filters} onChange={mockOnChange} />);
 
     // select Carbonara and Gricia from pasta filter
-    await act(() => userEvent.click(screen.getByText('Filter Pasta...')));
-    await act(() => userEvent.click(screen.getByText('Carbonara')));
-    await act(() => userEvent.click(screen.getByText('Gricia')));
-    await act(() => userEvent.click(screen.getByText('Carbonara, Gricia')));
+    await userEvent.click(screen.getByText('Filter Pasta...'));
+    await userEvent.click(screen.getByText('Carbonara'));
+    await userEvent.click(screen.getByText('Gricia'));
+    await userEvent.click(screen.getByText('Carbonara, Gricia'));
 
     // select Diavola from pizza filter
-    await act(() => userEvent.click(screen.getByText('Filter Pizza...')));
-    await act(() => userEvent.click(screen.getByText('Diavola')));
-    await act(() => userEvent.click(screen.getAllByText('Diavola')[0]));
+    await userEvent.click(screen.getByText('Filter Pizza...'));
+    await userEvent.click(screen.getByText('Diavola'));
+    await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
-    await act(() => userEvent.click(screen.getByText('Reset Filters')));
+    await userEvent.click(screen.getByText('Reset Filters'));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith({});
