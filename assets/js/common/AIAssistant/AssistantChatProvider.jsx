@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { noop } from 'lodash';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
@@ -31,9 +32,10 @@ export function AssistantChatProvider({ children }) {
 
   useEffect(() => {
     if (!agent) return undefined;
-    // Agent owns its own reconnect/backoff loop; we just kick it off and
-    // tear it down on unmount.
-    agent.initialize();
+    // Catch rejections (channel-join error / timeout / missing socket)
+    // so they don't bubble up as unhandled promise rejections —
+    // onConnectionChange handles flipping the UI to DISCONNECTED
+    agent.initialize().catch(noop);
     return () => agent.disconnect();
   }, [agent]);
 
