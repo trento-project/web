@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-03-17T06:42:36Z",
-    "commit": "b93668e90d45b300402452ee599a739f1322bf11",
-    "run_id": "23178333867",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-18T03:56:04Z",
     "commit": "bb1ca35c23075b29fc2ad5852fcebe95f855981e",
     "run_id": "23227964383",
@@ -6051,6 +6027,50 @@
       },
       {
         "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-01T07:05:55Z",
+    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
+    "run_id": "25202936113",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 27
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
+        "score": 0.1761
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.08507
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.08350
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05850
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.05001
+      },
+      {
+        "name": "should preserve per_page when coming back from another page::Hosts Overview Pagination and browser navigation should preserve per_page when coming back from another page",
+        "score": 0.03771
+      },
+      {
+        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
         "score": 0.02501
       }
     ]
