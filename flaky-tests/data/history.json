@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-03-17T03:48:06Z",
-    "commit": "b93668e90d45b300402452ee599a739f1322bf11",
-    "run_id": "23177123781",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.1260
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-17T04:20:05Z",
     "commit": "b93668e90d45b300402452ee599a739f1322bf11",
     "run_id": "23177780584",
@@ -6079,6 +6055,26 @@
       },
       {
         "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-01T04:29:55Z",
+    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
+    "run_id": "25201871442",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
         "score": 0.05001
       },
       {
