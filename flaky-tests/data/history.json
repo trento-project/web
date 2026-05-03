@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-19T03:56:58Z",
-    "commit": "f8d99891c28ecd2e8a28dbb83b8206d11e440740",
-    "run_id": "23278694050",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-19T04:27:33Z",
     "commit": "f8d99891c28ecd2e8a28dbb83b8206d11e440740",
     "run_id": "23279314937",
@@ -6059,6 +6039,34 @@
       },
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-03T04:23:33Z",
+    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
+    "run_id": "25269479748",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
+        "score": 0.03977
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
         "score": 0.02501
       }
     ]
