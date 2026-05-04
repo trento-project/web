@@ -92,7 +92,7 @@ defmodule Trento.DiscoveryTest do
     ] = discarded_events
   end
 
-  test "should delete events older than the specified days" do
+  test "should delete events and discarded events older than the specified days" do
     insert_list(
       10,
       :discovery_event,
@@ -101,18 +101,14 @@ defmodule Trento.DiscoveryTest do
       inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
     )
 
-    assert 10 == Discovery.prune_events(10)
-    assert 0 == DiscoveryEvent |> Trento.Repo.all() |> length()
-  end
-
-  test "should delete discarded events older than the specified days" do
     insert_list(
       10,
       :discarded_discovery_event,
       inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
     )
 
-    assert 10 == Discovery.prune_discarded_discovery_events(10)
+    assert :ok == Discovery.prune_discovery_events(10)
+    assert 0 == DiscoveryEvent |> Trento.Repo.all() |> length()
     assert 0 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
   end
 

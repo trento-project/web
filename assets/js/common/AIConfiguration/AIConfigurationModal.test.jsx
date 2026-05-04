@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
@@ -13,8 +13,10 @@ describe('AIConfigurationModal', () => {
     openai: ['gpt-4o', 'gpt-4-turbo'],
   };
 
-  it('should render empty form', () => {
-    render(<AIConfigurationModal open aiProviders={aiProviders} />);
+  it('should render empty form', async () => {
+    await act(() => {
+      render(<AIConfigurationModal open aiProviders={aiProviders} />);
+    });
 
     expect(screen.getByText('AI Configuration')).toBeVisible();
     expect(screen.getByText('Select Provider')).toBeVisible();
@@ -31,18 +33,20 @@ describe('AIConfigurationModal', () => {
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled();
   });
 
-  it('should render with saved configuration', () => {
+  it('should render with saved configuration', async () => {
     const aiConfiguration = aiConfigurationFactory.build({
       provider: 'googleai',
       model: 'gemini-2.5-pro',
     });
 
-    render(
-      <AIConfigurationModal
-        open
-        aiProviders={aiProviders}
-        aiConfiguration={aiConfiguration}
-      />
+    await act(() =>
+      render(
+        <AIConfigurationModal
+          open
+          aiProviders={aiProviders}
+          aiConfiguration={aiConfiguration}
+        />
+      )
     );
 
     expect(screen.getByText('Google Gemini')).toBeVisible();
@@ -56,7 +60,9 @@ describe('AIConfigurationModal', () => {
 
   it('should enable Save button when a Provider is selected', async () => {
     const user = userEvent.setup();
-    render(<AIConfigurationModal open aiProviders={aiProviders} />);
+    await act(() =>
+      render(<AIConfigurationModal open aiProviders={aiProviders} />)
+    );
 
     // Select Provider
     await user.click(screen.getByText('Select an AI Provider'));
@@ -82,8 +88,10 @@ describe('AIConfigurationModal', () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
 
-    render(
-      <AIConfigurationModal open aiProviders={aiProviders} onSave={onSave} />
+    await act(() =>
+      render(
+        <AIConfigurationModal open aiProviders={aiProviders} onSave={onSave} />
+      )
     );
 
     // Select Provider
@@ -112,13 +120,15 @@ describe('AIConfigurationModal', () => {
       model: 'gemini-2.5-pro',
     });
 
-    render(
-      <AIConfigurationModal
-        open
-        aiProviders={aiProviders}
-        aiConfiguration={aiConfiguration}
-        onUpdate={onUpdate}
-      />
+    await act(() =>
+      render(
+        <AIConfigurationModal
+          open
+          aiProviders={aiProviders}
+          aiConfiguration={aiConfiguration}
+          onUpdate={onUpdate}
+        />
+      )
     );
 
     // Type new API Key
@@ -138,8 +148,10 @@ describe('AIConfigurationModal', () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
 
-    render(
-      <AIConfigurationModal open aiProviders={aiProviders} onSave={onSave} />
+    await act(() =>
+      render(
+        <AIConfigurationModal open aiProviders={aiProviders} onSave={onSave} />
+      )
     );
 
     // Select Provider
@@ -158,12 +170,14 @@ describe('AIConfigurationModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    render(
-      <AIConfigurationModal
-        open
-        aiProviders={aiProviders}
-        onCancel={onCancel}
-      />
+    await act(() =>
+      render(
+        <AIConfigurationModal
+          open
+          aiProviders={aiProviders}
+          onCancel={onCancel}
+        />
+      )
     );
 
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -180,8 +194,10 @@ describe('AIConfigurationModal', () => {
       },
     ];
 
-    render(
-      <AIConfigurationModal open aiProviders={aiProviders} errors={errors} />
+    await act(() =>
+      render(
+        <AIConfigurationModal open aiProviders={aiProviders} errors={errors} />
+      )
     );
 
     expect(

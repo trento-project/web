@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { parseDateTimeLocalToUtc } from '@lib/timezones';
@@ -170,11 +170,9 @@ describe('ComposedFilter component', () => {
     await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
     expect(mockOnChange).toHaveBeenCalledTimes(14);
@@ -235,11 +233,9 @@ describe('ComposedFilter component', () => {
     await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
     // not applied yet
@@ -294,11 +290,9 @@ describe('ComposedFilter component', () => {
     await userEvent.click(screen.getAllByText('Diavola')[0]);
 
     // type a query in the search box
-    await act(() =>
-      userEvent.type(
-        screen.getByPlaceholderText('Filter by frutta'),
-        'Dragonfruit'
-      )
+    await userEvent.type(
+      screen.getByPlaceholderText('Filter by frutta'),
+      'Dragonfruit'
     );
 
     await userEvent.click(screen.getByText('Reset Filters'));

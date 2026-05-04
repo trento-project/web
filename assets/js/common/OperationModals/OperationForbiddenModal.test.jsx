@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { noop } from 'lodash';
@@ -9,12 +9,14 @@ import OperationForbiddenModal from './OperationForbiddenModal';
 
 describe('OperationForbiddenModal', () => {
   it('should show forbidden operation modal', async () => {
-    render(
-      <OperationForbiddenModal
-        operation="My operation"
-        errors={[{ detail: 'error1' }, { detail: 'error2' }]}
-        isOpen
-      />
+    await act(() =>
+      render(
+        <OperationForbiddenModal
+          operation="My operation"
+          errors={[{ detail: 'error1' }, { detail: 'error2' }]}
+          isOpen
+        />
+      )
     );
 
     expect(screen.getByText('Operation Forbidden')).toBeInTheDocument();
@@ -39,22 +41,24 @@ describe('OperationForbiddenModal', () => {
     const { id: hostID2, hostname: hostname2 } = hostFactory.build();
     const { id: hostID3, hostname: hostname3 } = hostFactory.build();
 
-    renderWithRouter(
-      <OperationForbiddenModal
-        operation="My operation"
-        errors={[
-          {
-            detail: 'error message {0}, {1} and {2} links',
-            metadata: [
-              { id: hostID1, label: hostname1, type: 'host' },
-              { id: hostID2, label: hostname2, type: 'host' },
-              { id: hostID3, label: hostname3, type: 'host' },
-            ],
-          },
-        ]}
-        isOpen
-        onCancel={noop}
-      />
+    await act(() =>
+      renderWithRouter(
+        <OperationForbiddenModal
+          operation="My operation"
+          errors={[
+            {
+              detail: 'error message {0}, {1} and {2} links',
+              metadata: [
+                { id: hostID1, label: hostname1, type: 'host' },
+                { id: hostID2, label: hostname2, type: 'host' },
+                { id: hostID3, label: hostname3, type: 'host' },
+              ],
+            },
+          ]}
+          isOpen
+          onCancel={noop}
+        />
+      )
     );
 
     const list = screen.getByRole('list');
@@ -94,17 +98,19 @@ describe('OperationForbiddenModal', () => {
     const id = 'some-id';
     const label = 'label';
 
-    renderWithRouter(
-      <OperationForbiddenModal
-        operation="My operation"
-        errors={[
-          {
-            detail: 'error message {0}',
-            metadata: [{ id, label, type: resource }],
-          },
-        ]}
-        isOpen
-      />
+    await act(() =>
+      renderWithRouter(
+        <OperationForbiddenModal
+          operation="My operation"
+          errors={[
+            {
+              detail: 'error message {0}',
+              metadata: [{ id, label, type: resource }],
+            },
+          ]}
+          isOpen
+        />
+      )
     );
 
     const list = screen.getByRole('list');
@@ -118,15 +124,17 @@ describe('OperationForbiddenModal', () => {
   it('should run onCancel when the close button is clicked', async () => {
     const user = userEvent.setup();
     const mockOnCancel = jest.fn();
-    render(
-      <OperationForbiddenModal
-        operation="My operation"
-        errors={[]}
-        isOpen
-        onCancel={mockOnCancel}
-      >
-        Some children
-      </OperationForbiddenModal>
+    await act(() =>
+      render(
+        <OperationForbiddenModal
+          operation="My operation"
+          errors={[]}
+          isOpen
+          onCancel={mockOnCancel}
+        >
+          Some children
+        </OperationForbiddenModal>
+      )
     );
 
     await user.click(screen.getByRole('button', { name: 'Close' }));

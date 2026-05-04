@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -122,14 +122,16 @@ describe('ProfileForm', () => {
     const user = userEvent.setup();
     const onModalToggle = jest.fn();
 
-    render(<ProfileForm togglePasswordModal={onModalToggle} />);
+    await act(() =>
+      render(<ProfileForm togglePasswordModal={onModalToggle} />)
+    );
     await user.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(onModalToggle).toHaveBeenCalled();
   });
 
-  it('should open the modal when the modal open props is set to true', () => {
-    render(<ProfileForm passwordModalOpen />);
+  it('should open the modal when the modal open props is set to true', async () => {
+    await act(() => render(<ProfileForm passwordModalOpen />));
 
     expect(screen.getByText('Current Password')).toBeVisible();
   });
@@ -267,9 +269,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
+    await user.click(screen.getByRole('switch'));
 
     expect(onEnableTotp).toHaveBeenCalled();
   });
@@ -293,13 +293,8 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
-
-    await act(async () => {
-      await user.click(screen.getByText('Disable'));
-    });
+    await user.click(screen.getByRole('switch'));
+    await user.click(screen.getByText('Disable'));
 
     expect(onResetTotp).toHaveBeenCalled();
   });
@@ -347,9 +342,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText(totpSecret)).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByText('Cancel'));
-    });
+    await user.click(screen.getByText('Cancel'));
 
     expect(toggleTotpBox).toHaveBeenCalledWith(false);
   });
@@ -375,10 +368,8 @@ describe('ProfileForm', () => {
       />
     );
 
-    await act(async () => {
-      await user.type(screen.getByLabelText('totp_code'), '1234');
-      await user.click(screen.getByRole('button', { name: 'Verify' }));
-    });
+    await user.type(screen.getByLabelText('totp_code'), '1234');
+    await user.click(screen.getByRole('button', { name: 'Verify' }));
 
     expect(onVerifyTotp).toHaveBeenNthCalledWith(1, '1234');
   });
