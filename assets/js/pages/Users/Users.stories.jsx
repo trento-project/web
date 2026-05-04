@@ -53,6 +53,12 @@ export default {
       description: 'Single sign on login is enabled',
       control: { type: 'boolean' },
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
 };
 

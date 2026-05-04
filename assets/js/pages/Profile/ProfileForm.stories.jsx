@@ -93,10 +93,10 @@ export default {
       },
     },
     timezone: {
-      description: 'User timezone',
-      control: {
-        type: 'text',
-      },
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
     },
     timezones: {
       description:

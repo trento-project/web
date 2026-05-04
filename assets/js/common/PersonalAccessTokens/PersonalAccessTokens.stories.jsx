@@ -38,6 +38,12 @@ export default {
       type: 'function',
       description: 'Closes new personal access token modal',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
   args: {
     generatedAccessToken: null,

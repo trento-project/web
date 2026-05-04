@@ -4,6 +4,14 @@ import CheckResultsOverview from './CheckResultsOverview';
 export default {
   title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,
+  argTypes: {
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
+  },
 };
 
 export const Default = {

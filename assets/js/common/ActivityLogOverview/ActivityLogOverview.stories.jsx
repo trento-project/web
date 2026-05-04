@@ -16,6 +16,12 @@ export default {
       description: 'Display loading state of the component',
       control: { type: 'boolean' },
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
 };
 

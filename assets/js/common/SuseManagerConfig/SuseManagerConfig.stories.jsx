@@ -67,6 +67,12 @@ export default {
       type: 'function',
       description: 'Callback function to test the SUSE Manager connection',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
 };
 

@@ -79,6 +79,12 @@ export default {
         'The type of scale for the Y axis (e.g., linear or logarithmic)',
       control: { type: 'text' },
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
 };
 

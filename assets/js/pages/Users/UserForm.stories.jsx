@@ -112,10 +112,10 @@ export default {
       },
     },
     timezone: {
-      description: 'User timezone',
-      control: {
-        type: 'text',
-      },
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
     },
     editing: {
       description: 'User is being edited',
@@ -161,24 +161,6 @@ export default {
     onCancel: {
       action: 'Cancel user creation',
       description: 'Cancel user creation',
-    },
-    updatedAt: {
-      type: 'string',
-      description:
-        'ISO timestamp string representing when the user was last updated',
-      control: { type: 'text' },
-    },
-    analyticsEnabledConfig: {
-      type: 'boolean',
-      description:
-        'Boolean flag controlling whether the analytics opt-in toggle is shown in the form',
-      control: { type: 'boolean' },
-    },
-    analyticsEnabled: {
-      type: 'boolean',
-      description:
-        'Boolean flag indicating whether analytics is enabled for the user',
-      control: { type: 'boolean' },
     },
   },
   decorators: [

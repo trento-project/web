@@ -227,6 +227,12 @@ export default {
       description:
         'Callback function to close the operation forbidden error modal',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
   decorators: [
     (Story) => (

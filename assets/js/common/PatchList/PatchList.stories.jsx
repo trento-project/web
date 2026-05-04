@@ -20,6 +20,12 @@ export default {
       description:
         'Callback function invoked when a patch is selected for navigation',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
   decorators: [
     (Story) => (

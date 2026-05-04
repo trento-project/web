@@ -33,6 +33,12 @@ export default {
     generatedApiKey: {
       description: 'The new generated api key',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
   args: {
     loading: false,

@@ -39,6 +39,12 @@ export default {
       description: 'CSS classes to apply to the date filter container',
       control: { type: 'text' },
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
   render: (args) => {
     const [value, setValue] = useState(args.value);

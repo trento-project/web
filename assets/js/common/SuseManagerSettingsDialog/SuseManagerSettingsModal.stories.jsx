@@ -52,6 +52,12 @@ export default {
       description:
         'Callback function invoked to clear validation errors from form inputs',
     },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
   },
 };
 
