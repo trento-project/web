@@ -7,7 +7,7 @@ import UpgradablePackages from './UpgradablePackages';
 
 export default {
   title: 'Layouts/UpgradablePackages',
-  components: UpgradablePackages,
+  component: UpgradablePackages,
   argTypes: {
     hostName: {
       control: { type: 'text' },
@@ -33,16 +33,10 @@ export default {
     onPatchClick: {
       action: 'onPatchClick',
       description: 'Callback when a patch is clicked',
-      table: {
-        type: { summary: 'function' },
-      },
     },
     onLoad: {
       action: 'onLoad',
       description: 'Callback when list is loaded',
-      table: {
-        type: { summary: 'function' },
-      },
     },
   },
   render: (args) => <UpgradablePackages {...args} />,

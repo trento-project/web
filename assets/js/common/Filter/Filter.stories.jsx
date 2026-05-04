@@ -24,9 +24,8 @@ export default {
       control: { type: 'object' },
     },
     onChange: {
-      type: { name: 'function', required: false },
       description: 'Function to call when the selected options change',
-      control: { type: null },
+      action: 'onChange',
     },
     className: {
       type: 'string',

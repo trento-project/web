@@ -85,7 +85,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/SapSystemsOverview',
-  components: SapSystemsOverview,
+  component: SapSystemsOverview,
   argTypes: {
     sapSystems: {
       control: { type: 'array' },

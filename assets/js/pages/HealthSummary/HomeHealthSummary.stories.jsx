@@ -31,7 +31,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/HomeHealthSummary',
-  components: HomeHealthSummary,
+  component: HomeHealthSummary,
   decorators: [
     (Story) => (
       <MemoryRouter>

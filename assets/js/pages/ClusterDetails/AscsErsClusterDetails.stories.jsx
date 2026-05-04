@@ -75,7 +75,7 @@ function ContainerWrapper({ children, ...props }) {
 
 export default {
   title: 'Layouts/AscsErsClusterDetails',
-  components: AscsErsClusterDetails,
+  component: AscsErsClusterDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>

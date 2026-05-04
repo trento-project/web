@@ -39,7 +39,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/SapSystemDetails',
-  components: GenericSystemDetails,
+  component: GenericSystemDetails,
   argTypes: {
     system: {
       control: 'object',
@@ -86,23 +86,23 @@ export default {
       control: { type: 'object' },
     },
     getSystemOperations: {
-      type: 'function',
       description:
         'Callback function that returns available system-level operations',
+      action: 'Get system operations function',
     },
     getSiteOperations: {
-      type: 'function',
       description:
         'Callback function that returns site-level operations for system replication',
+      action: 'Get site operations function',
     },
     onRequestOperation: {
-      type: 'function',
       description: 'Callback invoked when a user requests an operation',
+      action: 'Request operation',
     },
     onCleanForbiddenOperation: {
-      type: 'function',
       description:
         'Callback invoked when a forbidden operation modal is dismissed',
+      action: 'Clean forbidden operation',
     },
   },
   decorators: [

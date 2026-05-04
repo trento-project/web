@@ -33,7 +33,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/DatabaseDetails',
-  components: GenericSystemDetails,
+  component: GenericSystemDetails,
   argTypes: {
     system: {
       control: 'object',

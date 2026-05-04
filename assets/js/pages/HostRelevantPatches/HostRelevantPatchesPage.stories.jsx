@@ -14,7 +14,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/HostRelevantPatchesPage',
-  components: HostRelevantPatchesPage,
+  component: HostRelevantPatchesPage,
   argTypes: {
     hostName: {
       type: 'string',

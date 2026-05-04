@@ -4,7 +4,7 @@ import AdvisoryDetails from './AdvisoryDetails';
 
 export default {
   title: 'Layouts/AdvisoryDetails',
-  components: AdvisoryDetails,
+  component: AdvisoryDetails,
   argTypes: {
     advisoryName: {
       control: { type: 'text' },

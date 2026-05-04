@@ -69,15 +69,11 @@ export default {
     },
     onSaveSelection: {
       description: 'Updates the selected checks on save',
-      table: {
-        type: { summary: 'function' },
-      },
+      action: 'onSaveSelection',
     },
     onStartExecution: {
       description: 'Starts the host checks execution',
-      table: {
-        type: { summary: 'function' },
-      },
+      action: 'onStartExecution',
     },
   },
 };

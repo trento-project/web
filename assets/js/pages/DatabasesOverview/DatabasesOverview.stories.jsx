@@ -61,7 +61,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/DatabasesOverview',
-  components: DatabasesOverview,
+  component: DatabasesOverview,
   argTypes: {
     databases: {
       control: { type: 'array' },

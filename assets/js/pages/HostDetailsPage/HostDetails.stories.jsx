@@ -172,6 +172,7 @@ export default {
     },
     navigate: {
       description: 'Navigate function',
+      action: 'navigate',
     },
     chartsEnabled: {
       type: 'boolean',

@@ -71,7 +71,7 @@ export default {
         type: { summary: '() => {}' },
       },
     },
-    components: {
+    component: {
       type: 'object',
       description:
         'Custom React Select component replacements for rendering Option, DropdownIndicator, ClearIndicator, and other select parts',

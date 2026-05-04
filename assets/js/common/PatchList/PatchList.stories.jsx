@@ -7,7 +7,7 @@ import PatchList from '.';
 
 export default {
   title: 'Components/PatchList',
-  components: PatchList,
+  component: PatchList,
   argTypes: {
     patches: {
       control: {
@@ -17,8 +17,8 @@ export default {
       action: 'callback',
     },
     onNavigate: {
-      description:
       action: 'onNavigate',
+      description:
         'Callback function invoked when a patch is selected for navigation',
     },
     timezone: {

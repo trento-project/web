@@ -4,7 +4,7 @@ import AdvisoryIcon from '.';
 
 export default {
   title: 'Components/AdvisoryIcon',
-  components: AdvisoryIcon,
+  component: AdvisoryIcon,
   argTypes: {
     type: {
       description: 'The type of advisory',

@@ -329,7 +329,7 @@ const fetchCatalog = () =>
 
 export default {
   title: 'Layouts/ExecutionResults',
-  components: ExecutionResults,
+  component: ExecutionResults,
   decorators: [
     (Story) => (
       <MemoryRouter>

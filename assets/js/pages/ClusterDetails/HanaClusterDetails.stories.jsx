@@ -19,6 +19,14 @@ import HanaClusterDetails from './HanaClusterDetails';
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
+const baseCluster = clusterFactory.build({
+  type: 'hana_scale_up',
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
+});
+
 const {
   id: clusterID,
   name: clusterName,
@@ -29,13 +37,7 @@ const {
   cib_last_written: cibLastWritten,
   details,
   state,
-} = clusterFactory.build({
-  type: 'hana_scale_up',
-  details: {
-    architecture_type: 'classic',
-    hana_scenario: 'performance_optimized',
-  },
-});
+} = baseCluster;
 
 const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 
@@ -74,13 +76,10 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
 
 const scaleOutDetailsNodeStatus = {
   ...scaleOutDetails,
-  nodes: [
-    { ...scaleOutDetails.nodes[0], status: 'Online' },
-    { ...scaleOutDetails.nodes[1], status: 'Offline' },
-    { ...scaleOutDetails.nodes[2], status: 'Standby' },
-    { ...scaleOutDetails.nodes[3], status: 'Maintenance' },
-    { ...scaleOutDetails.nodes[4], status: 'Other' },
-  ],
+  nodes: scaleOutDetails.nodes.map((node, index) => ({
+    ...node,
+    status: ['Online', 'Offline', 'Standby', 'Maintenance', 'Other'][index],
+  })),
 };
 
 const lastExecution = {
@@ -132,7 +131,7 @@ function ContainerWrapper({ children, ...props }) {
 
 export default {
   title: 'Layouts/HanaClusterDetails',
-  components: HanaClusterDetails,
+  component: HanaClusterDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>
