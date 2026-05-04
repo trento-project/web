@@ -1,6 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { capitalize } from 'lodash';
@@ -14,7 +14,7 @@ import AlertingSettingsModal from './AlertingSettingsModal';
 
 describe('AlertingSettingsModal', () => {
   it('renders correctly when opened with no arguments passed', async () => {
-    render(<AlertingSettingsModal open />);
+    await act(() => render(<AlertingSettingsModal open />));
 
     const alertingEnabled = screen.getByRole('switch', {
       name: 'Send Email Alerts',
@@ -62,7 +62,9 @@ describe('AlertingSettingsModal', () => {
     const { smtpServer, smtpPort, smtpUsername, senderEmail, recipientEmail } =
       alertingSettings;
 
-    render(<AlertingSettingsModal previousSettings={alertingSettings} open />);
+    await act(() =>
+      render(<AlertingSettingsModal previousSettings={alertingSettings} open />)
+    );
 
     expect(
       screen.getByRole('switch', { name: 'Send Email Alerts' })
@@ -98,7 +100,7 @@ describe('AlertingSettingsModal', () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
 
-    render(<AlertingSettingsModal open onSave={onSave} />);
+    await act(() => render(<AlertingSettingsModal open onSave={onSave} />));
 
     await user.click(screen.getByRole('switch', 'Email Alerts'));
     await user.type(
@@ -143,12 +145,14 @@ describe('AlertingSettingsModal', () => {
     const user = userEvent.setup();
     const onSave = jest.fn();
 
-    render(
-      <AlertingSettingsModal
-        previousSettings={alertingSettings}
-        open
-        onSave={onSave}
-      />
+    await act(() =>
+      render(
+        <AlertingSettingsModal
+          previousSettings={alertingSettings}
+          open
+          onSave={onSave}
+        />
+      )
     );
     await user.click(screen.getByRole('button', { name: 'Save Settings' }));
 
@@ -179,19 +183,21 @@ describe('AlertingSettingsModal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <AlertingSettingsModal
-        open
-        previousSettings={alertingSettingsFactory.build()}
-        errors={[
-          constructErrorMessage('smtp_server', smtpServerError),
-          constructErrorMessage('smtp_port', smtpPortError),
-          constructErrorMessage('smtp_username', smtpUsernameError),
-          constructErrorMessage('smtp_password', smtpPasswordError),
-          constructErrorMessage('sender_email', senderEmailError),
-          constructErrorMessage('recipient_email', recipientEmailError),
-        ]}
-      />
+    await act(() =>
+      render(
+        <AlertingSettingsModal
+          open
+          previousSettings={alertingSettingsFactory.build()}
+          errors={[
+            constructErrorMessage('smtp_server', smtpServerError),
+            constructErrorMessage('smtp_port', smtpPortError),
+            constructErrorMessage('smtp_username', smtpUsernameError),
+            constructErrorMessage('smtp_password', smtpPasswordError),
+            constructErrorMessage('sender_email', senderEmailError),
+            constructErrorMessage('recipient_email', recipientEmailError),
+          ]}
+        />
+      )
     );
     await user.click(screen.getByRole('button', { name: 'Remove' }));
 

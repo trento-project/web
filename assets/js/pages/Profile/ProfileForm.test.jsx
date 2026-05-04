@@ -103,14 +103,16 @@ describe('ProfileForm', () => {
     const user = userEvent.setup();
     const onModalToggle = jest.fn();
 
-    render(<ProfileForm togglePasswordModal={onModalToggle} />);
+    await act(() =>
+      render(<ProfileForm togglePasswordModal={onModalToggle} />)
+    );
     await user.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(onModalToggle).toHaveBeenCalled();
   });
 
-  it('should open the modal when the modal open props is set to true', () => {
-    render(<ProfileForm passwordModalOpen />);
+  it('should open the modal when the modal open props is set to true', async () => {
+    await act(() => render(<ProfileForm passwordModalOpen />));
 
     expect(screen.getByText('Current Password')).toBeVisible();
   });

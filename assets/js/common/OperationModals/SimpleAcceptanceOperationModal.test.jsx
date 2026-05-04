@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { waiveOperationDisclaimer } from '@lib/operations';
@@ -125,12 +125,14 @@ describe('SimpleAcceptanceOperationModal', () => {
       descriptionResolverArgs,
       expectedDescription,
     }) => {
-      render(
-        <SimpleAcceptanceOperationModal
-          operation={operation}
-          descriptionResolverArgs={descriptionResolverArgs}
-          isOpen
-        />
+      await act(() =>
+        render(
+          <SimpleAcceptanceOperationModal
+            operation={operation}
+            descriptionResolverArgs={descriptionResolverArgs}
+            isOpen
+          />
+        )
       );
 
       expect(screen.getByText(title)).toBeInTheDocument();
@@ -142,12 +144,14 @@ describe('SimpleAcceptanceOperationModal', () => {
     const user = userEvent.setup();
     const onRequest = jest.fn();
 
-    render(
-      <SimpleAcceptanceOperationModal
-        operation={SAP_INSTANCE_START}
-        isOpen
-        onRequest={onRequest}
-      />
+    await act(() =>
+      render(
+        <SimpleAcceptanceOperationModal
+          operation={SAP_INSTANCE_START}
+          isOpen
+          onRequest={onRequest}
+        />
+      )
     );
 
     expect(screen.getByText('Request')).toBeEnabled();
@@ -160,12 +164,14 @@ describe('SimpleAcceptanceOperationModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    render(
-      <SimpleAcceptanceOperationModal
-        operation={SAP_INSTANCE_START}
-        isOpen
-        onCancel={onCancel}
-      />
+    await act(() =>
+      render(
+        <SimpleAcceptanceOperationModal
+          operation={SAP_INSTANCE_START}
+          isOpen
+          onCancel={onCancel}
+        />
+      )
     );
 
     await user.click(screen.getByText('Cancel'));

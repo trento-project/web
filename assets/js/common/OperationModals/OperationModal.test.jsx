@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -13,13 +13,15 @@ describe('OperationModal', () => {
     const operationTitle = faker.lorem.sentence();
     const operationDescription = faker.lorem.paragraph();
     const operationText = faker.lorem.word();
-    render(
-      <OperationModal
-        title={operationTitle}
-        description={operationDescription}
-        operationText={operationText}
-        isOpen
-      />
+    await act(() =>
+      render(
+        <OperationModal
+          title={operationTitle}
+          description={operationDescription}
+          operationText={operationText}
+          isOpen
+        />
+      )
     );
 
     const pattern = `By proceeding I confirm to be aware of the impact that executing operation "${operationText}" will have in my environment`;
@@ -44,16 +46,18 @@ describe('OperationModal', () => {
     const specificOperationModalContent = faker.person.fullName();
     const mockOnRequest = jest.fn();
 
-    render(
-      <OperationModal
-        title={operationTitle}
-        description={operationDescription}
-        operationText={operationText}
-        isOpen
-        onRequest={mockOnRequest}
-      >
-        {specificOperationModalContent}
-      </OperationModal>
+    await act(() =>
+      render(
+        <OperationModal
+          title={operationTitle}
+          description={operationDescription}
+          operationText={operationText}
+          isOpen
+          onRequest={mockOnRequest}
+        >
+          {specificOperationModalContent}
+        </OperationModal>
+      )
     );
 
     await user.click(screen.getByText('Proceed'));
@@ -80,7 +84,7 @@ describe('OperationModal', () => {
   it(`should not waive disclaimer by just clicking the "Don't show this again" checkbox`, async () => {
     const user = userEvent.setup();
 
-    const { rerender } = render(<OperationModal isOpen />);
+    const { rerender } = await act(() => render(<OperationModal isOpen />));
 
     await user.click(screen.getByRole('checkbox'));
     expect(screen.getByRole('checkbox')).toBeChecked();
@@ -98,15 +102,17 @@ describe('OperationModal', () => {
     const operationText = faker.lorem.word();
     const specificOperationModalContent = faker.person.fullName();
 
-    const { rerender } = render(
-      <OperationModal
-        title={operationTitle}
-        description={operationDescription}
-        operationText={operationText}
-        isOpen
-      >
-        {specificOperationModalContent}
-      </OperationModal>
+    const { rerender } = await act(() =>
+      render(
+        <OperationModal
+          title={operationTitle}
+          description={operationDescription}
+          operationText={operationText}
+          isOpen
+        >
+          {specificOperationModalContent}
+        </OperationModal>
+      )
     );
 
     await user.click(screen.getByRole('checkbox'));
@@ -133,7 +139,7 @@ describe('OperationModal', () => {
   it('should be possible to disable requesting operation after disclaimer step', async () => {
     const user = userEvent.setup();
 
-    render(<OperationModal isOpen requestDisabled />);
+    await act(() => render(<OperationModal isOpen requestDisabled />));
 
     await user.click(screen.getByText('Proceed'));
 
