@@ -4,11 +4,11 @@ import { filter, isUndefined, last } from 'lodash';
 
 import Spinner from '@common/Spinner';
 
-export function AgentProgressIndicatorView({ label }) {
+export function AgentProgressIndicatorView({ children }) {
   return (
     <div className="flex items-center gap-2 text-muted-foreground mt-2">
       <Spinner />
-      <span className="text-sm">{label}</span>
+      <span className="text-sm">{children}</span>
     </div>
   );
 }
@@ -32,9 +32,9 @@ export function AgentProgressIndicator() {
         );
       }}
     >
-      <AgentProgressIndicatorView
-        label={deriveProgressLabel(message.content)}
-      />
+      <AgentProgressIndicatorView>
+        {deriveProgressLabel(message.content)}
+      </AgentProgressIndicatorView>
     </AuiIf>
   );
 }

@@ -21,14 +21,14 @@ describe('AgentProgressIndicatorView', () => {
   it.each(['Thinking...', 'Calling get_hosts...'])(
     'renders the "%s" label',
     (label) => {
-      render(<AgentProgressIndicatorView label={label} />);
+      render(<AgentProgressIndicatorView>{label}</AgentProgressIndicatorView>);
       expect(screen.getByText(label)).toBeVisible();
     }
   );
 
   it('renders a spinner alongside the label', () => {
     const { container } = render(
-      <AgentProgressIndicatorView label="Thinking..." />
+      <AgentProgressIndicatorView>Thinking...</AgentProgressIndicatorView>
     );
     expect(
       container.querySelector('svg, [role="status"], .animate-spin')
