@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -59,6 +59,7 @@ describe('ChatHeaderView', () => {
   });
 
   it('stops pointer-down propagation on the buttons so the drag handle does not trigger', () => {
+    const user = userEvent.setup();
     const parentPointerDown = jest.fn();
     render(
       <div onPointerDown={parentPointerDown}>
@@ -66,8 +67,8 @@ describe('ChatHeaderView', () => {
       </div>
     );
 
-    fireEvent.pointerDown(screen.getByRole('button', { name: 'New chat' }));
-    fireEvent.pointerDown(screen.getByRole('button', { name: 'Close' }));
+    user.click(screen.getByRole('button', { name: 'New chat' }));
+    user.click(screen.getByRole('button', { name: 'Close' }));
 
     expect(parentPointerDown).not.toHaveBeenCalled();
   });
