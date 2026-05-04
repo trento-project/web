@@ -6,17 +6,16 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { useAui } from '@assistant-ui/react';
-
 import { useAIConnectionStatus } from '../connectionStatusContext';
+import { useResetThread } from '../resetThreadContext';
 import { ChatHeader, ChatHeaderView } from './ChatHeader';
-
-jest.mock('@assistant-ui/react', () => ({
-  useAui: jest.fn(),
-}));
 
 jest.mock('../connectionStatusContext', () => ({
   useAIConnectionStatus: jest.fn(),
+}));
+
+jest.mock('../resetThreadContext', () => ({
+  useResetThread: jest.fn(),
 }));
 
 const viewDefaults = {
@@ -84,9 +83,7 @@ describe('ChatHeaderView', () => {
 
 describe('ChatHeader', () => {
   it('passes the current connection status to the view', () => {
-    useAui.mockReturnValue({
-      threads: () => ({ switchToNewThread: jest.fn() }),
-    });
+    useResetThread.mockReturnValue(jest.fn());
     useAIConnectionStatus.mockReturnValue('connecting');
 
     render(<ChatHeader onClose={() => {}} />);
@@ -94,22 +91,20 @@ describe('ChatHeader', () => {
     expect(screen.getByText('Connecting...')).toBeVisible();
   });
 
-  it('calls aui.threads().switchToNewThread when "New chat" is clicked', async () => {
-    const switchToNewThread = jest.fn();
-    useAui.mockReturnValue({ threads: () => ({ switchToNewThread }) });
+  it('calls resetThread when "New chat" is clicked', async () => {
+    const resetThread = jest.fn();
+    useResetThread.mockReturnValue(resetThread);
     useAIConnectionStatus.mockReturnValue('connected');
     const user = userEvent.setup();
 
     render(<ChatHeader onClose={() => {}} />);
     await user.click(screen.getByRole('button', { name: 'New chat' }));
 
-    expect(switchToNewThread).toHaveBeenCalledTimes(1);
+    expect(resetThread).toHaveBeenCalledTimes(1);
   });
 
   it('forwards onClose to the close button', async () => {
-    useAui.mockReturnValue({
-      threads: () => ({ switchToNewThread: jest.fn() }),
-    });
+    useResetThread.mockReturnValue(jest.fn());
     useAIConnectionStatus.mockReturnValue('connected');
     const onClose = jest.fn();
     const user = userEvent.setup();

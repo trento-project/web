@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { EOS_CLOSE } from 'eos-icons-react';
-import { useAui } from '@assistant-ui/react';
 
 import Button from '@common/Button';
 import { CONNECTION_STATUS } from '@lib/ai';
 
 import { useAIConnectionStatus } from '../connectionStatusContext';
+import { useResetThread } from '../resetThreadContext';
 
 const STATUS_VIEW = {
   [CONNECTION_STATUS.CONNECTED]: { text: 'Online', dot: 'bg-white' },
@@ -62,17 +62,13 @@ export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
 }
 
 export function ChatHeader({ onClose }) {
-  const aui = useAui();
   const connectionStatus = useAIConnectionStatus();
-
-  const onNewChat = useCallback(() => {
-    aui.threads().switchToNewThread();
-  }, [aui]);
+  const resetThread = useResetThread();
 
   return (
     <ChatHeaderView
       connectionStatus={connectionStatus}
-      onNewChat={onNewChat}
+      onNewChat={resetThread}
       onClose={onClose}
     />
   );

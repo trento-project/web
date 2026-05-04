@@ -1,5 +1,6 @@
 import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -9,6 +10,7 @@ import * as agentModule from '@lib/ai';
 import { useSocket } from '@common/SocketProvider';
 import { AssistantChatProvider } from './AssistantChatProvider';
 import { useAIConnectionStatus } from './connectionStatusContext';
+import { useResetThread } from './resetThreadContext';
 
 jest.mock('@common/SocketProvider', () => ({
   useSocket: jest.fn(),
@@ -54,6 +56,15 @@ function StatusProbe() {
   return <div data-testid="status">{status}</div>;
 }
 
+function ResetProbe() {
+  const resetThread = useResetThread();
+  return (
+    <button type="button" onClick={resetThread}>
+      reset
+    </button>
+  );
+}
+
 function renderWithProvider(store, children = <StatusProbe />) {
   return render(
     <Provider store={store}>
@@ -68,20 +79,13 @@ const lastRuntimeOptions = () =>
 const userStore = (id = 42) => mockStore({ user: { id } });
 const guestStore = () => mockStore({ user: {} });
 
-let runtimeStub;
 let fakeSocket;
 
 beforeEach(() => {
   agentModule.__resetInstances();
   jest.clearAllMocks();
 
-  runtimeStub = {
-    thread: {
-      subscribe: jest.fn(() => jest.fn()),
-      getState: jest.fn(() => ({ messages: [] })),
-    },
-  };
-  useAgUiRuntime.mockImplementation(() => runtimeStub);
+  useAgUiRuntime.mockImplementation(() => ({}));
 
   fakeSocket = {
     channel: jest.fn(),
@@ -126,6 +130,23 @@ describe('AssistantChatProvider', () => {
     expect(lastRuntimeOptions().agent).toBe(agent);
   });
 
+  it('seeds the agent with a freshly minted thread id', async () => {
+    jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('initial-thread');
+    renderWithProvider(userStore());
+
+    await waitFor(() => {
+      expect(agentModule.__getInstances()).toHaveLength(1);
+    });
+    expect(agentModule.__getInstances()[0].opts.threadId).toBe(
+      'initial-thread'
+    );
+  });
+
+  it('does not pass a threadList adapter to the runtime', () => {
+    renderWithProvider(userStore());
+    expect(lastRuntimeOptions().adapters).toBeUndefined();
+  });
+
   it('initializes the agent after construction', async () => {
     renderWithProvider(userStore());
     await waitFor(() => {
@@ -150,15 +171,23 @@ describe('AssistantChatProvider', () => {
     expect(screen.getByTestId('status')).toHaveTextContent('disconnected');
   });
 
-  // Per-thread adapter behaviour is covered in useThreadStore.test.js. Here
-  // we just verify the provider wires the adapter into the AG-UI runtime.
-  it('forwards the thread store adapter to useAgUiRuntime', () => {
-    jest.spyOn(crypto, 'randomUUID').mockReturnValueOnce('initial-thread');
-    renderWithProvider(userStore());
-    expect(lastRuntimeOptions().adapters.threadList).toMatchObject({
-      threadId: 'initial-thread',
-      onSwitchToNewThread: expect.any(Function),
-      onSwitchToThread: expect.any(Function),
-    });
+  it('rebuilds the agent with a new thread id and disconnects the old one when reset', async () => {
+    jest
+      .spyOn(crypto, 'randomUUID')
+      .mockReturnValueOnce('thread-1')
+      .mockReturnValueOnce('thread-2');
+
+    renderWithProvider(userStore(), <ResetProbe />);
+    await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(1));
+    const [first] = agentModule.__getInstances();
+    expect(first.opts.threadId).toBe('thread-1');
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('button', { name: 'reset' }));
+
+    await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(2));
+    const [, second] = agentModule.__getInstances();
+    expect(second.opts.threadId).toBe('thread-2');
+    expect(first.disconnect).toHaveBeenCalled();
   });
 });
