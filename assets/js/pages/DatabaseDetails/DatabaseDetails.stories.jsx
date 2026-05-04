@@ -36,15 +36,15 @@ export default {
   component: GenericSystemDetails,
   argTypes: {
     system: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The represented HANA database',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Current user abilities',
     },
     cleanUpPermittedFor: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Abilities that allow instance clean up',
     },
     onInstanceCleanUp: {

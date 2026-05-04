@@ -22,7 +22,6 @@ export default {
       control: { type: 'text' },
     },
     onNavigate: {
-      type: { name: 'function' },
       description: 'Callback for navigation actions in PatchList.',
       action: 'onNavigate',
     },

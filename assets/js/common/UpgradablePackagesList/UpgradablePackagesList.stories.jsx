@@ -10,13 +10,13 @@ export default {
       description: 'Callback when patch is clicked',
     },
     upgradablePackages: {
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
       description: 'List of upgradable packages',
     },
     patchesLoading: {
+      type: 'boolean',
       description: 'Are patches loading?',
+      control: { type: 'boolean' },
     },
     sortDirection: {
       type: 'string',

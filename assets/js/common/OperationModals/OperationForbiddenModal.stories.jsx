@@ -7,17 +7,15 @@ export default {
     operation: {
       type: 'string',
       description: 'Operation name',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'Authorization errors as string',
-      control: 'array',
+      control: { type: 'array' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onCancel: {
       description: 'Closes the modal',

@@ -9,28 +9,20 @@ export default {
     type: {
       description: 'The type of advisory',
       options: ['security_advisory', 'bugfix', 'enhancement', 'NONEXISTENT'],
-      control: {
-        type: 'radio',
-      },
+      control: { type: 'radio' },
     },
     centered: {
       description: 'Center the icon',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     hoverOpacity: {
       description: 'Change opacity on hover',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     size: {
       description: 'Size of the icon',
       options: ['xs', 's', 'm', 'l', 'xl', 'xxl', 'xxxl'],
-      control: {
-        type: 'radio',
-      },
+      control: { type: 'radio' },
     },
   },
 

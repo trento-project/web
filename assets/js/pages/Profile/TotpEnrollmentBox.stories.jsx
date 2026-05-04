@@ -7,26 +7,18 @@ export default {
   argTypes: {
     secret: {
       description: 'TOTP secret',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     qrData: {
       description: 'TOTP enrollment payload as qr code',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'Totp errors during the enrollment verify procedure',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     loading: {
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     verifyTotp: {
       action: 'Verify enrollment TOTP',

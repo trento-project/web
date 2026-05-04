@@ -41,21 +41,15 @@ export default {
   argTypes: {
     fullName: {
       description: 'Full name',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     emailAddress: {
       description: 'Email address',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     username: {
       description: 'Username',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     status: {
       control: { type: 'radio' },
@@ -76,40 +70,28 @@ export default {
     },
     createdAt: {
       description: 'User creation timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     updatedAt: {
       description: 'User last update timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     totpEnabledAt: {
       description: 'User enablement of totp feature',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     lastLoginAt: {
       description: 'User last login timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     analyticsEnabledConfig: {
       description:
         'Toggles visibility of Analytics switch. Analytics config is enabled',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     analyticsEnabled: {
       description: 'Toggles tracking user analytics',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     timezone: {
       type: 'string',
@@ -119,36 +101,27 @@ export default {
     },
     editing: {
       description: 'User is being edited',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     timezones: {
       description: 'Available timezones',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     saving: {
       description: 'User is being saved',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     saveEnabled: {
       description: 'User saving is enabled',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     saveText: {
       description: 'Save button text',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: { type: 'object' },
     },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',

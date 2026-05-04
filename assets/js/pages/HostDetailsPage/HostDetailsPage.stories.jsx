@@ -295,12 +295,13 @@ export default {
       control: { type: 'text' },
     },
     cleanForbiddenOperation: {
-      description: 'Identifier for the cleanForbiddenOperation',
-      control: { type: 'text' },
+      description:
+        'Callback invoked when a forbidden operation modal is dismissed',
+      action: 'cleanForbiddenOperation',
     },
     navigate: {
-      description: 'The navigate prop',
-      control: { type: 'text' },
+      description: 'Navigation function',
+      action: 'navigate',
     },
     timezone: {
       description: 'The timezone prop',

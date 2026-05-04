@@ -42,16 +42,16 @@ export default {
   component: GenericSystemDetails,
   argTypes: {
     system: {
-      control: 'object',
+      control: { type: 'object' },
       description:
         'The object containing the details that are going to be represented in this view',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Current user abilities',
     },
     cleanUpPermittedFor: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Abilities that allow instance clean up',
     },
     getInstanceOperations: {

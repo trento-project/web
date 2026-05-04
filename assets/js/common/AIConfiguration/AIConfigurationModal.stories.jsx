@@ -10,21 +10,15 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     aiProviders: {
       description: 'Available AI providers and their models',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     aiConfiguration: {
       description: 'Current user AI configuration',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     onUpdate: {
       description: 'Updates AI configuration',
@@ -36,15 +30,11 @@ export default {
     },
     saving: {
       description: 'Whether the settings are loading or submitting',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     onSave: {
       description:

@@ -5,9 +5,7 @@ export default {
   component: AvailableSoftwareUpdates,
   argTypes: {
     settingsConfigured: {
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
       description: 'Have settings been saved for the software updates service',
     },
     onBackToSettings: {
@@ -26,24 +24,18 @@ export default {
       action: 'onNavigateToPackages',
     },
     loading: {
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
       description: 'are software updates settings being fetched?',
     },
     relevantPatches: {
       type: 'number',
       description: 'Number of relevant patches available for the system',
-      control: {
-        type: 'number',
-      },
+      control: { type: 'number' },
     },
     upgradablePackages: {
       type: 'number',
       description: 'Number of upgradable packages for the system',
-      control: {
-        type: 'number',
-      },
+      control: { type: 'number' },
     },
     tooltip: {
       type: 'string',

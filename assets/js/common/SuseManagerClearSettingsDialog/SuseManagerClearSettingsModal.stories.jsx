@@ -6,9 +6,7 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     onClearSettings: {
       description: 'Callback used to confirm the clearing of settings',

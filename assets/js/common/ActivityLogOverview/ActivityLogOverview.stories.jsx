@@ -8,9 +8,7 @@ export default {
   argTypes: {
     activityLog: {
       description: 'List of the activity log entries',
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
     },
     loading: {
       description: 'Display loading state of the component',

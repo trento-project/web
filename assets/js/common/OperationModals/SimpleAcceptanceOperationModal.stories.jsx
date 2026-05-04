@@ -37,11 +37,11 @@ export default {
     descriptionResolverArgs: {
       description:
         'Arguments for the description resolver function to generate the operation description',
-      control: 'object',
+      control: { type: 'object' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onRequest: {
       description: 'Request saptune solution apply operation',

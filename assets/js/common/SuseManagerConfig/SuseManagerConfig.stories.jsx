@@ -6,25 +6,19 @@ export default {
   argTypes: {
     username: {
       description: 'SUSE Manager username',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     userAbilities: {
       description: 'Users abilities that allow changing SUSE Manager settings',
-      control: 'array',
+      control: { type: 'array' },
     },
     url: {
       description: 'SUSE Manager URL',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     certUploadDate: {
       description: 'SUSE Manager self-signed certificate upload date',
-      control: {
-        type: 'date',
-      },
+      control: { type: 'date' },
     },
     onEditClick: {
       description: 'Callback used to edit settings',
@@ -32,15 +26,11 @@ export default {
     },
     clearSettingsDialogOpen: {
       description: "Whether the 'Clear Settings' dialog is open or not",
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     testConnectionEnabled: {
       description: "Whether the 'Test connection' button is enabled or not",
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     onClearClick: {
       description: "Callback used to open 'Clear Settings' dialog",

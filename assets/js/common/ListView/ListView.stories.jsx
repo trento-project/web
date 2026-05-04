@@ -7,7 +7,7 @@ export default {
   component: ListView,
   argTypes: {
     orientation: {
-      control: 'select',
+      control: { type: 'select' },
       options: ['horizontal', 'vertical'],
     },
     className: {

@@ -11,52 +11,38 @@ export default {
     options: {
       type: 'array',
       description: 'The list of options to be rendered in the dropdown',
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
     },
     value: {
       description:
         'Control value. Used to change select value after it is mounted',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     initialValues: {
       type: 'array',
       description:
         'Initially selected values. Used only to prepopulate the select on mount',
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
     },
     isDisabled: {
       type: 'boolean',
       description: 'Component is disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     isMulti: {
       type: 'boolean',
       description: 'Component is multi value',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     isSearchable: {
       type: 'boolean',
       description: 'Component is searchable',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     isClearable: {
       type: 'boolean',
       description: 'Component selected options are clearable',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     renderOption: {
       description: 'A function to render each option in the dropdown',

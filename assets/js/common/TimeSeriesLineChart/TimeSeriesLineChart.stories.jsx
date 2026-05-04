@@ -51,9 +51,11 @@ export default {
     },
     chartWrapperClassNames: {
       description: 'Classnames for the parent of chart canvas',
+      control: { type: 'text' },
     },
     className: {
       description: 'Classname for component',
+      control: { type: 'text' },
     },
     onIntervalChange: {
       description:

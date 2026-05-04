@@ -6,19 +6,16 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     initialRetentionTime: {
       description:
         'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `day`, `week`, `month`, `year`.',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     errors: {
       description: 'The validation error to be shown',
+      control: { type: 'object' },
     },
     loading: {
       type: 'boolean',
@@ -29,14 +26,17 @@ export default {
     onSave: {
       description:
         'Callback function invoked when the Save Settings button is clicked',
+      action: 'onSave',
     },
     onCancel: {
       description:
         'Callback function invoked when the Cancel button is clicked or the modal is closed',
+      action: 'onCancel',
     },
     onClearErrors: {
       description:
         'Callback function invoked when the retention time is modified to clear previous validation errors',
+      action: 'onClearErrors',
     },
   },
 };

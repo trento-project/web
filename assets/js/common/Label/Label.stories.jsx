@@ -6,27 +6,19 @@ export default {
   argTypes: {
     children: {
       description: 'Label content',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'string' },
     },
     className: {
       description: 'CSS classes',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'string' },
     },
     info: {
       description: 'Tooltip for user education',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'string' },
     },
     required: {
       description: 'Wether this field is required or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
   },
 };

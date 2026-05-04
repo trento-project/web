@@ -36,14 +36,14 @@ export default {
       description: 'Provider of the current checkable target',
     },
     catalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Catalog data',
       table: {
         type: { summary: 'object' },
       },
     },
     selectedChecks: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Currently selected checks',
       table: {
         type: { summary: 'array' },
@@ -65,7 +65,7 @@ export default {
       },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Current user abilities',
     },
     onUpdateCatalog: {
@@ -89,9 +89,7 @@ export default {
       type: 'enum',
       description: 'Current customization status',
       options: CUSTOMIZATION_STATUSES,
-      control: {
-        type: 'radio',
-      },
+      control: { type: 'radio' },
     },
   },
 };

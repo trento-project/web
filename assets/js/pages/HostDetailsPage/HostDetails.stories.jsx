@@ -118,7 +118,7 @@ export default {
       description: 'The discovered CSP data',
     },
     saptuneStatus: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Saptune status data',
     },
     savingChecks: {
@@ -130,7 +130,7 @@ export default {
       },
     },
     selectedChecks: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'The selected checks',
     },
     slesSubscriptions: {
@@ -138,15 +138,15 @@ export default {
       description: 'Registered SLES subscriptions on the host',
     },
     catalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Catalog data',
     },
     lastExecution: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Last execution data',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Current user abilities',
     },
     operationsEnabled: {
@@ -155,7 +155,7 @@ export default {
         'Operations framework enabled. Remove once it is ready to release',
     },
     runningOperation: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Currently running operation data',
     },
     cleanUpHost: {

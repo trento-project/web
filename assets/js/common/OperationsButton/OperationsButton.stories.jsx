@@ -9,32 +9,26 @@ export default {
   argTypes: {
     operations: {
       description: 'Operations to be displayed in the operations button menu',
-      control: 'array',
+      control: { type: 'array' },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Current user abilities',
     },
     menuPosition: {
       type: 'string',
       description: 'Position of the menu',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     disabled: {
       type: 'boolean',
       description: 'Main button disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabledTooltip: {
       type: 'string',
       description: 'Tooltip for the main button when disabled',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     disabledTooltipPosition: {
       type: 'string',

@@ -8,15 +8,11 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the modal is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     loading: {
       description: 'Whether the settings are loading or submitting',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     onGenerate: {
       action: 'Generate key',
@@ -29,9 +25,11 @@ export default {
     generatedApiKeyExpiration: {
       description:
         'The new generated api key expiration expressed in ISO8601 Timestamp',
+      control: { type: 'text' },
     },
     generatedApiKey: {
       description: 'The new generated api key',
+      control: { type: 'text' },
     },
     timezone: {
       type: 'string',

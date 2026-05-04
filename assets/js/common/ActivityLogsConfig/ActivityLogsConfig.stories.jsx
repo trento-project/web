@@ -8,9 +8,7 @@ export default {
     retentionTime: {
       description:
         'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `day`, `month`, `year`.',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     onEditClick: {
       description: 'Callback when the edit button is clicked',
@@ -18,7 +16,7 @@ export default {
     },
     userAbilities: {
       description: 'Users abilities that allow editing activity logs settings',
-      control: 'array',
+      control: { type: 'array' },
     },
   },
 };

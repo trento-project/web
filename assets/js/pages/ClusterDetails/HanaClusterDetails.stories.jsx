@@ -19,14 +19,6 @@ import HanaClusterDetails from './HanaClusterDetails';
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
-const baseCluster = clusterFactory.build({
-  type: 'hana_scale_up',
-  details: {
-    architecture_type: 'classic',
-    hana_scenario: 'performance_optimized',
-  },
-});
-
 const {
   id: clusterID,
   name: clusterName,
@@ -37,7 +29,13 @@ const {
   cib_last_written: cibLastWritten,
   details,
   state,
-} = baseCluster;
+} = clusterFactory.build({
+  type: 'hana_scale_up',
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
+});
 
 const scaleOutSites = hanaClusterSiteFactory.buildList(2);
 

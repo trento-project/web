@@ -10,63 +10,43 @@ export default {
   argTypes: {
     id: {
       description: 'The id attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     name: {
       description: 'The name attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     type: {
       description: 'The type attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     value: {
       description: 'The value attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     prefix: {
       description: 'The prefix icon to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     suffix: {
       description: 'The suffix icon to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     placeholder: {
       description: 'The placeholder text to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     allowClear: {
       description: 'Whether the input should have a clear icon or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     error: {
       description: 'Whether the field has an error',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the input should be disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     className: {
       type: 'string',

@@ -10,42 +10,30 @@ export default {
       type: 'string',
       description:
         'The content of the accordion header. It can be a plain string or a Component',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     children: {
       description:
         'The content of the accordion panel. It should be a Component',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     withHandle: {
       description:
         'Whether the accordion header should have a chevron icon handle or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     withTransition: {
       description:
         'Whether the accordion panel should open/close with a transition animation',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     defaultOpen: {
       description: 'Whether the accordion should render open by default',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     rounded: {
       description: 'Whether the accordion container should be rounded or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     className: {
       type: 'string',

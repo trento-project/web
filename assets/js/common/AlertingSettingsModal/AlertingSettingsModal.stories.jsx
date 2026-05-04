@@ -25,31 +25,23 @@ export default {
   argTypes: {
     previousSettings: {
       description: 'Alerting settings that could be configured',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
 
     errors: {
       description: 'Errors from failed submission',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
 
     open: {
       description: 'Whether the dialog is open or not',
       type: 'boolean',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
 
     loading: {
       description: 'Whether submission is in progress',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
 
     onSave: {

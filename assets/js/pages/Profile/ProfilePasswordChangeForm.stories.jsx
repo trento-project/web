@@ -14,6 +14,7 @@ export default {
   argTypes: {
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: { type: 'object' },
     },
     onSave: {
       action: 'Save password payload',
@@ -24,7 +25,9 @@ export default {
       description: 'Cancel Action',
     },
     loading: {
-      action: 'Loading state',
+      type: 'boolean',
+      description: 'Loading state',
+      control: { type: 'boolean' },
     },
   },
   args: {

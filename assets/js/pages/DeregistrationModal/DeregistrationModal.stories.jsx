@@ -86,9 +86,25 @@ function ButtonToOpenModal({ ...rest }) {
   );
 }
 
+export const Default = {
+  args: {
+    contentType: 'host',
+    isOpen: false,
+    onCleanUp: () => {},
+    onCancel: () => {},
+    hostname: '',
+    sid: '',
+    instanceNumber: '',
+  },
+  render: (args) => <ButtonToOpenModal {...args} />,
+};
+
 export const Host = {
   args: {
     hostname: 'example host',
+    isOpen: true,
+    onCleanUp: () => {},
+    onCancel: () => {},
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };

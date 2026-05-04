@@ -6,25 +6,19 @@ export default {
   argTypes: {
     placeholder: {
       description: 'The placeholder text to render',
-      control: {
-        type: 'text',
-        defaultValue: 'Password',
-      },
+      control: { type: 'text' },
       table: {
         type: { summary: 'string' },
+        defaultValue: { summary: 'Password' },
       },
     },
     error: {
       description: 'Whether the field has an error',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the input should be disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
       table: {
         type: { summary: 'boolean' },
       },

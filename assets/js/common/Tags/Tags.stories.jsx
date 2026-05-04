@@ -12,12 +12,12 @@ export default {
   argTypes: {
     onChange: { action: 'tag changed' },
     tagAdditionPermittedFor: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Abilities that allow tag creation',
       action: 'callback',
     },
     tagDeletionPermittedFor: {
-      control: 'array',
+      control: { type: 'array' },
       description: 'Abilities that allow tag deletion',
       action: 'callback',
     },

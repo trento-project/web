@@ -8,39 +8,27 @@ export default {
   argTypes: {
     id: {
       description: 'The id attribute of the textarea',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     name: {
       description: 'The name attribute of the textarea',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     value: {
       description: 'The value attribute of the textarea',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     placeholder: {
       description: 'The placeholder text to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     error: {
       description: 'Whether the field has an error',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the textarea should be disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     className: {
       type: 'string',

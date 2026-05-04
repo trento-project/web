@@ -78,7 +78,7 @@ export default {
       description: 'Staging',
     },
     tuningState: {
-      control: 'select',
+      control: { type: 'select' },
       options: ['compliant', 'not compliant', 'not tuned'],
       description: 'The tuning state of saptune',
     },

@@ -6,36 +6,27 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     loading: {
       description: 'Whether the settings are loading or submitting',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     initialUsername: {
       description: 'Initial SUSE Manager username',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'string' },
     },
     initialUrl: {
       description: 'Initial SUSE Manager URL',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'string' },
     },
     certUploadDate: {
       description: 'Certificate upload date',
-      control: {
-        type: 'date',
-      },
+      control: { type: 'date' },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: { type: 'object' },
     },
     onSave: {
       description:

@@ -158,6 +158,9 @@ export const Single = {
     lastExecution,
     catalog,
     userAbilities,
+    timezone: 'Etc/UTC',
+    navigate: (path) => () => alert(`Navigate to ${path}`),
+    getClusterHostOperations: () => [],
   },
 };
 

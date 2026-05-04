@@ -10,9 +10,7 @@ export default {
   component: PatchList,
   argTypes: {
     patches: {
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
       description: 'A list of patches',
       action: 'callback',
     },

@@ -8,15 +8,11 @@ export default {
   argTypes: {
     settings: {
       description: 'Current alerting settings values',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     userAbilities: {
       description: 'Abilities of the current user',
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
     },
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',

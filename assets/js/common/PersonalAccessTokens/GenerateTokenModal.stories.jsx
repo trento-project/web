@@ -6,7 +6,7 @@ export default {
   argTypes: {
     isOpen: {
       description: 'Opens the modal',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onGenerate: {
       description: 'Generate personal access token',

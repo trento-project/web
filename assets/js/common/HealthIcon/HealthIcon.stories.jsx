@@ -6,7 +6,7 @@ export default {
   component: HealthIcon,
   argTypes: {
     isLink: {
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     health: {
       type: 'string',

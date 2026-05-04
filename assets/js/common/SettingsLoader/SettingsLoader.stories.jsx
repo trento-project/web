@@ -11,15 +11,11 @@ export default {
       description: 'Settings Loader status',
       options: Object.keys(SettingsLoaderStatus),
       mapping: SettingsLoaderStatus,
-      control: {
-        type: 'select',
-      },
+      control: { type: 'select' },
     },
     sectionName: {
       description: 'Name of the setting section',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onRetry: {
       description:

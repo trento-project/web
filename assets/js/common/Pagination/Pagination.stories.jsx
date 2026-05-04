@@ -10,15 +10,11 @@ export default {
     hasPrev: { control: { type: 'boolean' }, defaultValue: true },
     hasNext: { control: { type: 'boolean' }, defaultValue: true },
     currentItemsPerPage: {
-      control: {
-        type: 'number',
-      },
+      control: { type: 'number' },
       defaultValue: 10,
     },
     itemsPerPageOptions: {
-      control: {
-        type: 'array',
-      },
+      control: { type: 'array' },
       defaultValue: [10],
     },
     onSelect: {
