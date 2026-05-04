@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { parseDateTimeLocalToUtc } from '@lib/timezones';
 import ComposedFilter from '.';
 
 jest.setTimeout(100000);
@@ -303,5 +304,36 @@ describe('ComposedFilter component', () => {
     expect(screen.getByText('Filter Pasta...')).toBeInTheDocument();
     expect(screen.getByText('Filter Pizza...')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Filter by frutta')).toBeInTheDocument();
+  });
+
+  it('should pass timezone to date filters', async () => {
+    const user = userEvent.setup();
+    const mockOnChange = jest.fn();
+    const timezone = 'Pacific/Kiritimati';
+    const datetime = '2024-01-10T09:30';
+    const filters = [
+      {
+        key: 'to_date',
+        type: 'date',
+        title: 'newer than',
+        prefilled: true,
+        timezone,
+      },
+    ];
+
+    render(
+      <ComposedFilter filters={filters} onChange={mockOnChange} autoApply />
+    );
+
+    await user.click(screen.getByText('Filter newer than...'));
+
+    const input = document.querySelector('input[type="datetime-local"]');
+    await user.type(input, datetime);
+
+    const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
+
+    expect(mockOnChange).toHaveBeenLastCalledWith({
+      to_date: ['custom', expectedDate],
+    });
   });
 });

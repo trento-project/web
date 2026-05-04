@@ -18,6 +18,7 @@ import {
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
+import { formatDateTime } from '@lib/timezones';
 
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
@@ -100,6 +101,7 @@ function HostDetails({
   requestOperation,
   cleanForbiddenOperation,
   navigate,
+  timezone,
 }) {
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [
@@ -118,6 +120,17 @@ function HostDetails({
   const saptuneConfiguredVersion = get(saptuneStatus, 'configured_version');
   const saptuneTuning = get(saptuneStatus, 'tuning_state');
   const currentlyAppliedSolution = get(saptuneStatus, 'applied_solution.id');
+
+  // Format SLES subscriptions dates to be displayed in user's timezone
+  const formatSlesSubscriptionsTimes = (subs, tz) =>
+    (subs || []).map((subscription) => {
+      const format = (date) => (date ? formatDateTime(date, tz) || date : date);
+      return {
+        ...subscription,
+        starts_at: format(subscription?.starts_at),
+        expires_at: format(subscription?.expires_at),
+      };
+    });
 
   const renderedExporters = Object.entries(exportersStatus).map(
     ([exporterName, exporterStatus]) => (
@@ -332,6 +345,7 @@ function HostDetails({
             cluster={cluster}
             ipAddresses={buildCidrNotation(ipAddresses, netmasks)}
             lastBootTimestamp={lastBootTimestamp}
+            timezone={timezone}
           />
           <div className="flex flex-col mt-4 bg-white shadow rounded-lg pt-8 px-8 xl:w-2/5 mr-4">
             <SaptuneSummary
@@ -346,6 +360,7 @@ function HostDetails({
             <CheckResultsOverview
               data={lastExecutionData}
               catalogDataEmpty={catalogData?.length === 0}
+              timezone={timezone}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
               onCheckClick={(health) =>
@@ -376,6 +391,7 @@ function HostDetails({
               yAxisFormatter={(value) => `${value}%`}
               startInterval={subHours(timeNow, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
             <HostTimeSeriesLineChart
               hostId={hostID}
@@ -384,6 +400,7 @@ function HostDetails({
               startInterval={subHours(timeNow, 3)}
               yAxisFormatter={(value) => formatBytes(value, 3)}
               className="w-1/2"
+              timezone={timezone}
             />
           </div>
           <DiskSpaceChart hostId={hostID} />
@@ -416,7 +433,7 @@ function HostDetails({
           <Table
             className="pt-2"
             config={subscriptionsTableConfiguration}
-            data={slesSubscriptions}
+            data={formatSlesSubscriptionsTimes(slesSubscriptions, timezone)}
           />
         </div>
       </div>

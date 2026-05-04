@@ -9,6 +9,7 @@ import PersonalAccessTokens from '@common/PersonalAccessTokens';
 
 import { isAdmin } from '@lib/model/users';
 import { isSingleSignOnEnabled } from '@lib/auth/config';
+import { timezones } from '@lib/timezones';
 
 import { editUser, getUser, deleteUserAccessToken } from '@lib/api/users';
 import { getAnalyticsEnabledConfig } from '@lib/analytics';
@@ -112,6 +113,7 @@ function EditUserPage() {
     totp_enabled_at: totpEnabledAt,
     last_login_at: lastLoginAt,
     analytics_enabled: analyticsEnabled,
+    timezone,
   } = userState;
 
   return (
@@ -141,6 +143,8 @@ function EditUserPage() {
         lastLoginAt={lastLoginAt}
         analyticsEnabledConfig={analyticsEnabledConfig}
         analyticsEnabled={analyticsEnabled}
+        timezone={timezone}
+        timezones={timezones}
         saveEnabled={!isAdmin(userState)}
         saving={savingState}
         errors={errorsState}
@@ -154,6 +158,7 @@ function EditUserPage() {
         personalAccessTokens={personalAccessTokens}
         generateTokenAvailable={false}
         onDeleteToken={onDeleteToken}
+        timezone={timezone}
       />
     </div>
   );

@@ -4,9 +4,9 @@ import {
   EOS_CRITICAL_BUG_OUTLINED,
   EOS_ADD_BOX_OUTLINED,
 } from 'eos-icons-react';
-import { format as formatDate } from 'date-fns';
 import classNames from 'classnames';
 import { noop } from 'lodash';
+import { formatDateOnly } from '@lib/timezones';
 
 import Button from '@common/Button';
 import Table, {
@@ -62,7 +62,7 @@ const iconFromAdvisoryType = (
   }
 };
 
-export default function PatchList({ patches, onNavigate = noop }) {
+export default function PatchList({ patches, timezone, onNavigate = noop }) {
   const [sortingColumn, setSortingColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
 
@@ -142,7 +142,7 @@ export default function PatchList({ patches, onNavigate = noop }) {
         sortable: true,
         sortDirection: sortingColumn === 'update_date' ? sortDirection : null,
         handleClick: handleUpdateDateColClick,
-        render: (content, _) => formatDate(content, 'd MMM y'),
+        render: (content, _) => formatDateOnly(content, timezone),
       },
     ],
   };

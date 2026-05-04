@@ -272,7 +272,9 @@ defmodule TrentoWeb.V1.UsersController do
     put_resp_header(conn, "etag", Integer.to_string(lock_version))
   end
 
-  # when sso is enabled, we only allow abilities and enabled as parameters
-  defp clean_params_for_sso_integration(attrs, true), do: Map.take(attrs, [:abilities, :enabled])
+  # when sso is enabled, we only allow abilities, enabled and timezone as parameters
+  defp clean_params_for_sso_integration(attrs, true),
+    do: Map.take(attrs, [:abilities, :enabled, :timezone])
+
   defp clean_params_for_sso_integration(attrs, _), do: attrs
 end
