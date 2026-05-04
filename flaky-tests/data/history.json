@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-20T03:44:43Z",
-    "commit": "b9457e15add8d418bc2d5841e98d7e94e04118a7",
-    "run_id": "23327826548",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
-        "score": 0.25
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-20T04:14:21Z",
     "commit": "b9457e15add8d418bc2d5841e98d7e94e04118a7",
     "run_id": "23328407660",
@@ -6108,6 +6088,26 @@
       },
       {
         "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-04T04:22:02Z",
+    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
+    "run_id": "25300448681",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
         "score": 0.02501
       }
     ]
