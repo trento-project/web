@@ -1,6 +1,6 @@
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -11,15 +11,26 @@ import ActivityLogsSettingsModal from '.';
 const positiveInt = () => faker.number.int({ min: 1 });
 
 describe('ActivityLogsSettingsModal component', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    /* eslint-disable-next-line */
+    console.error.mockRestore();
+  });
+
   it('renders correctly', async () => {
     const initialRetentionTime = { value: faker.number.int(), unit: 'day' };
-    render(
-      <ActivityLogsSettingsModal
-        open
-        onSave={() => {}}
-        onChange={() => {}}
-        initialRetentionTime={initialRetentionTime}
-      />
+    await act(async () =>
+      render(
+        <ActivityLogsSettingsModal
+          open
+          onSave={() => {}}
+          onChange={() => {}}
+          initialRetentionTime={initialRetentionTime}
+        />
+      )
     );
 
     await waitFor(() => {
@@ -34,13 +45,26 @@ describe('ActivityLogsSettingsModal component', () => {
   it('should throw when required props are not provided', async () => {
     const errorSpy = jest.fn();
 
-    render(
-      <ErrorBoundary onError={errorSpy}>
-        <ActivityLogsSettingsModal open onSave={() => {}} onChange={() => {}} />
-      </ErrorBoundary>
+    await act(async () =>
+      render(
+        <ErrorBoundary onError={errorSpy}>
+          <ActivityLogsSettingsModal
+            open
+            onSave={() => {}}
+            onChange={() => {}}
+          />
+        </ErrorBoundary>
+      )
     );
 
     expect(errorSpy).toHaveBeenCalled();
+    /* eslint-disable-next-line */
+    expect(console.error).toHaveBeenCalledWith(
+      expect.any(String),
+      TypeError("Cannot read properties of undefined (reading 'value')"),
+      expect.any(String),
+      expect.any(String)
+    );
   });
 
   it('should try to save all the changed fields', async () => {
@@ -55,13 +79,15 @@ describe('ActivityLogsSettingsModal component', () => {
     };
     const onSave = jest.fn();
 
-    render(
-      <ActivityLogsSettingsModal
-        open
-        initialRetentionTime={initialRetentionTime}
-        onSave={onSave}
-        onCancel={() => {}}
-      />
+    await act(() =>
+      render(
+        <ActivityLogsSettingsModal
+          open
+          initialRetentionTime={initialRetentionTime}
+          onSave={onSave}
+          onCancel={() => {}}
+        />
+      )
     );
 
     // first clean up the text input then type the new value
@@ -88,13 +114,15 @@ describe('ActivityLogsSettingsModal component', () => {
     const initialRetentionTime = { value: positiveInt(), unit: 'month' };
     const onSave = jest.fn();
 
-    render(
-      <ActivityLogsSettingsModal
-        open
-        initialRetentionTime={initialRetentionTime}
-        onSave={onSave}
-        onCancel={() => {}}
-      />
+    await act(() =>
+      render(
+        <ActivityLogsSettingsModal
+          open
+          initialRetentionTime={initialRetentionTime}
+          onSave={onSave}
+          onCancel={() => {}}
+        />
+      )
     );
 
     await user.click(screen.getByText('Save Settings'));
@@ -131,14 +159,16 @@ describe('ActivityLogsSettingsModal component', () => {
     async ({ errors, expectedErrorMessage }) => {
       const initialRetentionTime = { value: positiveInt(), unit: 'month' };
 
-      render(
-        <ActivityLogsSettingsModal
-          errors={errors}
-          initialRetentionTime={initialRetentionTime}
-          open
-          onSave={() => {}}
-          onCancel={() => {}}
-        />
+      await act(() =>
+        render(
+          <ActivityLogsSettingsModal
+            errors={errors}
+            initialRetentionTime={initialRetentionTime}
+            open
+            onSave={() => {}}
+            onCancel={() => {}}
+          />
+        )
       );
 
       await waitFor(() => {

@@ -39,6 +39,31 @@ describe('AdvisoryDetails', () => {
     expect(screen.getByText(errata.errata_details.description)).toBeVisible();
   });
 
+  it('renders issued and updated dates using the provided timezone', () => {
+    const timezone = 'Pacific/Kiritimati';
+    const errata = advisoryErrataFactory.build({
+      errata_details: {
+        issue_date: '2024-01-10T23:30:00.000Z',
+        update_date: '2024-01-11T23:30:00.000Z',
+      },
+    });
+
+    render(
+      <AdvisoryDetails
+        advisoryName={faker.lorem.word()}
+        errata={errata}
+        timezone={timezone}
+      />
+    );
+
+    expect(screen.getByText('Issued').nextSibling).toHaveTextContent(
+      '11 Jan 2024'
+    );
+    expect(screen.getByText('Updated').nextSibling).toHaveTextContent(
+      '12 Jan 2024'
+    );
+  });
+
   it('displays affected packages', () => {
     const errata = advisoryErrataFactory.build();
     const advisoryName = faker.lorem.word();

@@ -1,11 +1,10 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { format, formatISO } from 'date-fns';
+import { formatISO } from 'date-fns';
 import { times } from 'lodash';
 
 import { healthEnum } from '.';
-
-const slesSubscriptionDateFormat = "yyyy-MMM-dd h:mm:ss 'UTC'";
+import { formatDateTime } from '@lib/timezones';
 
 const slesSubscriptionIdentifierEnum = () =>
   faker.helpers.arrayElement([
@@ -27,11 +26,11 @@ const saptuneTuningStateEnum = () =>
 
 export const slesSubscriptionFactory = Factory.define(() => ({
   arch: 'x86_64',
-  expires_at: format(faker.date.future(), slesSubscriptionDateFormat),
+  expires_at: formatDateTime(faker.date.future()),
   host_id: faker.string.uuid(),
   identifier: slesSubscriptionIdentifierEnum(),
   inserted_at: formatISO(faker.date.recent()),
-  starts_at: format(faker.date.past(), slesSubscriptionDateFormat),
+  starts_at: formatDateTime(faker.date.past()),
   status: 'Registered',
   subscription_status: 'ACTIVE',
   type: 'internal',

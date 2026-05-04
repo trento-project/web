@@ -7,6 +7,7 @@ import ListView from '@common/ListView';
 import ProviderLabel from '@common/ProviderLabel';
 import ClusterTypeLabel from '@common/ClusterTypeLabel';
 import SapSystemLink from '@common/SapSystemLink';
+import { formatDateTime } from '@lib/timezones';
 
 import CheckResultsOverview from '@pages/CheckResultsOverview';
 
@@ -40,6 +41,7 @@ function HanaClusterDetails({
   catalog,
   lastExecution,
   userAbilities,
+  timezone,
   navigate = noop,
   getClusterHostOperations = noop,
 }) {
@@ -114,7 +116,9 @@ function HanaClusterDetails({
               },
               {
                 title: 'CIB last written',
-                content: cibLastWritten || '-',
+                content: cibLastWritten
+                  ? formatDateTime(cibLastWritten, timezone)
+                  : '-',
               },
               {
                 title: 'HANA log replication mode',
@@ -135,6 +139,7 @@ function HanaClusterDetails({
           <CheckResultsOverview
             data={executionData}
             catalogDataEmpty={catalogData?.length === 0}
+            timezone={timezone}
             loading={catalogLoading || executionLoading}
             error={catalogError || executionError}
             onCheckClick={(health) =>

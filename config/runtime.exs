@@ -207,6 +207,12 @@ if config_env() in [:prod, :demo] do
       ],
       hosts_checks_execution: [
         schedule: "*/#{System.get_env("CHECKS_INTERVAL", "5")} * * * *"
+      ],
+      prune_discovery_events: [
+        schedule: System.get_env("PRUNE_EVENTS_INTERVAL", "0 0 * * *"),
+        task:
+          {Trento.Discovery, :prune_discovery_events,
+           ["PRUNE_EVENTS_OLDER_THAN" |> System.get_env("10") |> String.to_integer()]}
       ]
     ]
 

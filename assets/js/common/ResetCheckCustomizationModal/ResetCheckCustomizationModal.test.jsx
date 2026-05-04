@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -11,7 +11,9 @@ describe('ResetCheckCustomizationModal component', () => {
   it('should render the reset check customization confirmation modal correctly', async () => {
     const checkId = faker.string.uuid();
 
-    render(<ResetCheckCustomizationModal checkId={checkId} open />);
+    await act(() =>
+      render(<ResetCheckCustomizationModal checkId={checkId} open />)
+    );
 
     expect(screen.getByText(`Reset check: ${checkId}`)).toBeVisible();
     expect(
@@ -30,12 +32,14 @@ describe('ResetCheckCustomizationModal component', () => {
   `('$scenario', async ({ button, callbackName }) => {
     const callback = jest.fn();
 
-    render(
-      <ResetCheckCustomizationModal
-        checkId={faker.string.uuid()}
-        open
-        {...{ [callbackName]: callback }}
-      />
+    await act(() =>
+      render(
+        <ResetCheckCustomizationModal
+          checkId={faker.string.uuid()}
+          open
+          {...{ [callbackName]: callback }}
+        />
+      )
     );
 
     await userEvent.click(screen.getByText(button));

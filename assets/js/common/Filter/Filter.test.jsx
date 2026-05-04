@@ -1,4 +1,4 @@
-import React, { act } from 'react';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
@@ -22,11 +22,9 @@ describe('Filter component', () => {
       expect(screen.queryByText(option)).not.toBeInTheDocument();
     });
 
-    await act(() =>
-      // select a button which text starts with 'Filter '
-      // click on the button to open the options
-      user.click(screen.getByText(/Filter *.../))
-    );
+    // select a button which text starts with 'Filter '
+    // click on the button to open the options
+    await user.click(screen.getByText(/Filter *.../));
 
     // assert that the options are rendered
     options.forEach((option) => {
@@ -46,9 +44,9 @@ describe('Filter component', () => {
 
     render(<Filter options={options} title="names" onChange={mockOnChange} />);
 
-    await act(() => user.click(screen.getByText(/Filter *.../)));
+    await user.click(screen.getByText(/Filter *.../));
 
-    await act(() => user.click(screen.getByText('Michael Scott')));
+    await user.click(screen.getByText('Michael Scott'));
 
     expect(mockOnChange).toHaveBeenCalledWith(['Michael Scott']);
   });
@@ -74,9 +72,9 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText(selectedItem)));
+    await user.click(screen.getByText(selectedItem));
 
-    await act(() => user.click(screen.getByText('Jane Smith')));
+    await user.click(screen.getByText('Jane Smith'));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
 
@@ -104,9 +102,9 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText(selectedItem)));
+    await user.click(screen.getByText(selectedItem));
 
-    await act(() => user.click(screen.getByText('Jane Smith')));
+    await user.click(screen.getByText('Jane Smith'));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
 
@@ -136,9 +134,9 @@ describe('Filter component', () => {
     );
 
     const filterText = [selectedItem1, selectedItem2].join(', ');
-    await act(() => user.click(screen.getByText(filterText)));
+    await user.click(screen.getByText(filterText));
 
-    await act(() => user.click(screen.getByText('Jane Smith')));
+    await user.click(screen.getByText('Jane Smith'));
 
     expect(mockOnChange).toHaveBeenCalledTimes(1);
 
@@ -171,9 +169,9 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText(selectedItem)));
+    await user.click(screen.getByText(selectedItem));
 
-    await act(() => user.click(screen.getAllByText(selectedItem)[1]));
+    await user.click(screen.getAllByText(selectedItem)[1]);
 
     expect(mockOnChange).toHaveBeenCalledWith([]);
   });
@@ -203,17 +201,13 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText(selectedItemLabel)));
+    await user.click(screen.getByText(selectedItemLabel));
 
-    await act(() => {
-      options.forEach(([, label]) => {
-        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
-      });
-    });
+    for (const [, label] of options) {
+      await expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+    }
 
-    await act(() =>
-      user.click(screen.getAllByText(anotherSelectedItemLabel)[0])
-    );
+    await user.click(screen.getAllByText(anotherSelectedItemLabel)[0]);
 
     expect(mockOnChange).toHaveBeenCalledWith([
       selectedItem,
@@ -240,20 +234,18 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Michael Scott')));
+    await user.click(screen.getByText('Michael Scott'));
 
-    await act(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-    });
+    await expect(screen.getByText('John Doe')).toBeInTheDocument();
+    await expect(screen.getByText('Jane Smith')).toBeInTheDocument();
 
     /* Remember that the component is stateless,
       it does not change its internal state on selection. */
 
-    await act(() => user.click(screen.getByText('John Doe')));
+    await user.click(screen.getByText('John Doe'));
     expect(mockOnChange).toHaveBeenCalledWith(['Michael Scott', 'john-doe']);
 
-    await act(() => user.click(screen.getByText('Jane Smith')));
+    await user.click(screen.getByText('Jane Smith'));
     expect(mockOnChange).toHaveBeenCalledWith(['Michael Scott', 'Jane Smith']);
   });
 
@@ -276,13 +268,11 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('Michael Scott')));
+    await user.click(screen.getByText('Michael Scott'));
 
-    await act(() => {
-      options.forEach((label) => {
-        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
-      });
-    });
+    for (const label of options) {
+      expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+    }
   });
 
   it('should ignore undefined options', async () => {
@@ -310,12 +300,10 @@ describe('Filter component', () => {
       />
     );
 
-    await act(() => user.click(screen.getByText('PRD')));
+    await user.click(screen.getByText('PRD'));
 
-    await act(() => {
-      options.filter(Boolean).forEach((label) => {
-        expect(screen.getAllByText(label)[0]).toBeInTheDocument();
-      });
-    });
+    for (const label of options.filter(Boolean)) {
+      await expect(screen.getAllByText(label)[0]).toBeInTheDocument();
+    }
   });
 });

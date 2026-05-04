@@ -17,25 +17,24 @@ export default {
   components: HostRelevantPatchesPage,
   argTypes: {
     hostName: {
-      control: 'text',
-      description: 'Host name',
-      table: {
-        type: { summary: 'string' },
-      },
-    },
-    patches: {
-      control: 'object',
-      description: 'Array of patch objects',
-      table: {
-        type: { summary: 'array' },
-      },
+      type: 'string',
+      description: 'The hostname to display in the header and CSV filename.',
+      control: { type: 'text' },
     },
     onNavigate: {
+      type: { name: 'function' },
+      description: 'Callback for navigation actions in PatchList.',
       action: 'onNavigate',
-      description: 'Navigation callback handler',
-      table: {
-        type: { summary: 'function' },
-      },
+    },
+    patches: {
+      type: { name: 'array' },
+      description: 'Array of patch objects to display.',
+    },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
     },
   },
   render: (args) => (
@@ -50,5 +49,6 @@ export const HasPatches = {
     hostName: hostFactory.build().hostname,
     patches: relevantPatchFactory.buildList(15),
     onNavigate: action('onNavigate'),
+    timezone: 'Etc/UTC',
   },
 };

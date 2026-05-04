@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { computeTimezoneOffsets, formatOffset } from '@lib/timezones';
 import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
@@ -8,8 +9,10 @@ import Label from '@common/Label';
 import Modal from '@common/Modal';
 import Switch from '@common/Switch';
 import AbilitiesMultiSelect from '@common/AbilitiesMultiSelect';
+import Select from '@common/Select';
 import ProfilePasswordChangeForm from '@pages/Profile/ProfilePasswordChangeForm';
 import TotpEnrollementBox from '@pages/Profile/TotpEnrollmentBox';
+import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 
@@ -38,6 +41,8 @@ function ProfileForm({
   analyticsEnabledConfig = false,
   analyticsEnabled = false,
   analyticsEulaAccepted = false,
+  timezone = DEFAULT_TIMEZONE,
+  timezones = [],
   errors,
   loading,
   disableForm,
@@ -57,6 +62,8 @@ function ProfileForm({
   const [emailAddressErrorState, setEmailAddressError] = useState(null);
   const [totpDisableModalOpen, setTotpDisableModalOpen] = useState(false);
   const [analyticsEnabledState, setAnalyticsState] = useState(analyticsEnabled);
+  const [timezoneState, setTimezone] = useState(timezone);
+  const [timezoneErrorState, setTimezoneError] = useState(null);
 
   const saveButtonVisible = !singleSignOnEnabled || analyticsEnabledConfig;
 
@@ -88,6 +95,7 @@ function ProfileForm({
       analytics_enabled: analyticsEnabledState,
       ...(analyticsEnabledState &&
         !analyticsEulaAccepted && { analytics_eula_accepted: true }),
+      timezone: timezoneState,
     };
 
     onSave(user);
@@ -104,7 +112,22 @@ function ProfileForm({
   useEffect(() => {
     setFullNameError(getError('fullname', errors));
     setEmailAddressError(getError('email', errors));
+    setTimezoneError(getError('timezone', errors));
   }, [errors]);
+
+  const selectedTimezone =
+    timezones.find((opt) => opt.value === timezoneState) || null;
+
+  // Compute UTC offsets (in minutes) from helper and evaluate warning locally
+  const { browserUtcOffset, profileUtcOffset } =
+    computeTimezoneOffsets(selectedTimezone);
+
+  // Show warning if browser and profile offsets differ
+  const showTimezoneWarning = Boolean(
+    selectedTimezone &&
+    profileUtcOffset !== null &&
+    browserUtcOffset !== profileUtcOffset
+  );
 
   return (
     <div>
@@ -205,6 +228,44 @@ function ProfileForm({
               placeholder=""
               isDisabled
             />
+          </div>
+          <Label
+            htmlFor="timezone"
+            className="col-start-1 col-span-2 pt-2"
+            info={'Aligns timestamps according to timezone selection'}
+          >
+            Timezone
+          </Label>
+          <div className="col-start-3 col-span-4">
+            <Select
+              inputId="timezone"
+              name="timezone"
+              value={selectedTimezone}
+              options={timezones}
+              onChange={(value) => {
+                setTimezone(value || '');
+                setTimezoneError(null);
+              }}
+              isMulti={false}
+              isSearchable
+              disabled={loading || disableForm}
+              placeholder="Select timezone..."
+              noOptionsMessage={() => 'No timezones found'}
+            />
+            {timezoneErrorState && errorMessage(timezoneErrorState)}
+            {showTimezoneWarning && (
+              <div
+                className="mt-2 text-yellow-700 bg-yellow-100 border border-yellow-300 rounded px-3 py-2 text-sm"
+                data-testid="timezone-warning"
+              >
+                <strong>Warning:</strong> Your browser UTC offset is{' '}
+                <b>{formatOffset(browserUtcOffset)}</b>, but your profile
+                timezone offset is <b>{formatOffset(profileUtcOffset)}</b>.{' '}
+                <br />
+                The Trento UI will always use your profile timezone to display
+                timestamps, not your browser&apos;s.
+              </div>
+            )}
           </div>
           {analyticsEnabledConfig && (
             <>

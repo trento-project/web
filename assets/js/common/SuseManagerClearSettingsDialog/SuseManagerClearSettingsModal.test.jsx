@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -10,12 +10,14 @@ describe('SuseManagerClearSettingsModal', () => {
     const user = userEvent.setup();
     const onClearSettings = jest.fn();
 
-    render(
-      <SuseManagerClearSettingsModal
-        open
-        onClearSettings={onClearSettings}
-        onCancel={() => {}}
-      />
+    await act(() =>
+      render(
+        <SuseManagerClearSettingsModal
+          open
+          onClearSettings={onClearSettings}
+          onCancel={() => {}}
+        />
+      )
     );
 
     expect(
@@ -30,12 +32,14 @@ describe('SuseManagerClearSettingsModal', () => {
     const user = userEvent.setup();
     const onCancel = jest.fn();
 
-    render(
-      <SuseManagerClearSettingsModal
-        open
-        onClearSettings={() => {}}
-        onCancel={onCancel}
-      />
+    await act(() =>
+      render(
+        <SuseManagerClearSettingsModal
+          open
+          onClearSettings={() => {}}
+          onCancel={onCancel}
+        />
+      )
     );
 
     expect(

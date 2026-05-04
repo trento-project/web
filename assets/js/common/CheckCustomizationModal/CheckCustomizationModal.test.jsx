@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import {
@@ -62,7 +62,9 @@ describe('CheckCustomizationModal', () => {
       'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.';
     const user = userEvent.setup();
 
-    render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
+    await act(() =>
+      render(<CheckCustomizationModal {...checkCustomizationModalProps} />)
+    );
 
     expect(screen.getByText(expectedModalTitle)).toBeInTheDocument();
     expect(
@@ -91,7 +93,9 @@ describe('CheckCustomizationModal', () => {
     const expectedCheckValues = [999, 'veryImportantValue', false];
     const { onSave } = checkCustomizationModalProps;
 
-    render(<CheckCustomizationModal {...checkCustomizationModalProps} />);
+    await act(() =>
+      render(<CheckCustomizationModal {...checkCustomizationModalProps} />)
+    );
 
     const warningBannerCheckbox = screen.getByRole('checkbox');
     expect(warningBannerCheckbox).not.toBeChecked();
@@ -146,7 +150,9 @@ describe('CheckCustomizationModal', () => {
       values: checkValueList,
     };
 
-    render(<CheckCustomizationModal {...checkWithMultipleValues} />);
+    await act(() =>
+      render(<CheckCustomizationModal {...checkWithMultipleValues} />)
+    );
     const warningBannerCheckbox = screen.getByRole('checkbox');
     await user.click(warningBannerCheckbox);
     expect(warningBannerCheckbox).toBeChecked();
@@ -167,7 +173,9 @@ describe('CheckCustomizationModal', () => {
   });
 
   it('should disable reset customization button if check is not customized', async () => {
-    render(<CheckCustomizationModal open customized={false} />);
+    await act(() =>
+      render(<CheckCustomizationModal open customized={false} />)
+    );
 
     expect(screen.getByText('Reset Check')).toBeDisabled();
   });
@@ -176,8 +184,10 @@ describe('CheckCustomizationModal', () => {
     const user = userEvent.setup();
     const { onReset } = checkCustomizationModalProps;
 
-    render(
-      <CheckCustomizationModal {...checkCustomizationModalProps} customized />
+    await act(() =>
+      render(
+        <CheckCustomizationModal {...checkCustomizationModalProps} customized />
+      )
     );
 
     await user.click(screen.getByText('Reset Check'));
@@ -193,11 +203,13 @@ describe('CheckCustomizationModal', () => {
   `(
     'should show error message when customization status is failed',
     async ({ customizationStatus, expectedMessage }) => {
-      render(
-        <CheckCustomizationModal
-          {...checkCustomizationModalProps}
-          customizationStatus={customizationStatus}
-        />
+      await act(() =>
+        render(
+          <CheckCustomizationModal
+            {...checkCustomizationModalProps}
+            customizationStatus={customizationStatus}
+          />
+        )
       );
 
       expectedMessage
@@ -207,11 +219,13 @@ describe('CheckCustomizationModal', () => {
   );
 
   it('should not allow saving customization while another one is ongoing', async () => {
-    render(
-      <CheckCustomizationModal
-        {...checkCustomizationModalProps}
-        customizationStatus={ONGOING}
-      />
+    await act(() =>
+      render(
+        <CheckCustomizationModal
+          {...checkCustomizationModalProps}
+          customizationStatus={ONGOING}
+        />
+      )
     );
 
     expect(screen.getByText('Save')).toBeDisabled();

@@ -70,7 +70,7 @@ export const getLastExecutionData = createSelector(
   [
     (state, groupID, targetType) => getTargetHosts(state, groupID, targetType),
     (state, groupID, targetType) => getTarget(state, groupID, targetType),
-    (state) => getCatalog()(state),
+    getCatalog,
     (state, groupID) => getLastExecution(groupID)(state),
   ],
   (targetHosts, target, catalog, lastExecution) => {

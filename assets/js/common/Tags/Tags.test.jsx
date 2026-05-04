@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen, waitFor, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
@@ -38,17 +38,17 @@ describe('Tags', () => {
 
     expect(screen.queryByText(msg)).toBeNull();
 
-    await act(async () => user.click(screen.queryByText('Add Tag')));
+    await user.click(screen.queryByText('Add Tag'));
 
-    await act(async () => userEvent.keyboard('A'));
+    await userEvent.keyboard('A');
 
     await waitFor(() => expect(screen.queryByText(msg)).toBeNull());
 
-    await act(async () => userEvent.keyboard('>'));
+    await userEvent.keyboard('>');
 
     await waitFor(() => expect(screen.queryByText(msg)).toBeVisible());
 
-    await act(async () => userEvent.keyboard('Z'));
+    await userEvent.keyboard('Z');
 
     // FIXME: The visibility is due to a css class.
     // Being the css is not loaded, it cannot be detected by js-dom
@@ -72,17 +72,17 @@ describe('Tags', () => {
 
     expect(screen.queryByText(msg)).toBeNull();
 
-    await act(async () => user.click(screen.queryByText('Add Tag')));
+    await user.click(screen.queryByText('Add Tag'));
 
-    await act(async () => userEvent.keyboard('>'));
+    await userEvent.keyboard('>');
 
     await waitFor(() => expect(screen.queryByText(msg)).toBeVisible());
 
-    await act(async () => user.click(screen.queryByText('sibling')));
+    await user.click(screen.queryByText('sibling'));
 
     await waitFor(() => expect(screen.queryByText(msg)).toBeNull());
 
-    await act(async () => user.click(screen.queryByText('Add Tag')));
+    await user.click(screen.queryByText('Add Tag'));
 
     await waitFor(() => expect(screen.queryByText(msg)).toBeNull());
   });

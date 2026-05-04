@@ -1,9 +1,8 @@
 import React from 'react';
 import { chunk } from 'lodash';
-import { format } from 'date-fns';
-import { utc } from '@date-fns/utc';
 
 import HealthIcon from '@common/HealthIcon';
+import { formatDateTime } from '@lib/timezones';
 import ListView from '@common/ListView';
 import Tooltip from '@common/Tooltip';
 
@@ -39,11 +38,10 @@ function HostSummary({
   cluster,
   ipAddresses,
   lastBootTimestamp,
+  timezone,
 }) {
   const formattedLastBoot = lastBootTimestamp
-    ? `${format(new Date(lastBootTimestamp), 'dd MMM yyyy, HH:mm:ss', {
-        in: utc,
-      })} GMT`
+    ? formatDateTime(lastBootTimestamp, timezone)
     : 'N/A';
 
   return (

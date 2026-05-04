@@ -1,3 +1,8 @@
+import { mockAnimationsApi } from 'jsdom-testing-mocks';
+
+// Silence the Headless UI warning globally
+mockAnimationsApi();
+
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),

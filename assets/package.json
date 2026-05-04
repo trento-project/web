@@ -37,7 +37,8 @@
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "jest-junit": "^16.0.0",
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.12",
+    "jsdom-testing-mocks": "^1.16.0",
     "postcss-import": "^16.1.1",
     "prettier": "^3.8.1",
     "redux-mock-store": "^1.5.5",
@@ -45,6 +46,7 @@
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.4.1",
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.7",
     "@heroicons/react": "^2.2.0",
@@ -79,6 +81,7 @@
     "redux-saga": "^1.4.2",
     "remark-gfm": "^4.0.1",
     "semver": "^7.7.4",
+    "tzdata": "^1.0.48",
     "uuid": "^11.1.0"
   },
   "overrides": {
@@ -97,7 +100,7 @@
     "format:check": "prettier -c .",
     "format": "prettier --write .",
     "pretest": "ls ../priv/static/assets/app.css || npm run tailwind:build",
-    "test": "jest --maxWorkers=2",
+    "test": "TZ=UTC jest --maxWorkers=2",
     "chromatic": "npx chromatic --exit-zero-on-changes"
   }
 }

@@ -1,14 +1,23 @@
 import React from 'react';
 
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import { profileFactory } from '@lib/test-utils/factories/users';
 
 import ProfileForm from '@pages/Profile/ProfileForm';
+import { DEFAULT_TIMEZONE, timezones } from '@lib/timezones';
+
+const getTimezoneLabel = (timezone) =>
+  timezones.find((option) => option.value === timezone)?.label;
+
+const userTimezone = 'Europe/Berlin';
 
 describe('ProfileForm', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should render a pre-filled form', () => {
     const { username, fullname, email, abilities } = profileFactory.build();
 
@@ -57,12 +66,18 @@ describe('ProfileForm', () => {
         source: { pointer: '/email' },
         title: 'Invalid value',
       },
+      {
+        detail: 'Error validating timezone',
+        source: { pointer: '/timezone' },
+        title: 'Invalid value',
+      },
     ];
 
     render(<ProfileForm errors={errors} />);
 
     expect(screen.getByText('Error validating fullname')).toBeVisible();
     expect(screen.getByText('Error validating email')).toBeVisible();
+    expect(screen.getByText('Error validating timezone')).toBeVisible();
   });
 
   it('should send the form values when correctly filled', async () => {
@@ -73,6 +88,7 @@ describe('ProfileForm', () => {
       abilities,
       analytics_enabled,
       analytics_eula_accepted,
+      timezone,
     } = profileFactory.build({ analytics_eula_accepted: true });
     const mockOnSave = jest.fn();
 
@@ -84,6 +100,8 @@ describe('ProfileForm', () => {
         abilities={abilities}
         analyticsEnabled={analytics_enabled}
         analyticsEulaAccepted={analytics_eula_accepted}
+        timezone={timezone}
+        timezones={timezones}
         onSave={mockOnSave}
       />
     );
@@ -96,6 +114,7 @@ describe('ProfileForm', () => {
       fullname,
       email,
       analytics_enabled,
+      timezone,
     });
   });
 
@@ -103,14 +122,16 @@ describe('ProfileForm', () => {
     const user = userEvent.setup();
     const onModalToggle = jest.fn();
 
-    render(<ProfileForm togglePasswordModal={onModalToggle} />);
+    await act(() =>
+      render(<ProfileForm togglePasswordModal={onModalToggle} />)
+    );
     await user.click(screen.getByRole('button', { name: 'Change Password' }));
 
     expect(onModalToggle).toHaveBeenCalled();
   });
 
-  it('should open the modal when the modal open props is set to true', () => {
-    render(<ProfileForm passwordModalOpen />);
+  it('should open the modal when the modal open props is set to true', async () => {
+    await act(() => render(<ProfileForm passwordModalOpen />));
 
     expect(screen.getByText('Current Password')).toBeVisible();
   });
@@ -192,6 +213,7 @@ describe('ProfileForm', () => {
           analyticsEnabled={analytics_enabled}
           analyticsEulaAccepted={analytics_eula_accepted}
           onSave={mockOnSave}
+          timezones={timezones}
         />
       );
 
@@ -204,6 +226,7 @@ describe('ProfileForm', () => {
         email,
         analytics_enabled: analyticsEnabled,
         ...(updateValue && { analytics_eula_accepted: true }),
+        timezone: DEFAULT_TIMEZONE,
       });
     }
   );
@@ -246,9 +269,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
+    await user.click(screen.getByRole('switch'));
 
     expect(onEnableTotp).toHaveBeenCalled();
   });
@@ -272,13 +293,8 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
-
-    await act(async () => {
-      await user.click(screen.getByText('Disable'));
-    });
+    await user.click(screen.getByRole('switch'));
+    await user.click(screen.getByText('Disable'));
 
     expect(onResetTotp).toHaveBeenCalled();
   });
@@ -326,9 +342,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText(totpSecret)).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByText('Cancel'));
-    });
+    await user.click(screen.getByText('Cancel'));
 
     expect(toggleTotpBox).toHaveBeenCalledWith(false);
   });
@@ -354,10 +368,8 @@ describe('ProfileForm', () => {
       />
     );
 
-    await act(async () => {
-      await user.type(screen.getByLabelText('totp_code'), '1234');
-      await user.click(screen.getByRole('button', { name: 'Verify' }));
-    });
+    await user.type(screen.getByLabelText('totp_code'), '1234');
+    await user.click(screen.getByRole('button', { name: 'Verify' }));
 
     expect(onVerifyTotp).toHaveBeenNthCalledWith(1, '1234');
   });
@@ -388,6 +400,136 @@ describe('ProfileForm', () => {
       />
     );
     expect(screen.getByText('Error validating totp code')).toBeVisible();
+  });
+
+  it('should set timezone selector value when timezone is not provided', () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezones={timezones}
+      />
+    );
+
+    expect(screen.getByText('Timezone')).toBeVisible();
+    expect(screen.getByLabelText('Timezone')).toBeVisible();
+    expect(screen.getByText(getTimezoneLabel(DEFAULT_TIMEZONE))).toBeVisible();
+  });
+
+  it('should set timezone selector value when timezone is provided', () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const timezone = userTimezone;
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={timezone}
+        timezones={timezones}
+      />
+    );
+
+    expect(screen.getByText('Timezone')).toBeVisible();
+    expect(screen.getByLabelText('Timezone')).toBeVisible();
+    expect(screen.getByText(getTimezoneLabel(timezone))).toBeVisible();
+  });
+
+  it('should set timezone in save payload when timezone selector changes', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    const timezone = userTimezone;
+    const mockOnSave = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
+        onSave={mockOnSave}
+      />
+    );
+
+    const timezoneSelectorInput = screen.getByRole('combobox', {
+      name: 'Timezone',
+    });
+    const timezoneLabel = getTimezoneLabel(timezone);
+
+    await user.click(timezoneSelectorInput);
+    await user.type(timezoneSelectorInput, timezone);
+    await user.click(await screen.findByText(timezoneLabel));
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockOnSave).toHaveBeenCalledWith(
+      expect.objectContaining({ timezone })
+    );
+  });
+
+  it('should display a timezone warning when browser and profile offsets differ', async () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(-120);
+    const timezone = 'Pacific/Port_Moresby';
+    const expectedWarning =
+      "Warning: Your browser UTC offset is +02:00, but your profile timezone offset is +10:00. The Trento UI will always use your profile timezone to display timestamps, not your browser's.";
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={timezone}
+        timezones={timezones}
+      />
+    );
+
+    const warning = await screen.findByTestId('timezone-warning');
+    expect(warning).toBeVisible();
+    expect(warning).toHaveTextContent(expectedWarning);
+  });
+
+  it('should not display a timezone warning when browser and profile offsets match', () => {
+    const { username, fullname, email, abilities } = profileFactory.build();
+    jest.spyOn(Date.prototype, 'getTimezoneOffset').mockReturnValue(0);
+
+    render(
+      <ProfileForm
+        fullName={fullname}
+        emailAddress={email}
+        username={username}
+        abilities={abilities}
+        timezone={DEFAULT_TIMEZONE}
+        timezones={timezones}
+      />
+    );
+
+    expect(
+      screen.queryByText(/The Trento UI will always use your profile timezone/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('should set timezone error when timezone error is provided', async () => {
+    const errors = [
+      {
+        detail: 'is not a valid IANA timezone',
+        source: { pointer: '/timezone' },
+        title: 'Invalid value',
+      },
+    ];
+
+    render(<ProfileForm errors={errors} timezones={timezones} />);
+
+    expect(
+      await screen.findByText(/is not a valid IANA timezone/i)
+    ).toBeVisible();
   });
 
   describe('Single sign on', () => {
@@ -428,6 +570,26 @@ describe('ProfileForm', () => {
       expect(screen.getByText('Permissions')).toBeVisible();
     });
 
+    it('should keep timezone selector enabled', () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          timezones={timezones}
+          singleSignOnEnabled
+        />
+      );
+
+      expect(screen.getByLabelText('Timezone')).toBeEnabled();
+      expect(
+        screen.getByText(getTimezoneLabel(DEFAULT_TIMEZONE))
+      ).toBeVisible();
+    });
+
     it('should show save button if analytics configuration is enabled', async () => {
       const { username, fullname, email, abilities } = profileFactory.build();
 
@@ -440,6 +602,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           onSave={mockOnSave}
+          timezones={timezones}
           singleSignOnEnabled
           analyticsEnabledConfig
         />
@@ -453,6 +616,43 @@ describe('ProfileForm', () => {
 
       expect(mockOnSave).toHaveBeenNthCalledWith(1, {
         analytics_enabled: false,
+        timezone: DEFAULT_TIMEZONE,
+      });
+    });
+
+    it('should set timezone in save payload when timezone selector changes', async () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+      const timezone = userTimezone;
+      const mockOnSave = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          timezone={DEFAULT_TIMEZONE}
+          timezones={timezones}
+          onSave={mockOnSave}
+          singleSignOnEnabled
+          analyticsEnabledConfig
+        />
+      );
+
+      const timezoneSelectorInput = screen.getByRole('combobox', {
+        name: 'Timezone',
+      });
+      const timezoneLabel = getTimezoneLabel(timezone);
+
+      await user.click(timezoneSelectorInput);
+      await user.type(timezoneSelectorInput, timezone);
+      await user.click(await screen.findByText(timezoneLabel));
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(mockOnSave).toHaveBeenCalledWith({
+        analytics_enabled: false,
+        timezone,
       });
     });
   });

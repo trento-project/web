@@ -12,6 +12,7 @@ const {
   updated_at: updatedAt,
   abilities,
   analytics_enabled: analyticsEnabled,
+  timezone,
 } = userFactory.build();
 
 function ContainerWrapper({ children }) {
@@ -44,13 +45,22 @@ export default {
     },
     abilities: {
       description: 'User abilities array',
+      control: {
+        type: 'text',
+      },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: {
+        type: 'text',
+      },
     },
     onSave: {
       action: 'Save user',
       description: 'Save user action',
+      control: {
+        type: 'text',
+      },
     },
     totpEnabled: {
       description: 'User TOTP enabled',
@@ -76,6 +86,31 @@ export default {
         type: 'text',
       },
     },
+    analyticsEulaAccepted: {
+      description: 'Whether the user accepted the analytics EULA',
+      control: {
+        type: 'text',
+      },
+    },
+    timezone: {
+      description: 'User timezone',
+      control: {
+        type: 'text',
+      },
+    },
+    timezones: {
+      description:
+        'Available timezone options for the timezone select (array of { value, label })',
+      control: {
+        type: 'text',
+      },
+    },
+    disableForm: {
+      description: 'When true, disables all inputs and actions in the form',
+      control: {
+        type: 'text',
+      },
+    },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',
       control: { type: 'boolean' },
@@ -89,45 +124,47 @@ export default {
       description: 'Toggles tracking user analytics',
       control: { type: 'boolean' },
     },
-    analyticsEulaAccepted: {
-      type: 'boolean',
-      description: 'Boolean indicating if user has accepted analytics EULA',
-      control: { type: 'boolean' },
+    toggleTotpBox: {
+      description: 'Callback to open or close the TOTP enrollment box',
+      control: {
+        type: 'text',
+      },
     },
     loading: {
-      type: 'boolean',
-      description: 'Loading state, disables all form controls',
-      control: { type: 'boolean' },
-    },
-    disableForm: {
-      type: 'boolean',
-      description: 'Disables all form inputs and buttons',
-      control: { type: 'boolean' },
-    },
-    passwordModalOpen: {
-      type: 'boolean',
-      description: 'Controls visibility of password change modal',
-      control: { type: 'boolean' },
-    },
-    toggleTotpBox: {
-      type: 'function',
-      description: 'Callback to toggle TOTP enrollment box open/closed',
+      description: 'Indicates whether the form is in a loading state',
+      control: {
+        type: 'boolean',
+      },
     },
     togglePasswordModal: {
-      type: 'function',
-      description: 'Callback to toggle password modal open/closed',
+      description: 'Callback to open or close the password change modal',
+      control: {
+        type: 'text',
+      },
     },
     onResetTotp: {
-      type: 'function',
-      description: 'Callback to reset/disable TOTP authentication',
+      description: "Callback invoked to reset the user's TOTP (disable TOTP)",
+      control: {
+        type: 'text',
+      },
     },
     onVerifyTotp: {
-      type: 'function',
-      description: 'Callback to verify TOTP code during enrollment',
+      description: 'Callback invoked to verify a TOTP token during enrollment',
+      control: {
+        type: 'text',
+      },
     },
     onEnableTotp: {
-      type: 'function',
-      description: 'Callback to enable TOTP authentication',
+      description: 'Callback invoked to start the TOTP enrollment flow',
+      control: {
+        type: 'text',
+      },
+    },
+    passwordModalOpen: {
+      description: 'Whether the change-password modal is currently open',
+      control: {
+        type: 'text',
+      },
     },
   },
   render: (args) => (
@@ -148,6 +185,8 @@ export const Default = {
       'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
     analyticsEnabledConfig: true,
     analyticsEnabled,
+    timezone,
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
   },
 };
 
@@ -161,6 +200,7 @@ export const Loading = {
     updatedAt,
     analyticsEnabledConfig: true,
     loading: true,
+    timezone,
   },
 };
 
