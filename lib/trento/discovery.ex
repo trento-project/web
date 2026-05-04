@@ -98,11 +98,8 @@ defmodule Trento.Discovery do
     :ok
   end
 
-  @doc """
-  Prune the discovery events log by removing the events older than the given number of days.
-  """
   @spec prune_events(number) :: non_neg_integer()
-  def prune_events(days) do
+  defp prune_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
 
     {events_number, nil} =
@@ -113,11 +110,8 @@ defmodule Trento.Discovery do
     events_number
   end
 
-  @doc """
-  Prune the discarded discovery events log by removing the events older than the given number of days.
-  """
   @spec prune_discarded_discovery_events(number) :: non_neg_integer()
-  def prune_discarded_discovery_events(days) do
+  defp prune_discarded_discovery_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
 
     {discarded_events_number, nil} =
