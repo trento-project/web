@@ -1,6 +1,6 @@
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
-import { isArray, isString } from 'lodash';
+import { isArray, isString, last } from 'lodash';
 
 import { EventType } from '@ag-ui/core';
 
@@ -127,7 +127,7 @@ export class WebSocketAIAgent extends AbstractAgent {
             await this.initialize();
           }
 
-          const lastMessage = messages[messages.length - 1];
+          const lastMessage = last(messages);
           if (!lastMessage || lastMessage.role !== 'user') {
             subscriber.error(
               new Error('Cannot start a run without a new user message')

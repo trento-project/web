@@ -310,33 +310,6 @@ describe('WebSocketAIAgent', () => {
     });
   });
 
-  describe('extractMessageText', () => {
-    it('returns string content as-is', () => {
-      expect(extractMessageText({ content: 'hello' })).toBe('hello');
-    });
-
-    it('joins text parts with newlines and skips non-text parts', () => {
-      expect(
-        extractMessageText({
-          content: [
-            { type: 'text', text: 'one' },
-            { type: 'image', url: 'x' },
-            { type: 'text', text: 'two' },
-          ],
-        })
-      ).toBe('one\ntwo');
-    });
-
-    it.each([
-      ['missing message', undefined],
-      ['missing content', {}],
-      ['null content', { content: null }],
-      ['number content', { content: 42 }],
-    ])('returns an empty string for %s', (_label, message) => {
-      expect(extractMessageText(message)).toBe('');
-    });
-  });
-
   describe('disconnect', () => {
     it('leaves the channel and reports disconnected', async () => {
       const { agent, channel, onConnectionChange } = await connectedAgent();
@@ -370,6 +343,33 @@ describe('WebSocketAIAgent', () => {
 
       expect(() => agent.disconnect()).not.toThrow();
       expect(onConnectionChange).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('extractMessageText', () => {
+    it('returns string content as-is', () => {
+      expect(extractMessageText({ content: 'hello' })).toBe('hello');
+    });
+
+    it('joins text parts with newlines and skips non-text parts', () => {
+      expect(
+        extractMessageText({
+          content: [
+            { type: 'text', text: 'one' },
+            { type: 'image', url: 'x' },
+            { type: 'text', text: 'two' },
+          ],
+        })
+      ).toBe('one\ntwo');
+    });
+
+    it.each([
+      ['missing message', undefined],
+      ['missing content', {}],
+      ['null content', { content: null }],
+      ['number content', { content: 42 }],
+    ])('returns an empty string for %s', (_label, message) => {
+      expect(extractMessageText(message)).toBe('');
     });
   });
 });
