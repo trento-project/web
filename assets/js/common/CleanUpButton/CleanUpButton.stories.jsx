@@ -13,16 +13,16 @@ export default {
       },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     permittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check selection',
     },
-    onClick: { action: 'Click button' },
+    onClick: { action: 'onClick' },
     className: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'CSS classes',
       table: {
         type: { summary: 'string' },
@@ -52,6 +52,12 @@ export default {
 export const Default = {
   args: {
     userAbilities: [{ name: 'all', resource: 'all' }],
+    permittedFor: [],
+    onClick: () => {},
+    cleaning: false,
+    className: '',
+    size: 'small',
+    type: 'primary-white',
   },
 };
 

@@ -9,12 +9,12 @@ export default {
       control: 'boolean',
     },
     onGenerate: {
-      type: 'function',
       description: 'Generate personal access token',
+      action: 'onGenerate',
     },
     onClose: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onClose',
     },
     timezone: {
       type: 'string',

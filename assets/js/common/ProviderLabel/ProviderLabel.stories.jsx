@@ -14,6 +14,12 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    provider: 'aws',
+  },
+};
+
 export const Azure = {
   args: {
     provider: 'azure',

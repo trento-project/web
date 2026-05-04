@@ -28,7 +28,7 @@ export default {
     },
     onClick: {
       description: 'Click handler function for the pill',
-      action: 'clicked',
+      action: 'onClick',
     },
     roundedMode: {
       description: 'Border radius style for the pill',
@@ -46,6 +46,18 @@ export default {
       },
       defaultValue: 'inline-flex',
     },
+  },
+};
+
+export const Default = {
+  args: {
+    size: 'md',
+    disabled: false,
+    className: '',
+    children: 'Pill',
+    onClick: () => {},
+    roundedMode: 'rounded-full',
+    display: 'inline-flex',
   },
 };
 

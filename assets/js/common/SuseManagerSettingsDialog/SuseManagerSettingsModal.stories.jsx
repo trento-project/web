@@ -38,19 +38,19 @@ export default {
       description: 'OpenAPI errors coming from backend validation',
     },
     onSave: {
-      type: 'function',
       description:
         'Callback function invoked when the settings form is submitted',
+      action: 'onSave',
     },
     onCancel: {
-      type: 'function',
       description:
         'Callback function invoked when the modal is closed or cancelled',
+      action: 'onCancel',
     },
     onClearErrors: {
-      type: 'function',
       description:
         'Callback function invoked to clear validation errors from form inputs',
+      action: 'onClearErrors',
     },
     timezone: {
       type: 'string',

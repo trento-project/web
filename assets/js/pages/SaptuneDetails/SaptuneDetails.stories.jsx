@@ -29,19 +29,19 @@ export default {
   component: SaptuneDetails,
   argTypes: {
     appliedNotes: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Applied notes',
     },
     appliedSolution: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Applied solution',
     },
     enabledNotes: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Enabled notes',
     },
     enabledSolution: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Enabled solutions',
     },
     configuredVersion: {
@@ -49,32 +49,32 @@ export default {
       description: 'The configured version of saptune',
     },
     hostname: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The hostname',
       table: {
         type: { summary: 'string' },
       },
     },
     hostID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host identifier',
       table: {
         type: { summary: 'string' },
       },
     },
     packageVersion: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The saptune installed version',
       table: {
         type: { summary: 'string' },
       },
     },
     services: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Services',
     },
     staging: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Staging',
     },
     tuningState: {

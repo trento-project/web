@@ -16,12 +16,12 @@ export default {
       description: 'Sets the visibility of the modal',
     },
     onReset: {
-      type: 'function',
       description: 'Callback when the Reset button is clicked',
+      action: 'onReset',
     },
     onCancel: {
-      type: 'function',
       description: 'Callback when the Cancel button is clicked',
+      action: 'onCancel',
     },
   },
 };

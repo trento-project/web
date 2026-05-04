@@ -5,9 +5,16 @@ export default {
   component: AIProviderLabel,
   argTypes: {
     provider: {
-      control: 'select',
+      description: 'AI provider name',
+      control: { type: 'select' },
       options: ['googleai', 'openai', 'anthropic', 'unmapped_provider'],
     },
+  },
+};
+
+export const Default = {
+  args: {
+    provider: 'anthropic',
   },
 };
 

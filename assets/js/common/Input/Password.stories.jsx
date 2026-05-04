@@ -57,14 +57,29 @@ export default {
       control: { type: 'text' },
     },
     onChange: {
-      type: 'function',
       description:
         'Callback function invoked when the password input value changes',
+      action: 'onChange',
     },
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    placeholder: '',
+    error: '',
+    disabled: false,
+    className: '',
+    id: '',
+    name: '',
+    value: '',
+    initialValue: '',
+    type: '',
+    prefix: '',
+    suffix: '',
+    allowClear: '',
+  },
+};
 export const WithValue = {
   args: {
     initialValue: 'somepassword',

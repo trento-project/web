@@ -27,12 +27,12 @@ export default {
       },
     },
     onUpdate: {
-      type: 'function',
       description: 'Updates AI configuration',
+      action: 'onUpdate',
     },
     onCancel: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onCancel',
     },
     saving: {
       description: 'Whether the settings are loading or submitting',
@@ -47,27 +47,37 @@ export default {
       },
     },
     onSave: {
-      type: 'function',
       description:
         'Callback function triggered when saving a new AI configuration',
+      action: 'onSave',
     },
-  },
-  args: {
-    open: false,
-    onCreate: () => action('edit clicked'),
-    onUpdate: () => action('update clicked'),
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    open: true,
+    aiProviders: {},
+    aiConfiguration: {},
+    saving: false,
+    errors: [],
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
+  },
+};
 
 export const WithUnmappedProvider = {
   args: {
+    open: true,
     aiProviders: {
       // eslint-disable-next-line no-undef
       ...config.aiProviders,
       custom_provider: ['custom_model'],
     },
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
   },
 };
 
@@ -75,30 +85,43 @@ const repeatedModel = faker.lorem.word();
 
 export const WithModelForManyProviders = {
   args: {
+    open: true,
     aiProviders: {
       // eslint-disable-next-line no-undef
       ...config.aiProviders,
       custom_provider: [repeatedModel],
       another_custom_provider: [repeatedModel],
     },
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
   },
 };
 
 export const WithPreviouslySetConfiguration = {
   args: {
+    open: true,
     aiConfiguration: aiConfigurationFactory.build(),
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
   },
 };
 
 export const Saving = {
   args: {
+    open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     saving: true,
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
   },
 };
 
 export const WithErrors = {
   args: {
+    open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     errors: [
       {
@@ -107,5 +130,8 @@ export const WithErrors = {
         title: 'Invalid value',
       },
     ],
+    onCancel: () => {},
+    onSave: () => {},
+    onUpdate: () => {},
   },
 };

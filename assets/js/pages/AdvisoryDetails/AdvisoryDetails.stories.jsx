@@ -7,14 +7,14 @@ export default {
   components: AdvisoryDetails,
   argTypes: {
     advisoryName: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Advisory name',
       table: {
         type: { summary: 'string' },
       },
     },
     errata: {
-      control: 'object',
+      control: { type: 'object' },
       description:
         'Errata object containing details, fixes, CVEs, and affected items',
       table: {
@@ -22,7 +22,7 @@ export default {
       },
     },
     affectsPackageMaintenanceStack: {
-      control: 'boolean',
+      control: { type: 'boolean' },
       description: 'Whether the advisory affects the package maintenance stack',
       table: {
         type: { summary: 'boolean' },

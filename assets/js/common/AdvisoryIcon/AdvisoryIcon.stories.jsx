@@ -37,6 +37,15 @@ export default {
   render: (args) => <AdvisoryIcon {...args} />,
 };
 
+export const Default = {
+  args: {
+    type: 'security_advisory',
+    centered: false,
+    hoverOpacity: false,
+    size: 'm',
+  },
+};
+
 export const SecurityAdvisory = {
   args: {
     type: 'security_advisory',

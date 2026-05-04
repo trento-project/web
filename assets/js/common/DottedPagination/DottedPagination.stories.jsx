@@ -6,24 +6,29 @@ export default {
   component: DottedPagination,
   argTypes: {
     pages: {
-      type: 'array',
       description: 'List of items that are paginated',
+      control: { type: 'object' },
     },
     initialSelectedIndex: {
-      type: 'number',
       description: 'Initial index for the pagination',
-      control: {
-        type: 'number',
-      },
+      control: { type: 'number' },
     },
     onChange: {
-      type: '',
       description: 'Function executed when a new page is selected',
+      action: 'onChange',
     },
   },
 };
 
 const PAGES = ['page 1', 'page 2', 'page 3'];
+
+export const Default = {
+  args: {
+    pages: PAGES,
+    initialSelectedIndex: 0,
+    onChange: () => {},
+  },
+};
 
 function DottedPaginationWithHooks(args) {
   const { pages, initialSelectedIndex } = args;

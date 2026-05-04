@@ -25,9 +25,9 @@ export default {
       control: { type: 'text' },
     },
     toggleSortDirection: {
-      type: 'function',
       description:
         'Callback function invoked when the Latest Package column header is clicked to toggle sort order',
+      action: 'toggle sort direction',
     },
   },
 };

@@ -20,10 +20,19 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    value: 0,
+    result: 'passing',
+    onClick: () => {},
+  },
+};
+
 export const Passing = {
   args: {
     value: 42,
     result: 'passing',
+    onClick: () => {},
   },
 };
 
@@ -31,6 +40,7 @@ export const Warning = {
   args: {
     value: 7,
     result: 'warning',
+    onClick: () => {},
   },
 };
 
@@ -38,5 +48,6 @@ export const Critical = {
   args: {
     value: 2,
     result: 'critical',
+    onClick: () => {},
   },
 };

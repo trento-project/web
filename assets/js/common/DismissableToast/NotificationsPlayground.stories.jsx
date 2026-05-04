@@ -125,7 +125,16 @@ function NotificationsPlayground() {
 export default {
   title: 'Playgrounds/Notifications',
   component: NotificationsPlayground,
-  argTypes: {},
+  argTypes: {
+    text: {
+      description: 'Text content displayed in the component',
+      control: { type: 'text' },
+    },
+    toastID: {
+      description: 'Identifier for the toastID',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export function Default() {

@@ -58,6 +58,7 @@ export default {
     onIntervalChange: {
       description:
         'Callback called with the selected/zoomed time interval, check the console',
+      action: 'onIntervalChange',
     },
     chartRef: {
       type: 'object',
@@ -70,8 +71,8 @@ export default {
       control: { type: 'number' },
     },
     yAxisLabelFormatter: {
-      type: 'function',
       description: 'Function to format Y axis tick labels',
+      action: 'yAxisLabelFormatter',
     },
     yAxisScaleType: {
       type: 'string',

@@ -13,19 +13,15 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     entry: {
-      description: 'An Avtivity Log entry.',
-      control: {
-        type: 'object',
-      },
+      description: 'An Activity Log entry.',
+      control: { type: 'object' },
     },
     onClose: {
       description: 'Callback when the Cancel button is clicked',
-      control: { type: 'function' },
+      action: 'onClose',
     },
   },
 };
@@ -38,14 +34,14 @@ export const Default = {
   },
 };
 
-export const UnknwonActivityType = {
+export const UnknownActivityType = {
   args: {
     ...Default.args,
     entry: toRenderedEntry(activityLogEntryFactory.build({ type: 'foo_bar' })),
   },
 };
 
-export const UnknwonResourceType = {
+export const UnknownResourceType = {
   args: {
     ...Default.args,
     entry: toRenderedEntry(

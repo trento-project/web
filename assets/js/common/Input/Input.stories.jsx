@@ -80,13 +80,26 @@ export default {
       control: { type: 'text' },
     },
     onChange: {
-      type: 'function',
       description: 'Callback function invoked when the input value changes',
+      action: 'onChange',
     },
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    id: '',
+    name: '',
+    prefix: '',
+    suffix: '',
+    placeholder: '',
+    allowClear: '',
+    error: '',
+    disabled: false,
+    className: '',
+    initialValue: '',
+  },
+};
 
 export const WithControlledValue = {
   args: {},

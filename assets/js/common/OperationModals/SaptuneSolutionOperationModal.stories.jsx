@@ -8,61 +8,86 @@ export default {
   argTypes: {
     operation: {
       description: 'Operation to request',
-      control: 'text',
+      control: { type: 'object' },
     },
     currentlyApplied: {
       description: 'Currently applied saptune solution',
-      control: 'text',
+      control: { type: 'text' },
     },
     isHanaRunning: {
       description: 'HANA instance is running on host',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     isAppRunning: {
       description: 'Application instance is running on host',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onRequest: {
       description: 'Request saptune solution apply operation',
+      action: 'onRequest',
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
   },
+};
+
+export const Default = {
   args: {
     operation: saptuneOperation(),
     isHanaRunning: false,
     isAppRunning: false,
     isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };
 
 export const HanaRunning = {
   args: {
+    operation: saptuneOperation(),
     isHanaRunning: true,
+    isAppRunning: false,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };
 
 export const AppRunning = {
   args: {
+    operation: saptuneOperation(),
+    isHanaRunning: false,
     isAppRunning: true,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };
 
 export const HanaAndAppRunning = {
   args: {
+    operation: saptuneOperation(),
     isHanaRunning: true,
     isAppRunning: true,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };
 
-export const WithCurrentlyAppliedsolution = {
+export const WithCurrentlyAppliedSolution = {
   args: {
+    operation: saptuneOperation(),
     isHanaRunning: true,
     currentlyApplied: 'HANA',
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };

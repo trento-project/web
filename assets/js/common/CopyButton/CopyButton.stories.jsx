@@ -6,7 +6,7 @@ export default {
   argTypes: {
     content: {
       description: 'Text content to copy',
-      control: 'text',
+      control: { type: 'text' },
     },
   },
 };

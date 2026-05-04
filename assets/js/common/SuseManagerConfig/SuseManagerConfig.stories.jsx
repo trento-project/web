@@ -28,9 +28,7 @@ export default {
     },
     onEditClick: {
       description: 'Callback used to edit settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onEditClick',
     },
     clearSettingsDialogOpen: {
       description: "Whether the 'Clear Settings' dialog is open or not",
@@ -46,26 +44,20 @@ export default {
     },
     onClearClick: {
       description: "Callback used to open 'Clear Settings' dialog",
-      control: {
-        type: 'function',
-      },
+      action: 'onClearClick',
     },
     onClearSettings: {
       description: 'Callback used to clear settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onClearSettings',
     },
     onCancel: {
       description:
         "Callback used to close the 'Edit Settings' and 'Clear Settings' dialogs",
-      control: {
-        type: 'function',
-      },
+      action: 'onCancel',
     },
     onTestConnection: {
-      type: 'function',
       description: 'Callback function to test the SUSE Manager connection',
+      action: 'callback',
     },
     timezone: {
       type: 'string',

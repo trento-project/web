@@ -6,19 +6,19 @@ export default {
   argTypes: {
     name: {
       description: 'Name of the token',
-      control: 'text',
+      control: { type: 'text' },
     },
     isOpen: {
       description: 'Opens the modal',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onDelete: {
-      type: 'function',
       description: 'Deletes the personal access token',
+      action: 'onDelete',
     },
     onClose: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onClose',
     },
   },
 };
@@ -27,5 +27,7 @@ export const Default = {
   args: {
     name: 'Trento PAT',
     isOpen: true,
+    onDelete: () => {},
+    onClose: () => {},
   },
 };

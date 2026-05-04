@@ -63,6 +63,18 @@ const guardElementWithTooltip = (args) => (
   </div>
 );
 
+export const Default = {
+  args: {
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    permitted: [],
+    withTooltip: false,
+    tooltipMessage: '',
+    tooltipPlace: 'top',
+    tooltipWrap: false,
+  },
+  render: (args) => guardElement(args),
+};
+
 export const Authorized = {
   args: {
     userAbilities: [{ name: 'all', resource: 'all' }],

@@ -38,18 +38,18 @@ export default {
   component: HostDetails,
   argTypes: {
     agentVersion: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The version of the installed agent',
       table: {
         type: { summary: 'string' },
       },
     },
     cluster: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The cluster which this host belongs to',
     },
     arch: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The architecture of the host',
       table: {
         type: { summary: 'string' },
@@ -72,7 +72,7 @@ export default {
       },
     },
     exportersStatus: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Status of the prometheus exporters',
     },
     heartbeat: {
@@ -85,36 +85,36 @@ export default {
       },
     },
     hostID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host identifier',
       table: {
         type: { summary: 'string' },
       },
     },
     hostname: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host name',
       table: {
         type: { summary: 'string' },
       },
     },
     ipAddresses: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'IP addresses',
     },
     netmasks: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Netmasks associated to ip addresses',
     },
     provider: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The discovered CSP where the host is running',
       table: {
         type: { summary: 'string' },
       },
     },
     providerData: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The discovered CSP data',
     },
     saptuneStatus: {
@@ -223,7 +223,6 @@ export default {
       control: { type: 'text' },
     },
     cleanForbiddenOperation: {
-      type: 'function',
       description:
         'Callback function to close the operation forbidden error modal',
     },

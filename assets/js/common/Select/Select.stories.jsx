@@ -66,6 +66,7 @@ export default {
     },
     onChange: {
       description: 'A function to be called when selected options are changed',
+      action: 'onChange',
       table: {
         type: { summary: '() => {}' },
       },
@@ -89,14 +90,14 @@ export default {
       control: { type: 'boolean' },
     },
     renderControlOption: {
-      type: 'function',
       description:
         'Custom renderer function for displaying the selected option in the control',
+      action: 'callback',
     },
     filterOption: {
-      type: 'function',
       description:
         'Custom filter function to determine which options match the search input',
+      action: 'callback',
     },
     className: {
       type: 'string',

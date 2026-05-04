@@ -45,13 +45,12 @@ export default {
     },
     onRequest: {
       description: 'Request saptune solution apply operation',
+      action: 'onRequest',
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
-  },
-  args: {
-    isOpen: true,
   },
 };
 
@@ -59,6 +58,16 @@ const { instance_number: instanceNumber, sid } =
   sapSystemApplicationInstanceFactory.build();
 
 const { hostname: hostName } = hostFactory.build();
+
+export const Default = {
+  args: {
+    operation: SAP_INSTANCE_START,
+    descriptionResolverArgs: { instanceNumber, sid },
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
+  },
+};
 
 export const StartInstance = {
   args: {

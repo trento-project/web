@@ -13,23 +13,17 @@ export default {
     onBackToSettings: {
       description:
         'Callback function to trigger when the "Settings" button is clicked',
-      control: {
-        type: 'function',
-      },
+      action: 'onBackToSettings',
     },
     onNavigateToPatches: {
       description:
         'Callback function to trigger when the "Relevant Patches" area is clicked',
-      control: {
-        type: 'function',
-      },
+      action: 'onNavigateToPatches',
     },
     onNavigateToPackages: {
       description:
         'Callback function to trigger when the "Upgradable Packages" area is clicked',
-      control: {
-        type: 'function',
-      },
+      action: 'onNavigateToPackages',
     },
     loading: {
       control: {

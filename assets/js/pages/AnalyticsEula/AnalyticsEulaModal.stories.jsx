@@ -21,11 +21,11 @@ export default {
     },
     onEnable: {
       description: 'Callback when the Enable button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
     onCancel: {
       description: 'Callback when the Cancel button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
   },
   args: {

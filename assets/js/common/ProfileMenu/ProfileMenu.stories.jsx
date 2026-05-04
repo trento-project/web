@@ -15,9 +15,18 @@ export default {
   title: 'Components/ProfileMenu',
   component: ProfileMenu,
   argTypes: {
-    username: { control: 'text' },
-    email: { control: 'text' },
-    logout: { action: 'logout' },
+    username: {
+      description: 'Username to display in the menu',
+      control: { type: 'text' },
+    },
+    email: {
+      description: 'Email address to display in the menu',
+      control: { type: 'text' },
+    },
+    logout: {
+      description: 'Callback function invoked when user logs out',
+      action: 'logout',
+    },
   },
   decorators: [
     (Story) => (
@@ -26,17 +35,17 @@ export default {
       </MemoryRouter>
     ),
   ],
-  render: (args) => (
-    <ContainerWrapper>
-      <ProfileMenu {...args} />
-    </ContainerWrapper>
-  ),
 };
 
 export const Default = {
   args: {
     username: 'John Doe',
     email: 'john@example.com',
-    logout: action('logout'),
+    logout: () => {},
   },
+  render: (args) => (
+    <ContainerWrapper>
+      <ProfileMenu {...args} />
+    </ContainerWrapper>
+  ),
 };

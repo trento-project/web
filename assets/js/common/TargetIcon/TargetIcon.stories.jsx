@@ -24,6 +24,15 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    targetType: 'host',
+    containerClassName: '',
+    className: '',
+    children: '',
+  },
+};
+
 export const Host = {
   args: { targetType: 'host' },
 };

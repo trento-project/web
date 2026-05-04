@@ -39,15 +39,15 @@ export default {
   component: ChecksCatalog,
   argTypes: {
     completeCatalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The whole Catalog content',
     },
     filteredCatalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The filtered Catalog content',
     },
     catalogError: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Error message getting catalog data',
       table: {
         type: { summary: 'string' },

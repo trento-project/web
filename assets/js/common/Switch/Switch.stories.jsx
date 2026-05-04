@@ -22,7 +22,7 @@ export default {
 };
 
 export const Default = {
-  args: {},
+  args: { selected: '', disabled: false },
   render: (args) => {
     const [selected, setSelected] = useState(args.selected);
     return <Switch {...args} selected={selected} onChange={setSelected} />;

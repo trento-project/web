@@ -12,15 +12,11 @@ export default {
     },
     onClearSettings: {
       description: 'Callback used to confirm the clearing of settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onClearSettings',
     },
     onCancel: {
       description: 'Callback used to cancel the clearing of settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onCancel',
     },
   },
 };

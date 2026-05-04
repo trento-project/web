@@ -44,14 +44,14 @@ export const Empty = {
   },
 };
 
-export const UnknwonActivityType = {
+export const UnknownActivityType = {
   args: {
     ...Default.args,
     activityLog: [activityLogEntryFactory.build({ type: 'foo_bar' })],
   },
 };
 
-// export const UnknwonLevel = {
+// export const UnknownLevel = {
 //   args: {
 //     ...Default.args,
 //     activityLog: [activityLogEntryFactory.build({ level: 'foo_bar' })],

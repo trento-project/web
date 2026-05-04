@@ -20,22 +20,35 @@ export default {
     },
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',
-      control: { type: 'function' },
+      action: 'onEditClick',
     },
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    settings: {},
+    userAbilities: [],
+    label: '',
+    value: '',
+    ariaLabel: '',
+    addClasses: '',
+  },
+};
 
 export const WithFilledInValues = {
   args: {
     settings: alertingSettingsFactory.build(),
+    userAbilities: [],
+    onEditClick: () => {},
   },
 };
 
 export const WithEditButtonEnabledWhenEnoughPermissions = {
   args: {
+    settings: {},
     userAbilities: [{ name: 'all', resource: 'all' }],
+    onEditClick: () => {},
   },
 };
 
@@ -45,5 +58,6 @@ export const WithEditButtonDisabledWhenEnforcedFromEnv = {
       enforcedFromEnv: true,
     },
     userAbilities: [{ name: 'all', resource: 'all' }],
+    onEditClick: () => {},
   },
 };

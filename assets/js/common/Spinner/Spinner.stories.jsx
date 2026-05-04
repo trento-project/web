@@ -3,12 +3,9 @@ import Spinner from './Spinner';
 export default {
   title: 'Components/Spinner',
   component: Spinner,
-};
-
-export const Default = {
   argTypes: {
     className: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Add padding or margin',
       table: {
         type: { summary: 'string' },
@@ -24,4 +21,8 @@ export const Default = {
       },
     },
   },
+};
+
+export const Default = {
+  args: { size: 'm', className: '' },
 };

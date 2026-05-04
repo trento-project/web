@@ -53,6 +53,18 @@ export default {
         'Boolean determining whether the button uses transparent styling',
       control: { type: 'boolean' },
     },
+    value: {
+      description: 'Current value of the component',
+      control: { type: 'text' },
+    },
+    running: {
+      description: 'The running prop',
+      control: { type: 'text' },
+    },
+    onClick: {
+      description: 'Callback function invoked when click',
+      action: 'onClick',
+    },
   },
 };
 

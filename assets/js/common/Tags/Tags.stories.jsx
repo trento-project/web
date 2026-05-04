@@ -14,10 +14,12 @@ export default {
     tagAdditionPermittedFor: {
       control: 'array',
       description: 'Abilities that allow tag creation',
+      action: 'callback',
     },
     tagDeletionPermittedFor: {
       control: 'array',
       description: 'Abilities that allow tag deletion',
+      action: 'callback',
     },
     className: {
       type: 'string',
@@ -31,13 +33,13 @@ export default {
       control: { type: 'object' },
     },
     onAdd: {
-      type: 'function',
       description:
         'Callback function invoked when a new tag is added to the collection',
+      action: 'callback',
     },
     onRemove: {
-      type: 'function',
       description: 'Callback function invoked when an existing tag is removed',
+      action: 'callback',
     },
     resourceId: {
       type: 'string',
@@ -55,6 +57,18 @@ export default {
       type: 'string',
       description:
         'Custom validation message displayed when tag input contains invalid characters',
+      control: { type: 'text' },
+    },
+    onClick: {
+      description: 'Callback function invoked when click',
+      action: 'onClick',
+    },
+    disabled: {
+      description: 'Whether the component is disabled',
+      control: { type: 'boolean' },
+    },
+    tag: {
+      description: 'The tag prop',
       control: { type: 'text' },
     },
   },

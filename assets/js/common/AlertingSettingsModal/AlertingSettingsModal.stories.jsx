@@ -54,12 +54,12 @@ export default {
 
     onSave: {
       description: 'Callback that would run on submit',
-      control: { type: 'function' },
+      action: 'callback',
     },
 
     onCancel: {
       description: 'Callback that would run on Cancel button clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
   },
 };

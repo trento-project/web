@@ -21,6 +21,7 @@ export default {
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
   },
   args: {
@@ -30,4 +31,4 @@ export default {
   },
 };
 
-export const Default = {};
+export const Default = { args: { operation: '', errors: [], isOpen: false } };

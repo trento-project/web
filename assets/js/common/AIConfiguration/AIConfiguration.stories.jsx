@@ -12,16 +12,16 @@ export default {
       control: { type: 'object' },
     },
     onCreate: {
-      type: 'function',
       description: 'Creates or updates AI configuration',
+      action: 'onCreate',
     },
     onUpdate: {
-      type: 'function',
       description: 'Updates AI configuration',
+      action: 'onUpdate',
     },
     onEditClick: {
-      type: 'function',
       description: 'Edit button click handler',
+      action: 'onEditClick',
     },
     className: {
       type: 'string',

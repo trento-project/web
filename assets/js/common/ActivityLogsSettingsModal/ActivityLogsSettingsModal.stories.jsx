@@ -27,17 +27,14 @@ export default {
       control: { type: 'boolean' },
     },
     onSave: {
-      type: 'function',
       description:
         'Callback function invoked when the Save Settings button is clicked',
     },
     onCancel: {
-      type: 'function',
       description:
         'Callback function invoked when the Cancel button is clicked or the modal is closed',
     },
     onClearErrors: {
-      type: 'function',
       description:
         'Callback function invoked when the retention time is modified to clear previous validation errors',
     },

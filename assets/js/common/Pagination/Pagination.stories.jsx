@@ -22,8 +22,8 @@ export default {
       defaultValue: [10],
     },
     onSelect: {
-      type: 'function',
       description: 'Callback function invoked with page navigation action',
+      action: 'callback',
     },
     pageStats: {
       type: 'element',
@@ -36,9 +36,13 @@ export default {
       control: { type: 'text' },
     },
     onChangeItemsPerPage: {
-      type: 'function',
       description:
         'Callback function invoked when the items per page selection is changed',
+      action: 'onChangeItemsPerPage',
+    },
+    onChange: {
+      description: 'Callback function invoked when change',
+      action: 'onChange',
     },
   },
   render: (args) => (

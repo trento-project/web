@@ -10,21 +10,21 @@ export default {
   components: UpgradablePackages,
   argTypes: {
     hostName: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Host name',
       table: {
         type: { summary: 'string' },
       },
     },
     upgradablePackages: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Array of upgradable package objects',
       table: {
         type: { summary: 'array' },
       },
     },
     patchesLoading: {
-      control: 'boolean',
+      control: { type: 'boolean' },
       description: 'Loading state for patches',
       table: {
         type: { summary: 'boolean' },

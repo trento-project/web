@@ -19,6 +19,13 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    data: {},
+    className: '',
+  },
+};
+
 export function Normal(args) {
   return (
     <ObjectTree

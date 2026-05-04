@@ -83,46 +83,45 @@ export default {
   argTypes: {
     open: {
       description: 'Opens the modal',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     id: {
       description: 'Check ID',
-      control: 'text',
+      control: { type: 'text' },
     },
     groupID: {
       description: 'Target ID',
-      control: 'text',
+      control: { type: 'text' },
     },
     values: {
       description: 'Check values',
-      control: 'array',
+      control: { type: 'object' },
     },
     description: {
       description: 'Check description',
-      control: 'string',
+      control: { type: 'text' },
     },
     customized: {
       description: 'Describes if the check was customized',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     provider: {
       description: 'Cloud or on-premises provider',
-      control: 'text',
+      control: { type: 'text' },
     },
     onClose: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onClose',
     },
     onSave: {
-      type: 'function',
       description: 'Saves the customized checks values and closes the modal',
+      action: 'onSave',
     },
     onReset: {
-      type: 'function',
       description: 'Resets the customized checks values and closes the modal',
+      action: 'onReset',
     },
     customizationStatus: {
-      type: 'string',
       description:
         'Status of the check customization operation (ongoing, failed, or invalid)',
       control: { type: 'text' },
@@ -130,16 +129,33 @@ export default {
   },
 };
 
-export const SingleValue = {
+export const Default = {
   args: {
-    open: false,
+    open: true,
     id: defaultCheck.id,
     values: defaultCheck.values,
     description: defaultCheck.description,
     provider: defaultProvider,
-    onClose: action('onClose'),
-    onSave: action('onSave'),
-    onReset: action('onReset'),
+    customized: false,
+    customizationStatus: '',
+    onClose: () => {},
+    onSave: () => {},
+    onReset: () => {},
+  },
+};
+
+export const SingleValue = {
+  args: {
+    open: true,
+    id: defaultCheck.id,
+    values: defaultCheck.values,
+    description: defaultCheck.description,
+    provider: defaultProvider,
+    customized: false,
+    customizationStatus: '',
+    onClose: () => {},
+    onSave: () => {},
+    onReset: () => {},
   },
 };
 

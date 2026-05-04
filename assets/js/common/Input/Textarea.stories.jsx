@@ -54,13 +54,24 @@ export default {
       control: { type: 'text' },
     },
     onChange: {
-      type: 'function',
       description: 'Callback function invoked when the textarea value changes',
+      action: 'onChange',
     },
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    id: '',
+    name: '',
+    value: '',
+    placeholder: '',
+    error: '',
+    disabled: false,
+    className: '',
+    initialValue: '',
+  },
+};
 
 export const WithPlaceholder = {
   args: {

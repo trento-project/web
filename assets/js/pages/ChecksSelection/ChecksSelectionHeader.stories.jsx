@@ -18,14 +18,14 @@ export default {
   ],
   argTypes: {
     targetID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The target identifier',
       table: {
         type: { summary: 'string' },
       },
     },
     targetName: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The target name',
       table: {
         type: { summary: 'string' },
@@ -40,27 +40,27 @@ export default {
         'A Component that renders the page header for the specific target',
     },
     selection: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'The check selection currently displayed',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     checkSelectionPermittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check selection',
     },
     checkExecutionPermittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check execution',
     },
     savedSelection: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'The last saved check selection for the target',
     },
     isSavingSelection: {
-      control: 'boolean',
+      control: { type: 'boolean' },
       description:
         'Whether Save Checks Selection button is enabled or disabled',
       table: {

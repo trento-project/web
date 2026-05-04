@@ -14,10 +14,11 @@ export default {
         type: 'array',
       },
       description: 'A list of patches',
+      action: 'callback',
     },
     onNavigate: {
-      type: 'function',
       description:
+      action: 'onNavigate',
         'Callback function invoked when a patch is selected for navigation',
     },
     timezone: {

@@ -24,9 +24,7 @@ export default {
     onRetry: {
       description:
         "Callback used to close the 'Edit Settings' and 'Clear Settings' dialogs",
-      control: {
-        type: 'function',
-      },
+      action: 'onRetry',
     },
     children: {
       type: 'element',

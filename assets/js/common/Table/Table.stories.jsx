@@ -59,6 +59,21 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    data: [],
+    className: '',
+    config: { columns: [] },
+    sortBy: () => 0,
+    searchParams: new URLSearchParams(),
+    setSearchParams: () => {},
+    emptyStateText: 'No data available',
+    header: null,
+    rowKey: (row, index) => index,
+    roundedTop: false,
+  },
+};
+
 const config = {
   columns: [
     {

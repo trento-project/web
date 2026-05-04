@@ -33,12 +33,12 @@ export default {
   argTypes: {
     onDeleteUser: {
       description: 'Function to handle deleting a user',
-      control: { type: 'function' },
+      action: 'callback',
       action: 'onDeleteUser',
     },
     navigate: {
       description: 'Function to navigate pages',
-      control: { type: 'function' },
+      action: 'callback',
       action: 'navigate',
     },
     users: {

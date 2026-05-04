@@ -14,10 +14,9 @@ export default {
       control: { type: 'object' },
     },
     onChange: {
-      type: { name: 'function', required: false },
       description:
         'Function to call when the composed value changes. If autoApply is true, this function is called on every filter change',
-      control: { type: null },
+      action: 'onChange',
     },
     autoApply: {
       type: { name: 'boolean', required: false, defaultValue: false },

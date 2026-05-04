@@ -12,7 +12,7 @@ export default {
   argTypes: {
     operation: {
       description: 'Operation to request',
-      control: 'text',
+      control: { type: 'object' },
     },
     type: {
       description: 'System type',
@@ -21,35 +21,48 @@ export default {
     },
     sid: {
       description: 'SAP system or database sid',
-      control: 'text',
+      control: { type: 'text' },
     },
     site: {
       description: 'System replication site. Only applicable for database type',
-      control: 'text',
+      control: { type: 'text' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onRequest: {
       description: 'Request start/stop operation',
+      action: 'onRequest',
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
-  },
-  args: {
-    isOpen: true,
   },
 };
 
 const { sid } = sapSystemFactory.build();
+
+export const Default = {
+  args: {
+    operation: SAP_SYSTEM_START,
+    type: APPLICATION_TYPE,
+    sid,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
+  },
+};
 
 export const SapSystem = {
   args: {
     operation: SAP_SYSTEM_START,
     type: APPLICATION_TYPE,
     sid,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };
 
@@ -58,5 +71,8 @@ export const Database = {
     operation: DATABASE_START,
     type: DATABASE_TYPE,
     sid,
+    isOpen: true,
+    onRequest: () => {},
+    onCancel: () => {},
   },
 };

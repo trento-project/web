@@ -14,7 +14,7 @@ export default {
     },
     onEditClick: {
       description: 'Callback when the edit button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
     userAbilities: {
       description: 'Users abilities that allow editing activity logs settings',
