@@ -3,6 +3,15 @@ import ProviderLabel from '.';
 export default {
   title: 'Components/ProviderLabel',
   component: ProviderLabel,
+  argTypes: {
+    provider: {
+      description: 'Cloud provider name',
+      control: {
+        type: 'select',
+        options: ['azure', 'aws', 'gcp', 'nutanix', 'kvm', 'vmware', 'unknown'],
+      },
+    },
+  },
 };
 
 export const Azure = {

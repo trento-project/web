@@ -6,6 +6,12 @@ export default {
   title: 'Components/GenericError',
   component: GenericError,
   args: { message: undefined },
+  argTypes: {
+    message: {
+      description: 'Optional error message to display',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export function Default(args) {

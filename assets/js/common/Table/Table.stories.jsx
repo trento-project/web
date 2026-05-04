@@ -11,6 +11,52 @@ export default {
    */
   title: 'Components/Table',
   component: Table,
+  argTypes: {
+    data: {
+      description: 'Data to be displayed in the table',
+      control: { type: 'object' },
+    },
+    className: {
+      description: 'Additional container class names',
+      control: { type: 'text' },
+    },
+    config: {
+      description:
+        'Table configuration object (columns, pagination, filters, etc.)',
+      control: { type: 'object' },
+    },
+    sortBy: {
+      description:
+        'Sorting predicate function (use `createStringSortingPredicate` helper)',
+      control: { type: 'object' },
+    },
+    searchParams: {
+      description:
+        'URL search params (e.g. `new URLSearchParams(window.location.search)`) used for filters/pagination',
+      control: { type: 'object' },
+    },
+    setSearchParams: {
+      description:
+        'Setter function to update search params (usually from React Router)',
+      action: 'setSearchParams',
+    },
+    emptyStateText: {
+      description: 'Text shown when there is no data',
+      control: { type: 'text' },
+    },
+    header: {
+      description: 'Optional header node rendered above the table',
+      control: { type: 'object' },
+    },
+    rowKey: {
+      description: 'Function to compute a unique key for each row',
+      control: { type: 'object' },
+    },
+    roundedTop: {
+      description: 'Whether to render the table with rounded top corners',
+      control: { type: 'boolean' },
+    },
+  },
 };
 
 const config = {

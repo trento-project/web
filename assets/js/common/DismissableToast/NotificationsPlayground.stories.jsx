@@ -125,6 +125,7 @@ function NotificationsPlayground() {
 export default {
   title: 'Playgrounds/Notifications',
   component: NotificationsPlayground,
+  argTypes: {},
 };
 
 export function Default() {

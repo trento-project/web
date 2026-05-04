@@ -7,6 +7,46 @@ import Pill from '.';
 export default {
   title: 'Components/Pill',
   component: Pill,
+  argTypes: {
+    size: {
+      description: 'Size of the pill',
+      control: { type: 'select', options: ['xs', 'sm', 'md'] },
+      defaultValue: 'md',
+    },
+    disabled: {
+      description: 'Whether the pill is disabled',
+      control: { type: 'boolean' },
+      defaultValue: false,
+    },
+    className: {
+      description: 'Additional CSS classes for custom styling',
+      control: { type: 'text' },
+    },
+    children: {
+      description: 'Content to be displayed inside the pill',
+      control: { type: 'text' },
+    },
+    onClick: {
+      description: 'Click handler function for the pill',
+      action: 'clicked',
+    },
+    roundedMode: {
+      description: 'Border radius style for the pill',
+      control: {
+        type: 'select',
+        options: ['rounded-full', 'rounded-lg', 'rounded'],
+      },
+      defaultValue: 'rounded-full',
+    },
+    display: {
+      description: 'CSS display property for the pill',
+      control: {
+        type: 'select',
+        options: ['inline-flex', 'inline-block', 'block'],
+      },
+      defaultValue: 'inline-flex',
+    },
+  },
 };
 
 export function Small() {

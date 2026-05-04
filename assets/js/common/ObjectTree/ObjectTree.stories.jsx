@@ -7,6 +7,16 @@ import ObjectTree from '.';
 export default {
   title: 'Components/ObjectTree',
   component: ObjectTree,
+  argTypes: {
+    data: {
+      description: 'The object to display as a tree',
+      control: { type: 'object' },
+    },
+    className: {
+      description: 'Optional CSS class for the tree container',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export function Normal(args) {

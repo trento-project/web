@@ -4,6 +4,24 @@ import TargetIcon from './TargetIcon';
 export default {
   title: 'Components/TargetIcon',
   component: TargetIcon,
+  argTypes: {
+    targetType: {
+      description: 'Type of the target',
+      control: { type: 'select', options: ['host', 'cluster'] },
+    },
+    containerClassName: {
+      description: 'Custom CSS class for the container',
+      control: { type: 'text' },
+    },
+    className: {
+      description: 'Custom CSS class for the icon',
+      control: { type: 'text' },
+    },
+    children: {
+      description: 'Optional label to display next to the icon',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export const Host = {

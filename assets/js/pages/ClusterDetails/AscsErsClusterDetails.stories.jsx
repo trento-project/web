@@ -88,6 +88,59 @@ export default {
       <AscsErsClusterDetails {...args} />
     </ContainerWrapper>
   ),
+  argTypes: {
+    clusterID: {
+      description: 'Unique identifier for the cluster',
+      control: { type: 'text' },
+    },
+    hosts: {
+      description: 'List of hosts in the cluster',
+      control: { type: 'object' },
+    },
+    details: {
+      description: 'Detailed information about the cluster',
+      control: { type: 'object' },
+    },
+    lastExecution: {
+      description: 'Information about the last checks execution',
+      control: { type: 'object' },
+    },
+    userAbilities: {
+      description: 'List of user abilities for actions on the cluster',
+      control: { type: 'object' },
+    },
+    cibLastWritten: {
+      description: 'Timestamp when the CIB was last written',
+      control: { type: 'date' },
+    },
+    provider: {
+      description:
+        'Cluster provider name (e.g., azure, aws, gcp, nutanix, kvm, vmware)',
+      control: { type: 'text' },
+    },
+    sapSystems: {
+      description: 'Array of SAP system objects for the cluster',
+      control: { type: 'object' },
+    },
+    catalog: {
+      description: 'Catalog data (may include loading and data fields)',
+      control: { type: 'object' },
+    },
+    timezone: {
+      type: 'string',
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+      defaultValue: 'Etc/UTC',
+    },
+    navigate: {
+      description: 'Navigation function (e.g., from react-router)',
+      action: 'navigate',
+    },
+    getClusterHostOperations: {
+      description: 'Function returning available host operations for a host',
+      action: 'getClusterHostOperations',
+    },
+  },
 };
 
 export const Single = {

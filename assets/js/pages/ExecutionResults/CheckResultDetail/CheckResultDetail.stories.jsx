@@ -69,6 +69,34 @@ const executionDataWithoutValues = checksExecutionCompletedFactory.build({
 export default {
   title: 'Layouts/CheckResultDetail',
   component: CheckResultDetail,
+  argTypes: {
+    checkID: {
+      description: 'ID of the check to display details for',
+      control: { type: 'text' },
+    },
+    targetID: {
+      description: 'ID of the target associated with the check result',
+      control: { type: 'text' },
+    },
+    targetType: {
+      description: 'Type of the target (e.g., host, cluster)',
+      control: { type: 'text' },
+    },
+    executionData: {
+      description:
+        'Data from the checks execution containing results and expectations',
+      control: { type: 'object' },
+    },
+    expectations: {
+      description:
+        'List of expectations associated with the check results for display',
+      control: { type: 'object' },
+    },
+    severity: {
+      description: 'Severity level of the check result',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export const Default = {

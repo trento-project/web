@@ -5,11 +5,31 @@ export default {
   title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,
   argTypes: {
+    data: {
+      description: 'Check results data object',
+      control: { type: 'object' },
+    },
     timezone: {
       type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
       defaultValue: 'Etc/UTC',
+    },
+    catalogDataEmpty: {
+      description: 'Whether catalog data is empty',
+      control: { type: 'boolean' },
+    },
+    error: {
+      description: 'Error message to display',
+      control: { type: 'text' },
+    },
+    loading: {
+      description: 'Loading state',
+      control: { type: 'boolean' },
+    },
+    onCheckClick: {
+      action: 'onCheckClick',
+      description: 'Callback when a check count is clicked',
     },
   },
 };
@@ -22,6 +42,7 @@ export const Default = {
       warning_count: faker.number.int(),
       critical_count: faker.number.int(),
     },
+    timezone: 'Etc/UTC',
     catalogDataEmpty: false,
     error: '',
     loading: false,

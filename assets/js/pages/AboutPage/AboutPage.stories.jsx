@@ -12,9 +12,14 @@ const fetchAboutPageData = () =>
 export default {
   title: 'Layouts/AboutPage',
   component: AboutPage,
-
   args: {
     onFetch: fetchAboutPageData,
+  },
+  argTypes: {
+    onFetch: {
+      description: 'Function to fetch the about page data',
+      action: 'fetch',
+    },
   },
 };
 

@@ -23,6 +23,28 @@ export const Default = {
     isError: false,
     errorMessage: 'An error occurred',
   },
+  argTypes: {
+    isTargetHost: {
+      description: 'Indicates if the target is a host',
+      control: { type: 'boolean' },
+    },
+    results: {
+      description: 'List of expectation results',
+      control: { type: 'object' },
+    },
+    isError: {
+      description: 'Indicates if there was an error during evaluation',
+      control: { type: 'boolean' },
+    },
+    errorMessage: {
+      description: 'Error message to display if an error occurred',
+      control: { type: 'text' },
+    },
+    severity: {
+      description: 'Severity level of the expectation result',
+      control: { type: 'text' },
+    },
+  },
 };
 
 export const WithFailureMessage = {

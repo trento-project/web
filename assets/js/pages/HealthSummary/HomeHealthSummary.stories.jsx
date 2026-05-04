@@ -44,6 +44,16 @@ export default {
       <HomeHealthSummary {...args} />
     </ContainerWrapper>
   ),
+  argTypes: {
+    sapSystemsHealth: {
+      description: 'Health summary of SAP systems',
+      control: { type: 'array' },
+    },
+    loading: {
+      description: 'Loading state of the health summary',
+      control: { type: 'boolean' },
+    },
+  },
 };
 
 export const Random = {
