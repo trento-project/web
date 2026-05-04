@@ -70,4 +70,24 @@ describe('Analytics Eula Modal component', () => {
 
     expect(mockOnCancel).toHaveBeenCalledWith(true);
   });
+
+  it('should open a new window with the docs url when the link is clicked', async () => {
+    const user = userEvent.setup();
+    const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => {});
+
+    render(<AnalyticsEulaModal isOpen />);
+
+    const linkElement = screen.getByRole('link', { name: 'anonymous metrics' });
+    linkElement.onclick = mockOpen;
+
+    expect(linkElement).toHaveProperty('target', '_blank');
+    expect(linkElement).toHaveProperty(
+      'href',
+      'https://trento-project.io/docs/user-guide/trento-analytics'
+    );
+
+    await user.click(linkElement);
+
+    expect(mockOpen).toHaveBeenCalled();
+  });
 });
