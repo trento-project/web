@@ -14,7 +14,6 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 
 // jsdom does not implement scrollTo on Elements
 globalThis.Element.prototype.scrollTo = function scrollTo() {};
-globalThis.Element.prototype.scrollIntoView = function scrollIntoView() {};
 
 const { TextEncoder, TextDecoder } = require('util');
 
@@ -37,10 +36,6 @@ global.WritableStream = WritableStream;
 // so empty-class stubs are enough to satisfy the inheritance.
 class FetchStub {}
 global.Response = FetchStub;
-global.Request = FetchStub;
-global.Headers = FetchStub;
-global.fetch = () =>
-  Promise.reject(new Error('fetch not implemented in tests'));
 
 // Mock Chart.js
 jest.mock('chart.js/auto', () => ({
