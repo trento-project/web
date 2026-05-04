@@ -167,8 +167,6 @@ config :trento, Trento.Scheduler,
   ],
   debug_logging: false
 
-config :trento, prune_events_cronjob_schedule: "0 0 * * *"
-
 config :trento, Trento.Infrastructure.Messaging,
   adapter: Trento.Infrastructure.Messaging.Adapter.AMQP
 
