@@ -1,0 +1,42 @@
+import Component from './ChecksSelectionGroup';
+
+export default {
+  title: 'Components/ChecksSelectionGroup',
+  component: Component,
+  argTypes: {
+    children: {
+      description: 'Checks within this group',
+      control: { type: 'object' },
+    },
+    group: {
+      description: 'Group identifier or name',
+      control: { type: 'text' },
+    },
+    selected: {
+      description: 'Currently selected check IDs',
+      control: { type: 'object' },
+    },
+    onChange: {
+      description: 'Callback function invoked when selection changes',
+      action: 'onChange',
+    },
+  },
+};
+
+export const Default = {
+  args: {
+    group: 'Configuration Checks',
+    selected: {},
+    onChange: () => {},
+    children: 'Check items go here',
+  },
+};
+
+export const WithSelected = {
+  args: {
+    group: 'Configuration Checks',
+    selected: { check_001: true, check_002: true },
+    onChange: () => {},
+    children: 'Check items go here',
+  },
+};

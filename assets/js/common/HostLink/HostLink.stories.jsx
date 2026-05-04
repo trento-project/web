@@ -1,0 +1,29 @@
+import React from 'react';
+import { BrowserRouter } from 'react-router';
+import Component from './HostLink';
+
+export default {
+  title: 'Components/HostLink',
+  component: Component,
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
+  argTypes: {
+    hostId: {
+      description: 'Unique identifier for the host',
+      control: { type: 'text' },
+    },
+    children: {
+      description: 'Content or text displayed inside the component',
+      control: { type: 'text' },
+    },
+  },
+};
+
+export const Default = {
+  args: { hostId: 'host-123', children: 'Default children' },
+};

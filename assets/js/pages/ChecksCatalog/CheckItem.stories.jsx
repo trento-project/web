@@ -1,0 +1,42 @@
+import Component from './CheckItem';
+
+export default {
+  title: 'Components/CheckItem',
+  component: Component,
+  argTypes: {
+    checkID: {
+      description: 'Identifier for the checkID',
+      control: { type: 'text' },
+    },
+    targetType: {
+      description: 'The targetType prop',
+      control: { type: 'text' },
+    },
+    description: {
+      description: 'The description prop',
+      control: { type: 'text' },
+    },
+    remediation: {
+      description: 'The remediation prop',
+      control: { type: 'text' },
+    },
+  },
+};
+
+export const Default = {
+  args: {
+    checkID: 'check_001',
+    targetType: 'host',
+    description: 'This check verifies that the system is properly configured',
+    remediation: 'Update the configuration according to best practices',
+  },
+};
+
+export const Cluster = {
+  args: {
+    checkID: 'check_cluster_001',
+    targetType: 'cluster',
+    description: 'Cluster-level configuration check',
+    remediation: 'Apply the recommended cluster settings',
+  },
+};
