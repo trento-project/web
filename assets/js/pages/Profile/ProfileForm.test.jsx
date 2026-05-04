@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen, act } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
@@ -248,9 +248,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
+    await user.click(screen.getByRole('switch'));
 
     expect(onEnableTotp).toHaveBeenCalled();
   });
@@ -274,13 +272,8 @@ describe('ProfileForm', () => {
 
     expect(screen.getByRole('switch')).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByRole('switch'));
-    });
-
-    await act(async () => {
-      await user.click(screen.getByText('Disable'));
-    });
+    await user.click(screen.getByRole('switch'));
+    await user.click(screen.getByText('Disable'));
 
     expect(onResetTotp).toHaveBeenCalled();
   });
@@ -328,9 +321,7 @@ describe('ProfileForm', () => {
 
     expect(screen.getByText(totpSecret)).toBeVisible();
 
-    await act(async () => {
-      await user.click(screen.getByText('Cancel'));
-    });
+    await user.click(screen.getByText('Cancel'));
 
     expect(toggleTotpBox).toHaveBeenCalledWith(false);
   });
@@ -356,10 +347,8 @@ describe('ProfileForm', () => {
       />
     );
 
-    await act(async () => {
-      await user.type(screen.getByLabelText('totp_code'), '1234');
-      await user.click(screen.getByRole('button', { name: 'Verify' }));
-    });
+    await user.type(screen.getByLabelText('totp_code'), '1234');
+    await user.click(screen.getByRole('button', { name: 'Verify' }));
 
     expect(onVerifyTotp).toHaveBeenNthCalledWith(1, '1234');
   });
