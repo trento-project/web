@@ -51,6 +51,7 @@ export const Default = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     loading: true,
   },
 };
@@ -59,6 +60,7 @@ export const Empty = {};
 
 export const WithErrors = {
   args: {
+    ...Default.args,
     ...Empty.args,
     errors: [
       {

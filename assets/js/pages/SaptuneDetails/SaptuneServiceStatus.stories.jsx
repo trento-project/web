@@ -24,13 +24,28 @@ export const Default = {
 };
 
 export const Disabled = {
-  args: { serviceName: 'sapconf', enabled: false, active: false },
+  args: {
+    ...Default.args,
+    serviceName: 'sapconf',
+    enabled: false,
+    active: false,
+  },
 };
 
 export const EnabledNotActive = {
-  args: { serviceName: 'tuned', enabled: true, active: false },
+  args: {
+    ...Default.args,
+    serviceName: 'tuned',
+    enabled: true,
+    active: false,
+  },
 };
 
 export const ActiveNotEnabled = {
-  args: { serviceName: 'other-service', enabled: false, active: true },
+  args: {
+    ...Default.args,
+    serviceName: 'other-service',
+    enabled: false,
+    active: true,
+  },
 };

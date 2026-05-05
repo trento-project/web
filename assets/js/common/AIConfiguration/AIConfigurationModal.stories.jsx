@@ -59,6 +59,7 @@ export const Default = {
 
 export const WithUnmappedProvider = {
   args: {
+    ...Default.args,
     open: true,
     aiProviders: {
       // eslint-disable-next-line no-undef
@@ -75,6 +76,7 @@ const repeatedModel = faker.lorem.word();
 
 export const WithModelForManyProviders = {
   args: {
+    ...Default.args,
     open: true,
     aiProviders: {
       // eslint-disable-next-line no-undef
@@ -90,6 +92,7 @@ export const WithModelForManyProviders = {
 
 export const WithPreviouslySetConfiguration = {
   args: {
+    ...Default.args,
     open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     onCancel: action('onCancel'),
@@ -100,6 +103,7 @@ export const WithPreviouslySetConfiguration = {
 
 export const Saving = {
   args: {
+    ...Default.args,
     open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     saving: true,
@@ -111,6 +115,7 @@ export const Saving = {
 
 export const WithErrors = {
   args: {
+    ...Default.args,
     open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     errors: [

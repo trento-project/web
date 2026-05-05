@@ -45,6 +45,7 @@ function DottedPaginationWithHooks(args) {
 
 export const Multiple = {
   args: {
+    ...Default.args,
     pages: PAGES,
     initialSelectedIndex: 0,
     onChange: action('onChange'),
@@ -54,6 +55,7 @@ export const Multiple = {
 
 export const Single = {
   args: {
+    ...Default.args,
     ...Multiple.args,
     pages: PAGES.slice(0, 1),
   },

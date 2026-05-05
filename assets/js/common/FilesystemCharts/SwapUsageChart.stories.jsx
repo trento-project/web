@@ -37,6 +37,7 @@ export const Default = {
 
 export const MostlyUsed = {
   args: {
+    ...Default.args,
     availBytes: 214748364, // 0.2 GB
     usedBytes: 1932735284, // 1.8 GB
     totalBytes: 2147483648, // 2 GB
@@ -45,6 +46,7 @@ export const MostlyUsed = {
 
 export const NoUsage = {
   args: {
+    ...Default.args,
     availBytes: 2147483648, // 2 GB
     usedBytes: 0,
     totalBytes: 2147483648, // 2 GB
@@ -53,6 +55,7 @@ export const NoUsage = {
 
 export const ZeroTotal = {
   args: {
+    ...Default.args,
     availBytes: 0,
     usedBytes: 0,
     totalBytes: 0,

@@ -60,6 +60,7 @@ export const Default = {
 
 export const WithPermission = {
   args: {
+    ...Default.args,
     permitted: ['action:resource'],
     outletMode: false,
     disabled: false,
@@ -69,6 +70,7 @@ export const WithPermission = {
 
 export const Disabled = {
   args: {
+    ...Default.args,
     permitted: [],
     outletMode: false,
     disabled: true,

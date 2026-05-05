@@ -84,7 +84,9 @@ export const Default = {
 };
 
 export const WithControlledValue = {
-  args: {},
+  args: {
+    ...Default.args,
+  },
   render: () => {
     const [value, setValue] = useState('Value');
     return <Input value={value} onChange={(e) => setValue(e.target.value)} />;
@@ -93,18 +95,21 @@ export const WithControlledValue = {
 
 export const WithInitialValue = {
   args: {
+    ...Default.args,
     initialValue: 'Initial Value',
   },
 };
 
 export const WithPlaceholder = {
   args: {
+    ...Default.args,
     placeholder: 'Placeholder',
   },
 };
 
 export const Disabled = {
   args: {
+    ...Default.args,
     ...WithPlaceholder.args,
     disabled: true,
   },
@@ -112,12 +117,14 @@ export const Disabled = {
 
 export const Clearable = {
   args: {
+    ...Default.args,
     ...WithPlaceholder.args,
     allowClear: true,
   },
 };
 export const ClearableDisabled = {
   args: {
+    ...Default.args,
     ...Clearable.args,
     disabled: true,
   },
@@ -125,6 +132,7 @@ export const ClearableDisabled = {
 
 export const WithError = {
   args: {
+    ...Default.args,
     ...WithInitialValue.args,
     error: true,
   },
@@ -132,6 +140,7 @@ export const WithError = {
 
 export const WithPrefix = {
   args: {
+    ...Default.args,
     ...WithPlaceholder.args,
     prefix: <EOS_SEARCH size="l" />,
   },
@@ -139,6 +148,7 @@ export const WithPrefix = {
 
 export const WithPrefixDisabled = {
   args: {
+    ...Default.args,
     ...WithPrefix.args,
     disabled: true,
   },
@@ -146,6 +156,7 @@ export const WithPrefixDisabled = {
 
 export const WithSuffix = {
   args: {
+    ...Default.args,
     ...WithPlaceholder.args,
     suffix: <EOS_VISIBILITY_OFF_OUTLINED size="l" />,
   },
@@ -153,6 +164,7 @@ export const WithSuffix = {
 
 export const WithSuffixDisabled = {
   args: {
+    ...Default.args,
     ...WithSuffix.args,
     disabled: true,
   },
@@ -160,24 +172,28 @@ export const WithSuffixDisabled = {
 
 export const Checkbox = {
   args: {
+    ...Default.args,
     type: 'checkbox',
   },
 };
 
 export const Date = {
   args: {
+    ...Default.args,
     type: 'date',
   },
 };
 
 export const DateTime = {
   args: {
+    ...Default.args,
     type: 'datetime-local',
   },
 };
 
 export const File = {
   args: {
+    ...Default.args,
     type: 'file',
   },
 };

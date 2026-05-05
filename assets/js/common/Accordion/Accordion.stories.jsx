@@ -64,6 +64,7 @@ export const WithoutHandle = {
 
 export const WithCustomHeader = {
   args: {
+    ...Default.args,
     ...WithoutHandle.args,
     header: (
       <div className="check-row px-4 py-4 sm:px-6">

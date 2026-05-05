@@ -82,6 +82,7 @@ export const WithVeryLongSUMAUrl = {
 
 export const Empty = {
   args: {
+    ...Default.args,
     userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };

@@ -98,6 +98,7 @@ export const Default = {
 
 export const Host = {
   args: {
+    ...Default.args,
     hostname: 'example host',
     isOpen: true,
     onCleanUp: action('onCleanUp'),
@@ -108,6 +109,7 @@ export const Host = {
 
 export const ApplicationInstance = {
   args: {
+    ...Default.args,
     contentType: APPLICATION_TYPE,
     sid: 'PRD',
     instanceNumber: '00',
@@ -119,6 +121,7 @@ export const ApplicationInstance = {
 
 export const DatabaseInstance = {
   args: {
+    ...Default.args,
     contentType: DATABASE_TYPE,
     sid: 'PRD',
     instanceNumber: '00',

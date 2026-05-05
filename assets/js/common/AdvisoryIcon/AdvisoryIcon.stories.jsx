@@ -40,6 +40,7 @@ export const Default = {
 
 export const SecurityAdvisory = {
   args: {
+    ...Default.args,
     type: 'security_advisory',
     centered: false,
     hoverOpacity: true,
@@ -49,18 +50,21 @@ export const SecurityAdvisory = {
 
 export const Bugfix = {
   args: {
+    ...Default.args,
     type: 'bugfix',
   },
 };
 
 export const Enhancement = {
   args: {
+    ...Default.args,
     type: 'enhancement',
   },
 };
 
 export const Unknown = {
   args: {
+    ...Default.args,
     type: '',
   },
 };

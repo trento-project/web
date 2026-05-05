@@ -31,6 +31,7 @@ export const Default = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     loading: true,
     activityLog: [],
   },
@@ -38,6 +39,7 @@ export const Loading = {
 
 export const Empty = {
   args: {
+    ...Default.args,
     activityLog: [],
   },
 };

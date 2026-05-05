@@ -45,6 +45,7 @@ export const Default = {
 
 export const Empty = {
   args: {
+    ...Default.args,
     hostName: hostFactory.build().hostname,
     upgradablePackages: [],
     patchesLoading: false,

@@ -95,6 +95,7 @@ export const Disabled = {
 
 export const DisabledWithTooltip = {
   args: {
+    ...Default.args,
     ...Disabled.args,
     disabledTooltip: 'Operations are disabled',
   },

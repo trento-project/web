@@ -44,6 +44,7 @@ export const Default = {
 
 export const Offline = {
   args: {
+    ...Default.args,
     status: 'offline',
     hostId: 'host_002',
     resources: [],
@@ -53,6 +54,7 @@ export const Offline = {
 
 export const Standby = {
   args: {
+    ...Default.args,
     status: 'standby',
     hostId: 'host_003',
     resources: [{ id: 'res_002', name: 'Resource 2' }],

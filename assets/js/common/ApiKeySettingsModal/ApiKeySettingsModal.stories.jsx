@@ -76,6 +76,7 @@ export const Default = {
 
 export const OnlyGenerationForm = {
   args: {
+    ...Default.args,
     loading: false,
     open: false,
     generatedApiKeyExpiration: null,

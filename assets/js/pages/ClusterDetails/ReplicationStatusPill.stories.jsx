@@ -17,13 +17,22 @@ export const Default = {
 };
 
 export const Secondary = {
-  args: { status: 'Secondary' },
+  args: {
+    ...Default.args,
+    status: 'Secondary',
+  },
 };
 
 export const Unknown = {
-  args: { status: 'Unknown' },
+  args: {
+    ...Default.args,
+    status: 'Unknown',
+  },
 };
 
 export const Disabled = {
-  args: { status: 'Disabled' },
+  args: {
+    ...Default.args,
+    status: 'Disabled',
+  },
 };

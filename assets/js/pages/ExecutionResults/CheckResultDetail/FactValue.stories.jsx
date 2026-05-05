@@ -27,11 +27,16 @@ export const Default = {
 };
 
 export const Empty = {
-  args: { className: '', data: [] },
+  args: {
+    ...Default.args,
+    className: '',
+    data: [],
+  },
 };
 
 export const SingleFact = {
   args: {
+    ...Default.args,
     className: '',
     data: [{ key: 'single_fact', value: 'Single value' }],
   },

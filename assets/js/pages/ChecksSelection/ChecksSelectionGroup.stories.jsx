@@ -35,6 +35,7 @@ export const Default = {
 
 export const WithSelected = {
   args: {
+    ...Default.args,
     group: 'Configuration Checks',
     selected: { check_001: true, check_002: true },
     onChange: action('onChange'),

@@ -65,18 +65,21 @@ export const Default = {
 
 export const WithPlaceholder = {
   args: {
+    ...Default.args,
     placeholder: 'Placeholder text',
   },
 };
 
 export const Disabled = {
   args: {
+    ...Default.args,
     disabled: true,
   },
 };
 
 export const DisabledWithPlaceholder = {
   args: {
+    ...Default.args,
     ...WithPlaceholder.args,
     ...Disabled.args,
   },
@@ -84,12 +87,15 @@ export const DisabledWithPlaceholder = {
 
 export const WithInitialValue = {
   args: {
+    ...Default.args,
     initialValue: 'Initial value text',
   },
 };
 
 export const WithControlledValue = {
-  args: {},
+  args: {
+    ...Default.args,
+  },
   render: () => {
     const [value, setValue] = useState('Value text');
     return (
@@ -100,6 +106,7 @@ export const WithControlledValue = {
 
 export const WithError = {
   args: {
+    ...Default.args,
     value: 'This is a wrong value',
     error: true,
   },
@@ -107,6 +114,7 @@ export const WithError = {
 
 export const DisabledWithValue = {
   args: {
+    ...Default.args,
     value: 'Value text',
     ...Disabled.args,
   },

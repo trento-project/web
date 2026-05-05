@@ -49,6 +49,7 @@ export const Default = {
 
 export const Secondary = {
   args: {
+    ...Default.args,
     type: 'secondary',
     children: 'Hello world!',
   },
@@ -56,6 +57,7 @@ export const Secondary = {
 
 export const Danger = {
   args: {
+    ...Default.args,
     type: 'danger',
     children: 'Hello world!',
   },
@@ -63,6 +65,7 @@ export const Danger = {
 
 export const DangerBold = {
   args: {
+    ...Default.args,
     type: 'danger-bold',
     children: 'Danger!',
   },
@@ -70,6 +73,7 @@ export const DangerBold = {
 
 export const PrimaryWhite = {
   args: {
+    ...Default.args,
     type: 'primary-white',
     children: 'Hello world!',
   },
@@ -77,6 +81,7 @@ export const PrimaryWhite = {
 
 export const Transparent = {
   args: {
+    ...Default.args,
     type: 'transparent',
     children: 'Hello world!',
   },
@@ -84,6 +89,7 @@ export const Transparent = {
 
 export const Small = {
   args: {
+    ...Default.args,
     size: 'small',
     children: 'Hello world!',
   },
@@ -91,6 +97,7 @@ export const Small = {
 
 export const Fit = {
   args: {
+    ...Default.args,
     size: 'fit',
     children: 'Hello world!',
   },
@@ -98,6 +105,7 @@ export const Fit = {
 
 export const Link = {
   args: {
+    ...Default.args,
     type: 'link',
     children: 'Go to another page',
   },
@@ -105,6 +113,7 @@ export const Link = {
 
 export const SmallSecondary = {
   args: {
+    ...Default.args,
     size: 'small',
     type: 'secondary',
     children: 'Hello world!',
@@ -113,6 +122,7 @@ export const SmallSecondary = {
 
 export const Disabled = {
   args: {
+    ...Default.args,
     disabled: true,
     children: 'Hello world!',
   },

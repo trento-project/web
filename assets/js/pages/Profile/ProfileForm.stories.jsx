@@ -160,6 +160,7 @@ export const Default = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     fullName: fullname,
     emailAddress: email,
     username,

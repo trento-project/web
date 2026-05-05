@@ -58,6 +58,7 @@ export const Default = {
 
 export const SapSystem = {
   args: {
+    ...Default.args,
     operation: SAP_SYSTEM_START,
     type: APPLICATION_TYPE,
     sid,
@@ -69,6 +70,7 @@ export const SapSystem = {
 
 export const Database = {
   args: {
+    ...Default.args,
     operation: DATABASE_START,
     type: DATABASE_TYPE,
     sid,

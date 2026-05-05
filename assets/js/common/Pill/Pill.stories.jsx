@@ -64,6 +64,7 @@ export const Default = {
 
 export const Small = {
   args: {
+    ...Default.args,
     size: 'sm',
     children: 'Small!',
   },
@@ -71,6 +72,7 @@ export const Small = {
 
 export const ExtraSmall = {
   args: {
+    ...Default.args,
     size: 'xs',
     children: 'Extra small!',
   },
@@ -78,6 +80,7 @@ export const ExtraSmall = {
 
 export const Disabled = {
   args: {
+    ...Default.args,
     size: 'xs',
     disabled: true,
     children: 'Disabled',
@@ -86,6 +89,7 @@ export const Disabled = {
 
 export const WithIcon = {
   args: {
+    ...Default.args,
     className: 'bg-green-100 text-green-800 group flex items-center',
   },
   render: (args) => (
@@ -98,6 +102,7 @@ export const WithIcon = {
 
 export const Warning = {
   args: {
+    ...Default.args,
     className: 'bg-yellow-200 text-yellow-600',
     children: 'Warning!',
   },
@@ -105,6 +110,7 @@ export const Warning = {
 
 export const Critical = {
   args: {
+    ...Default.args,
     className: 'bg-red-200 text-red-600',
     children: 'Critical!',
   },
@@ -112,6 +118,7 @@ export const Critical = {
 
 export const Truncated = {
   args: {
+    ...Default.args,
     display: 'inline-block',
     className: 'bg-green-100 text-green-800 truncate w-24',
     children: 'Truncated pill text',
@@ -120,6 +127,7 @@ export const Truncated = {
 
 export const WithTooltip = {
   args: {
+    ...Default.args,
     className: 'bg-green-100 text-green-800 relative',
   },
   render: (args) => (

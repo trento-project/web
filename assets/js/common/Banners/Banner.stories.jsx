@@ -37,6 +37,7 @@ export const Default = {
 
 export const WithTruncatedContent = {
   args: {
+    ...Default.args,
     children: faker.lorem.sentences(20),
     truncate: true,
   },
@@ -44,6 +45,7 @@ export const WithTruncatedContent = {
 
 export const SuccessBanner = {
   args: {
+    ...Default.args,
     type: 'success',
     children: 'SUCCESS',
   },
@@ -51,6 +53,7 @@ export const SuccessBanner = {
 
 export const WarningBanner = {
   args: {
+    ...Default.args,
     type: 'warning',
     children: 'WARNING',
   },
@@ -58,6 +61,7 @@ export const WarningBanner = {
 
 export const ErrorBanner = {
   args: {
+    ...Default.args,
     type: 'error',
     children: 'ERROR',
   },

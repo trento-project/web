@@ -35,6 +35,7 @@ export const Default = {
 
 export const WithFilledInValues = {
   args: {
+    ...Default.args,
     settings: alertingSettingsFactory.build(),
     userAbilities: [],
     onEditClick: action('onEditClick'),
@@ -43,6 +44,7 @@ export const WithFilledInValues = {
 
 export const WithEditButtonEnabledWhenEnoughPermissions = {
   args: {
+    ...Default.args,
     settings: {},
     userAbilities: [{ name: 'all', resource: 'all' }],
     onEditClick: action('onEditClick'),
@@ -51,6 +53,7 @@ export const WithEditButtonEnabledWhenEnoughPermissions = {
 
 export const WithEditButtonDisabledWhenEnforcedFromEnv = {
   args: {
+    ...Default.args,
     settings: {
       enforcedFromEnv: true,
     },

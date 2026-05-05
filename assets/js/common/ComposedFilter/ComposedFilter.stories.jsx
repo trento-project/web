@@ -85,6 +85,7 @@ export const Default = {
 
 export const WithDateFilter = {
   args: {
+    ...Default.args,
     filters: [
       {
         key: 'filter1',
@@ -106,6 +107,7 @@ export const WithDateFilter = {
 
 export const WithSearchBox = {
   args: {
+    ...Default.args,
     filters: [
       {
         key: 'filter1',

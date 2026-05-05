@@ -51,6 +51,7 @@ export const Default = {
 
 export const HanaRunning = {
   args: {
+    ...Default.args,
     operation: saptuneOperation(),
     isHanaRunning: true,
     isAppRunning: false,
@@ -62,6 +63,7 @@ export const HanaRunning = {
 
 export const AppRunning = {
   args: {
+    ...Default.args,
     operation: saptuneOperation(),
     isHanaRunning: false,
     isAppRunning: true,
@@ -73,6 +75,7 @@ export const AppRunning = {
 
 export const HanaAndAppRunning = {
   args: {
+    ...Default.args,
     operation: saptuneOperation(),
     isHanaRunning: true,
     isAppRunning: true,
@@ -84,6 +87,7 @@ export const HanaAndAppRunning = {
 
 export const WithCurrentlyAppliedSolution = {
   args: {
+    ...Default.args,
     operation: saptuneOperation(),
     isHanaRunning: true,
     currentlyApplied: 'HANA',

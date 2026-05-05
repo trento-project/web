@@ -30,5 +30,9 @@ export const Default = {
 };
 
 export const Cluster = {
-  args: { targetID: 'cluster_001', targetType: 'cluster' },
+  args: {
+    ...Default.args,
+    targetID: 'cluster_001',
+    targetType: 'cluster',
+  },
 };

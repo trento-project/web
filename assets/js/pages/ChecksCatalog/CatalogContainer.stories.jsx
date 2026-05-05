@@ -50,6 +50,7 @@ export const Default = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     onClear: action('onClear'),
     onRefresh: action('onRefresh'),
     withResetFilters: true,
@@ -62,6 +63,7 @@ export const Loading = {
 
 export const Empty = {
   args: {
+    ...Default.args,
     onClear: action('onClear'),
     onRefresh: action('onRefresh'),
     withResetFilters: true,
@@ -74,6 +76,7 @@ export const Empty = {
 
 export const WithError = {
   args: {
+    ...Default.args,
     onClear: action('onClear'),
     onRefresh: action('onRefresh'),
     withResetFilters: true,

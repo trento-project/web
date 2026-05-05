@@ -28,6 +28,7 @@ export const Default = {
 
 export const Normal = {
   args: {
+    ...Default.args,
     data: objectTreeFactory.build({ empty_array: [], empty_object: {} }),
     className: '',
   },

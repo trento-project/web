@@ -25,6 +25,7 @@ export const Default = {
 
 export const Cluster = {
   args: {
+    ...Default.args,
     targetType: 'cluster',
     target: { id: 'cluster_001', name: 'HANA-Cluster' },
   },

@@ -45,6 +45,7 @@ export const Default = {
 
 export const PatchesLoading = {
   args: {
+    ...Default.args,
     hostname: 'Example Host',
     patchesLoading: true,
     upgradablePackages: csvDataupgradablePackageFactory.buildList(2),

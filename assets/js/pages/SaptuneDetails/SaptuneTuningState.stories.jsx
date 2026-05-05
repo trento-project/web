@@ -17,13 +17,22 @@ export const Default = {
 };
 
 export const NotCompliant = {
-  args: { state: 'not-compliant' },
+  args: {
+    ...Default.args,
+    state: 'not-compliant',
+  },
 };
 
 export const Pending = {
-  args: { state: 'pending' },
+  args: {
+    ...Default.args,
+    state: 'pending',
+  },
 };
 
 export const Unknown = {
-  args: { state: 'unknown' },
+  args: {
+    ...Default.args,
+    state: 'unknown',
+  },
 };

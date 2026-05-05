@@ -26,6 +26,7 @@ export const Default = {
 
 export const NoDate = {
   args: {
+    ...Default.args,
     date: null,
     timezone: 'Etc/UTC',
   },

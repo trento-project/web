@@ -37,6 +37,7 @@ export const Default = {
 
 export const Checked = {
   args: {
+    ...Default.args,
     hideCheckbox: false,
     checked: true,
     children:
@@ -47,6 +48,7 @@ export const Checked = {
 
 export const WithoutCheckbox = {
   args: {
+    ...Default.args,
     hideCheckbox: true,
     checked: false,
     children:

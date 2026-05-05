@@ -60,6 +60,7 @@ export const FullDisk = {
 
 export const NoData = {
   args: {
+    ...Default.args,
     mountpoints: {},
   },
 };

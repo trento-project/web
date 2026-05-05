@@ -20,24 +20,28 @@ export const Default = {
 
 export const GoogleAI = {
   args: {
+    ...Default.args,
     provider: 'googleai',
   },
 };
 
 export const OpenAI = {
   args: {
+    ...Default.args,
     provider: 'openai',
   },
 };
 
 export const Anthropic = {
   args: {
+    ...Default.args,
     provider: 'anthropic',
   },
 };
 
 export const UnmappedProvider = {
   args: {
+    ...Default.args,
     provider: 'unmapped_provider',
   },
 };

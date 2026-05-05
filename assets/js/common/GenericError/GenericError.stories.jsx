@@ -22,6 +22,7 @@ export const Default = {
 
 export const WithMessage = {
   args: {
+    ...Default.args,
     message: 'My super cool error message',
   },
 };

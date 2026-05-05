@@ -21,13 +21,25 @@ export const Default = {
 };
 
 export const SortedAsc = {
-  args: { sortable: true, sortDirection: 'asc' },
+  args: {
+    ...Default.args,
+    sortable: true,
+    sortDirection: 'asc',
+  },
 };
 
 export const SortedDesc = {
-  args: { sortable: true, sortDirection: 'desc' },
+  args: {
+    ...Default.args,
+    sortable: true,
+    sortDirection: 'desc',
+  },
 };
 
 export const NotSortable = {
-  args: { sortable: false, sortDirection: null },
+  args: {
+    ...Default.args,
+    sortable: false,
+    sortDirection: null,
+  },
 };

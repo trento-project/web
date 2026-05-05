@@ -43,6 +43,7 @@ export const Default = {
 
 export const WithUnmappedModel = {
   args: {
+    ...Default.args,
     aiConfiguration: aiConfigurationFactory.build({
       provider: 'custom_provider',
       model: 'custom_model',

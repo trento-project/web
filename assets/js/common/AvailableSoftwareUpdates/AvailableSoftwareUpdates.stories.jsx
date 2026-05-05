@@ -70,20 +70,31 @@ export const Default = {
 
 export const Cool = {
   args: {
+    ...Default.args,
     settingsConfigured: true,
     relevantPatches: 0,
     upgradablePackages: 42,
   },
 };
 
-export const NoSettingsConfigured = { args: { settingsConfigured: false } };
+export const NoSettingsConfigured = {
+  args: {
+    ...Default.args,
+    settingsConfigured: false,
+  },
+};
 
 export const Loading = {
-  args: { settingsConfigured: true, loading: true },
+  args: {
+    ...Default.args,
+    settingsConfigured: true,
+    loading: true,
+  },
 };
 
 export const Error = {
   args: {
+    ...Default.args,
     settingsConfigured: true,
     errorMessage: 'Connection to SUMA not working',
     tooltip: 'Please review SUSE Manager settings',

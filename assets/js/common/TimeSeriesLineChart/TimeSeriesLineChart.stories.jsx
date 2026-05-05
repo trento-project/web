@@ -219,6 +219,7 @@ function ChartUpdaterWrapper(props) {
  */
 export const WithUpdates = {
   args: {
+    ...Default.args,
     title: 'CPU',
   },
   render: (args) => <ChartUpdaterWrapper {...args} />,

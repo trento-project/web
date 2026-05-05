@@ -44,6 +44,7 @@ export const Default = {
 
 export const NoPatches = {
   args: {
+    ...Default.args,
     patches: undefined,
     onNavigate: action('onNavigate'),
   },
@@ -51,6 +52,7 @@ export const NoPatches = {
 
 export const AllStates = {
   args: {
+    ...Default.args,
     patches: [
       relevantPatchFactory.build({ advisory_type: 'security_advisory' }),
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),

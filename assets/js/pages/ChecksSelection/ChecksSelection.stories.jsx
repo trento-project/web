@@ -119,6 +119,7 @@ export const WithSelection = {
 
 export const WithError = {
   args: {
+    ...Default.args,
     ...WithSelection.args,
     catalogError: 'An error occurred while fetching the catalog.',
   },

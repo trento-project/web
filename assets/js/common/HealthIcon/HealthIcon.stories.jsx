@@ -33,23 +33,43 @@ export default {
 };
 
 export const Passing = {
-  args: { health: 'passing', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'passing',
+    isLink: false,
+  },
 };
 
 export const Warning = {
-  args: { health: 'warning', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'warning',
+    isLink: false,
+  },
 };
 
 export const Critical = {
-  args: { health: 'critical', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'critical',
+    isLink: false,
+  },
 };
 
 export const Pending = {
-  args: { health: 'pending', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'pending',
+    isLink: false,
+  },
 };
 
 export const Absent = {
-  args: { health: 'absent', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'absent',
+    isLink: false,
+  },
 };
 
 export const Default = {
@@ -57,5 +77,10 @@ export const Default = {
 };
 
 export const ExtraLarge = {
-  args: { health: 'passing', size: 'xl', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'passing',
+    size: 'xl',
+    isLink: false,
+  },
 };

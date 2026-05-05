@@ -71,12 +71,14 @@ export const Default = {
 };
 export const WithValue = {
   args: {
+    ...Default.args,
     initialValue: 'somepassword',
   },
 };
 
 export const WithError = {
   args: {
+    ...Default.args,
     initialValue: 'someotherpassword',
     error: true,
   },
@@ -84,12 +86,14 @@ export const WithError = {
 
 export const Disabled = {
   args: {
+    ...Default.args,
     disabled: true,
   },
 };
 
 export const DisabledWithInitialValue = {
   args: {
+    ...Default.args,
     ...WithValue.args,
     ...Disabled.args,
   },

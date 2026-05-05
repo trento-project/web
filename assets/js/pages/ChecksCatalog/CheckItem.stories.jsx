@@ -34,6 +34,7 @@ export const Default = {
 
 export const Cluster = {
   args: {
+    ...Default.args,
     checkID: 'check_cluster_001',
     targetType: 'cluster',
     description: 'Cluster-level configuration check',

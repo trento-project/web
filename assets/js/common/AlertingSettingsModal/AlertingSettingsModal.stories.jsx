@@ -67,6 +67,7 @@ export const Default = {
 
 export const WithPreviousSettings = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
   },
@@ -74,6 +75,7 @@ export const WithPreviousSettings = {
 
 export const WithPreviousSettingsAndEditablePassword = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
   },
@@ -85,6 +87,7 @@ export const WithPreviousSettingsAndEditablePassword = {
 
 export const WithErrors = {
   args: {
+    ...Default.args,
     previousSettings: {
       alertingEnabled: true,
       smtpServer: 'localhost',
@@ -131,6 +134,7 @@ export const WithErrors = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
     loading: true,

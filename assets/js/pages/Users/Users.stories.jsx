@@ -74,7 +74,10 @@ export const Default = {
 };
 
 export const Loading = {
-  args: { loading: true },
+  args: {
+    ...Default.args,
+    loading: true,
+  },
   render: withContainerWrapper,
 };
 
@@ -84,6 +87,7 @@ export const EmptyUsersTable = {
 
 export const UsersOverview = {
   args: {
+    ...Default.args,
     users: [
       adminUser.build(),
       userFactory.build(),
@@ -97,6 +101,9 @@ export const UsersOverview = {
 };
 
 export const SingleSignOn = {
-  args: { singleSignOnEnabled: true },
+  args: {
+    ...Default.args,
+    singleSignOnEnabled: true,
+  },
   render: withContainerWrapper,
 };

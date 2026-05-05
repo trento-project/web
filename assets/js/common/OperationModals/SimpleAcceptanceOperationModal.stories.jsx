@@ -72,6 +72,7 @@ export const Default = {
 
 export const StartInstance = {
   args: {
+    ...Default.args,
     operation: SAP_INSTANCE_START,
     descriptionResolverArgs: { instanceNumber, sid },
   },
@@ -79,6 +80,7 @@ export const StartInstance = {
 
 export const StopInstance = {
   args: {
+    ...Default.args,
     operation: SAP_INSTANCE_STOP,
     descriptionResolverArgs: { instanceNumber, sid },
   },
@@ -86,6 +88,7 @@ export const StopInstance = {
 
 export const EnablePacemaker = {
   args: {
+    ...Default.args,
     operation: PACEMAKER_ENABLE,
     descriptionResolverArgs: { hostName },
   },
@@ -93,6 +96,7 @@ export const EnablePacemaker = {
 
 export const DisablePacemaker = {
   args: {
+    ...Default.args,
     operation: PACEMAKER_DISABLE,
     descriptionResolverArgs: { hostName },
   },
@@ -100,6 +104,7 @@ export const DisablePacemaker = {
 
 export const ClusterHostStart = {
   args: {
+    ...Default.args,
     operation: CLUSTER_HOST_START,
     descriptionResolverArgs: { hostName },
   },
@@ -107,6 +112,7 @@ export const ClusterHostStart = {
 
 export const ClusterHostStop = {
   args: {
+    ...Default.args,
     operation: CLUSTER_HOST_STOP,
     descriptionResolverArgs: { hostName },
   },
@@ -114,6 +120,7 @@ export const ClusterHostStop = {
 
 export const ClusterMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: { maintenance: true },
   },
@@ -121,6 +128,7 @@ export const ClusterMaintenanceChange = {
 
 export const NodeMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: { maintenance: true, node_id: hostName },
   },
@@ -128,6 +136,7 @@ export const NodeMaintenanceChange = {
 
 export const ResourceMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: {
       maintenance: true,
@@ -138,6 +147,7 @@ export const ResourceMaintenanceChange = {
 
 export const ClusterResourcesRefresh = {
   args: {
+    ...Default.args,
     operation: CLUSTER_RESOURCE_REFRESH,
     descriptionResolverArgs: {},
   },
@@ -145,6 +155,7 @@ export const ClusterResourcesRefresh = {
 
 export const ResourceRefresh = {
   args: {
+    ...Default.args,
     operation: CLUSTER_RESOURCE_REFRESH,
     descriptionResolverArgs: {
       resource_id: 'rsc_ip_PRD_HDB00',
@@ -154,6 +165,7 @@ export const ResourceRefresh = {
 
 export const RebootHost = {
   args: {
+    ...Default.args,
     operation: 'reboot',
     descriptionResolverArgs: { hostName },
   },

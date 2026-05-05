@@ -31,6 +31,7 @@ export const Default = {
 
 export const Required = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     required: true,
   },
@@ -38,6 +39,7 @@ export const Required = {
 
 export const WithInfo = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     info: 'This is a tooltip for user education',
   },
@@ -45,6 +47,7 @@ export const WithInfo = {
 
 export const WithInfoRequired = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     info: 'This is a tooltip for user education',
     required: true,

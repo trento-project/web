@@ -31,6 +31,7 @@ export const Default = {
 
 export const Passing = {
   args: {
+    ...Default.args,
     value: 42,
     result: 'passing',
     onClick: action('onClick'),
@@ -39,6 +40,7 @@ export const Passing = {
 
 export const Warning = {
   args: {
+    ...Default.args,
     value: 7,
     result: 'warning',
     onClick: action('onClick'),
@@ -47,6 +49,7 @@ export const Warning = {
 
 export const Critical = {
   args: {
+    ...Default.args,
     value: 2,
     result: 'critical',
     onClick: action('onClick'),

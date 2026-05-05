@@ -22,6 +22,7 @@ export const Default = {
 
 export const AnotherCluster = {
   args: {
+    ...Default.args,
     cluster: {
       id: 'cluster_002',
       name: 'Corosync-Pacemaker',

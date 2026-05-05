@@ -165,6 +165,7 @@ export const ProviderSelectionSample = {
 
 export const Disabled = {
   args: {
+    ...Default.args,
     ...WithInitialValues.args,
     isDisabled: true,
   },
@@ -200,6 +201,7 @@ export const Searchable = {
 
 export const Clearable = {
   args: {
+    ...Default.args,
     ...Multi.args,
     isClearable: true,
   },

@@ -64,6 +64,7 @@ export const Default = {
 
 export const WithPreviousSettings = {
   args: {
+    ...Default.args,
     open: false,
     initialUrl: 'https://demo.trento-project.io/suse_manager',
     initialUsername: 'trentorulez',
@@ -73,6 +74,7 @@ export const WithPreviousSettings = {
 
 export const WithErrors = {
   args: {
+    ...Default.args,
     open: false,
     initialUrl: 'https://demo.trento-project.io/suse_manager',
     initialUsername: 'trentorulez',
@@ -94,6 +96,7 @@ export const WithErrors = {
 
 export const WithAllErrors = {
   args: {
+    ...Default.args,
     open: false,
     errors: [
       {
@@ -122,6 +125,7 @@ export const WithAllErrors = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     open: false,
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     loading: true,

@@ -169,7 +169,9 @@ const data = [
 ];
 
 export const Sorted = {
-  args: {},
+  args: {
+    ...Default.args,
+  },
   render: () => {
     const [sortingColumn, setSortingColumn] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
@@ -246,6 +248,7 @@ export const Sorted = {
 
 export const Populated = {
   args: {
+    ...Default.args,
     config,
     data,
   },
@@ -253,6 +256,7 @@ export const Populated = {
 
 export const Paginated = {
   args: {
+    ...Default.args,
     config: { ...config, pagination: true },
     data: [].concat(data, data, data, data),
   },
@@ -260,6 +264,7 @@ export const Paginated = {
 
 export const WithFilters = {
   args: {
+    ...Default.args,
     config: filteredConfig,
     data,
   },
@@ -267,6 +272,7 @@ export const WithFilters = {
 
 export const WithHeader = {
   args: {
+    ...Default.args,
     config,
     data,
     header: <h3 className="bg-white px-4 py-4">Header</h3>,
@@ -275,6 +281,7 @@ export const WithHeader = {
 
 export const WithCollapsibleRow = {
   args: {
+    ...Default.args,
     config: collapsibleConfig,
     data,
   },
@@ -282,6 +289,7 @@ export const WithCollapsibleRow = {
 
 export const Empty = {
   args: {
+    ...Default.args,
     config,
     data: [],
   },

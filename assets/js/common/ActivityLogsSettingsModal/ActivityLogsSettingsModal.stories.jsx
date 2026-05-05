@@ -55,6 +55,7 @@ export const Default = {
 
 export const WithFieldValidationError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [
@@ -69,6 +70,7 @@ export const WithFieldValidationError = {
 
 export const WithCompositeFieldValidationError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [
@@ -88,6 +90,7 @@ export const WithCompositeFieldValidationError = {
 
 export const WithGlobalError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: ['any error'],
