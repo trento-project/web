@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.ActivityLogSettings do
   @moduledoc """
   ActivityLogSettings is the STI projection of activity log related settings

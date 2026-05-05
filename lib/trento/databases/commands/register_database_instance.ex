@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
   @moduledoc """
   Register a database instance to the monitoring system.

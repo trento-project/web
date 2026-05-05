@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.IntermediateEvent do
   @moduledoc """
   Represents an event that has been deserialized from the database, but not yet casted to its final type.

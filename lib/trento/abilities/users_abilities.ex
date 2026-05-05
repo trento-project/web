@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Abilities.UsersAbilities do
   @moduledoc """
   Many to many table schema used to connect users and abilities.

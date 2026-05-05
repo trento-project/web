@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Discovery.Policies.HostPolicy do
   @moduledoc """
   This module contains functions to transform host related integration events into commands.

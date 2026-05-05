@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Event.Upcaster.UpcastDatabaseId do
   @moduledoc """
   Adds the required upcast function to upcast from legacy events where

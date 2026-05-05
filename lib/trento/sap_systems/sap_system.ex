@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.SapSystem do
   @moduledoc """
   The SAP system aggregate manages all the domain logic related to

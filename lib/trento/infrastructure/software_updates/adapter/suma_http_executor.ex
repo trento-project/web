@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
   @moduledoc """
   SUSE Multi-Linux Manager Http requests executor

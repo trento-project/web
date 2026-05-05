@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { getFromConfig } from '@lib/config/config';
 import posthog from 'posthog-js';
 import { optinCapturing } from '.';

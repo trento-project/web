@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.SapSystemHealthChanged do
   @moduledoc """
   This event is emitted when the SAP System health has changed.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications

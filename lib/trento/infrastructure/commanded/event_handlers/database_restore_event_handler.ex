@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler do
   @moduledoc """
   This event handler is responsible to forward restore commands to the SAP systems

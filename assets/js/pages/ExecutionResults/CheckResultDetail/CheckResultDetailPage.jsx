@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect } from 'react';
 import { find, get, some } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';

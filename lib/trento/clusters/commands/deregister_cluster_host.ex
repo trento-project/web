@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Commands.DeregisterClusterHost do
   @moduledoc """
   Deregister a host from a cluster

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.Ecto.STI do
   @moduledoc """
   Helpers module for Single Table Inheritance in ecto schemas

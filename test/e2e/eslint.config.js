@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 const js = require('@eslint/js');
 const cypress = require('eslint-plugin-cypress');
 const mocha = require('eslint-plugin-mocha');

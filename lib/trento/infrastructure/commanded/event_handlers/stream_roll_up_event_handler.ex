@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler do
   @moduledoc """
   This module is responsible for triggering the roll-up of an aggregate.

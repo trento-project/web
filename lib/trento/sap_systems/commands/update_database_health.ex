@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Commands.UpdateDatabaseHealth do
   @moduledoc """
   Update the health of the database associated to the SAP system.

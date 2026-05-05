@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import { without, uniq, groupBy, noop } from 'lodash';
 import { pipe } from 'lodash/fp';

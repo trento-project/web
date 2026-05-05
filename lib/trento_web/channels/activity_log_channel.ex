@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.ActivityLogChannel do
   @moduledoc """
   Activity Log channel, each user is subscribed to this channel,

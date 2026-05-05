@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   for: Trento.SapSystems.Commands.DeregisterApplicationInstance do
   @moduledoc """

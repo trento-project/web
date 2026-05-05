@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Repo.Migrations.AddDatabaseStartStopAbilities do
   use Ecto.Migration
 

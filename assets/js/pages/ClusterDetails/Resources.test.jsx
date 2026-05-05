@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { screen, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

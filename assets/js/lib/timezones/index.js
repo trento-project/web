@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { tz, TZDate, tzName, tzOffset } from '@date-fns/tz';
 import { format } from 'date-fns';
 import tzdata from 'tzdata';

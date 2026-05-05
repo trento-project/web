@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Events.SaptuneStatusUpdated do
   @moduledoc """
   This event is emitted when saptune status is updated in a specific host.

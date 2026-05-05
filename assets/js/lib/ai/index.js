@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { get } from 'lodash';
 
 import GeminiIcon from '@static/gemini-logo.svg';

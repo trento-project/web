@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Enums.Architecture do
   @moduledoc """
   Type that represents the supported architectures by our agent.

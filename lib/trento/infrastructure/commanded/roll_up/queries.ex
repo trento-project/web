@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.RollUp.Queries do
   @moduledoc """
   This module contains the SQL queries used to archive a stream.

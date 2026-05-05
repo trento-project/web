@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseInstanceMarkedPresent do
   @moduledoc """
   This event is emitted when a database instance is marked as present.

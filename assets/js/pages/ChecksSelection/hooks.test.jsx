@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { act, renderHook } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import MockAdapter from 'axios-mock-adapter';

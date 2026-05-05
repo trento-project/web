@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.Correlations.TestCorrelations do
   @moduledoc """
   For usage in test suites where-in we want per test process isolation

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.AI.Configurations do
   @moduledoc """
   This module is responsible for managing user AI configurations.

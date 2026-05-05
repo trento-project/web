@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   SAP_INSTANCE_START,
   SAP_INSTANCE_STOP,

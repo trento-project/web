@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Alerting.Alerting do
   @moduledoc """
   Provides a set of functions of Alerting related usecases.

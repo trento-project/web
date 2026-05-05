@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Events.SlesSubscriptionsUpdated do
   @moduledoc """
   Subscriptions updated event

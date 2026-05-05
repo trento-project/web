@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';

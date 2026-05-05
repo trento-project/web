@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.ChecksExecutionRequested do
   @moduledoc """
   Event of the request of a checks execution.

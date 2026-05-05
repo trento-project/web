@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.HostSaptuneHealthChanged do
   @moduledoc """
   This event is emitted when a host's saptune health changes.

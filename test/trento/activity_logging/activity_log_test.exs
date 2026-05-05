@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.ActivityLogTest do
   @moduledoc false
   use TrentoWeb.ConnCase, async: true

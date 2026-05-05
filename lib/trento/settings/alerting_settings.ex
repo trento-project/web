@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.AlertingSettings do
   @moduledoc """
   Schema and functions related to alerting settings.

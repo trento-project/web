@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { EOS_KEYBOARD_ARROW_RIGHT } from 'eos-icons-react';
 import classNames from 'classnames';

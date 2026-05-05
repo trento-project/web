@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog do
   @moduledoc """
   Activity Log module provides functionality to manage activity log settings and track activity.

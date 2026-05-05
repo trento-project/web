@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
   @moduledoc """
   Register an application instance to the monitoring system.

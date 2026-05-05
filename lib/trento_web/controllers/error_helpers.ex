@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.

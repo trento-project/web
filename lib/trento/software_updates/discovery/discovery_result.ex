@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SoftwareUpdates.Discovery.DiscoveryResult do
   @moduledoc """
   This is the schema used to store the results of the software updates discovery process.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Events.HostRollUpRequested do
   @moduledoc """
   This event is emitted when an host roll-up is requested.

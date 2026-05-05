@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SoftwareUpdates.Discovery.Gen do
   @moduledoc """
   Behaviour of the software updates discovery process.

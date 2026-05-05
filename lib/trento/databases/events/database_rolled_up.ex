@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseRolledUp do
   @moduledoc """
   This event is emitted when a database roll-up is requested.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.ValueObjects.AscsErsClusterNode do
   @moduledoc """
   Represents the node of a ASCS/ERS cluster.

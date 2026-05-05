@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 module.exports = (github, context) => {
   const MARKER = "<!-- pr-env-bot -->";
   const owner = context.repo.owner;
@@ -5,7 +8,7 @@ module.exports = (github, context) => {
   const pullRequestNumber = context.issue.number;
 
   console.log(
-    `Executing script with 
+    `Executing script with
   owner: ${owner}
   repo: ${repo}
   pullRequestNumber: ${pullRequestNumber}`

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import { EOS_KEYBOARD_ARROW_DOWN } from 'eos-icons-react';

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { createSlice } from '@reduxjs/toolkit';
 
 export const RUNNING_EXECUTION_STATE = 'running';

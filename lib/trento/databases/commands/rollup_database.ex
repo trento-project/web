@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Commands.RollUpDatabase do
   @moduledoc """
   Start a database aggregate rollup.

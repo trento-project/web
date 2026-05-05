@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 export const availableHosts = [
   {
     id: '240f96b1-8d26-53b7-9e99-ffb0f2e735bf',

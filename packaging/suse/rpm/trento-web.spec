@@ -1,7 +1,8 @@
 #
 # spec file for package trento-web
 #
-# Copyright (c) 2024 SUSE LLC
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.PersonalAccessTokens.PersonalAccessToken do
   @moduledoc """
   Represents a Personal Access Token for a user.

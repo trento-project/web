@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.SapSystemUpdated do
   @moduledoc """
   This event is emitted when some of the fields in the SAP system are updated

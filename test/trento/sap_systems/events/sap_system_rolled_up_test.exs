@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
   use Trento.AggregateCase, aggregate: Trento.SapSystems.SapSystem, async: true
 

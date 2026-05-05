@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Enums.PrometheusMode do
   @moduledoc """
   Type that represents the Prometheus mode for a host.

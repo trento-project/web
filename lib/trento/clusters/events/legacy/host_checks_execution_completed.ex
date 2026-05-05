@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.HostChecksExecutionCompleted do
   @moduledoc """
   Event of the checks execution completed of a host.

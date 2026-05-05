@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Events.ClusterDetailsUpdated do
   @moduledoc """
   This event is emitted when cluster details are updated.

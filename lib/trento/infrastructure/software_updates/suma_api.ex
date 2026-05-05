@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   @moduledoc """
   SUSE Multi-Linux Manager API client supporting software updates discovery.

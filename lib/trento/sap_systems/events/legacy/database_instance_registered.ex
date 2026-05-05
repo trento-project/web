@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.DatabaseInstanceRegistered do
   @moduledoc """
   This event is emitted when a database instance is registered to the SAP system.

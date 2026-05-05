@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Commands.SelectChecks do
   @moduledoc """
   Select the checks to be executed in the cluster.

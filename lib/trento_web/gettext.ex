@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.

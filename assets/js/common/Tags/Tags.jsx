@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 import { EOS_NEW_LABEL, EOS_CLOSE } from 'eos-icons-react';

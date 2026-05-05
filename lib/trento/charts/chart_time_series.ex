@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Charts.ChartTimeSeries do
   @moduledoc """
    Represents a time series of a chart

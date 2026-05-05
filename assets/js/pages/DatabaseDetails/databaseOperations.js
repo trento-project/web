@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { curry, every, filter, flow, get } from 'lodash';
 
 import { DATABASE_START, DATABASE_STOP } from '@lib/operations';

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.UpdateLastLoginAtPlug do
   @moduledoc """
   This plug updates the last login at value in a successful login attempt.

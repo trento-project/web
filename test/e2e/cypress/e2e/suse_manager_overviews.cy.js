@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import * as hostDetailsPage from '../pageObject/host_details_po.js';
 
 context('SUSE Manager overviews', () => {

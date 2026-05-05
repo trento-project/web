@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.ExternalIdpGuardPlug do
   @moduledoc """
   This plug acts as a guard for certain actions/endpoint to disable them when an external idp integration is enabled

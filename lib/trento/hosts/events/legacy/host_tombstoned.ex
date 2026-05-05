@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.HostTombstoned do
   @moduledoc """
     This event is emitted after a successful host deregistration, to tombstone and stop the host aggregate

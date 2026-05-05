@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.ValueObjects.SaptuneServiceStatus do
   @moduledoc """
   Represents the status of a Saptune service.

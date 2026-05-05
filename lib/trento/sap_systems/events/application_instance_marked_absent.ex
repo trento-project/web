@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent do
   @moduledoc """
   This event is emitted when an application instance is marked as absent from the SAP system.

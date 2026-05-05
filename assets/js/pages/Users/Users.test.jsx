@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import '@testing-library/jest-dom';
 import { screen, render, waitFor } from '@testing-library/react';

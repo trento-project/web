@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.ActivityLoggingPlug do
   @moduledoc """
   This plug is responsible for auditing the requests made to the API.

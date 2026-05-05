@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 /* This page object handles alerting functionality.
 It was created to keep alerting logic separate from other concerns, even though there is no dedicated "Alerting" page in the UI.*/
 
