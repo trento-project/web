@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';

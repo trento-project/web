@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 export const selectedHost = {
   agentId: '9cd46919-5f19-59aa-993e-cf3736c71053',

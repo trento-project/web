@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 export const selectedDatabase = {
   Id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',

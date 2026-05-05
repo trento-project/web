@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 export * from './base_po.js';
 import * as basePage from './base_po.js';

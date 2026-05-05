@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 import { keyBy, get } from 'lodash';
 import { pipe, map, fromPairs, compact } from 'lodash/fp';

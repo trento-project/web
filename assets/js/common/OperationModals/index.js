@@ -1,7 +1,5 @@
-/*
- * SPDX-FileCopyrightText: SUSE LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
 
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 import OperationForbiddenModal from './OperationForbiddenModal';
