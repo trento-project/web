@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { Fragment, useState, useRef } from 'react';
 import classNames from 'classnames';
 import { Transition } from '@headlessui/react';

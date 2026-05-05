@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router';

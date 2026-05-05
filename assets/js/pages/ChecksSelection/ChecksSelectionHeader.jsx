@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { EOS_PLAY_CIRCLE } from 'eos-icons-react';
 import classNames from 'classnames';

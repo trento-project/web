@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import classNames from 'classnames';
 import React from 'react';
 import HealthSummaryBox from './HealthSummaryBox';

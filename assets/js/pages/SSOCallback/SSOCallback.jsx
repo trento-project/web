@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect } from 'react';
 import TrentoLogo from '@static/trento-dark.svg';
 import { useLocation, useNavigate } from 'react-router';
