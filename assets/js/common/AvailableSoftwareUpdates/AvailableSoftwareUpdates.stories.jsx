@@ -1,5 +1,6 @@
-import AvailableSoftwareUpdates from './AvailableSoftwareUpdates';
 import { action } from 'storybook/actions';
+
+import AvailableSoftwareUpdates from './AvailableSoftwareUpdates';
 
 export default {
   title: 'Components/AvailableSoftwareUpdates',

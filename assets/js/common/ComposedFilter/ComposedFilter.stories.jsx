@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import ComposedFilter from '.';
 import { action } from 'storybook/actions';
+
+import ComposedFilter from './ComposedFilter';
 
 export default {
   title: 'Components/ComposedFilter',

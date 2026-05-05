@@ -1,10 +1,9 @@
+import Button from '@common/Button';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import Button from '@common/Button';
-
-import DeregistrationModal from '.';
+import DeregistrationModal from './DeregistrationModal';
 
 export default {
   title: 'Patterns/DeregistrationModal',

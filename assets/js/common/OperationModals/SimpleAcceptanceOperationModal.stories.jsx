@@ -1,19 +1,18 @@
 import {
-  SAP_INSTANCE_START,
-  SAP_INSTANCE_STOP,
-  PACEMAKER_ENABLE,
-  PACEMAKER_DISABLE,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_RESOURCE_REFRESH,
+  PACEMAKER_DISABLE,
+  PACEMAKER_ENABLE,
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
 } from '@lib/operations';
-import { action } from 'storybook/actions';
-
 import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 

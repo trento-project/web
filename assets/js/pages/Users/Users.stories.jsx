@@ -1,8 +1,7 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
-
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import Users from './Users';
 

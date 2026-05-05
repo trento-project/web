@@ -1,4 +1,4 @@
-import AIProviderLabel from '.';
+import AIProviderLabel from './AIProviderLabel';
 
 export default {
   title: 'Components/AIProviderLabel',

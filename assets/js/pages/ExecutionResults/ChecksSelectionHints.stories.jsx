@@ -1,8 +1,9 @@
+import { catalogFactory, hostFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { hostFactory, catalogFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
-import ChecksSelectionHints from '.';
+
+import ChecksSelectionHints from './ChecksSelectionHints';
 
 const hosts = hostFactory.buildList(2);
 const catalog = catalogFactory.build();

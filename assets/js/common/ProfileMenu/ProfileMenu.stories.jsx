@@ -1,9 +1,9 @@
+import { userFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { userFactory } from '@lib/test-utils/factories';
-import ProfileMenu from '.';
-
 import { action } from 'storybook/actions';
+
+import ProfileMenu from './ProfileMenu';
 
 const user = userFactory.build();
 function ContainerWrapper({ children }) {

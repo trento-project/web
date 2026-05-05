@@ -1,8 +1,7 @@
 import { faker } from '@faker-js/faker';
+import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 import { formatISO } from 'date-fns';
 import { action } from 'storybook/actions';
-
-import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 
 import PersonalAccessTokens from './PersonalAccessTokens';
 

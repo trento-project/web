@@ -1,9 +1,10 @@
-import HostDetailsPage from '.';
 import { action } from 'storybook/actions';
+
+import SaptuneSummary from './SaptuneSummary';
 
 export default {
   title: 'Components/SaptuneSummary',
-  component: HostDetailsPage,
+  component: SaptuneSummary,
   argTypes: {
     sapPresent: {
       description: 'The sapPresent prop',

@@ -1,8 +1,8 @@
-import HostDetailsPage from '.';
+import HostTimeSeriesLineChart from './HostTimeSeriesLineChart';
 
 export default {
   title: 'Components/HostTimeSeriesLineChart',
-  component: HostDetailsPage,
+  component: HostTimeSeriesLineChart,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',

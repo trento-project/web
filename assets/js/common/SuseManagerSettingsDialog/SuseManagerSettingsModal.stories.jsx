@@ -1,5 +1,6 @@
-import SuseManagerSettingsModal from './SuseManagerSettingsModal';
 import { action } from 'storybook/actions';
+
+import SuseManagerSettingsModal from './SuseManagerSettingsModal';
 
 export default {
   title: 'Components/SuseManagerSettingsModal',

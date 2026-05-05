@@ -1,4 +1,4 @@
-import CopyButton from '.';
+import CopyButton from './CopyButton';
 
 export default {
   title: 'Components/CopyButton',

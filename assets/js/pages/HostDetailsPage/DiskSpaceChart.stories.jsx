@@ -1,8 +1,8 @@
-import HostDetailsPage from '.';
+import DiskSpaceChart from './DiskSpaceChart';
 
 export default {
   title: 'Components/DiskSpaceChart',
-  component: HostDetailsPage,
+  component: DiskSpaceChart,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',

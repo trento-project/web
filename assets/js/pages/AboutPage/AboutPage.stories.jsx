@@ -1,6 +1,7 @@
-import React from 'react';
 import { aboutFactory } from '@lib/test-utils/factories';
-import AboutPage from '.';
+import React from 'react';
+
+import AboutPage from './AboutPage';
 
 const aboutData = aboutFactory.build();
 const fetchAboutPageData = () =>

@@ -1,9 +1,10 @@
-import DottedPagination from '.';
 import { action } from 'storybook/actions';
+
+import Arrow from './Arrow';
 
 export default {
   title: 'Components/Arrow',
-  component: DottedPagination,
+  component: Arrow,
   argTypes: {
     children: {
       description: 'Content or text displayed inside the component',

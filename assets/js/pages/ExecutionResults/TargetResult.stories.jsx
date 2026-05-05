@@ -1,9 +1,10 @@
-import ExecutionResults from '.';
 import { action } from 'storybook/actions';
+
+import TargetResult from './TargetResult';
 
 export default {
   title: 'Components/TargetResult',
-  component: ExecutionResults,
+  component: TargetResult,
   argTypes: {
     targetType: {
       description: 'The targetType prop',

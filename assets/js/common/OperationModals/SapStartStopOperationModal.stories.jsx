@@ -1,9 +1,7 @@
-import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
-import { action } from 'storybook/actions';
-
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-
+import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
 import { sapSystemFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import SapStartStopOperationModal from './SapStartStopOperationModal';
 

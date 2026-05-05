@@ -1,9 +1,9 @@
+import ProviderLabel from '@common/ProviderLabel';
+import { providers } from '@lib/model';
 import React from 'react';
 import { action } from 'storybook/actions';
-import Select, { createOptionRenderer } from '.';
 
-import { providers } from '@lib/model';
-import ProviderLabel from '@common/ProviderLabel';
+import Select, { createOptionRenderer } from './Select';
 
 export default {
   title: 'Components/Select',

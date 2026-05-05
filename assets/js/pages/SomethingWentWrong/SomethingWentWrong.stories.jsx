@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import SomethingWentWrong from '.';
+
+import SomethingWentWrong from './SomethingWentWrong';
 
 export default {
   title: 'Components/SomethingWentWrong',

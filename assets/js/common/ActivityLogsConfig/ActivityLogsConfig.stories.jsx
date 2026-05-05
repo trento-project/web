@@ -1,6 +1,7 @@
-import ActivityLogsConfig from '.';
-import { action } from 'storybook/actions';
 import { abilityFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
+import ActivityLogsConfig from './ActivityLogsConfig';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 

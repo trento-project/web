@@ -1,7 +1,6 @@
+import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
-import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
 import SaptuneDetails from './SaptuneDetails';
 

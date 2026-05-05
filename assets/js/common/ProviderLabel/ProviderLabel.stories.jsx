@@ -1,5 +1,6 @@
-import ProviderLabel from '.';
 import { providers } from '@lib/model';
+
+import ProviderLabel from './ProviderLabel';
 
 export default {
   title: 'Components/ProviderLabel',

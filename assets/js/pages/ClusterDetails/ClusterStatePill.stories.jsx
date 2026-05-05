@@ -1,8 +1,8 @@
-import ClusterDetails from '.';
+import ClusterStatePill from './ClusterStatePill';
 
 export default {
   title: 'Components/ClusterStatePill',
-  component: ClusterDetails,
+  component: ClusterStatePill,
   argTypes: {
     state: {
       description: 'The state prop',

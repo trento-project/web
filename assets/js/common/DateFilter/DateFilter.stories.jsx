@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import DateFilter from '.';
 import { action } from 'storybook/actions';
+
+import DateFilter from './DateFilter';
 
 export default {
   title: 'Components/DateFilter',

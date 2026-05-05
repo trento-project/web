@@ -1,9 +1,10 @@
-import AvailableSoftwareUpdates from '.';
-
 import { action } from 'storybook/actions';
+
+import SumaNotConfigured from './SumaNotConfigured';
+
 export default {
   title: 'Components/SumaNotConfigured',
-  component: AvailableSoftwareUpdates,
+  component: SumaNotConfigured,
   argTypes: {
     className: {
       description: 'Additional CSS classes for the container.',

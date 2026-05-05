@@ -1,9 +1,9 @@
-import ObjectTree from '.';
+import ObjectTreeNode from './ObjectTreeNode';
 // import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/ObjectTreeNode',
-  component: ObjectTree,
+  component: ObjectTreeNode,
   argTypes: {
     element: {
       description: 'Object element to display in the tree',

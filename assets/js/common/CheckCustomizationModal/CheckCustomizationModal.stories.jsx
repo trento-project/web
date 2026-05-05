@@ -1,11 +1,11 @@
-import CheckCustomizationModal from '.';
 import { providers } from '@lib/model';
 import {
-  selectableCheckFactory,
   nonCustomizedValueFactory,
+  selectableCheckFactory,
 } from '@lib/test-utils/factories';
-
 import { action } from 'storybook/actions';
+
+import CheckCustomizationModal from './CheckCustomizationModal';
 
 const singleValue = [
   nonCustomizedValueFactory.build({

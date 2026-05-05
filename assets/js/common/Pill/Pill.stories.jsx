@@ -1,9 +1,9 @@
-import React from 'react';
 import HealthIcon from '@common/HealthIcon';
 import Tooltip from '@common/Tooltip';
+import React from 'react';
 import { action } from 'storybook/actions';
 
-import Pill from '.';
+import Pill from './Pill';
 
 export default {
   title: 'Components/Pill',

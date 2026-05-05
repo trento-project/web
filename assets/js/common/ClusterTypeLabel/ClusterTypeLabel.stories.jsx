@@ -1,12 +1,13 @@
-import ClusterTypeLabel from '.';
 import {
-  clusterTypes,
-  hanaClusterScenarioTypes,
-  CLASSIC_ARCHITECTURE,
   ANGI_ARCHITECTURE,
+  CLASSIC_ARCHITECTURE,
+  clusterTypes,
   HANA_SCALE_UP,
+  hanaClusterScenarioTypes,
   PERFORMANCE_SCENARIO,
 } from '@lib/model/clusters';
+
+import ClusterTypeLabel from './ClusterTypeLabel';
 
 export default {
   title: 'Components/ClusterTypeLabel',

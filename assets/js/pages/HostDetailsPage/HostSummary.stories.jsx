@@ -1,9 +1,10 @@
-import HostDetailsPage from '.';
 import { architectures } from '@lib/model';
+
+import HostSummary from './HostSummary';
 
 export default {
   title: 'Components/HostSummary',
-  component: HostDetailsPage,
+  component: HostSummary,
   argTypes: {
     agentVersion: {
       description: 'The agentVersion prop',

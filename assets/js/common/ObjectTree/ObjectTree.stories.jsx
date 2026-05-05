@@ -1,8 +1,7 @@
+import { objectTreeFactory } from '@lib/test-utils/factories';
 import React from 'react';
 
-import { objectTreeFactory } from '@lib/test-utils/factories';
-
-import ObjectTree from '.';
+import ObjectTree from './ObjectTree';
 
 export default {
   title: 'Components/ObjectTree',

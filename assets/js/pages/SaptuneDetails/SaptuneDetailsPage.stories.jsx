@@ -1,9 +1,10 @@
+import { hostFactory } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import { hostFactory } from '@lib/test-utils/factories';
-import SaptuneDetails from '.';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import SaptuneDetailsPage from './SaptuneDetailsPage';
 
 const host = hostFactory.build();
 
@@ -17,7 +18,7 @@ const hostDetailsSlice = createSlice({
 
 export default {
   title: 'Components/SaptuneDetailsPage',
-  component: SaptuneDetails,
+  component: SaptuneDetailsPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

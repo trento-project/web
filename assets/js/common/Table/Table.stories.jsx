@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import Table from '.';
-
 import { createStringSortingPredicate } from './sorting';
+import Table from './Table';
 
 export default {
   /* 👇 The title prop is optional.

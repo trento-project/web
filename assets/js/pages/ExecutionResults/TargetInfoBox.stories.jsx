@@ -1,5 +1,6 @@
-import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
-import TargetInfoBox from '.';
+import { clusterFactory, hostFactory } from '@lib/test-utils/factories';
+
+import TargetInfoBox from './TargetInfoBox';
 
 const cluster = clusterFactory.build({
   provider: 'aws',

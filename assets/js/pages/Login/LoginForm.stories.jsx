@@ -1,12 +1,13 @@
-import Login from '.';
-import { action } from 'storybook/actions';
 import { userFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
+import LoginForm from './LoginForm';
 
 const mockUser = userFactory.build();
 
 export default {
   title: 'Components/LoginForm',
-  component: Login,
+  component: LoginForm,
   argTypes: {
     authError: {
       description: 'The authError prop',

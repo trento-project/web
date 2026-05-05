@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import Switch from '.';
+import Switch from './Switch';
 
 export default {
   title: 'Components/Switch',

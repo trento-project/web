@@ -1,10 +1,11 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
-import SettingsPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { Provider } from 'react-redux';
+
+import SettingsPage from './SettingsPage';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const user = userFactory.build();

@@ -1,8 +1,8 @@
-import Pagination from '.';
+import PageStats from './PageStats';
 
 export default {
   title: 'Components/PageStats',
-  component: Pagination,
+  component: PageStats,
   argTypes: {
     currentItemsPerPage: {
       description: 'Number of items currently displayed per page',

@@ -1,5 +1,6 @@
-import Modal from '.';
 import { action } from 'storybook/actions';
+
+import Modal from './Modal';
 
 export default {
   title: 'Components/Modal',

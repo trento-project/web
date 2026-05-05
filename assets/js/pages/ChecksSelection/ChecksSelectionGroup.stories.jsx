@@ -1,9 +1,10 @@
-import ChecksSelection from '.';
-
 import { action } from 'storybook/actions';
+
+import ChecksSelectionGroup from './ChecksSelectionGroup';
+
 export default {
   title: 'Components/ChecksSelectionGroup',
-  component: ChecksSelection,
+  component: ChecksSelectionGroup,
   argTypes: {
     children: {
       description: 'Checks within this group',

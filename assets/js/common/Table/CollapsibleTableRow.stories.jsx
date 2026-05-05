@@ -1,9 +1,10 @@
 import React from 'react';
-import Table from '.';
+
+import CollapsibleTableRow from './CollapsibleTableRow';
 
 export default {
   title: 'Components/CollapsibleTableRow',
-  component: Table,
+  component: CollapsibleTableRow,
   argTypes: {
     columns: {
       description: 'Array of column definitions',

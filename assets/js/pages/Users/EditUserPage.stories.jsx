@@ -1,16 +1,17 @@
-import React from 'react';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
-import { userFactory, abilityFactory } from '@lib/test-utils/factories';
-import Users from '.';
+import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import EditUserPage from './EditUserPage';
 
 const mockUser = userFactory.build({ id: 123 });
 const mockAbilities = abilityFactory.buildList(4);
 
 export default {
   title: 'Components/EditUserPage',
-  component: Users,
+  component: EditUserPage,
   decorators: [
     (Story) => {
       const axiosMock = new MockAdapter(networkClient);

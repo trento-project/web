@@ -1,9 +1,9 @@
+import { clusterFactory, hostFactory } from '@lib/test-utils/factories';
 import React from 'react';
-import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
-import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
-import ExecutionResults from '.';
+import ExecutionResults from './ExecutionResults';
 
 const executionID = '9fbcaec6-e65e-4adc-9cac-fc542c66717b';
 const agentID = [

@@ -1,5 +1,5 @@
-import { within, userEvent } from 'storybook/test';
 import { action } from 'storybook/actions';
+import { userEvent, within } from 'storybook/test';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 

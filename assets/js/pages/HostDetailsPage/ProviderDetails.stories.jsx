@@ -1,9 +1,10 @@
-import HostDetailsPage from '.';
 import { providers } from '@lib/model';
+
+import ProviderDetails from './ProviderDetails';
 
 export default {
   title: 'Components/ProviderDetails',
-  component: HostDetailsPage,
+  component: ProviderDetails,
   argTypes: {
     provider: {
       description: 'Cloud provider',

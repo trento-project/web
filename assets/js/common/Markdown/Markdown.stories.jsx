@@ -1,4 +1,4 @@
-import Markdown from '.';
+import Markdown from './Markdown';
 
 export default {
   title: 'Components/Markdown',

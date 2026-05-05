@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { action } from 'storybook/actions';
-import { selectableCheckFactory } from '@lib/test-utils/factories';
 import { providers } from '@lib/model';
+import { selectableCheckFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import ChecksSelection from './ChecksSelection';
 import { CUSTOMIZATION_STATUSES } from './hooks';

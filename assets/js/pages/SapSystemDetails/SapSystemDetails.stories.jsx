@@ -1,18 +1,16 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
-
+import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import {
   clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { APPLICATION_TYPE } from '@lib/model/sapSystems';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
-
 import { getSapInstanceOperations } from './sapOperations';
 
 const hosts = hostFactory.buildList(2, {

@@ -1,12 +1,12 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router';
 import {
   databaseInstanceFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
-import InstanceOverview from '.';
-
+import React from 'react';
+import { BrowserRouter } from 'react-router';
 import { action } from 'storybook/actions';
+
+import InstanceOverview from './InstanceOverview';
 
 const applicationInstance = sapSystemApplicationInstanceFactory.build();
 const databaseInstance = databaseInstanceFactory.build();

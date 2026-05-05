@@ -1,9 +1,10 @@
-import CheckCustomizationModal from '.';
 import { action } from 'storybook/actions';
+
+import CheckCustomizationInput from './CheckCustomizationInput';
 
 export default {
   title: 'Components/CheckCustomizationInput',
-  component: CheckCustomizationModal,
+  component: CheckCustomizationInput,
   argTypes: {
     name: {
       description: 'Name or label for the component',

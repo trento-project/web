@@ -1,5 +1,6 @@
-import { Password } from '.';
 import { action } from 'storybook/actions';
+
+import Password from './Password';
 
 export default {
   title: 'Components/Input/Password',

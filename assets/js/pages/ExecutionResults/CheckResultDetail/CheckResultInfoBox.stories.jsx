@@ -1,9 +1,10 @@
-import CheckResultDetail from '.';
 import { providers } from '@lib/model';
+
+import CheckResultInfoBox from './CheckResultInfoBox';
 
 export default {
   title: 'Components/CheckResultInfoBox',
-  component: CheckResultDetail,
+  component: CheckResultInfoBox,
   argTypes: {
     checkID: {
       description: 'Identifier for the checkID',

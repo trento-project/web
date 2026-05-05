@@ -1,5 +1,6 @@
-import OperationForbiddenModal from './OperationForbiddenModal';
 import { action } from 'storybook/actions';
+
+import OperationForbiddenModal from './OperationForbiddenModal';
 
 export default {
   title: 'Components/OperationForbiddenModal',

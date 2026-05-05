@@ -1,5 +1,6 @@
 import { csvDataupgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
 import { action } from 'storybook/actions';
+
 import UpgradablePackagesList from './UpgradablePackagesList';
 
 export default {

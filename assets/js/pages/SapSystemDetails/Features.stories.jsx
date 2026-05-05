@@ -1,8 +1,8 @@
-import SapSystemDetails from '.';
+import Features from './Features';
 
 export default {
   title: 'Components/Features',
-  component: SapSystemDetails,
+  component: Features,
   argTypes: {
     features: {
       description: 'The features prop',

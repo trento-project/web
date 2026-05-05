@@ -1,5 +1,6 @@
-import HealthSummary from '.';
 import { action } from 'storybook/actions';
+
+import HealthSummary from './HealthSummary';
 
 export default {
   title: 'Components/HealthSummary',

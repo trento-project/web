@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import CheckResultsOverview from './CheckResultsOverview';
-
 import { action } from 'storybook/actions';
+
+import CheckResultsOverview from './CheckResultsOverview';
 export default {
   title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,

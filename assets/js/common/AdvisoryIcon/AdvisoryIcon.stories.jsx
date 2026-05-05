@@ -1,6 +1,6 @@
 import React from 'react';
 
-import AdvisoryIcon from '.';
+import AdvisoryIcon from './AdvisoryIcon';
 
 export default {
   title: 'Components/AdvisoryIcon',

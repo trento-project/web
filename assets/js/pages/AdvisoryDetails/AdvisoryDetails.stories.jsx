@@ -1,5 +1,6 @@
-import React from 'react';
 import { advisoryErrataFactory } from '@lib/test-utils/factories/advisoryErrata';
+import React from 'react';
+
 import AdvisoryDetails from './AdvisoryDetails';
 
 const errata = advisoryErrataFactory.build();

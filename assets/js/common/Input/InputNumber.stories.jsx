@@ -1,9 +1,10 @@
-import Input from '.';
 import { action } from 'storybook/actions';
+
+import InputNumber from './InputNumber';
 
 export default {
   title: 'Components/Input/InputNumber',
-  component: Input,
+  component: InputNumber,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',

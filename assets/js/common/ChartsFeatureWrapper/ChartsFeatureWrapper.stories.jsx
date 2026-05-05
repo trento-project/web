@@ -1,4 +1,4 @@
-import ChartsFeatureWrapper from '.';
+import ChartsFeatureWrapper from './ChartsFeatureWrapper';
 
 export default {
   title: 'Components/ChartsFeatureWrapper',

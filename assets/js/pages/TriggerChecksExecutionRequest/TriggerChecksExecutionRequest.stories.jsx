@@ -1,6 +1,7 @@
-import TriggerChecksExecutionRequest from '.';
-
 import { action } from 'storybook/actions';
+
+import TriggerChecksExecutionRequest from './TriggerChecksExecutionRequest';
+
 export default {
   title: 'Components/TriggerChecksExecutionRequest',
   component: TriggerChecksExecutionRequest,

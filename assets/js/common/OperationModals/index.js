@@ -1,11 +1,13 @@
-import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
+import OperationModal from './OperationModal';
 import OperationForbiddenModal from './OperationForbiddenModal';
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 import SapStartStopOperationModal from './SapStartStopOperationModal';
+import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
 export {
-  SaptuneSolutionOperationModal,
+  OperationModal,
+  OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
   SapStartStopOperationModal,
-  OperationForbiddenModal,
+  SaptuneSolutionOperationModal,
 };

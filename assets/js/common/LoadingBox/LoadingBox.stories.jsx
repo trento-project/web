@@ -1,4 +1,4 @@
-import LoadingBox from '.';
+import LoadingBox from './LoadingBox';
 
 export default {
   title: 'Components/LoadingBox',

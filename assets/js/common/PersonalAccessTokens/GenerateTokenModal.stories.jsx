@@ -1,5 +1,6 @@
-import GenerateTokenModal from './GenerateTokenModal';
 import { action } from 'storybook/actions';
+
+import GenerateTokenModal from './GenerateTokenModal';
 
 export default {
   title: 'Components/PersonalAccessTokens/GenerateTokenModal',

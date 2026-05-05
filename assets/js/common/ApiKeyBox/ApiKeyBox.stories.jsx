@@ -1,4 +1,4 @@
-import ApiKeyBox from '.';
+import ApiKeyBox from './ApiKeyBox';
 
 export default {
   title: 'Components/ApiKeyBox',

@@ -1,8 +1,9 @@
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Login from '.';
+
+import Login from './Login';
 
 const userSlice = createSlice({
   name: 'user',

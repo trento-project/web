@@ -1,12 +1,13 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
 import { userFactory } from '@lib/test-utils/factories';
-import Users from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
+import UsersPage from './UsersPage';
 
 const users = userFactory.buildList(3);
 
@@ -22,7 +23,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/UsersPage',
-  component: Users,
+  component: UsersPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -74,7 +75,7 @@ export default {
 export const Default = {
   args: {
     navigate: action('navigate'),
-    users: users,
+    users,
     loading: false,
     singleSignOnEnabled: false,
     timezone: 'Etc/UTC',

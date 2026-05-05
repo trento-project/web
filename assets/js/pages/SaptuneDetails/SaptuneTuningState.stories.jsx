@@ -1,8 +1,8 @@
-import SaptuneDetails from '.';
+import SaptuneTuningState from './SaptuneTuningState';
 
 export default {
   title: 'Components/SaptuneTuningState',
-  component: SaptuneDetails,
+  component: SaptuneTuningState,
   argTypes: {
     state: {
       description: 'Saptune tuning state',

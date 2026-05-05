@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
+import { WARNING } from '@lib/model';
 import {
   executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
-
-import { WARNING } from '@lib/model';
 
 import ExpectationsResults from './ExpectationsResults';
 

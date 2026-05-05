@@ -1,4 +1,4 @@
-import ChartsDisabledBox from '.';
+import ChartsDisabledBox from './ChartsDisabledBox';
 
 export default {
   title: 'Components/ChartsDisabledBox',

@@ -1,14 +1,15 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import {
-  sapSystemFactory,
-  databaseFactory,
   abilityFactory,
+  databaseFactory,
+  sapSystemFactory,
   userFactory,
 } from '@lib/test-utils/factories';
-import SapSystemsOverviewPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+
+import SapSystemsOverviewPage from './SapSystemsOverviewPage';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const user = userFactory.build();

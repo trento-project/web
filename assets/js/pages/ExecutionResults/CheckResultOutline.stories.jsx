@@ -1,13 +1,14 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import {
-  catalogFactory,
   agentCheckResultFactory,
+  catalogFactory,
   expectationResultFactory,
 } from '@lib/test-utils/factories';
-import CheckResultOutline from '.';
+import { configureStore } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+
+import CheckResultOutline from './CheckResultOutline';
 
 const catalog = catalogFactory.build();
 const agentsCheckResults = agentCheckResultFactory
@@ -104,13 +105,13 @@ export default {
 
 export const Default = {
   args: {
-    checkID: checkID,
+    checkID,
     targetID: 'target-1',
     targetName: 'Target Name',
     targetType: 'cluster',
-    expectations: expectations,
-    agentsCheckResults: agentsCheckResults,
-    expectationResults: expectationResults,
+    expectations,
+    agentsCheckResults,
+    expectationResults,
   },
 };
 
@@ -126,6 +127,6 @@ export const Empty = {
 export const WithExpectations = {
   args: {
     ...Default.args,
-    expectations: expectations,
+    expectations,
   },
 };

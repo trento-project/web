@@ -1,10 +1,9 @@
-import React from 'react';
-
 import Button from '@common/Button';
 import Tooltip, { PLACES } from '@common/Tooltip';
 import { abilityFactory } from '@lib/test-utils/factories';
+import React from 'react';
 
-import DisabledGuard from '.';
+import DisabledGuard from './DisabledGuard';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 

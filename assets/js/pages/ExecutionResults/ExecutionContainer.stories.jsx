@@ -1,8 +1,8 @@
-import ExecutionResults from '.';
+import ExecutionContainer from './ExecutionContainer';
 
 export default {
   title: 'Components/ExecutionContainer',
-  component: ExecutionResults,
+  component: ExecutionContainer,
   argTypes: {
     catalogLoading: {
       description: 'The catalogLoading prop',

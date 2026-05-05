@@ -1,8 +1,9 @@
+import { clusterFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { clusterFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
-import ExecutionHeader from '.';
+
+import ExecutionHeader from './ExecutionHeader';
 
 const cluster = clusterFactory.build({
   provider: 'aws',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { action } from 'storybook/actions';
 
-import SettingsLoader, { Status as SettingsLoaderStatus } from '.';
+import SettingsLoader, { Status } from './SettingsLoader';
 
 export default {
   title: 'Components/SettingsLoader',
@@ -9,8 +9,8 @@ export default {
   argTypes: {
     status: {
       description: 'Settings Loader status',
-      options: Object.keys(SettingsLoaderStatus),
-      mapping: SettingsLoaderStatus,
+      options: Object.keys(Status),
+      mapping: Status,
       control: { type: 'select' },
     },
     sectionName: {
@@ -38,7 +38,7 @@ export default {
 
 export const Default = {
   args: {
-    status: SettingsLoaderStatus.READY,
+    status: Status.READY,
     sectionName: 'Trento',
     onRetry: action('onRetry'),
   },

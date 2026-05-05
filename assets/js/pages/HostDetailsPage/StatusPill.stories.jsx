@@ -1,8 +1,8 @@
-import HostDetailsPage from '.';
+import StatusPill from './StatusPill';
 
 export default {
   title: 'Components/StatusPill',
-  component: HostDetailsPage,
+  component: StatusPill,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',

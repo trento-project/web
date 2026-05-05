@@ -1,7 +1,6 @@
+import { healthSummaryFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
-import { healthSummaryFactory } from '@lib/test-utils/factories';
 
 import HomeHealthSummary from './HomeHealthSummary';
 

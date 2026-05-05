@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import HostLink from '.';
+
+import HostLink from './HostLink';
 
 export default {
   title: 'Components/HostLink',

@@ -1,8 +1,8 @@
-import AvailableSoftwareUpdates from '.';
+import Loading from './Loading';
 
 export default {
   title: 'Components/Loading',
-  component: AvailableSoftwareUpdates,
+  component: Loading,
   argTypes: {
     className: {
       description: 'Additional CSS classes for the loading container.',

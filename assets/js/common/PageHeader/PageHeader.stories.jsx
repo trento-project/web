@@ -1,4 +1,4 @@
-import PageHeader from '.';
+import PageHeader from './PageHeader';
 
 export default {
   title: 'Components/PageHeader',

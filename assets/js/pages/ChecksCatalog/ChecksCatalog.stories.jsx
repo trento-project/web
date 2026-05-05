@@ -1,8 +1,8 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
-
 import { catalogCheckFactory } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import ChecksCatalog from './ChecksCatalog';
 
 const groupName1 = 'group 1';

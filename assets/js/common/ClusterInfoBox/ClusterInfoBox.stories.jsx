@@ -1,13 +1,14 @@
-import ClusterInfoBox from '.';
-import { providers, AWS_PROVIDER } from '@lib/model';
+import { AWS_PROVIDER, providers } from '@lib/model';
 import {
-  clusterTypes,
-  hanaClusterScenarioTypes,
-  CLASSIC_ARCHITECTURE,
   ANGI_ARCHITECTURE,
-  HANA_SCALE_UP,
+  CLASSIC_ARCHITECTURE,
+  clusterTypes,
   COST_OPT_SCENARIO,
+  HANA_SCALE_UP,
+  hanaClusterScenarioTypes,
 } from '@lib/model/clusters';
+
+import ClusterInfoBox from './ClusterInfoBox';
 
 export default {
   title: 'Components/ClusterInfoBox',

@@ -1,7 +1,7 @@
-import CleanUpButton from '.';
 import { abilityFactory } from '@lib/test-utils/factories';
-
 import { action } from 'storybook/actions';
+
+import CleanUpButton from './CleanUpButton';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 export default {

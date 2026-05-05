@@ -1,14 +1,13 @@
-import React from 'react';
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
 import {
   clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import SapSystemsOverview from './SapSystemsOverview';
 

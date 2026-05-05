@@ -1,22 +1,22 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { architectures, providers } from '@lib/model';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
 } from '@lib/operations';
-
 import {
   abilityFactory,
-  clusterFactory,
-  hostFactory,
-  databaseInstanceFactory,
-  sapSystemApplicationInstanceFactory,
   catalogFactory,
+  clusterFactory,
+  databaseInstanceFactory,
+  hostFactory,
+  sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import HostDetails from './HostDetails';
 
 const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });

@@ -1,8 +1,9 @@
+import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
-import PatchList from '.';
 import { action } from 'storybook/actions';
+
+import PatchList from './PatchList';
 
 export default {
   title: 'Components/PatchList',

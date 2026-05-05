@@ -1,9 +1,8 @@
+import { EOS_SEARCH, EOS_VISIBILITY_OFF_OUTLINED } from 'eos-icons-react';
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import { EOS_SEARCH, EOS_VISIBILITY_OFF_OUTLINED } from 'eos-icons-react';
-
-import Input from '.';
+import Input from './Input';
 
 export default {
   title: 'Components/Input',

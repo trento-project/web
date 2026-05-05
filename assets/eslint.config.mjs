@@ -4,6 +4,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
+import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import * as storybookPlugin from 'eslint-plugin-storybook';
 import jestPlugin from 'eslint-plugin-jest';
 import prettierConfig from 'eslint-config-prettier';
@@ -83,6 +84,7 @@ export default defineConfig([
       'react-hooks': reactHooksPlugin,
       'jsx-a11y': jsxA11yPlugin,
       import: importPlugin,
+      'simple-import-sort': simpleImportSortPlugin,
       jest: jestPlugin,
       storybook: storybookPlugin,
     },
@@ -153,6 +155,9 @@ export default defineConfig([
           ],
         },
       ],
+
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
 
       ...jestPlugin.configs.recommended.rules,
       ...storybookPlugin.configs.recommended.rules,

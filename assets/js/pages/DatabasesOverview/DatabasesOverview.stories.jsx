@@ -1,8 +1,4 @@
-import React from 'react';
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
 import {
   abilityFactory,
   clusterFactory,
@@ -10,6 +6,9 @@ import {
   databaseInstanceFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import DatabasesOverview from './DatabasesOverview';
 

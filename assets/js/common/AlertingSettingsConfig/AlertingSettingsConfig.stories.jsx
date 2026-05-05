@@ -1,6 +1,6 @@
 import {
-  alertingSettingsFactory,
   abilityFactory,
+  alertingSettingsFactory,
 } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 

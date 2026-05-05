@@ -1,4 +1,5 @@
 import React from 'react';
+
 import TargetIcon from './TargetIcon';
 
 export default {

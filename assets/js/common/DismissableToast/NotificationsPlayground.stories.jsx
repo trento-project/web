@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Toaster, toast } from 'react-hot-toast';
-import * as ICONS from 'eos-icons-react';
+import Button from '@common/Button';
 import Input from '@common/Input';
 import Label from '@common/Label';
 import Switch from '@common/Switch';
-import Button from '@common/Button';
+import * as ICONS from 'eos-icons-react';
+import React, { useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
 
 import DismissableToast from './DismissableToast';
 

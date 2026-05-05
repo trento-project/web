@@ -1,8 +1,7 @@
+import { hostFactory } from '@lib/test-utils/factories/hosts';
+import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import React from 'react';
 import { action } from 'storybook/actions';
-
-import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
-import { hostFactory } from '@lib/test-utils/factories/hosts';
 
 import UpgradablePackages from './UpgradablePackages';
 

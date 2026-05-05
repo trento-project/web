@@ -1,5 +1,6 @@
-import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
 import { action } from 'storybook/actions';
+
+import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
 
 export default {
   title: 'Components/SuseManagerClearSettingsModal',

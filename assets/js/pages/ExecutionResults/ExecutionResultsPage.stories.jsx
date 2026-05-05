@@ -1,16 +1,17 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import {
+  catalogCheckFactory,
+  catalogFactory,
+  checksExecutionCompletedFactory,
   clusterFactory,
   hostFactory,
-  catalogFactory,
-  catalogCheckFactory,
-  checksExecutionCompletedFactory,
 } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
 import { action } from 'storybook/actions';
-import ExecutionResultsPage from '.';
+
+import ExecutionResultsPage from './ExecutionResultsPage';
 
 const cluster = clusterFactory.build({
   provider: 'aws',

@@ -1,13 +1,14 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import {
   hostFactory,
   upgradablePackageFactory,
 } from '@lib/test-utils/factories';
-import UpgradablePackagesPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
+import { action } from 'storybook/actions';
+
+import UpgradablePackagesPage from './UpgradablePackagesPage';
 
 const host = hostFactory.build();
 const upgradablePackages = upgradablePackageFactory.buildList(5);

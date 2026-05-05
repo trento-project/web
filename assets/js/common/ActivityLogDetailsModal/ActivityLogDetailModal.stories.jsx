@@ -1,11 +1,12 @@
-import { action } from 'storybook/actions';
+import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
+import { RESOURCE_TAGGING } from '@lib/model/activityLog';
 import {
   activityLogEntryFactory,
   taggingMetadataFactory,
 } from '@lib/test-utils/factories/activityLog';
-import { RESOURCE_TAGGING } from '@lib/model/activityLog';
-import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
-import ActivityLogDetailModal from '.';
+import { action } from 'storybook/actions';
+
+import ActivityLogDetailModal from './ActivityLogDetailModal';
 
 export default {
   title: 'Components/ActivityLogDetailModal',

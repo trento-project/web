@@ -1,9 +1,10 @@
-import OperationModals from '.';
-
 import { action } from 'storybook/actions';
+
+import OperationModal from './OperationModal';
+
 export default {
   title: 'Components/OperationModal',
-  component: OperationModals,
+  component: OperationModal,
   argTypes: {
     dontShowAgainDisclaimerChecked: {
       description: 'Whether the dont show again disclaimer is checked',

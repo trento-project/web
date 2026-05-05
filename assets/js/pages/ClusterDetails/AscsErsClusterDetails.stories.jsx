@@ -1,24 +1,22 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
-import { providers } from '@lib/model';
-
 import { faker } from '@faker-js/faker';
-
+import { providers } from '@lib/model';
 import {
   abilityFactory,
-  buildHostsFromAscsErsClusterDetails,
-  buildSapSystemsFromAscsErsClusterDetails,
   ascsErsClusterDetailsFactory,
   ascsErsClusterNodeFactory,
   ascsErsSapSystemFactory,
-  clusterFactory,
+  buildHostsFromAscsErsClusterDetails,
+  buildSapSystemsFromAscsErsClusterDetails,
   catalogFactory,
   checksExecutionCompletedFactory,
+  clusterFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
-import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
+import ClusterDetails from './ClusterDetails';
 
 const {
   id: clusterID,

@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { action } from 'storybook/actions';
 
-import ResetCheckCustomizationModal from '.';
+import ResetCheckCustomizationModal from './ResetCheckCustomizationModal';
 
 export default {
   title: 'Patterns/ResetCheckCustomizationModal',

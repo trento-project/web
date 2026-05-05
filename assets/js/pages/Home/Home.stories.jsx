@@ -1,13 +1,14 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import {
+  abilityFactory,
   clusterFactory,
   hostFactory,
-  abilityFactory,
 } from '@lib/test-utils/factories';
-import Home from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+
+import Home from './Home';
 
 const clusters = clusterFactory.buildList(3);
 const hosts = hostFactory.buildList(5);

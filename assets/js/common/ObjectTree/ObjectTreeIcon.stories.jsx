@@ -1,8 +1,8 @@
-import ObjectTree from '.';
+import ObjectTreeIcon from './ObjectTreeIcon';
 
 export default {
   title: 'Components/ObjectTreeIcon',
-  component: ObjectTree,
+  component: ObjectTreeIcon,
   argTypes: {
     expanded: {
       description: 'The expanded prop',

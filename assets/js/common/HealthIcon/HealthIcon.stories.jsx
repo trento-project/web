@@ -1,5 +1,6 @@
 import React from 'react';
-import HealthIcon from '.';
+
+import HealthIcon from './HealthIcon';
 
 export default {
   title: 'Components/HealthIcon',

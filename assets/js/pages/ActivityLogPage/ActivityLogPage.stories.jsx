@@ -1,10 +1,11 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import { abilityFactory } from '@lib/test-utils/factories';
-import ActivityLogPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
+import ActivityLogPage from './ActivityLogPage';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 

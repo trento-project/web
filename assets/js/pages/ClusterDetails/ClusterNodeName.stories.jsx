@@ -1,10 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import ClusterDetails from '.';
+
+import ClusterNodeName from './ClusterNodeName';
 
 export default {
   title: 'Components/ClusterNodeName',
-  component: ClusterDetails,
+  component: ClusterNodeName,
   decorators: [
     (Story) => (
       <MemoryRouter>

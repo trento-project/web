@@ -1,14 +1,15 @@
+import {
+  abilityFactory,
+  databaseInstanceFactory,
+  hostFactory,
+  sapSystemApplicationInstanceFactory,
+  sapSystemFactory,
+} from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import {
-  sapSystemFactory,
-  sapSystemApplicationInstanceFactory,
-  databaseInstanceFactory,
-  abilityFactory,
-  hostFactory,
-} from '@lib/test-utils/factories';
-import SapSystemsOverviewPage from '.';
 import { action } from 'storybook/actions';
+
+import SapSystemItemOverview from './SapSystemItemOverview';
 
 const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 const applicationInstances = sapSystemApplicationInstanceFactory
@@ -31,7 +32,7 @@ const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/SapSystemItemOverview',
-  component: SapSystemsOverviewPage,
+  component: SapSystemItemOverview,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -62,7 +63,7 @@ export default {
 export const Default = {
   args: {
     userAbilities: [allAbility],
-    sapSystem: sapSystem,
+    sapSystem,
     onCleanUpClick: action('onCleanUpClick'),
   },
 };

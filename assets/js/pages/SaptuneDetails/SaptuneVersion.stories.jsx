@@ -1,8 +1,8 @@
-import SaptuneDetails from '.';
+import SaptuneVersion from './SaptuneVersion';
 
 export default {
   title: 'Components/SaptuneVersion',
-  component: SaptuneDetails,
+  component: SaptuneVersion,
   argTypes: {
     sapPresent: {
       description: 'The sapPresent prop',

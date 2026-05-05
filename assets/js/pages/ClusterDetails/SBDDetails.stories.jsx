@@ -1,9 +1,10 @@
 import { sbdDevicesFactory } from '@lib/test-utils/factories';
-import ClusterDetails from '.';
+
+import SBDDetails from './SBDDetails';
 
 export default {
   title: 'Components/SBDDetails',
-  component: ClusterDetails,
+  component: SBDDetails,
   argTypes: {
     sbdDevices: {
       description: 'The sbdDevices prop',

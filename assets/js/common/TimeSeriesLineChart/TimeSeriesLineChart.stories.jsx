@@ -1,6 +1,4 @@
 /* eslint-disable no-console */
-import React, { useEffect, useRef, useState } from 'react';
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import {
   addMinutes,
@@ -9,6 +7,9 @@ import {
   subHours,
   subMinutes,
 } from 'date-fns';
+import React, { useEffect, useRef, useState } from 'react';
+import { action } from 'storybook/actions';
+
 import TimeSeriesLineChart from './TimeSeriesLineChart';
 
 const now = new Date();
@@ -196,7 +197,7 @@ function ChartUpdaterWrapper(props) {
         );
       }
     }, 20000);
-  }, []);
+  }, [datasets]);
 
   return (
     <TimeSeriesLineChart

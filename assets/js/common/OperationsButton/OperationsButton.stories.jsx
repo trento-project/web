@@ -1,8 +1,8 @@
+import { PLACES } from '@common/Tooltip';
+import { abilityFactory } from '@lib/test-utils/factories';
 import { noop } from 'lodash';
 import { action } from 'storybook/actions';
-import { abilityFactory } from '@lib/test-utils/factories';
 
-import { PLACES } from '@common/Tooltip';
 import OperationsButton from './OperationsButton';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });

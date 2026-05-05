@@ -1,7 +1,8 @@
+import { sapSystemFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import SapSystemLink from '.';
-import { sapSystemFactory } from '@lib/test-utils/factories';
+
+import SapSystemLink from './SapSystemLink';
 
 const { id, sid } = sapSystemFactory.build();
 

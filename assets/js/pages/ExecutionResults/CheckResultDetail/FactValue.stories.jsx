@@ -1,8 +1,8 @@
-import CheckResultDetail from '.';
+import FactValue from './FactValue';
 
 export default {
   title: 'Components/FactValue',
-  component: CheckResultDetail,
+  component: FactValue,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',

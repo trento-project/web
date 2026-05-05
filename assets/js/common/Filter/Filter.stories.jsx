@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Filter from '.';
 import { action } from 'storybook/actions';
+
+import Filter from './Filter';
 
 export default {
   title: 'Components/Filter',

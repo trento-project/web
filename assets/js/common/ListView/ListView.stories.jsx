@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ListView from '.';
+import ListView from './ListView';
 
 export default {
   title: 'Components/ListView',

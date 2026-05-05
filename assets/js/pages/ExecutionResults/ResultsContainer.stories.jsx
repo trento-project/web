@@ -1,16 +1,16 @@
+import { catalogFactory, hostFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { hostFactory, catalogFactory } from '@lib/test-utils/factories';
-import ExecutionResults from '.';
-
 import { action } from 'storybook/actions';
+
+import ResultsContainer from './ResultsContainer';
 
 const hosts = hostFactory.buildList(2);
 const catalog = catalogFactory.build();
 const checks = Object.keys(catalog.catalog || {}).slice(0, 3);
 export default {
   title: 'Components/ResultsContainer',
-  component: ExecutionResults,
+  component: ResultsContainer,
   decorators: [
     (Story) => (
       <MemoryRouter>

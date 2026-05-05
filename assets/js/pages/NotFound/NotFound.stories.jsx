@@ -1,7 +1,7 @@
 import React from 'react';
 import { action } from 'storybook/actions';
 
-import NotFound from '.';
+import NotFound from './NotFound';
 
 export default {
   title: 'Layouts/NotFound',

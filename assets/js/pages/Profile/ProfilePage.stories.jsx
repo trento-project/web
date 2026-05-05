@@ -1,10 +1,11 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
 import { profileFactory } from '@lib/test-utils/factories';
-import Profile from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { Provider } from 'react-redux';
+
+import ProfilePage from './ProfilePage';
 
 const userData = profileFactory.build();
 
@@ -25,7 +26,7 @@ const notificationsSlice = createSlice({
 
 export default {
   title: 'Components/ProfilePage',
-  component: Profile,
+  component: ProfilePage,
   decorators: [
     (Story) => {
       const axiosMock = new MockAdapter(networkClient);

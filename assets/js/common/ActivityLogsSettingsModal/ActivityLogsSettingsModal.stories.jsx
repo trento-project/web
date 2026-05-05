@@ -1,5 +1,6 @@
-import ActivityLogsSettingsModal from '.';
 import { action } from 'storybook/actions';
+
+import ActivityLogsSettingsModal from './ActivityLogsSettingsModal';
 
 export default {
   title: 'Components/ActivityLogsSettingsModal',

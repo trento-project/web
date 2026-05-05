@@ -1,8 +1,8 @@
-import SaptuneDetails from '.';
+import SaptuneServiceStatus from './SaptuneServiceStatus';
 
 export default {
   title: 'Components/SaptuneServiceStatus',
-  component: SaptuneDetails,
+  component: SaptuneServiceStatus,
   argTypes: {
     serviceName: {
       description: 'Name of the service',

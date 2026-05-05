@@ -1,9 +1,10 @@
-import ClusterDetails from '.';
 import { clusterResourceFactory } from '@lib/test-utils/factories';
+
+import Resources from './Resources';
 
 export default {
   title: 'Components/Resources',
-  component: ClusterDetails,
+  component: Resources,
   argTypes: {
     resources: {
       description: 'The resources prop',

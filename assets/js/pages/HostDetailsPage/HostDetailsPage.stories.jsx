@@ -1,18 +1,18 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import HostDetailsPage from '.';
-
-import { action } from 'storybook/actions';
 import { architectures, providers } from '@lib/model';
 import {
   abilityFactory,
   hostFactory,
-  userFactory,
   relevantPatchFactory,
   upgradablePackageFactory,
+  userFactory,
 } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
+import { action } from 'storybook/actions';
+
+import HostDetailsPage from './HostDetailsPage';
 
 const host = hostFactory.build();
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });

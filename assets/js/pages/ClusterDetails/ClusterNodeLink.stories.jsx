@@ -1,8 +1,8 @@
-import ClusterDetails from '.';
+import ClusterNodeLink from './ClusterNodeLink';
 
 export default {
   title: 'Components/ClusterNodeLink',
-  component: ClusterDetails,
+  component: ClusterNodeLink,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',

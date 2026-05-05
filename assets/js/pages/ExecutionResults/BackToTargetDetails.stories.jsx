@@ -1,10 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import ExecutionResults from '.';
+
+import BackToTargetDetails from './BackToTargetDetails';
 
 export default {
   title: 'Components/BackToTargetDetails',
-  component: ExecutionResults,
+  component: BackToTargetDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>

@@ -1,10 +1,10 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import { userFactory } from '@lib/test-utils/factories';
-import Guard from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+
+import Guard from './Guard';
 
 const user = userFactory.build();
 

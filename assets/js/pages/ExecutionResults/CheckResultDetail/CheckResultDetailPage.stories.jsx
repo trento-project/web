@@ -1,14 +1,15 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
 import {
+  catalogFactory,
+  checksExecutionCompletedFactory,
   clusterFactory,
   hostFactory,
-  checksExecutionCompletedFactory,
-  catalogFactory,
 } from '@lib/test-utils/factories';
-import CheckResultDetailPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import CheckResultDetailPage from './CheckResultDetailPage';
 
 const cluster = clusterFactory.build();
 const execution = checksExecutionCompletedFactory.build();
@@ -169,8 +170,8 @@ const expectations = checkData.expectations || [
 
 export const Default = {
   args: {
-    checkID: checkID,
-    expectations: expectations,
+    checkID,
+    expectations,
     targetID: cluster.id,
     targetType: 'cluster',
     severity: checkData.severity || 'critical',

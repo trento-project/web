@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import BackButton from '.';
-
 import { action } from 'storybook/actions';
+
+import BackButton from './BackButton';
+
 export default {
   title: 'Components/BackButton',
   component: BackButton,

@@ -1,6 +1,6 @@
-import CheckResultCount from './CheckResultCount';
-
 import { action } from 'storybook/actions';
+
+import CheckResultCount from './CheckResultCount';
 export default {
   title: 'Layouts/CheckResultsOverview/CheckResultCount',
   component: CheckResultCount,

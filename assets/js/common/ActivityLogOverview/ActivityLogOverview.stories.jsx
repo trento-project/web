@@ -1,4 +1,5 @@
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
+
 // import _ from 'lodash';
 import ActivityLogOverview from './ActivityLogOverview';
 

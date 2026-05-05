@@ -1,6 +1,7 @@
-import HostInfoBox from '.';
 import { architectures, providers } from '@lib/model';
 import { hostFactory } from '@lib/test-utils/factories';
+
+import HostInfoBox from './HostInfoBox';
 
 const host = hostFactory.build();
 

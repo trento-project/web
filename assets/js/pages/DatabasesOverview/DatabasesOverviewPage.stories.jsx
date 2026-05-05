@@ -1,16 +1,17 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import {
-  databaseFactory,
-  clusterFactory,
-  hostFactory,
   abilityFactory,
+  clusterFactory,
+  databaseFactory,
+  hostFactory,
   userFactory,
 } from '@lib/test-utils/factories';
-import DatabasesOverview from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
+import DatabasesOverviewPage from './DatabasesOverviewPage';
 
 const databases = databaseFactory.buildList(2);
 const clusterListData = clusterFactory.buildList(2);
@@ -57,7 +58,7 @@ const clusterListSlice = createSlice({
 
 export default {
   title: 'Components/DatabasesOverviewPage',
-  component: DatabasesOverview,
+  component: DatabasesOverviewPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

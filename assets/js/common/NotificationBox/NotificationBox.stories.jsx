@@ -1,4 +1,4 @@
-import NotificationBox from '.';
+import NotificationBox from './NotificationBox';
 
 export default {
   title: 'Components/NotificationBox',

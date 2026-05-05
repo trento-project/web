@@ -1,6 +1,6 @@
-import DeleteTokenModal from './DeleteTokenModal';
-
 import { action } from 'storybook/actions';
+
+import DeleteTokenModal from './DeleteTokenModal';
 export default {
   title: 'Components/PersonalAccessTokens/DeleteTokenModal',
   component: DeleteTokenModal,

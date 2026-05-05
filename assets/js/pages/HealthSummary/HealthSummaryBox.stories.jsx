@@ -1,9 +1,10 @@
-import HealthSummary from '.';
-
 import { action } from 'storybook/actions';
+
+import HealthSummaryBox from './HealthSummaryBox';
+
 export default {
   title: 'Components/HealthSummaryBox',
-  component: HealthSummary,
+  component: HealthSummaryBox,
   argTypes: {
     health: {
       description: 'Health status of the component',

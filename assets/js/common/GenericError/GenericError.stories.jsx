@@ -1,6 +1,6 @@
 import React from 'react';
 
-import GenericError from '.';
+import GenericError from './GenericError';
 
 export default {
   title: 'Components/GenericError',

@@ -1,6 +1,7 @@
-import AbilitiesMultiSelect from '.';
-import { action } from 'storybook/actions';
 import { abilityFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
+import AbilitiesMultiSelect from './AbilitiesMultiSelect';
 
 export default {
   title: 'Components/AbilitiesMultiSelect',

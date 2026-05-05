@@ -1,8 +1,9 @@
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import SSOCallback from '.';
+
+import SSOCallback from './SSOCallback';
 
 const userSlice = createSlice({
   name: 'user',

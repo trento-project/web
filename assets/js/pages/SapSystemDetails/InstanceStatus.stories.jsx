@@ -1,8 +1,8 @@
-import SapSystemDetails from '.';
+import InstanceStatus from './InstanceStatus';
 
 export default {
   title: 'Components/InstanceStatus',
-  component: SapSystemDetails,
+  component: InstanceStatus,
   argTypes: {
     health: {
       description: 'The health prop',

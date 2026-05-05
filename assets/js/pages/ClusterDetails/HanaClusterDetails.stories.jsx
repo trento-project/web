@@ -1,21 +1,20 @@
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-import { action } from 'storybook/actions';
 import { providers } from '@lib/model';
-
 import {
   abilityFactory,
+  catalogFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
   clusterFactory,
+  clusterResourceFactory,
   hanaClusterDetailsFactory,
   hanaClusterDetailsNodesFactory,
   hanaClusterSiteFactory,
   hostFactory,
-  checksExecutionCompletedFactory,
-  checksExecutionRunningFactory,
   sapSystemFactory,
-  catalogFactory,
-  clusterResourceFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import ClusterDetails from './ClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';

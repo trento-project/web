@@ -1,19 +1,18 @@
+import { EXPECT_ENUM, WARNING } from '@lib/model';
 import {
+  addCriticalExpectExpectation,
+  addExpectationWithResult,
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
-  addExpectationWithResult,
-  emptyCheckResultFactory,
-  hostFactory,
-  checksExecutionCompletedFactory,
-  checkResultFactory,
-  addCriticalExpectExpectation,
-  withOverriddenValues,
+  catalogExpectEnumExpectationFactory,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
-  catalogExpectEnumExpectationFactory,
+  checkResultFactory,
+  checksExecutionCompletedFactory,
+  emptyCheckResultFactory,
+  hostFactory,
+  withOverriddenValues,
 } from '@lib/test-utils/factories';
-
-import { EXPECT_ENUM, WARNING } from '@lib/model';
 
 import CheckResultDetail from './CheckResultDetail';
 

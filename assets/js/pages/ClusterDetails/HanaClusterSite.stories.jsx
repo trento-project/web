@@ -1,9 +1,10 @@
 import {
   abilityFactory,
-  hanaClusterDetailsNodesFactory,
   clusterResourceFactory,
+  hanaClusterDetailsNodesFactory,
 } from '@lib/test-utils/factories';
-import ClusterDetails from '.';
+
+import HanaClusterSite from './HanaClusterSite';
 
 const resources = clusterResourceFactory.buildList(2);
 const nodes = hanaClusterDetailsNodesFactory.buildList(3, { resources });
@@ -11,7 +12,7 @@ const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/HanaClusterSite',
-  component: ClusterDetails,
+  component: HanaClusterSite,
   argTypes: {
     name: {
       description: 'Name or label for the component',

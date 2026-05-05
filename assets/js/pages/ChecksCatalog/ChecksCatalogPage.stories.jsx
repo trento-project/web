@@ -1,10 +1,10 @@
+import { catalogCheckFactory } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { catalogCheckFactory } from '@lib/test-utils/factories';
-import ChecksCatalog from '.';
-
 import { action } from 'storybook/actions';
+
+import ChecksCatalogPage from './ChecksCatalogPage';
 
 const catalogData = catalogCheckFactory.buildList(10);
 const catalogSlice = createSlice({
@@ -20,7 +20,7 @@ const catalogSlice = createSlice({
 
 export default {
   title: 'Components/ChecksCatalogPage',
-  component: ChecksCatalog,
+  component: ChecksCatalogPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

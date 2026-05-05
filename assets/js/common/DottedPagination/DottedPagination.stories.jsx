@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import DottedPagination from '.';
-
 import { action } from 'storybook/actions';
+
+import DottedPagination from './DottedPagination';
+
 export default {
   title: 'Components/DottedPagination',
   component: DottedPagination,

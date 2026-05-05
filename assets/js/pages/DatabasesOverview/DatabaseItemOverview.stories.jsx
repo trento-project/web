@@ -1,13 +1,14 @@
-import React from 'react';
-import { MemoryRouter } from 'react-router';
 import {
-  databaseInstanceFactory,
-  databaseFactory,
   abilityFactory,
+  databaseFactory,
+  databaseInstanceFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
-import DatabasesOverview from '.';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
+
+import DatabaseItemOverview from './DatabaseItemOverview';
 
 const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
 const instances = databaseInstanceFactory
@@ -23,7 +24,7 @@ const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/DatabaseItemOverview',
-  component: DatabasesOverview,
+  component: DatabaseItemOverview,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -62,9 +63,9 @@ export default {
 export const Default = {
   args: {
     userAbilities: [allAbility],
-    instances: instances,
+    instances,
     asDatabaseLayer: false,
-    database: database,
+    database,
     onCleanUpClick: action('onCleanUpClick'),
   },
 };

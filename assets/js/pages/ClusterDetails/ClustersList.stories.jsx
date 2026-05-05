@@ -1,15 +1,16 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter } from 'react-router';
 import {
-  clusterFactory,
-  sapSystemFactory,
-  databaseFactory,
   abilityFactory,
+  clusterFactory,
+  databaseFactory,
+  sapSystemFactory,
   userFactory,
 } from '@lib/test-utils/factories';
-import ClusterDetails from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+
+import ClustersList from './ClustersList';
 
 const clusters = clusterFactory.buildList(3);
 const sapSystems = sapSystemFactory.buildList(2);
@@ -66,7 +67,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/ClustersList',
-  component: ClusterDetails,
+  component: ClustersList,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

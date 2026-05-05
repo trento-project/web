@@ -1,10 +1,10 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
+import PageHeader from '@common/PageHeader';
+import { faker } from '@faker-js/faker';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import ChecksSelectionHeader from './ChecksSelectionHeader';
 
 export default {

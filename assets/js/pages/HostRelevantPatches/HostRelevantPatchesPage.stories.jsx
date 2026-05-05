@@ -1,6 +1,6 @@
-import React from 'react';
-import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import { hostFactory } from '@lib/test-utils/factories/hosts';
+import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
+import React from 'react';
 import { action } from 'storybook/actions';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';

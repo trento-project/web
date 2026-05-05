@@ -1,6 +1,7 @@
-import SuseManagerConfig from './SuseManagerConfig';
-import { action } from 'storybook/actions';
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
+import SuseManagerConfig from './SuseManagerConfig';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const user = userFactory.build();

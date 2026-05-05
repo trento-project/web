@@ -1,8 +1,8 @@
-import ClusterDetails from '.';
+import ReplicationStatusPill from './ReplicationStatusPill';
 
 export default {
   title: 'Components/ReplicationStatusPill',
-  component: ClusterDetails,
+  component: ReplicationStatusPill,
   argTypes: {
     status: {
       description: 'Replication status',

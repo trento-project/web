@@ -1,9 +1,10 @@
+import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import { userFactory, abilityFactory } from '@lib/test-utils/factories';
-import Layout from '.';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import Layout from './Layout';
 
 const user = userFactory.build();
 const abilities = abilityFactory.buildList(2);

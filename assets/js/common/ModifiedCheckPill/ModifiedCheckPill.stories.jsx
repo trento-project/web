@@ -1,4 +1,4 @@
-import ModifiedCheckPill from '.';
+import ModifiedCheckPill from './ModifiedCheckPill';
 
 export default {
   title: 'Components/ModifiedCheckPill',

@@ -1,7 +1,8 @@
 import React from 'react';
-import CheckableWarningMessage from '.';
-
 import { action } from 'storybook/actions';
+
+import CheckableWarningMessage from './CheckableWarningMessage';
+
 export default {
   title: 'Components/CheckableWarningMessage',
   component: CheckableWarningMessage,

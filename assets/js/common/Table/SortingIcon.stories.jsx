@@ -1,8 +1,8 @@
-import Table from '.';
+import SortingIcon from './SortingIcon';
 
 export default {
   title: 'Components/SortingIcon',
-  component: Table,
+  component: SortingIcon,
   argTypes: {
     sortable: {
       description: 'Whether the column is sortable',

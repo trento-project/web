@@ -1,16 +1,17 @@
-import React from 'react';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
 import {
   abilityFactory,
+  catalogFactory,
   clusterFactory,
   userFactory,
-  catalogFactory,
 } from '@lib/test-utils/factories';
-import ClusterSettingsPage from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import ClusterSettingsPage from './ClusterSettingsPage';
 
 const cluster = clusterFactory.build({
   details: {

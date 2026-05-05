@@ -1,11 +1,12 @@
-import React from 'react';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
 import { advisoryErrataFactory } from '@lib/test-utils/factories/advisoryErrata';
-import AdvisoryDetails from '.';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import MockAdapter from 'axios-mock-adapter';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import AdvisoryDetailsPage from './AdvisoryDetailsPage';
 
 const errata = advisoryErrataFactory.build();
 
@@ -25,7 +26,7 @@ const mockStore = configureStore({
 
 export default {
   title: 'Components/AdvisoryDetailsPage',
-  component: AdvisoryDetails,
+  component: AdvisoryDetailsPage,
   argTypes: {},
   decorators: [
     (Story) => {

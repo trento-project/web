@@ -1,8 +1,8 @@
-import Table from '.';
+import EmptyState from './EmptyState';
 
 export default {
   title: 'Components/EmptyState',
-  component: Table,
+  component: EmptyState,
   argTypes: {
     colSpan: {
       description: 'The colSpan prop',

@@ -1,14 +1,15 @@
+import {
+  abilityFactory,
+  hostFactory,
+  relevantPatchFactory,
+  userFactory,
+} from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { MemoryRouter, Routes, Route } from 'react-router';
-import {
-  hostFactory,
-  userFactory,
-  relevantPatchFactory,
-  abilityFactory,
-} from '@lib/test-utils/factories';
-import HostRelevantPatches from '.';
+import { MemoryRouter, Route, Routes } from 'react-router';
+
+import Page from './Page';
 
 const host = hostFactory.build();
 const user = userFactory.build();
@@ -50,7 +51,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/Page',
-  component: HostRelevantPatches,
+  component: Page,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

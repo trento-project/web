@@ -1,8 +1,9 @@
+import { abilityFactory } from '@lib/test-utils/factories';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import { abilityFactory } from '@lib/test-utils/factories';
-import ForbiddenGuard from '.';
+
+import ForbiddenGuard from './ForbiddenGuard';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 

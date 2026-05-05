@@ -1,16 +1,15 @@
-import React from 'react';
-import { action } from 'storybook/actions';
-import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
+import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   clusterFactory,
-  databaseInstanceFactory,
   databaseFactory,
+  databaseInstanceFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
-import { DATABASE_TYPE } from '@lib/model/sapSystems';
-
 import { GenericSystemDetails } from '@pages/SapSystemDetails';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 const database = {
   ...databaseFactory.build({ instances: databaseInstanceFactory.buildList(2) }),

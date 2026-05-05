@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import Users from '.';
+
+import CreateUserPage from './CreateUserPage';
 
 export default {
   title: 'Components/CreateUserPage',
-  component: Users,
+  component: CreateUserPage,
   decorators: [
     (Story) => (
       <BrowserRouter>

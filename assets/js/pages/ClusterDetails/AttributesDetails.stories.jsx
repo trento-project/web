@@ -1,8 +1,8 @@
-import ClusterDetails from '.';
+import AttributesDetails from './AttributesDetails';
 
 export default {
   title: 'Components/AttributesDetails',
-  component: ClusterDetails,
+  component: AttributesDetails,
   argTypes: {
     attributes: {
       description: 'The attributes prop',

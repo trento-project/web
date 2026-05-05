@@ -1,11 +1,12 @@
+import { providers } from '@lib/model';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import CheckResultDetail from '.';
-import { providers } from '@lib/model';
+
+import CheckDetailHeader from './CheckDetailHeader';
 
 export default {
   title: 'Components/CheckDetailHeader',
-  component: CheckResultDetail,
+  component: CheckDetailHeader,
   decorators: [
     (Story) => (
       <MemoryRouter>
