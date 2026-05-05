@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router';
 
@@ -20,16 +21,10 @@ export default {
     targetID: {
       control: { type: 'text' },
       description: 'The target identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     targetName: {
       control: { type: 'text' },
       description: 'The target name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     backTo: {
       description:
@@ -63,9 +58,6 @@ export default {
       control: { type: 'boolean' },
       description:
         'Whether Save Checks Selection button is enabled or disabled',
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
     onSaveSelection: {
       description: 'Updates the selected checks on save',
@@ -103,6 +95,8 @@ export const Default = {
     checkExecutionPermittedFor: ['all:cluster_checks_execution'],
     savedSelection,
     isSavingSelection: false,
+    onSaveSelection: action('onSaveSelection'),
+    onStartExecution: action('onStartExecution'),
   },
 };
 

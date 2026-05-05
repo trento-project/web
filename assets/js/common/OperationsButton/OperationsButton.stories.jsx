@@ -1,4 +1,5 @@
 import { noop } from 'lodash';
+import { action } from 'storybook/actions';
 
 import { PLACES } from '@common/Tooltip';
 import OperationsButton from './OperationsButton';
@@ -9,10 +10,10 @@ export default {
   argTypes: {
     operations: {
       description: 'Operations to be displayed in the operations button menu',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     menuPosition: {
@@ -81,6 +82,7 @@ export const Default = {
       },
     ],
     userAbilities: [{ name: 'all', resource: 'all' }],
+    onClick: action('onClick'),
   },
 };
 

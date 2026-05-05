@@ -1,4 +1,5 @@
 import Component from './DatabaseItemOverview';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/DatabaseItemOverview',
@@ -38,5 +39,6 @@ export const Default = {
     instances: '',
     asDatabaseLayer: '',
     database: [],
+    onCleanUpClick: action('onCleanUpClick'),
   },
 };

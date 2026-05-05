@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router';
 import Component from './BackButton';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/BackButton',
   component: Component,
@@ -33,6 +34,6 @@ export const Default = {
   args: {
     children: 'Back to something',
     url: '/',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };

@@ -1,5 +1,6 @@
 import CheckResultCount from './CheckResultCount';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Layouts/CheckResultsOverview/CheckResultCount',
   component: CheckResultCount,
@@ -24,7 +25,7 @@ export const Default = {
   args: {
     value: 0,
     result: 'passing',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };
 
@@ -32,7 +33,7 @@ export const Passing = {
   args: {
     value: 42,
     result: 'passing',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };
 
@@ -40,7 +41,7 @@ export const Warning = {
   args: {
     value: 7,
     result: 'warning',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };
 
@@ -48,6 +49,6 @@ export const Critical = {
   args: {
     value: 2,
     result: 'critical',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };

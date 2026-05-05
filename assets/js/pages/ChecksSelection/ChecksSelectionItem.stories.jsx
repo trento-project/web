@@ -1,5 +1,6 @@
 import Component from './ChecksSelectionItem';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksSelectionItem',
   component: Component,
@@ -56,8 +57,8 @@ export const Default = {
     customized: false,
     selected: true,
     userAbilities: [],
-    onChange: () => {},
-    onCustomize: () => {},
-    onResetCustomization: () => {},
+    onChange: action('onChange'),
+    onCustomize: action('onCustomize'),
+    onResetCustomization: action('onResetCustomization'),
   },
 };

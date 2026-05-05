@@ -1,4 +1,5 @@
 import { within, userEvent } from 'storybook/test';
+import { action } from 'storybook/actions';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 
@@ -59,6 +60,8 @@ export default {
 export const Default = {
   args: {
     open: true,
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
   },
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import Component from './ExecutionHeader';
 
@@ -51,5 +52,7 @@ export const Default = {
     targetType: 'cluster',
     target: {},
     savedFilters: [],
+    onFilterChange: action('onFilterChange'),
+    onFilterSave: action('onFilterSave'),
   },
 };

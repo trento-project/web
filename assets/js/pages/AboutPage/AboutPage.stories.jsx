@@ -23,6 +23,8 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <AboutPage {...args} />;
-}
+export const Default = {
+  args: {
+    onFetch: fetchAboutPageData,
+  },
+};

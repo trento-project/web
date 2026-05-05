@@ -30,7 +30,7 @@ export const Default = {
   args: {
     open: false,
     entry: toRenderedEntry(activityLogEntryFactory.build()),
-    onClose: action('cancel clicked'),
+    onClose: action('onClose'),
   },
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 
 import {
@@ -55,10 +56,6 @@ export default {
       control: { type: 'radio' },
       options: ['Enabled', 'Disabled'],
       description: 'Status',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'Enabled' },
-      },
     },
     abilities: {
       description: 'Available abilities',
@@ -157,6 +154,7 @@ export const Editing = {
     fullName: fullname,
     emailAddress: email,
     username,
+    status: 'Enabled',
     createdAt,
     updatedAt,
     totpEnabledAt,
@@ -165,6 +163,8 @@ export const Editing = {
     editing: true,
     saveText: 'Save',
     timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
   },
 };
 

@@ -1,4 +1,5 @@
 import OperationForbiddenModal from './OperationForbiddenModal';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/OperationForbiddenModal',
@@ -11,7 +12,7 @@ export default {
     },
     errors: {
       description: 'Authorization errors as string',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     isOpen: {
       description: 'Modal is open',
@@ -26,7 +27,15 @@ export default {
     operation: 'My operation',
     errors: ['Authorization error 1', 'Authorization error 2'],
     isOpen: true,
+    onCancel: action('onCancel'),
   },
 };
 
-export const Default = { args: { operation: '', errors: [], isOpen: false } };
+export const Default = {
+  args: {
+    operation: '',
+    errors: [],
+    isOpen: false,
+    onCancel: action('onCancel'),
+  },
+};

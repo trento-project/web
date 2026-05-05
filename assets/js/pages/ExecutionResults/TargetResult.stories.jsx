@@ -1,4 +1,5 @@
 import Component from './TargetResult';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/TargetResult',
@@ -33,5 +34,6 @@ export const Default = {
     targetName: '',
     expectationsSummary: '',
     isAgentCheckError: false,
+    onClick: action('onClick'),
   },
 };

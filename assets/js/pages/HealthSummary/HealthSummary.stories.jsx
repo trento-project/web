@@ -1,4 +1,5 @@
 import Component from './HealthSummary';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/HealthSummary',
@@ -38,5 +39,6 @@ export const Default = {
     warning: '',
     className: '',
     activeFilters: '',
+    onFilterChange: action('onFilterChange'),
   },
 };

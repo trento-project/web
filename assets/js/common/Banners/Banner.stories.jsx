@@ -9,27 +9,15 @@ export default {
       description: 'The type of the banner',
       control: { type: 'radio' },
       options: ['info', 'success', 'warning', 'error'],
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'info' },
-      },
     },
     iconSize: {
       description: 'The size of the icon in the banner',
       control: { type: 'radio' },
       options: ['s', 'm', 'l', 'xl', 'xxl', 16, 24, 32, 48, 64],
-      table: {
-        type: { summary: 'string|number' },
-        defaultValue: { summary: 'm' },
-      },
     },
     truncate: {
       description: 'Whether to truncate the banner text',
       control: { type: 'boolean' },
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: true },
-      },
     },
     children: {
       type: 'element',
@@ -40,6 +28,9 @@ export default {
 
 export const Default = {
   args: {
+    type: 'info',
+    iconSize: 'm',
+    truncate: true,
     children: 'Banner content',
   },
 };

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import Textarea from './Textarea';
 
@@ -58,6 +59,7 @@ export const Default = {
     disabled: false,
     className: '',
     initialValue: '',
+    onChange: action('onChange'),
   },
 };
 

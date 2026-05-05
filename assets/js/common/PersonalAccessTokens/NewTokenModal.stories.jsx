@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 
 import NewTokenModal from './NewTokenModal';
 
@@ -25,6 +26,6 @@ export const Default = {
   args: {
     accessToken: faker.internet.jwt(),
     isOpen: true,
-    onClose: () => {},
+    onClose: action('onClose'),
   },
 };

@@ -1,4 +1,5 @@
 import SuseManagerSettingsModal from './SuseManagerSettingsModal';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SuseManagerSettingsModal',
@@ -14,11 +15,11 @@ export default {
     },
     initialUsername: {
       description: 'Initial SUSE Manager username',
-      control: { type: 'string' },
+      control: { type: 'text' },
     },
     initialUrl: {
       description: 'Initial SUSE Manager URL',
-      control: { type: 'string' },
+      control: { type: 'text' },
     },
     certUploadDate: {
       description: 'Certificate upload date',
@@ -55,6 +56,9 @@ export default {
 export const Default = {
   args: {
     open: false,
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+    onClearErrors: action('onClearErrors'),
   },
 };
 

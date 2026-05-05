@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import Component from './ChecksCatalogPage';
 
+import { action } from 'storybook/actions';
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
@@ -62,6 +63,6 @@ export const Default = {
     filteredCatalog: false,
     catalogError: null,
     loading: false,
-    updateCatalog: () => {},
+    updateCatalog: action('updateCatalog'),
   },
 };

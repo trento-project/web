@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
@@ -64,10 +65,11 @@ export default {
 
 export const Default = {
   args: {
-    navigate: () => {},
+    navigate: action('navigate'),
     users: [],
     loading: false,
     singleSignOnEnabled: false,
     timezone: 'UTC',
+    onDeleteUser: action('onDeleteUser'),
   },
 };

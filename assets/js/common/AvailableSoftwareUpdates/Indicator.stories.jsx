@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { EOS_UPDATE_OUTLINED } from 'eos-icons-react';
 
 import Component from './Indicator';
@@ -47,5 +48,6 @@ export const Default = {
     message: 'Click here to review and install them.',
     icon: <EOS_UPDATE_OUTLINED size="l" />,
     isError: false,
+    onNavigate: action('onNavigate'),
   },
 };

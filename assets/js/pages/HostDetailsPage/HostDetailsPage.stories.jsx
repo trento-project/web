@@ -4,6 +4,7 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import Component from './HostDetailsPage';
 
+import { action } from 'storybook/actions';
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
@@ -283,16 +284,16 @@ export default {
       control: { type: 'text' },
     },
     cleanUpHost: {
-      description: 'The cleanUpHost prop',
-      control: { type: 'text' },
+      description: 'Callback function invoked when cleaning up host',
+      action: 'cleanUpHost',
     },
     requestHostChecksExecution: {
-      description: 'The requestHostChecksExecution prop',
-      control: { type: 'text' },
+      description: 'Callback function invoked to request host checks execution',
+      action: 'requestHostChecksExecution',
     },
     requestOperation: {
-      description: 'The requestOperation prop',
-      control: { type: 'text' },
+      description: 'Callback function invoked to request an operation',
+      action: 'requestOperation',
     },
     cleanForbiddenOperation: {
       description:
@@ -343,11 +344,11 @@ export const Default = {
     userAbilities: [],
     operationsEnabled: true,
     runningOperation: null,
-    cleanUpHost: () => {},
-    requestHostChecksExecution: () => {},
-    requestOperation: () => {},
-    cleanForbiddenOperation: () => {},
-    navigate: () => {},
+    cleanUpHost: action('cleanUpHost'),
+    requestHostChecksExecution: action('requestHostChecksExecution'),
+    requestOperation: action('requestOperation'),
+    cleanForbiddenOperation: action('cleanForbiddenOperation'),
+    navigate: action('navigate'),
     timezone: 'UTC',
   },
 };

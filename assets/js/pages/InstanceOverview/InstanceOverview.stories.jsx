@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router';
 import Component from './InstanceOverview';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/InstanceOverview',
   component: Component,
@@ -50,6 +51,6 @@ export const Default = {
     },
     userAbilities: [],
     cleanUpPermittedFor: [],
-    onCleanUpClick: () => {},
+    onCleanUpClick: action('onCleanUpClick'),
   },
 };

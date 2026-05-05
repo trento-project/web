@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { formatISO } from 'date-fns';
+import { action } from 'storybook/actions';
 
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 
@@ -51,9 +52,9 @@ export const Default = {
     generatedAccessToken: null,
     generateTokenAvailable: true,
     className: '',
-    onDeleteToken: () => {},
-    onGenerateToken: () => {},
-    onCloseGeneratedTokenModal: () => {},
+    onDeleteToken: action('onDeleteToken'),
+    onGenerateToken: action('onGenerateToken'),
+    onCloseGeneratedTokenModal: action('onCloseGeneratedTokenModal'),
     timezone: 'Etc/UTC',
   },
 };

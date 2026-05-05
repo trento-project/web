@@ -1,5 +1,5 @@
-import { action } from 'storybook/actions';
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import AIConfiguration from './AIConfiguration';
 
@@ -31,7 +31,7 @@ export default {
   },
   args: {
     aiConfiguration: {},
-    onEditClick: action('Edit button clicked!'),
+    onEditClick: action('onEditClick'),
   },
 };
 

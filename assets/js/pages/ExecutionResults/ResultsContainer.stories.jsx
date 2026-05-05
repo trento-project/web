@@ -2,6 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import Component from './ResultsContainer';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/ResultsContainer',
   component: Component,
@@ -65,7 +66,7 @@ export const Default = {
     hasAlreadyChecksResults: false,
     selectedChecks: [],
     hosts: [],
-    onContentRefresh: () => {},
-    onStartExecution: () => {},
+    onContentRefresh: action('onContentRefresh'),
+    onStartExecution: action('onStartExecution'),
   },
 };

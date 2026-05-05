@@ -1,4 +1,5 @@
 import SuseManagerConfig from './SuseManagerConfig';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SuseManagerConfig',
@@ -10,7 +11,7 @@ export default {
     },
     userAbilities: {
       description: 'Users abilities that allow changing SUSE Manager settings',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     url: {
       description: 'SUSE Manager URL',
@@ -64,6 +65,11 @@ export const Default = {
     username: 'trentoAdm',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     userAbilities: [{ name: 'all', resource: 'all' }],
+    onEditClick: action('onEditClick'),
+    onClearClick: action('onClearClick'),
+    onClearSettings: action('onClearSettings'),
+    onCancel: action('onCancel'),
+    onTestConnection: action('onTestConnection'),
   },
 };
 

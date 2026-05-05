@@ -1,4 +1,5 @@
 import Component from './Modal';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Modal',
@@ -33,5 +34,6 @@ export const Default = {
     title: 'Default title',
     className: '',
     open: true,
+    onClose: action('onClose'),
   },
 };

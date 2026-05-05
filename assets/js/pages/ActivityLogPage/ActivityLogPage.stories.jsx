@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
@@ -85,5 +86,8 @@ export const Default = {
     timezone: '',
     disabled: false,
     rate: '',
+    onPageChange: action('onPageChange'),
+    onChangeItemsPerPage: action('onChangeItemsPerPage'),
+    onChange: action('onChange'),
   },
 };

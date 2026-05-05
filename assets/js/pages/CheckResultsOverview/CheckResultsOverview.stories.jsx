@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import CheckResultsOverview from './CheckResultsOverview';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,
@@ -46,7 +47,7 @@ export const Default = {
     catalogDataEmpty: false,
     error: '',
     loading: false,
-    onCheckClick: () => {},
+    onCheckClick: action('onCheckClick'),
   },
 };
 

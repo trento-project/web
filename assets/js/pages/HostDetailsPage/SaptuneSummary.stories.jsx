@@ -1,4 +1,5 @@
 import Component from './SaptuneSummary';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SaptuneSummary',
@@ -33,5 +34,6 @@ export const Default = {
     saptuneVersion: '',
     saptuneConfiguredVersion: '',
     saptuneTuning: '',
+    onViewDetails: action('onViewDetails'),
   },
 };

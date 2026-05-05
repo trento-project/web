@@ -1,5 +1,5 @@
-import { action } from 'storybook/actions';
 import ActivityLogsConfig from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/ActivityLogsConfig',
@@ -16,7 +16,7 @@ export default {
     },
     userAbilities: {
       description: 'Users abilities that allow editing activity logs settings',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
   },
 };
@@ -24,7 +24,7 @@ export default {
 export const Default = {
   args: {
     retentionTime: { value: 1, unit: 'month' },
-    onEditClick: action('edit clicked'),
+    onEditClick: action('onEditClick'),
     userAbilities: [{ name: 'all', resource: 'all' }],
   },
 };

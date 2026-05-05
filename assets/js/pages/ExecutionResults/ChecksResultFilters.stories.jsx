@@ -2,6 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import Component from './ChecksResultFilters';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksResultFilters',
   component: Component,
@@ -31,7 +32,7 @@ export default {
 export const Default = {
   args: {
     savedFilters: [],
-    onChange: () => {},
-    onSave: () => {},
+    onChange: action('onChange'),
+    onSave: action('onSave'),
   },
 };

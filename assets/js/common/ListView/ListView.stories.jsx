@@ -34,15 +34,15 @@ export default {
   },
 };
 
-export function Default(args) {
-  return (
-    <ListView
-      data={[
-        { title: 'Hostname', content: 'vmhdbdev01' },
-        { title: 'Cluster', content: 'hana_cluster_1' },
-        { title: 'SID', content: 'HDD' },
-      ]}
-      {...args}
-    />
-  );
-}
+export const Default = {
+  args: {
+    data: [
+      { title: 'Hostname', content: 'vmhdbdev01' },
+      { title: 'Cluster', content: 'hana_cluster_1' },
+      { title: 'SID', content: 'HDD' },
+    ],
+    orientation: 'horizontal',
+    className: '',
+    titleClassName: '',
+  },
+};

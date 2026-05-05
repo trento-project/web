@@ -1,4 +1,5 @@
 import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SuseManagerClearSettingsModal',
@@ -22,5 +23,7 @@ export default {
 export const Default = {
   args: {
     open: false,
+    onClearSettings: action('onClearSettings'),
+    onCancel: action('onCancel'),
   },
 };

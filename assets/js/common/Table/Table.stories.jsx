@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import Table from '.';
 
@@ -66,7 +67,7 @@ export const Default = {
     config: { columns: [] },
     sortBy: () => 0,
     searchParams: new URLSearchParams(),
-    setSearchParams: () => {},
+    setSearchParams: action('setSearchParams'),
     emptyStateText: 'No data available',
     header: null,
     rowKey: (row, index) => index,
@@ -243,38 +244,45 @@ export const Sorted = {
   },
 };
 
-export function Populated() {
-  return <Table config={config} data={data} />;
-}
+export const Populated = {
+  args: {
+    config,
+    data,
+  },
+};
 
-export function Paginated() {
-  return (
-    <Table
-      config={{ ...config, pagination: true }}
-      data={[].concat(data, data, data, data)}
-    />
-  );
-}
+export const Paginated = {
+  args: {
+    config: { ...config, pagination: true },
+    data: [].concat(data, data, data, data),
+  },
+};
 
-export function WithFilters(args) {
-  return <Table config={filteredConfig} data={data} {...args} />;
-}
+export const WithFilters = {
+  args: {
+    config: filteredConfig,
+    data,
+  },
+};
 
-export function WithHeader(args) {
-  return (
-    <Table
-      config={config}
-      data={data}
-      header={<h3 className="bg-white px-4 py-4">Header</h3>}
-      {...args}
-    />
-  );
-}
+export const WithHeader = {
+  args: {
+    config,
+    data,
+    header: <h3 className="bg-white px-4 py-4">Header</h3>,
+  },
+};
 
-export function WithCollapsibleRow(args) {
-  return <Table config={collapsibleConfig} data={data} {...args} />;
-}
+export const WithCollapsibleRow = {
+  args: {
+    config: collapsibleConfig,
+    data,
+  },
+};
 
-export function Empty() {
-  return <Table config={config} data={[]} />;
-}
+export const Empty = {
+  args: {
+    config,
+    data: [],
+  },
+};

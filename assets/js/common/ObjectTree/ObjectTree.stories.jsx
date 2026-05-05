@@ -26,11 +26,9 @@ export const Default = {
   },
 };
 
-export function Normal(args) {
-  return (
-    <ObjectTree
-      data={objectTreeFactory.build({ empty_array: [], empty_object: {} })}
-      {...args}
-    />
-  );
-}
+export const Normal = {
+  args: {
+    data: objectTreeFactory.build({ empty_array: [], empty_object: {} }),
+    className: '',
+  },
+};

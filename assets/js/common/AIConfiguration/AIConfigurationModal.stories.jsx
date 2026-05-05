@@ -1,6 +1,6 @@
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import AIConfigurationModal from './AIConfigurationModal';
 
@@ -51,9 +51,9 @@ export const Default = {
     aiConfiguration: {},
     saving: false,
     errors: [],
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };
 
@@ -65,9 +65,9 @@ export const WithUnmappedProvider = {
       ...config.aiProviders,
       custom_provider: ['custom_model'],
     },
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };
 
@@ -82,9 +82,9 @@ export const WithModelForManyProviders = {
       custom_provider: [repeatedModel],
       another_custom_provider: [repeatedModel],
     },
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };
 
@@ -92,9 +92,9 @@ export const WithPreviouslySetConfiguration = {
   args: {
     open: true,
     aiConfiguration: aiConfigurationFactory.build(),
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };
 
@@ -103,9 +103,9 @@ export const Saving = {
     open: true,
     aiConfiguration: aiConfigurationFactory.build(),
     saving: true,
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };
 
@@ -120,8 +120,8 @@ export const WithErrors = {
         title: 'Invalid value',
       },
     ],
-    onCancel: () => {},
-    onSave: () => {},
-    onUpdate: () => {},
+    onCancel: action('onCancel'),
+    onSave: action('onSave'),
+    onUpdate: action('onUpdate'),
   },
 };

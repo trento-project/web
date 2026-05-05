@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
@@ -97,5 +98,13 @@ export default {
 };
 
 export const Default = {
-  args: {},
+  args: {
+    databases: [],
+    databaseInstances: [],
+    loading: false,
+    userAbilities: [],
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
 };

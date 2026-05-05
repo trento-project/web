@@ -1,4 +1,5 @@
 import Component from './AbilitiesMultiSelect';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/AbilitiesMultiSelect',
@@ -33,5 +34,6 @@ export const Default = {
     userAbilities: [],
     placeholder: 'Select abilities...',
     operationsEnabled: true,
+    setAbilities: action('setAbilities'),
   },
 };

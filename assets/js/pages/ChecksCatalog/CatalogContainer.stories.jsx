@@ -1,5 +1,6 @@
 import Component from './CatalogContainer';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/CatalogContainer',
   component: Component,
@@ -37,8 +38,8 @@ export default {
 
 export const Default = {
   args: {
-    onClear: () => {},
-    onRefresh: () => {},
+    onClear: action('onClear'),
+    onRefresh: action('onRefresh'),
     withResetFilters: true,
     empty: false,
     catalogError: '',
@@ -49,8 +50,8 @@ export const Default = {
 
 export const Loading = {
   args: {
-    onClear: () => {},
-    onRefresh: () => {},
+    onClear: action('onClear'),
+    onRefresh: action('onRefresh'),
     withResetFilters: true,
     empty: false,
     catalogError: '',
@@ -61,8 +62,8 @@ export const Loading = {
 
 export const Empty = {
   args: {
-    onClear: () => {},
-    onRefresh: () => {},
+    onClear: action('onClear'),
+    onRefresh: action('onRefresh'),
     withResetFilters: true,
     empty: true,
     catalogError: '',
@@ -73,8 +74,8 @@ export const Empty = {
 
 export const WithError = {
   args: {
-    onClear: () => {},
-    onRefresh: () => {},
+    onClear: action('onClear'),
+    onRefresh: action('onRefresh'),
     withResetFilters: true,
     empty: false,
     catalogError: 'Failed to load catalog',

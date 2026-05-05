@@ -1,8 +1,8 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { action } from 'storybook/actions';
 import ProfileMenu from '.';
 
+import { action } from 'storybook/actions';
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-xs mx-auto px-2 sm:px-4 lg:px-6 flex justify-center h-48">
@@ -41,7 +41,7 @@ export const Default = {
   args: {
     username: 'John Doe',
     email: 'john@example.com',
-    logout: () => {},
+    logout: action('logout'),
   },
   render: (args) => (
     <ContainerWrapper>

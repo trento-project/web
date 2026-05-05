@@ -1,6 +1,6 @@
-import { action } from 'storybook/actions';
 import CheckCustomizationModal from '.';
 
+import { action } from 'storybook/actions';
 const singleValue = [
   {
     name: 'ValueName1',
@@ -138,9 +138,9 @@ export const Default = {
     provider: defaultProvider,
     customized: false,
     customizationStatus: '',
-    onClose: () => {},
-    onSave: () => {},
-    onReset: () => {},
+    onClose: action('onClose'),
+    onSave: action('onSave'),
+    onReset: action('onReset'),
   },
 };
 
@@ -153,9 +153,9 @@ export const SingleValue = {
     provider: defaultProvider,
     customized: false,
     customizationStatus: '',
-    onClose: () => {},
-    onSave: () => {},
-    onReset: () => {},
+    onClose: action('onClose'),
+    onSave: action('onSave'),
+    onReset: action('onReset'),
   },
 };
 

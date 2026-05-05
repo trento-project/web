@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router';
 
@@ -64,23 +65,19 @@ export default {
   component: DatabasesOverview,
   argTypes: {
     databases: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Databases',
     },
     databaseInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Database instances',
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'User profile abilities',
     },
     onTagAdd: {
@@ -116,6 +113,9 @@ export const Databases = {
     databases,
     databaseInstances: enrichedInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 
@@ -125,6 +125,9 @@ export const WithSystemReplication = {
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 
@@ -134,6 +137,9 @@ export const WithAbsentInstances = {
     databases: [databaseWithAbsentInstances],
     databaseInstances: absentInstance,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 

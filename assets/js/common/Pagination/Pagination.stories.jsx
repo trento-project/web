@@ -1,7 +1,6 @@
 import React from 'react';
-import { action } from 'storybook/actions';
-
 import Pagination, { PageStats } from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Pagination',
@@ -14,7 +13,7 @@ export default {
       defaultValue: 10,
     },
     itemsPerPageOptions: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       defaultValue: [10],
     },
     onSelect: {

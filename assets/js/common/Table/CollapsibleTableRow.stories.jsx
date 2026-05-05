@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import Component from './CollapsibleTableRow';
 
 export default {
@@ -52,15 +53,9 @@ export const Default = {
       status: 'Active',
       value: '100',
     },
-    collapsibleDetailRenderer: () => <div className="p-4">Detail content</div>,
+    collapsibleDetailRenderer: action('collapsibleDetailRenderer'),
     wrapCollapsedRowInCell: true,
-    renderCells: () => (
-      <>
-        <td>Sample Item</td>
-        <td>Active</td>
-        <td>100</td>
-      </>
-    ),
+    renderCells: action('renderCells'),
     colSpan: '3',
     className: '',
     collapsedRowClassName: 'bg-gray-50',

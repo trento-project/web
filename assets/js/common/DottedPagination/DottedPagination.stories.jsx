@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DottedPagination from '.';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/DottedPagination',
   component: DottedPagination,
@@ -26,7 +27,7 @@ export const Default = {
   args: {
     pages: PAGES,
     initialSelectedIndex: 0,
-    onChange: () => {},
+    onChange: action('onChange'),
   },
 };
 
@@ -46,7 +47,7 @@ export const Multiple = {
   args: {
     pages: PAGES,
     initialSelectedIndex: 0,
-    onChange: () => {},
+    onChange: action('onChange'),
   },
   render: (args) => <DottedPaginationWithHooks {...args} />,
 };

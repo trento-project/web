@@ -1,4 +1,5 @@
 import Component from './Arrow';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Arrow',
@@ -16,5 +17,7 @@ export default {
 };
 
 export const Default = {
-  args: {},
+  args: {
+    onClick: action('onClick'),
+  },
 };

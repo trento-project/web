@@ -1,5 +1,6 @@
 import Component from './OperationModal';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/OperationModal',
   component: Component,
@@ -57,8 +58,10 @@ export const Default = {
     requestDisabled: false,
     isOpen: true,
     children: 'Operation details will be displayed here',
-    setDontShowAgainDisclaimerChecked: () => {},
-    onRequest: () => {},
-    onCancel: () => {},
+    setDontShowAgainDisclaimerChecked: action(
+      'setDontShowAgainDisclaimerChecked'
+    ),
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };

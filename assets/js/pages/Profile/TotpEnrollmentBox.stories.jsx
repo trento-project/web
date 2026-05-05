@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 import TotpEnrollmentBox from './TotpEnrollmentBox';
 
 export default {
@@ -31,6 +32,7 @@ export const Default = {
     secret: faker.string.uuid(),
     qrData:
       'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
+    verifyTotp: action('verifyTotp'),
   },
 };
 

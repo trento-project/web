@@ -1,4 +1,5 @@
 import Tags from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Tags',
@@ -12,12 +13,12 @@ export default {
   argTypes: {
     onChange: { action: 'tag changed' },
     tagAdditionPermittedFor: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Abilities that allow tag creation',
       action: 'callback',
     },
     tagDeletionPermittedFor: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Abilities that allow tag deletion',
       action: 'callback',
     },
@@ -80,6 +81,10 @@ export const Default = {
     userAbilities: [{ name: 'all', resource: 'all' }],
     tagAdditionPermittedFor: ['all:all'],
     tagDeletionPermittedFor: ['all:all'],
+    onChange: action('onChange'),
+    onAdd: action('onAdd'),
+    onRemove: action('onRemove'),
+    onClick: action('onClick'),
   },
 };
 

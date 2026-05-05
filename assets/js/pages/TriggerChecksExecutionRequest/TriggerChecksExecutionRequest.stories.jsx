@@ -1,5 +1,6 @@
 import Component from './TriggerChecksExecutionRequest';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/TriggerChecksExecutionRequest',
   component: Component,
@@ -45,7 +46,7 @@ export const Default = {
       { id: 'check_001', name: 'Check 1' },
       { id: 'check_002', name: 'Check 2' },
     ],
-    onStartExecution: () => {},
+    onStartExecution: action('onStartExecution'),
     cssOverride: '',
   },
 };

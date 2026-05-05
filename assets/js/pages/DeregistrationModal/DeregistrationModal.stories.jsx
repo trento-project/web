@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import Button from '@common/Button';
@@ -13,10 +14,6 @@ export default {
       control: { type: 'radio' },
       options: ['host', APPLICATION_TYPE, DATABASE_TYPE],
       description: 'The content type of the deregistration modal',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'host' },
-      },
     },
     hostname: {
       type: 'string',
@@ -90,8 +87,8 @@ export const Default = {
   args: {
     contentType: 'host',
     isOpen: false,
-    onCleanUp: () => {},
-    onCancel: () => {},
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
     hostname: '',
     sid: '',
     instanceNumber: '',
@@ -103,8 +100,8 @@ export const Host = {
   args: {
     hostname: 'example host',
     isOpen: true,
-    onCleanUp: () => {},
-    onCancel: () => {},
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };
@@ -114,6 +111,8 @@ export const ApplicationInstance = {
     contentType: APPLICATION_TYPE,
     sid: 'PRD',
     instanceNumber: '00',
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };
@@ -123,6 +122,8 @@ export const DatabaseInstance = {
     contentType: DATABASE_TYPE,
     sid: 'PRD',
     instanceNumber: '00',
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };

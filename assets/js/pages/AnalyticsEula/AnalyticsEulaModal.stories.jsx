@@ -35,6 +35,10 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <AnalyticsEulaModal {...args} />;
-}
+export const Default = {
+  args: {
+    isOpen: true,
+    onEnable: action('enable clicked'),
+    onCancel: action('cancel clicked'),
+  },
+};

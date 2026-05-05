@@ -1,4 +1,5 @@
 import { Password } from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Input/Password',
@@ -7,10 +8,6 @@ export default {
     placeholder: {
       description: 'The placeholder text to render',
       control: { type: 'text' },
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'Password' },
-      },
     },
     error: {
       description: 'Whether the field has an error',
@@ -19,9 +16,6 @@ export default {
     disabled: {
       description: 'Whether the input should be disabled or not',
       control: { type: 'boolean' },
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
     className: {
       type: 'string',
@@ -60,7 +54,7 @@ export default {
 
 export const Default = {
   args: {
-    placeholder: '',
+    placeholder: 'Password',
     error: '',
     disabled: false,
     className: '',
@@ -72,6 +66,7 @@ export const Default = {
     prefix: '',
     suffix: '',
     allowClear: '',
+    onChange: action('onChange'),
   },
 };
 export const WithValue = {

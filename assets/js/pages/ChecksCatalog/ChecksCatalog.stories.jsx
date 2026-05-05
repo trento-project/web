@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 
 import { catalogCheckFactory } from '@lib/test-utils/factories';
@@ -49,17 +50,10 @@ export default {
     catalogError: {
       control: { type: 'text' },
       description: 'Error message getting catalog data',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Catalog data is being loaded',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     updateCatalog: {
       action: 'Update catalog',
@@ -83,6 +77,10 @@ export default {
 export const Default = {
   args: {
     completeCatalog: catalogData,
+    filteredCatalog: catalogData,
+    loading: false,
+    catalogError: '',
+    updateCatalog: action('updateCatalog'),
   },
 };
 

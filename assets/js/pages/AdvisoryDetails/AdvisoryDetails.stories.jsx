@@ -9,24 +9,15 @@ export default {
     advisoryName: {
       control: { type: 'text' },
       description: 'Advisory name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     errata: {
       control: { type: 'object' },
       description:
         'Errata object containing details, fixes, CVEs, and affected items',
-      table: {
-        type: { summary: 'object' },
-      },
     },
     affectsPackageMaintenanceStack: {
       control: { type: 'boolean' },
       description: 'Whether the advisory affects the package maintenance stack',
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
     timezone: {
       type: 'string',

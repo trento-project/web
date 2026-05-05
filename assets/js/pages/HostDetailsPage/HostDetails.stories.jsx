@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
@@ -40,9 +41,6 @@ export default {
     agentVersion: {
       control: { type: 'text' },
       description: 'The version of the installed agent',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     cluster: {
       control: { type: 'object' },
@@ -51,25 +49,14 @@ export default {
     arch: {
       control: { type: 'text' },
       description: 'The architecture of the host',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     deregisterable: {
       control: { type: 'boolean' },
       description: 'The host is in deregisterable state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     deregistering: {
       control: { type: 'boolean' },
       description: 'The host is in deregistering state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     exportersStatus: {
       control: { type: 'object' },
@@ -79,24 +66,14 @@ export default {
       control: { type: 'radio' },
       options: ['passing', 'critical'],
       description: 'Host heartbeat state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'passing' },
-      },
     },
     hostID: {
       control: { type: 'text' },
       description: 'The host identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     hostname: {
       control: { type: 'text' },
       description: 'The host name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     ipAddresses: {
       control: { type: 'object' },
@@ -109,9 +86,6 @@ export default {
     provider: {
       control: { type: 'text' },
       description: 'The discovered CSP where the host is running',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     providerData: {
       control: { type: 'object' },
@@ -124,17 +98,13 @@ export default {
     savingChecks: {
       control: { type: 'boolean' },
       description: 'The checks are being saved',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     selectedChecks: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'The selected checks',
     },
     slesSubscriptions: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Registered SLES subscriptions on the host',
     },
     catalog: {
@@ -146,7 +116,7 @@ export default {
       description: 'Last execution data',
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     operationsEnabled: {
@@ -253,6 +223,8 @@ export const Default = {
     agentVersion: host.agent_version,
     arch: host.arch,
     chartsEnabled: false,
+    cleanUpHost: action('cleanUpHost'),
+    cleanForbiddenOperation: action('cleanForbiddenOperation'),
     cluster,
     deregisterable: false,
     deregistering: false,
@@ -261,9 +233,12 @@ export const Default = {
     hostID: host.id,
     hostname: host.hostname,
     ipAddresses: host.ip_addresses,
+    navigate: action('navigate'),
     netmasks: host.netmasks,
     provider: host.provider,
     providerData: host.provider_data,
+    requestHostChecksExecution: action('requestHostChecksExecution'),
+    requestOperation: action('requestOperation'),
     sapInstances,
     savingChecks: false,
     saptuneStatus: {

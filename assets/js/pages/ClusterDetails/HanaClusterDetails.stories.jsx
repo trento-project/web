@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import {
   clusterFactory,
@@ -200,7 +201,7 @@ export default {
     },
     clusterSids: {
       description: 'List of cluster SIDs',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
   },
 };
@@ -222,8 +223,9 @@ export const Hana = {
     lastExecution,
     catalog,
     userAbilities,
-    onStartExecution: () => {},
-    navigate: () => {},
+    onStartExecution: action('onStartExecution'),
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
   },
 };
 

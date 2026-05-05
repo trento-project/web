@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import React, { useEffect, useRef, useState } from 'react';
+import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import {
   addMinutes,
@@ -32,9 +33,6 @@ export default {
     title: {
       description: 'Chart title',
       control: { type: 'text' },
-      table: {
-        type: { summary: 'string' },
-      },
     },
     start: {
       description: 'Start of the time interval, as Date object',
@@ -47,7 +45,7 @@ export default {
     datasets: {
       description:
         'Array of datasets, a series of objects containing a value and a Date',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     chartWrapperClassNames: {
       description: 'Classnames for the parent of chart canvas',
@@ -139,8 +137,8 @@ export const Default = {
     title: 'CPU',
     start: subHours(now, 5),
     end: now,
-    onIntervalChange: (start, end) =>
-      console.log(`Interval changed, start ${start} - end ${end}`),
+    onIntervalChange: action('onIntervalChange'),
+    yAxisLabelFormatter: action('yAxisLabelFormatter'),
     datasets: buildDatasets(defaultTimeframes),
   },
 };

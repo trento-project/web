@@ -1,5 +1,5 @@
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 
 import ResetCheckCustomizationModal from '.';
 
@@ -29,7 +29,7 @@ export default {
 export const Default = {
   args: {
     checkId: faker.lorem.word(),
-    onReset: action('reset clicked'),
-    onCancel: action('cancel clicked'),
+    onReset: action('onReset'),
+    onCancel: action('onCancel'),
   },
 };

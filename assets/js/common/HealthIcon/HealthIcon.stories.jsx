@@ -44,17 +44,17 @@ export const Critical = {
   args: { health: 'critical', isLink: false },
 };
 
-export function Pending() {
-  return <HealthIcon health="pending" />;
-}
+export const Pending = {
+  args: { health: 'pending', isLink: false },
+};
 
 export const Absent = {
   args: { health: 'absent', isLink: false },
 };
 
-export function Default() {
-  return <HealthIcon health="unknown" />;
-}
+export const Default = {
+  args: { health: 'unknown', isLink: false },
+};
 
 export const ExtraLarge = {
   args: { health: 'passing', size: 'xl', isLink: false },

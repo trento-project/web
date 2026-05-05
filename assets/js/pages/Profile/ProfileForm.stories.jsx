@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { userFactory } from '@lib/test-utils/factories/users';
 
@@ -147,6 +148,13 @@ export const Default = {
     analyticsEnabled,
     timezone,
     timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+    toggleTotpBox: action('toggleTotpBox'),
+    togglePasswordModal: action('togglePasswordModal'),
+    onResetTotp: action('onResetTotp'),
+    onVerifyTotp: action('onVerifyTotp'),
+    onEnableTotp: action('onEnableTotp'),
   },
 };
 

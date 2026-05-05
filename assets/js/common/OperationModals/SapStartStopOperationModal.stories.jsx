@@ -1,4 +1,5 @@
 import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
+import { action } from 'storybook/actions';
 
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 
@@ -50,8 +51,8 @@ export const Default = {
     type: APPLICATION_TYPE,
     sid,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -61,8 +62,8 @@ export const SapSystem = {
     type: APPLICATION_TYPE,
     sid,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -72,7 +73,7 @@ export const Database = {
     type: DATABASE_TYPE,
     sid,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };

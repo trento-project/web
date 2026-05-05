@@ -1,4 +1,5 @@
 import ActivityLogsSettingsModal from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/ActivityLogsSettingsModal',
@@ -46,6 +47,9 @@ export const Default = {
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+    onClearErrors: action('onClearErrors'),
   },
 };
 

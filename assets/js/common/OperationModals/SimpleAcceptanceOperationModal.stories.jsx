@@ -8,6 +8,7 @@ import {
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_RESOURCE_REFRESH,
 } from '@lib/operations';
+import { action } from 'storybook/actions';
 
 import {
   hostFactory,
@@ -64,8 +65,8 @@ export const Default = {
     operation: SAP_INSTANCE_START,
     descriptionResolverArgs: { instanceNumber, sid },
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 

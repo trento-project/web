@@ -47,7 +47,7 @@ export default {
   argTypes: {
     sapSystemsHealth: {
       description: 'Health summary of SAP systems',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     loading: {
       description: 'Loading state of the health summary',

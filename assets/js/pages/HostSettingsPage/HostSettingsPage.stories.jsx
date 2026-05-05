@@ -4,14 +4,6 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import Component from './HostSettingsPage';
 
-const hostSlice = createSlice({
-  name: 'host',
-  initialState: {
-    hosts: [],
-  },
-  reducers: {},
-});
-
 const checksSelectionSlice = createSlice({
   name: 'checksSelection',
   initialState: {

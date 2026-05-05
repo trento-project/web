@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import { hostFactory } from '@lib/test-utils/factories/hosts';
@@ -12,23 +13,14 @@ export default {
     hostName: {
       control: { type: 'text' },
       description: 'Host name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     upgradablePackages: {
       control: { type: 'object' },
       description: 'Array of upgradable package objects',
-      table: {
-        type: { summary: 'array' },
-      },
     },
     patchesLoading: {
       control: { type: 'boolean' },
       description: 'Loading state for patches',
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
     onPatchClick: {
       action: 'onPatchClick',
@@ -46,6 +38,8 @@ export const Default = {
   args: {
     hostName: hostFactory.build().hostname,
     upgradablePackages: upgradablePackageFactory.buildList(15),
+    onPatchClick: action('onPatchClick'),
+    onLoad: action('onLoad'),
   },
 };
 
@@ -54,5 +48,7 @@ export const Empty = {
     hostName: hostFactory.build().hostname,
     upgradablePackages: [],
     patchesLoading: false,
+    onPatchClick: action('onPatchClick'),
+    onLoad: action('onLoad'),
   },
 };

@@ -2,6 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router';
 import Component from './ChecksSelectionHints';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksSelectionHints',
   component: Component,
@@ -42,6 +43,6 @@ export const Default = {
     targetType: 'cluster',
     selectedChecks: [],
     hosts: [],
-    onStartExecution: () => {},
+    onStartExecution: action('onStartExecution'),
   },
 };

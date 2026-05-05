@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
 import {
@@ -40,11 +41,11 @@ export default {
       description: 'The represented HANA database',
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     cleanUpPermittedFor: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Abilities that allow instance clean up',
     },
     onInstanceCleanUp: {
@@ -73,6 +74,7 @@ export const Database = {
     system: database,
     userAbilities: [{ name: 'all', resource: 'all' }],
     cleanUpPermittedFor: ['cleanup:database_instance'],
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 

@@ -1,4 +1,5 @@
 import { csvDataupgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
+import { action } from 'storybook/actions';
 import UpgradablePackagesList from './UpgradablePackagesList';
 
 export default {
@@ -10,7 +11,7 @@ export default {
       description: 'Callback when patch is clicked',
     },
     upgradablePackages: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'List of upgradable packages',
     },
     patchesLoading: {
@@ -37,6 +38,8 @@ export const Default = {
     hostname: 'Example Host',
     patchesLoading: false,
     upgradablePackages: csvDataupgradablePackageFactory.buildList(2),
+    onPatchClick: action('onPatchClick'),
+    toggleSortDirection: action('toggleSortDirection'),
   },
 };
 

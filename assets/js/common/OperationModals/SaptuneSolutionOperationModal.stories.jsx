@@ -1,4 +1,5 @@
 import { saptuneOperation } from '@lib/test-utils/factories/operations';
+import { action } from 'storybook/actions';
 
 import SaptuneSolutionOperationModal from './SaptuneSolutionOperationModal';
 
@@ -43,8 +44,8 @@ export const Default = {
     isHanaRunning: false,
     isAppRunning: false,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -54,8 +55,8 @@ export const HanaRunning = {
     isHanaRunning: true,
     isAppRunning: false,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -65,8 +66,8 @@ export const AppRunning = {
     isHanaRunning: false,
     isAppRunning: true,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -76,8 +77,8 @@ export const HanaAndAppRunning = {
     isHanaRunning: true,
     isAppRunning: true,
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
@@ -87,7 +88,7 @@ export const WithCurrentlyAppliedSolution = {
     isHanaRunning: true,
     currentlyApplied: 'HANA',
     isOpen: true,
-    onRequest: () => {},
-    onCancel: () => {},
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };

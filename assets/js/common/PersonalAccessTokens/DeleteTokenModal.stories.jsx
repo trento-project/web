@@ -1,5 +1,6 @@
 import DeleteTokenModal from './DeleteTokenModal';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/PersonalAccessTokens/DeleteTokenModal',
   component: DeleteTokenModal,
@@ -27,7 +28,7 @@ export const Default = {
   args: {
     name: 'Trento PAT',
     isOpen: true,
-    onDelete: () => {},
-    onClose: () => {},
+    onDelete: action('onDelete'),
+    onClose: action('onClose'),
   },
 };

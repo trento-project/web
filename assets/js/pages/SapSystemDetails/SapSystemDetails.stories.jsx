@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
 
@@ -47,11 +48,11 @@ export default {
         'The object containing the details that are going to be represented in this view',
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     cleanUpPermittedFor: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Abilities that allow instance clean up',
     },
     getInstanceOperations: {
@@ -128,6 +129,11 @@ export const SapSystem = {
     cleanUpPermittedFor: ['cleanup:application_instance'],
     getInstanceOperations: getSapInstanceOperations,
     operationsEnabled: true,
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+    getSystemOperations: action('getSystemOperations'),
+    getSiteOperations: action('getSiteOperations'),
+    onRequestOperation: action('onRequestOperation'),
+    onCleanForbiddenOperation: action('onCleanForbiddenOperation'),
   },
 };
 

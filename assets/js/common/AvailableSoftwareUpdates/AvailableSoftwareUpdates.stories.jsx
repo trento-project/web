@@ -1,4 +1,5 @@
 import AvailableSoftwareUpdates from './AvailableSoftwareUpdates';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/AvailableSoftwareUpdates',
@@ -61,6 +62,9 @@ export const Default = {
     settingsConfigured: true,
     relevantPatches: 412,
     upgradablePackages: 234,
+    onBackToSettings: action('onBackToSettings'),
+    onNavigateToPatches: action('onNavigateToPatches'),
+    onNavigateToPackages: action('onNavigateToPackages'),
   },
 };
 

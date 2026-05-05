@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import Switch from '.';
 
@@ -22,7 +23,7 @@ export default {
 };
 
 export const Default = {
-  args: { selected: '', disabled: false },
+  args: { selected: '', disabled: false, onChange: action('onChange') },
   render: (args) => {
     const [selected, setSelected] = useState(args.selected);
     return <Switch {...args} selected={selected} onChange={setSelected} />;

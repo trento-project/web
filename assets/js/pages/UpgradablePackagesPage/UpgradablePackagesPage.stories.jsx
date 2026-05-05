@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router';
+import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
@@ -87,5 +87,7 @@ export const Default = {
     hostName: '',
     upgradablePackages: '',
     patchesLoading: '',
+    onPatchClick: action('onPatchClick'),
+    onLoad: action('onLoad'),
   },
 };

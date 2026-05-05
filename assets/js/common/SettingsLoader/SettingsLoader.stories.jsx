@@ -40,6 +40,6 @@ export const Default = {
   args: {
     status: SettingsLoaderStatus.READY,
     sectionName: 'Trento',
-    onRetry: action('retry!'),
+    onRetry: action('onRetry'),
   },
 };

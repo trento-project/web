@@ -1,4 +1,5 @@
 import Component from './LoginForm';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/LoginForm',
@@ -60,5 +61,9 @@ export const Default = {
     totpCodeRequested: '',
     totpCode: '',
     username: '',
+    handleLoginSubmit: action('handleLoginSubmit'),
+    setPassword: action('setPassword'),
+    setTotpCode: action('setTotpCode'),
+    setUsername: action('setUsername'),
   },
 };

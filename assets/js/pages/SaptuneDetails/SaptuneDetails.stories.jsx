@@ -51,23 +51,14 @@ export default {
     hostname: {
       control: { type: 'text' },
       description: 'The hostname',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     hostID: {
       control: { type: 'text' },
       description: 'The host identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     packageVersion: {
       control: { type: 'text' },
       description: 'The saptune installed version',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     services: {
       control: { type: 'object' },

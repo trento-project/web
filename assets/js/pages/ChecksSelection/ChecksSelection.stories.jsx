@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
 
 import ChecksSelection from './ChecksSelection';
@@ -38,34 +39,21 @@ export default {
     catalog: {
       control: { type: 'object' },
       description: 'Catalog data',
-      table: {
-        type: { summary: 'object' },
-      },
     },
     selectedChecks: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Currently selected checks',
-      table: {
-        type: { summary: 'array' },
-      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     catalogError: {
-      control: { type: 'string' },
+      control: { type: 'text' },
       description: 'Error occurred while loading the catalog',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     onUpdateCatalog: {
@@ -100,6 +88,11 @@ export const Default = {
     catalog,
     userAbilities: [{ name: 'all', resource: 'check_customization' }],
     provider: 'aws',
+    loading: false,
+    onUpdateCatalog: action('onUpdateCatalog'),
+    onChange: action('onChange'),
+    onSaveCheckCustomization: action('onSaveCheckCustomization'),
+    onResetCheckCustomization: action('onResetCheckCustomization'),
   },
 };
 

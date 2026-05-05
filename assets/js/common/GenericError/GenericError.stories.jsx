@@ -14,10 +14,14 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <GenericError {...args} />;
-}
+export const Default = {
+  args: {
+    message: undefined,
+  },
+};
 
-export function WithMessage(args) {
-  return <GenericError {...args} message="My super cool error message" />;
-}
+export const WithMessage = {
+  args: {
+    message: 'My super cool error message',
+  },
+};

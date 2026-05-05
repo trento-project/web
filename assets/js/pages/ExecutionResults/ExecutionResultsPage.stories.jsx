@@ -4,6 +4,7 @@ import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
 import Component from './ExecutionResultsPage';
 
+import { action } from 'storybook/actions';
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
@@ -157,9 +158,9 @@ export const Default = {
   args: {
     targetID: '123',
     targetType: 'cluster',
-    onCatalogRefresh: () => {},
-    onLastExecutionUpdate: () => {},
-    onStartExecution: () => {},
-    onSaveFilters: () => {},
+    onCatalogRefresh: action('onCatalogRefresh'),
+    onLastExecutionUpdate: action('onLastExecutionUpdate'),
+    onStartExecution: action('onStartExecution'),
+    onSaveFilters: action('onSaveFilters'),
   },
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router';
 
@@ -88,27 +89,23 @@ export default {
   component: SapSystemsOverview,
   argTypes: {
     sapSystems: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'SAP systems',
     },
     applicationInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Application instances',
     },
     databaseInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Database instances',
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'User profile abilities',
     },
     onTagAdd: {
@@ -145,6 +142,9 @@ export const SapSystems = {
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 

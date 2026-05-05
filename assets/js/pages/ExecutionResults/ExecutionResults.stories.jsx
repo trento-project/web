@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 
@@ -437,6 +438,8 @@ export const Running = {
     onCatalogRefresh: fetchCatalog,
     catalog: catalogData.data.items,
     executionRunning: true,
+    onStartExecution: action('onStartExecution'),
+    onSaveFilters: action('onSaveFilters'),
   },
 };
 
@@ -456,5 +459,7 @@ export const Completed = {
     catalog: catalogData.data.items,
     executionRunning: false,
     executionData: completedExecution.data,
+    onStartExecution: action('onStartExecution'),
+    onSaveFilters: action('onSaveFilters'),
   },
 };

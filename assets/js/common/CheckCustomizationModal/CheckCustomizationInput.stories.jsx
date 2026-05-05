@@ -1,4 +1,5 @@
 import Component from './CheckCustomizationInput';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/CheckCustomizationInput',
@@ -38,5 +39,6 @@ export const Default = {
     currentValue: '',
     inputIsLocked: '',
     inputType: '',
+    handleInput: action('handleInput'),
   },
 };

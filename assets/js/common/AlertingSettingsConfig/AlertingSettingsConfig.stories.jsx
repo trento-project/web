@@ -1,4 +1,5 @@
 import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
+import { action } from 'storybook/actions';
 
 import AlertingSettingsConfig from './AlertingSettingsConfig';
 
@@ -12,7 +13,7 @@ export default {
     },
     userAbilities: {
       description: 'Abilities of the current user',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',
@@ -36,7 +37,7 @@ export const WithFilledInValues = {
   args: {
     settings: alertingSettingsFactory.build(),
     userAbilities: [],
-    onEditClick: () => {},
+    onEditClick: action('onEditClick'),
   },
 };
 
@@ -44,7 +45,7 @@ export const WithEditButtonEnabledWhenEnoughPermissions = {
   args: {
     settings: {},
     userAbilities: [{ name: 'all', resource: 'all' }],
-    onEditClick: () => {},
+    onEditClick: action('onEditClick'),
   },
 };
 
@@ -54,6 +55,6 @@ export const WithEditButtonDisabledWhenEnforcedFromEnv = {
       enforcedFromEnv: true,
     },
     userAbilities: [{ name: 'all', resource: 'all' }],
-    onEditClick: () => {},
+    onEditClick: action('onEditClick'),
   },
 };

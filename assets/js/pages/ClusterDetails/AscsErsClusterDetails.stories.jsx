@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 
 import { faker } from '@faker-js/faker';
@@ -159,8 +160,8 @@ export const Single = {
     catalog,
     userAbilities,
     timezone: 'Etc/UTC',
-    navigate: (path) => () => alert(`Navigate to ${path}`),
-    getClusterHostOperations: () => [],
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
   },
 };
 

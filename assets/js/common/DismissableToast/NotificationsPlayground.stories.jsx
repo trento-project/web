@@ -137,6 +137,6 @@ export default {
   },
 };
 
-export function Default() {
-  return <NotificationsPlayground />;
-}
+export const Default = {
+  render: () => <NotificationsPlayground />,
+};

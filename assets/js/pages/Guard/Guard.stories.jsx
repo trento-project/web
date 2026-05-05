@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
@@ -47,6 +48,6 @@ export default {
 export const Default = {
   args: {
     redirectPath: '/login',
-    getUser: async () => ({ id: '1', username: 'test' }),
+    getUser: action('getUser'),
   },
 };

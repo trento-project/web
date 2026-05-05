@@ -1,5 +1,6 @@
 import Component from './ChecksSelectionGroup';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksSelectionGroup',
   component: Component,
@@ -27,7 +28,7 @@ export const Default = {
   args: {
     group: 'Configuration Checks',
     selected: {},
-    onChange: () => {},
+    onChange: action('onChange'),
     children: 'Check items go here',
   },
 };
@@ -36,7 +37,7 @@ export const WithSelected = {
   args: {
     group: 'Configuration Checks',
     selected: { check_001: true, check_002: true },
-    onChange: () => {},
+    onChange: action('onChange'),
     children: 'Check items go here',
   },
 };

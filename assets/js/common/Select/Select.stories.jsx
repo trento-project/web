@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import Select, { createOptionRenderer } from '.';
 
 import { providers } from '@lib/model';
@@ -11,7 +12,7 @@ export default {
     options: {
       type: 'array',
       description: 'The list of options to be rendered in the dropdown',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     value: {
       description:
@@ -22,7 +23,7 @@ export default {
       type: 'array',
       description:
         'Initially selected values. Used only to prepopulate the select on mount',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     isDisabled: {
       type: 'boolean',
@@ -46,16 +47,10 @@ export default {
     },
     renderOption: {
       description: 'A function to render each option in the dropdown',
-      table: {
-        type: { summary: '(item) => item' },
-      },
     },
     onChange: {
       description: 'A function to be called when selected options are changed',
       action: 'onChange',
-      table: {
-        type: { summary: '() => {}' },
-      },
     },
     component: {
       type: 'object',
@@ -110,6 +105,9 @@ export const Default = {
   args: {
     options,
     className: 'w-96',
+    onChange: action('onChange'),
+    renderControlOption: action('renderControlOption'),
+    filterOption: action('filterOption'),
   },
 };
 

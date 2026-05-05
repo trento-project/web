@@ -1,4 +1,5 @@
 import Component from './InputNumber';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/InputNumber',
@@ -44,5 +45,10 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', placeholder: 'Default placeholder', disabled: false },
+  args: {
+    className: '',
+    placeholder: 'Default placeholder',
+    disabled: false,
+    onChange: action('onChange'),
+  },
 };

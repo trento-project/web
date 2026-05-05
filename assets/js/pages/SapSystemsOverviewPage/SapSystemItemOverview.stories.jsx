@@ -1,4 +1,5 @@
 import Component from './SapSystemItemOverview';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SapSystemItemOverview',
@@ -24,5 +25,10 @@ export default {
 };
 
 export const Default = {
-  args: { instance: '', userAbilities: '', sapSystem: '' },
+  args: {
+    instance: '',
+    userAbilities: '',
+    sapSystem: '',
+    onCleanUpClick: action('onCleanUpClick'),
+  },
 };

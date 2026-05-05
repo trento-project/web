@@ -1,5 +1,6 @@
 import CleanUpButton from '.';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/CleanUpButton',
   component: CleanUpButton,
@@ -7,10 +8,6 @@ export default {
     cleaning: {
       control: { type: 'boolean' },
       description: 'Cleaning state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
       control: { type: 'object' },
@@ -24,27 +21,16 @@ export default {
     className: {
       control: { type: 'text' },
       description: 'CSS classes',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     size: {
       control: { type: 'radio' },
       options: ['small', 'fit'],
       description: 'Button size',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'small' },
-      },
     },
     type: {
       control: { type: 'radio' },
       options: ['primary-white', 'transparent'],
       description: 'Style type',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'primary-white' },
-      },
     },
   },
 };
@@ -53,7 +39,7 @@ export const Default = {
   args: {
     userAbilities: [{ name: 'all', resource: 'all' }],
     permittedFor: [],
-    onClick: () => {},
+    onClick: action('onClick'),
     cleaning: false,
     className: '',
     size: 'small',

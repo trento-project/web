@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
 import { EOS_SEARCH, EOS_VISIBILITY_OFF_OUTLINED } from 'eos-icons-react';
 
@@ -78,6 +79,7 @@ export const Default = {
     disabled: false,
     className: '',
     initialValue: '',
+    onChange: action('onChange'),
   },
 };
 

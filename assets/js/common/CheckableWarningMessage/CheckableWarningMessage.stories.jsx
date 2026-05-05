@@ -1,6 +1,7 @@
 import React from 'react';
 import CheckableWarningMessage from '.';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/CheckableWarningMessage',
   component: CheckableWarningMessage,
@@ -30,7 +31,7 @@ export const Default = {
     checked: false,
     children:
       'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.',
-    onChecked: () => {},
+    onChecked: action('onChecked'),
   },
 };
 
@@ -40,7 +41,7 @@ export const Checked = {
     checked: true,
     children:
       'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.',
-    onChecked: () => {},
+    onChecked: action('onChecked'),
   },
 };
 
@@ -50,6 +51,6 @@ export const WithoutCheckbox = {
     checked: false,
     children:
       'Trento and SUSE are not responsible for cluster operation failure due to deviation from Best Practices.',
-    onChecked: () => {},
+    onChecked: action('onChecked'),
   },
 };

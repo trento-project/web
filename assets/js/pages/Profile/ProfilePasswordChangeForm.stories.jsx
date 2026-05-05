@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 
 import ProfilePasswordChangeForm from './ProfilePasswordChangeForm';
 
@@ -38,6 +39,14 @@ export default {
       <ProfilePasswordChangeForm {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    loading: false,
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+  },
 };
 
 export const Loading = {

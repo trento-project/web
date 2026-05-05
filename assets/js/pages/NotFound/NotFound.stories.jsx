@@ -1,11 +1,12 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 
 import NotFound from '.';
 
 export default {
   title: 'Layouts/NotFound',
   component: NotFound,
-  args: { buttonText: 'Go back home', onNavigate: () => {} },
+  args: { buttonText: 'Go back home', onNavigate: action('onNavigate') },
   argTypes: {
     buttonText: {
       description: 'Text to display on the navigation button',
@@ -18,6 +19,9 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <NotFound {...args} />;
-}
+export const Default = {
+  args: {
+    buttonText: 'Go back home',
+    onNavigate: action('onNavigate'),
+  },
+};

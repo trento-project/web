@@ -1,4 +1,5 @@
 import React from 'react';
+import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
@@ -33,12 +34,10 @@ export default {
   argTypes: {
     onDeleteUser: {
       description: 'Function to handle deleting a user',
-      action: 'callback',
       action: 'onDeleteUser',
     },
     navigate: {
       description: 'Function to navigate pages',
-      action: 'callback',
       action: 'navigate',
     },
     users: {
@@ -63,16 +62,26 @@ export default {
 };
 
 export const Default = {
-  args: { users: [adminUser.build()] },
+  args: {
+    users: [adminUser.build()],
+    navigate: action('navigate'),
+    loading: false,
+    singleSignOnEnabled: false,
+    timezone: 'Etc/UTC',
+    onDeleteUser: action('onDeleteUser'),
+  },
   render: withContainerWrapper,
 };
+
 export const Loading = {
   args: { loading: true },
   render: withContainerWrapper,
 };
+
 export const EmptyUsersTable = {
   render: withContainerWrapper,
 };
+
 export const UsersOverview = {
   args: {
     users: [
@@ -86,6 +95,7 @@ export const UsersOverview = {
   },
   render: withContainerWrapper,
 };
+
 export const SingleSignOn = {
   args: { singleSignOnEnabled: true },
   render: withContainerWrapper,

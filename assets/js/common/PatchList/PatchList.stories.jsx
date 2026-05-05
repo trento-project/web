@@ -1,16 +1,15 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { action } from 'storybook/actions';
-
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import PatchList from '.';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/PatchList',
   component: PatchList,
   argTypes: {
     patches: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'A list of patches',
       action: 'callback',
     },

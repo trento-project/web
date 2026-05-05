@@ -10,10 +10,6 @@ export default {
       control: { type: 'radio' },
       options: ['small', 'fit'],
       description: 'Button size',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'small' },
-      },
     },
     children: {
       type: 'element',
@@ -44,50 +40,80 @@ export default {
   },
 };
 
-export function Default() {
-  return <Button>Hello world!</Button>;
-}
+export const Default = {
+  args: {
+    size: 'small',
+    children: 'Hello world!',
+  },
+};
 
-export function Secondary() {
-  return <Button type="secondary">Hello world!</Button>;
-}
+export const Secondary = {
+  args: {
+    type: 'secondary',
+    children: 'Hello world!',
+  },
+};
 
-export function Danger() {
-  return <Button type="danger">Hello world!</Button>;
-}
+export const Danger = {
+  args: {
+    type: 'danger',
+    children: 'Hello world!',
+  },
+};
 
-export function DangerBold() {
-  return <Button type="danger-bold">Danger!</Button>;
-}
+export const DangerBold = {
+  args: {
+    type: 'danger-bold',
+    children: 'Danger!',
+  },
+};
 
-export function PrimaryWhite() {
-  return <Button type="primary-white">Hello world!</Button>;
-}
+export const PrimaryWhite = {
+  args: {
+    type: 'primary-white',
+    children: 'Hello world!',
+  },
+};
 
-export function Transparent() {
-  return <Button type="transparent">Hello world!</Button>;
-}
+export const Transparent = {
+  args: {
+    type: 'transparent',
+    children: 'Hello world!',
+  },
+};
 
-export function Small() {
-  return <Button size="small">Hello world!</Button>;
-}
+export const Small = {
+  args: {
+    size: 'small',
+    children: 'Hello world!',
+  },
+};
 
-export function Fit() {
-  return <Button size="fit">Hello world!</Button>;
-}
+export const Fit = {
+  args: {
+    size: 'fit',
+    children: 'Hello world!',
+  },
+};
 
-export function Link() {
-  return <Button type="link">Go to another page</Button>;
-}
+export const Link = {
+  args: {
+    type: 'link',
+    children: 'Go to another page',
+  },
+};
 
-export function SmallSecondary() {
-  return (
-    <Button size="small" type="secondary">
-      Hello world!
-    </Button>
-  );
-}
+export const SmallSecondary = {
+  args: {
+    size: 'small',
+    type: 'secondary',
+    children: 'Hello world!',
+  },
+};
 
-export function Disabled() {
-  return <Button disabled>Hello world!</Button>;
-}
+export const Disabled = {
+  args: {
+    disabled: true,
+    children: 'Hello world!',
+  },
+};

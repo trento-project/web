@@ -1,5 +1,6 @@
 import Component from './SumaNotConfigured';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/SumaNotConfigured',
   component: Component,
@@ -19,6 +20,6 @@ export default {
 export const Default = {
   args: {
     className: '',
-    onBackToSettings: () => {},
+    onBackToSettings: action('onBackToSettings'),
   },
 };

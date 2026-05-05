@@ -1,4 +1,5 @@
 import GenerateTokenModal from './GenerateTokenModal';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/PersonalAccessTokens/GenerateTokenModal',
@@ -28,5 +29,7 @@ export default {
 export const Default = {
   args: {
     isOpen: true,
+    onGenerate: action('onGenerate'),
+    onClose: action('onClose'),
   },
 };

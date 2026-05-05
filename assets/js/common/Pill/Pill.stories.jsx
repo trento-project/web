@@ -1,6 +1,7 @@
 import React from 'react';
 import HealthIcon from '@common/HealthIcon';
 import Tooltip from '@common/Tooltip';
+import { action } from 'storybook/actions';
 
 import Pill from '.';
 
@@ -55,61 +56,75 @@ export const Default = {
     disabled: false,
     className: '',
     children: 'Pill',
-    onClick: () => {},
+    onClick: action('onClick'),
     roundedMode: 'rounded-full',
     display: 'inline-flex',
   },
 };
 
-export function Small() {
-  return <Pill size="sm">Small!</Pill>;
-}
+export const Small = {
+  args: {
+    size: 'sm',
+    children: 'Small!',
+  },
+};
 
-export function ExtraSmall() {
-  return <Pill size="xs">Extra small!</Pill>;
-}
+export const ExtraSmall = {
+  args: {
+    size: 'xs',
+    children: 'Extra small!',
+  },
+};
 
-export function Disabled() {
-  return (
-    <Pill size="xs" disabled>
-      {' '}
-      Disabled
-    </Pill>
-  );
-}
+export const Disabled = {
+  args: {
+    size: 'xs',
+    disabled: true,
+    children: 'Disabled',
+  },
+};
 
-export function WithIcon() {
-  return (
-    <Pill className="bg-green-100 text-green-800 group flex items-center">
+export const WithIcon = {
+  args: {
+    className: 'bg-green-100 text-green-800 group flex items-center',
+  },
+  render: (args) => (
+    <Pill {...args}>
       <HealthIcon size="base" health="passing" />
       <span className="ml-1">Nice!</span>
     </Pill>
-  );
-}
+  ),
+};
 
-export function Warning() {
-  return <Pill className="bg-yellow-200 text-yellow-600">Warning!</Pill>;
-}
+export const Warning = {
+  args: {
+    className: 'bg-yellow-200 text-yellow-600',
+    children: 'Warning!',
+  },
+};
 
-export function Critical() {
-  return <Pill className="bg-red-200 text-red-600">Critical!</Pill>;
-}
+export const Critical = {
+  args: {
+    className: 'bg-red-200 text-red-600',
+    children: 'Critical!',
+  },
+};
 
-export function Truncated() {
-  return (
-    <Pill
-      display="inline-block"
-      className="bg-green-100 text-green-800 truncate w-24"
-    >
-      Truncated pill text
-    </Pill>
-  );
-}
+export const Truncated = {
+  args: {
+    display: 'inline-block',
+    className: 'bg-green-100 text-green-800 truncate w-24',
+    children: 'Truncated pill text',
+  },
+};
 
-export function WithTooltip() {
-  return (
-    <Pill className="bg-green-100 text-green-800 relative">
+export const WithTooltip = {
+  args: {
+    className: 'bg-green-100 text-green-800 relative',
+  },
+  render: (args) => (
+    <Pill {...args}>
       <Tooltip content="Oh yeah!">With tooltip!</Tooltip>
     </Pill>
-  );
-}
+  ),
+};

@@ -1,4 +1,5 @@
 import Component from './ObjectTreeNode';
+import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/ObjectTreeNode',
@@ -32,7 +33,7 @@ export const Default = {
     element: { name: 'root', value: 'data', children: [] },
     isBranch: false,
     isExpanded: false,
-    getNodeProps: () => ({ className: '' }),
+    getNodeProps: action('getNodeProps'),
     level: '1',
   },
 };

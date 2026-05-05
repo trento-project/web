@@ -1,5 +1,6 @@
 import Component from './HealthSummaryBox';
 
+import { action } from 'storybook/actions';
 export default {
   title: 'Components/HealthSummaryBox',
   component: Component,
@@ -29,6 +30,6 @@ export const Default = {
     health: 'passing',
     selected: false,
     value: '0',
-    onClick: () => {},
+    onClick: action('onClick'),
   },
 };
