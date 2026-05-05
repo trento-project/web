@@ -1,7 +1,6 @@
 import React from 'react';
 
-import Tooltip from '.';
-import { PLACES } from './Tooltip';
+import Tooltip, { PLACES } from '.';
 
 export default {
   title: 'Components/Tooltip',
