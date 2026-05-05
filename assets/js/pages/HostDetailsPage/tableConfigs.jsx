@@ -1,4 +1,8 @@
 import React from 'react';
+import { capitalize } from 'lodash';
+
+import SapSystemLink from '@common/SapSystemLink';
+import HealthIcon from '@common/HealthIcon';
 import { Features } from '@pages/SapSystemDetails';
 
 import { getInstanceID } from '@state/instances';
@@ -46,12 +50,27 @@ export const sapInstancesTableConfiguration = {
   usePadding: false,
   columns: [
     {
-      title: 'ID',
-      key: '',
-      render: (_content, item) => getInstanceID(item),
+      title: 'Health',
+      key: 'health',
+      render: (content) => (
+        <div className="ml-3">
+          <HealthIcon health={content} />
+        </div>
+      ),
     },
-    { title: 'SID', key: 'sid' },
-    { title: 'Type', key: 'type' },
+    {
+      title: 'SID',
+      key: 'sid',
+      render: (_content, item) => (
+        <SapSystemLink
+          systemType={item?.type}
+          sapSystemId={getInstanceID(item)}
+        >
+          {item?.sid}
+        </SapSystemLink>
+      ),
+    },
+    { title: 'Type', key: 'type', render: capitalize },
     {
       title: 'Features',
       key: 'features',

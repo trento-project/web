@@ -13,8 +13,9 @@ import {
   hostFactory,
   saptuneStatusFactory,
   databaseInstanceFactory,
+  sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
-import { DATABASE_TYPE } from '@lib/model/sapSystems';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
@@ -157,6 +158,68 @@ describe('HostDetails component', () => {
         expect(screen.getByText('Last Boot').nextSibling.textContent).toBe(
           '11 Jan 2024, 13:30:00'
         );
+      });
+    });
+  });
+
+  describe('SLES subscriptions', () => {
+    it('should format SLES subscription dates using provided timezone prop', () => {
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          timezone="Pacific/Kiritimati"
+          slesSubscriptions={[
+            {
+              starts_at: '2024-01-10T23:30:00Z',
+              expires_at: '2024-01-11T23:30:00Z',
+              status: 'active',
+              subscription_id: 'sub-1',
+            },
+          ]}
+        />
+      );
+
+      expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeVisible();
+      expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeVisible();
+    });
+  });
+
+  describe('SAP instances', () => {
+    it('should show SAP instances in host', () => {
+      const sapInstances = databaseInstanceFactory
+        .buildList(2)
+        .map((inst) => ({ ...inst, type: DATABASE_TYPE }))
+        .concat(
+          sapSystemApplicationInstanceFactory
+            .buildList(2)
+            .map((inst) => ({ ...inst, type: APPLICATION_TYPE }))
+        );
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          sapInstances={sapInstances}
+        />
+      );
+
+      const heading = screen.getByRole('heading', { name: 'SAP instances' });
+      const section = heading.closest('div').nextSibling;
+      const table = within(section).getByRole('table');
+      const rows = table.querySelectorAll('tbody > tr');
+
+      sapInstances.forEach((instance, index) => {
+        const row = rows[index];
+        const healthIcon = within(row).getByTestId('eos-svg-component');
+        expect(healthIcon).toBeInTheDocument();
+        const sidLink = within(row).getByRole('link', { name: instance.sid });
+        const href = instance.database_id
+          ? `/databases/${instance.database_id}`
+          : `/sap_systems/${instance.sap_system_id}`;
+        expect(sidLink).toHaveAttribute('href', href);
+        expect(
+          within(row).getByText(instance.instance_number)
+        ).toBeInTheDocument();
       });
     });
   });
@@ -687,27 +750,6 @@ describe('HostDetails component', () => {
           exact: false,
         })
       ).toBeVisible();
-    });
-
-    it('should format SLES subscription dates using provided timezone prop', () => {
-      renderWithRouter(
-        <HostDetails
-          agentVersion="1.0.0"
-          userAbilities={userAbilities}
-          timezone="Pacific/Kiritimati"
-          slesSubscriptions={[
-            {
-              starts_at: '2024-01-10T23:30:00Z',
-              expires_at: '2024-01-11T23:30:00Z',
-              status: 'active',
-              subscription_id: 'sub-1',
-            },
-          ]}
-        />
-      );
-
-      expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeVisible();
-      expect(screen.getByText('11 Jan 2024, 13:30:00')).toBeVisible();
     });
   });
 });
