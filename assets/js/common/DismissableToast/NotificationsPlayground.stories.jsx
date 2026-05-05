@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import * as ICONS from 'eos-icons-react';
