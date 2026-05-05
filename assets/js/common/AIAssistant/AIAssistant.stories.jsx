@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 
 import { SocketContext } from '@common/SocketProvider';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
@@ -11,13 +9,9 @@ import AIAssistant from './AIAssistant';
 const USER_ID = 1;
 const TOPIC = `ai_assistant:${USER_ID}`;
 
-const store = configureStore([])({ user: { id: USER_ID } });
-
 function StoryProviders({ socket, children }) {
   return (
-    <Provider store={store}>
-      <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
-    </Provider>
+    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
   );
 }
 
@@ -143,6 +137,7 @@ export default {
       turn: null,
     },
   },
+  args: { userID: USER_ID },
   decorators: [
     (Story, context) => {
       const socket = useFreshSocket();

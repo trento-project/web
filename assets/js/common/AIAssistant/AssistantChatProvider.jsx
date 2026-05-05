@@ -1,38 +1,29 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { noop } from 'lodash';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
-import { useSelector } from 'react-redux';
 
 import { useSocket } from '@common/SocketProvider';
-import { CONNECTION_STATUS, WebSocketAIAgent } from '@lib/ai';
-import { getUserProfile } from '@state/selectors/user';
+import { WebSocketAIAgent } from '@lib/ai';
 
-import { ConnectionStatusContext } from './connectionStatusContext';
-import { ResetThreadContext } from './resetThreadContext';
-
-export function AssistantChatProvider({ children }) {
-  const userId = useSelector(getUserProfile)?.id;
+function AssistantChatProvider({
+  userID,
+  threadId,
+  onConnectionChange = noop,
+  children,
+}) {
   const socket = useSocket();
-  const [connectionStatus, setConnectionStatus] = useState(
-    CONNECTION_STATUS.DISCONNECTED
-  );
-  const [threadId, setThreadId] = useState(() => crypto.randomUUID());
-
-  const resetThread = useCallback(() => {
-    setThreadId(crypto.randomUUID());
-  }, []);
 
   const agent = useMemo(() => {
-    if (!socket || !userId) return null;
+    if (!socket || !userID) return null;
     return new WebSocketAIAgent({
       socket,
-      userId,
+      userID,
       threadId,
-      onConnectionChange: setConnectionStatus,
+      onConnectionChange,
     });
-  }, [socket, userId, threadId]);
+  }, [socket, userID, threadId, onConnectionChange]);
 
   useEffect(() => {
     if (!agent) return undefined;
@@ -46,13 +37,22 @@ export function AssistantChatProvider({ children }) {
   const runtime = useAgUiRuntime({ agent });
   const aui = useAui();
 
+  // useAgUiRuntime keeps its core (and the message store) in a useRef across
+  // agent swaps, so bumping threadId rebuilds the agent + websocket but
+  // leaves the prior thread's messages onscreen. Wipe them explicitly when
+  // the thread id actually changes; the first mount is a no-op.
+  const previousThreadIdRef = useRef(threadId);
+  useEffect(() => {
+    if (previousThreadIdRef.current === threadId) return;
+    previousThreadIdRef.current = threadId;
+    runtime.thread.reset();
+  }, [threadId, runtime]);
+
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>
-      <ConnectionStatusContext.Provider value={connectionStatus}>
-        <ResetThreadContext.Provider value={resetThread}>
-          {children}
-        </ResetThreadContext.Provider>
-      </ConnectionStatusContext.Provider>
+      {children}
     </AssistantRuntimeProvider>
   );
 }
+
+export default AssistantChatProvider;

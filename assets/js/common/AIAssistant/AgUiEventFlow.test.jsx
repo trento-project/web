@@ -2,14 +2,12 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
 import { config as rxjsConfig } from 'rxjs';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { buildAssistantTurn } from '@lib/test-utils/aguiEvents';
-import { AssistantChatProvider } from './AssistantChatProvider';
+
 import { useSocket } from '@common/SocketProvider';
-import { AssistantThread } from './AssistantThread';
+import AIAssistant from './AIAssistant';
 
 // RxJS reports unhandled subscriber errors via setTimeout(() => throw err) by
 // default — terminal AG-UI events (ie RUN_ERROR) hit
@@ -35,19 +33,11 @@ jest.mock('@assistant-ui/react-markdown', () => ({
   MarkdownTextPrimitive: ({ text }) => <span data-aui-md>{text}</span>,
 }));
 
-const mockStore = configureStore([]);
-
 async function renderAssistant({ userId = 'user-1' } = {}) {
   const socket = makeMockSocket();
   useSocket.mockReturnValue(socket);
 
-  const utils = render(
-    <Provider store={mockStore({ user: { id: userId } })}>
-      <AssistantChatProvider>
-        <AssistantThread onClose={() => {}} />
-      </AssistantChatProvider>
-    </Provider>
-  );
+  const utils = render(<AIAssistant userID={userId} open />);
 
   const channel = await waitFor(() => {
     const c = socket.channels.get(`ai_assistant:${userId}`);
