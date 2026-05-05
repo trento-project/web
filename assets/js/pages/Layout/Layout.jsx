@@ -102,7 +102,7 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const { username, email } = useSelector(getUserProfile);
+  const { id, username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -250,7 +250,7 @@ function Layout() {
       </div>
       {getFromConfig('aiEnabled') && (
         <SocketProvider>
-          <AIAssistant />
+          <AIAssistant userID={id} />
         </SocketProvider>
       )}
     </main>
