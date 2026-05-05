@@ -7,9 +7,6 @@ import { EOS_CLOSE } from 'eos-icons-react';
 import Button from '@common/Button';
 import { CONNECTION_STATUS } from '@lib/ai';
 
-import { useAIConnectionStatus } from '../connectionStatusContext';
-import { useResetThread } from '../resetThreadContext';
-
 const STATUS_VIEW = {
   [CONNECTION_STATUS.CONNECTED]: { text: 'Online', dot: 'bg-white' },
   [CONNECTION_STATUS.CONNECTING]: {
@@ -21,7 +18,7 @@ const STATUS_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
+export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
   const { text, dot } =
     STATUS_VIEW[connectionStatus] ??
     STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
@@ -58,18 +55,5 @@ export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
         </Button>
       </div>
     </div>
-  );
-}
-
-export function ChatHeader({ onClose }) {
-  const connectionStatus = useAIConnectionStatus();
-  const resetThread = useResetThread();
-
-  return (
-    <ChatHeaderView
-      connectionStatus={connectionStatus}
-      onNewChat={resetThread}
-      onClose={onClose}
-    />
   );
 }
