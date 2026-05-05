@@ -30,14 +30,14 @@ class AbortError extends Error {
 }
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
-// AG-UI protocol events to/from channel events for the ai_assistant:{userId}
+// AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
 export class WebSocketAIAgent extends AbstractAgent {
-  constructor({ socket, userId, onConnectionChange, ...options }) {
+  constructor({ socket, userID, onConnectionChange, ...options }) {
     super(options);
 
     this.socket = socket;
-    this.userId = userId;
+    this.userID = userID;
     this.channel = null;
     this.onConnectionChange = onConnectionChange;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
@@ -52,13 +52,13 @@ export class WebSocketAIAgent extends AbstractAgent {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
       throw new Error('No socket available');
     }
-    if (!this.userId) {
+    if (!this.userID) {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-      throw new Error('No userId available');
+      throw new Error('No userID available');
     }
 
     this._setConnectionStatus(CONNECTION_STATUS.CONNECTING);
-    this.channel = this.socket.channel(`ai_assistant:${this.userId}`, {});
+    this.channel = this.socket.channel(`ai_assistant:${this.userID}`, {});
     this._setupChannelHandlers();
 
     return new Promise((resolve, reject) => {
