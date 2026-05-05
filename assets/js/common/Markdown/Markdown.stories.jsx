@@ -1,8 +1,8 @@
-import Component from './Markdown';
+import Markdown from '.';
 
 export default {
   title: 'Components/Markdown',
-  component: Component,
+  component: Markdown,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', children: 'Default children' },
+  args: {
+    className: '',
+    children: '# This is a title',
+  },
 };

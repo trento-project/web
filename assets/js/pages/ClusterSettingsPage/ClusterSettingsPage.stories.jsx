@@ -2,7 +2,25 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './ClusterSettingsPage';
+import MockAdapter from 'axios-mock-adapter';
+import { networkClient } from '@lib/network';
+import {
+  abilityFactory,
+  clusterFactory,
+  userFactory,
+  catalogFactory,
+} from '@lib/test-utils/factories';
+import ClusterSettingsPage from '.';
+
+const cluster = clusterFactory.build({
+  details: {
+    hana_scenario: 'cost_optimized_3_tier',
+    architecture_type: 'classic',
+  },
+});
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
+const catalog = catalogFactory.build();
 
 const sapSystemsListSlice = createSlice({
   name: 'sapSystemsList',
@@ -16,7 +34,7 @@ const sapSystemsListSlice = createSlice({
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
-    data: [],
+    data: catalog.catalog || [],
     loading: false,
     error: null,
   },
@@ -27,7 +45,7 @@ const checksSelectionSlice = createSlice({
   name: 'checksSelection',
   initialState: {
     cluster: {
-      123: {},
+      [cluster.id]: {},
     },
     host: {},
   },
@@ -37,7 +55,7 @@ const checksSelectionSlice = createSlice({
 const lastExecutionsSlice = createSlice({
   name: 'lastExecutions',
   initialState: {
-    123: null,
+    [cluster.id]: null,
   },
   reducers: {},
 });
@@ -45,10 +63,10 @@ const lastExecutionsSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    abilities: [{ name: 'all', resource: 'all' }],
-    timezone: 'UTC',
+    username: user.username,
+    email: user.email,
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
@@ -56,12 +74,7 @@ const userSlice = createSlice({
 const clusterListSlice = createSlice({
   name: 'clustersList',
   initialState: {
-    clusters: [
-      {
-        id: '123',
-        name: 'Cluster-01',
-      },
-    ],
+    clusters: [cluster],
   },
   reducers: {},
 });
@@ -76,7 +89,7 @@ const hostListSlice = createSlice({
 
 export default {
   title: 'Components/ClusterSettingsPage',
-  component: Component,
+  component: ClusterSettingsPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -91,9 +104,14 @@ export default {
         },
       });
 
+      const axiosMock = new MockAdapter(networkClient);
+      axiosMock.onPost(/\/checks\/env\/checks_selection/).reply(200, {
+        data: catalog.catalog || [],
+      });
+
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/clusters/123/settings']}>
+          <MemoryRouter initialEntries={[`/clusters/${cluster.id}/settings`]}>
             <Routes>
               <Route path="/clusters/:clusterID/settings" element={<Story />} />
             </Routes>

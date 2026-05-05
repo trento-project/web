@@ -11,18 +11,15 @@ export default {
       options: ['horizontal', 'vertical'],
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes applied to the list view container',
       control: { type: 'text' },
     },
     data: {
-      type: 'array',
       description:
         'Array of objects containing title, content, and rendering configuration for each list item',
       control: { type: 'object' },
     },
     titleClassName: {
-      type: 'string',
       description: 'CSS classes applied to individual item titles',
       control: { type: 'text' },
     },
@@ -44,5 +41,12 @@ export const Default = {
     orientation: 'horizontal',
     className: '',
     titleClassName: '',
+  },
+};
+
+export const Vertical = {
+  args: {
+    ...Default.args,
+    orientation: 'vertical',
   },
 };

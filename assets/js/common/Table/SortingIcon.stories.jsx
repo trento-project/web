@@ -1,8 +1,8 @@
-import Component from './SortingIcon';
+import Table from '.';
 
 export default {
   title: 'Components/SortingIcon',
-  component: Component,
+  component: Table,
   argTypes: {
     sortable: {
       description: 'Whether the column is sortable',
@@ -17,7 +17,10 @@ export default {
 };
 
 export const Default = {
-  args: { sortable: true, sortDirection: null },
+  args: {
+    sortable: true,
+    sortDirection: null,
+  },
 };
 
 export const SortedAsc = {

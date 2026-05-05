@@ -3,7 +3,10 @@ import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './ActivityLogPage';
+import { abilityFactory } from '@lib/test-utils/factories';
+import ActivityLogPage from '.';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 const activityLogSlice = createSlice({
   name: 'activityLog',
@@ -16,15 +19,15 @@ const activityLogSlice = createSlice({
 const userProfileSlice = createSlice({
   name: 'user',
   initialState: {
-    abilities: [{ name: 'all', resource: 'all' }],
-    timezone: 'UTC',
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/ActivityLogPage',
-  component: Component,
+  component: ActivityLogPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -81,11 +84,11 @@ export default {
 
 export const Default = {
   args: {
-    request: '',
-    itemsPerPage: [],
-    timezone: '',
+    request: {},
+    itemsPerPage: [10, 25, 50],
+    timezone: 'Etc/UTC',
     disabled: false,
-    rate: '',
+    rate: 5000,
     onPageChange: action('onPageChange'),
     onChangeItemsPerPage: action('onChangeItemsPerPage'),
     onChange: action('onChange'),

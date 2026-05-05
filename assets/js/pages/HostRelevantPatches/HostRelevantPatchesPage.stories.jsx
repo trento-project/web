@@ -16,7 +16,6 @@ export default {
   component: HostRelevantPatchesPage,
   argTypes: {
     hostName: {
-      type: 'string',
       description: 'The hostname to display in the header and CSV filename.',
       control: { type: 'text' },
     },
@@ -29,10 +28,8 @@ export default {
       description: 'Array of patch objects to display.',
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
   render: (args) => (
@@ -40,6 +37,15 @@ export default {
       <HostRelevantPatchesPage {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    hostName: hostFactory.build().hostname,
+    patches: relevantPatchFactory.buildList(15),
+    onNavigate: action('onNavigate'),
+    timezone: 'Etc/UTC',
+  },
 };
 
 export const HasPatches = {

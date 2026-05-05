@@ -1,16 +1,22 @@
-import Component from './HostInfoBox';
+import HostInfoBox from '.';
+import { architectures, providers } from '@lib/model';
+import { hostFactory } from '@lib/test-utils/factories';
+
+const host = hostFactory.build();
 
 export default {
   title: 'Components/HostInfoBox',
-  component: Component,
+  component: HostInfoBox,
   argTypes: {
     arch: {
       description: 'The arch prop',
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: architectures,
     },
     provider: {
-      description: 'Identifier for the provider',
-      control: { type: 'text' },
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     agentVersion: {
       description: 'The agentVersion prop',
@@ -20,5 +26,9 @@ export default {
 };
 
 export const Default = {
-  args: { arch: '', provider: '', agentVersion: '' },
+  args: {
+    arch: host.arch,
+    provider: host.provider,
+    agentVersion: host.agent_version,
+  },
 };

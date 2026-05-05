@@ -9,10 +9,8 @@ export default {
       control: { type: 'date' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
 };

@@ -91,10 +91,8 @@ export default {
       control: { type: 'boolean' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
     editing: {
       description: 'User is being edited',
@@ -145,6 +143,26 @@ export default {
       <UserForm {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    fullName: fullname,
+    emailAddress: email,
+    username,
+    status: 'Enabled',
+    abilities,
+    userAbilities,
+    createdAt,
+    updatedAt,
+    totpEnabledAt,
+    lastLoginAt,
+    timezone,
+    editing: false,
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+  },
 };
 
 export const Empty = {};

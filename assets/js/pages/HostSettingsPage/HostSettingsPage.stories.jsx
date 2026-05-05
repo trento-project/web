@@ -2,14 +2,18 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './HostSettingsPage';
+import { hostFactory, abilityFactory } from '@lib/test-utils/factories';
+import HostSettingsPage from '.';
+
+const host = hostFactory.build();
+const abilities = abilityFactory.buildList(2);
 
 const checksSelectionSlice = createSlice({
   name: 'checksSelection',
   initialState: {
     saving: false,
     cluster: {},
-    host: { 123: [] },
+    host: { [host.id]: [] },
   },
   reducers: {},
 });
@@ -26,7 +30,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     profile: {
-      abilities: [],
+      abilities,
     },
   },
   reducers: {},
@@ -35,14 +39,14 @@ const userSlice = createSlice({
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [],
+    hosts: [host],
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/HostSettingsPage',
-  component: Component,
+  component: HostSettingsPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -56,7 +60,7 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/hosts/123/settings']}>
+          <MemoryRouter initialEntries={[`/hosts/${host.id}/settings`]}>
             <Routes>
               <Route path="/hosts/:hostID/settings" element={<Story />} />
             </Routes>

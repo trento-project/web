@@ -1,8 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { userFactory } from '@lib/test-utils/factories';
 import ProfileMenu from '.';
 
 import { action } from 'storybook/actions';
+
+const user = userFactory.build();
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-xs mx-auto px-2 sm:px-4 lg:px-6 flex justify-center h-48">
@@ -39,8 +42,8 @@ export default {
 
 export const Default = {
   args: {
-    username: 'John Doe',
-    email: 'john@example.com',
+    username: user.username,
+    email: user.email,
     logout: action('logout'),
   },
   render: (args) => (

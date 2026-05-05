@@ -2,15 +2,65 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './CheckResultOutline';
+import {
+  catalogFactory,
+  agentCheckResultFactory,
+  expectationResultFactory,
+} from '@lib/test-utils/factories';
+import CheckResultOutline from '.';
+
+const catalog = catalogFactory.build();
+const agentsCheckResults = agentCheckResultFactory
+  .buildList(2)
+  .map((result) => ({
+    ...result,
+    expectation_evaluations: [
+      { name: 'expectation_1', result: true, type: 'expect' },
+      { name: 'expectation_2', result: true, type: 'expect' },
+    ],
+  }));
+const expectationResults = expectationResultFactory.buildList(2);
 
 const mockStore = configureStore({
   reducer: {},
 });
 
+const check = catalog.catalog || {};
+const checkIDs = Object.keys(check);
+const checkID = checkIDs.length > 0 ? checkIDs[0] : 'check-1';
+const checkData = check[checkID] || {};
+const expectations = checkData.expectations || [
+  {
+    name: 'expect_test_1',
+    value: 'some_value',
+    type: 'expect',
+    expectations: [
+      {
+        name: 'test_expectation_1',
+        type: 'expect',
+      },
+      {
+        name: 'test_expectation_2',
+        type: 'expect',
+      },
+    ],
+  },
+  {
+    name: 'expect_test_2',
+    value: 'another_value',
+    type: 'expect_enum',
+    expectations: [
+      {
+        name: 'test_expectation_3',
+        type: 'expect_enum',
+      },
+    ],
+  },
+];
+
 export default {
   title: 'Components/CheckResultOutline',
-  component: Component,
+  component: CheckResultOutline,
   decorators: [
     (Story) => (
       <Provider store={mockStore}>
@@ -54,12 +104,28 @@ export default {
 
 export const Default = {
   args: {
-    checkID: 'check-1',
+    checkID: checkID,
     targetID: 'target-1',
     targetName: 'Target Name',
     targetType: 'cluster',
+    expectations: expectations,
+    agentsCheckResults: agentsCheckResults,
+    expectationResults: expectationResults,
+  },
+};
+
+export const Empty = {
+  args: {
+    ...Default.args,
     expectations: [],
     agentsCheckResults: [],
     expectationResults: [],
+  },
+};
+
+export const WithExpectations = {
+  args: {
+    ...Default.args,
+    expectations: expectations,
   },
 };

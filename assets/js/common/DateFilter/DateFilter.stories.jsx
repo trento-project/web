@@ -7,7 +7,6 @@ export default {
   component: DateFilter,
   argTypes: {
     options: {
-      type: { name: 'array', required: true },
       description: 'List of options available',
       control: { type: 'object' },
     },
@@ -27,21 +26,17 @@ export default {
       action: 'onChange',
     },
     prefilled: {
-      type: 'boolean',
       description:
         'Whether to include preconfigured date filter options in the list',
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description: 'CSS classes to apply to the date filter container',
       control: { type: 'text' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
   render: (args) => {
@@ -65,6 +60,8 @@ export default {
 export const Default = {
   args: {
     title: 'by date',
+    options: [['1h ago', () => new Date(Date.now() - 60 * 60 * 1000)]],
+    type: 'date',
   },
 };
 

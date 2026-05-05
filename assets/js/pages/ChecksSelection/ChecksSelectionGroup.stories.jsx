@@ -1,9 +1,9 @@
-import Component from './ChecksSelectionGroup';
+import ChecksSelection from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksSelectionGroup',
-  component: Component,
+  component: ChecksSelection,
   argTypes: {
     children: {
       description: 'Checks within this group',
@@ -26,10 +26,10 @@ export default {
 
 export const Default = {
   args: {
+    children: 'Check items go here',
     group: 'Configuration Checks',
     selected: {},
     onChange: action('onChange'),
-    children: 'Check items go here',
   },
 };
 

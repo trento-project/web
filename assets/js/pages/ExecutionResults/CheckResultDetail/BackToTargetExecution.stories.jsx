@@ -1,10 +1,10 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import Component from './BackToTargetExecution';
+import CheckResultDetail from '.';
 
 export default {
   title: 'Components/BackToTargetExecution',
-  component: Component,
+  component: CheckResultDetail,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -26,7 +26,10 @@ export default {
 };
 
 export const Default = {
-  args: { targetID: 'host_001', targetType: 'host' },
+  args: {
+    targetID: 'host_001',
+    targetType: 'host',
+  },
 };
 
 export const Cluster = {

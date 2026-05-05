@@ -423,6 +423,27 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    targetID: groupID,
+    targetHosts: clusterHosts,
+    targetName: clusterName,
+    targetType: 'cluster',
+    target: {
+      type: clusterScenario,
+      provider: cloudProvider,
+      details: clusterDetails,
+    },
+    onLastExecutionUpdate: fetchCompleted,
+    onCatalogRefresh: fetchCatalog,
+    catalog: catalogData.data.items,
+    executionRunning: false,
+    executionData: completedExecution.data,
+    onStartExecution: action('onStartExecution'),
+    onSaveFilters: action('onSaveFilters'),
+  },
+};
+
 export const Running = {
   args: {
     targetID: groupID,

@@ -7,7 +7,6 @@ export default {
   component: ComposedFilter,
   argTypes: {
     value: {
-      type: { name: 'object', required: false, defaultValue: {} },
       description:
         'Key/value pairs of selected filters, where key is the filter id',
       control: { type: 'object' },
@@ -24,12 +23,10 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes applied to the filter container',
       control: { type: 'text' },
     },
     filters: {
-      type: 'array',
       description:
         'Array of filter configuration objects defining the filters to compose',
       control: { type: 'object' },
@@ -65,6 +62,8 @@ export default {
 
 export const Default = {
   args: {
+    value: {},
+    type: 'select',
     filters: [
       {
         key: 'filter1',
@@ -80,6 +79,7 @@ export const Default = {
       },
     ],
     onChange: action('onChange'),
+    autoApply: false,
   },
 };
 

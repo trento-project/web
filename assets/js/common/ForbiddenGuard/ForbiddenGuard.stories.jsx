@@ -1,19 +1,22 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import Component from './ForbiddenGuard';
+import { abilityFactory } from '@lib/test-utils/factories';
+import ForbiddenGuard from '.';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    abilities: [{ name: 'all', resource: 'all' }],
+    abilities: [allAbility],
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/ForbiddenGuard',
-  component: Component,
+  component: ForbiddenGuard,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -36,7 +39,7 @@ export default {
     },
     outletMode: {
       description: 'The outletMode prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the component is disabled',

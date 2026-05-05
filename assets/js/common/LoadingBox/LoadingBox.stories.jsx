@@ -1,8 +1,8 @@
-import Component from './LoadingBox';
+import LoadingBox from '.';
 
 export default {
   title: 'Components/LoadingBox',
-  component: Component,
+  component: LoadingBox,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', text: 'Default text' },
+  args: {
+    className: '',
+    text: 'Default text',
+  },
 };

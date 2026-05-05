@@ -3,12 +3,25 @@ import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './DatabasesOverviewPage';
+import {
+  databaseFactory,
+  clusterFactory,
+  hostFactory,
+  abilityFactory,
+  userFactory,
+} from '@lib/test-utils/factories';
+import DatabasesOverview from '.';
+
+const databases = databaseFactory.buildList(2);
+const clusterListData = clusterFactory.buildList(2);
+const hostListData = hostFactory.buildList(2);
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 const databasesListSlice = createSlice({
   name: 'databasesList',
   initialState: {
-    databases: [],
+    databases,
     databaseInstances: [],
     loading: false,
   },
@@ -18,10 +31,10 @@ const databasesListSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    abilities: [],
-    timezone: 'UTC',
+    username: user.username,
+    email: user.email,
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
@@ -29,7 +42,7 @@ const userSlice = createSlice({
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [],
+    hosts: hostListData,
   },
   reducers: {},
 });
@@ -37,14 +50,14 @@ const hostListSlice = createSlice({
 const clusterListSlice = createSlice({
   name: 'clustersList',
   initialState: {
-    clusters: [],
+    clusters: clusterListData,
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/DatabasesOverviewPage',
-  component: Component,
+  component: DatabasesOverview,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -99,10 +112,10 @@ export default {
 
 export const Default = {
   args: {
-    databases: [],
+    databases,
     databaseInstances: [],
     loading: false,
-    userAbilities: [],
+    userAbilities: [allAbility],
     onTagAdd: action('onTagAdd'),
     onTagRemove: action('onTagRemove'),
     onInstanceCleanUp: action('onInstanceCleanUp'),

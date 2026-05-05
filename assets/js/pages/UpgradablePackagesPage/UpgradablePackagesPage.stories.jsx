@@ -3,17 +3,19 @@ import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './UpgradablePackagesPage';
+import {
+  hostFactory,
+  upgradablePackageFactory,
+} from '@lib/test-utils/factories';
+import UpgradablePackagesPage from '.';
+
+const host = hostFactory.build();
+const upgradablePackages = upgradablePackageFactory.buildList(5);
 
 const hostDetailsSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [
-      {
-        id: '123',
-        hostname: 'host-01',
-      },
-    ],
+    hosts: [host],
   },
   reducers: {},
 });
@@ -22,8 +24,8 @@ const softwareUpdatesSlice = createSlice({
   name: 'softwareUpdates',
   initialState: {
     softwareUpdates: {
-      123: {
-        upgradable_packages: [],
+      [host.id]: {
+        upgradable_packages: upgradablePackages,
         loading: false,
         errors: [],
       },
@@ -34,7 +36,7 @@ const softwareUpdatesSlice = createSlice({
 
 export default {
   title: 'Components/UpgradablePackagesPage',
-  component: Component,
+  component: UpgradablePackagesPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -46,7 +48,9 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/hosts/123/upgradable-packages']}>
+          <MemoryRouter
+            initialEntries={[`/hosts/${host.id}/upgradable-packages`]}
+          >
             <Routes>
               <Route
                 path="/hosts/:hostID/upgradable-packages"
@@ -84,9 +88,9 @@ export default {
 
 export const Default = {
   args: {
-    hostName: '',
-    upgradablePackages: '',
-    patchesLoading: '',
+    hostName: host.hostname,
+    upgradablePackages,
+    patchesLoading: false,
     onPatchClick: action('onPatchClick'),
     onLoad: action('onLoad'),
   },

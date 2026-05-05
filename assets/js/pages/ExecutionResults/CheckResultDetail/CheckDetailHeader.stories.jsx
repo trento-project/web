@@ -1,8 +1,18 @@
-import Component from './CheckDetailHeader';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import CheckResultDetail from '.';
+import { providers } from '@lib/model';
 
 export default {
   title: 'Components/CheckDetailHeader',
-  component: Component,
+  component: CheckResultDetail,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   argTypes: {
     checkID: {
       description: 'Identifier for the checkID',
@@ -28,9 +38,10 @@ export default {
       description: 'The resultTargetName prop',
       control: { type: 'text' },
     },
-    cloudProvider: {
-      description: 'Identifier for the cloudProvider',
-      control: { type: 'text' },
+    provider: {
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     result: {
       description: 'The result prop',
@@ -41,13 +52,13 @@ export default {
 
 export const Default = {
   args: {
-    checkID: '',
-    checkDescription: '',
-    targetID: '',
-    targetType: '',
-    resultTargetType: '',
-    resultTargetName: '',
-    cloudProvider: '',
-    result: '',
+    checkID: 'check-123',
+    checkDescription: 'Check cluster configuration',
+    targetID: 'cluster-01',
+    targetType: 'cluster',
+    resultTargetType: 'cluster',
+    resultTargetName: 'Cluster 1',
+    cloudProvider: 'aws',
+    result: 'passing',
   },
 };

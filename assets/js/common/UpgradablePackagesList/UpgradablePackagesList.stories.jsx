@@ -15,12 +15,10 @@ export default {
       description: 'List of upgradable packages',
     },
     patchesLoading: {
-      type: 'boolean',
       description: 'Are patches loading?',
       control: { type: 'boolean' },
     },
     sortDirection: {
-      type: 'string',
       description:
         'Specifies the current sort order (asc or desc) for the Latest Package column',
       control: { type: 'text' },

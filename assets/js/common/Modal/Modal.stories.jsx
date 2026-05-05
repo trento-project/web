@@ -1,9 +1,9 @@
-import Component from './Modal';
+import Modal from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Modal',
-  component: Component,
+  component: Modal,
   argTypes: {
     children: {
       description: 'Content or text displayed inside the component',

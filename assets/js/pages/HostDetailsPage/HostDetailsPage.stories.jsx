@@ -2,30 +2,27 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './HostDetailsPage';
+import HostDetailsPage from '.';
 
 import { action } from 'storybook/actions';
+import { architectures, providers } from '@lib/model';
+import {
+  abilityFactory,
+  hostFactory,
+  userFactory,
+  relevantPatchFactory,
+  upgradablePackageFactory,
+} from '@lib/test-utils/factories';
+
+const host = hostFactory.build();
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
+const patches = relevantPatchFactory.buildList(3);
+const upgradablePackages = upgradablePackageFactory.buildList(5);
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [
-      {
-        id: '123',
-        hostname: 'host-01',
-        heartbeat: 'passing',
-        agent_version: '2.0.0',
-        arch: 'x86_64',
-        cluster_id: null,
-        provider: 'aws',
-        ip_addresses: ['192.168.1.100'],
-        netmasks: ['255.255.255.0'],
-        deregisterable: false,
-        deregistering: false,
-        sles_subscriptions: [],
-        saptune_status: {},
-        provider_data: '{}',
-      },
-    ],
+    hosts: [host],
   },
   reducers: {},
 });
@@ -67,7 +64,7 @@ const catalogSlice = createSlice({
 const lastExecutionsSlice = createSlice({
   name: 'lastExecutions',
   initialState: {
-    123: null,
+    [host.id]: null,
   },
   reducers: {},
 });
@@ -76,7 +73,7 @@ const checksSelectionSlice = createSlice({
   name: 'checksSelection',
   initialState: {
     host: {
-      123: {},
+      [host.id]: {},
     },
     cluster: {},
   },
@@ -87,10 +84,10 @@ const softwareUpdatesSlice = createSlice({
   name: 'softwareUpdates',
   initialState: {
     softwareUpdates: {
-      123: {
+      [host.id]: {
         loading: false,
-        relevant_patches: [],
-        upgradable_packages: [],
+        relevant_patches: patches,
+        upgradable_packages: upgradablePackages,
         errors: [],
       },
     },
@@ -118,17 +115,17 @@ const instancesSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    abilities: [{ name: 'all', resource: 'all' }],
-    timezone: 'UTC',
+    username: user.username,
+    email: user.email,
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/HostDetailsPage',
-  component: Component,
+  component: HostDetailsPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -149,7 +146,7 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/hosts/123']}>
+          <MemoryRouter initialEntries={[`/hosts/${host.id}`]}>
             <Routes>
               <Route path="/hosts/:hostID" element={<Story />} />
             </Routes>
@@ -165,11 +162,12 @@ export default {
     },
     arch: {
       description: 'The arch prop',
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: architectures,
     },
     chartsEnabled: {
       description: 'The chartsEnabled prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     cluster: {
       description: 'The cluster prop',
@@ -212,8 +210,9 @@ export default {
       control: { type: 'object' },
     },
     provider: {
-      description: 'Identifier for the provider',
-      control: { type: 'text' },
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     providerData: {
       description: 'Identifier for the providerData',
@@ -321,8 +320,8 @@ export const Default = {
     deregistering: false,
     exportersStatus: {},
     heartbeat: 'passing',
-    hostID: '123',
-    hostname: 'host-01',
+    hostID: host.id,
+    hostname: host.hostname,
     ipAddresses: ['192.168.1.100'],
     lastBootTimestamp: '2024-01-01T00:00:00Z',
     netmasks: ['255.255.255.0'],
@@ -340,7 +339,7 @@ export const Default = {
     softwareUpdatesLoading: false,
     softwareUpdatesSettingsSaved: false,
     softwareUpdatesErrorMessage: '',
-    softwareUpdatesTooltip: '',
+    softwareUpdatesTooltip: 'Software updates are not available',
     userAbilities: [],
     operationsEnabled: true,
     runningOperation: null,
@@ -349,6 +348,6 @@ export const Default = {
     requestOperation: action('requestOperation'),
     cleanForbiddenOperation: action('cleanForbiddenOperation'),
     navigate: action('navigate'),
-    timezone: 'UTC',
+    timezone: 'Etc/UTC',
   },
 };

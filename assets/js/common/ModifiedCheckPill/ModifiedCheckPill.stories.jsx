@@ -1,8 +1,8 @@
-import Component from './ModifiedCheckPill';
+import ModifiedCheckPill from '.';
 
 export default {
   title: 'Components/ModifiedCheckPill',
-  component: Component,
+  component: ModifiedCheckPill,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -20,5 +20,9 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', content: '', customized: '' },
+  args: {
+    className: 'my-class',
+    content: 'Modified Check',
+    customized: true,
+  },
 };

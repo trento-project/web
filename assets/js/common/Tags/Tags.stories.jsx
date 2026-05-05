@@ -1,35 +1,34 @@
 import Tags from '.';
 import { action } from 'storybook/actions';
+import { abilityFactory } from '@lib/test-utils/factories';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/Tags',
   component: Tags,
   args: {
     tags: ['carbonara', 'Amatriciana'],
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     tagAdditionPermittedFor: ['all:all'],
     tagDeletionPermittedFor: ['all:all'],
   },
   argTypes: {
     onChange: { action: 'tag changed' },
     tagAdditionPermittedFor: {
-      control: { type: 'object' },
       description: 'Abilities that allow tag creation',
       action: 'callback',
     },
     tagDeletionPermittedFor: {
-      control: { type: 'object' },
       description: 'Abilities that allow tag deletion',
       action: 'callback',
     },
     className: {
-      type: 'string',
       description:
         'Additional CSS classes to apply to the tags container element',
       control: { type: 'text' },
     },
     tags: {
-      type: 'array',
       description: 'Array of tag strings to display as individual tag pills',
       control: { type: 'object' },
     },
@@ -43,19 +42,16 @@ export default {
       action: 'callback',
     },
     resourceId: {
-      type: 'string',
       description:
         'Unique identifier for the resource to which tags are associated',
       control: { type: 'text' },
     },
     userAbilities: {
-      type: 'array',
       description:
         'Array of user ability objects to determine if tag operations are permitted',
       control: { type: 'object' },
     },
     validationMessage: {
-      type: 'string',
       description:
         'Custom validation message displayed when tag input contains invalid characters',
       control: { type: 'text' },
@@ -78,7 +74,7 @@ export default {
 export const Default = {
   args: {
     tags: ['carbonara', 'Amatriciana'],
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     tagAdditionPermittedFor: ['all:all'],
     tagDeletionPermittedFor: ['all:all'],
     onChange: action('onChange'),

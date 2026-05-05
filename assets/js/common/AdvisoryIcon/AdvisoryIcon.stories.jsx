@@ -25,7 +25,6 @@ export default {
       control: { type: 'radio' },
     },
   },
-
   render: (args) => <AdvisoryIcon {...args} />,
 };
 

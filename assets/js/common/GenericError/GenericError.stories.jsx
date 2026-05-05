@@ -5,7 +5,6 @@ import GenericError from '.';
 export default {
   title: 'Components/GenericError',
   component: GenericError,
-  args: { message: undefined },
   argTypes: {
     message: {
       description: 'Optional error message to display',

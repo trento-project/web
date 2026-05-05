@@ -36,7 +36,6 @@ export default {
 
     open: {
       description: 'Whether the dialog is open or not',
-      type: 'boolean',
       control: { type: 'boolean' },
     },
 
@@ -59,6 +58,14 @@ export default {
 
 export const Default = {
   args: {
+    previousSettings: {
+      alertingEnabled: false,
+      smtpServer: '',
+      smtpPort: 587,
+      smtpUsername: '',
+      senderEmail: '',
+      recipientEmail: '',
+    },
     open: true,
     onSave: action('onSave'),
     onCancel: action('onCancel'),

@@ -1,8 +1,8 @@
-import Component from './ApiKeyBox';
+import ApiKeyBox from '.';
 
 export default {
   title: 'Components/ApiKeyBox',
-  component: Component,
+  component: ApiKeyBox,
   argTypes: {
     apiKey: {
       description: 'The API key to be displayed.',

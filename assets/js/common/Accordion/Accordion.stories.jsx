@@ -7,7 +7,6 @@ export default {
   component: Accordion,
   argTypes: {
     header: {
-      type: 'string',
       description:
         'The content of the accordion header. It can be a plain string or a Component',
       control: { type: 'text' },
@@ -36,12 +35,10 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description: 'CSS classes to apply to the accordion container',
       control: { type: 'text' },
     },
     headerClassnames: {
-      type: 'string',
       description: 'CSS classes to apply to the accordion header',
       control: { type: 'text' },
     },

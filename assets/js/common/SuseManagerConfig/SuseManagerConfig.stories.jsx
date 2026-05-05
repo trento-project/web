@@ -1,5 +1,9 @@
 import SuseManagerConfig from './SuseManagerConfig';
 import { action } from 'storybook/actions';
+import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 export default {
   title: 'Components/SuseManagerConfig',
@@ -51,10 +55,8 @@ export default {
       action: 'callback',
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
 };
@@ -62,9 +64,9 @@ export default {
 export const Default = {
   args: {
     url: 'https://trento-project.io/suse-manager',
-    username: 'trentoAdm',
+    username: user.username,
     certUploadDate: '2024-01-29T08:41:47.291734Z',
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     onEditClick: action('onEditClick'),
     onClearClick: action('onClearClick'),
     onClearSettings: action('onClearSettings'),
@@ -83,7 +85,7 @@ export const WithVeryLongSUMAUrl = {
 export const Empty = {
   args: {
     ...Default.args,
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
   },
 };
 

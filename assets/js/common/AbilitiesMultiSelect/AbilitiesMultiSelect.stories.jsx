@@ -1,9 +1,10 @@
-import Component from './AbilitiesMultiSelect';
+import AbilitiesMultiSelect from '.';
 import { action } from 'storybook/actions';
+import { abilityFactory } from '@lib/test-utils/factories';
 
 export default {
   title: 'Components/AbilitiesMultiSelect',
-  component: Component,
+  component: AbilitiesMultiSelect,
   argTypes: {
     abilities: {
       description: 'Available abilities options (array of ability objects)',
@@ -28,12 +29,35 @@ export default {
   },
 };
 
+const sampleAbilities = abilityFactory.buildList(7);
+const userSelectedAbilities = abilityFactory.buildList(2);
+
 export const Default = {
+  args: {
+    abilities: sampleAbilities,
+    userAbilities: userSelectedAbilities,
+    placeholder: 'Select abilities...',
+    operationsEnabled: true,
+    setAbilities: action('setAbilities'),
+  },
+};
+
+export const NoAbilities = {
   args: {
     abilities: [],
     userAbilities: [],
     placeholder: 'Select abilities...',
     operationsEnabled: true,
+    setAbilities: action('setAbilities'),
+  },
+};
+
+export const OperationsDisabled = {
+  args: {
+    abilities: sampleAbilities,
+    userAbilities: userSelectedAbilities,
+    placeholder: 'Select abilities...',
+    operationsEnabled: false,
     setAbilities: action('setAbilities'),
   },
 };

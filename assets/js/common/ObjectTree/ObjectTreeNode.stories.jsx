@@ -1,9 +1,9 @@
-import Component from './ObjectTreeNode';
-import { action } from 'storybook/actions';
+import ObjectTree from '.';
+// import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/ObjectTreeNode',
-  component: Component,
+  component: ObjectTree,
   argTypes: {
     element: {
       description: 'Object element to display in the tree',
@@ -23,7 +23,7 @@ export default {
     },
     level: {
       description: 'Nesting level for indentation',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
   },
 };
@@ -33,7 +33,27 @@ export const Default = {
     element: { name: 'root', value: 'data', children: [] },
     isBranch: false,
     isExpanded: false,
-    getNodeProps: action('getNodeProps'),
-    level: '1',
+    getNodeProps: () => ({ className: 'object-tree-node' }),
+    level: 1,
+  },
+};
+
+export const BranchNode = {
+  args: {
+    element: { name: 'branch', value: null, children: [] },
+    isBranch: true,
+    isExpanded: false,
+    getNodeProps: () => ({ className: 'object-tree-node' }),
+    level: 1,
+  },
+};
+
+export const ExpandedBranch = {
+  args: {
+    element: { name: 'branch', value: null, children: [] },
+    isBranch: true,
+    isExpanded: true,
+    getNodeProps: () => ({ className: 'object-tree-node' }),
+    level: 1,
   },
 };

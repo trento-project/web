@@ -1,10 +1,10 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import Component from './SomethingWentWrong';
+import SomethingWentWrong from '.';
 
 export default {
   title: 'Components/SomethingWentWrong',
-  component: Component,
+  component: SomethingWentWrong,
   decorators: [
     (Story) => (
       <BrowserRouter>

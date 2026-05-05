@@ -1,24 +1,24 @@
-import Component from './ExecutionContainer';
+import ExecutionResults from '.';
 
 export default {
   title: 'Components/ExecutionContainer',
-  component: Component,
+  component: ExecutionResults,
   argTypes: {
     catalogLoading: {
       description: 'The catalogLoading prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     executionLoading: {
       description: 'The executionLoading prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     executionStarted: {
       description: 'The executionStarted prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     executionRunning: {
       description: 'The executionRunning prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     children: {
       description: 'Content or text displayed inside the component',
@@ -29,9 +29,10 @@ export default {
 
 export const Default = {
   args: {
-    catalogLoading: '',
-    executionLoading: '',
-    executionStarted: '',
-    executionRunning: '',
+    catalogLoading: false,
+    executionLoading: false,
+    executionStarted: false,
+    executionRunning: false,
+    children: 'Execution content',
   },
 };

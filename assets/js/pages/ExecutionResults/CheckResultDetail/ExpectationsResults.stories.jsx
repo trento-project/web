@@ -11,18 +11,6 @@ import ExpectationsResults from './ExpectationsResults';
 export default {
   title: 'Patterns/ExpectationsResults',
   component: ExpectationsResults,
-};
-
-export const Default = {
-  args: {
-    isTargetHost: true,
-    results: [
-      { name: faker.animal.bear(), return_value: true },
-      { name: faker.animal.bear(), return_value: false },
-    ],
-    isError: false,
-    errorMessage: 'An error occurred',
-  },
   argTypes: {
     isTargetHost: {
       description: 'Indicates if the target is a host',
@@ -44,6 +32,18 @@ export const Default = {
       description: 'Severity level of the expectation result',
       control: { type: 'text' },
     },
+  },
+};
+
+export const Default = {
+  args: {
+    isTargetHost: true,
+    results: [
+      { name: faker.animal.bear(), return_value: true },
+      { name: faker.animal.bear(), return_value: false },
+    ],
+    isError: false,
+    errorMessage: 'An error occurred',
   },
 };
 

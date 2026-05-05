@@ -15,18 +15,40 @@ import { GenericSystemDetails } from './GenericSystemDetails';
 
 import { getSapInstanceOperations } from './sapOperations';
 
+const hosts = hostFactory.buildList(2, {
+  cluster: clusterFactory.build(),
+  heartbeat: 'passing',
+});
+const instancesWithHosts = sapSystemApplicationInstanceFactory
+  .buildList(2)
+  .map((instance, index) => ({
+    ...instance,
+    host: hosts[index] || hosts[0],
+  }));
+
 const system = {
   ...sapSystemFactory.build({
-    instances: sapSystemApplicationInstanceFactory.buildList(2),
+    instances: instancesWithHosts,
   }),
-  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+  hosts,
 };
+
+const hostsForAbsent = hostFactory.buildList(2, {
+  cluster: clusterFactory.build(),
+  heartbeat: 'passing',
+});
+const instancesWithHostsAbsent = sapSystemApplicationInstanceFactory
+  .buildList(2)
+  .map((instance, index) => ({
+    ...instance,
+    host: hostsForAbsent[index] || hostsForAbsent[0],
+  }));
 
 const systemWithAbsentInstance = {
   ...sapSystemFactory.build({
-    instances: sapSystemApplicationInstanceFactory.buildList(2),
+    instances: instancesWithHostsAbsent,
   }),
-  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+  hosts: hostsForAbsent,
 };
 systemWithAbsentInstance.instances[1].absent_at = faker.date
   .past()
@@ -64,25 +86,21 @@ export default {
       description: 'Deregister and clean up an absent instance',
     },
     title: {
-      type: 'string',
       description:
         'Main page title displayed at the top of the SAP/Database system details view',
       control: { type: 'text' },
     },
     type: {
-      type: 'string',
       description:
         'System type indicator: APPLICATION_TYPE for SAP systems or DATABASE_TYPE for HANA databases',
       control: { type: 'text' },
     },
     operationsEnabled: {
-      type: 'boolean',
       description:
         'Boolean flag that determines whether operation buttons are rendered for system start/stop actions',
       control: { type: 'boolean' },
     },
     runningOperations: {
-      type: 'array',
       description: 'Array of currently executing operations on the system',
       control: { type: 'object' },
     },
@@ -118,6 +136,23 @@ export default {
       <GenericSystemDetails {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    title: 'SAP System Details',
+    type: APPLICATION_TYPE,
+    system,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    cleanUpPermittedFor: ['cleanup:application_instance'],
+    getInstanceOperations: getSapInstanceOperations,
+    operationsEnabled: true,
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+    getSystemOperations: action('getSystemOperations'),
+    getSiteOperations: action('getSiteOperations'),
+    onRequestOperation: action('onRequestOperation'),
+    onCleanForbiddenOperation: action('onCleanForbiddenOperation'),
+  },
 };
 
 export const SapSystem = {

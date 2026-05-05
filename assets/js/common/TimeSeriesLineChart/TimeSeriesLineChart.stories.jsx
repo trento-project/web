@@ -61,12 +61,11 @@ export default {
       action: 'onIntervalChange',
     },
     chartRef: {
-      type: 'object',
       description:
         'Reference to the Chart.js instance for direct chart manipulation',
+      control: { type: 'object' },
     },
     yAxisMaxValue: {
-      type: 'number',
       description: 'Maximum value for the Y axis scale',
       control: { type: 'number' },
     },
@@ -75,16 +74,13 @@ export default {
       action: 'yAxisLabelFormatter',
     },
     yAxisScaleType: {
-      type: 'string',
       description:
         'The type of scale for the Y axis (e.g., linear or logarithmic)',
       control: { type: 'text' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
 };

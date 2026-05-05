@@ -72,10 +72,8 @@ export default {
       control: { type: 'text' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
     timezones: {
       description:
@@ -139,6 +137,8 @@ export default {
 
 export const Default = {
   args: {
+    fullName: fullname,
+    emailAddress: email,
     username,
     abilities,
     totpSecret: 'HKJDFHJKHDIU379847HJKDJKH',

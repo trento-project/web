@@ -1,8 +1,8 @@
-import Component from './Features';
+import SapSystemDetails from '.';
 
 export default {
   title: 'Components/Features',
-  component: Component,
+  component: SapSystemDetails,
   argTypes: {
     features: {
       description: 'The features prop',
@@ -12,5 +12,7 @@ export default {
 };
 
 export const Default = {
-  args: { features: '' },
+  args: {
+    features: 'Example feature 1|Example feature 2|Example feature 3',
+  },
 };

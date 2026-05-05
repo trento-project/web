@@ -1,9 +1,12 @@
-import Component from './LoginForm';
+import Login from '.';
 import { action } from 'storybook/actions';
+import { userFactory } from '@lib/test-utils/factories';
+
+const mockUser = userFactory.build();
 
 export default {
   title: 'Components/LoginForm',
-  component: Component,
+  component: Login,
   argTypes: {
     authError: {
       description: 'The authError prop',
@@ -11,7 +14,7 @@ export default {
     },
     authInProgress: {
       description: 'The authInProgress prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     handleLoginSubmit: {
       description: 'Callback function invoked when login submit',
@@ -39,7 +42,7 @@ export default {
     },
     totpCodeRequested: {
       description: 'The totpCodeRequested prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     totpCode: {
       description: 'The totpCode prop',
@@ -55,15 +58,47 @@ export default {
 export const Default = {
   args: {
     authError: '',
-    authInProgress: '',
+    authInProgress: false,
     isUnauthorized: false,
     password: '',
-    totpCodeRequested: '',
+    totpCodeRequested: false,
     totpCode: '',
     username: '',
     handleLoginSubmit: action('handleLoginSubmit'),
     setPassword: action('setPassword'),
     setTotpCode: action('setTotpCode'),
     setUsername: action('setUsername'),
+  },
+};
+
+export const FilledForm = {
+  args: {
+    ...Default.args,
+    username: mockUser.username,
+    password: 'ExamplePassword123!',
+  },
+};
+
+export const WithTotpCode = {
+  args: {
+    ...FilledForm.args,
+    totpCodeRequested: true,
+    totpCode: '123456',
+  },
+};
+
+export const WithAuthError = {
+  args: {
+    ...Default.args,
+    username: mockUser.username,
+    authError: 'Invalid username or password',
+    isUnauthorized: true,
+  },
+};
+
+export const SubmittingForm = {
+  args: {
+    ...FilledForm.args,
+    authInProgress: true,
   },
 };

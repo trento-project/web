@@ -1,11 +1,15 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import Component from './ChecksSelectionHints';
-
+import { hostFactory, catalogFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
+import ChecksSelectionHints from '.';
+
+const hosts = hostFactory.buildList(2);
+const catalog = catalogFactory.build();
+const checks = Object.keys(catalog.catalog || {}).slice(0, 3);
 export default {
   title: 'Components/ChecksSelectionHints',
-  component: Component,
+  component: ChecksSelectionHints,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -41,8 +45,22 @@ export const Default = {
   args: {
     targetID: 'target-1',
     targetType: 'cluster',
-    selectedChecks: [],
-    hosts: [],
+    selectedChecks: checks.slice(0, 3),
+    hosts,
     onStartExecution: action('onStartExecution'),
+  },
+};
+
+export const NoChecks = {
+  args: {
+    ...Default.args,
+    selectedChecks: [],
+  },
+};
+
+export const WithAllChecks = {
+  args: {
+    ...Default.args,
+    selectedChecks: checks,
   },
 };

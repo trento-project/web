@@ -8,11 +8,9 @@ export default {
   component: ResetCheckCustomizationModal,
   argTypes: {
     checkId: {
-      type: 'string',
       description: 'The check ID for which the customization will be reset',
     },
     open: {
-      type: 'boolean',
       description: 'Sets the visibility of the modal',
     },
     onReset: {
@@ -29,7 +27,15 @@ export default {
 export const Default = {
   args: {
     checkId: faker.lorem.word(),
+    open: true,
     onReset: action('onReset'),
     onCancel: action('onCancel'),
+  },
+};
+
+export const Closed = {
+  args: {
+    ...Default.args,
+    open: false,
   },
 };

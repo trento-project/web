@@ -1,8 +1,20 @@
-import Component from './SapSystemLink';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import SapSystemLink from '.';
+import { sapSystemFactory } from '@lib/test-utils/factories';
+
+const { id, sid } = sapSystemFactory.build();
 
 export default {
   title: 'Components/SapSystemLink',
-  component: Component,
+  component: SapSystemLink,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   argTypes: {
     systemType: {
       description: 'The systemType prop',
@@ -20,5 +32,9 @@ export default {
 };
 
 export const Default = {
-  args: { systemType: '', sapSystemId: '' },
+  args: {
+    systemType: 'database',
+    sapSystemId: id,
+    children: sid,
+  },
 };

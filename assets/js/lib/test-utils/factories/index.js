@@ -10,6 +10,14 @@ export * from './relevantPatches';
 export * from './advisoryErrata';
 export * from './users';
 export * from './checks';
+export * from './upgradablePackage';
+export * from './alertingSettings';
+export * from './activityLog';
+export * from './activityLogsSettings';
+export * from './charts';
+export * from './operations';
+export * from './settings';
+export * from './softwareUpdatesSettings';
 
 export const randomObjectFactory = Factory.define(({ transientParams }) => {
   const depth = transientParams.depth || 2;

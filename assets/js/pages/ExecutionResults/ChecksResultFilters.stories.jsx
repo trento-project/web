@@ -1,11 +1,11 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import Component from './ChecksResultFilters';
+import ExecutionResults from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksResultFilters',
-  component: Component,
+  component: ExecutionResults,
   decorators: [
     (Story) => (
       <MemoryRouter>

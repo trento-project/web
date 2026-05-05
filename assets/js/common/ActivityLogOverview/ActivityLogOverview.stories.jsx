@@ -15,10 +15,8 @@ export default {
       control: { type: 'boolean' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
 };

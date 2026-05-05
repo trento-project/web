@@ -1,8 +1,9 @@
-import Component from './Resources';
+import ClusterDetails from '.';
+import { clusterResourceFactory } from '@lib/test-utils/factories';
 
 export default {
   title: 'Components/Resources',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     resources: {
       description: 'The resources prop',
@@ -29,10 +30,10 @@ export default {
 
 export const Default = {
   args: {
-    resources: '',
-    hosts: '',
-    userAbilities: '',
-    operationsDisabled: '',
-    getResourceOperations: '',
+    resources: clusterResourceFactory.buildList(5, { parent: null }),
+    hosts: [],
+    userAbilities: [],
+    operationsDisabled: false,
+    getResourceOperations: () => [],
   },
 };

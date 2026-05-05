@@ -32,12 +32,10 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes to apply to the textarea element',
       control: { type: 'text' },
     },
     initialValue: {
-      type: 'string',
       description:
         'The initial value to populate the textarea with when the component mounts',
       control: { type: 'text' },
@@ -51,11 +49,11 @@ export default {
 
 export const Default = {
   args: {
-    id: '',
-    name: '',
+    id: 'textarea-1',
+    name: 'default-textarea',
     value: '',
-    placeholder: '',
-    error: '',
+    placeholder: 'Enter text...',
+    error: false,
     disabled: false,
     className: '',
     initialValue: '',

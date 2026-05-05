@@ -1,8 +1,8 @@
-import Component from './PageHeader';
+import PageHeader from '.';
 
 export default {
   title: 'Components/PageHeader',
-  component: Component,
+  component: PageHeader,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', children: 'Default children' },
+  args: {
+    className: '',
+    children: 'Default children',
+  },
 };

@@ -1,9 +1,9 @@
-import Component from './InputNumber';
+import Input from '.';
 import { action } from 'storybook/actions';
 
 export default {
-  title: 'Components/InputNumber',
-  component: Component,
+  title: 'Components/Input/InputNumber',
+  component: Input,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -47,8 +47,13 @@ export default {
 export const Default = {
   args: {
     className: '',
-    placeholder: 'Default placeholder',
+    id: 'number-input-1',
+    name: 'number-input',
+    placeholder: 'Enter number...',
+    value: 0,
+    initialValue: 0,
     disabled: false,
+    error: false,
     onChange: action('onChange'),
   },
 };

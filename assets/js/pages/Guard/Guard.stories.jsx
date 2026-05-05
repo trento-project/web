@@ -3,19 +3,26 @@ import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './Guard';
+import { userFactory } from '@lib/test-utils/factories';
+import Guard from '.';
+
+const user = userFactory.build();
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    loggedIn: false,
+    loggedIn: true,
+    username: user.username,
+    email: user.email,
   },
   reducers: {},
 });
 
+const mockGetUser = () => Promise.resolve(user);
+
 export default {
   title: 'Components/Guard',
-  component: Component,
+  component: Guard,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -48,6 +55,6 @@ export default {
 export const Default = {
   args: {
     redirectPath: '/login',
-    getUser: action('getUser'),
+    getUser: mockGetUser,
   },
 };

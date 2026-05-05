@@ -1,21 +1,21 @@
-import Component from './HealthSummary';
+import HealthSummary from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/HealthSummary',
-  component: Component,
+  component: HealthSummary,
   argTypes: {
     passing: {
       description: 'The passing prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     critical: {
       description: 'The critical prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     warning: {
       description: 'The warning prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -27,18 +27,18 @@ export default {
     },
     activeFilters: {
       description: 'The activeFilters prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };
 
 export const Default = {
   args: {
-    passing: '',
-    critical: '',
-    warning: '',
+    passing: 10,
+    critical: 2,
+    warning: 3,
     className: '',
-    activeFilters: '',
+    activeFilters: [],
     onFilterChange: action('onFilterChange'),
   },
 };

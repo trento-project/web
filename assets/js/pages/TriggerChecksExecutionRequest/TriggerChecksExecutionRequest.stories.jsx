@@ -1,9 +1,9 @@
-import Component from './TriggerChecksExecutionRequest';
+import TriggerChecksExecutionRequest from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/TriggerChecksExecutionRequest',
-  component: Component,
+  component: TriggerChecksExecutionRequest,
   argTypes: {
     targetID: {
       description: 'Identifier for the target',
@@ -39,7 +39,7 @@ export default {
 export const Default = {
   args: {
     targetID: 'host_001',
-    cssClasses: '',
+    cssClasses: 'my-custom-class',
     children: 'Execute Checks',
     hosts: [{ id: 'host_001', name: 'host-01' }],
     checks: [

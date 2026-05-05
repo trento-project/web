@@ -67,6 +67,17 @@ export default {
   ),
 };
 
+export const Default = {
+  args: {
+    title: 'Database Details',
+    type: DATABASE_TYPE,
+    system: database,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    cleanUpPermittedFor: ['cleanup:database_instance'],
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
+};
+
 export const Database = {
   args: {
     title: 'Database Details',

@@ -2,12 +2,21 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './SapSystemsOverviewPage';
+import {
+  sapSystemFactory,
+  databaseFactory,
+  abilityFactory,
+  userFactory,
+} from '@lib/test-utils/factories';
+import SapSystemsOverviewPage from '.';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 const sapSystemsListSlice = createSlice({
   name: 'sapSystemsList',
   initialState: {
-    sapSystems: [],
+    sapSystems: sapSystemFactory.buildList(3),
     applicationInstances: [],
   },
   reducers: {},
@@ -16,7 +25,7 @@ const sapSystemsListSlice = createSlice({
 const databasesListSlice = createSlice({
   name: 'databasesList',
   initialState: {
-    databases: [],
+    databases: databaseFactory.buildList(2),
     databaseInstances: [],
   },
   reducers: {},
@@ -25,17 +34,17 @@ const databasesListSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    abilities: [{ name: 'all', resource: 'all' }],
-    timezone: 'UTC',
+    username: user.username,
+    email: user.email,
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/SapSystemsOverviewPage',
-  component: Component,
+  component: SapSystemsOverviewPage,
   decorators: [
     (Story) => {
       const hostListSlice = createSlice({

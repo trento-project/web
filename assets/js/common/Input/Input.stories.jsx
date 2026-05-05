@@ -50,12 +50,10 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes to apply to the input wrapper',
       control: { type: 'text' },
     },
     initialValue: {
-      type: 'string',
       description:
         'The initial default value to populate the input with when the component mounts',
       control: { type: 'text' },
@@ -69,13 +67,13 @@ export default {
 
 export const Default = {
   args: {
-    id: '',
-    name: '',
-    prefix: '',
-    suffix: '',
-    placeholder: '',
-    allowClear: '',
-    error: '',
+    id: 'input-1',
+    name: 'default-input',
+    prefix: undefined,
+    suffix: undefined,
+    placeholder: 'Enter text...',
+    allowClear: false,
+    error: false,
     disabled: false,
     className: '',
     initialValue: '',

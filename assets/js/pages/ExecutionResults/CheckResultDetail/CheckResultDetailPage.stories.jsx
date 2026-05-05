@@ -2,15 +2,56 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './CheckResultDetailPage';
+import {
+  clusterFactory,
+  hostFactory,
+  checksExecutionCompletedFactory,
+  catalogFactory,
+} from '@lib/test-utils/factories';
+import CheckResultDetailPage from '.';
+
+const cluster = clusterFactory.build();
+const execution = checksExecutionCompletedFactory.build();
+const hosts = hostFactory.buildList(2, { cluster_id: cluster.id });
+const catalogData = catalogFactory.build();
+
+const checkIDs = Object.keys(catalogData.catalog || {});
+const checkID = checkIDs.length > 0 ? checkIDs[0] : 'check-1';
+const checkData = catalogData.catalog?.[checkID] || {};
+
+// Ensure execution has check_results with the check we're testing
+const executionWithCheckResults = {
+  ...execution,
+  check_results: [
+    {
+      check_id: checkID,
+      result: 'passing',
+      agents_check_results: hosts.map((host) => ({
+        agent_id: host.id,
+        expectation_evaluations: [
+          { name: 'test_expectation_1', result: true, type: 'expect' },
+          { name: 'test_expectation_2', result: true, type: 'expect' },
+        ],
+      })),
+      ...checkData,
+    },
+  ],
+};
+
+const catalogArray = Object.entries(catalogData.catalog || {}).map(
+  ([id, check]) => ({
+    id,
+    ...check,
+  })
+);
 
 const lastExecutionsSlice = createSlice({
   name: 'lastExecutions',
   initialState: {
-    123: {
-      data: {
-        check_results: [],
-      },
+    [cluster.id]: {
+      data: executionWithCheckResults,
+      loading: false,
+      error: null,
     },
   },
   reducers: {},
@@ -19,7 +60,8 @@ const lastExecutionsSlice = createSlice({
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
-    data: [],
+    data: catalogArray,
+    filteredCatalog: catalogArray,
     loading: false,
     error: null,
   },
@@ -39,7 +81,7 @@ const checksSelectionSlice = createSlice({
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [],
+    hosts,
   },
   reducers: {},
 });
@@ -47,14 +89,14 @@ const hostListSlice = createSlice({
 const clusterListSlice = createSlice({
   name: 'clustersList',
   initialState: {
-    clusters: [],
+    clusters: [cluster],
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/CheckResultDetailPage',
-  component: Component,
+  component: CheckResultDetailPage,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -69,10 +111,14 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/results/clusters/123/checks/456']}>
+          <MemoryRouter
+            initialEntries={[
+              `/results/clusters/${cluster.id}/checks/${checkID}/cluster/${cluster.name}`,
+            ]}
+          >
             <Routes>
               <Route
-                path="/results/:targetType/:targetID/checks/:checkID"
+                path="/results/:targetType/:targetID/checks/:checkID/:resultTargetType/:resultTargetName"
                 element={<Story />}
               />
             </Routes>
@@ -109,13 +155,25 @@ export default {
   },
 };
 
+const expectations = checkData.expectations || [
+  {
+    name: 'expect_test_1',
+    value: 'some_value',
+    type: 'expect',
+    expectations: [
+      { name: 'test_expectation_1', type: 'expect' },
+      { name: 'test_expectation_2', type: 'expect' },
+    ],
+  },
+];
+
 export const Default = {
   args: {
-    checkID: 'check-1',
-    expectations: {},
-    targetID: 'target-1',
+    checkID: checkID,
+    expectations: expectations,
+    targetID: cluster.id,
     targetType: 'cluster',
-    severity: 'critical',
-    executionData: {},
+    severity: checkData.severity || 'critical',
+    executionData: executionWithCheckResults,
   },
 };

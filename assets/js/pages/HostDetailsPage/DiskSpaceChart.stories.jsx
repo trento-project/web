@@ -1,8 +1,8 @@
-import Component from './DiskSpaceChart';
+import HostDetailsPage from '.';
 
 export default {
   title: 'Components/DiskSpaceChart',
-  component: Component,
+  component: HostDetailsPage,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { hostId: '', updateFrequency: '' },
+  args: {
+    hostId: 'host-123',
+    updateFrequency: 30000,
+  },
 };

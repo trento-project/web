@@ -1,9 +1,9 @@
-import Component from './CatalogContainer';
+import ChecksCatalog from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/CatalogContainer',
-  component: Component,
+  component: ChecksCatalog,
   argTypes: {
     onClear: {
       description: 'Callback function invoked when clear',

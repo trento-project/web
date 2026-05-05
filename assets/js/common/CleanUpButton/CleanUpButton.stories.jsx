@@ -1,6 +1,9 @@
 import CleanUpButton from '.';
+import { abilityFactory } from '@lib/test-utils/factories';
 
 import { action } from 'storybook/actions';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 export default {
   title: 'Components/CleanUpButton',
   component: CleanUpButton,
@@ -37,7 +40,7 @@ export default {
 
 export const Default = {
   args: {
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     permittedFor: [],
     onClick: action('onClick'),
     cleaning: false,

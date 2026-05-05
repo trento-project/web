@@ -18,28 +18,23 @@ export default {
       control: { type: 'boolean' },
     },
     className: {
-      type: 'string',
       description:
         'Additional CSS classes to apply to the password input wrapper',
       control: { type: 'text' },
     },
     id: {
-      type: 'string',
       description: 'The id attribute of the underlying input element',
       control: { type: 'text' },
     },
     name: {
-      type: 'string',
       description: 'The name attribute of the underlying input element',
       control: { type: 'text' },
     },
     value: {
-      type: 'string',
       description: 'The controlled value of the password input',
       control: { type: 'text' },
     },
     initialValue: {
-      type: 'string',
       description:
         'The initial default value to populate the password input with on mount',
       control: { type: 'text' },
@@ -55,17 +50,17 @@ export default {
 export const Default = {
   args: {
     placeholder: 'Password',
-    error: '',
+    error: false,
     disabled: false,
     className: '',
-    id: '',
-    name: '',
+    id: 'password-1',
+    name: 'password',
     value: '',
     initialValue: '',
-    type: '',
-    prefix: '',
-    suffix: '',
-    allowClear: '',
+    type: 'password',
+    prefix: undefined,
+    suffix: undefined,
+    allowClear: false,
     onChange: action('onChange'),
   },
 };

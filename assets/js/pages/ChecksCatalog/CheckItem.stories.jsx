@@ -1,8 +1,8 @@
-import Component from './CheckItem';
+import ChecksCatalog from '.';
 
 export default {
   title: 'Components/CheckItem',
-  component: Component,
+  component: ChecksCatalog,
   argTypes: {
     checkID: {
       description: 'Identifier for the checkID',

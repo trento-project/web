@@ -1,8 +1,8 @@
-import Component from './ClusterNodeLink';
+import ClusterDetails from '.';
 
 export default {
   title: 'Components/ClusterNodeLink',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { hostId: '' },
+  args: {
+    hostId: '',
+    children: 'Default children',
+  },
 };

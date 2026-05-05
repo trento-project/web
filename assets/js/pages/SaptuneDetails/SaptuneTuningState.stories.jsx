@@ -1,8 +1,8 @@
-import Component from './SaptuneTuningState';
+import SaptuneDetails from '.';
 
 export default {
   title: 'Components/SaptuneTuningState',
-  component: Component,
+  component: SaptuneDetails,
   argTypes: {
     state: {
       description: 'Saptune tuning state',
@@ -13,7 +13,9 @@ export default {
 };
 
 export const Default = {
-  args: { state: 'compliant' },
+  args: {
+    state: 'compliant',
+  },
 };
 
 export const NotCompliant = {

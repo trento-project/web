@@ -2,12 +2,25 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './ClustersList';
+import {
+  clusterFactory,
+  sapSystemFactory,
+  databaseFactory,
+  abilityFactory,
+  userFactory,
+} from '@lib/test-utils/factories';
+import ClusterDetails from '.';
+
+const clusters = clusterFactory.buildList(3);
+const sapSystems = sapSystemFactory.buildList(2);
+const databases = databaseFactory.buildList(2);
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 const clusterListSlice = createSlice({
   name: 'clustersList',
   initialState: {
-    clusters: [],
+    clusters,
   },
   reducers: {},
 });
@@ -15,7 +28,7 @@ const clusterListSlice = createSlice({
 const sapSystemsListSlice = createSlice({
   name: 'sapSystemsList',
   initialState: {
-    sapSystems: [],
+    sapSystems,
     applicationInstances: [],
   },
   reducers: {},
@@ -24,7 +37,7 @@ const sapSystemsListSlice = createSlice({
 const databasesListSlice = createSlice({
   name: 'databasesList',
   initialState: {
-    databases: [],
+    databases,
     databaseInstances: [],
   },
   reducers: {},
@@ -41,11 +54,11 @@ const instanceSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
+    username: user.username,
+    email: user.email,
     profile: {
-      abilities: [{ name: 'all', resource: 'all' }],
-      timezone: 'UTC',
+      abilities: [allAbility],
+      timezone: 'Etc/UTC',
     },
   },
   reducers: {},
@@ -53,7 +66,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/ClustersList',
-  component: Component,
+  component: ClusterDetails,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

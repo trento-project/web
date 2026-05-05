@@ -1,11 +1,16 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import Component from './ResultsContainer';
+import { hostFactory, catalogFactory } from '@lib/test-utils/factories';
+import ExecutionResults from '.';
 
 import { action } from 'storybook/actions';
+
+const hosts = hostFactory.buildList(2);
+const catalog = catalogFactory.build();
+const checks = Object.keys(catalog.catalog || {}).slice(0, 3);
 export default {
   title: 'Components/ResultsContainer',
-  component: Component,
+  component: ExecutionResults,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -63,10 +68,27 @@ export const Default = {
     errorContent: '',
     targetID: 'target-1',
     targetType: 'cluster',
-    hasAlreadyChecksResults: false,
-    selectedChecks: [],
-    hosts: [],
+    hasAlreadyChecksResults: true,
+    selectedChecks: checks,
+    hosts: hosts.map((h) => h.id),
+    children: 'Results content',
     onContentRefresh: action('onContentRefresh'),
     onStartExecution: action('onStartExecution'),
+  },
+};
+
+export const NoResults = {
+  args: {
+    ...Default.args,
+    hasAlreadyChecksResults: false,
+  },
+};
+
+export const WithError = {
+  args: {
+    ...Default.args,
+    error: true,
+    errorContent: 'Failed to load results',
+    hasAlreadyChecksResults: false,
   },
 };

@@ -11,10 +11,8 @@ export default {
       control: { type: 'object' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
     catalogDataEmpty: {
       description: 'Whether catalog data is empty',
@@ -52,8 +50,29 @@ export const Default = {
 };
 
 export const CatalogEmpty = {
-  args: { ...Default.args, catalogDataEmpty: true },
+  args: {
+    ...Default.args,
+    catalogDataEmpty: true,
+  },
 };
-export const Loading = { args: { ...Default.args, loading: true } };
-export const Error = { args: { ...Default.args, error: 'Network Error' } };
-export const NoData = { ...Default.args, data: {} };
+
+export const Loading = {
+  args: {
+    ...Default.args,
+    loading: true,
+  },
+};
+
+export const Error = {
+  args: {
+    ...Default.args,
+    error: 'Network Error',
+  },
+};
+
+export const NoData = {
+  args: {
+    ...Default.args,
+    data: {},
+  },
+};

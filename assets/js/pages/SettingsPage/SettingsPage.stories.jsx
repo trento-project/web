@@ -3,15 +3,19 @@ import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
-import Component from './SettingsPage';
+import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+import SettingsPage from '.';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    abilities: [{ name: 'all', resource: 'all' }],
-    timezone: 'UTC',
+    username: user.username,
+    email: user.email,
+    abilities: [allAbility],
+    timezone: 'Etc/UTC',
   },
   reducers: {},
 });
@@ -50,7 +54,7 @@ const notificationsSlice = createSlice({
 
 export default {
   title: 'Components/SettingsPage',
-  component: Component,
+  component: SettingsPage,
   decorators: [
     (Story) => {
       const axiosMock = new MockAdapter(networkClient);
@@ -90,7 +94,7 @@ export default {
 
 export const Default = {
   args: {
-    apiKeyExpiration: '',
-    timezone: '',
+    apiKeyExpiration: '2026-12-31T23:59:59Z',
+    timezone: 'Etc/UTC',
   },
 };

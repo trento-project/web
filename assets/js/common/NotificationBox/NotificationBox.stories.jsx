@@ -1,8 +1,8 @@
-import Component from './NotificationBox';
+import NotificationBox from '.';
 
 export default {
   title: 'Components/NotificationBox',
-  component: Component,
+  component: NotificationBox,
   argTypes: {
     icon: {
       description: 'Icon element or component to display',
@@ -27,5 +27,9 @@ export default {
 };
 
 export const Default = {
-  args: { title: 'Default title', text: 'Default text' },
+  args: {
+    icon: null,
+    title: 'Default title',
+    text: 'Default text',
+  },
 };

@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { MemoryRouter } from 'react-router';
 
 import {
+  abilityFactory,
   clusterFactory,
   databaseFactory,
   databaseInstanceFactory,
@@ -12,7 +13,8 @@ import {
 
 import DatabasesOverview from './DatabasesOverview';
 
-const userAbilities = [{ name: 'all', resource: 'all' }];
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const userAbilities = [allAbility];
 const databases = databaseFactory.buildList(3);
 
 const enrichedInstances = databases[0].database_instances
@@ -105,6 +107,18 @@ export default {
       <DatabasesOverview {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    userAbilities,
+    databases,
+    databaseInstances: enrichedInstances,
+    loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
 };
 
 export const Databases = {

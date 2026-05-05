@@ -10,7 +10,6 @@ export default {
       control: { type: 'object' },
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes applied to the chart container',
       control: { type: 'text' },
     },

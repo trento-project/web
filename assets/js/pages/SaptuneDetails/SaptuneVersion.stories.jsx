@@ -1,8 +1,8 @@
-import Component from './SaptuneVersion';
+import SaptuneDetails from '.';
 
 export default {
   title: 'Components/SaptuneVersion',
-  component: Component,
+  component: SaptuneDetails,
   argTypes: {
     sapPresent: {
       description: 'The sapPresent prop',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { sapPresent: '', version: '' },
+  args: {
+    sapPresent: true,
+    version: '7.3.0',
+  },
 };

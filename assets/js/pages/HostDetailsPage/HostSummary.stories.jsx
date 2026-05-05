@@ -1,8 +1,9 @@
-import Component from './HostSummary';
+import HostDetailsPage from '.';
+import { architectures } from '@lib/model';
 
 export default {
   title: 'Components/HostSummary',
-  component: Component,
+  component: HostDetailsPage,
   argTypes: {
     agentVersion: {
       description: 'The agentVersion prop',
@@ -10,7 +11,8 @@ export default {
     },
     arch: {
       description: 'The arch prop',
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: architectures,
     },
     cluster: {
       description: 'The cluster prop',
@@ -38,6 +40,6 @@ export const Default = {
     cluster: 'HANA-Cluster',
     ipAddresses: ['192.168.1.100', '192.168.1.101'],
     lastBootTimestamp: '2024-01-01T00:00:00Z',
-    timezone: 'UTC',
+    timezone: 'Etc/UTC',
   },
 };

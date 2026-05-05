@@ -2,8 +2,11 @@ import React from 'react';
 
 import Button from '@common/Button';
 import Tooltip, { PLACES } from '@common/Tooltip';
+import { abilityFactory } from '@lib/test-utils/factories';
 
 import DisabledGuard from '.';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/DisabledGuard',
@@ -31,7 +34,6 @@ export default {
       description: 'Tooltip place',
     },
     tooltipWrap: {
-      type: 'boolean',
       description:
         'Determines if the tooltip content should wrap or stay on a single line',
       control: { type: 'boolean' },
@@ -64,10 +66,10 @@ const guardElementWithTooltip = (args) => (
 
 export const Default = {
   args: {
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     permitted: [],
     withTooltip: false,
-    tooltipMessage: '',
+    tooltipMessage: 'You do not have permission',
     tooltipPlace: 'top',
     tooltipWrap: false,
   },
@@ -77,7 +79,7 @@ export const Default = {
 export const Authorized = {
   args: {
     ...Default.args,
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     tooltipMessage: 'Some tooltip',
   },
   render: (args) => guardElement(args),

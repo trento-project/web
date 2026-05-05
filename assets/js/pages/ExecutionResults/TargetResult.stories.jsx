@@ -1,9 +1,9 @@
-import Component from './TargetResult';
+import ExecutionResults from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/TargetResult',
-  component: Component,
+  component: ExecutionResults,
   argTypes: {
     targetType: {
       description: 'The targetType prop',
@@ -30,10 +30,18 @@ export default {
 
 export const Default = {
   args: {
-    targetType: '',
-    targetName: '',
-    expectationsSummary: '',
+    targetType: 'cluster',
+    targetName: 'Cluster 1',
+    expectationsSummary: '5/6 Expectations met',
     isAgentCheckError: false,
     onClick: action('onClick'),
+  },
+};
+
+export const WithError = {
+  args: {
+    ...Default.args,
+    isAgentCheckError: true,
+    expectationsSummary: 'Check execution failed',
   },
 };

@@ -17,5 +17,8 @@ export default {
 };
 
 export const Default = {
-  args: { size: 'm', className: '' },
+  args: {
+    size: 'm',
+    className: '',
+  },
 };

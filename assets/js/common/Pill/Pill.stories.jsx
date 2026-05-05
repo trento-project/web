@@ -11,13 +11,12 @@ export default {
   argTypes: {
     size: {
       description: 'Size of the pill',
-      control: { type: 'select', options: ['xs', 'sm', 'md'] },
-      defaultValue: 'md',
+      options: ['xs', 'sm', 'md'],
+      control: { type: 'select' },
     },
     disabled: {
       description: 'Whether the pill is disabled',
       control: { type: 'boolean' },
-      defaultValue: false,
     },
     className: {
       description: 'Additional CSS classes for custom styling',
@@ -33,19 +32,17 @@ export default {
     },
     roundedMode: {
       description: 'Border radius style for the pill',
+      options: ['rounded-full', 'rounded-lg', 'rounded'],
       control: {
         type: 'select',
-        options: ['rounded-full', 'rounded-lg', 'rounded'],
       },
-      defaultValue: 'rounded-full',
     },
     display: {
       description: 'CSS display property for the pill',
+      options: ['inline-flex', 'inline-block', 'block'],
       control: {
         type: 'select',
-        options: ['inline-flex', 'inline-block', 'block'],
       },
-      defaultValue: 'inline-flex',
     },
   },
 };

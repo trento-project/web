@@ -1,8 +1,8 @@
-import Component from './HostTimeSeriesLineChart';
+import HostDetailsPage from '.';
 
 export default {
   title: 'Components/HostTimeSeriesLineChart',
-  component: Component,
+  component: HostDetailsPage,
   argTypes: {
     hostId: {
       description: 'Unique identifier for the host',
@@ -53,16 +53,16 @@ export default {
 
 export const Default = {
   args: {
-    hostId: '',
-    chartId: '',
-    chartTitle: '',
-    yAxisFormatter: '',
-    yAxisScaleType: '',
-    yAxisMaxValue: '',
-    startInterval: '',
-    endInterval: '',
-    updateFrequency: '',
-    className: '',
-    timezone: '',
+    hostId: 'host-123',
+    chartId: 'cpu',
+    chartTitle: 'CPU',
+    yAxisFormatter: (value) => `${value}%`,
+    yAxisScaleType: 'linear',
+    yAxisMaxValue: 100,
+    startInterval: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    endInterval: new Date(),
+    updateFrequency: 30000,
+    className: 'w-1/2',
+    timezone: 'Etc/UTC',
   },
 };

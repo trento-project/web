@@ -1,5 +1,8 @@
 import ActivityLogsConfig from '.';
 import { action } from 'storybook/actions';
+import { abilityFactory } from '@lib/test-utils/factories';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/ActivityLogsConfig',
@@ -25,7 +28,7 @@ export const Default = {
   args: {
     retentionTime: { value: 1, unit: 'month' },
     onEditClick: action('onEditClick'),
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
   },
 };
 

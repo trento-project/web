@@ -1,9 +1,9 @@
-import Component from './ChecksSelectionItem';
+import ChecksSelection from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/ChecksSelectionItem',
-  component: Component,
+  component: ChecksSelection,
   argTypes: {
     checkID: {
       description: 'Identifier for the checkID',

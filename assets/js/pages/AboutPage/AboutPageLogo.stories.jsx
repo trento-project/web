@@ -1,8 +1,8 @@
-import Component from './AboutPageLogo';
+import AboutPage from '.';
 
 export default {
   title: 'Components/AboutPageLogo',
-  component: Component,
+  component: AboutPage,
   argTypes: {},
 };
 

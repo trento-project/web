@@ -1,4 +1,5 @@
 import ProviderLabel from '.';
+import { providers } from '@lib/model';
 
 export default {
   title: 'Components/ProviderLabel',
@@ -6,10 +7,8 @@ export default {
   argTypes: {
     provider: {
       description: 'Cloud provider name',
-      control: {
-        type: 'select',
-        options: ['azure', 'aws', 'gcp', 'nutanix', 'kvm', 'vmware', 'unknown'],
-      },
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
   },
 };
@@ -65,6 +64,6 @@ export const VMWare = {
 export const Unknown = {
   args: {
     ...Default.args,
-    provider: 'unknown',
+    provider: 'unrecognized-provider',
   },
 };

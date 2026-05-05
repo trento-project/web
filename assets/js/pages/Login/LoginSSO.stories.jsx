@@ -1,8 +1,8 @@
-import Component from './LoginSSO';
+import Login from '.';
 
 export default {
   title: 'Components/LoginSSO',
-  component: Component,
+  component: Login,
   argTypes: {
     singleSignOnUrl: {
       description: 'The singleSignOnUrl prop',
@@ -16,5 +16,8 @@ export default {
 };
 
 export const Default = {
-  args: { singleSignOnUrl: '', error: '' },
+  args: {
+    singleSignOnUrl: 'https://sso.example.com/login',
+    error: false,
+  },
 };

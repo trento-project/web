@@ -1,11 +1,21 @@
 import React from 'react';
-import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
-import Component from './ExecutionHeader';
+import { clusterFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+import ExecutionHeader from '.';
+
+const cluster = clusterFactory.build({
+  provider: 'aws',
+  type: 'hana_scale_up',
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
+});
 
 export default {
   title: 'Components/ExecutionHeader',
-  component: Component,
+  component: ExecutionHeader,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -32,7 +42,7 @@ export default {
     },
     savedFilters: {
       description: 'The savedFilters prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     onFilterChange: {
       description: 'Callback function invoked when filter change',
@@ -47,10 +57,10 @@ export default {
 
 export const Default = {
   args: {
-    targetID: 'target-1',
-    targetName: 'Cluster-01',
+    targetID: cluster.id,
+    targetName: cluster.name,
     targetType: 'cluster',
-    target: {},
+    target: cluster,
     savedFilters: [],
     onFilterChange: action('onFilterChange'),
     onFilterSave: action('onFilterSave'),

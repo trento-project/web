@@ -1,8 +1,19 @@
-import Component from './TargetInfoBox';
+import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
+import TargetInfoBox from '.';
+
+const cluster = clusterFactory.build({
+  provider: 'aws',
+  type: 'hana_scale_up',
+  details: {
+    architecture_type: 'classic',
+    hana_scenario: 'performance_optimized',
+  },
+});
+const host = hostFactory.build({ cluster_id: cluster.id });
 
 export default {
   title: 'Components/TargetInfoBox',
-  component: Component,
+  component: TargetInfoBox,
   argTypes: {
     targetType: {
       description: 'Type of target (host or cluster)',
@@ -19,14 +30,13 @@ export default {
 export const Default = {
   args: {
     targetType: 'host',
-    target: { id: 'host_001', name: 'server-01' },
+    target: host,
   },
 };
 
 export const Cluster = {
   args: {
-    ...Default.args,
     targetType: 'cluster',
-    target: { id: 'cluster_001', name: 'HANA-Cluster' },
+    target: cluster,
   },
 };

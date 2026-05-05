@@ -6,7 +6,6 @@ export default {
   component: OperationForbiddenModal,
   argTypes: {
     operation: {
-      type: 'string',
       description: 'Operation name',
       control: { type: 'text' },
     },
@@ -33,7 +32,7 @@ export default {
 
 export const Default = {
   args: {
-    operation: '',
+    operation: 'Clean up resource',
     errors: [],
     isOpen: false,
     onCancel: action('onCancel'),

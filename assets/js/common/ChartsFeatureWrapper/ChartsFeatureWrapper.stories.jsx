@@ -1,8 +1,8 @@
-import Component from './ChartsFeatureWrapper';
+import ChartsFeatureWrapper from '.';
 
 export default {
   title: 'Components/ChartsFeatureWrapper',
-  component: Component,
+  component: ChartsFeatureWrapper,
   argTypes: {
     children: {
       description: 'Content or text displayed inside the component',
@@ -10,11 +10,14 @@ export default {
     },
     chartsEnabled: {
       description: 'The chartsEnabled prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
   },
 };
 
 export const Default = {
-  args: { chartsEnabled: '' },
+  args: {
+    chartsEnabled: false,
+    children: 'Charts content goes here',
+  },
 };

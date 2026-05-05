@@ -1,9 +1,9 @@
-import Component from './SaptuneSummary';
+import HostDetailsPage from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/SaptuneSummary',
-  component: Component,
+  component: HostDetailsPage,
   argTypes: {
     sapPresent: {
       description: 'The sapPresent prop',
@@ -30,10 +30,10 @@ export default {
 
 export const Default = {
   args: {
-    sapPresent: '',
-    saptuneVersion: '',
-    saptuneConfiguredVersion: '',
-    saptuneTuning: '',
+    sapPresent: true,
+    saptuneVersion: '7.3.0',
+    saptuneConfiguredVersion: '7.3.0',
+    saptuneTuning: 'HANA',
     onViewDetails: action('onViewDetails'),
   },
 };

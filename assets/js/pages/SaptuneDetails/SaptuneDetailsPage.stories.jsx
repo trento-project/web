@@ -2,51 +2,22 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter, Routes, Route } from 'react-router';
-import Component from './SaptuneDetailsPage';
+import { hostFactory } from '@lib/test-utils/factories';
+import SaptuneDetails from '.';
+
+const host = hostFactory.build();
 
 const hostDetailsSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [
-      {
-        id: '123',
-        hostname: 'host-01',
-        saptune_status: {
-          package_version: '3.1.0',
-          configured_version: '3.1.0',
-          applied_notes: [{ id: '2205917' }, { id: '2382421' }],
-          enabled_notes: [{ id: '2205917' }],
-          applied_solution: {
-            id: 'SLES15-SAP',
-            notes: ['2205917'],
-            partial: false,
-          },
-          enabled_solution: {
-            id: 'SLES15-SAP',
-            notes: ['2205917'],
-            partial: false,
-          },
-          services: [
-            { name: 'saptune', enabled: true, active: true },
-            { name: 'sapconf', enabled: false, active: false },
-            { name: 'tuned', enabled: true, active: true },
-          ],
-          staging: {
-            enabled: false,
-            notes: [],
-            solutions_ids: [],
-          },
-          tuning_state: 'compliant',
-        },
-      },
-    ],
+    hosts: [host],
   },
   reducers: {},
 });
 
 export default {
   title: 'Components/SaptuneDetailsPage',
-  component: Component,
+  component: SaptuneDetails,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -57,7 +28,7 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <MemoryRouter initialEntries={['/hosts/123/saptune']}>
+          <MemoryRouter initialEntries={[`/hosts/${host.id}/saptune`]}>
             <Routes>
               <Route path="/hosts/:hostID/saptune" element={<Story />} />
             </Routes>
@@ -116,16 +87,16 @@ export default {
 
 export const Default = {
   args: {
-    appliedNotes: '',
-    appliedSolution: '',
-    enabledNotes: '',
-    enabledSolution: '',
-    configuredVersion: '',
-    hostname: '',
-    hostID: '',
-    packageVersion: '',
-    services: '',
-    staging: '',
-    tuningState: '',
+    appliedNotes: host.saptune_status?.applied_notes || [],
+    appliedSolution: host.saptune_status?.applied_solution || [],
+    enabledNotes: host.saptune_status?.enabled_notes || [],
+    enabledSolution: host.saptune_status?.enabled_solution || [],
+    configuredVersion: host.saptune_status?.configured_version,
+    hostname: host.hostname,
+    hostID: host.id,
+    packageVersion: host.saptune_status?.package_version,
+    services: host.saptune_status?.services || [],
+    staging: host.saptune_status?.staging,
+    tuningState: host.saptune_status?.tuning_state,
   },
 };

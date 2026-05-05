@@ -1,8 +1,8 @@
-import Component from './ClusterStatePill';
+import ClusterDetails from '.';
 
 export default {
   title: 'Components/ClusterStatePill',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     state: {
       description: 'The state prop',
@@ -12,5 +12,7 @@ export default {
 };
 
 export const Default = {
-  args: { state: '' },
+  args: {
+    state: '',
+  },
 };

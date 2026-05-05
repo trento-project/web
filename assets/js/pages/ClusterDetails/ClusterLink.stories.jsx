@@ -1,8 +1,8 @@
-import Component from './ClusterLink';
+import ClusterDetails from '.';
 
 export default {
   title: 'Components/ClusterLink',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     cluster: {
       description: 'Cluster object with id and name',

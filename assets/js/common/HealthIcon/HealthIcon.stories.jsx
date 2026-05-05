@@ -9,26 +9,32 @@ export default {
       control: { type: 'boolean' },
     },
     health: {
-      type: 'string',
       description:
         'The health status to display (passing, warning, critical, absent, pending, or unknown)',
       control: { type: 'text' },
     },
     centered: {
-      type: 'boolean',
       description: 'Whether to apply centering styles to the health icon',
       control: { type: 'boolean' },
     },
     hoverOpacity: {
-      type: 'boolean',
       description: 'Whether to apply opacity change on hover',
       control: { type: 'boolean' },
     },
     size: {
-      type: 'string',
       description: 'The icon size (xs, s, m, l, xl, or similar EOS icon size)',
       control: { type: 'text' },
     },
+  },
+};
+
+export const Default = {
+  args: {
+    health: 'unknown',
+    isLink: false,
+    centered: false,
+    hoverOpacity: false,
+    size: 'm',
   },
 };
 
@@ -72,8 +78,11 @@ export const Absent = {
   },
 };
 
-export const Default = {
-  args: { health: 'unknown', isLink: false },
+export const Linked = {
+  args: {
+    ...Default.args,
+    isLink: true,
+  },
 };
 
 export const ExtraLarge = {

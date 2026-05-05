@@ -6,7 +6,6 @@ import NotFound from '.';
 export default {
   title: 'Layouts/NotFound',
   component: NotFound,
-  args: { buttonText: 'Go back home', onNavigate: action('onNavigate') },
   argTypes: {
     buttonText: {
       description: 'Text to display on the navigation button',

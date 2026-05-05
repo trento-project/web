@@ -26,7 +26,6 @@ export default {
       description: 'Cancel Action',
     },
     loading: {
-      type: 'boolean',
       description: 'Loading state',
       control: { type: 'boolean' },
     },
@@ -43,6 +42,7 @@ export default {
 
 export const Default = {
   args: {
+    errors: [],
     loading: false,
     onSave: action('onSave'),
     onCancel: action('onCancel'),

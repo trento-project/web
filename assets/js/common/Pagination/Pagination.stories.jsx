@@ -6,27 +6,32 @@ export default {
   title: 'Components/Pagination',
   component: Pagination,
   argTypes: {
-    hasPrev: { control: { type: 'boolean' }, defaultValue: true },
-    hasNext: { control: { type: 'boolean' }, defaultValue: true },
+    hasPrev: {
+      description: 'Whether the previous page button is enabled',
+      control: { type: 'boolean' },
+    },
+    hasNext: {
+      description: 'Whether the next page button is enabled',
+      control: { type: 'boolean' },
+    },
     currentItemsPerPage: {
+      description: 'Number of items currently displayed per page',
       control: { type: 'number' },
-      defaultValue: 10,
     },
     itemsPerPageOptions: {
+      description: 'Available options for items per page',
       control: { type: 'object' },
-      defaultValue: [10],
     },
     onSelect: {
       description: 'Callback function invoked with page navigation action',
       action: 'callback',
     },
     pageStats: {
-      type: 'element',
       description:
         'Component or content displayed to show current page statistics',
+      control: { type: 'object' },
     },
     className: {
-      type: 'string',
       description: 'Additional CSS classes applied to the pagination container',
       control: { type: 'text' },
     },
@@ -55,6 +60,8 @@ export default {
 
 export const Default = {
   args: {
+    hasPrev: true,
+    hasNext: true,
     currentItemsPerPage: 10,
     itemsPerPageOptions: [10, 20, 50],
   },

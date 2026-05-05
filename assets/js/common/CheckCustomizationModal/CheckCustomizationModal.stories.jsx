@@ -1,79 +1,85 @@
 import CheckCustomizationModal from '.';
+import { providers } from '@lib/model';
+import {
+  selectableCheckFactory,
+  nonCustomizedValueFactory,
+} from '@lib/test-utils/factories';
 
 import { action } from 'storybook/actions';
+
 const singleValue = [
-  {
+  nonCustomizedValueFactory.build({
     name: 'ValueName1',
     default_value: 'value1',
     customizable: true,
-  },
+  }),
 ];
-const singeBooleanValue = [
-  {
+
+const singleBooleanValue = [
+  nonCustomizedValueFactory.build({
     name: 'ValueName1',
     default_value: true,
     customizable: true,
-  },
+  }),
 ];
 
 const multipleValues = [
-  {
+  nonCustomizedValueFactory.build({
     name: 'ValueName1',
     default_value: 'value1',
     customizable: true,
-  },
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName2',
     default_value: 'value2',
     customizable: true,
-  },
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'A very very very long name with to many characters',
     default_value: 'value3',
     customizable: true,
-  },
-
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName4',
     default_value: true,
     customizable: true,
-  },
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName5',
     default_value: false,
     customizable: true,
-  },
+  }),
 ];
 
 const partialCustomizableValues = [
-  {
+  nonCustomizedValueFactory.build({
     name: 'ValueName1',
     default_value: 'value1',
     customizable: true,
-  },
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName2',
     default_value: 'value2',
     customizable: false,
-  },
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName3',
     default_value: true,
     customizable: true,
-  },
-
-  {
+  }),
+  nonCustomizedValueFactory.build({
     name: 'ValueName4',
     default_value: false,
     customizable: false,
-  },
+  }),
 ];
-const defaultCheck = {
+
+const defaultCheck = selectableCheckFactory.build({
   id: 'Check001',
   name: 'Check Corosync max_messages during runtime',
   values: singleValue,
   description: 'This is a great check description',
-};
+});
 
 const defaultProvider = 'aws';
 
@@ -106,8 +112,9 @@ export default {
       control: { type: 'boolean' },
     },
     provider: {
-      description: 'Cloud or on-premises provider',
-      control: { type: 'text' },
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     onClose: {
       description: 'Closes the modal',
@@ -137,7 +144,7 @@ export const Default = {
     description: defaultCheck.description,
     provider: defaultProvider,
     customized: false,
-    customizationStatus: '',
+    customizationStatus: 'idle',
     onClose: action('onClose'),
     onSave: action('onSave'),
     onReset: action('onReset'),
@@ -153,7 +160,7 @@ export const SingleValue = {
     description: defaultCheck.description,
     provider: defaultProvider,
     customized: false,
-    customizationStatus: '',
+    customizationStatus: 'idle',
     onClose: action('onClose'),
     onSave: action('onSave'),
     onReset: action('onReset'),
@@ -163,7 +170,7 @@ export const SingleValue = {
 export const SingleBooleanValue = {
   args: {
     ...SingleValue.args,
-    values: singeBooleanValue,
+    values: singleBooleanValue,
   },
 };
 

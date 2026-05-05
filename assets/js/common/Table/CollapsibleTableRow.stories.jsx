@@ -1,10 +1,9 @@
 import React from 'react';
-import { action } from 'storybook/actions';
-import Component from './CollapsibleTableRow';
+import Table from '.';
 
 export default {
   title: 'Components/CollapsibleTableRow',
-  component: Component,
+  component: Table,
   argTypes: {
     columns: {
       description: 'Array of column definitions',
@@ -41,6 +40,22 @@ export default {
   },
 };
 
+const defaultRenderCells = (columns, item) =>
+  columns.map((column) => (
+    <td
+      key={column.key}
+      className="border-b border-gray-200 bg-white px-4 py-2"
+    >
+      {item[column.key]}
+    </td>
+  ));
+
+const defaultCollapsibleDetailRenderer = (item) => (
+  <div className="p-4">
+    <p>Details for {item.name}</p>
+  </div>
+);
+
 export const Default = {
   args: {
     columns: [
@@ -53,10 +68,10 @@ export const Default = {
       status: 'Active',
       value: '100',
     },
-    collapsibleDetailRenderer: action('collapsibleDetailRenderer'),
+    collapsibleDetailRenderer: defaultCollapsibleDetailRenderer,
     wrapCollapsedRowInCell: true,
-    renderCells: action('renderCells'),
-    colSpan: '3',
+    renderCells: defaultRenderCells,
+    colSpan: 3,
     className: '',
     collapsedRowClassName: 'bg-gray-50',
   },

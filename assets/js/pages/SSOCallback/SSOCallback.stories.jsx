@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './SSOCallback';
+import SSOCallback from '.';
 
 const userSlice = createSlice({
   name: 'user',
@@ -15,7 +15,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/SSOCallback',
-  component: Component,
+  component: SSOCallback,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

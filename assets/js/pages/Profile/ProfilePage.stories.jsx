@@ -3,21 +3,14 @@ import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import MockAdapter from 'axios-mock-adapter';
 import { networkClient } from '@lib/network';
-import Component from './ProfilePage';
+import { profileFactory } from '@lib/test-utils/factories';
+import Profile from '.';
+
+const userData = profileFactory.build();
 
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
-    fullname: 'Test User',
-    abilities: [],
-    timezone: 'UTC',
-    personal_access_tokens: [],
-    analytics_enabled: false,
-    analytics_eula_accepted: true,
-    totp_enabled: false,
-  },
+  initialState: userData,
   reducers: {},
 });
 
@@ -32,21 +25,11 @@ const notificationsSlice = createSlice({
 
 export default {
   title: 'Components/ProfilePage',
-  component: Component,
+  component: Profile,
   decorators: [
     (Story) => {
       const axiosMock = new MockAdapter(networkClient);
-      axiosMock.onGet('/profile').reply(200, {
-        fullname: 'Test User',
-        email: 'test@example.com',
-        username: 'testuser',
-        timezone: 'UTC',
-        abilities: [],
-        personal_access_tokens: [],
-        analytics_enabled: false,
-        analytics_eula_accepted: true,
-        totp_enabled: false,
-      });
+      axiosMock.onGet('/profile').reply(200, userData);
 
       const mockStore = configureStore({
         reducer: {

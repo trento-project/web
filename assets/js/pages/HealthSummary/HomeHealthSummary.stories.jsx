@@ -56,6 +56,13 @@ export default {
   },
 };
 
+export const Default = {
+  args: {
+    sapSystemsHealth: healthSummaryFactory.buildList(3),
+    loading: false,
+  },
+};
+
 export const Random = {
   args: {
     sapSystemsHealth: randomSummary,

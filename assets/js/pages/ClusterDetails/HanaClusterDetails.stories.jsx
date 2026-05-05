@@ -1,8 +1,10 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
+import { providers } from '@lib/model';
 
 import {
+  abilityFactory,
   clusterFactory,
   hanaClusterDetailsFactory,
   hanaClusterDetailsNodesFactory,
@@ -18,7 +20,8 @@ import {
 import ClusterDetails from './ClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 
-const userAbilities = [{ name: 'all', resource: 'all' }];
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const userAbilities = [allAbility];
 
 const {
   id: clusterID,
@@ -169,9 +172,9 @@ export default {
       control: { type: 'date' },
     },
     provider: {
-      description:
-        'Cluster provider name (e.g., azure, aws, gcp, nutanix, kvm, vmware)',
-      control: { type: 'text' },
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     sapSystems: {
       description: 'Array of SAP system objects for the cluster',
@@ -182,10 +185,8 @@ export default {
       control: { type: 'object' },
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
     navigate: {
       description: 'Navigation function (e.g., from react-router)',
@@ -203,6 +204,30 @@ export default {
       description: 'List of cluster SIDs',
       control: { type: 'object' },
     },
+  },
+};
+
+export const Default = {
+  args: {
+    clusterID,
+    clusterName,
+    selectedChecks,
+    hasSelectedChecks: true,
+    hosts,
+    clusterType,
+    cibLastWritten,
+    clusterSids: [sid],
+    provider,
+    sapSystems,
+    details,
+    state,
+    lastExecution,
+    catalog,
+    userAbilities,
+    timezone: 'Etc/UTC',
+    onStartExecution: action('onStartExecution'),
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
   },
 };
 

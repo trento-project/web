@@ -3,12 +3,14 @@ import { action } from 'storybook/actions';
 import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import { architectures, providers } from '@lib/model';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
 } from '@lib/operations';
 
 import {
+  abilityFactory,
   clusterFactory,
   hostFactory,
   databaseInstanceFactory,
@@ -19,6 +21,7 @@ import HostDetails from './HostDetails';
 
 const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
 const cluster = clusterFactory.build({ id: host.cluster_id });
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const sapInstances = sapSystemApplicationInstanceFactory
   .buildList(1)
   .map((instance) => ({ ...instance, type: APPLICATION_TYPE }))
@@ -47,7 +50,8 @@ export default {
       description: 'The cluster which this host belongs to',
     },
     arch: {
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: architectures,
       description: 'The architecture of the host',
     },
     deregisterable: {
@@ -84,8 +88,9 @@ export default {
       description: 'Netmasks associated to ip addresses',
     },
     provider: {
-      control: { type: 'text' },
-      description: 'The discovered CSP where the host is running',
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     providerData: {
       control: { type: 'object' },
@@ -145,50 +150,41 @@ export default {
       action: 'navigate',
     },
     chartsEnabled: {
-      type: 'boolean',
       description:
         'Whether to render system performance charts (CPU, memory, disk space)',
       control: { type: 'boolean' },
     },
     lastBootTimestamp: {
-      type: 'string',
       description: 'Timestamp of when the host was last rebooted',
       control: { type: 'text' },
     },
     sapInstances: {
-      type: 'array',
       description:
         'List of SAP application and database instances running on the host',
       control: { type: 'object' },
     },
     relevantPatches: {
-      type: 'number',
       description: 'Patches available for installation on the host',
       control: { type: 'number' },
     },
     upgradablePackages: {
-      type: 'number',
       description: 'Packages on the host that have newer versions available',
       control: { type: 'number' },
     },
     softwareUpdatesLoading: {
-      type: 'boolean',
       description: 'Whether software update data is currently being loaded',
       control: { type: 'boolean' },
     },
     softwareUpdatesSettingsSaved: {
-      type: 'boolean',
       description:
         "Whether the host's software update settings have been saved",
       control: { type: 'boolean' },
     },
     softwareUpdatesErrorMessage: {
-      type: 'string',
       description: 'Error message displayed when software updates fail',
       control: { type: 'text' },
     },
     softwareUpdatesTooltip: {
-      type: 'string',
       description:
         'Tooltip text providing additional information about software updates',
       control: { type: 'text' },
@@ -196,12 +192,11 @@ export default {
     cleanForbiddenOperation: {
       description:
         'Callback function to close the operation forbidden error modal',
+      action: 'Clean forbidden operation',
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
   decorators: [
@@ -261,7 +256,7 @@ export const Default = {
     softwareUpdatesTooltip: undefined,
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     operationsEnabled: true,
     runningOperations: {},
   },

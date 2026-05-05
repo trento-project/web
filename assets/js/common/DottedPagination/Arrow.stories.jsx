@@ -1,9 +1,9 @@
-import Component from './Arrow';
+import DottedPagination from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/Arrow',
-  component: Component,
+  component: DottedPagination,
   argTypes: {
     children: {
       description: 'Content or text displayed inside the component',
@@ -18,6 +18,7 @@ export default {
 
 export const Default = {
   args: {
+    children: '→',
     onClick: action('onClick'),
   },
 };

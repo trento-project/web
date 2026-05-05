@@ -1,8 +1,8 @@
-import Component from './AboutPageText';
+import AboutPage from '.';
 
 export default {
   title: 'Components/AboutPageText',
-  component: Component,
+  component: AboutPage,
   argTypes: {},
 };
 

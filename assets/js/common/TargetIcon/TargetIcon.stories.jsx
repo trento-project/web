@@ -7,7 +7,8 @@ export default {
   argTypes: {
     targetType: {
       description: 'Type of the target',
-      control: { type: 'select', options: ['host', 'cluster'] },
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     containerClassName: {
       description: 'Custom CSS class for the container',

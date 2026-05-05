@@ -1,7 +1,12 @@
-import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSettings';
+import {
+  alertingSettingsFactory,
+  abilityFactory,
+} from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 
 import AlertingSettingsConfig from './AlertingSettingsConfig';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/AlertingSettingsConfig',
@@ -26,10 +31,10 @@ export const Default = {
   args: {
     settings: {},
     userAbilities: [],
-    label: '',
-    value: '',
-    ariaLabel: '',
-    addClasses: '',
+    label: 'Alerting Settings',
+    value: 'default',
+    ariaLabel: 'alerting-settings-config',
+    addClasses: 'my-class',
   },
 };
 
@@ -46,7 +51,7 @@ export const WithEditButtonEnabledWhenEnoughPermissions = {
   args: {
     ...Default.args,
     settings: {},
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     onEditClick: action('onEditClick'),
   },
 };
@@ -57,7 +62,7 @@ export const WithEditButtonDisabledWhenEnforcedFromEnv = {
     settings: {
       enforcedFromEnv: true,
     },
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     onEditClick: action('onEditClick'),
   },
 };

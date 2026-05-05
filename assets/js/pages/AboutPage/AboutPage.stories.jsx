@@ -1,12 +1,11 @@
 import React from 'react';
+import { aboutFactory } from '@lib/test-utils/factories';
 import AboutPage from '.';
 
+const aboutData = aboutFactory.build();
 const fetchAboutPageData = () =>
   Promise.resolve({
-    data: {
-      sles_subscriptions: '27',
-      version: '1.2.0+git.dev310.1680767518.f5894f7c',
-    },
+    data: aboutData,
   });
 
 export default {

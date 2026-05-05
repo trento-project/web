@@ -1,8 +1,8 @@
-import Component from './ObjectTreeIcon';
+import ObjectTree from '.';
 
 export default {
   title: 'Components/ObjectTreeIcon',
-  component: Component,
+  component: ObjectTree,
   argTypes: {
     expanded: {
       description: 'The expanded prop',
@@ -12,5 +12,7 @@ export default {
 };
 
 export const Default = {
-  args: { expanded: '' },
+  args: {
+    expanded: '',
+  },
 };

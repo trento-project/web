@@ -1,9 +1,9 @@
-import Component from './CheckCustomizationInput';
+import CheckCustomizationModal from '.';
 import { action } from 'storybook/actions';
 
 export default {
   title: 'Components/CheckCustomizationInput',
-  component: Component,
+  component: CheckCustomizationModal,
   argTypes: {
     name: {
       description: 'Name or label for the component',
@@ -11,19 +11,20 @@ export default {
     },
     defaultCheckValue: {
       description: 'The defaultCheckValue prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     currentValue: {
       description: 'The currentValue prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     inputIsLocked: {
       description: 'The inputIsLocked prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     inputType: {
       description: 'The inputType prop',
-      control: { type: 'text' },
+      options: ['boolean', 'string', 'number'],
+      control: { type: 'select' },
     },
     handleInput: {
       description: 'Callback function invoked when input',
@@ -34,11 +35,11 @@ export default {
 
 export const Default = {
   args: {
-    name: '',
-    defaultCheckValue: '',
-    currentValue: '',
-    inputIsLocked: '',
-    inputType: '',
+    name: 'Enable Feature',
+    defaultCheckValue: true,
+    currentValue: true,
+    inputIsLocked: false,
+    inputType: 'boolean',
     handleInput: action('handleInput'),
   },
 };

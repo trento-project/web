@@ -2,12 +2,21 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './HostsList';
+import {
+  hostFactory,
+  userFactory,
+  abilityFactory,
+} from '@lib/test-utils/factories';
+import HostsList from '.';
+
+const hosts = hostFactory.buildList(3);
+const user = userFactory.build();
+const abilities = abilityFactory.buildList(2);
 
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
-    hosts: [],
+    hosts,
   },
   reducers: {},
 });
@@ -33,11 +42,11 @@ const databasesListSlice = createSlice({
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    username: 'testuser',
-    email: 'test@example.com',
+    username: user.username,
+    email: user.email,
     profile: {
-      abilities: [],
-      timezone: 'UTC',
+      abilities,
+      timezone: 'Etc/UTC',
     },
   },
   reducers: {},
@@ -45,7 +54,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/HostsList',
-  component: Component,
+  component: HostsList,
   decorators: [
     (Story) => {
       const clusterListSlice = createSlice({
@@ -89,7 +98,7 @@ export default {
 
 export const Default = {
   args: {
-    id: 'host-123',
-    hostname: 'prod-host-01',
+    id: hosts[0].id,
+    hostname: hosts[0].hostname,
   },
 };

@@ -1,8 +1,8 @@
-import Component from './StatusPill';
+import HostDetailsPage from '.';
 
 export default {
   title: 'Components/StatusPill',
-  component: Component,
+  component: HostDetailsPage,
   argTypes: {
     className: {
       description: 'Additional CSS classes applied to the component',
@@ -20,5 +20,9 @@ export default {
 };
 
 export const Default = {
-  args: { className: '', heartbeat: '' },
+  args: {
+    className: '',
+    children: 'Agent',
+    heartbeat: 'passing',
+  },
 };

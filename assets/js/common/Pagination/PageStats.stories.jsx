@@ -1,23 +1,23 @@
-import Component from './PageStats';
+import Pagination from '.';
 
 export default {
   title: 'Components/PageStats',
-  component: Component,
+  component: Pagination,
   argTypes: {
     currentItemsPerPage: {
-      description: 'The currentItemsPerPage prop',
+      description: 'Number of items currently displayed per page',
       control: { type: 'number' },
     },
     itemsPresent: {
-      description: 'Array of items for the itemsPresent',
-      control: { type: 'object' },
+      description: 'Number of items currently present',
+      control: { type: 'number' },
     },
     itemsTotal: {
-      description: 'Array of items for the itemsTotal',
-      control: { type: 'object' },
+      description: 'Total number of items',
+      control: { type: 'number' },
     },
     selectedPage: {
-      description: 'The selectedPage prop',
+      description: 'The currently selected page number',
       control: { type: 'number' },
     },
   },
@@ -25,9 +25,9 @@ export default {
 
 export const Default = {
   args: {
-    currentItemsPerPage: '',
-    itemsPresent: [],
-    itemsTotal: [],
-    selectedPage: '',
+    currentItemsPerPage: 10,
+    itemsPresent: 5,
+    itemsTotal: 50,
+    selectedPage: 1,
   },
 };

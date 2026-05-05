@@ -2,7 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './Login';
+import Login from '.';
 
 const userSlice = createSlice({
   name: 'user',
@@ -16,7 +16,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/Login',
-  component: Component,
+  component: Login,
   decorators: [
     (Story) => {
       const mockStore = configureStore({

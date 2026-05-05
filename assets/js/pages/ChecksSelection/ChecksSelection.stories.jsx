@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { action } from 'storybook/actions';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
+import { providers } from '@lib/model';
 
 import ChecksSelection from './ChecksSelection';
 import { CUSTOMIZATION_STATUSES } from './hooks';
@@ -29,12 +30,12 @@ export default {
   component: ChecksSelection,
   argTypes: {
     groupID: {
-      type: 'string',
       description: 'The ID of the group to which the selection refers to.',
     },
     provider: {
-      type: 'string',
-      description: 'Provider of the current checkable target',
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     catalog: {
       control: { type: 'object' },
@@ -74,7 +75,6 @@ export default {
       description: 'Gets called when the user resets a customization.',
     },
     customizationStatus: {
-      type: 'enum',
       description: 'Current customization status',
       options: CUSTOMIZATION_STATUSES,
       control: { type: 'radio' },

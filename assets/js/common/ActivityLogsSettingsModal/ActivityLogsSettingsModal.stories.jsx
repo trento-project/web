@@ -19,7 +19,6 @@ export default {
       control: { type: 'object' },
     },
     loading: {
-      type: 'boolean',
       description:
         'Boolean flag indicating whether a save operation is in progress to disable the Save Settings button',
       control: { type: 'boolean' },

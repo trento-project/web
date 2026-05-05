@@ -7,7 +7,6 @@ export default {
   component: Filter,
   argTypes: {
     options: {
-      type: { name: 'array', required: true },
       description: 'List of options available',
       control: { type: 'object' },
     },
@@ -27,7 +26,6 @@ export default {
       action: 'onChange',
     },
     className: {
-      type: 'string',
       description:
         'Additional CSS classes to apply to the root filter container',
       control: { type: 'text' },
@@ -52,6 +50,7 @@ export default {
 export const Default = {
   args: {
     title: 'Title',
+    type: 'select',
     options: [
       'Tony Kekw',
       'Chad Carbonara',

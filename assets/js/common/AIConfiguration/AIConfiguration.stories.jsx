@@ -24,7 +24,6 @@ export default {
       action: 'onEditClick',
     },
     className: {
-      type: 'string',
       description: 'CSS classes to apply to the AI configuration container',
       control: { type: 'text' },
     },

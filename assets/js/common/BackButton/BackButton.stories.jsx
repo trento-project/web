@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import Component from './BackButton';
+import BackButton from '.';
 
 import { action } from 'storybook/actions';
 export default {
   title: 'Components/BackButton',
-  component: Component,
+  component: BackButton,
   decorators: [
     (Story) => (
       <BrowserRouter>

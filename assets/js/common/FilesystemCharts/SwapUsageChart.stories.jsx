@@ -18,7 +18,6 @@ export default {
       control: { type: 'number' },
     },
     className: {
-      type: 'string',
       description:
         'CSS class name applied to the component container for styling',
       control: { type: 'text' },

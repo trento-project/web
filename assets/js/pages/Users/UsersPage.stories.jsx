@@ -3,13 +3,18 @@ import { action } from 'storybook/actions';
 import { Provider } from 'react-redux';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import Component from './UsersPage';
+import MockAdapter from 'axios-mock-adapter';
+import { networkClient } from '@lib/network';
+import { userFactory } from '@lib/test-utils/factories';
+import Users from '.';
+
+const users = userFactory.buildList(3);
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
     profile: {
-      timezone: 'UTC',
+      timezone: 'Etc/UTC',
     },
   },
   reducers: {},
@@ -17,7 +22,7 @@ const userSlice = createSlice({
 
 export default {
   title: 'Components/UsersPage',
-  component: Component,
+  component: Users,
   decorators: [
     (Story) => {
       const mockStore = configureStore({
@@ -25,6 +30,9 @@ export default {
           user: userSlice.reducer,
         },
       });
+
+      const axiosMock = new MockAdapter(networkClient);
+      axiosMock.onGet('/users').reply(200, users);
 
       return (
         <Provider store={mockStore}>
@@ -66,10 +74,24 @@ export default {
 export const Default = {
   args: {
     navigate: action('navigate'),
-    users: [],
+    users: users,
     loading: false,
     singleSignOnEnabled: false,
-    timezone: 'UTC',
+    timezone: 'Etc/UTC',
     onDeleteUser: action('onDeleteUser'),
+  },
+};
+
+export const Empty = {
+  args: {
+    ...Default.args,
+    users: [],
+  },
+};
+
+export const Loading = {
+  args: {
+    ...Default.args,
+    loading: true,
   },
 };

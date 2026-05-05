@@ -1,8 +1,17 @@
-import Component from './HanaClusterSite';
+import {
+  abilityFactory,
+  hanaClusterDetailsNodesFactory,
+  clusterResourceFactory,
+} from '@lib/test-utils/factories';
+import ClusterDetails from '.';
+
+const resources = clusterResourceFactory.buildList(2);
+const nodes = hanaClusterDetailsNodesFactory.buildList(3, { resources });
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/HanaClusterSite',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     name: {
       description: 'Name or label for the component',
@@ -33,11 +42,18 @@ export default {
 
 export const Default = {
   args: {
-    name: '',
-    nodes: '',
-    state: '',
-    srHealthState: '',
-    userAbilities: '',
-    getClusterHostOperations: '',
+    name: 'Site 1',
+    nodes,
+    state: 'primary',
+    srHealthState: '4',
+    userAbilities: [allAbility],
+    getClusterHostOperations: () => [],
+  },
+};
+
+export const Empty = {
+  args: {
+    ...Default.args,
+    nodes: [],
   },
 };

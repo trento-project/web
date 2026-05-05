@@ -1,8 +1,8 @@
-import Component from './ReplicationStatusPill';
+import ClusterDetails from '.';
 
 export default {
   title: 'Components/ReplicationStatusPill',
-  component: Component,
+  component: ClusterDetails,
   argTypes: {
     status: {
       description: 'Replication status',
@@ -13,7 +13,9 @@ export default {
 };
 
 export const Default = {
-  args: { status: 'Primary' },
+  args: {
+    status: 'Primary',
+  },
 };
 
 export const Secondary = {

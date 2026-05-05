@@ -1,8 +1,8 @@
-import Component from './InstanceStatus';
+import SapSystemDetails from '.';
 
 export default {
   title: 'Components/InstanceStatus',
-  component: Component,
+  component: SapSystemDetails,
   argTypes: {
     health: {
       description: 'The health prop',
@@ -12,5 +12,7 @@ export default {
 };
 
 export const Default = {
-  args: { health: '' },
+  args: {
+    health: '',
+  },
 };

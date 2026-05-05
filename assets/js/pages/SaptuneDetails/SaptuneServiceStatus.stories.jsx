@@ -1,8 +1,8 @@
-import Component from './SaptuneServiceStatus';
+import SaptuneDetails from '.';
 
 export default {
   title: 'Components/SaptuneServiceStatus',
-  component: Component,
+  component: SaptuneDetails,
   argTypes: {
     serviceName: {
       description: 'Name of the service',
@@ -20,7 +20,11 @@ export default {
 };
 
 export const Default = {
-  args: { serviceName: 'saptune', enabled: true, active: true },
+  args: {
+    serviceName: 'saptune',
+    enabled: true,
+    active: true,
+  },
 };
 
 export const Disabled = {

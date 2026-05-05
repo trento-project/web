@@ -135,6 +135,19 @@ export default {
   ),
 };
 
+export const Default = {
+  args: {
+    userAbilities,
+    sapSystems,
+    applicationInstances: enrichedApplicationInstances,
+    databaseInstances: enrichedDatabaseInstances,
+    loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
+};
+
 export const SapSystems = {
   args: {
     userAbilities,

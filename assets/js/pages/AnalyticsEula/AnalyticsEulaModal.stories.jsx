@@ -16,7 +16,6 @@ export default {
   },
   argTypes: {
     isOpen: {
-      type: 'boolean',
       description: 'Sets the visibility of the modal',
     },
     onEnable: {

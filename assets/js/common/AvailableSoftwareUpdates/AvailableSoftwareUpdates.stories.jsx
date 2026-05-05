@@ -29,27 +29,23 @@ export default {
       description: 'are software updates settings being fetched?',
     },
     relevantPatches: {
-      type: 'number',
       description: 'Number of relevant patches available for the system',
       control: { type: 'number' },
     },
     upgradablePackages: {
-      type: 'number',
       description: 'Number of upgradable packages for the system',
       control: { type: 'number' },
     },
     tooltip: {
-      type: 'string',
       description: 'Content of the tooltip, if it is rendered',
+      control: { type: 'text' },
     },
     className: {
-      type: 'string',
       description:
         "Additional CSS classes to apply to the component's container",
       control: { type: 'text' },
     },
     errorMessage: {
-      type: 'string',
       description:
         'Error message displayed when software updates data is unavailable',
       control: { type: 'text' },

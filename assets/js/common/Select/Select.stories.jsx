@@ -10,7 +10,6 @@ export default {
   component: Select,
   argTypes: {
     options: {
-      type: 'array',
       description: 'The list of options to be rendered in the dropdown',
       control: { type: 'object' },
     },
@@ -20,28 +19,23 @@ export default {
       control: { type: 'object' },
     },
     initialValues: {
-      type: 'array',
       description:
         'Initially selected values. Used only to prepopulate the select on mount',
       control: { type: 'object' },
     },
     isDisabled: {
-      type: 'boolean',
       description: 'Component is disabled or not',
       control: { type: 'boolean' },
     },
     isMulti: {
-      type: 'boolean',
       description: 'Component is multi value',
       control: { type: 'boolean' },
     },
     isSearchable: {
-      type: 'boolean',
       description: 'Component is searchable',
       control: { type: 'boolean' },
     },
     isClearable: {
-      type: 'boolean',
       description: 'Component selected options are clearable',
       control: { type: 'boolean' },
     },
@@ -53,19 +47,16 @@ export default {
       action: 'onChange',
     },
     component: {
-      type: 'object',
       description:
         'Custom React Select component replacements for rendering Option, DropdownIndicator, ClearIndicator, and other select parts',
       control: { type: 'object' },
     },
     selectClassNames: {
-      type: 'object',
       description:
         'Custom className generator functions for styling Select components',
       control: { type: 'object' },
     },
     unstyled: {
-      type: 'boolean',
       description:
         'Whether to use unstyled react-select components and handle all styling externally',
       control: { type: 'boolean' },
@@ -81,7 +72,6 @@ export default {
       action: 'callback',
     },
     className: {
-      type: 'string',
       description:
         'Additional CSS classes to apply to the Select container wrapper',
       control: { type: 'text' },
@@ -103,11 +93,20 @@ const optionsWithTooltip = [
 
 export const Default = {
   args: {
-    options,
     className: 'w-96',
+    components: undefined, // use default components
+    filterOption: undefined, // use default filterOption
+    isClearable: false,
+    isDisabled: false,
+    isMulti: false,
+    isSearchable: false,
     onChange: action('onChange'),
-    renderControlOption: action('renderControlOption'),
-    filterOption: action('filterOption'),
+    options,
+    renderControlOption: undefined,
+    renderOption: undefined, // use default renderOption
+    selectClassNames: undefined, // use default classNames
+    unstyled: true,
+    value: undefined,
   },
 };
 

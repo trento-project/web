@@ -2,11 +2,11 @@ import React from 'react';
 import { action } from 'storybook/actions';
 import { EOS_UPDATE_OUTLINED } from 'eos-icons-react';
 
-import Component from './Indicator';
+import AvailableSoftwareUpdates from '.';
 
 export default {
   title: 'Components/Indicator',
-  component: Component,
+  component: AvailableSoftwareUpdates,
   argTypes: {
     title: {
       description: 'The title of the indicator',

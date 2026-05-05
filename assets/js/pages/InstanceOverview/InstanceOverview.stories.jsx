@@ -1,11 +1,19 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router';
-import Component from './InstanceOverview';
+import {
+  databaseInstanceFactory,
+  sapSystemApplicationInstanceFactory,
+} from '@lib/test-utils/factories';
+import InstanceOverview from '.';
 
 import { action } from 'storybook/actions';
+
+const applicationInstance = sapSystemApplicationInstanceFactory.build();
+const databaseInstance = databaseInstanceFactory.build();
+const userAbilities = [];
 export default {
   title: 'Components/InstanceOverview',
-  component: Component,
+  component: InstanceOverview,
   decorators: [
     (Story) => (
       <BrowserRouter>
@@ -40,16 +48,18 @@ export default {
 export const Default = {
   args: {
     instanceType: 'application',
-    instance: {
-      name: 'ERP',
-      type: 'SAP',
-      health: 'passing',
-      hostname: 'host-01',
-      sid: 'ERP',
-      instance_number: '00',
-      features: 'ABAP|GATEWAY',
-    },
-    userAbilities: [],
+    instance: applicationInstance,
+    userAbilities,
+    cleanUpPermittedFor: [],
+    onCleanUpClick: action('onCleanUpClick'),
+  },
+};
+
+export const Database = {
+  args: {
+    instanceType: 'database',
+    instance: databaseInstance,
+    userAbilities,
     cleanUpPermittedFor: [],
     onCleanUpClick: action('onCleanUpClick'),
   },
