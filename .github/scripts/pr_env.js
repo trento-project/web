@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 module.exports = (github, context) => {
   const MARKER = "<!-- pr-env-bot -->";
   const owner = context.repo.owner;
