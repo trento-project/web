@@ -1,11 +1,14 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { screen, render, waitFor } from '@testing-library/react';
-import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import {
+  adminUser,
+  fakeAppTimezone,
+  userFactory,
+} from '@lib/test-utils/factories/users';
 import { renderWithRouter } from '@lib/test-utils';
 import { userEvent } from '@testing-library/user-event';
 import Users from './Users';
-import { faker } from '@faker-js/faker';
 import { DEFAULT_TIMEZONE } from '@lib/timezones';
 
 describe('Users', () => {
@@ -31,7 +34,7 @@ describe('Users', () => {
 
   it('should render an empty table with an enabled create user button', () => {
     render(<Users loading={false} />, {
-      initialState: { user: { timezone: faker.location.timeZone() } },
+      initialState: { user: { timezone: fakeAppTimezone() } },
     });
     const button = screen.getByRole('button', { name: /Create User/i });
     expect(button).not.toBeDisabled();
