@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.SessionJSON do
   def logged(%{token: token, expiration: expiration, refresh_token: refresh_token}),
     do: %{access_token: token, expires_in: expiration, refresh_token: refresh_token}

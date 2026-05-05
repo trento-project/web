@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Mix.Tasks.ClearAlertingSettings do
   @moduledoc "Delete the record for alerting settings from the DB."
 

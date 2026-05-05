@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ProjectorTestHelper do
   @moduledoc """
   This module contains helper functions for testing projectors

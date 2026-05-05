@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.Command do
   @moduledoc """
   Adds the macro `defcommand` which is used to define a new command.

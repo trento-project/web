@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Heartbeats.Faker do
   @moduledoc """
   Heartbeat faker for demo environment

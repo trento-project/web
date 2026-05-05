@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.SessionController do
   alias Plug.Conn
   alias PowAssent.Plug, as: PowAssentPlug

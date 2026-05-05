@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager do
   @moduledoc """
     DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible

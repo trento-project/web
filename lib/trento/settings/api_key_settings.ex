@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.ApiKeySettings do
   @moduledoc """
   ApiKeySettings is the STI projection of api key related settings

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Services.HealthSummaryService do
   @moduledoc """
   Provides a set of functions to interact with SAP systems Health Summary

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Mix.Tasks.PruneEvents do
   @moduledoc "Delete events older than X days."
 

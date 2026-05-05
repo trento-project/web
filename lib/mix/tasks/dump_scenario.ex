@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Mix.Tasks.DumpScenario do
   @moduledoc "Dump the current discovery scenario and
   discarded discovery events."

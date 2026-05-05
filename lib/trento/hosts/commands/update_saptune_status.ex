@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Commands.UpdateSaptuneStatus do
   @moduledoc """
   Update the saptune status on a specific host.

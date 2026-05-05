@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Host do
   @moduledoc """
   The host aggregate manages all the domain logic related to individual hosts

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.HostAddedToCluster do
   @moduledoc """
   This event is emitted when a host is added to a cluster

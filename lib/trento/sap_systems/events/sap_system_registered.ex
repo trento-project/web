@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.SapSystemRegistered do
   @moduledoc """
   This event is emitted when a sap system is registered.

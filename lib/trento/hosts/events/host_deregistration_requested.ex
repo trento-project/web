@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Events.HostDeregistrationRequested do
   @moduledoc """
     This event is emitted when a deregistration (decommission) of a host is requested.

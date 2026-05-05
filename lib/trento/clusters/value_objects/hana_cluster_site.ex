@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.ValueObjects.HanaClusterSite do
   @moduledoc """
   Represents the details of a HANA site.

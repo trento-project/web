@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.ApiRedirector do
   @moduledoc """
     This Plug is responsible for redirecting api requests without a specific version

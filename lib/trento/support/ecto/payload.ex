@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.Ecto.Payload do
   @moduledoc """
   Ecto Type that represents a JSONB payload that contains an array or a map.

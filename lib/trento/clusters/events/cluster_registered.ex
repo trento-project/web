@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Events.ClusterRegistered do
   @moduledoc """
   This event is emitted when a cluster is registered.

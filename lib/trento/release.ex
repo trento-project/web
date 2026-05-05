@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Release do
   @moduledoc """
   Used for executing DB release tasks when run in production without Mix

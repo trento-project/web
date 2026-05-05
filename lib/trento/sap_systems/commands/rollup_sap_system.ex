@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Commands.RollUpSapSystem do
   @moduledoc """
   Start a sap system aggregate rollup.

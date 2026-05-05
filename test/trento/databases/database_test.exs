@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.DatabaseTest do
   use Trento.AggregateCase, aggregate: Trento.Databases.Database, async: true
 

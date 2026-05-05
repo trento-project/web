@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler do
   @moduledoc """
   This event handler is responsible to forward deregistration commands to the SAP systems

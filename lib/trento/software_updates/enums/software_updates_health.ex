@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth do
   @moduledoc """
   Type that represents the possible health values for the software updates discovery process.

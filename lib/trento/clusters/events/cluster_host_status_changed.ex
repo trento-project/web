@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Events.ClusterHostStatusChanged do
   @moduledoc """
   When a host's cluster status changes, from online to offline or vice versa,

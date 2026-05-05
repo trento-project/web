@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Events.ChecksSelected do
   @moduledoc """
   Event of the checks selected in a cluster.

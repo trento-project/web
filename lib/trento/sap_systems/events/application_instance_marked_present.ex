@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.ApplicationInstanceMarkedPresent do
   @moduledoc """
   This event is emitted when an application instance is marked as present in the SAP system.

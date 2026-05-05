@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Charts.Hosts.HostCpuChart do
   @moduledoc """
   Represents CPU chart data for a single host

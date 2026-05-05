@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Checks.AMQP.Processor do
   @moduledoc """
   AMQP processor for the checks execution events

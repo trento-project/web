@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   @moduledoc """
   This plug is responsible for authorizing operations. It falls back to `{:error, :forbidden}` if

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.AI.ApplicationConfigLoader do
   @moduledoc """
   This module is responsible for loading the AI application configuration and providing access to it.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Charts.ChartTimeSeriesSample do
   @moduledoc """
   ChartTimeSeriesSample represent a sample in a chart timeseries according to the Trento Domain.

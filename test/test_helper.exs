@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 Mox.defmock(Trento.Commanded.Mock, for: Commanded.Application)
 
 Application.put_env(:trento, Trento.Commanded, adapter: Trento.Commanded.Mock)

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 [
   import_deps: [:ecto, :phoenix, :ecto_sql, :commanded, :open_api_spex],
   locals_without_parens: [

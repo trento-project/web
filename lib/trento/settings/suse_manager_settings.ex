@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.SuseManagerSettings do
   @moduledoc """
   Schema for SUSE Multi-Linux Manager settings.

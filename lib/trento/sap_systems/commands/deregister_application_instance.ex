@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Commands.DeregisterApplicationInstance do
   @moduledoc """
   Deregister (decommission) an application instance from the monitoring system.

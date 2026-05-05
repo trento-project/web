@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Auth.Tokens do
   @moduledoc """
   Module responsible to deal with tokens concerns like introspection and validation.

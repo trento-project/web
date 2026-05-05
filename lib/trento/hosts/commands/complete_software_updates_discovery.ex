@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery do
   @moduledoc """
   Complete the software updates discovery with the computed health based on detected info

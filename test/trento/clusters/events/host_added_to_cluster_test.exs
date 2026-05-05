@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Cluster.Events.HostAddedToClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus

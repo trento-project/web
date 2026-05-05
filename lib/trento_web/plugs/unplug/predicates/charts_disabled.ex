@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabled do
   @moduledoc false
 

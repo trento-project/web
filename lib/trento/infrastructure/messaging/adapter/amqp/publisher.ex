@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher do
   @moduledoc """
   AMQP publisher.

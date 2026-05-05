@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
   @moduledoc """
   Crmmon field payload

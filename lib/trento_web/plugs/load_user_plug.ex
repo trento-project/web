@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.LoadUserPlug do
   @moduledoc """
   LoadUserPlug loads the stateless user from jwt from the database.

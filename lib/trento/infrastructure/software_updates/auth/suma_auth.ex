@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   @moduledoc """
   GenServer module to authenticate with SUSE Multi-Linux Manager

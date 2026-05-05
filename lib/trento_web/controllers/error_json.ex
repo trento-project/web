@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.ErrorJSON do
   def render("400.json", %{reason: %{exception: exception}}) do
     %{

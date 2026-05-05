@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler do
   @moduledoc """
   This event handler is responsible for rolling-up aggregates when a requested event is received.

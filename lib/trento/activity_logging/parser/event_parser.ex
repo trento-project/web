@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.Logger.Parser.EventParser do
   @moduledoc """
   Event parser extracts the event relevant information from the context.

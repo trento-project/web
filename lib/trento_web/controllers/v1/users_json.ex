@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.UsersJSON do
   alias TrentoWeb.V1.{AbilityJSON, PersonalAccessTokensJSON}
 

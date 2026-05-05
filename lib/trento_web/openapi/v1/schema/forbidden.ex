@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.OpenApi.V1.Schema.Forbidden do
   @moduledoc """
   403 - Forbidden.

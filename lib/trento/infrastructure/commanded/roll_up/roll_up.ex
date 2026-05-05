@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.RollUp.RollUp do
   @moduledoc """
   This module is responsible for archiving a stream and appending a roll-up event to it.

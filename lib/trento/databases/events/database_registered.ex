@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseRegistered do
   @moduledoc """
   This event is emitted when a database is registered.

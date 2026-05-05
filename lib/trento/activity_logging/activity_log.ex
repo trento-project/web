@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.ActivityLog do
   @moduledoc """
   ActivityLog represents an interesting activity that is tracked

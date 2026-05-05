@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseTenantsUpdated do
   @moduledoc """
   This event is emitted when the tenants of a database are updated

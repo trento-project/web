@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.Protobuf do
   @moduledoc """
   Helper functions to use Protobuf mapping

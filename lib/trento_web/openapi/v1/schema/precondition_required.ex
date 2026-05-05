@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.OpenApi.V1.Schema.PreconditionRequired do
   @moduledoc """
   428 - Precondition Required.

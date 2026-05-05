@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.PrometheusJSON do
   @node_exporter_port 9100
   @node_exporter_name "node_exporter"

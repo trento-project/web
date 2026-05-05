@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Commands.DeregisterDatabaseInstance do
   @moduledoc """
   Deregister (decommission) a database instance from the monitoring system.

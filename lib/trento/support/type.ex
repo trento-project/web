@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.Type do
   @moduledoc """
   This module defines the macro `deftype` which is used to define a new type,

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.RetentionTime do
   @moduledoc """
   This module Represents the Activity Log Retention Time
