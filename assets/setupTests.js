@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { mockAnimationsApi } from 'jsdom-testing-mocks';
 
 // Silence the Headless UI warning globally

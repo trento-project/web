@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 module.exports = {
   darkMode: 'class',
   content: ['./js/**/*.{js,jsx}', '../lib/*_web/**/*.*ex'],

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { defineConfig } from 'eslint/config';
 import js from '@eslint/js';
 import reactPlugin from 'eslint-plugin-react';
