@@ -6,7 +6,7 @@ export default {
   argTypes: {
     sbdDevices: {
       description: 'The sbdDevices prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };

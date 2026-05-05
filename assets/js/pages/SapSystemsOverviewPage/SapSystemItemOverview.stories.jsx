@@ -7,11 +7,11 @@ export default {
   argTypes: {
     instance: {
       description: 'The instance prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     userAbilities: {
       description: 'The userAbilities prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     onCleanUpClick: {
       description: 'Callback function invoked when clean up click',

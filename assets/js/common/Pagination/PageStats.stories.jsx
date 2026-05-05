@@ -6,7 +6,7 @@ export default {
   argTypes: {
     currentItemsPerPage: {
       description: 'The currentItemsPerPage prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     itemsPresent: {
       description: 'Array of items for the itemsPresent',
@@ -18,7 +18,7 @@ export default {
     },
     selectedPage: {
       description: 'The selectedPage prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
   },
 };

@@ -14,7 +14,7 @@ export default {
     },
     customized: {
       description: 'The customized prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
   },
 };

@@ -21,7 +21,7 @@ export default {
     },
     buttonOnClick: {
       description: 'The buttonOnClick prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };

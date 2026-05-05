@@ -93,7 +93,7 @@ export default {
     },
     targetHosts: {
       description: 'The targetHosts prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     catalogLoading: {
       description: 'The catalogLoading prop',
@@ -101,7 +101,7 @@ export default {
     },
     catalog: {
       description: 'The catalog prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     catalogError: {
       description: 'The catalogError prop',
@@ -129,7 +129,7 @@ export default {
     },
     targetSelectedChecks: {
       description: 'The targetSelectedChecks prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     savedFilters: {
       description: 'The savedFilters prop',

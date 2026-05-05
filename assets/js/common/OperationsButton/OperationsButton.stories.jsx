@@ -54,7 +54,7 @@ export default {
     },
     running: {
       description: 'The running prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     onClick: {
       description: 'Callback function invoked when click',

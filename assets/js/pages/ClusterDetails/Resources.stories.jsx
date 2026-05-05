@@ -6,15 +6,15 @@ export default {
   argTypes: {
     resources: {
       description: 'The resources prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     hosts: {
       description: 'The hosts prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     userAbilities: {
       description: 'The userAbilities prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     operationsDisabled: {
       description: 'The operationsDisabled prop',
@@ -22,7 +22,7 @@ export default {
     },
     getResourceOperations: {
       description: 'The getResourceOperations prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };

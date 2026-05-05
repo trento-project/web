@@ -7,11 +7,11 @@ export default {
   argTypes: {
     instance: {
       description: 'The instance prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     userAbilities: {
       description: 'The userAbilities prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     onCleanUpClick: {
       description: 'Callback function invoked when clean up click',
@@ -19,11 +19,11 @@ export default {
     },
     instances: {
       description: 'The instances prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     asDatabaseLayer: {
       description: 'The asDatabaseLayer prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     database: {
       description: 'Array of items for the database',

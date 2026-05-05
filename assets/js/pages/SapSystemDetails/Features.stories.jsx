@@ -6,7 +6,7 @@ export default {
   argTypes: {
     features: {
       description: 'The features prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };

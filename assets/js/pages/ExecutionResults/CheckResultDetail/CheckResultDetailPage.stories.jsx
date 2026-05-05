@@ -104,7 +104,7 @@ export default {
     },
     executionData: {
       description: 'The executionData prop',
-      control: { type: 'object' },
+      control: { type: 'text' },
     },
   },
 };

@@ -6,7 +6,7 @@ export default {
   argTypes: {
     colSpan: {
       description: 'The colSpan prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     emptyStateText: {
       description: 'The emptyStateText prop',

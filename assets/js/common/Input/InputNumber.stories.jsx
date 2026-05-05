@@ -19,11 +19,11 @@ export default {
     },
     value: {
       description: 'The value prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     initialValue: {
       description: 'The initialValue prop',
-      control: { type: 'text' },
+      control: { type: 'number' },
     },
     placeholder: {
       description: 'Placeholder text shown when empty',
@@ -31,7 +31,7 @@ export default {
     },
     error: {
       description: 'The error prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the component is disabled',

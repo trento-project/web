@@ -7,7 +7,7 @@ export default {
   argTypes: {
     children: {
       description: 'Checks within this group',
-      control: { type: 'object' },
+      control: { type: 'text' },
     },
     group: {
       description: 'Group identifier or name',

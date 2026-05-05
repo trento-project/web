@@ -101,7 +101,7 @@ export default {
     },
     services: {
       description: 'The services prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     staging: {
       description: 'The staging prop',

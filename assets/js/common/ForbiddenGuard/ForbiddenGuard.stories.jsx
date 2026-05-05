@@ -32,7 +32,7 @@ export default {
   argTypes: {
     permitted: {
       description: 'The permitted prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     outletMode: {
       description: 'The outletMode prop',

@@ -10,7 +10,7 @@ export default {
     },
     error: {
       description: 'The error prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
   },
 };

@@ -42,7 +42,7 @@ export default {
     },
     navigate: {
       description: 'The navigate prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     users: {
       description: 'Array of items for the users',
@@ -50,7 +50,7 @@ export default {
     },
     loading: {
       description: 'The loading prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     singleSignOnEnabled: {
       description: 'The singleSignOnEnabled prop',

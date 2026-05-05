@@ -6,7 +6,7 @@ export default {
   argTypes: {
     attributes: {
       description: 'The attributes prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     title: {
       description: 'Title text for the component',

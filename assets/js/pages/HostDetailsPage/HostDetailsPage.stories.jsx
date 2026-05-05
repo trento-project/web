@@ -177,11 +177,11 @@ export default {
     },
     deregisterable: {
       description: 'The deregisterable prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     deregistering: {
       description: 'The deregistering prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     exportersStatus: {
       description: 'The exportersStatus prop',
@@ -209,7 +209,7 @@ export default {
     },
     netmasks: {
       description: 'The netmasks prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     provider: {
       description: 'Identifier for the provider',
@@ -221,11 +221,11 @@ export default {
     },
     sapInstances: {
       description: 'The sapInstances prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     savingChecks: {
       description: 'The savingChecks prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     saptuneStatus: {
       description: 'The saptuneStatus prop',
@@ -233,15 +233,15 @@ export default {
     },
     selectedChecks: {
       description: 'The selectedChecks prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     slesSubscriptions: {
       description: 'The slesSubscriptions prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     catalog: {
       description: 'The catalog prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     lastExecution: {
       description: 'The lastExecution prop',
@@ -249,11 +249,11 @@ export default {
     },
     relevantPatches: {
       description: 'The relevantPatches prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     upgradablePackages: {
       description: 'The upgradablePackages prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     softwareUpdatesLoading: {
       description: 'The softwareUpdatesLoading prop',
@@ -273,7 +273,7 @@ export default {
     },
     userAbilities: {
       description: 'The userAbilities prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     operationsEnabled: {
       description: 'The operationsEnabled prop',

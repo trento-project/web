@@ -10,7 +10,7 @@ export default {
     },
     nodes: {
       description: 'The nodes prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     state: {
       description: 'The state prop',
@@ -22,11 +22,11 @@ export default {
     },
     userAbilities: {
       description: 'The userAbilities prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     getClusterHostOperations: {
       description: 'The getClusterHostOperations prop',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
   },
 };

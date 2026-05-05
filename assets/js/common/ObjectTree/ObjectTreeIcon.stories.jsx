@@ -6,7 +6,7 @@ export default {
   argTypes: {
     expanded: {
       description: 'The expanded prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
   },
 };
