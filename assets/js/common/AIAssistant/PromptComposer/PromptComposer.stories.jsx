@@ -1,66 +1,64 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useState } from 'react';
 
-import Button from '@common/Button';
+import { SocketContext } from '@common/SocketProvider';
+import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 
-import { PromptComposerView, PromptInput } from './PromptComposer';
+import AssistantChatProvider from '../AssistantChatProvider';
+import { PromptComposer } from './PromptComposer';
 
-const renderInput = ({ placeholder, disabled }) => (
-  <PromptInput
-    as="textarea"
-    placeholder={placeholder}
-    disabled={disabled}
-    aria-label="Message input"
-  />
-);
-
-const renderSend = ({ disabled }) => (
-  <Button asSubmit type="default-fit" disabled={disabled}>
-    Send
-  </Button>
-);
+// PromptComposer relies on @assistant-ui/react's ComposerPrimitive.*, which
+// in turn need an AssistantRuntimeProvider in scope. Mount the real
+// AssistantChatProvider over a no-op mock socket so the primitives mount
+// cleanly without talking to a backend. The connection-state visuals are
+// driven by the `connectionStatus` prop, not the runtime, so the join
+// handshake never has to fire.
+function StoryProviders({ children }) {
+  const [socket] = useState(makeMockSocket());
+  return (
+    <SocketContext.Provider value={socket}>
+      <AssistantChatProvider userID="storybook" threadID="storybook">
+        {children}
+      </AssistantChatProvider>
+    </SocketContext.Provider>
+  );
+}
 
 export default {
   title: 'Components/AIAssistant/PromptComposer',
-  component: PromptComposerView,
-  parameters: {
-    layout: 'padded',
+  component: PromptComposer,
+  parameters: { layout: 'padded' },
+  argTypes: {
+    connectionStatus: {
+      description:
+        'Connection state used to drive the placeholder + disabled state',
+      options: ['connected', 'connecting', 'disconnected'],
+      control: { type: 'radio' },
+    },
+    isRunning: {
+      description: 'Whether a run is in flight (hides the send button)',
+      control: { type: 'boolean' },
+    },
   },
+  decorators: [
+    (Story) => (
+      <StoryProviders>
+        <Story />
+      </StoryProviders>
+    ),
+  ],
 };
 
 export const Idle = {
-  render: () => (
-    <PromptComposerView
-      inputSlot={renderInput({
-        placeholder: 'How can I help you?',
-        disabled: false,
-      })}
-      actionSlot={renderSend({ disabled: false })}
-    />
-  ),
+  args: { connectionStatus: 'connected', isRunning: false },
 };
 
 export const Disabled = {
-  render: () => (
-    <PromptComposerView
-      inputSlot={renderInput({
-        placeholder: 'Offline - waiting to reconnect...',
-        disabled: true,
-      })}
-      actionSlot={renderSend({ disabled: true })}
-    />
-  ),
+  args: { connectionStatus: 'disconnected', isRunning: false },
 };
 
 export const Sending = {
-  render: () => (
-    <PromptComposerView
-      inputSlot={renderInput({
-        placeholder: 'How can I help you?',
-        disabled: false,
-      })}
-    />
-  ),
+  args: { connectionStatus: 'connected', isRunning: true },
 };
