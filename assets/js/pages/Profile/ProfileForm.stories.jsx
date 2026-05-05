@@ -49,7 +49,6 @@ export default {
     onSave: {
       action: 'Save user',
       description: 'Save user action',
-      control: { type: 'text' },
     },
     totpEnabled: {
       description: 'User TOTP enabled',
@@ -65,11 +64,11 @@ export default {
     },
     totpBoxOpen: {
       description: 'Show TOTP enrollment box',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     analyticsEulaAccepted: {
       description: 'Whether the user accepted the analytics EULA',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     timezone: {
       description: 'Timezone string for date formatting.',
@@ -78,11 +77,11 @@ export default {
     timezones: {
       description:
         'Available timezone options for the timezone select (array of { value, label })',
-      control: { type: 'text' },
+      control: { type: 'object' },
     },
     disableForm: {
       description: 'When true, disables all inputs and actions in the form',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',

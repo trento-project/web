@@ -1,6 +1,8 @@
+import { CRITICAL, PASSING, WARNING } from '@lib/model';
 import { action } from 'storybook/actions';
 
 import CheckResultCount from './CheckResultCount';
+
 export default {
   title: 'Layouts/CheckResultsOverview/CheckResultCount',
   component: CheckResultCount,
@@ -12,7 +14,7 @@ export default {
     result: {
       description: 'Result type to display (affects icon/color)',
       control: { type: 'select' },
-      options: ['passing', 'warning', 'critical'],
+      options: [WARNING, CRITICAL, PASSING],
     },
     onClick: {
       action: 'onClick',

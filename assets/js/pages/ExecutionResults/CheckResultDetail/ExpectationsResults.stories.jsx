@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { WARNING } from '@lib/model';
+import { CRITICAL, PASSING, WARNING } from '@lib/model';
 import {
   executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
@@ -29,7 +29,8 @@ export default {
     },
     severity: {
       description: 'Severity level of the expectation result',
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: [WARNING, CRITICAL, PASSING],
     },
   },
 };

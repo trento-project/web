@@ -10,9 +10,16 @@ export default {
       control: { type: 'boolean' },
     },
     health: {
-      description:
-        'The health status to display (passing, warning, critical, absent, pending, or unknown)',
-      control: { type: 'text' },
+      description: 'The health status to display',
+      control: { type: 'select' },
+      options: [
+        'passing',
+        'warning',
+        'critical',
+        'absent',
+        'pending',
+        'unknown',
+      ],
     },
     centered: {
       description: 'Whether to apply centering styles to the health icon',
@@ -23,8 +30,9 @@ export default {
       control: { type: 'boolean' },
     },
     size: {
-      description: 'The icon size (xs, s, m, l, xl, or similar EOS icon size)',
-      control: { type: 'text' },
+      description: 'The icon size',
+      control: { type: 'select' },
+      options: ['xs', 's', 'm', 'l', 'xl'],
     },
   },
 };

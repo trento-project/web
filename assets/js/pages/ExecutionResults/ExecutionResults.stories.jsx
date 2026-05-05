@@ -357,8 +357,9 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'Type of the target (e.g., host, cluster)',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     target: {
       description: 'Details of the target',

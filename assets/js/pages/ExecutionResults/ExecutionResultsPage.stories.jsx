@@ -150,8 +150,9 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'The targetType prop',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     target: {
       description: 'The target prop',

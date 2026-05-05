@@ -15,9 +15,9 @@ export default {
   ],
   argTypes: {
     targetType: {
-      description: 'Type of target (host or cluster)',
-      control: { type: 'select' },
+      description: 'Type of the target',
       options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     targetID: {
       description: 'Identifier for the target',

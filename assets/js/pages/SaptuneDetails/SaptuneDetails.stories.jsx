@@ -109,6 +109,7 @@ export const StagingDisabled = {
     staging: { enabled: false, notes: [], solutions_ids: [] },
   },
 };
+
 export const SaptuneServiceStatusPassing = {
   args: {
     ...Default.args,
@@ -120,6 +121,7 @@ export const SaptuneServiceStatusPassing = {
     ],
   },
 };
+
 export const SaptuneServiceStatusFailing = {
   args: {
     ...Default.args,

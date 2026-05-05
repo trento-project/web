@@ -8,6 +8,7 @@ import ResultsContainer from './ResultsContainer';
 const hosts = hostFactory.buildList(2);
 const catalog = catalogFactory.build();
 const checks = Object.keys(catalog.catalog || {}).slice(0, 3);
+
 export default {
   title: 'Components/ResultsContainer',
   component: ResultsContainer,
@@ -36,8 +37,9 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'The targetType prop',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     hasAlreadyChecksResults: {
       description: 'The hasAlreadyChecksResults prop',

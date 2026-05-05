@@ -39,9 +39,9 @@ export default {
       control: { type: 'object' },
     },
     children: {
-      type: 'element',
       description:
         'Additional React elements displayed after the filters when not in autoApply mode',
+      control: { type: 'text' },
     },
   },
   render: ({ filters, value, onChange, autoApply }) => {

@@ -21,8 +21,8 @@ export default {
       control: { type: 'boolean' },
     },
     children: {
-      type: 'element',
       description: 'The text or content to display inside the banner',
+      control: { type: 'text' },
     },
   },
 };

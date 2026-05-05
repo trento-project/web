@@ -38,9 +38,9 @@ export default {
       control: { type: 'boolean' },
     },
     children: {
-      type: 'element',
       description:
         'The element to be guarded, which becomes disabled if the user lacks authorization',
+      control: { type: 'text' },
     },
   },
 };

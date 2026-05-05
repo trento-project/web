@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import { action } from 'storybook/actions';
 
 import CheckResultsOverview from './CheckResultsOverview';
+
 export default {
   title: 'Layouts/CheckResultsOverview',
   component: CheckResultsOverview,

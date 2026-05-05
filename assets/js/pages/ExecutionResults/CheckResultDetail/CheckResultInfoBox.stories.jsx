@@ -10,9 +10,10 @@ export default {
       description: 'Identifier for the checkID',
       control: { type: 'text' },
     },
-    resultTargetType: {
-      description: 'The resultTargetType prop',
-      control: { type: 'text' },
+    targetType: {
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     resultTargetName: {
       description: 'The resultTargetName prop',

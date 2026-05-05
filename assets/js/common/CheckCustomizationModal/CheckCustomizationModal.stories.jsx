@@ -129,9 +129,9 @@ export default {
       action: 'onReset',
     },
     customizationStatus: {
-      description:
-        'Status of the check customization operation (ongoing, failed, or invalid)',
-      control: { type: 'text' },
+      description: 'Status of the check customization operation',
+      control: { type: 'select' },
+      options: ['idle', 'ongoing', 'failed', 'invalid'],
     },
   },
 };

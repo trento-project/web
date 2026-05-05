@@ -4,6 +4,7 @@ import { action } from 'storybook/actions';
 import CleanUpButton from './CleanUpButton';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+
 export default {
   title: 'Components/CleanUpButton',
   component: CleanUpButton,

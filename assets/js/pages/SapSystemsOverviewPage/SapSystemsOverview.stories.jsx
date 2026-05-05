@@ -176,6 +176,7 @@ export const UnauthorizedCleanUp = {
     userAbilities: [],
   },
 };
+
 export const SapSystemsWithDifferentTypes = {
   args: {
     userAbilities,

@@ -75,9 +75,9 @@ export default {
       action: 'yAxisLabelFormatter',
     },
     yAxisScaleType: {
-      description:
-        'The type of scale for the Y axis (e.g., linear or logarithmic)',
-      control: { type: 'text' },
+      description: 'The type of scale for the Y axis',
+      control: { type: 'select' },
+      options: ['linear', 'logarithmic'],
     },
     timezone: {
       description: 'Timezone string for date formatting.',

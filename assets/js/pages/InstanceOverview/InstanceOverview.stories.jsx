@@ -11,6 +11,7 @@ import InstanceOverview from './InstanceOverview';
 const applicationInstance = sapSystemApplicationInstanceFactory.build();
 const databaseInstance = databaseInstanceFactory.build();
 const userAbilities = [];
+
 export default {
   title: 'Components/InstanceOverview',
   component: InstanceOverview,

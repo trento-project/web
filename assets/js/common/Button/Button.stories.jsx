@@ -12,17 +12,25 @@ export default {
       description: 'Button size',
     },
     children: {
-      type: 'element',
       description: 'Content or text displayed inside the button',
+      control: { type: 'text' },
     },
     className: {
       description: 'Additional CSS classes applied to the button element',
       control: { type: 'text' },
     },
     type: {
-      description:
-        'Style variant of the button (e.g., primary, secondary, danger, link)',
-      control: { type: 'text' },
+      description: 'Style variant of the button',
+      control: { type: 'select' },
+      options: [
+        'primary',
+        'secondary',
+        'danger',
+        'danger-bold',
+        'primary-white',
+        'transparent',
+        'link',
+      ],
     },
     disabled: {
       description: 'Boolean indicating whether the button is disabled',

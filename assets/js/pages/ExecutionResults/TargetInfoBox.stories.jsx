@@ -17,9 +17,9 @@ export default {
   component: TargetInfoBox,
   argTypes: {
     targetType: {
-      description: 'Type of target (host or cluster)',
-      control: { type: 'select' },
+      description: 'Type of the target',
       options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     target: {
       description: 'Target object with id, name, and other properties',

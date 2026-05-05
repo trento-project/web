@@ -1,4 +1,5 @@
 import { providers } from '@lib/model';
+import { clusterTypes } from '@lib/model/clusters';
 import {
   abilityFactory,
   catalogFactory,
@@ -196,8 +197,9 @@ export default {
       action: 'getClusterHostOperations',
     },
     clusterType: {
-      description: 'Type of the cluster (e.g., hana_scale_up, hana_scale_out)',
-      control: { type: 'text' },
+      description: 'Type of the cluster',
+      control: { type: 'select' },
+      options: clusterTypes,
     },
     clusterSids: {
       description: 'List of cluster SIDs',

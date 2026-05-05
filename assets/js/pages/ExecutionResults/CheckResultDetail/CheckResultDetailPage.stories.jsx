@@ -1,3 +1,4 @@
+import { CRITICAL, PASSING, WARNING } from '@lib/model';
 import {
   catalogFactory,
   checksExecutionCompletedFactory,
@@ -142,12 +143,14 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'The targetType prop',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     severity: {
-      description: 'The severity prop',
-      control: { type: 'text' },
+      description: 'Severity level of the check result',
+      control: { type: 'select' },
+      options: [WARNING, CRITICAL, PASSING],
     },
     executionData: {
       description: 'The executionData prop',
@@ -174,7 +177,7 @@ export const Default = {
     expectations,
     targetID: cluster.id,
     targetType: 'cluster',
-    severity: checkData.severity || 'critical',
+    severity: checkData.severity || PASSING,
     executionData: executionWithCheckResults,
   },
 };

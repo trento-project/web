@@ -1,4 +1,4 @@
-import { EXPECT_ENUM, WARNING } from '@lib/model';
+import { CRITICAL, EXPECT_ENUM, PASSING, WARNING } from '@lib/model';
 import {
   addCriticalExpectExpectation,
   addExpectationWithResult,
@@ -78,8 +78,9 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'Type of the target (e.g., host, cluster)',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     executionData: {
       description:
@@ -93,7 +94,8 @@ export default {
     },
     severity: {
       description: 'Severity level of the check result',
-      control: { type: 'text' },
+      control: { type: 'select' },
+      options: [WARNING, CRITICAL, PASSING],
     },
   },
 };

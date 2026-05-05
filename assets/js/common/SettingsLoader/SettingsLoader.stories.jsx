@@ -23,9 +23,9 @@ export default {
       action: 'onRetry',
     },
     children: {
-      type: 'element',
       description:
         'React elements or content displayed when the settings loader status is READY',
+      control: { type: 'text' },
     },
   },
   render: (args) => (

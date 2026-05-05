@@ -8,6 +8,7 @@ import ChecksSelectionHints from './ChecksSelectionHints';
 const hosts = hostFactory.buildList(2);
 const catalog = catalogFactory.build();
 const checks = Object.keys(catalog.catalog || {}).slice(0, 3);
+
 export default {
   title: 'Components/ChecksSelectionHints',
   component: ChecksSelectionHints,
@@ -24,8 +25,9 @@ export default {
       control: { type: 'text' },
     },
     targetType: {
-      description: 'The targetType prop',
-      control: { type: 'text' },
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
     },
     selectedChecks: {
       description: 'The selectedChecks prop',
