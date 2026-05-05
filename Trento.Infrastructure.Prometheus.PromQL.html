@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-B606DADF.js"></script>
+    <script src="dist/sidebar_items-ED9A977E.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -126,7 +126,7 @@ Info
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/promql.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/promql.ex#L4" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -188,7 +188,7 @@ character-level scanner, without relying on regex.</p>
     </a>
     <h1 class="signature" translate="no">inject_label(query, label_name, label_value)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/promql.ex#L46" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/promql.ex#L49" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -212,10 +212,10 @@ scanner for robustness.</p><h2 id="inject_label/3-examples" class="section-headi
   </a>
   <span class="text">Examples</span>
 </h2>
-<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="3510864286-1">(</span><span class="s">&quot;up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="3510864286-1">)</span><span class="w">
+<pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="7301272634-1">(</span><span class="s">&quot;up&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="7301272634-1">)</span><span class="w">
 </span><span class="s">&quot;up{agentID=</span><span class="se">\&quot;</span><span class="s">host-123</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="w">
 
-</span><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="3510864286-2">(</span><span class="s">&quot;up{job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="3510864286-2">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Trento.Infrastructure.Prometheus.PromQL</span><span class="o">.</span><span class="n">inject_label</span><span class="p" data-group-id="7301272634-2">(</span><span class="s">&quot;up{job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;agentID&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;host-123&quot;</span><span class="p" data-group-id="7301272634-2">)</span><span class="w">
 </span><span class="s">&quot;up{agentID=</span><span class="se">\&quot;</span><span class="s">host-123</span><span class="se">\&quot;</span><span class="s">,job=</span><span class="se">\&quot;</span><span class="s">node</span><span class="se">\&quot;</span><span class="s">}&quot;</span></code></pre>
   </section>
 </section>

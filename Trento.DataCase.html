@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-B606DADF.js"></script>
+    <script src="dist/sidebar_items-ED9A977E.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -126,7 +126,7 @@ Info
 <div id="top-content">
   <h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/data_case.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/data_case.ex#L4" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -194,7 +194,7 @@ this option is not recommended for other databases.</p>
     </a>
     <h1 class="signature" translate="no">errors_on(changeset)</h1>
 
-      <a href="https://github.com/trento-project/web/blob/main/test/support/data_case.ex#L46" class="icon-action" rel="help" title="View Source">
+      <a href="https://github.com/trento-project/web/blob/main/test/support/data_case.ex#L49" class="icon-action" rel="help" title="View Source">
        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
        <span class="sr-only">View Source</span>
      </a>
@@ -204,9 +204,9 @@ this option is not recommended for other databases.</p>
 
   <section class="docstring">
 
-<p>A helper that transforms changeset errors into a map of messages.</p><pre><code class="makeup elixir" translate="no"><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="1119017779-1">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="1119017779-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Accounts</span><span class="o">.</span><span class="n">create_user</span><span class="p" data-group-id="1119017779-2">(</span><span class="p" data-group-id="1119017779-3">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;short&quot;</span><span class="p" data-group-id="1119017779-3">}</span><span class="p" data-group-id="1119017779-2">)</span><span class="w">
-</span><span class="n">assert</span><span class="w"> </span><span class="s">&quot;password is too short&quot;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="1119017779-4">(</span><span class="n">changeset</span><span class="p" data-group-id="1119017779-4">)</span><span class="o">.</span><span class="n">password</span><span class="w">
-</span><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="1119017779-5">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1119017779-6">[</span><span class="s">&quot;password is too short&quot;</span><span class="p" data-group-id="1119017779-6">]</span><span class="p" data-group-id="1119017779-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="1119017779-7">(</span><span class="n">changeset</span><span class="p" data-group-id="1119017779-7">)</span></code></pre>
+<p>A helper that transforms changeset errors into a map of messages.</p><pre><code class="makeup elixir" translate="no"><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="8702286983-1">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="8702286983-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Accounts</span><span class="o">.</span><span class="n">create_user</span><span class="p" data-group-id="8702286983-2">(</span><span class="p" data-group-id="8702286983-3">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;short&quot;</span><span class="p" data-group-id="8702286983-3">}</span><span class="p" data-group-id="8702286983-2">)</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="s">&quot;password is too short&quot;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="8702286983-4">(</span><span class="n">changeset</span><span class="p" data-group-id="8702286983-4">)</span><span class="o">.</span><span class="n">password</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="8702286983-5">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="8702286983-6">[</span><span class="s">&quot;password is too short&quot;</span><span class="p" data-group-id="8702286983-6">]</span><span class="p" data-group-id="8702286983-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="8702286983-7">(</span><span class="n">changeset</span><span class="p" data-group-id="8702286983-7">)</span></code></pre>
   </section>
 </section>
 
