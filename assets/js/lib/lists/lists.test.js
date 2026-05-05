@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { page, pages } from '.';
 
 const pagedList = [...Array(30).keys()];

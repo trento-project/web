@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { userFactory } from '@lib/test-utils/factories/users';
 
 import activityLogReducer, { setUsers, initialState } from './activityLog';
