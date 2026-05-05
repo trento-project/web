@@ -1,8 +1,7 @@
 import React from 'react';
 
 import Button from '@common/Button';
-import Tooltip from '@common/Tooltip';
-import { PLACES } from '@common/Tooltip/Tooltip';
+import Tooltip, { PLACES } from '@common/Tooltip';
 
 import DisabledGuard from '.';
 
