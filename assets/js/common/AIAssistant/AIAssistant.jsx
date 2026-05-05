@@ -38,17 +38,17 @@ function AIAssistant({
 }) {
   const [isOpen, setIsOpen] = useState(open);
   const handleClose = () => setIsOpen(false);
-  const [threadId, setThreadId] = useState(() => crypto.randomUUID());
+  const [threadID, setThreadID] = useState(() => crypto.randomUUID());
   const [connectionStatus, setConnectionStatus] = useState(
     initialConnectionStatus
   );
 
-  const onNewThread = () => setThreadId(crypto.randomUUID());
+  const onNewThread = () => setThreadID(crypto.randomUUID());
 
   return (
     <AssistantChatProvider
       userID={userID}
-      threadId={threadId}
+      threadID={threadID}
       onConnectionChange={setConnectionStatus}
     >
       <AssistantUI

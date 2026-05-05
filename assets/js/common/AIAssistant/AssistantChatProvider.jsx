@@ -9,7 +9,7 @@ import { WebSocketAIAgent } from '@lib/ai';
 
 function AssistantChatProvider({
   userID,
-  threadId,
+  threadID,
   onConnectionChange = noop,
   children,
 }) {
@@ -17,13 +17,14 @@ function AssistantChatProvider({
 
   const agent = useMemo(() => {
     if (!socket || !userID) return null;
+    // AG-UI's AgentConfig field is `threadId` (camel) — translate.
     return new WebSocketAIAgent({
       socket,
       userID,
-      threadId,
+      threadId: threadID,
       onConnectionChange,
     });
-  }, [socket, userID, threadId, onConnectionChange]);
+  }, [socket, userID, threadID, onConnectionChange]);
 
   useEffect(() => {
     if (!agent) return undefined;
@@ -38,15 +39,15 @@ function AssistantChatProvider({
   const aui = useAui();
 
   // useAgUiRuntime keeps its core (and the message store) in a useRef across
-  // agent swaps, so bumping threadId rebuilds the agent + websocket but
+  // agent swaps, so bumping threadID rebuilds the agent + websocket but
   // leaves the prior thread's messages onscreen. Wipe them explicitly when
   // the thread id actually changes; the first mount is a no-op.
-  const previousThreadIdRef = useRef(threadId);
+  const previousThreadIDRef = useRef(threadID);
   useEffect(() => {
-    if (previousThreadIdRef.current === threadId) return;
-    previousThreadIdRef.current = threadId;
+    if (previousThreadIDRef.current === threadID) return;
+    previousThreadIDRef.current = threadID;
     runtime.thread.reset();
-  }, [threadId, runtime]);
+  }, [threadID, runtime]);
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>

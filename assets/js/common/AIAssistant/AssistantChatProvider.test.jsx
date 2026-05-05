@@ -65,7 +65,7 @@ const renderProvider = (
   children = <div data-testid="child">hi</div>
 ) =>
   render(
-    <AssistantChatProvider userID={42} threadId="thread-1" {...props}>
+    <AssistantChatProvider userID={42} threadID="thread-1" {...props}>
       {children}
     </AssistantChatProvider>
   );
@@ -90,13 +90,14 @@ describe('AssistantChatProvider', () => {
   });
 
   it('creates the agent and forwards it to useAgUiRuntime when userID and socket are present', async () => {
-    renderProvider({ userID: 7, threadId: 'thread-x' });
+    renderProvider({ userID: 7, threadID: 'thread-x' });
 
     await waitFor(() => {
       expect(agentModule.__getInstances()).toHaveLength(1);
     });
     const [agent] = agentModule.__getInstances();
     expect(agent.opts.userID).toBe(7);
+    // Provider translates threadID prop to AG-UI's `threadId` constructor option.
     expect(agent.opts.threadId).toBe('thread-x');
     expect(agent.opts.socket).toBe(fakeSocket);
     expect(lastRuntimeOptions().agent).toBe(agent);
@@ -135,9 +136,9 @@ describe('AssistantChatProvider', () => {
     expect(onConnectionChange).toHaveBeenCalledWith('connected');
   });
 
-  it('rebuilds the agent and disconnects the old one when threadId changes', async () => {
+  it('rebuilds the agent and disconnects the old one when threadID changes', async () => {
     const { rerender } = render(
-      <AssistantChatProvider userID={42} threadId="thread-1">
+      <AssistantChatProvider userID={42} threadID="thread-1">
         <div />
       </AssistantChatProvider>
     );
@@ -146,7 +147,7 @@ describe('AssistantChatProvider', () => {
     expect(first.opts.threadId).toBe('thread-1');
 
     rerender(
-      <AssistantChatProvider userID={42} threadId="thread-2">
+      <AssistantChatProvider userID={42} threadID="thread-2">
         <div />
       </AssistantChatProvider>
     );
@@ -162,16 +163,16 @@ describe('AssistantChatProvider', () => {
     expect(runtimeStub.thread.reset).not.toHaveBeenCalled();
   });
 
-  it('resets the runtime when threadId changes so prior messages are wiped', async () => {
+  it('resets the runtime when threadID changes so prior messages are wiped', async () => {
     const { rerender } = render(
-      <AssistantChatProvider userID={42} threadId="thread-1">
+      <AssistantChatProvider userID={42} threadID="thread-1">
         <div />
       </AssistantChatProvider>
     );
     expect(runtimeStub.thread.reset).not.toHaveBeenCalled();
 
     rerender(
-      <AssistantChatProvider userID={42} threadId="thread-2">
+      <AssistantChatProvider userID={42} threadID="thread-2">
         <div />
       </AssistantChatProvider>
     );
