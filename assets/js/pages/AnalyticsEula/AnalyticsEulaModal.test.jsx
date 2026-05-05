@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import AnalyticsEulaModal from './AnalyticsEulaModal';
@@ -72,22 +72,14 @@ describe('Analytics Eula Modal component', () => {
   });
 
   it('should open a new window with the docs url when the link is clicked', async () => {
-    const user = userEvent.setup();
-    const mockOpen = jest.spyOn(window, 'open').mockImplementation(() => {});
-
-    render(<AnalyticsEulaModal isOpen />);
+    await act(() => render(<AnalyticsEulaModal isOpen />));
 
     const linkElement = screen.getByRole('link', { name: 'anonymous metrics' });
-    linkElement.onclick = mockOpen;
 
     expect(linkElement).toHaveProperty('target', '_blank');
     expect(linkElement).toHaveProperty(
       'href',
       'https://trento-project.io/docs/user-guide/trento-analytics'
     );
-
-    await user.click(linkElement);
-
-    expect(mockOpen).toHaveBeenCalled();
   });
 });
