@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
 import { RESOURCE_TAGGING } from '@lib/model/activityLog';
 import {

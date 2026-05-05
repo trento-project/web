@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import React from 'react';
 import { MemoryRouter } from 'react-router';

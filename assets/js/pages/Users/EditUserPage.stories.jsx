@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { networkClient } from '@lib/network';
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
 import MockAdapter from 'axios-mock-adapter';

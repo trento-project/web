@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import Button from '@common/Button';
 import Tooltip, { PLACES } from '@common/Tooltip';
 import { abilityFactory } from '@lib/test-utils/factories';

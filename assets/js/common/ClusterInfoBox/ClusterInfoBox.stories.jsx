@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { AWS_PROVIDER, providers } from '@lib/model';
 import {
   ANGI_ARCHITECTURE,

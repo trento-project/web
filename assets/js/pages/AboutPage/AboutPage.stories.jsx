@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { aboutFactory } from '@lib/test-utils/factories';
 import React from 'react';
 

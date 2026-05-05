@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { hostFactory } from '@lib/test-utils/factories/hosts';
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';

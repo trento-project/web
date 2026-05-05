@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { networkClient } from '@lib/network';
 import { advisoryErrataFactory } from '@lib/test-utils/factories/advisoryErrata';
 import { configureStore, createSlice } from '@reduxjs/toolkit';

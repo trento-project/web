@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { clusterResourceFactory } from '@lib/test-utils/factories';
 
 import Resources from './Resources';

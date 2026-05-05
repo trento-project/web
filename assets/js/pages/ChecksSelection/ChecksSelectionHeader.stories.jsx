@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import BackButton from '@common/BackButton';
 import PageHeader from '@common/PageHeader';
 import { faker } from '@faker-js/faker';

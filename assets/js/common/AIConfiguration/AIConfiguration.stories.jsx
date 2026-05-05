@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 

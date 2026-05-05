@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { architectures, providers } from '@lib/model';
 import { hostFactory } from '@lib/test-utils/factories';
 

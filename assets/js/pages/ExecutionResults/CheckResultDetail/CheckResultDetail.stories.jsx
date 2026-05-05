@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { CRITICAL, EXPECT_ENUM, PASSING, WARNING } from '@lib/model';
 import {
   addCriticalExpectExpectation,

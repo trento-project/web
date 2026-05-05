@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import HealthIcon from '@common/HealthIcon';
 import Tooltip from '@common/Tooltip';
 import React from 'react';

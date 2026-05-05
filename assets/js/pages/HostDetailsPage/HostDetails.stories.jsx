@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { faker } from '@faker-js/faker';
 import { architectures, providers } from '@lib/model';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';

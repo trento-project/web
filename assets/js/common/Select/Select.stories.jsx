@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import ProviderLabel from '@common/ProviderLabel';
 import { providers } from '@lib/model';
 import React from 'react';

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { objectTreeFactory } from '@lib/test-utils/factories';
 import React from 'react';
 

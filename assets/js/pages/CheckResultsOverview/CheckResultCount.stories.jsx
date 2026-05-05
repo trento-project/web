@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { CRITICAL, PASSING, WARNING } from '@lib/model';
 import { action } from 'storybook/actions';
 

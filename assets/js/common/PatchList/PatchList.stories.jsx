@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
