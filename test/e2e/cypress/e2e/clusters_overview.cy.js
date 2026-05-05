@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as clustersOverviewPage from '../pageObject/clusters_overview_po';
 
 context('Clusters Overview', () => {

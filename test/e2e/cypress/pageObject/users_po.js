@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { addDays } from 'date-fns';
 
 export * from './base_po.js';

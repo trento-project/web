@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /// <reference types="cypress" />
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins

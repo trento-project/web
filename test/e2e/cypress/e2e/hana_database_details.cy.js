@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as hanaDbDetailsPage from '../pageObject/hana_database_details_po';
 
 context('HANA database details', () => {

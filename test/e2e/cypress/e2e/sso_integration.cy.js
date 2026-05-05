@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import * as usersPage from '../pageObject/users_po';
 import * as loginPage from '../pageObject/login_po';
 import * as dashboardPage from '../pageObject/dashboard_po';

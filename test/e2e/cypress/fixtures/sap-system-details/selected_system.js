@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export const healthMap = {
   Green: 'fill-jungle-green-500',
   Yellow: 'fill-yellow-500',
