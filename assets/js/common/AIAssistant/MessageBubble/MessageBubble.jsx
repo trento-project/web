@@ -12,7 +12,7 @@ import { AgentProgressIndicator } from '../AgentProgressIndicator';
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
 
-export function MessageBubbleView({ variant, children }) {
+function MessageBubbleView({ variant, children }) {
   if (variant === 'user') {
     return (
       <div className="rounded-lg bg-[#e8f5ef] px-5 py-4">
@@ -61,13 +61,13 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage() {
+export function AssistantMessage({ isRunning }) {
   return (
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         <MessageError />
-        <AgentProgressIndicator />
+        <AgentProgressIndicator isRunning={isRunning} />
       </MessageBubbleView>
     </MessagePrimitive.Root>
   );
