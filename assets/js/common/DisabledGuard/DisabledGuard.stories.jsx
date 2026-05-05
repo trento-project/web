@@ -85,7 +85,6 @@ export const Authorized = {
 
 export const Disabled = {
   args: {
-    ...Default.args,
     ...Authorized.args,
     userAbilities: [],
     permitted: ['action:resource'],
@@ -96,7 +95,6 @@ export const Disabled = {
 
 export const DisabledWithTooltip = {
   args: {
-    ...Default.args,
     ...Disabled.args,
     withTooltip: true,
   },
@@ -105,7 +103,6 @@ export const DisabledWithTooltip = {
 
 export const AuthorizedWithOriginalTooltip = {
   args: {
-    ...Default.args,
     ...Authorized.args,
   },
   render: (args) => guardElementWithTooltip(args),
@@ -113,7 +110,6 @@ export const AuthorizedWithOriginalTooltip = {
 
 export const DisabledWithOriginalTooltip = {
   args: {
-    ...Default.args,
     ...DisabledWithTooltip.args,
   },
   render: (args) => guardElementWithTooltip(args),

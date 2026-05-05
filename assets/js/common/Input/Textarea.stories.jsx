@@ -79,7 +79,6 @@ export const Disabled = {
 
 export const DisabledWithPlaceholder = {
   args: {
-    ...Default.args,
     ...WithPlaceholder.args,
     ...Disabled.args,
   },
@@ -114,7 +113,6 @@ export const WithError = {
 
 export const DisabledWithValue = {
   args: {
-    ...Default.args,
     value: 'Value text',
     ...Disabled.args,
   },

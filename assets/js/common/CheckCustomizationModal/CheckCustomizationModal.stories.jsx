@@ -162,7 +162,6 @@ export const SingleValue = {
 
 export const SingleBooleanValue = {
   args: {
-    ...Default.args,
     ...SingleValue.args,
     values: singeBooleanValue,
   },
@@ -170,7 +169,6 @@ export const SingleBooleanValue = {
 
 export const MultipleValues = {
   args: {
-    ...Default.args,
     ...SingleValue.args,
     values: multipleValues,
   },
@@ -178,7 +176,6 @@ export const MultipleValues = {
 
 export const PartialNonCustomizableValues = {
   args: {
-    ...Default.args,
     ...SingleValue.args,
     isChecked: true,
     values: partialCustomizableValues,

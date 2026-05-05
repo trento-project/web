@@ -93,7 +93,6 @@ export const Disabled = {
 
 export const DisabledWithInitialValue = {
   args: {
-    ...Default.args,
     ...WithValue.args,
     ...Disabled.args,
   },

@@ -55,7 +55,6 @@ export const Multiple = {
 
 export const Single = {
   args: {
-    ...Default.args,
     ...Multiple.args,
     pages: PAGES.slice(0, 1),
   },

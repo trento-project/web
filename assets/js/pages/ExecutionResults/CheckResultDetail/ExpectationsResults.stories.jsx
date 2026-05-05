@@ -56,7 +56,6 @@ export const WithFailureMessage = {
 
 export const WithWarning = {
   args: {
-    ...Default.args,
     ...WithFailureMessage.args,
     severity: WARNING,
   },
