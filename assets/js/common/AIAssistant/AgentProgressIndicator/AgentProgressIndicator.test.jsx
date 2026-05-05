@@ -6,19 +6,16 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { useAuiState } from '@assistant-ui/react';
-import {
-  AgentProgressIndicator,
+import AgentProgressIndicator, {
   AgentProgressIndicatorView,
   deriveProgressLabel,
 } from './AgentProgressIndicator';
 
-let mockThread = { isRunning: true };
-
 jest.mock('@assistant-ui/react', () => ({
-  AuiIf: ({ children, condition }) =>
-    condition({ thread: mockThread }) ? children : null,
   useAuiState: jest.fn(),
 }));
+
+const mockMessage = (message) => useAuiState.mockReturnValue(message);
 
 describe('AgentProgressIndicatorView', () => {
   it.each(['Thinking...', 'Calling get_hosts...'])(
@@ -83,36 +80,31 @@ describe('deriveProgressLabel', () => {
 });
 
 describe('AgentProgressIndicator', () => {
-  beforeEach(() => {
-    mockThread = { isRunning: true };
-  });
-
   it('renders nothing when the thread is not running', () => {
-    mockThread = { isRunning: false };
-    useAuiState.mockReturnValue({ content: [] });
-    const { container } = render(<AgentProgressIndicator />);
+    mockMessage({ content: [] });
+    const { container } = render(<AgentProgressIndicator isRunning={false} />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders nothing when the assistant has already produced text', () => {
-    useAuiState.mockReturnValue({
+    mockMessage({
       content: [{ type: 'text', text: 'partial answer' }],
     });
-    const { container } = render(<AgentProgressIndicator />);
+    const { container } = render(<AgentProgressIndicator isRunning />);
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
-    useAuiState.mockReturnValue({ content: [] });
-    render(<AgentProgressIndicator />);
+    mockMessage({ content: [] });
+    render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
 
   it('renders the tool name while a tool call is in flight', () => {
-    useAuiState.mockReturnValue({
+    mockMessage({
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
     });
-    render(<AgentProgressIndicator />);
+    render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
   });
 });
