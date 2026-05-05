@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { recordSaga } from '@lib/test-utils';
 import { userFactory } from '@lib/test-utils/factories/users';
 import { setUsers } from '@state/activityLog';

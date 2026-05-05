@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { faker } from '@faker-js/faker';
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 import { formatISO } from 'date-fns';

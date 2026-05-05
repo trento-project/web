@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useEffect, useState } from 'react';
 import { EOS_CONTENT_COPY } from 'eos-icons-react';
 import copy from 'copy-to-clipboard';

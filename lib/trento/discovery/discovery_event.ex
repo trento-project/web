@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Discovery.DiscoveryEvent do
   @moduledoc """
   This module contains the schema used to store an append log of the handled discovery events,

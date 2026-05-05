@@ -1,9 +1,13 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useState } from 'react';
 
 import { useSearchParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
+import semver from 'semver';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HealthIcon from '@common/HealthIcon';
@@ -18,6 +22,15 @@ import Tooltip from '@common/Tooltip';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+
+const compareAgentVersions = (a, b) => {
+  const coercedA = semver.coerce(a);
+  const coercedB = semver.coerce(b);
+  if (coercedA && coercedB) {
+    return semver.compare(coercedA, coercedB);
+  }
+  return String(a).localeCompare(String(b));
+};
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
@@ -136,6 +149,9 @@ function HostsList() {
       {
         title: 'Agent version',
         key: 'agent_version',
+        filter: true,
+        filterFromParams: true,
+        filterOptionsSorter: compareAgentVersions,
         render: (content) => {
           const warning = agentVersionWarning(content);
           if (warning) {

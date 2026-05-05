@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable require-yield */
 import React from 'react';
 import { takeEvery } from 'redux-saga/effects';

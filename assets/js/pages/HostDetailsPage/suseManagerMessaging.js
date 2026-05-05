@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
 
 export const getSoftwareUpdatesErrorMessage = (errors) => {

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Commands.CompleteHostChecksExecution do
   @moduledoc """
   Complete the checks execution with the incoming result

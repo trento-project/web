@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { getProviderLabel, getProviderIcon } from '.';
 
 describe('aizz', () => {

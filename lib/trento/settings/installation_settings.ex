@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.InstallationSettings do
   @moduledoc """
   InstallationSettings is the STI projection containing installation related settings

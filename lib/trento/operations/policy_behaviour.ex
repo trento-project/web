@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Operations.PolicyBehaviour do
   @moduledoc """
   Behaviour of the operations policies.

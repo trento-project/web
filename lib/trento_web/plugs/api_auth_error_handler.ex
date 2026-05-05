@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.ApiAuthErrorHandler do
   @moduledoc """
   Used to handle authentication error in APIs

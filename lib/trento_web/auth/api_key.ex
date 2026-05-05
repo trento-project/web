@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Auth.ApiKey do
   @moduledoc """
   ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.

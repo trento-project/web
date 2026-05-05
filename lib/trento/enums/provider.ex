@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Enums.Provider do
   @moduledoc """
   Type that represents the supported provider values by our agent.

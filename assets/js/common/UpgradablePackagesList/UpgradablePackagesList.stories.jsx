@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { csvDataupgradablePackageFactory } from '@lib/test-utils/factories/relevantPatches';
 import { action } from 'storybook/actions';
 

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import Select, { OPTION_ALL } from './Select';
 
 export const createOptionRenderer =

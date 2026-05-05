@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 # This workflow requires the following secrets:
 # `SSH_PUBLIC_KEY`, `SSH_PRIVATE_KEY` ssh keys to access the e2e machines
 # `AWS_SECRET_ACCESS_KEY`, `AWS_ACCESS_KEY_ID` aws credentials,

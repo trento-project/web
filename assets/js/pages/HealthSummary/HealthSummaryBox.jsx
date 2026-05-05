@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   EOS_CHECK_CIRCLE_OUTLINED,
   EOS_ERROR_OUTLINED,

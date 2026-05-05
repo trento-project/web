@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Prometheus.ChartIntegration do
   @moduledoc """
   ChartIntegration provides a mechanism for mapping prometheus query information to domain

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseDeregistered do
   @moduledoc """
   This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned).

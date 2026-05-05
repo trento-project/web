@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import * as alertingPage from '../pageObject/alerting_po';
 
 context('Email Alerting feature', () => {

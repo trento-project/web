@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler do
   @moduledoc """
   This event handler is responsible to forward update database health commands to the SAP systems

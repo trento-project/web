@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.Correlations.UnscopedCorrelations do
   @moduledoc """
   For usage in application code.

@@ -1,6 +1,16 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { formatISO } from 'date-fns';
+
+import { timezones } from '@lib/timezones';
+
+// use the actual timezones from prduction code instead of faker.location.timeZone()
+// to avoid flaky test failures when the random pick lands on a filtered zone.
+export const fakeAppTimezone = () =>
+  faker.helpers.arrayElement(timezones).value;
 
 export const abilityFactory = Factory.define(() => ({
   id: faker.number.int(),
@@ -20,7 +30,7 @@ export const userFactory = Factory.define(() => ({
   totp_enabled_at: formatISO(faker.date.past()),
   analytics_enabled: faker.datatype.boolean(),
   analytics_eula_enabled: faker.datatype.boolean(),
-  timezone: faker.location.timeZone(),
+  timezone: fakeAppTimezone(),
   last_login_at: formatISO(faker.date.past()),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
@@ -36,7 +46,7 @@ export const profileFactory = Factory.define(() => ({
   totp_enabled: faker.datatype.boolean(),
   analytics_enabled: faker.datatype.boolean(),
   analytics_eula_accepted: faker.datatype.boolean(),
-  timezone: faker.location.timeZone(),
+  timezone: fakeAppTimezone(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));

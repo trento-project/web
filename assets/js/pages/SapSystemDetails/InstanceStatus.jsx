@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { EOS_LENS_FILLED } from 'eos-icons-react';
 import Pill from '@common/Pill';

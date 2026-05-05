@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
 
 if (Cypress.env('REAL_CLUSTER_TESTS')) {

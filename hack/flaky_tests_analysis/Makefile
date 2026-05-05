@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 PATH-TO-JUNIT-FILES ?= /tmp
 
 # Parameters for analyze-files target

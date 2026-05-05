@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.HostJSON do
   def hosts(%{hosts: hosts}), do: Enum.map(hosts, &host(%{host: &1}))
 

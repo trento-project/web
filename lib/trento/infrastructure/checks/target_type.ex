@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Checks.TargetType do
   @moduledoc """
   Type that represents the possible target types for a check execution.

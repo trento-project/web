@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Commands.SelectHostChecks do
   @moduledoc """
   Select the checks to be executed on a host.

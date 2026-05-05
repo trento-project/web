@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Ai.ConfigurationsTest do
   use Trento.DataCase, async: true
   use Trento.AI.AICase

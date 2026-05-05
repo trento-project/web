@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { recordSaga } from '@lib/test-utils';
 
 import { clusterFactory } from '@lib/test-utils/factories';

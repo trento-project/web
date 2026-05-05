@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ClusterTest do
   use Trento.AggregateCase, aggregate: Trento.Clusters.Cluster, async: true
 

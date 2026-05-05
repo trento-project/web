@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable no-console */
 import { faker } from '@faker-js/faker';
 import {

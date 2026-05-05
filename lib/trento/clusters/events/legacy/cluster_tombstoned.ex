@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.ClusterTombstoned do
   @moduledoc """
     This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate

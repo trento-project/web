@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SoftwareUpdates.Enums.AdvisoryType do
   @moduledoc """
   Enum representing possible advisory types.

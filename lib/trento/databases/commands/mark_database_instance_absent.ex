@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Commands.MarkDatabaseInstanceAbsent do
   @moduledoc """
   Mark a database instance as absent

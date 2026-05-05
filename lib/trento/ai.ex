@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.AI do
   @moduledoc """
   The `Trento.AI` module provides functions to interact with the AI features of the Trento application.

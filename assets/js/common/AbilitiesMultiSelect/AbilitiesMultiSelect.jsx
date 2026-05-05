@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { assign, find, orderBy, startsWith } from 'lodash';
 import { getFromConfig } from '@lib/config';

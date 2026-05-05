@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.JsonbSerializer do
   @moduledoc """
   Serialize to/from PostgreSQL's native `jsonb` format.

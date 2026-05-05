@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { put, call, takeEvery } from 'redux-saga/effects';
 import { getCatalog } from '@lib/api/checks';
 

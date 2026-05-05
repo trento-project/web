@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /* This file is for your main application CSS */
 @import './markdown.scss';
 @import './tooltip.scss';

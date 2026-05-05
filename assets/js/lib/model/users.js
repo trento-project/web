@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { getFromConfig } from '@lib/config';
 
 const TRENTO_ADMIN_USERNAME = getFromConfig('adminUsername') || 'admin';

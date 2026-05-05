@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Commands.RollUpCluster do
   @moduledoc """
   Start a cluster aggregate rollup.

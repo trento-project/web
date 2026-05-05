@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 export const availableClusters = [
   {
     id: '8a66f8fb-5fe9-51b3-a34c-24321271a4e3',

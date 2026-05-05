@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.SapSystemJSON do
   import TrentoWeb.V1.DatabaseJSON,
     only: [database_instance: 1]

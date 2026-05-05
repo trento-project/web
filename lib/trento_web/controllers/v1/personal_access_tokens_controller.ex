@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.PersonalAccessTokensController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs

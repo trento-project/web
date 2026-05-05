@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.Parser.ActivityParser do
   @moduledoc """
   Activity parser extracts the activity relevant information from the context.

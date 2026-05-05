@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Auth.AccessToken do
   @moduledoc """
     Jwt Token is the module responsible for creating a proper jwt access token.

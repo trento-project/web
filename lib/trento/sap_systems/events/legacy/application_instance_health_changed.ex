@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.ApplicationInstanceHealthChanged do
   @moduledoc """
   This event is emitted when a application instance health has changed.

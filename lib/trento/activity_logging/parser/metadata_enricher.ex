@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.ActivityLog.Logger.Parser.MetadataEnricher do
   @moduledoc """
   Metadata enricher enriches metadata extracted by activity parser.

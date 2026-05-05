@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.V1.AbilityJSON do
   def index(%{abilities: abilities}), do: Enum.map(abilities, &ability/1)
 

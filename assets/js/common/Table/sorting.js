@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 export const createStringSortingPredicate = (key, direction) => {
   if (!key) {
     return null;

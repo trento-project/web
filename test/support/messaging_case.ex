@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.MessagingCase do
   @moduledoc """
   This test case makes sure that the messaging system is properly stubbed for tests where a defined behavior is sufficient.

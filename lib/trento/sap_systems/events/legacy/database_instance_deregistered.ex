@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.DatabaseInstanceDeregistered do
   @moduledoc """
   This event is emitted when a database instance is deregistered (decommissioned) from the SAP system.

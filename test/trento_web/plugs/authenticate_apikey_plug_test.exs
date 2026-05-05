@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlugTest do
   use TrentoWeb.ConnCase, async: true
   import Plug.Test

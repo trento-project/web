@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { executionValueFactory } from '@lib/test-utils/factories';
 
 import ExpectedValues from './ExpectedValues';

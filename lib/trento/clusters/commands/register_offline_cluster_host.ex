@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Commands.RegisterOfflineClusterHost do
   @moduledoc """
   Command to register a host in a cluster when the host is offline.

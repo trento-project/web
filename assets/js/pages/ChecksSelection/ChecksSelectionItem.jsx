@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import { noop } from 'lodash';

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Settings.SSOCertificatesSettings do
   @moduledoc """
   SSOCertificatesSettings is the STI projection containing SSL certificates

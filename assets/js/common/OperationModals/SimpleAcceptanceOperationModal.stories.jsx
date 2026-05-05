@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,

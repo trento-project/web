@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Enums.SapInstanceResourceType do
   @moduledoc """
   Type that represents the discovered type of a clustered SAP instance.

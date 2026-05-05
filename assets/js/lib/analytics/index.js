@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import posthog from 'posthog-js';
 import { v5 as uuidv5 } from 'uuid';
 import { get, has, noop } from 'lodash';
@@ -19,7 +22,7 @@ const installationID = getFromConfig('installationID');
 // The GTM container must have a Tag with Custom HTML type with the next
 // content:
 {
-  /* 
+  /*
 <script>
   var posthogConfig = {
     apiKey: <<POSTHOG_API_KEY>>,
@@ -28,7 +31,7 @@ const installationID = getFromConfig('installationID');
       // any other additional custom configuration
     }
   }
-</script> 
+</script>
 */
 }
 const getGtmConfig = () => window.posthogConfig;

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { TARGET_CLUSTER, TARGET_HOST } from '@lib/model';
 import { HANA_SCALE_UP, HANA_SCALE_OUT, ASCS_ERS } from '@lib/model/clusters';
 import { hasChecksForClusterType, hasChecksForTarget } from './checks';

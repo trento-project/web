@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Databases.Events.DatabaseRolledUpTest do
   use Trento.AggregateCase, aggregate: Trento.Databases.Database, async: true
 

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.ValueObjects.SlesSubscription do
   @moduledoc """
   SLES subscriptions value object

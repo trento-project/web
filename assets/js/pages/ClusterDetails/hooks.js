@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { isValid, max, parseISO } from 'date-fns';
 import { useEffect, useState } from 'react';
 

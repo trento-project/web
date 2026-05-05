@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import '@testing-library/jest-dom';
 
@@ -7,14 +10,16 @@ import { toast } from 'react-hot-toast';
 import { networkClient } from '@lib/network';
 import { screen, act, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import {
+  adminUser,
+  fakeAppTimezone,
+  userFactory,
+} from '@lib/test-utils/factories/users';
 import {
   defaultInitialState,
   renderWithRouter,
   withState,
 } from '@lib/test-utils';
-import { faker } from '@faker-js/faker';
-
 import UsersPage from './UsersPage';
 
 const axiosMock = new MockAdapter(networkClient);
@@ -140,7 +145,7 @@ describe('UsersPage', () => {
 
     await act(async () => {
       renderUsersPage({
-        user: { timezone: faker.location.timeZone() },
+        user: { timezone: fakeAppTimezone() },
       });
     });
 

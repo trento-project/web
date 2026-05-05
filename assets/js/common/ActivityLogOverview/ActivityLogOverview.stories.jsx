@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { activityLogEntryFactory } from '@lib/test-utils/factories/activityLog';
 
 // import _ from 'lodash';

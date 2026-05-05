@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { createSelector } from '@reduxjs/toolkit';
 import { pipe, find } from 'lodash/fp';
 import { flatMap, get, has } from 'lodash';

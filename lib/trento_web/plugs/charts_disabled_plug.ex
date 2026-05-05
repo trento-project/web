@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.ChartsDisabledPlug do
   @moduledoc """
     This plug acts as a barrier for the charts endpoint, return 501 for all the requests.

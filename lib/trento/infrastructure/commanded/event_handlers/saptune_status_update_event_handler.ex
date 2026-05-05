@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler do
   @moduledoc """
   Event handler to update saptune status when application or HANA database instances are registered/deregistered.

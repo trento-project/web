@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Factory do
   @moduledoc """
   A simple Factory helper module to be used within tests to generate test data

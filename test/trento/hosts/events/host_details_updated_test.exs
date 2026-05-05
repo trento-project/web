@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.Events.HostDetailsUpdatedTest do
   use Trento.AggregateCase, aggregate: Trento.Hosts.Host, async: true
 

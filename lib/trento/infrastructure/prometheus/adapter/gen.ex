@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Infrastructure.Prometheus.Gen do
   @moduledoc """
   Behaviour of a prometheus adapter.

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TestCommandedApp do
   @moduledoc """
   InMemory commanded app used in tests.

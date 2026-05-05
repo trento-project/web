@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Services.HealthService do
   @moduledoc """
   This module contains the domain logic for everything health related.

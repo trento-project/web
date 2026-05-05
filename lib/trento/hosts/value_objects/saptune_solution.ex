@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Hosts.ValueObjects.SaptuneSolution do
   @moduledoc """
   Represents a Saptune solution

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Enums.EnsaVersion do
   @moduledoc """
   Type that represents the supported ENSA versions.

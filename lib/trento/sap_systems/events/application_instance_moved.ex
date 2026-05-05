@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.SapSystems.Events.ApplicationInstanceMoved do
   @moduledoc """
   This event is emitted when an application instance is moved from a host to another.

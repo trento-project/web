@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Discovery.Payloads.CloudDiscoveryPayload do
   @moduledoc """
   Cloud discovery integration event payload

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import * as aboutPage from '../pageObject/about_po';
 
 describe('About page', () => {

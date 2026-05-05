@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {

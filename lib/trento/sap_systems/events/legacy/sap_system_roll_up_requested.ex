@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Domain.Events.SapSystemRollUpRequested do
   @moduledoc """
   This event is emitted when an sap system roll-up is requested.

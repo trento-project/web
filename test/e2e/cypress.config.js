@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 const { defineConfig } = require('cypress');
 
 const DEMO = 'demo';

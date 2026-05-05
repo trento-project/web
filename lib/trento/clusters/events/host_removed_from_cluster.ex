@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Clusters.Events.HostRemovedFromCluster do
   @moduledoc """
   This event is emitted when a host is removed from a cluster.

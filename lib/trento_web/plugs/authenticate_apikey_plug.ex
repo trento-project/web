@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Plugs.AuthenticateAPIKeyPlug do
   @moduledoc """
   A Plug that authenticates API calls via an API Key provided in `X-Trento-apiKey` HTTP header
