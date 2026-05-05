@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { pipe, getOr, find, some } from 'lodash/fp';
 
 const getUnitFileState = (host, unit) =>

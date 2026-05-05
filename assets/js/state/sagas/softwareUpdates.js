@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { get } from 'lodash';
 import { put, call, takeEvery } from 'redux-saga/effects';
 import {

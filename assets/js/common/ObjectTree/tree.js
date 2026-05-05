@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export const flattenTree = (tree, parent, id = 0) => {
   const { count, children } =
     !tree.children || tree.children.length === 0

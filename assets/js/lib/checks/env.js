@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { ASCS_ERS, HANA_SCALE_UP } from '@lib/model/clusters';
 
 export const buildEnv = ({

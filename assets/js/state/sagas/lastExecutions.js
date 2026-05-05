@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { put, call, takeEvery, select, getContext } from 'redux-saga/effects';
 
 import { notify } from '@state/notifications';

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { createAction, createSlice } from '@reduxjs/toolkit';
 import { instancesMatch, upsertInstances, updateInstance } from './instances';
 

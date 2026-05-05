@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { call, put, select, takeEvery, getContext } from 'redux-saga/effects';
 import { del } from '@lib/network';
 

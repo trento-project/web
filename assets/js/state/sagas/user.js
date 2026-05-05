@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { call, put, takeEvery, select } from 'redux-saga/effects';
 import {
   setAuthInProgress,

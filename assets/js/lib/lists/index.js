@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export const toggle = (element, list) =>
   list.includes(element)
     ? list.filter((string) => string !== element)

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 export default [
   {
     agent_version: '1.1.0+git.dev17.1660137228.fe5ba8a',

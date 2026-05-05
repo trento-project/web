@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import posthog from 'posthog-js';
 import { v5 as uuidv5 } from 'uuid';
 import { get, has, noop } from 'lodash';

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { screen } from '@testing-library/react';
 
 export const filterTable = async (user, name, option) => {

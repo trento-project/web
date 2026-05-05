@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 // safe to disable phoenix stuff
 // eslint-disable-next-line
 import { Socket } from 'phoenix';

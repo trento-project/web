@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { networkClient } from '@lib/network';
 
 export const getSettings = () => networkClient.get(`/settings/activity_log`);

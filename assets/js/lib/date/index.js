@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { addDays, addMonths, addYears, setHours, setMinutes } from 'date-fns';
 
 export const availableSelectTimeOptions = [

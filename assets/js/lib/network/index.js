@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import axios from 'axios';
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import { logError, logWarn } from '@lib/log';

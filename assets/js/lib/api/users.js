@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { del, get, patch, post } from '@lib/network';
 
 export const listUsers = () => get('/users');

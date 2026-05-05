@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { hostFactory, randomObjectFactory } from '.';

@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: SUSE LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 import { all, call, put, select, takeEvery } from 'redux-saga/effects';
 import { noop } from 'lodash';
 
