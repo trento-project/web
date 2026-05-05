@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-03-21T03:56:33Z",
-    "commit": "07e9b4bd7934596ec75ecd4ff85b86940ee39e2a",
-    "run_id": "23371221731",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 10
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › forbidden actions::should disable Saptune apply solution operation button based on user abilities",
-        "score": 0.5
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.1020
-      },
-      {
-        "name": "checksUtils::should get host expectation statements results",
-        "score": 0.07001
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Host reboot operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.04323
-      },
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-21T03:57:22Z",
     "commit": "07e9b4bd7934596ec75ecd4ff85b86940ee39e2a",
     "run_id": "23371221731",
@@ -6109,6 +6065,58 @@
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-05T04:18:53Z",
+    "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
+    "run_id": "25357040669",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 18
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.25
+      },
+      {
+        "name": "UserForm::should save the user",
+        "score": 0.2375
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.09275
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable systems operations if an instance operation is running",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "PersonalAccessTokens::should show personal access tokens",
+        "score": 0.02501
       }
     ]
   }
