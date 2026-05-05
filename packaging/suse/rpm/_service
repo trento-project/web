@@ -1,3 +1,7 @@
+<!--
+  ~ SPDX-FileCopyrightText: SUSE LLC
+  ~ SPDX-License-Identifier: Apache-2.0
+-->
 <services>
     <service name="tar_scm" mode="manual">
         <param name="url">https://github.com/%%REPOSITORY%%.git</param>
