@@ -1,7 +1,8 @@
 import React from 'react';
 import { action } from 'storybook/actions';
 
-import Pagination, { PageStats } from './Pagination';
+import PageStats from './PageStats';
+import Pagination from './Pagination';
 
 export default {
   title: 'Components/Pagination',

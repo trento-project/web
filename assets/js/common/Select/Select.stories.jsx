@@ -3,7 +3,8 @@ import { providers } from '@lib/model';
 import React from 'react';
 import { action } from 'storybook/actions';
 
-import Select, { createOptionRenderer } from './Select';
+import { createOptionRenderer } from '.';
+import Select from './Select';
 
 export default {
   title: 'Components/Select',
