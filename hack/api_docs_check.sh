@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 
 # Copyright 2025 SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
