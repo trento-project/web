@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+header:
+  comment: on-failure
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: SUSE LLC
+    software-name: trento-web
+    content: |
+      SPDX-FileCopyrightText: SUSE LLC
+      SPDX-License-Identifier: Apache-2.0
+  paths-ignore:
+    - "**/*.adoc"
+    - "**/*.eslintrc"
+    - "**/*.example"
+    - "**/*.json"
+    - "**/*.md"
+    - "**/*.pem"
+    - "**/*.service"
+    - "**/*.svg"
+    - "**/*.txt"
+    - ".github/CODEOWNERS"
+    - ".github/dependabot.yml"
+    - ".tool-versions"
+    - "LICENSE"
+    - "VERSION"
+    - "assets/vendor/**"
+
+  language:
+    JavaScript:
+      extensions:
+        - ".js"
+        - ".jsx"
+        - ".mjs"
+        - ".cjs"
+      comment_style_id: DoubleSlash
