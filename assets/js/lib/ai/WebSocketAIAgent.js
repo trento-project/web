@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
 import { isArray, isString, last } from 'lodash';

@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
 

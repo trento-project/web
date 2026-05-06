@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 // Test/story doubles for Phoenix Channel APIs.
 //
 // Plain JS only — no jest.fn — so this module can be imported from Storybook
