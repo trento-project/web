@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React, { useCallback } from 'react';
 import { EOS_CLOSE } from 'eos-icons-react';
 import { useAui } from '@assistant-ui/react';

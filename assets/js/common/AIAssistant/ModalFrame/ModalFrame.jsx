@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { Rnd } from 'react-rnd';
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';

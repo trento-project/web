@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 import React from 'react';
 import { AuiIf, useAuiState } from '@assistant-ui/react';
 import { filter, isUndefined, last } from 'lodash';
