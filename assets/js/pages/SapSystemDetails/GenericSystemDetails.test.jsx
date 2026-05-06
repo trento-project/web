@@ -22,6 +22,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import userEvent from '@testing-library/user-event';
 
 import {
+  clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
@@ -263,6 +264,37 @@ describe('GenericSystemDetails', () => {
     expect(getByTextSite2('Operation Mode').nextSibling).toHaveTextContent(
       instance2.system_replication_operation_mode
     );
+  });
+
+  it('should render hosts table', () => {
+    const cluster = clusterFactory.build({ type: 'hana_scale_up' });
+    const host = hostFactory.build({ cluster });
+    const sapSystem = sapSystemFactory.build({
+      instances: sapSystemApplicationInstanceFactory.buildList(5),
+      hosts: [host],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        cleanUpPermittedFor={[]}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    const heading = screen.getByRole('heading', { name: 'Hosts' });
+    const section = heading.closest('div').nextSibling;
+    const table = within(section).getByRole('table');
+    const row = table.querySelector('tbody > tr');
+    const hostLink = within(row).getByRole('link', { name: host.hostname });
+    expect(hostLink).toHaveAttribute('href', `/hosts/${host.id}`);
+    const clusterLink = within(row).getByRole('link', {
+      name: cluster.name,
+    });
+    expect(clusterLink).toHaveAttribute('href', `/clusters/${cluster.id}`);
+    expect(within(row).getByText(host.agent_version)).toBeInTheDocument();
   });
 
   it('should render a cleanup button and correct health icon when absent instances exist', () => {

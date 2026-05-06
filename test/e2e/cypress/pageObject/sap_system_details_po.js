@@ -97,9 +97,20 @@ export const eachHostHasTheExpectedLink = () =>
     return cy.go('back');
   });
 
+export const eachHostHasTheExpectedClusterLink = () =>
+  cy.wrap(attachedHosts).each((host, index) => {
+    if (!host.ClusterId) return;
+    const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(3) a`;
+    cy.get(tableCellSelector).click();
+    basePage.validateUrl(`/clusters/${host.ClusterId}`);
+    return cy.go('back');
+  });
+
 export const eachHostHasTheExpectedData = () =>
   cy.wrap(attachedHosts).each((host, index) => {
-    const keys = Object.keys(host).filter((key) => key !== 'AgentId');
+    const keys = Object.keys(host).filter(
+      (key) => !['AgentId', 'ClusterId'].includes(key)
+    );
     return cy.wrap(keys).each((key, rowIndex) => {
       const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(${rowIndex})`;
       const expectedValue =

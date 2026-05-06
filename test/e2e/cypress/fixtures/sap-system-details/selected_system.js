@@ -59,6 +59,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.21', '10.100.1.25'],
     Provider: 'Azure',
     Cluster: 'netweaver_cluster',
+    ClusterId: '5284f376-c1f4-5178-8966-d490df3dab4f',
     Version: '2.1.0',
   },
   {
@@ -67,6 +68,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.23', '10.100.1.27'],
     Provider: 'Azure',
     Cluster: '',
+    ClusterId: '',
     Version: '2.1.0',
   },
   {
@@ -75,6 +77,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.24', '10.100.1.28'],
     Provider: 'Azure',
     Cluster: '',
+    ClusterId: '',
     Version: '2.1.0',
   },
   {
@@ -83,6 +86,7 @@ export const attachedHosts = [
     Addresses: ['10.100.1.22', '10.100.1.26'],
     Provider: 'Azure',
     Cluster: 'netweaver_cluster',
+    ClusterId: '5284f376-c1f4-5178-8966-d490df3dab4f',
     Version: '2.1.0',
   },
 ];

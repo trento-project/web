@@ -8,7 +8,10 @@ import { capitalize } from 'lodash';
 
 // Test Data
 import * as sumaMocks from '../fixtures/suma-software-updates/software_updates.js';
-import { selectedHost } from '../fixtures/host-details/selected_host.js';
+import {
+  selectedHost,
+  attachedSapInstance,
+} from '../fixtures/host-details/selected_host.js';
 import {
   saptuneDetailsData,
   saptuneDetailsDataUnsupportedVersion,
@@ -414,6 +417,13 @@ export const slesSubscriptionsTableDisplaysExpectedData = () =>
 
 export const sapSystemsTableDisplaysExpectedData = () =>
   _genericTableValidation('SAP instances', selectedHost);
+
+export const sapSystemHasTheExpectedLink = () => {
+  const tableCellSelector = `div:contains("SAP instances") table tbody tr:eq(0) td:eq(1) a`;
+  cy.get(tableCellSelector).click();
+  basePage.validateUrl(`/databases/${attachedSapInstance.id}`);
+  return cy.go('back');
+};
 
 export const heartbeatFailingToasterIsDisplayed = () =>
   cy.get(heartbeatFailingToaster, { timeout: 20000 }).should('be.visible');
