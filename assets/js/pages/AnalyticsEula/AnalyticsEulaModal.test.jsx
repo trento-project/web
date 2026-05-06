@@ -79,7 +79,7 @@ describe('Analytics Eula Modal component', () => {
     expect(linkElement).toHaveProperty('target', '_blank');
     expect(linkElement).toHaveProperty(
       'href',
-      'https://trento-project.io/docs/user-guide/trento-analytics'
+      'https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics'
     );
   });
 });
