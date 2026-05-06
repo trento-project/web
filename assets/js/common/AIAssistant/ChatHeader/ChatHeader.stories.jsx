@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { action } from 'storybook/actions';
-import { ChatHeader } from './ChatHeader';
+import ChatHeader from './ChatHeader';
 
 export default {
   title: 'Components/AIAssistant/ChatHeader',

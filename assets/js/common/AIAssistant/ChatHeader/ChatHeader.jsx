@@ -18,7 +18,7 @@ const STATUS_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
+function ChatHeader({ connectionStatus, onNewChat, onClose }) {
   const { text, dot } =
     STATUS_VIEW[connectionStatus] ??
     STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
@@ -57,3 +57,5 @@ export function ChatHeader({ connectionStatus, onNewChat, onClose }) {
     </div>
   );
 }
+
+export default ChatHeader;

@@ -1,4 +1,6 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-export { PromptComposer } from './PromptComposer';
+import PromptComposer from './PromptComposer';
+
+export default PromptComposer;

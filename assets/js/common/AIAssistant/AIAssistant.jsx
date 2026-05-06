@@ -9,7 +9,7 @@ import { CONNECTION_STATUS } from '@lib/ai';
 
 import AssistantChatProvider from './AssistantChatProvider';
 import AssistantThread from './AssistantThread';
-import { ModalFrame } from './ModalFrame';
+import ModalFrame from './ModalFrame';
 
 export function AssistantUI({
   open,

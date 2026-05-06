@@ -1,4 +1,6 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-export { ThreadWelcome } from './ThreadWelcome';
+import ThreadWelcome from './ThreadWelcome';
+
+export default ThreadWelcome;

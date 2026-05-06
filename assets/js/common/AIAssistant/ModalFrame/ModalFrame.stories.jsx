@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
-import { ModalFrame } from './ModalFrame';
+import ModalFrame from './ModalFrame';
 
 export default {
   title: 'Components/AIAssistant/ModalFrame',

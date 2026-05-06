@@ -5,7 +5,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { PromptComposer } from './PromptComposer';
+import PromptComposer from './PromptComposer';
 
 jest.mock('@assistant-ui/react', () => ({
   ComposerPrimitive: {

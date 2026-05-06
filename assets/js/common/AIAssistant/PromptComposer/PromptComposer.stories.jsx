@@ -7,7 +7,7 @@ import { SocketContext } from '@common/SocketProvider';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 
 import AssistantChatProvider from '../AssistantChatProvider';
-import { PromptComposer } from './PromptComposer';
+import PromptComposer from './PromptComposer';
 
 // PromptComposer relies on @assistant-ui/react's ComposerPrimitive.*, which
 // in turn need an AssistantRuntimeProvider in scope. Mount the real

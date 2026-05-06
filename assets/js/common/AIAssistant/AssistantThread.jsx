@@ -5,10 +5,10 @@ import React from 'react';
 import { noop } from 'lodash';
 import { ThreadPrimitive } from '@assistant-ui/react';
 
-import { ChatHeader } from './ChatHeader';
-import { PromptComposer } from './PromptComposer';
+import ChatHeader from './ChatHeader';
+import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
-import { ThreadWelcome } from './ThreadWelcome';
+import ThreadWelcome from './ThreadWelcome';
 
 const SUGGESTION_CLASS_NAME =
   'text-left bg-[#f8f9fa] border border-gray-200 rounded-lg p-3.5 text-gray-500 hover:bg-gray-100 transition-colors text-[15px]';

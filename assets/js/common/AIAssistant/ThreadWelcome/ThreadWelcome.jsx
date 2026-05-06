@@ -10,7 +10,7 @@ const defaultGreeting = (
   </>
 );
 
-export function ThreadWelcome({ greeting = defaultGreeting, children }) {
+function ThreadWelcome({ greeting = defaultGreeting, children }) {
   return (
     <div className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-6 pt-32 pb-2">
       <div className="text-[22px] leading-snug text-gray-500">{greeting}</div>
@@ -18,3 +18,5 @@ export function ThreadWelcome({ greeting = defaultGreeting, children }) {
     </div>
   );
 }
+
+export default ThreadWelcome;

@@ -5,7 +5,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { ThreadWelcome } from './ThreadWelcome';
+import ThreadWelcome from './ThreadWelcome';
 
 describe('ThreadWelcome', () => {
   it('renders the default Liz greeting when no greeting is provided', () => {

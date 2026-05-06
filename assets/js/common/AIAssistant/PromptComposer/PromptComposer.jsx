@@ -46,7 +46,7 @@ function SendButton({ disabled, isRunning }) {
   );
 }
 
-export function PromptComposer({ connectionStatus, isRunning = false }) {
+function PromptComposer({ connectionStatus, isRunning = false }) {
   const isConnected = connectionStatus === CONNECTION_STATUS.CONNECTED;
   const placeholder =
     PLACEHOLDERS[connectionStatus] ??
@@ -71,3 +71,5 @@ export function PromptComposer({ connectionStatus, isRunning = false }) {
     </ComposerPrimitive.Root>
   );
 }
+
+export default PromptComposer;

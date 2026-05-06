@@ -20,7 +20,7 @@ const defaultTrigger = (
   </Button>
 );
 
-export function ModalFrame({
+function ModalFrame({
   open,
   onOpenChange,
   trigger = defaultTrigger,
@@ -58,3 +58,5 @@ export function ModalFrame({
     </AssistantModalPrimitive.Root>
   );
 }
+
+export default ModalFrame;
