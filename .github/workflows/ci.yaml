@@ -235,6 +235,18 @@ jobs:
       - name: codespell
         run: codespell -S priv*,*package*json,deps*,*node_modules*,*svg,*.git,*.app -L enque,daa,afterall,statics
 
+  license-headers:
+    name: Ensure license headers are present and correct
+    needs: [detect-changes]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+      - name: Check license Headers
+        uses: apache/skywalking-eyes/header@61275cc80d0798a405cb070f7d3a8aaf7cf2c2c1 # v0.8.0
+
   generate-docs:
     name: Generate project documentation
     needs: [detect-changes]
