@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
 // AG-UI event factories for tests/stories.
 //
 // Each helper builds a single event payload of the matching AG-UI type
