@@ -23,21 +23,25 @@ export const Default = {
         usedBytes: 8589934592, // 8 GB
         availBytes: 12884901888, // 12 GB
         device: '/dev/sda1',
+        fsType: 'btrfs',
       },
       '/home': {
         usedBytes: 53687091200, // 50 GB
         availBytes: 53687091200, // 50 GB
         device: '/dev/sda2',
+        fsType: 'xfs',
       },
       '/boot/efi': {
         usedBytes: 52428800, // 50 MB
         availBytes: 471859200, // 450 MB
         device: '/dev/nvme0n1p1',
+        fsType: 'vfat',
       },
       '/var/log': {
         usedBytes: 2147483648, // 2GB
         availBytes: 8589934592, // 8GB
         device: '/dev/mapper/system-var_log',
+        fsType: 'xfs',
       },
     },
   },
@@ -51,6 +55,7 @@ export const FullDisk = {
         usedBytes: 1099511627776, // 1 TB
         availBytes: 1073741824, // 1 GB
         device: '/dev/sdb1',
+        fsType: 'xfs',
       },
     },
   },
