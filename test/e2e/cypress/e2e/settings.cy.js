@@ -5,8 +5,9 @@ import * as settingsPage from '../pageObject/settings_po';
 
 context('Settings page', () => {
   beforeEach(() => {
+    settingsPage.interceptInitialDataFetch();
     settingsPage.visit();
-    settingsPage.waitForRequest('settingsEndpoint');
+    settingsPage.waitForSettingsPageRequests();
   });
 
   after(() => settingsPage.updateApiKeyExpiration(null));
@@ -108,7 +109,7 @@ context('Settings page', () => {
       it('should clear existing settings', () => {
         settingsPage.saveDefaultSUMAsettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.waitForRequest('sumaSettingsEndpoint');
 
         settingsPage.sumaUrlHasExpectedValue();
         settingsPage.sumaCaCertUploadDateHasExpectedValue();
@@ -116,7 +117,7 @@ context('Settings page', () => {
         settingsPage.sumaPasswordHasExpectedValue('•••••');
 
         settingsPage.clearSumaSettings();
-        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.waitForRequest('sumaSettingsEndpoint');
 
         settingsPage.sumaUrlHasExpectedValue('https://');
         settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
@@ -127,7 +128,7 @@ context('Settings page', () => {
       it('should succeed even though settings do not exist', () => {
         settingsPage.clearSUMASettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.waitForRequest('sumaSettingsEndpoint');
 
         settingsPage.sumaUrlHasExpectedValue('https://');
         settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
@@ -135,7 +136,7 @@ context('Settings page', () => {
         settingsPage.sumaPasswordHasExpectedValue('.....');
 
         settingsPage.clearSumaSettings();
-        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.waitForRequest('sumaSettingsEndpoint');
 
         settingsPage.sumaUrlHasExpectedValue('https://');
         settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
@@ -148,7 +149,7 @@ context('Settings page', () => {
       it('should be disabled when there are no settings', () => {
         settingsPage.clearSUMASettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('settingsEndpoint');
+        settingsPage.waitForRequest('sumaSettingsEndpoint');
         settingsPage.sumaConnectionButtonIsDisabled();
       });
 
@@ -195,7 +196,6 @@ context('Settings page', () => {
     describe('Changing Settings', () => {
       it('should change retention time', () => {
         settingsPage.clickEditActivityLogSettingsButton();
-        settingsPage.waitForRequest('activityLogSettingsEndpoint');
         settingsPage.typeRetentionTime(6);
         settingsPage.clickActivityLogSettingsSaveButton();
         settingsPage.retentionTimeIsTheExpected('6 months');
@@ -221,6 +221,24 @@ context('Settings page', () => {
           settingsPage.retentionTimeIsTheExpected(currentRetentionTime);
         });
       });
+    });
+  });
+
+  describe('Page reload after refresh token flow', () => {
+    it('should reload all settings data after refresh token flow', () => {
+      settingsPage.waitForInitialDataFetch();
+
+      settingsPage.goNavigationMenuItem('Dashboard');
+      settingsPage.clearAccessTokenFromStorage();
+      settingsPage.interceptRefreshTokenRequest();
+      settingsPage.goNavigationMenuItem('Settings');
+
+      settingsPage.checkSettingsEndpointsRequestsAreForbidden(true);
+      settingsPage.waitForRefreshRequest();
+      // repeat check to see the requests are retried but not forbidden again
+      settingsPage.checkSettingsEndpointsRequestsAreForbidden(false);
+      // check only one refresh token request is done
+      settingsPage.checkRefreshRequestCount(1);
     });
   });
 

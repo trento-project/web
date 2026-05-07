@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import axios from 'axios';
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import createAuthRefresh from 'axios-auth-refresh';
 import { logError, logWarn } from '@lib/log';
 import {
   getAccessTokenFromStore,
@@ -52,7 +52,17 @@ const refreshAuthLogic = async (failedRequest) => {
   }
 };
 
-createAuthRefreshInterceptor(networkClient, refreshAuthLogic);
+// Even though it looks counter intuitive, we need to add `deduplicateRefresh: false`
+// to enable the retry of all the requests that got 401 at the same time.
+// The functionality of this flag is not properly implemented and it doesn't do what
+// it should. However, setting it to false fixes our problem.
+// Without this change, only the first request with 401 response is retried.
+// What the library docs explain about this field doesn't apply if the requests
+// receive 401 almost at the same time, as the retry is not handled in that case.
+// In any case, the refresh flow is done once
+createAuthRefresh(networkClient, refreshAuthLogic, {
+  deduplicateRefresh: false,
+});
 
 networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
