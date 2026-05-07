@@ -15,6 +15,6 @@ config :trento, Trento.SoftwareUpdates.Discovery,
 config :trento,
   operations_enabled: true
 
-config :trento, :ai, enabled: true
+config :trento, :ai, enabled: false
 
 config :logger, level: :info
