@@ -39,6 +39,7 @@ export const calculateFilesystemUsage = ({
           mountpoint,
           {
             device: get(sizeData, 'metric.device'),
+            fsType: get(sizeData, 'metric.fstype'),
             totalBytes,
             availBytes,
             usedBytes: totalBytes - availBytes,
