@@ -43,7 +43,7 @@ export default {
       description: 'The resultTargetName prop',
       control: { type: 'text' },
     },
-    provider: {
+    cloudProvider: {
       description: 'Cloud provider',
       control: { type: 'select' },
       options: [...providers, 'unrecognized-provider'],

@@ -8,8 +8,8 @@ export default {
   component: Features,
   argTypes: {
     features: {
-      description: 'The features prop',
-      control: { type: 'object' },
+      description: 'Pipe-separated list of features',
+      control: { type: 'text' },
     },
   },
 };

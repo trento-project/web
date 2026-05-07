@@ -8,14 +8,33 @@ export default {
   component: ClusterStatePill,
   argTypes: {
     state: {
-      description: 'The state prop',
-      control: { type: 'text' },
+      description: 'The cluster state',
+      control: { type: 'select' },
+      options: ['S_IDLE', 'S_TRANSITION_ENGINE', 'unknown', 'stopped'],
     },
   },
 };
 
 export const Default = {
   args: {
-    state: '',
+    state: 'S_IDLE',
+  },
+};
+
+export const Transition = {
+  args: {
+    state: 'S_TRANSITION_ENGINE',
+  },
+};
+
+export const Unknown = {
+  args: {
+    state: 'unknown',
+  },
+};
+
+export const Stopped = {
+  args: {
+    state: 'stopped',
   },
 };

@@ -8,14 +8,27 @@ export default {
   component: InstanceStatus,
   argTypes: {
     health: {
-      description: 'The health prop',
-      control: { type: 'text' },
+      description: 'The health status',
+      control: { type: 'select' },
+      options: ['passing', 'warning', 'critical'],
     },
   },
 };
 
 export const Default = {
   args: {
-    health: '',
+    health: 'passing',
+  },
+};
+
+export const Warning = {
+  args: {
+    health: 'warning',
+  },
+};
+
+export const Critical = {
+  args: {
+    health: 'critical',
   },
 };

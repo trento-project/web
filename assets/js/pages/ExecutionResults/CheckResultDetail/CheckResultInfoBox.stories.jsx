@@ -13,7 +13,7 @@ export default {
       description: 'Identifier for the checkID',
       control: { type: 'text' },
     },
-    targetType: {
+    resultTargetType: {
       description: 'Type of the target',
       options: ['host', 'cluster'],
       control: { type: 'select' },

@@ -8,7 +8,7 @@ export default {
   component: ObjectTreeIcon,
   argTypes: {
     expanded: {
-      description: 'The expanded prop',
+      description: 'Whether the tree node is expanded',
       control: { type: 'boolean' },
     },
   },
@@ -16,6 +16,12 @@ export default {
 
 export const Default = {
   args: {
-    expanded: '',
+    expanded: false,
+  },
+};
+
+export const Expanded = {
+  args: {
+    expanded: true,
   },
 };

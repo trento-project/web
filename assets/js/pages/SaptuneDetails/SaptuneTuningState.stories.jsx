@@ -10,7 +10,7 @@ export default {
     state: {
       description: 'Saptune tuning state',
       control: { type: 'select' },
-      options: ['compliant', 'not-compliant', 'pending', 'unknown'],
+      options: ['compliant', 'not compliant', 'not tuned'],
     },
   },
 };
@@ -24,20 +24,13 @@ export const Default = {
 export const NotCompliant = {
   args: {
     ...Default.args,
-    state: 'not-compliant',
+    state: 'not compliant',
   },
 };
 
-export const Pending = {
+export const NotTuned = {
   args: {
     ...Default.args,
-    state: 'pending',
-  },
-};
-
-export const Unknown = {
-  args: {
-    ...Default.args,
-    state: 'unknown',
+    state: 'not tuned',
   },
 };

@@ -9,7 +9,7 @@ export default {
   argTypes: {
     sapPresent: {
       description: 'The sapPresent prop',
-      control: { type: 'text' },
+      control: { type: 'boolean' },
     },
     version: {
       description: 'The version prop',
@@ -22,5 +22,19 @@ export const Default = {
   args: {
     sapPresent: true,
     version: '7.3.0',
+  },
+};
+
+export const NotInstalled = {
+  args: {
+    sapPresent: true,
+    version: '',
+  },
+};
+
+export const NotInstalledNotPresent = {
+  args: {
+    sapPresent: false,
+    version: '',
   },
 };

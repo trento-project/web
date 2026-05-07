@@ -20,7 +20,7 @@ export default {
       const axiosMock = new MockAdapter(networkClient);
       axiosMock.onGet(`/api/v1/users/${mockUser.id}`).reply(200, mockUser);
       axiosMock.onGet('/abilities').reply(200, mockAbilities);
-      axiosMock.onPut(`/api/v1/users/${mockUser.id}`).reply(200, mockUser);
+      axiosMock.onPatch(`/users/${mockUser.id}`).reply(200, mockUser);
 
       return (
         <MemoryRouter initialEntries={[`/users/${mockUser.id}/edit`]}>

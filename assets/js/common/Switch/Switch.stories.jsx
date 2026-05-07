@@ -19,7 +19,7 @@ export default {
       description: 'Disabled state',
     },
     onChange: {
-      action: 'Toogle',
+      action: 'Toggle',
       description: 'Change switch state',
     },
   },

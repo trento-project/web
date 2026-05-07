@@ -10,7 +10,7 @@ export default {
   component: Tooltip,
   argTypes: {
     content: {
-      description: 'Content to be rendered int he tooltip',
+      description: 'Content to be rendered in the tooltip',
       options: PLACES,
       control: { type: 'text' },
     },

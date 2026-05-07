@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { sapSystemFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
@@ -21,8 +22,9 @@ export default {
   ],
   argTypes: {
     systemType: {
-      description: 'The systemType prop',
-      control: { type: 'text' },
+      description: 'Type of SAP system',
+      control: { type: 'select' },
+      options: [DATABASE_TYPE, APPLICATION_TYPE],
     },
     sapSystemId: {
       description: 'Unique identifier for the SAP system',
@@ -37,8 +39,22 @@ export default {
 
 export const Default = {
   args: {
-    systemType: 'database',
+    systemType: undefined,
     sapSystemId: id,
     children: sid,
+  },
+};
+
+export const Application = {
+  args: {
+    ...Default.args,
+    systemType: APPLICATION_TYPE,
+  },
+};
+
+export const Database = {
+  args: {
+    ...Default.args,
+    systemType: DATABASE_TYPE,
   },
 };

@@ -16,8 +16,9 @@ export default {
       control: { type: 'text' },
     },
     heartbeat: {
-      description: 'The heartbeat prop',
-      control: { type: 'text' },
+      description: 'The heartbeat status',
+      control: { type: 'select' },
+      options: ['passing', 'critical'],
     },
   },
 };
@@ -27,5 +28,12 @@ export const Default = {
     className: '',
     children: 'Agent',
     heartbeat: 'passing',
+  },
+};
+
+export const Critical = {
+  args: {
+    ...Default.args,
+    heartbeat: 'critical',
   },
 };

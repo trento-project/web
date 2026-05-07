@@ -20,7 +20,7 @@ export default {
       control: { type: 'text' },
     },
     required: {
-      description: 'Wether this field is required or not',
+      description: 'Whether this field is required or not',
       control: { type: 'boolean' },
     },
   },

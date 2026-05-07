@@ -10,7 +10,7 @@ export default {
     status: {
       description: 'Replication status',
       control: { type: 'select' },
-      options: ['Primary', 'Secondary', 'Unknown', 'Disabled'],
+      options: ['Primary', 'Secondary', 'Unknown', 'Failed'],
     },
   },
 };
@@ -35,9 +35,9 @@ export const Unknown = {
   },
 };
 
-export const Disabled = {
+export const Failed = {
   args: {
     ...Default.args,
-    status: 'Disabled',
+    status: 'Failed',
   },
 };
