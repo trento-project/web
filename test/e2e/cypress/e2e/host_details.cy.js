@@ -139,6 +139,10 @@ context('Host Details', () => {
     it('should show SAP instance data', () => {
       hostDetailsPage.sapSystemsTableDisplaysExpectedData();
     });
+
+    it('should have a correct link to the SAP system', () => {
+      hostDetailsPage.sapSystemHasTheExpectedLink();
+    });
   });
 
   describe('SLES subscriptions details for this host should be displayed', () => {

@@ -192,11 +192,7 @@ export const visit = () => {
     '/api/v1/settings/activity_log',
     cy.spy().as('changeSettingsEndpoint')
   );
-  cy.intercept('/api/v1/settings/activity_log').as(
-    'activityLogSettingsEndpoint'
-  );
-  cy.intercept('/api/v1/settings/suse_manager').as('settingsEndpoint');
-  cy.intercept('/api/v1/settings/alerting').as('alertingSettingsEndpoint');
+  interceptSettingsPageEndpoints();
   return basePage.visit(url);
 };
 
@@ -341,6 +337,46 @@ export const enterAlertingUpdateSettingsWithoutPassword = () =>
 
 export const enterAlertingUpdateSettingsWithPassword = () =>
   enterAlertingSettings(alertingUpdateSettings, true);
+
+export const interceptSettingsPageEndpoints = () => {
+  cy.intercept('/api/v1/settings/api_key').as('apiKeySettingsEndpoint');
+  cy.intercept('/api/v1/settings/activity_log').as(
+    'activityLogSettingsEndpoint'
+  );
+  cy.intercept('/api/v1/settings/suse_manager').as('sumaSettingsEndpoint');
+  return cy
+    .intercept('/api/v1/settings/alerting')
+    .as('alertingSettingsEndpoint');
+};
+
+export const waitForSettingsPageRequests = () => {
+  basePage.waitForRequest('apiKeySettingsEndpoint');
+  // need to wait twice for api key as it is loaded in the initial fetch as well
+  basePage.waitForRequest('apiKeySettingsEndpoint');
+  basePage.waitForRequest('activityLogSettingsEndpoint');
+  basePage.waitForRequest('sumaSettingsEndpoint');
+  return basePage.waitForRequest('alertingSettingsEndpoint');
+};
+
+export const checkSettingsEndpointsRequestsAreForbidden = (forbidden) => {
+  const matcher = forbidden ? 'eq' : 'not.eq';
+  basePage
+    .waitForRequest('apiKeySettingsEndpoint')
+    .its('response.statusCode')
+    .should(matcher, 401);
+  basePage
+    .waitForRequest('activityLogSettingsEndpoint')
+    .its('response.statusCode')
+    .should(matcher, 401);
+  basePage
+    .waitForRequest('sumaSettingsEndpoint')
+    .its('response.statusCode')
+    .should(matcher, 401);
+  return basePage
+    .waitForRequest('alertingSettingsEndpoint')
+    .its('response.statusCode')
+    .should(matcher, 401);
+};
 
 // UI Validations
 
@@ -490,7 +526,7 @@ export const expectedSavingValidationsAreDisplayed = () => {
       );
 
       clickSumaSettingsModalSaveButton();
-      basePage.waitForRequest('settingsEndpoint');
+      basePage.waitForRequest('sumaSettingsEndpoint');
 
       cy.wrap(expectedErrors).each(({ selector, error }) => {
         const errorMessageSelector = `${selector.split('+')[0]} + div p`;
@@ -537,7 +573,7 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
     );
 
     clickSumaSettingsModalSaveButton();
-    basePage.waitForRequest('settingsEndpoint');
+    basePage.waitForRequest('sumaSettingsEndpoint');
 
     sumaUrlHasExpectedValue(sumaUrl);
     const expectedCaCertDate = expectCertUploadDate
@@ -656,7 +692,7 @@ export const changingSettingsValidationsWorkAsExpected = () => {
         };
         basePage.saveSUMASettings(initialSettings);
         basePage.refresh();
-        basePage.waitForRequest('settingsEndpoint');
+        basePage.waitForRequest('sumaSettingsEndpoint');
         clickSumaEditSettingsButton();
 
         if (withInitialCert) _clickRemoveSumaCaCertButton();
@@ -667,7 +703,7 @@ export const changingSettingsValidationsWorkAsExpected = () => {
         );
 
         clickSumaSettingsModalSaveButton();
-        basePage.waitForRequest('settingsEndpoint');
+        basePage.waitForRequest('sumaSettingsEndpoint');
 
         cy.wrap(expectedErrors).each(({ selector, error }) => {
           const errorMessageSelector = `${selector.split('+')[0]} + div p`;
@@ -760,7 +796,7 @@ export const sumaSettingsAreCorrectlyChanged = () => {
     };
     basePage.saveSUMASettings(initialSettings);
     basePage.refresh();
-    basePage.waitForRequest('settingsEndpoint');
+    basePage.waitForRequest('sumaSettingsEndpoint');
 
     clickSumaEditSettingsButton();
 
@@ -772,7 +808,7 @@ export const sumaSettingsAreCorrectlyChanged = () => {
     );
 
     clickSumaSettingsModalSaveButton();
-    basePage.waitForRequest('settingsEndpoint');
+    basePage.waitForRequest('sumaSettingsEndpoint');
 
     const expectedUrl = expectNewUrl ? newUrl : baseInitialSettings.url;
     sumaUrlHasExpectedValue(expectedUrl);

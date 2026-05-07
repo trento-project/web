@@ -124,8 +124,7 @@ export const nwdInstance01CleanUpButtonIsVisible = () =>
 export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
-export const validateUrl = (_url = url) =>
-  cy.location('pathname').should('eq', _url);
+export const validateUrl = (_url = url) => basePage.validateUrl(_url);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);

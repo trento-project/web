@@ -3,6 +3,9 @@
 
 name: Flaky Tests Analysis
 
+env:
+  FLAKY_TESTS_FAILURE_RATE_THRESHOLD: "20.0"
+
 on:
   workflow_call:
     inputs:
@@ -18,6 +21,10 @@ on:
         description: "Expected number of test runs"
         type: string
         required: true
+    secrets:
+      SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL:
+        description: "Incoming Slack webhook URL for flaky tests alerts"
+        required: false
 
 jobs:
   flaky-tests-analysis:
@@ -62,10 +69,9 @@ jobs:
           }
 
           write_stability_summary() {
-            local total_completed="$1" failed_runs="$2" expected_runs="$3"
-            local failure_percentage missing_runs
+            local total_completed="$1" failed_runs="$2" expected_runs="$3" failure_percentage="$4"
+            local missing_runs
 
-            failure_percentage=$(echo "scale=1; $failed_runs * 100 / $total_completed" | bc)
             missing_runs=$((expected_runs - total_completed))
 
             echo "### 📊 ${{ inputs.suite-name }} Suite Stability Summary" >> $GITHUB_STEP_SUMMARY
@@ -123,6 +129,7 @@ jobs:
           FLAT_DIR="$RUNNER_TEMP/junit-reports-flat"
           FAILED_DIR="$RUNNER_TEMP/failed-junit-reports"
           EXPECTED_RUNS=${{ inputs.total-runs }}
+          FAILURE_RATE_THRESHOLD="${{ env.FLAKY_TESTS_FAILURE_RATE_THRESHOLD }}"
 
           process_runs "$REPORTS_DIR" "$FAILED_DIR"
 
@@ -133,8 +140,14 @@ jobs:
             echo "has-failed-reports=false" >> $GITHUB_OUTPUT
           fi
 
+          echo "failure-rate-exceeded=false" >> $GITHUB_OUTPUT
           if [ "$TOTAL_COMPLETED" -gt 0 ]; then
-            write_stability_summary "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS"
+            FAILURE_PERCENTAGE=$(echo "scale=1; $FAILED_RUNS * 100 / $TOTAL_COMPLETED" | bc)
+            FAILURE_RATE_EXCEEDED=$(echo "$FAILURE_PERCENTAGE > $FAILURE_RATE_THRESHOLD" | bc -l)
+
+            write_stability_summary "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FAILURE_PERCENTAGE"
+            echo "failure-percentage=$FAILURE_PERCENTAGE" >> $GITHUB_OUTPUT
+            echo "failure-rate-exceeded=$([ "$FAILURE_RATE_EXCEEDED" -eq 1 ] && echo true || echo false)" >> $GITHUB_OUTPUT
           fi
 
           flatten_reports "$REPORTS_DIR" "$FLAT_DIR"
@@ -187,6 +200,15 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ]; then
              generate_dashboard_json "$TOTAL_COMPLETED" "$FAILED_RUNS" "$EXPECTED_RUNS" "$FLAKY_TEST_LIST"
           fi
+
+      - name: Send Slack alert
+        if: github.event_name == 'schedule' && fromJson(steps.analyze.outputs.failure-rate-exceeded)
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        with:
+          webhook: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: ":warning: *Flaky tests failure rate threshold exceeded*\n*Suite:* ${{ inputs.suite-name }}\n*Failure rate:* ${{ steps.analyze.outputs.failure-percentage }}%"
 
       - name: Delete artifacts
         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6

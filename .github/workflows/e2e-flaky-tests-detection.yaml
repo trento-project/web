@@ -232,3 +232,5 @@ jobs:
       suite-name: E2E
       junit-artifact-pattern: e2e-junit-reports-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
+    secrets:
+      SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}

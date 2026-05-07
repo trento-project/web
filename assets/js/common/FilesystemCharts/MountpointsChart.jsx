@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useState } from 'react';
 import classNames from 'classnames';
 
-import { keys, values, map } from 'lodash';
+import { keys, values, map, uniq, flow, orderBy, pickBy, xor } from 'lodash';
 
 import {
   Chart as ChartJS,
@@ -18,6 +18,8 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { formatBytes } from '@lib/charts';
 
+import Pill from '@common/Pill';
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,10 +29,36 @@ ChartJS.register(
   Legend
 );
 
+const initialActiveFsTypes = ['gpfs', 'nfs', 'xfs', 'nfs4'];
+
+// getFsTypes gets all uniq and sorted filesystem types from
+// the given mountpoints
+const getFsTypes = flow([values, (arr) => map(arr, 'fsType'), uniq, orderBy]);
+
 function MountpointsChart({ mountpoints, className }) {
-  const mountpointsLabels = keys(mountpoints);
-  const used = map(values(mountpoints), ({ usedBytes }) => usedBytes);
-  const available = map(values(mountpoints), ({ availBytes }) => availBytes);
+  // Get all FS types and store in state as initial selected types
+  const allFsTypes = getFsTypes(mountpoints);
+  const initialFsTypes = allFsTypes.filter((fsType) =>
+    initialActiveFsTypes.includes(fsType)
+  );
+
+  const [selectedTypes, setSelectedTypes] = useState(initialFsTypes);
+
+  // Filter the mountpoints based on selection
+  const filteredMountpoints = pickBy(mountpoints, (mountpoint) =>
+    selectedTypes.includes(mountpoint.fsType)
+  );
+
+  const mountpointsLabels = keys(filteredMountpoints);
+  const used = map(values(filteredMountpoints), ({ usedBytes }) => usedBytes);
+  const available = map(
+    values(filteredMountpoints),
+    ({ availBytes }) => availBytes
+  );
+
+  const toggleType = (type) => {
+    setSelectedTypes((prev) => xor(prev, [type]));
+  };
 
   const mountpointsData = {
     labels: mountpointsLabels,
@@ -71,8 +99,10 @@ function MountpointsChart({ mountpoints, className }) {
         callbacks: {
           beforeBody(tooltipItem) {
             const mountpoint = tooltipItem[0].label;
-            const device = mountpoints[mountpoint].device;
-            return `Device: ${device}`;
+            const currentMountpoint = filteredMountpoints[mountpoint];
+            const device = currentMountpoint.device;
+            const fsType = currentMountpoint.fsType;
+            return `Device: ${device}\nFS type: ${fsType}`;
           },
           label(tooltipItem) {
             const label = tooltipItem.dataset.label;
@@ -96,6 +126,22 @@ function MountpointsChart({ mountpoints, className }) {
       )}
     >
       <h2 className="font-bold text-center text-xl">File System Capacity</h2>
+      <div className="flex flex-wrap justify-center gap-2 mt-4">
+        {allFsTypes.map((type) => (
+          <Pill
+            key={type}
+            onClick={() => toggleType(type)}
+            className={classNames(
+              'cursor-pointer bg-green-100 text-green-800',
+              {
+                'opacity-50': !selectedTypes.includes(type),
+              }
+            )}
+          >
+            {type}
+          </Pill>
+        ))}
+      </div>
       <div className="pt-6 relative text-center h-[92%] w-full flex justify-center h-[350px]">
         <Bar options={mountpointsChartOptions} data={mountpointsData} />
       </div>

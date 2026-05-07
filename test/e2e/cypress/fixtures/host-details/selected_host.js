@@ -49,9 +49,9 @@ export const selectedHost = {
     provider: 'VMware',
   },
   sapInstance: {
-    id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
+    health: '',
     sid: 'HDP',
-    type: 'database',
+    type: 'Database',
     features: ['HDB', 'HDB_WORKER'],
     instanceNumber: '10',
   },
@@ -77,4 +77,8 @@ export const selectedHost = {
       expiresAt: '',
     },
   ],
+};
+
+export const attachedSapInstance = {
+  id: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
 };

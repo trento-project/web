@@ -55,6 +55,10 @@ context('SAP system details', () => {
       sapSystemDetailsPage.eachHostHasTheExpectedLink();
     });
 
+    it('should have a correct link to the cluster', () => {
+      sapSystemDetailsPage.eachHostHasTheExpectedClusterLink();
+    });
+
     it('should show every host with its data', () => {
       sapSystemDetailsPage.eachHostHasTheExpectedData();
     });

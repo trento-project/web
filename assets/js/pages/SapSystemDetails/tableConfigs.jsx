@@ -13,8 +13,9 @@ import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
 import Tooltip from '@common/Tooltip';
 import HealthIcon from '@common/HealthIcon';
-
 import OperationsButton from '@common/OperationsButton';
+
+import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
@@ -152,7 +153,7 @@ export const systemHostsTableConfiguration = {
     {
       title: 'Cluster',
       key: 'cluster',
-      render: (cluster) => cluster?.name,
+      render: (cluster) => <ClusterLink cluster={cluster} />,
     },
     {
       title: 'Agent version',
