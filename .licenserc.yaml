@@ -26,6 +26,7 @@ header:
     - "LICENSE"
     - "VERSION"
     - "assets/vendor/**"
+    - "mix.lock"
 
   language:
     JavaScript:
