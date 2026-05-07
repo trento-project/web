@@ -58,7 +58,7 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:agentic_runtime,
-       github: "trento-project/agentic_runtime", ref: "08f06d5747afb42c68dbfd80a0f553d759b06e9e"},
+       github: "trento-project/agentic_runtime", ref: "869996113bfc3e51b61bef385eaa6b3d001e829e"},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
