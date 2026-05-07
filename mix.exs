@@ -88,7 +88,7 @@ defmodule Trento.MixProject do
       {:nimble_parsec, "~> 1.4"},
       {:open_api_spex, "~> 3.19.1"},
       {:pegasus, "~> 0.2.5"},
-      {:phoenix, "~> 1.7.14"},
+      {:phoenix, "~> 1.7.23"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
