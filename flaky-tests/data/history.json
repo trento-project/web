@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-03-24T04:17:25Z",
-    "commit": "45cf93bff3807941239fe56c83c24115510347d5",
-    "run_id": "23472451169",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
-        "score": 0.5
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.1094
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.06551
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
-        "score": 0.04323
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-24T04:18:07Z",
     "commit": "45cf93bff3807941239fe56c83c24115510347d5",
     "run_id": "23472451169",
@@ -6182,6 +6146,54 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-08T04:21:10Z",
+    "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
+    "run_id": "25535897343",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "AboutPage component::should render the about page with content from the api",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable systems operations if an instance operation is running",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should enable Saptune apply solution operation button based on user abilities",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
+      },
+      {
+        "name": "checksUtils::should get host expectation statements results",
+        "score": 0.02501
       }
     ]
   }
