@@ -34,11 +34,10 @@ defmodule TrentoWeb.AIAssistantTools do
       summary: "List all hosts with their basic information.",
       description:
         "Retrieves a comprehensive list of all hosts discovered on the target infrastructure. " <>
-        "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
-        "Note: To get detailed cluster information (name, type, etc.), use the Cluster_list tool with the cluster_id.",
+          "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
+          "Note: To get detailed cluster information (name, type, etc.), use the Cluster_list tool with the cluster_id.",
       function: fn _args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case Hosts.Policy.authorize(:list, user, HostReadModel) do
           true ->
@@ -60,8 +59,7 @@ defmodule TrentoWeb.AIAssistantTools do
       description:
         "Retrieves a comprehensive list of all SAP Systems discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case SapSystems.Policy.authorize(:list, user, SapSystemReadModel) do
           true ->
@@ -83,8 +81,7 @@ defmodule TrentoWeb.AIAssistantTools do
       description:
         "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case Databases.Policy.authorize(:list, user, DatabaseReadModel) do
           true ->
@@ -106,8 +103,7 @@ defmodule TrentoWeb.AIAssistantTools do
       description:
         "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case Clusters.Policy.authorize(:list, user, ClusterReadModel) do
           true ->
@@ -156,8 +152,7 @@ defmodule TrentoWeb.AIAssistantTools do
         required: ["host_id", "query"]
       },
       function: fn %{"host_id" => host_id, "query" => query} = args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case Hosts.Policy.authorize(:query_metrics, user, HostReadModel) do
           true ->
@@ -221,8 +216,7 @@ defmodule TrentoWeb.AIAssistantTools do
         required: ["host_id", "query", "from", "to"]
       },
       function: fn args, context ->
-        Logger.warning("user_id: #{inspect(context.current_scope)}")
-        user = Users.get_user(context.current_scope.user.id)
+        user = Users.get_user(context.scope.user.id)
 
         case Hosts.Policy.authorize(:query_metrics, user, HostReadModel) do
           true ->
