@@ -112,7 +112,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     url = "#{prometheus_url}/api/v1/status/buildinfo"
     headers = [{"Accept", "application/json"}]
 
-    case HTTPoison.get(url, headers, recv_timeout: @timeout) do
+    case HTTPoison.get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => %{"version" => version}}} -> {:ok, %{prometheus_version: version}}
@@ -132,7 +132,10 @@ defmodule Trento.Infrastructure.ComponentVersions do
   defp fetch_wanda_info(origin) do
     url = resolve_checks_url("/api", origin)
 
-    case HTTPoison.get(url, [{"Accept", "application/json"}], recv_timeout: @timeout) do
+    case HTTPoison.get(url, [{"Accept", "application/json"}],
+           recv_timeout: @timeout,
+           follow_redirect: true
+         ) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"version" => version} = data} ->
