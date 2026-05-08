@@ -6,7 +6,7 @@ defmodule Trento.Infrastructure.ComponentVersions.Gen do
   Behaviour for fetching component versions.
   """
 
-  @callback get_versions() :: %{
+  @callback get_versions(origin :: String.t() | nil) :: %{
               wanda_version: String.t() | nil,
               checks_version: String.t() | nil,
               postgres_version: String.t() | nil,
