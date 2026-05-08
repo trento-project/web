@@ -34,12 +34,12 @@ function makeAgent(overrides = {}) {
   const onConnectionChange = jest.fn();
   const agent = new WebSocketAIAgent({
     socket,
-    userId: 'u',
+    userID: 'u',
     onConnectionChange,
     ...overrides,
   });
   const getChannel = () =>
-    agent.socket?.channels.get(`ai_assistant:${agent.userId}`);
+    agent.socket?.channels.get(`ai_assistant:${agent.userID}`);
   return { agent, socket: agent.socket, onConnectionChange, getChannel };
 }
 
@@ -63,9 +63,9 @@ function runAgent(agent, input = { threadId: 't', messages: [userMessage()] }) {
 
 describe('WebSocketAIAgent', () => {
   describe('initialize', () => {
-    it('joins ai_assistant:{userId} and reports connecting → connected', async () => {
+    it('joins ai_assistant:{userID} and reports connecting → connected', async () => {
       const { agent, socket, onConnectionChange, getChannel } = makeAgent({
-        userId: 'u42',
+        userID: 'u42',
       });
 
       const initPromise = agent.initialize();
@@ -111,9 +111,9 @@ describe('WebSocketAIAgent', () => {
         error: /No socket available/,
       },
       {
-        missing: 'userId',
-        overrides: { userId: undefined },
-        error: /No userId available/,
+        missing: 'userID',
+        overrides: { userID: undefined },
+        error: /No userID available/,
       },
     ])(
       'throws when no $missing is provided and never reports a status change',
@@ -252,7 +252,7 @@ describe('WebSocketAIAgent', () => {
 
     it('initializes the channel lazily when run() is called before initialize()', async () => {
       const { agent, getChannel, onConnectionChange } = makeAgent({
-        userId: 'u2',
+        userID: 'u2',
       });
 
       runAgent(agent);
