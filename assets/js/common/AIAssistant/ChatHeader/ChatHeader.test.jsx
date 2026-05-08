@@ -6,45 +6,34 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { useAui } from '@assistant-ui/react';
+import ChatHeader from './ChatHeader';
 
-import { useAIConnectionStatus } from '../connectionStatusContext';
-import { ChatHeader, ChatHeaderView } from './ChatHeader';
-
-jest.mock('@assistant-ui/react', () => ({
-  useAui: jest.fn(),
-}));
-
-jest.mock('../connectionStatusContext', () => ({
-  useAIConnectionStatus: jest.fn(),
-}));
-
-const viewDefaults = {
+const defaults = {
   connectionStatus: 'connected',
   onNewChat: () => {},
   onClose: () => {},
 };
 
-describe('ChatHeaderView', () => {
+describe('ChatHeader', () => {
   it.each([
     { status: 'connected', text: 'Online' },
     { status: 'connecting', text: 'Connecting...' },
     { status: 'disconnected', text: 'Offline' },
   ])('renders the $text label for $status', ({ status, text }) => {
-    render(<ChatHeaderView {...viewDefaults} connectionStatus={status} />);
+    render(<ChatHeader {...defaults} connectionStatus={status} />);
     expect(screen.getByText(text)).toBeVisible();
     expect(screen.getByText('Liz')).toBeVisible();
   });
 
   it('falls back to the disconnected label for an unknown status', () => {
-    render(<ChatHeaderView {...viewDefaults} connectionStatus="unknown" />);
+    render(<ChatHeader {...defaults} connectionStatus="unknown" />);
     expect(screen.getByText('Offline')).toBeVisible();
   });
 
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
     const user = userEvent.setup();
     const onNewChat = jest.fn();
-    render(<ChatHeaderView {...viewDefaults} onNewChat={onNewChat} />);
+    render(<ChatHeader {...defaults} onNewChat={onNewChat} />);
 
     await user.click(screen.getByRole('button', { name: 'New chat' }));
 
@@ -54,7 +43,7 @@ describe('ChatHeaderView', () => {
   it('invokes onClose when the close button is clicked', async () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
-    render(<ChatHeaderView {...viewDefaults} onClose={onClose} />);
+    render(<ChatHeader {...defaults} onClose={onClose} />);
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
 
@@ -66,7 +55,7 @@ describe('ChatHeaderView', () => {
     const parentPointerDown = jest.fn();
     render(
       <div onPointerDown={parentPointerDown}>
-        <ChatHeaderView {...viewDefaults} />
+        <ChatHeader {...defaults} />
       </div>
     );
 
@@ -77,46 +66,7 @@ describe('ChatHeaderView', () => {
   });
 
   it('marks the bar as a drag handle so the surrounding modal can be dragged', () => {
-    const { container } = render(<ChatHeaderView {...viewDefaults} />);
+    const { container } = render(<ChatHeader {...defaults} />);
     expect(container.firstChild).toHaveClass('drag-handle');
-  });
-});
-
-describe('ChatHeader', () => {
-  it('passes the current connection status to the view', () => {
-    useAui.mockReturnValue({
-      threads: () => ({ switchToNewThread: jest.fn() }),
-    });
-    useAIConnectionStatus.mockReturnValue('connecting');
-
-    render(<ChatHeader onClose={() => {}} />);
-
-    expect(screen.getByText('Connecting...')).toBeVisible();
-  });
-
-  it('calls aui.threads().switchToNewThread when "New chat" is clicked', async () => {
-    const switchToNewThread = jest.fn();
-    useAui.mockReturnValue({ threads: () => ({ switchToNewThread }) });
-    useAIConnectionStatus.mockReturnValue('connected');
-    const user = userEvent.setup();
-
-    render(<ChatHeader onClose={() => {}} />);
-    await user.click(screen.getByRole('button', { name: 'New chat' }));
-
-    expect(switchToNewThread).toHaveBeenCalledTimes(1);
-  });
-
-  it('forwards onClose to the close button', async () => {
-    useAui.mockReturnValue({
-      threads: () => ({ switchToNewThread: jest.fn() }),
-    });
-    useAIConnectionStatus.mockReturnValue('connected');
-    const onClose = jest.fn();
-    const user = userEvent.setup();
-
-    render(<ChatHeader onClose={onClose} />);
-    await user.click(screen.getByRole('button', { name: 'Close' }));
-
-    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

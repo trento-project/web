@@ -2,56 +2,101 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { MessageBubbleView } from './MessageBubble';
+import {
+  AssistantRuntimeProvider,
+  ThreadPrimitive,
+  useAui,
+  useExternalStoreRuntime,
+} from '@assistant-ui/react';
+
+import { AssistantMessage, UserMessage } from './MessageBubble';
+import { identity } from 'lodash';
+
+// UserMessage / AssistantMessage rely on MessagePrimitive scoping established
+// by <ThreadPrimitive.Messages>. Mount a minimal external-store runtime
+// seeded with the messages we want to render — no backend, no agent, just
+// static state. onNew is required by the adapter contract but never fires
+// here since the stories don't render a composer.
+function StubRuntime({ messages, children }) {
+  const runtime = useExternalStoreRuntime({
+    messages,
+    isRunning: false,
+    isLoading: false,
+    convertMessage: identity,
+    onNew: () => Promise.resolve(),
+  });
+  const aui = useAui();
+  return (
+    <AssistantRuntimeProvider aui={aui} runtime={runtime}>
+      <ThreadPrimitive.Root>{children}</ThreadPrimitive.Root>
+    </AssistantRuntimeProvider>
+  );
+}
+
+function SeededThread({ messages }) {
+  return (
+    <StubRuntime messages={messages}>
+      <ThreadPrimitive.Messages
+        components={{ UserMessage, AssistantMessage }}
+      />
+    </StubRuntime>
+  );
+}
+
+const RICH_ASSISTANT_MARKDOWN = [
+  'Here are the steps:',
+  '',
+  '1. Open the agents page.',
+  '2. Click the copy button next to the key.',
+  '3. Run `trento-agent install`.',
+].join('\n');
 
 export default {
   title: 'Components/AIAssistant/MessageBubble',
-  component: MessageBubbleView,
-  argTypes: {
-    variant: {
-      description: 'Whether the bubble belongs to the user or the assistant',
-      options: ['user', 'assistant'],
-      control: { type: 'radio' },
-    },
-    children: {
-      description: 'Content rendered inside the bubble',
-      control: false,
-    },
-  },
+  parameters: { layout: 'padded' },
 };
 
 export const User = {
-  args: {
-    variant: 'user',
-    children: 'What is the API key for adding agents?',
-  },
+  render: () => (
+    <SeededThread
+      messages={[
+        { role: 'user', content: 'What is the API key for adding agents?' },
+      ]}
+    />
+  ),
 };
 
 export const Assistant = {
-  args: {
-    variant: 'assistant',
-    children: 'Use the API key shown in the Settings → Agents page.',
-  },
+  render: () => (
+    <SeededThread
+      messages={[
+        {
+          role: 'assistant',
+          content: 'Use the API key shown in the Settings → Agents page.',
+        },
+      ]}
+    />
+  ),
 };
 
 export const AssistantWithRichContent = {
-  args: {
-    variant: 'assistant',
-    children: (
-      <div>
-        <p className="mb-2">Here are the steps:</p>
-        <ol className="list-decimal pl-5">
-          <li>Open the agents page.</li>
-          <li>Click the copy button next to the key.</li>
-          <li>
-            Run{' '}
-            <code className="bg-gray-100 px-1 rounded">
-              trento-agent install
-            </code>
-            .
-          </li>
-        </ol>
-      </div>
-    ),
-  },
+  render: () => (
+    <SeededThread
+      messages={[{ role: 'assistant', content: RICH_ASSISTANT_MARKDOWN }]}
+    />
+  ),
+};
+
+export const Conversation = {
+  render: () => (
+    <SeededThread
+      messages={[
+        { role: 'user', content: 'What is the API key for adding agents?' },
+        {
+          role: 'assistant',
+          content: 'Use the API key shown in the Settings → Agents page.',
+        },
+      ]}
+    />
+  ),
 };

@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { action } from 'storybook/actions';
-import { ChatHeaderView } from './ChatHeader';
+import ChatHeader from './ChatHeader';
 
 export default {
   title: 'Components/AIAssistant/ChatHeader',
-  component: ChatHeaderView,
+  component: ChatHeader,
   argTypes: {
     connectionStatus: {
       description: 'Current connection status of the AI assistant',

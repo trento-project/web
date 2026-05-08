@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { ThreadWelcome } from './ThreadWelcome';
+import ThreadWelcome from './ThreadWelcome';
 
 const suggestionClassName =
   'text-left bg-[#f8f9fa] border border-gray-200 rounded-lg p-3.5 text-gray-500 hover:bg-gray-100 transition-colors text-[15px]';

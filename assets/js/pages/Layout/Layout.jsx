@@ -5,6 +5,7 @@ import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Outlet } from 'react-router';
 
+import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
 import { getUserProfile } from '@state/selectors/user';
 import { optinCapturing, reset } from '@lib/analytics';
@@ -31,6 +32,8 @@ import classNames from 'classnames';
 import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
+import { SocketProvider } from '@common/SocketProvider';
+import AIAssistant from '@common/AIAssistant';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -99,7 +102,7 @@ function Layout() {
       : localStorage.setItem('sidebar-collapsed', true);
   }, [isCollapsed]);
 
-  const { username, email } = useSelector(getUserProfile);
+  const { id, username, email } = useSelector(getUserProfile);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -245,6 +248,11 @@ function Layout() {
           </span>
         </footer>
       </div>
+      {getFromConfig('aiEnabled') && (
+        <SocketProvider>
+          <AIAssistant userID={id} />
+        </SocketProvider>
+      )}
     </main>
   );
 }

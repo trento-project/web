@@ -1,14 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback } from 'react';
+import React from 'react';
 import { EOS_CLOSE } from 'eos-icons-react';
-import { useAui } from '@assistant-ui/react';
 
 import Button from '@common/Button';
 import { CONNECTION_STATUS } from '@lib/ai';
-
-import { useAIConnectionStatus } from '../connectionStatusContext';
 
 const STATUS_VIEW = {
   [CONNECTION_STATUS.CONNECTED]: { text: 'Online', dot: 'bg-white' },
@@ -21,7 +18,7 @@ const STATUS_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
+function ChatHeader({ connectionStatus, onNewChat, onClose }) {
   const { text, dot } =
     STATUS_VIEW[connectionStatus] ??
     STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
@@ -61,19 +58,4 @@ export function ChatHeaderView({ connectionStatus, onNewChat, onClose }) {
   );
 }
 
-export function ChatHeader({ onClose }) {
-  const aui = useAui();
-  const connectionStatus = useAIConnectionStatus();
-
-  const onNewChat = useCallback(() => {
-    aui.threads().switchToNewThread();
-  }, [aui]);
-
-  return (
-    <ChatHeaderView
-      connectionStatus={connectionStatus}
-      onNewChat={onNewChat}
-      onClose={onClose}
-    />
-  );
-}
+export default ChatHeader;
