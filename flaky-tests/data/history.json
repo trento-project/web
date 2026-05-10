@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-03-26T04:33:46Z",
-    "commit": "e2e8ffb8224cc8811d9dfec82cb752f30c4db787",
-    "run_id": "23577247916",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as false",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune change operation running",
-        "score": 0.04323
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-26T04:34:29Z",
     "commit": "e2e8ffb8224cc8811d9dfec82cb752f30c4db787",
     "run_id": "23577247916",
@@ -6206,6 +6170,46 @@
       {
         "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-10T04:53:02Z",
+    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
+    "run_id": "25619877756",
+    "suite": "Jest — Node 22.15.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.09501
+      },
+      {
+        "name": "GenericSystemDetails::should disable systems operations if an instance operation is running",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Saptune change operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
       }
     ]
   }
