@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-03-26T07:06:53Z",
-    "commit": "e2e8ffb8224cc8811d9dfec82cb752f30c4db787",
-    "run_id": "23577778486",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.5
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.5
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.1644
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-27T04:02:55Z",
     "commit": "b3310211fb9cd39a2cecef215abcf292db5d22d5",
     "run_id": "23630197843",
@@ -6221,6 +6197,62 @@
       },
       {
         "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-10T07:30:59Z",
+    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
+    "run_id": "25620214075",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.2981
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.2981
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.2817
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1495
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.08419
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.05001
+      },
+      {
+        "name": "should render without selected filters::Activity Log page Filtering should render without selected filters",
+        "score": 0.05001
+      },
+      {
+        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
+        "score": 0.05001
+      },
+      {
+        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
         "score": 0.02501
       }
     ]
