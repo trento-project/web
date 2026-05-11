@@ -33,7 +33,6 @@ describe('ChatHeader', () => {
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
     const user = userEvent.setup();
     const onNewChat = jest.fn();
-
     render(<ChatHeader {...defaults} onNewChat={onNewChat} />);
 
     await user.click(screen.getByRole('button', { name: 'New chat' }));
@@ -44,7 +43,6 @@ describe('ChatHeader', () => {
   it('invokes onClose when the close button is clicked', async () => {
     const user = userEvent.setup();
     const onClose = jest.fn();
-
     render(<ChatHeader {...defaults} onClose={onClose} />);
 
     await user.click(screen.getByRole('button', { name: 'Close' }));
