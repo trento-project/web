@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-03-27T06:52:54Z",
-    "commit": "b3310211fb9cd39a2cecef215abcf292db5d22d5",
-    "run_id": "23631430799",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-03-28T03:49:56Z",
     "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
     "run_id": "23676614115",
@@ -6253,6 +6242,102 @@
       },
       {
         "name": "SuseManagerSettingsModal component::should try to save all the fields",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-11T08:02:34Z",
+    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
+    "run_id": "25651465292",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 21
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
+        "score": 0.5
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
+        "score": 0.5
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.5
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.5
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.5
+      },
+      {
+        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
+        "score": 0.25
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.25
+      },
+      {
+        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
+        "score": 0.25
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.25
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.1530
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1207
+      },
+      {
+        "name": "should allow database instance clean up::Databases Overview Forbidden actions Database instance clean up should allow database instance clean up",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid database instance cleanup::Databases Overview Forbidden actions Database instance clean up should forbid database instance cleanup",
+        "score": 0.05001
+      },
+      {
+        "name": "should show a warning message in the check selection view::HANA cluster details Cluster with unknown provider should show a warning message in the check selection view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show a warning message in the checks results view::HANA cluster details Cluster with unknown provider should show a warning message in the checks results view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.05001
+      },
+      {
+        "name": "should delete the user personal access token and revoke access to guarded resources::Users Edit user personal access tokens should delete the user personal access token and revoke access to guarded resources",
+        "score": 0.02501
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should move a clustered application instance::SAP Systems Overview Move application instance should move a clustered application instance",
+        "score": 0.02501
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
+      },
+      {
+        "name": "should not display eula once it is accepted::Users Analytics eula should not display eula once it is accepted",
         "score": 0.02501
       }
     ]
