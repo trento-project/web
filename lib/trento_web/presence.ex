@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.Presence do
   @moduledoc """
   Phoenix Presence implementation for tracking user presence in channels.
