@@ -391,8 +391,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     push_ag_ui_event_with_ids(
       socket,
       %RunError{
-        message:
-          "Agent paused waiting for human input, but this UI does not support interrupts."
+        message: "Agent paused waiting for human input, but this UI does not support interrupts."
       },
       run_id,
       thread_id
