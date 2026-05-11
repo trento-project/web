@@ -311,7 +311,9 @@ context('HANA cluster details', () => {
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should include the checks catalog in the checks results once enabled', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_COROSYNC);
       hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_MISCELLANEOUS);
       hanaClusterDetailsPage.expectedCheckIsDisplayed(
@@ -362,7 +364,9 @@ context('HANA cluster details', () => {
     });
 
     it('should show the default check catalog with corosync token timeout default value', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
       hanaClusterDetailsPage.checkInputValueIsTheExpected(5000);
@@ -388,7 +392,9 @@ context('HANA cluster details', () => {
     });
 
     it('should show the default check catalog with corosync token timeout default value', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
       hanaClusterDetailsPage.checkInputValueIsTheExpected(5000);
