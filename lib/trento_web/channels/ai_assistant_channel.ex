@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.AIAssistantChannel do
   @moduledoc """
   Phoenix Channel for AI Assistant real-time communication.
