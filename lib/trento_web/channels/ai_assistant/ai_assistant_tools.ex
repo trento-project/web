@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule TrentoWeb.AIAssistantTools do
   @moduledoc """
   AI Assistant tools for querying Trento infrastructure resources.
