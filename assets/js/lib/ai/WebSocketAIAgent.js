@@ -101,6 +101,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   }
 
   _handleAgUiEvent(event) {
+    console.log(`Received AG-UI event from channel ${event.type}:`, event);
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
 

@@ -544,7 +544,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     updated_socket = IntegrationHelpers.handle_tool_execution_update(socket, status, tool_info)
 
     # Emit AG UI ToolCallResult event when execution completes
-    if status == :complete do
+    if status == :completed do
       run_id = socket.assigns[:current_run_id]
       thread_id = socket.assigns[:current_thread_id]
       tool_name = tool_info[:name] || tool_info["name"]
