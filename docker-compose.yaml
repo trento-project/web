@@ -62,7 +62,8 @@ services:
     # Keep versions in sync with
       # .github/workflows/ci.yaml
       # https://github.com/trento-project/helm-charts/blob/main/charts/trento-server/values.yaml
-    image: registry.suse.com/suse/postgres:14 # https://registry.suse.com/repositories/suse-postgres-eol?tag=14
+      # https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#id-install-postgresql
+    image: registry.suse.com/suse/postgres:17.5 # https://registry.suse.com/repositories/suse-postgres17?tag=17.5
     command: -c 'max_connections=200'
     environment:
       POSTGRES_USER: postgres
