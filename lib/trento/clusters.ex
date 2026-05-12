@@ -326,12 +326,9 @@ defmodule Trento.Clusters do
          selected_checks: selected_checks,
          details: details
        }) do
-    hosts_data =
-      Repo.all(
-        from h in HostReadModel,
-          select: %{host_id: h.id},
-          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
-      )
+    majority_maker_hostnames = majority_maker_hostnames(details)
+
+    hosts_data = majority_maker_hosts_data(cluster_id, majority_maker_hostnames)
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
@@ -357,12 +354,9 @@ defmodule Trento.Clusters do
          selected_checks: selected_checks,
          details: details
        }) do
-    hosts_data =
-      Repo.all(
-        from h in HostReadModel,
-          select: %{host_id: h.id},
-          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
-      )
+    majority_maker_hostnames = majority_maker_hostnames(details)
+
+    hosts_data = majority_maker_hosts_data(cluster_id, majority_maker_hostnames)
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
@@ -414,6 +408,31 @@ defmodule Trento.Clusters do
       [ensa_version] -> ensa_version
       _ -> ClusterEnsaVersion.mixed_versions()
     end
+  end
+
+  defp majority_maker_hostnames(nil), do: MapSet.new()
+
+  defp majority_maker_hostnames(details) do
+    details
+    |> Map.get(:nodes, [])
+    |> Enum.filter(& &1[:is_majority_maker])
+    |> MapSet.new(& &1[:name])
+  end
+
+  defp majority_maker_hosts_data(cluster_id, majority_maker_hostnames) do
+    hosts =
+      Repo.all(
+        from h in HostReadModel,
+          select: %{host_id: h.id, hostname: h.hostname},
+          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at)
+      )
+
+    Enum.map(hosts, fn %{host_id: host_id, hostname: hostname} ->
+      %{
+        host_id: host_id,
+        is_majority_maker: MapSet.member?(majority_maker_hostnames, hostname)
+      }
+    end)
   end
 
   defp parse_architecture_type(%{architecture_type: "angi"}),
