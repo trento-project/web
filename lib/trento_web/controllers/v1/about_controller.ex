@@ -24,7 +24,7 @@ defmodule TrentoWeb.V1.AboutController do
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
-    versions = component_versions().get_versions()
+    versions = component_versions().get_versions(request_origin(conn))
 
     render(conn, :about,
       about_info:
@@ -43,4 +43,15 @@ defmodule TrentoWeb.V1.AboutController do
       Application.fetch_env!(:trento, :component_versions)[
         :adapter
       ]
+
+  defp request_origin(%Plug.Conn{scheme: scheme, host: host, port: port}) do
+    port_part =
+      case {scheme, port} do
+        {:http, 80} -> ""
+        {:https, 443} -> ""
+        {_, port} -> ":#{port}"
+      end
+
+    "#{scheme}://#{host}#{port_part}"
+  end
 end

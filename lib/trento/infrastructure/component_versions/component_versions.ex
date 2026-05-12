@@ -23,12 +23,12 @@ defmodule Trento.Infrastructure.ComponentVersions do
   }
 
   @impl true
-  def get_versions do
+  def get_versions(origin \\ nil) do
     fetchers = [
       {:postgres, &fetch_postgres_version/0},
       {:rabbitmq, &fetch_rabbitmq_version/0},
       {:prometheus, &fetch_prometheus_version/0},
-      {:wanda, &fetch_wanda_info/0}
+      {:wanda, fn -> fetch_wanda_info(origin) end}
     ]
 
     results =
@@ -112,7 +112,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     url = "#{prometheus_url}/api/v1/status/buildinfo"
     headers = [{"Accept", "application/json"}]
 
-    case HTTPoison.get(url, headers, recv_timeout: @timeout) do
+    case HTTPoison.get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => %{"version" => version}}} -> {:ok, %{prometheus_version: version}}
@@ -129,11 +129,12 @@ defmodule Trento.Infrastructure.ComponentVersions do
     end
   end
 
-  defp fetch_wanda_info do
-    checks_base_url = Application.fetch_env!(:trento, :checks_service)[:base_url]
+  defp fetch_wanda_info(origin) do
+    url = resolve_checks_url("/api", origin)
 
-    case HTTPoison.get("#{checks_base_url}/api", [{"Accept", "application/json"}],
-           recv_timeout: @timeout
+    case HTTPoison.get(url, [{"Accept", "application/json"}],
+           recv_timeout: @timeout,
+           follow_redirect: true
          ) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
@@ -154,6 +155,22 @@ defmodule Trento.Infrastructure.ComponentVersions do
 
       _ ->
         {:error, :unexpected_response}
+    end
+  end
+
+  @doc false
+  def resolve_checks_url(path, origin) do
+    base_url = Application.fetch_env!(:trento, :checks_service)[:base_url] || ""
+
+    case URI.parse(base_url) do
+      %URI{scheme: scheme} when scheme in ["http", "https"] ->
+        base_url <> path
+
+      _ when is_binary(origin) and origin != "" ->
+        origin <> base_url <> path
+
+      _ ->
+        base_url <> path
     end
   end
 end
