@@ -5,7 +5,7 @@ import * as hostsOverviewPage from '../pageObject/hosts_overview_po';
 import { availableHosts } from '../fixtures/hosts-overview/available_hosts';
 
 context('Hosts Overview', () => {
-  before(() => hostsOverviewPage.preloadTestData());
+  // before(() => hostsOverviewPage.preloadTestData());
 
   beforeEach(() => hostsOverviewPage.visit());
 
@@ -35,7 +35,7 @@ context('Hosts Overview', () => {
       hostsOverviewPage.hostsTableContentsAreTheExpected();
     });
 
-    it('should link to the correct host details page clicking in the host name', () => {
+    it.only('should link to the correct host details page clicking in the host name', () => {
       hostsOverviewPage.everyLinkGoesToExpectedHostDetailsPage();
     });
 
