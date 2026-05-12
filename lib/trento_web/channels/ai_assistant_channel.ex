@@ -226,7 +226,9 @@ defmodule TrentoWeb.AIAssistantChannel do
          thread_id
        ) do
     case Coordinator.start_conversation_session(conversation_id,
-           filesystem_scope: nil,
+           # DISABLED (plan: valiant-twirling-crown): filesystem_scope no longer required;
+           # FileSystem middleware commented out in agentic_runtime Factory.
+           # filesystem_scope: nil,
            scope: socket.assigns.current_scope,
            tool_context: %{timezone: socket.assigns.timezone},
            factory_opts: [
@@ -394,26 +396,29 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info({:agent, {:status_changed, :interrupted, interrupt_data}}, socket) do
-    Logger.warning(
-      "Agent execution interrupted but no interrupt UI is wired: #{inspect(interrupt_data)}"
-    )
-
-    run_id = socket.assigns[:current_run_id]
-    thread_id = socket.assigns[:current_thread_id]
-
-    push_ag_ui_event_with_ids(
-      socket,
-      %RunError{
-        message: "Agent paused waiting for human input, but this UI does not support interrupts."
-      },
-      run_id,
-      thread_id
-    )
-
-    {:noreply, IntegrationHelpers.handle_status_interrupted(socket, interrupt_data)}
-  end
+  # DISABLED (plan: valiant-twirling-crown): no middleware can fire :interrupted after
+  # FileSystem + HITL + AskUserQuestion middleware were removed. Catch-all
+  # `def handle_info(_msg, socket)` below absorbs any stray message.
+  # @impl true
+  # def handle_info({:agent, {:status_changed, :interrupted, interrupt_data}}, socket) do
+  #   Logger.warning(
+  #     "Agent execution interrupted but no interrupt UI is wired: #{inspect(interrupt_data)}"
+  #   )
+  #
+  #   run_id = socket.assigns[:current_run_id]
+  #   thread_id = socket.assigns[:current_thread_id]
+  #
+  #   push_ag_ui_event_with_ids(
+  #     socket,
+  #     %RunError{
+  #       message: "Agent paused waiting for human input, but this UI does not support interrupts."
+  #     },
+  #     run_id,
+  #     thread_id
+  #   )
+  #
+  #   {:noreply, IntegrationHelpers.handle_status_interrupted(socket, interrupt_data)}
+  # end
 
   @impl true
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
