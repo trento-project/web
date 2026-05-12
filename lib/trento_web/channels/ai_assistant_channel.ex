@@ -111,6 +111,7 @@ defmodule TrentoWeb.AIAssistantChannel do
           |> assign(:timezone, "UTC")
           |> assign(:current_scope, %{user: %{id: current_user_id}})
 
+        # what does this actually do?
         send(self(), {:reinit_params, %{}})
         {:ok, updated_socket}
 
@@ -172,11 +173,26 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:ok,
      %{
        ai_configuration: %{
+         provider: provider,
          model: model,
          api_key: api_key
        }
      }} = Users.get_user(current_user_id)
 
+    if Trento.AI.LLMRegistry.provider_supported?(provider) do
+      provider
+      |> case do
+        :googleai -> AgenticRuntime.build_googleai_model_config(model, api_key)
+        :openai -> AgenticRuntime.build_openai_model_config(model, api_key)
+        :anthropic -> AgenticRuntime.build_anthropic_model_config(model, api_key)
+      end
+      |> start_agent(socket, message_text, params)
+    else
+      push(socket, "agent_error", %{message: "Failed to start agent. Selected model is invalid."})
+    end
+  end
+
+  defp start_agent(model_config, socket, message_text, params) do
     # Store run_id for tracking this execution (generate if not provided)
     run_id = params["run_id"] || generate_run_id()
     thread_id = params["thread_id"]
@@ -189,7 +205,6 @@ defmodule TrentoWeb.AIAssistantChannel do
       end
 
     conversation_id = socket.assigns.conversation_id
-    model_config = AgenticRuntime.build_googleai_model_config(model, api_key)
 
     start_agent_session_and_execute(
       socket,
