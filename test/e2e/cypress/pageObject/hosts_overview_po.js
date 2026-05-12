@@ -63,7 +63,6 @@ const hostnameFilterOptions = '[data-testid="filter-Hostname-options"]';
 
 export const visit = (params) => {
   cy.intercept('/api/v1/hosts').as('hostsEndpoint');
-  cy.intercept('/api/v2/clusters').as('clustersEndpoint');
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
   return basePage.waitForRequest('hostsEndpoint');
