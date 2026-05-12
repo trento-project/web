@@ -273,7 +273,7 @@ const hostHasExpectedWorkingLink = (host) => {
 };
 
 export const eachAttachedHostHasExpectedValues = () =>
-  cy.wrap(attachedHosts)e.each((host) => {
+  cy.wrap(attachedHosts).each((host) => {
     hostHostHasExpectedAddresses(host.Name);
     hostHasExpectedProvider(host.Name);
     hostHasExpectedClusterValue(host.Name);
