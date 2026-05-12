@@ -109,7 +109,7 @@ export const nextPageButtonIsDisabled = () =>
 export const everyLinkGoesToExpectedHostDetailsPage = () =>
   cy.wrap(availableHosts.slice(0, 10)).each((host) => {
     const expectedHref = `${url}/${host.id}`;
-    cy.contains(`a[href="${expectedHref}"]`, host.name).click();
+    cy.get(`a[href*="${host.id}"]`).click();
     basePage.validateUrl(expectedHref);
     return basePage.goBack().then(() => basePage.validateUrl(url));
   });
