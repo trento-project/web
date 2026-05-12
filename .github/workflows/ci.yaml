@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-name: Continous Integration
+name: Continuous Integration
 
 on:
   push:
@@ -32,7 +32,7 @@ env:
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
   K3S_VERSION: "v1.31.2+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
   CERT_MANAGER_VERSION: "v1.14.5" # https://github.com/cert-manager/cert-manager/releases
-  POSTGRESQL_VERSION: "15" # https://hub.docker.com/_/postgres/tags
+  POSTGRESQL_VERSION: "14" # https://registry.suse.com/repositories/suse-postgres-eol?tag=14
 
 jobs:
   # job to detect changed paths
