@@ -122,17 +122,8 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
       cy.wrap(availableHosts.slice(0, 10)).each((host, index) => {
         if (host.clusterId) {
           const expectedHref = `/clusters/${host.clusterId}`;
-
-          cy.get(tableRow)
-            .should('have.length', 10)
-            .eq(index)
-            .find('td')
-            .eq(i)
-            .find(`a[href="${expectedHref}"]`)
-            .as('clusterLink');
-
-          cy.get('@clusterLink').should('be.visible').click({ force: true });
-
+          const clusterLinkSelector = `tbody tr:nth-child(${index + 1}) td:nth-child(${i + 1}) a[href="${expectedHref}"]`;
+          cy.get(clusterLinkSelector).click();
           basePage.validateUrl(expectedHref);
           return basePage.goBack().then(() => basePage.validateUrl(url));
         }
@@ -147,18 +138,8 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
       cy.wrap(availableHosts.slice(0, 10)).each((host, index) => {
         if (host.sapSystemSid) {
           const expectedHref = `/databases/${host.sapSystemId}`;
-
-          cy.get(tableRow)
-            .should('have.length', 10)
-            .eq(index)
-            .find('td')
-            .eq(i)
-            .find(`a[href="${expectedHref}"]`)
-            .contains(host.sapSystemSid)
-            .as('sapSystemLink');
-
-          cy.get('@sapSystemLink').should('be.visible').click({ force: true });
-
+          const sapSystemLinkSelector = `${tableRow}:nth-child(${index + 1}) td:nth-child(${i + 1}) a[href="${expectedHref}"]`;
+          cy.get(sapSystemLinkSelector).click();
           basePage.validateUrl(expectedHref);
           return basePage.goBack().then(() => basePage.validateUrl(url));
         }
