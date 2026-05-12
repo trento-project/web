@@ -40,7 +40,7 @@ context('Hosts Overview', () => {
     });
 
     it('should link to the correct cluster details page clicking in the cluster name', () => {
-      hostsOverviewPage.everyClusterLinkGoesToExpectedClusterDetailsPage();
+      hostsOverviewPage.everyClusterLinkGoesToExpectedClusterDetailsPeage();
     });
 
     it('should link to the correct sap system details page clicking in the sap system name', () => {

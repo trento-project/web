@@ -143,7 +143,7 @@ export const eachSystemHasItsExpectedWorkingLink = () =>
   cy.wrap(availableSAPSystems).each(({ sid, id }) => {
     cy.get(`td:contains("${sid}")`).should('be.visible').click();
     basePage.validateUrl(`${url}/${id}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');
@@ -208,7 +208,7 @@ export const eachSystemHasItsDatabaseWorkingLink = () =>
       const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
       cy.get(databaseSidLink).should('be.visible').click();
       validateUrl(`/databases/${attachedDatabase.id}`);
-      cy.go('back');
+      basePage.goBack();
       validateUrl();
       pageTitleIsCorrectlyDisplayed();
       return cy.get(sapSystemsTableRows).should('be.visible');
@@ -272,7 +272,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
     clickAllRows();
     cy.get(hanaClusterLinks).eq(index).should('be.visible').click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');
@@ -284,7 +284,7 @@ export const eachInstanceHasItsHostWorkingLink = () =>
     clickAllRows();
     cy.get(instanceHostLinks).eq(rowIndex).should('be.visible').click();
     validateUrl(`/hosts/${instance.hostID}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');

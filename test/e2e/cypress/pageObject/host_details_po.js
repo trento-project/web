@@ -422,7 +422,7 @@ export const sapSystemHasTheExpectedLink = () => {
   const tableCellSelector = `div:contains("SAP instances") table tbody tr:eq(0) td:eq(1) a`;
   cy.get(tableCellSelector).click();
   basePage.validateUrl(`/databases/${attachedSapInstance.id}`);
-  return cy.go('back');
+  return basePage.goBack();
 };
 
 export const heartbeatFailingToasterIsDisplayed = () =>

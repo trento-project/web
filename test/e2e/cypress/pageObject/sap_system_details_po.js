@@ -94,7 +94,7 @@ export const eachHostHasTheExpectedLink = () =>
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(0) a`;
     cy.get(tableCellSelector).click();
     basePage.validateUrl(`/hosts/${host.AgentId}`);
-    return cy.go('back');
+    return basePage.goBack();
   });
 
 export const eachHostHasTheExpectedClusterLink = () =>
@@ -103,7 +103,7 @@ export const eachHostHasTheExpectedClusterLink = () =>
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(3) a`;
     cy.get(tableCellSelector).click();
     basePage.validateUrl(`/clusters/${host.ClusterId}`);
-    return cy.go('back');
+    return basePage.goBack();
   });
 
 export const eachHostHasTheExpectedData = () =>

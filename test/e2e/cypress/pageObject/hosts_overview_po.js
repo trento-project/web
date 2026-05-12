@@ -62,10 +62,12 @@ const hostnameFilterOptions = '[data-testid="filter-Hostname-options"]';
 // UI Interactions
 
 export const visit = (params) => {
+  cy.intercept('/api/v1/hosts').as('hostsEndpoint');
   cy.intercept('/api/v2/clusters').as('clustersEndpoint');
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
-  return cy.wait('@clustersEndpoint');
+  return basePage.waitForRequest('hostsEndpoint');
+  // return cy.wait('@hostsEndpoint');
 };
 
 export const validateUrl = () => basePage.validateUrl(url);
@@ -109,22 +111,33 @@ export const everyLinkGoesToExpectedHostDetailsPage = () =>
   cy.wrap(availableHosts.slice(0, 10)).each((host) => {
     cy.get(`a[href*="${host.id}"]`).click();
     basePage.validateUrl(`${url}/${host.id}`);
-    return cy.go('back');
+    return basePage.goBack();
   });
 
 export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
-  cy.wrap(availableHosts.slice(0, 10)).each((host, index) =>
-    cy
-      .get(clusterTableHeader)
-      .invoke('index')
-      .then((i) => {
+  cy
+    .get(clusterTableHeader)
+    .invoke('index')
+    .then((i) =>
+      cy.wrap(availableHosts.slice(0, 10)).each((host, index) => {
         if (host.clusterId) {
-          cy.get(tableRow).eq(index).find('td').eq(i).click();
-          basePage.validateUrl(`/clusters/${host.clusterId}`);
-          cy.go('back');
+          const expectedHref = `/clusters/${host.clusterId}`;
+
+          cy.get(tableRow)
+            .should('have.length', 10)
+            .eq(index)
+            .find('td')
+            .eq(i)
+            .find(`a[href="${expectedHref}"]`)
+            .as('clusterLink');
+
+          cy.get('@clusterLink').should('be.visible').click({ force: true });e
+
+          basePage.validateUrl(expectedHref);
+          return basePage.goBack().then(() => basePage.validateUrl(url));
         }
       })
-  );
+    );
 
 export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
   cy.wrap(availableHosts.slice(0, 10)).each((host, index) =>
@@ -136,7 +149,7 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
           cy.get(`td:contains("${host.sapSystemSid}")`).should('be.visible');
           cy.get('tbody tr').eq(index).find('td').eq(i).click();
           basePage.validateUrl(`/databases/${host.sapSystemId}`);
-          cy.go('back');
+          return basePage.goBack();
         }
       })
   );
