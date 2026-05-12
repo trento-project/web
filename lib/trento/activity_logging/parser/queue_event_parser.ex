@@ -9,18 +9,12 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
   alias Trento.Users
   alias Trento.Users.User
 
-  alias Trento.Hosts
-
   alias Trento.Checks.V1.{
     CheckCustomizationApplied,
     CheckCustomizationReset
   }
 
-  alias Trento.Operations.V1.{
-    OperationCompleted,
-    OperationErrorDetails,
-    OperationRequestFailedDetails
-  }
+  alias Trento.Operations.V1.OperationCompleted
 
   alias Trento.Infrastructure.Operations
 
@@ -129,51 +123,5 @@ defmodule Trento.ActivityLog.Logger.Parser.QueueEventParser do
 
   def get_activity_metadata(_, _), do: %{}
 
-  defp maybe_put_error_details(metadata, %{
-         details:
-           {:error_details, %OperationErrorDetails{step: step, target_errors: target_errors}}
-       })
-       when map_size(target_errors) == 0 do
-    Map.put(metadata, :failed_step, step)
-  end
-
-  defp maybe_put_error_details(metadata, %{
-         details:
-           {:error_details, %OperationErrorDetails{step: step, target_errors: target_errors}}
-       }) do
-    errors =
-      Enum.into(target_errors, %{}, fn {host_id, error} ->
-        case Hosts.by_id(host_id) do
-          {:ok, %{hostname: name}} -> {name, error}
-          {:error, :not_found} -> {host_id, error}
-        end
-      end)
-
-    metadata
-    |> Map.put(:failed_step, step)
-    |> Map.put(:errors, errors)
-  end
-
-  defp maybe_put_error_details(metadata, %{
-         details: {:request_failed_details, %OperationRequestFailedDetails{error: error}}
-       }) do
-    metadata
-    |> Map.put(:error, error)
-    |> Map.put(:reason, map_request_failed_error(error))
-  end
-
   defp maybe_put_error_details(metadata, _), do: metadata
-
-  defp map_request_failed_error(:ARGUMENTS_MISSING),
-    do: "The operation request failed because one or more mandatory arguments are missing"
-
-  defp map_request_failed_error(:TARGETS_MISSING),
-    do: "The operation request failed because no valid target was specified"
-
-  defp map_request_failed_error(:ALREADY_RUNNING),
-    do:
-      "The operation request cannot proceed due to concurrent operations executing on the selected target(s)"
-
-  defp map_request_failed_error(:UNKNOWN),
-    do: "The operation request terminated with an unexpected error"
 end
