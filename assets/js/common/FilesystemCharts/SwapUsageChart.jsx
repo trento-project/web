@@ -17,22 +17,40 @@ import { formatBytes } from '@lib/charts';
 
 ChartJS.register(CategoryScale, ArcElement, Title, Tooltip, Legend);
 
+const usedColor = 'rgba(88, 207, 155, 1)';
+const availableColor = 'rgba(178, 186, 186, 0.7)';
+
 function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
-  const swapData = {
-    labels: ['Used', 'Available'],
-    datasets: [
-      {
-        data: [usedBytes, availBytes],
-        backgroundColor: ['rgba(88, 207, 155, 1)', 'rgba(178, 186, 186, 0.7)'],
-        borderColor: ['rgba(88, 207, 155, 1)', 'rgba(178, 186, 186, 0.7)'],
-        borderWidth: 1,
-      },
-    ],
-  };
+  const isSwapConfigured = Boolean(totalBytes);
+
+  const swapData = isSwapConfigured
+    ? {
+        labels: ['Used', 'Available'],
+        datasets: [
+          {
+            data: [usedBytes, availBytes],
+            backgroundColor: [usedColor, availableColor],
+            borderColor: [usedColor, availableColor],
+            borderWidth: 1,
+          },
+        ],
+      }
+    : {
+        labels: [],
+        datasets: [
+          {
+            data: [1],
+            backgroundColor: [availableColor],
+            borderColor: [availableColor],
+            borderWidth: 0,
+          },
+        ],
+      };
 
   const swapChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    ...(!isSwapConfigured && { events: [] }),
     plugins: {
       legend: {
         position: 'bottom',
@@ -50,8 +68,6 @@ function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
     },
   };
 
-  const renderedTotal = totalBytes ? formatBytes(totalBytes) : 'N/A';
-
   return (
     <div
       className={classNames(
@@ -64,10 +80,17 @@ function SwapUsageChart({ availBytes, usedBytes, totalBytes, className }) {
         <div className="h-[92%]">
           <Doughnut data={swapData} options={swapChartOptions} />
         </div>
-        <div className="ml-4 align-self-center">
-          <p className="text-3xl font-bold">{renderedTotal}</p>
-        </div>
+        {isSwapConfigured && (
+          <div className="ml-4 align-self-center">
+            <p className="text-3xl font-bold">{formatBytes(totalBytes)}</p>
+          </div>
+        )}
       </div>
+      {!isSwapConfigured && (
+        <div className="flex items-center justify-center pt-3 mb-3">
+          <p className="text-2xl font-bold">Swap Not Configured</p>
+        </div>
+      )}
     </div>
   );
 }
