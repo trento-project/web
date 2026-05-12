@@ -13,6 +13,28 @@ const DEFAULT_OPTS = {
   opt_out_capturing_by_default: true,
   capture_pageview: false,
   disable_persistence: true,
+  // mask $autocapture event `text` field for elements with
+  // `ph-mask` class
+  before_send: (event) => {
+    if (!event) {
+      return null;
+    }
+
+    if (event.event !== '$autocapture') return event;
+
+    const elements = event.properties.$elements_chain;
+    const shouldMask = elements.includes('ph-mask');
+    if (shouldMask) {
+      const textToMask = event.properties.$el_text;
+      event.properties.$elements_chain = elements.replace(
+        `"${textToMask}"`,
+        '"*****"'
+      );
+      event.properties.$el_text = '*****';
+    }
+
+    return event;
+  },
 };
 
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
