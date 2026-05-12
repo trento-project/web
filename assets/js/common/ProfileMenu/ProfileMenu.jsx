@@ -17,7 +17,7 @@ function ProfileMenu({ username, email, logout }) {
             color="currentColor"
             className="text-gray-600 group-hover:text-gray-400"
           />
-          <span className="text-gray-600 ml-2 group-hover:text-gray-400">
+          <span className="ph-mask text-gray-600 ml-2 group-hover:text-gray-400">
             {username}
           </span>
           <svg

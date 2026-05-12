@@ -67,6 +67,7 @@ describe('analytics', () => {
         capture_pageview: false,
         disable_persistence: true,
         loaded: expect.any(Function),
+        before_send: expect.any(Function),
         opt_out_capturing_by_default: true,
       });
     });
@@ -109,4 +110,76 @@ describe('analytics', () => {
       );
     });
   });
+
+  it.each([
+    {
+      beforeEvent: {
+        event: '$autocapture',
+        properties: {
+          $el_text: 'toBeMasked',
+          $elements_chain: '<span class="ph-mask">"toBeMasked"</span>',
+        },
+      },
+      updatedEvent: {
+        event: '$autocapture',
+        properties: {
+          $el_text: '*****',
+          $elements_chain: '<span class="ph-mask">"*****"</span>',
+        },
+      },
+    },
+    {
+      beforeEvent: {
+        event: '$autocapture',
+        properties: {
+          $el_text: 'goodToGo',
+          $elements_chain: '<span>"goodToGo"</span>',
+        },
+      },
+      updatedEvent: {
+        event: '$autocapture',
+        properties: {
+          $el_text: 'goodToGo',
+          $elements_chain: '<span>"goodToGo"</span>',
+        },
+      },
+    },
+    {
+      beforeEvent: null,
+      updatedEvent: null,
+    },
+    {
+      beforeEvent: {
+        event: '$snapshot',
+        properties: {
+          $el_text: 'toBeMasked',
+          $elements_chain: '<span class="ph-mask">"toBeMasked"</span>',
+        },
+      },
+      updatedEvent: {
+        event: '$snapshot',
+        properties: {
+          $el_text: 'toBeMasked',
+          $elements_chain: '<span class="ph-mask">"toBeMasked"</span>',
+        },
+      },
+    },
+  ])(
+    'should mask event text before sending it',
+    ({ beforeEvent, updatedEvent }) => {
+      const mockInit = jest.fn();
+
+      jest.mock('posthog-js', () => ({
+        init: mockInit,
+      }));
+
+      return import('.').then(({ init }) => {
+        init();
+        const initArgs = mockInit.mock.calls[0];
+        const config = initArgs[1];
+        const beforeSend = config.before_send;
+        expect(beforeSend(beforeEvent)).toStrictEqual(updatedEvent);
+      });
+    }
+  );
 });
