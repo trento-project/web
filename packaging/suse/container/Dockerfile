@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 #!BuildTag: trento/trento-web:%%VERSION%%
+#!BuildTag: trento/trento-web:%%VERSION_SHORT%%
 #!BuildTag: trento/trento-web:%%VERSION%%-build%RELEASE%
 #!BuildName: trento-web
 #!BuildVersion: %%VERSION%%
