@@ -49,7 +49,7 @@ const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.user
 // UI Interactions
 export const visit = (url = '/') => cy.visit(url);
 
-export const e = () => cy.go('back');
+export const goBack = () => cy.go('back');
 
 export const clickUsernameMenu = () => cy.get(usernameMenu).click();
 

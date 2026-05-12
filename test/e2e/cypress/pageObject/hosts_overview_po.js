@@ -67,7 +67,6 @@ export const visit = (params) => {
   const visitUrl = [url, params].filter(Boolean).join('?');
   basePage.visit(visitUrl);
   return basePage.waitForRequest('hostsEndpoint');
-  // return cy.wait('@hostsEndpoint');
 };
 
 export const validateUrl = () => basePage.validateUrl(url);
@@ -109,9 +108,17 @@ export const nextPageButtonIsDisabled = () =>
 
 export const everyLinkGoesToExpectedHostDetailsPage = () =>
   cy.wrap(availableHosts.slice(0, 10)).each((host) => {
-    cy.get(`a[href*="${host.id}"]`).click();
-    basePage.validateUrl(`${url}/${host.id}`);
-    return basePage.goBack();
+    const expectedHref = `${url}/${host.id}`;
+
+    cy.get(tableRow)
+      .should('have.length', 10)
+      .contains(`a[href="${expectedHref}"]`, host.name)
+      .as('hostLink');
+
+    cy.get('@hostLink').should('be.visible').click({ force: true });
+
+    basePage.validateUrl(expectedHref);
+    return basePage.goBack().then(() => basePage.validateUrl(url));
   });
 
 export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
@@ -131,7 +138,7 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
             .find(`a[href="${expectedHref}"]`)
             .as('clusterLink');
 
-          cy.get('@clusterLink').should('be.visible').click({ force: true });e
+          cy.get('@clusterLink').should('be.visible').click({ force: true });
 
           basePage.validateUrl(expectedHref);
           return basePage.goBack().then(() => basePage.validateUrl(url));
@@ -140,19 +147,30 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () =>
     );
 
 export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () =>
-  cy.wrap(availableHosts.slice(0, 10)).each((host, index) =>
-    cy
-      .get(sidTableHeader)
-      .invoke('index')
-      .then((i) => {
+  cy
+    .get(sidTableHeader)
+    .invoke('index')
+    .then((i) =>
+      cy.wrap(availableHosts.slice(0, 10)).each((host, index) => {
         if (host.sapSystemSid) {
-          cy.get(`td:contains("${host.sapSystemSid}")`).should('be.visible');
-          cy.get('tbody tr').eq(index).find('td').eq(i).click();
-          basePage.validateUrl(`/databases/${host.sapSystemId}`);
-          return basePage.goBack();
+          const expectedHref = `/databases/${host.sapSystemId}`;
+
+          cy.get(tableRow)
+            .should('have.length', 10)
+            .eq(index)
+            .find('td')
+            .eq(i)
+            .find(`a[href="${expectedHref}"]`)
+            .contains(host.sapSystemSid)
+            .as('sapSystemLink');
+
+          cy.get('@sapSystemLink').should('be.visible').click({ force: true });
+
+          basePage.validateUrl(expectedHref);
+          return basePage.goBack().then(() => basePage.validateUrl(url));
         }
       })
-  );
+    );
 
 export const expectedWarningHostsAreDisplayed = (amount) =>
   cy.get(hostsWithWarning).should('have.text', amount);
