@@ -5,7 +5,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
-import { formatISO } from 'date-fns';
+import { addDays, formatISO } from 'date-fns';
 import { faker } from '@faker-js/faker';
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
 import { DEFAULT_TIMEZONE, formatDateOnly } from '@lib/timezones';
@@ -13,7 +13,18 @@ import PersonalAccessTokens from './PersonalAccessTokens';
 
 describe('PersonalAccessTokens', () => {
   it('should show personal access tokens', () => {
-    const tokens = personalAccessTokenFactory.buildList(3);
+    // Override `name` and `expires_at` to guarantee uniqueness across the
+    // generated tokens. Faker may otherwise produce duplicate display names or
+    // two future dates that format to the same calendar day, which causes
+    // `getByText` to find multiple matches and fail intermittently.
+    const baseDate = new Date('2099-01-01T00:00:00Z');
+    const tokens = personalAccessTokenFactory
+      .buildList(3)
+      .map((token, index) => ({
+        ...token,
+        name: `pat-${index}-${token.name}`,
+        expires_at: formatISO(addDays(baseDate, index)),
+      }));
     render(
       <PersonalAccessTokens
         personalAccessTokens={tokens}
