@@ -9,8 +9,13 @@ import Spinner from '@common/Spinner';
 
 export function deriveProgressLabel(content) {
   const lastToolCall = last(filter(content, { type: 'tool-call' }));
-  if (lastToolCall && isUndefined(lastToolCall.result))
+  if (lastToolCall && isUndefined(lastToolCall.result)) {
+    console.log(`Calling ${lastToolCall.toolName || 'tool'}...`);
+    // @nelson
+    // this sometimes disappears too fast, what is going on?
     return `Calling ${lastToolCall.toolName || 'tool'}...`;
+  }
+  console.log('Thinking...');
   return 'Thinking...';
 }
 
