@@ -10,7 +10,7 @@ volumes:
 services:
   keycloak:
     profiles: [idp]
-    image: quay.io/keycloak/keycloak:25.0.2
+    image: quay.io/keycloak/keycloak:25.0.2 # https://quay.io/repository/keycloak/keycloak?tab=tags
     depends_on: [postgres]
     command: ["start-dev", "--import-realm"]
     environment:
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./container_fixtures/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro,z
   node_exporter:
-    image: docker.io/prom/node-exporter:v1.9.1
+    image: docker.io/prom/node-exporter:v1.9.1 # https://hub.docker.com/r/prom/node-exporter/tags
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -37,7 +37,7 @@ services:
       - "--path.sysfs=/host/sys"
       - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
   prometheus:
-    image: docker.io/prom/prometheus:v2.53.4
+    image: docker.io/prom/prometheus:v2.53.4 # https://hub.docker.com/r/prom/prometheus/tags
     user: "0:0"
     volumes:
       - ./prometheus-dev-config.yml:/etc/prometheus/prometheus.yml:z
@@ -59,7 +59,11 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
   postgres:
-    image: docker.io/library/postgres:15
+    # Keep versions in sync with
+      # .github/workflows/ci.yaml
+      # https://github.com/trento-project/helm-charts/blob/main/charts/trento-server/values.yaml
+      # https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#id-install-postgresql
+    image: registry.suse.com/suse/postgres:17.5 # https://registry.suse.com/repositories/suse-postgres17?tag=17.5
     command: -c 'max_connections=200'
     environment:
       POSTGRES_USER: postgres
@@ -77,7 +81,10 @@ services:
       - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_key.pem:/var/lib/rabbitmq/server_rabbit.trento.local_key.pem:z
       - ./container_fixtures/rabbitmq/certs/server_rabbit.trento.local_certificate.pem:/var/lib/rabbitmq/server_rabbit.trento.local_certificate.pem:z
       - ./container_fixtures/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:z
-    image: docker.io/rabbitmq:3.12.6-management-alpine
+    # Keep versions in sync with
+      # .github/workflows/ci.yaml
+      # https://github.com/trento-project/helm-charts/blob/main/charts/trento-server/values.yaml
+    image: docker.io/rabbitmq:3.12.6-management-alpine # https://hub.docker.com/_/rabbitmq/tags
     ports:
       - 5671:5671
       - 5673:5672
@@ -88,13 +95,13 @@ services:
 
   checks:
     profiles: [wanda]
-    image: ghcr.io/trento-project/checks:rolling
+    image: ghcr.io/trento-project/checks:rolling # https://github.com/trento-project/checks/pkgs/container/checks
     volumes:
       - trento-checks:/usr/share/trento/checks
 
   wanda:
     profiles: [wanda]
-    image: ghcr.io/trento-project/trento-wanda:demo
+    image: ghcr.io/trento-project/trento-wanda:demo # https://github.com/trento-project/trento-wanda/pkgs/container/trento-wanda
     environment:
       DATABASE_URL: ecto://postgres:postgres@postgres/wanda_db
       SECRET_KEY_BASE: s2ZdE+3+ke1USHEJ5O45KT364KiXPYaB9cJPdH3p60t8yT0nkLexLBNw8TFSzC7k
@@ -114,7 +121,7 @@ services:
       - host.docker.internal:host-gateway
 
   mailpit:
-    image: ghcr.io/axllent/mailpit:v1.24
+    image: ghcr.io/axllent/mailpit:v1.24 # https://github.com/axllent/mailpit/pkgs/container/mailpit
     volumes:
       - mailpit:/data
     ports:
