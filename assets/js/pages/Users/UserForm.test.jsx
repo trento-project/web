@@ -181,7 +181,7 @@ describe('UserForm', () => {
   });
 
   it('should save the user', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const { fullname, email, username, timezone } = userFactory.build();
     const password = faker.internet.password();
     const mockOnSave = jest.fn();
