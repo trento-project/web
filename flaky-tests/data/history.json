@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-03-29T06:49:01Z",
-    "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
-    "run_id": "23701587938",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.07638
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-30T04:12:58Z",
     "commit": "8acbe1d89dbabcacb496b0b3646ec73aff06bb5b",
     "run_id": "23727270998",
@@ -6427,6 +6411,70 @@
       },
       {
         "name": "ClustersList component › filtering::should filter the table content by SID filter",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-13T07:46:52Z",
+    "commit": "f99c2b532e0aa8714fac26fd7b9f2d71b3902357",
+    "run_id": "25779294078",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 62
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should link to the correct cluster details page clicking in the cluster name::Hosts Overview Registered Hosts are shown in the list should link to the correct cluster details page clicking in the cluster name",
+        "score": 0.3980
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.2567
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.2329
+      },
+      {
+        "name": "should link to the correct host details page clicking in the host name::Hosts Overview Registered Hosts are shown in the list should link to the correct host details page clicking in the host name",
+        "score": 0.2066
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1900
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.1264
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.09526
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.09032
+      },
+      {
+        "name": "should mark an instance as absent and restore it as present on received respective discovery messages::SAP Systems Overview Instance deregistration should mark an instance as absent and restore it as present on received respective discovery messages",
+        "score": 0.06570
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.05001
       }
     ]
