@@ -76,6 +76,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           example: ["john.doe@example.com", "admin@example.com"]
         },
+        explode: true,
         required: false,
         example: ["john.doe@example.com", "admin@example.com"]
       ],
@@ -99,6 +100,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           example: ["host_registered", "user_login"]
         },
+        explode: true,
         required: false,
         example: ["host_registered", "user_login"]
       ],
@@ -111,6 +113,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           default: ["debug", "info", "warning", "critical"]
         },
+        explode: true,
         required: false
       ]
     ],
