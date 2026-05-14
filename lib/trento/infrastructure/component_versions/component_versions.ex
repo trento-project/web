@@ -134,7 +134,8 @@ defmodule Trento.Infrastructure.ComponentVersions do
 
     case HTTPoison.get(url, [{"Accept", "application/json"}],
            recv_timeout: @timeout,
-           follow_redirect: true
+           follow_redirect: true,
+           ssl: [verify: :verify_peer, cacerts: resolve_ca_certs()]
          ) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
@@ -172,5 +173,13 @@ defmodule Trento.Infrastructure.ComponentVersions do
       _ ->
         base_url <> path
     end
+  end
+
+  defp resolve_ca_certs do
+    :public_key.cacerts_get()
+  rescue
+    e ->
+      Logger.error("Failed to load system CA certificates: #{inspect(e)}")
+      []
   end
 end
