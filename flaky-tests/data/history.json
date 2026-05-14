@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-03-31T04:02:49Z",
-    "commit": "0976bc51a7a041d5cc409131c821e8cdf001f9d3",
-    "run_id": "23779524213",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.1030
-      }
-    ]
-  },
-  {
     "timestamp": "2026-03-31T04:03:55Z",
     "commit": "0976bc51a7a041d5cc409131c821e8cdf001f9d3",
     "run_id": "23779524213",
@@ -6466,6 +6450,66 @@
       },
       {
         "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-14T08:09:40Z",
+    "commit": "3f7514a394eb1f0e6197b79e5b5cc1b57935b365",
+    "run_id": "25842593550",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 65
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should link to the correct host details page clicking in the host name::Hosts Overview Registered Hosts are shown in the list should link to the correct host details page clicking in the host name",
+        "score": 0.4922
+      },
+      {
+        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
+        "score": 0.25
+      },
+      {
+        "name": "should link to the correct cluster details page clicking in the cluster name::Hosts Overview Registered Hosts are shown in the list should link to the correct cluster details page clicking in the cluster name",
+        "score": 0.2076
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1650
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1611
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.1464
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.1399
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.1224
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.07392
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.06965
+      },
+      {
+        "name": "should allow navigating back to previous page::Hosts Overview Filter and browser navigation should allow navigating back to previous page",
+        "score": 0.05781
+      },
+      {
+        "name": "should delete the user personal access token and revoke access to guarded resources::Users Edit user personal access tokens should delete the user personal access token and revoke access to guarded resources",
         "score": 0.05001
       }
     ]
