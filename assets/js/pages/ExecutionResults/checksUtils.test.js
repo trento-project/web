@@ -269,18 +269,12 @@ describe('checksUtils', () => {
   });
 
   it('should get expect_same statement results for a set of catalog expectations', () => {
-    const expectationName = faker.lorem.word();
-    const anotherExpectationName = faker.color.human();
-
     const expectations = [
       ...catalogExpectExpectationFactory.buildList(2),
-      catalogExpectSameExpectationFactory.build({
-        name: expectationName,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: anotherExpectationName,
-      }),
+      ...catalogExpectSameExpectationFactory.buildList(2),
     ];
+    const [, , { name: expectationName }, { name: anotherExpectationName }] =
+      expectations;
 
     const expectSameResult = expectationResultFactory.build({
       type: EXPECT_SAME,
@@ -311,18 +305,12 @@ describe('checksUtils', () => {
       { id: agent2, hostname: hostname2 },
     ] = clusterHosts;
 
-    const expectationName = faker.lorem.word();
-    const anotherExpectationName = faker.color.human();
-
     const expectations = [
       ...catalogExpectExpectationFactory.buildList(2),
-      catalogExpectSameExpectationFactory.build({
-        name: expectationName,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: anotherExpectationName,
-      }),
+      ...catalogExpectSameExpectationFactory.buildList(2),
     ];
+    const [, , { name: expectationName }, { name: anotherExpectationName }] =
+      expectations;
 
     const factValueFromAgent1ForExpectation1 = faker.lorem.word();
     const factValueFromAgent1ForExpectation2 = faker.lorem.sentence();
@@ -396,18 +384,12 @@ describe('checksUtils', () => {
       { id: agent3, hostname: hostname3 },
     ] = clusterHosts;
 
-    const expectationName = faker.lorem.word();
-    const anotherExpectationName = faker.color.human();
-
     const expectations = [
       ...catalogExpectExpectationFactory.buildList(2),
-      catalogExpectSameExpectationFactory.build({
-        name: expectationName,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: anotherExpectationName,
-      }),
+      ...catalogExpectSameExpectationFactory.buildList(2),
     ];
+    const [, , { name: expectationName }, { name: anotherExpectationName }] =
+      expectations;
 
     const errorFromAgent1 = faker.lorem.sentence();
     const errorFromAgent2 = faker.lorem.paragraph();

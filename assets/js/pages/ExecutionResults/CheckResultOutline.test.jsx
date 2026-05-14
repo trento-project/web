@@ -62,30 +62,18 @@ describe('CheckResultOutline Component', () => {
     const checkID = faker.string.uuid();
     const clusterName = faker.lorem.word();
 
-    // expectation names are not required to be uuids. using uuids for their uniqueness.
-    const expectationName1 = faker.string.uuid();
-    const expectationName2 = faker.string.uuid();
-    const expectationName3 = faker.string.uuid();
-    const expectSameExpectationName1 = faker.string.uuid();
-    const expectSameExpectationName2 = faker.string.uuid();
-
     const expectations = [
-      catalogExpectExpectationFactory.build({
-        name: expectationName1,
-      }),
-      catalogExpectExpectationFactory.build({
-        name: expectationName2,
-      }),
-      catalogExpectExpectationFactory.build({
-        name: expectationName3,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: expectSameExpectationName1,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: expectSameExpectationName2,
-      }),
+      ...catalogExpectExpectationFactory.buildList(3),
+      ...catalogExpectSameExpectationFactory.buildList(2),
     ];
+
+    const [
+      { name: expectationName1 },
+      { name: expectationName2 },
+      { name: expectationName3 },
+      { name: expectSameExpectationName1 },
+      { name: expectSameExpectationName2 },
+    ] = expectations;
 
     let checkResult = emptyCheckResultFactory.build({
       checkID,
@@ -223,17 +211,7 @@ describe('CheckResultOutline Component', () => {
     const checkID = faker.string.uuid();
     const clusterName = faker.animal.bear();
 
-    const expectationName1 = faker.company.name();
-    const expectationName2 = faker.color.human();
-
-    const expectations = [
-      catalogExpectExpectationFactory.build({
-        name: expectationName1,
-      }),
-      catalogExpectExpectationFactory.build({
-        name: expectationName2,
-      }),
-    ];
+    const expectations = catalogExpectExpectationFactory.buildList(2);
 
     const agentsCheckResults = agentsCheckResultsWithHostname(
       agentCheckErrorFactory.buildList(2)
