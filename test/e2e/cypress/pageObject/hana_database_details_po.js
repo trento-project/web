@@ -269,7 +269,7 @@ const hostHasExpectedWorkingLink = (host) => {
   cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
   cy.get(hostNameSelector).click();
   basePage.validateUrl(expectedHref);
-  return cy.go('back');
+  return basePage.goBack();
 };
 
 export const eachAttachedHostHasExpectedValues = () =>
