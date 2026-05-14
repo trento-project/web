@@ -10,6 +10,11 @@ defmodule TrentoWeb.V1.ActivityLogController do
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
+  plug TrentoWeb.Plugs.NormalizeListsPlug,
+    list_fields: %{
+      get_activity_log: ["severity", "actor", "type"]
+    }
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
   plug TrentoWeb.Plugs.LoadUserPlug
