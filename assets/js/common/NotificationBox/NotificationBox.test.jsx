@@ -59,9 +59,9 @@ describe('NotificationBox Component', () => {
   it('should display the title', () => {
     const icon = faker.color.human();
     const text = faker.lorem.paragraph();
-    const buttonText = faker.lorem.word();
+    const buttonText = `button-${faker.string.uuid()}`;
     const buttonOnClick = () => {};
-    const title = faker.lorem.word();
+    const title = `title-${faker.string.uuid()}`;
 
     render(
       <NotificationBox
