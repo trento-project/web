@@ -72,7 +72,7 @@ describe('Settings Page', () => {
     });
 
     it('should render api key expiration date according to user timezone', async () => {
-      const futureDate = '2026-05-14T10:30:00.000Z';
+      const futureDate = '2030-01-01T10:30:00.000Z';
 
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
