@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-03-31T07:30:27Z",
-    "commit": "0976bc51a7a041d5cc409131c821e8cdf001f9d3",
-    "run_id": "23780803065",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 9
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-01T04:25:38Z",
     "commit": "ccc91639f04ea26ed14e5c7eeb59807d9f1f1d3b",
     "run_id": "23831532089",
@@ -6523,6 +6503,22 @@
       {
         "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-15T04:56:19Z",
+    "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
+    "run_id": "25900494446",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.09051
       }
     ]
   }
