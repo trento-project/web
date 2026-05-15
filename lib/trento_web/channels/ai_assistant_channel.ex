@@ -14,6 +14,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias AgenticRuntime.Conversations
   alias AgenticRuntime.IntegrationHelpers
   alias Trento.Users
+  alias Trento.Users.User
 
   # AG-UI event structs
   alias AgUi.Core.Events.{
@@ -111,7 +112,7 @@ defmodule TrentoWeb.AIAssistantChannel do
           socket
           |> IntegrationHelpers.init_agent_state()
           # |> assign(:timezone, "UTC")
-          |> assign(:current_scope, %{user: %{id: current_user_id}})
+          |> assign(:current_scope, %User{id: current_user_id})
 
         # noop here
         # send(self(), {:reinit_params, %{}})
@@ -174,7 +175,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     # # Untrack presence BEFORE resetting state so AgentServer
     # # sees viewer count drop to 0 and can trigger smart shutdown
     # if previous_conversation_id do
-    #   user_id = socket.assigns.current_scope.user.id
+    #   user_id = socket.assigns.current_scope.id
     #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
     # end
 
@@ -188,7 +189,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   # Execute agent message with user input
   defp execute_agent_message(socket, message_text, params) do
-    current_user_id = socket.assigns.current_scope.user.id
+    current_user_id = socket.assigns.current_scope.id
 
     {:ok,
      %{
@@ -199,6 +200,11 @@ defmodule TrentoWeb.AIAssistantChannel do
        }
      }} = Users.get_user(current_user_id)
 
+    # todo: if the user model settings are changed while a conversation is active
+    # the new settings won't take effect until a new conversation is started
+    # the following start_agent would load current Agent state and re-use previous model config
+    #
+    # we could move user loading at join level instead of per message, but we will have to address the case anyway
     if Trento.AI.LLMRegistry.provider_supported?(provider) do
       provider
       |> case do
@@ -288,7 +294,7 @@ defmodule TrentoWeb.AIAssistantChannel do
         {:noreply,
          socket
          #  |> assign(:input, "")
-         #  |> assign(:loading, true)
+         |> assign(:loading, true)
          |> assign(:current_run_id, run_id)
          |> assign(:current_thread_id, thread_id)
          |> assign(:message_id, run_id)
@@ -300,8 +306,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
         push(socket, "agent_error", %{message: "Failed to start agent #{inspect(reason)}"})
 
-        # {:noreply, assign(socket, :loading, false)}
-        {:noreply, socket}
+        {:noreply, assign(socket, :loading, false)}
     end
   end
 
@@ -314,7 +319,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       cond do
         conversation_id && conversation_id != previous_conversation_id ->
           # if previous_conversation_id do
-          #   user_id = socket.assigns.current_scope.user.id
+          #   user_id = socket.assigns.current_scope.id
           #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
           #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
           # end
@@ -322,7 +327,7 @@ defmodule TrentoWeb.AIAssistantChannel do
           load_conversation(socket, conversation_id)
 
         is_nil(conversation_id) && previous_conversation_id ->
-          #   user_id = socket.assigns.current_scope.user.id
+          #   user_id = socket.assigns.current_scope.id
           #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
           #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
           IntegrationHelpers.reset_conversation(socket)
@@ -386,13 +391,18 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
-  @impl true
-  def handle_info({:agent, {:status_changed, :cancelled, _data}}, socket) do
-    Logger.info("Agent execution was cancelled")
-    updated_socket = IntegrationHelpers.handle_status_cancelled(socket)
-    push(updated_socket, "agent-execution-cancelled", %{})
-    {:noreply, socket}
-  end
+  # DISABLED (plan: valiant-twirling-crown): cancel UX disabled in trento.
+  # Sagents only fires :status_changed, :cancelled when AgentServer.cancel/1
+  # is called, and the only call site (handle_in "cancel_agent" above) is
+  # also commented out. Restore alongside the cancel_agent handle_in if
+  # user-driven cancel comes back.
+  # @impl true
+  # def handle_info({:agent, {:status_changed, :cancelled, _data}}, socket) do
+  #   Logger.info("Agent execution was cancelled")
+  #   updated_socket = IntegrationHelpers.handle_status_cancelled(socket)
+  #   push(updated_socket, "agent-execution-cancelled", %{})
+  #   {:noreply, socket}
+  # end
 
   @impl true
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
@@ -526,12 +536,15 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, updated_socket}
   end
 
-  @impl true
-  def handle_info({:agent, {:llm_token_usage, usage}}, socket) do
-    # Optional: Display token usage stats
-    Logger.debug("Token usage: #{inspect(usage)}")
-    {:noreply, socket}
-  end
+  # DISABLED (plan: valiant-twirling-crown): token usage logging is pure
+  # noise on the hot path (one event per Gemini delta). Catch-all at
+  # handle_info(_msg, socket) below absorbs. Restore by uncommenting if
+  # observability needs token-counting telemetry.
+  # @impl true
+  # def handle_info({:agent, {:llm_token_usage, usage}}, socket) do
+  #   Logger.debug("Token usage: #{inspect(usage)}")
+  #   {:noreply, socket}
+  # end
 
   @impl true
   def handle_info({:agent, {:conversation_title_generated, new_title, agent_id}}, socket) do
@@ -709,7 +722,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp load_conversation(socket, conversation_id) do
     scope = socket.assigns.current_scope
-    # user_id = socket.assigns.current_scope.user.id
+    # user_id = socket.assigns.current_scope.id
 
     case IntegrationHelpers.load_conversation(socket, conversation_id,
            scope: scope
@@ -746,7 +759,7 @@ defmodule TrentoWeb.AIAssistantChannel do
         Logger.debug("Ensured subscription to agent events for conversation #{conversation.id}")
 
         # # Track presence - this enables smart agent shutdown
-        # user_id = socket.assigns.current_scope.user.id
+        # user_id = socket.assigns.current_scope.id
         # {:ok, _ref} = Coordinator.track_conversation_viewer(conversation.id, user_id)
         # Logger.debug("Tracking presence for conversation #{conversation.id}, user #{user_id}")
 
@@ -792,8 +805,4 @@ defmodule TrentoWeb.AIAssistantChannel do
     push(socket, "ag_ui_event", payload)
     socket
   end
-end
-
-defimpl AgenticRuntime.Scope, for: Map do
-  def owner_id(%{user: %{id: id}}), do: id
 end

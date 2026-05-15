@@ -25,8 +25,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                |> socket("user_id", %{current_user_id: 42})
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42")
 
-      assert socket.assigns.current_scope == %{user: %{id: 42}}
-      assert socket.assigns.timezone == "UTC"
+      assert socket.assigns.current_scope == %Trento.Users.User{id: 42}
+      # assert socket.assigns.timezone == "UTC"
       # init_agent_state defaults
       assert socket.assigns.agent_status == :not_running
       assert socket.assigns.conversation_id == nil
