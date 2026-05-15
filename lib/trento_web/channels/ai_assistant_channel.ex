@@ -29,6 +29,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     ToolCallStart
   }
 
+  alias AgUi.Encoder.EventEncoder
+
   @system_prompt """
   You are an expert AI assistant for SUSE Trento, a comprehensive solution for SAP applications management and monitoring.
   ## YOUR ROLE
@@ -765,55 +767,32 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 
-  # Helper to push AG-UI protocol events to the client
-  # Encodes the event to JSON with camelCase keys (AG-UI protocol standard)
+  # Helper to push AG-UI protocol events to the client.
+  # Delegates camelCase + nil-strip + JSON encoding to ag_ui_ex,
+  # then decodes back to a map so Phoenix.Channel.push/3 can re-encode
+  # at the wire boundary. Single source of truth for AG-UI wire format
+  # is AgUi.Encoder.EventEncoder.encode_json/1.
   defp push_ag_ui_event(socket, event) do
-    # Encode event to JSON map with camelCase keys
-    # The type field stays in SCREAMING_SNAKE_CASE (e.g., "RUN_STARTED")
-    event_json =
-      event
-      |> Map.from_struct()
-      |> Enum.reject(fn {_k, v} -> is_nil(v) end)
-      |> Enum.map(fn {k, v} -> {to_camel_case(k), v} end)
-      |> Map.new()
-
-    push(socket, "ag_ui_event", event_json)
+    payload = event |> EventEncoder.encode_json() |> Jason.decode!()
+    push(socket, "ag_ui_event", payload)
     socket
   end
 
-  # Helper to push AG-UI events with runId and threadId added.
-  # Some events don't include these fields by default, but the client needs them.
+  # Same as push_ag_ui_event/2 but injects runId + threadId after the
+  # round-trip. Events like TextMessage* and ToolCall* don't carry
+  # these fields natively but the client needs them.
   defp push_ag_ui_event_with_ids(socket, event, run_id, thread_id) do
-    event_json =
+    payload =
       event
-      |> Map.from_struct()
-      |> Enum.reject(fn {_k, v} -> is_nil(v) end)
-      |> Enum.map(fn {k, v} -> {to_camel_case(k), v} end)
-      |> Map.new()
+      |> EventEncoder.encode_json()
+      |> Jason.decode!()
       |> Map.put("runId", run_id)
       |> Map.put("threadId", thread_id)
 
-    push(socket, "ag_ui_event", event_json)
+    push(socket, "ag_ui_event", payload)
     socket
   end
-
-  # Convert atom or string from snake_case to camelCase
-  defp to_camel_case(atom) when is_atom(atom) do
-    atom
-    |> Atom.to_string()
-    |> to_camel_case()
-  end
-
-  defp to_camel_case(string) when is_binary(string) do
-    [first | rest] = String.split(string, "_")
-    first <> Enum.map_join(rest, "", &String.capitalize/1)
-  end
 end
-
-require Protocol
-Protocol.derive(Jason.Encoder, LangChain.MessageDelta)
-Protocol.derive(Jason.Encoder, LangChain.TokenUsage)
-Protocol.derive(Jason.Encoder, LangChain.Message.ToolCall)
 
 defimpl AgenticRuntime.Scope, for: Map do
   def owner_id(%{user: %{id: id}}), do: id
