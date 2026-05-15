@@ -149,14 +149,14 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   @impl true
   def handle_in("new_thread", _params, socket) do
-    previous_conversation_id = socket.assigns[:conversation_id]
+    # previous_conversation_id = socket.assigns[:conversation_id]
 
-    # Untrack presence BEFORE resetting state so AgentServer
-    # sees viewer count drop to 0 and can trigger smart shutdown
-    if previous_conversation_id do
-      user_id = socket.assigns.current_scope.user.id
-      Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-    end
+    # # Untrack presence BEFORE resetting state so AgentServer
+    # # sees viewer count drop to 0 and can trigger smart shutdown
+    # if previous_conversation_id do
+    #   user_id = socket.assigns.current_scope.user.id
+    #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
+    # end
 
     socket = IntegrationHelpers.reset_conversation(socket)
 
@@ -292,19 +292,18 @@ defmodule TrentoWeb.AIAssistantChannel do
     socket =
       cond do
         conversation_id && conversation_id != previous_conversation_id ->
-          if previous_conversation_id do
-            user_id = socket.assigns.current_scope.user.id
-            Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-            Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
-          end
+          # if previous_conversation_id do
+          #   user_id = socket.assigns.current_scope.user.id
+          #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
+          #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
+          # end
 
           load_conversation(socket, conversation_id)
 
         is_nil(conversation_id) && previous_conversation_id ->
-          user_id = socket.assigns.current_scope.user.id
-          Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-          Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
-
+          #   user_id = socket.assigns.current_scope.user.id
+          #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
+          #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
           IntegrationHelpers.reset_conversation(socket)
 
         true ->
@@ -689,11 +688,11 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp load_conversation(socket, conversation_id) do
     scope = socket.assigns.current_scope
-    user_id = socket.assigns.current_scope.user.id
+    # user_id = socket.assigns.current_scope.user.id
 
     case IntegrationHelpers.load_conversation(socket, conversation_id,
-           scope: scope,
-           user_id: user_id
+           scope: scope
+           # user_id: user_id
          ) do
       {:ok, socket} ->
         socket
@@ -725,10 +724,10 @@ defmodule TrentoWeb.AIAssistantChannel do
         :ok = Coordinator.ensure_subscribed_to_conversation(conversation.id)
         Logger.debug("Ensured subscription to agent events for conversation #{conversation.id}")
 
-        # Track presence - this enables smart agent shutdown
-        user_id = socket.assigns.current_scope.user.id
-        {:ok, _ref} = Coordinator.track_conversation_viewer(conversation.id, user_id)
-        Logger.debug("Tracking presence for conversation #{conversation.id}, user #{user_id}")
+        # # Track presence - this enables smart agent shutdown
+        # user_id = socket.assigns.current_scope.user.id
+        # {:ok, _ref} = Coordinator.track_conversation_viewer(conversation.id, user_id)
+        # Logger.debug("Tracking presence for conversation #{conversation.id}, user #{user_id}")
 
         socket =
           socket
