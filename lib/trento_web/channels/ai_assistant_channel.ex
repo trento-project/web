@@ -111,8 +111,8 @@ defmodule TrentoWeb.AIAssistantChannel do
           |> assign(:timezone, "UTC")
           |> assign(:current_scope, %{user: %{id: current_user_id}})
 
-        # what does this actually do?
-        send(self(), {:reinit_params, %{}})
+        # noop here
+        # send(self(), {:reinit_params, %{}})
         {:ok, updated_socket}
 
       _ ->
@@ -146,6 +146,24 @@ defmodule TrentoWeb.AIAssistantChannel do
       execute_agent_message(socket, message_text, params)
     end
   end
+
+  # @impl true
+  # def handle_in("cancel_agent", _params, socket) do
+  #   Logger.info("User requested to cancel agent execution")
+
+  #   case AgenticRuntime.cancel_agent_execution(socket.assigns.agent_id) do
+  #     :ok ->
+  #       # The cancellation message will be created when we receive the
+  #       # {:status_changed, :cancelled, nil} event from AgentServer
+  #       {:noreply, socket}
+
+  #     {:error, reason} ->
+  #       Logger.error("Failed to cancel agent: #{inspect(reason)}")
+
+  #       {:noreply,
+  #        assign(socket, :put_flash, "Error: Failed to cancel agent: #{inspect(reason)}")}
+  #   end
+  # end
 
   @impl true
   def handle_in("new_thread", _params, socket) do
