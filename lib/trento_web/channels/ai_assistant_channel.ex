@@ -111,11 +111,8 @@ defmodule TrentoWeb.AIAssistantChannel do
         updated_socket =
           socket
           |> IntegrationHelpers.init_agent_state()
-          # |> assign(:timezone, "UTC")
           |> assign(:current_scope, %User{id: current_user_id})
 
-        # noop here
-        # send(self(), {:reinit_params, %{}})
         {:ok, updated_socket}
 
       _ ->
@@ -151,35 +148,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:reply, {:error, :invalid_payload}, socket}
   end
 
-  # @impl true
-  # def handle_in("cancel_agent", _params, socket) do
-  #   Logger.info("User requested to cancel agent execution")
-
-  #   case AgenticRuntime.cancel_agent_execution(socket.assigns.agent_id) do
-  #     :ok ->
-  #       # The cancellation message will be created when we receive the
-  #       # {:status_changed, :cancelled, nil} event from AgentServer
-  #       {:noreply, socket}
-
-  #     {:error, reason} ->
-  #       Logger.error("Failed to cancel agent: #{inspect(reason)}")
-
-  #       {:noreply,
-  #        assign(socket, :put_flash, "Error: Failed to cancel agent: #{inspect(reason)}")}
-  #   end
-  # end
-
   @impl true
   def handle_in("new_thread", _params, socket) do
-    # previous_conversation_id = socket.assigns[:conversation_id]
-
-    # # Untrack presence BEFORE resetting state so AgentServer
-    # # sees viewer count drop to 0 and can trigger smart shutdown
-    # if previous_conversation_id do
-    #   user_id = socket.assigns.current_scope.id
-    #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-    # end
-
     socket = IntegrationHelpers.reset_conversation(socket)
 
     send(self(), {:reinit_params, %{}})
@@ -255,11 +225,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          message_text
        ) do
     case Coordinator.start_conversation_session(conversation_id,
-           # DISABLED (plan: valiant-twirling-crown): filesystem_scope no longer required;
-           # FileSystem middleware commented out in agentic_runtime Factory.
-           # filesystem_scope: nil,
            scope: socket.assigns.current_scope,
-           #  tool_context: %{timezone: socket.assigns.timezone},
            factory_opts: [
              model_config: model_config,
              base_system_prompt: @system_prompt,
@@ -324,18 +290,9 @@ defmodule TrentoWeb.AIAssistantChannel do
     socket =
       cond do
         conversation_id && conversation_id != previous_conversation_id ->
-          # if previous_conversation_id do
-          #   user_id = socket.assigns.current_scope.id
-          #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-          #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
-          # end
-
           load_conversation(socket, conversation_id)
 
         is_nil(conversation_id) && previous_conversation_id ->
-          #   user_id = socket.assigns.current_scope.id
-          #   Coordinator.untrack_conversation_viewer(previous_conversation_id, user_id)
-          #   Logger.debug("Untracked presence from conversation #{previous_conversation_id}")
           IntegrationHelpers.reset_conversation(socket)
 
         true ->
@@ -396,19 +353,6 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
-  # DISABLED (plan: valiant-twirling-crown): cancel UX disabled in trento.
-  # Sagents only fires :status_changed, :cancelled when AgentServer.cancel/1
-  # is called, and the only call site (handle_in "cancel_agent" above) is
-  # also commented out. Restore alongside the cancel_agent handle_in if
-  # user-driven cancel comes back.
-  # @impl true
-  # def handle_info({:agent, {:status_changed, :cancelled, _data}}, socket) do
-  #   Logger.info("Agent execution was cancelled")
-  #   updated_socket = IntegrationHelpers.handle_status_cancelled(socket)
-  #   push(updated_socket, "agent-execution-cancelled", %{})
-  #   {:noreply, socket}
-  # end
-
   @impl true
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
@@ -425,30 +369,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     {:noreply, socket}
   end
-
-  # DISABLED (plan: valiant-twirling-crown): no middleware can fire :interrupted after
-  # FileSystem + HITL + AskUserQuestion middleware were removed. Catch-all
-  # `def handle_info(_msg, socket)` below absorbs any stray message.
-  # @impl true
-  # def handle_info({:agent, {:status_changed, :interrupted, interrupt_data}}, socket) do
-  #   Logger.warning(
-  #     "Agent execution interrupted but no interrupt UI is wired: #{inspect(interrupt_data)}"
-  #   )
-  #
-  #   run_id = socket.assigns.current_run_id
-  #   thread_id = socket.assigns.current_thread_id
-  #
-  #   push_ag_ui_event_with_ids(
-  #     socket,
-  #     %RunError{
-  #       message: "Agent paused waiting for human input, but this UI does not support interrupts."
-  #     },
-  #     run_id,
-  #     thread_id
-  #   )
-  #
-  #   {:noreply, IntegrationHelpers.handle_status_interrupted(socket, interrupt_data)}
-  # end
 
   @impl true
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
@@ -468,30 +388,6 @@ defmodule TrentoWeb.AIAssistantChannel do
         # Fallback
         _ -> ""
       end)
-
-    # previous implementation.
-    # check whether we need the more complex handling of deltas as structs or if we can assume it's always a list
-    # # Extract text content from LangChain.MessageDelta structs
-    # delta_text =
-    #   case deltas do
-    #     deltas when is_binary(deltas) ->
-    #       deltas
-
-    #     deltas when is_list(deltas) ->
-    #       Enum.map_join(deltas, "", fn
-    #         # LangChain.MessageDelta with ContentPart
-    #         %{content: %{type: :text, content: text}} -> text
-    #         # LangChain.MessageDelta with string content
-    #         %{content: text} when is_binary(text) -> text
-    #         # Plain string
-    #         text when is_binary(text) -> text
-    #         # Fallback
-    #         _ -> ""
-    #       end)
-
-    #     _ ->
-    #       ""
-    #   end
 
     # Emit TextMessageStart on first delta
     updated_socket =
@@ -527,16 +423,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     {:noreply, updated_socket}
   end
-
-  # DISABLED (plan: valiant-twirling-crown): token usage logging is pure
-  # noise on the hot path (one event per Gemini delta). Catch-all at
-  # handle_info(_msg, socket) below absorbs. Restore by uncommenting if
-  # observability needs token-counting telemetry.
-  # @impl true
-  # def handle_info({:agent, {:llm_token_usage, usage}}, socket) do
-  #   Logger.debug("Token usage: #{inspect(usage)}")
-  #   {:noreply, socket}
-  # end
 
   @impl true
   def handle_info({:agent, {:conversation_title_generated, new_title, agent_id}}, socket) do
@@ -729,11 +615,6 @@ defmodule TrentoWeb.AIAssistantChannel do
         # Using ensure_* versions - idempotent, safe to call multiple times
         :ok = Coordinator.ensure_subscribed_to_conversation(conversation.id)
         Logger.debug("Ensured subscription to agent events for conversation #{conversation.id}")
-
-        # # Track presence - this enables smart agent shutdown
-        # user_id = socket.assigns.current_scope.id
-        # {:ok, _ref} = Coordinator.track_conversation_viewer(conversation.id, user_id)
-        # Logger.debug("Tracking presence for conversation #{conversation.id}, user #{user_id}")
 
         socket =
           socket
