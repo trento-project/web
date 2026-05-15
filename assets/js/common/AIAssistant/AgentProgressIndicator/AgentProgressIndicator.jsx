@@ -12,7 +12,6 @@ export function deriveProgressLabel(content) {
   if (lastToolCall && isUndefined(lastToolCall.result)) {
     return `Calling ${lastToolCall.toolName || 'tool'}...`;
   }
-  console.log('Thinking...');
   return 'Thinking...';
 }
 
