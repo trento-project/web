@@ -5,7 +5,8 @@ name: Backend Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: "9 0 * * *" # Runs every day at 00:09 AM UTC
+    - cron: "9 19 * * *" # Runs every day at 19:09 Europe/Madrid
+      timezone: "Europe/Madrid"
   workflow_dispatch:
     inputs:
       num_runs:

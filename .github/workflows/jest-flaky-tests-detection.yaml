@@ -5,7 +5,8 @@ name: Jest Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: "39 0 * * *" # Runs every day at 00:39 AM UTC
+    - cron: "39 19 * * *" # Runs every day at 19:39 Europe/Madrid
+      timezone: "Europe/Madrid"
   workflow_dispatch:
     inputs:
       num_runs:
