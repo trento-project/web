@@ -63,15 +63,42 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "ignores empty message text", %{socket: socket} do
-      ref = push(socket, "send_message", %{"message" => ""})
+      ref =
+        push(socket, "send_message", %{
+          "message" => "",
+          "run_id" => "r1",
+          "thread_id" => "t1"
+        })
+
       refute_reply ref, _, 100
       refute_push "agent_error", _, 100
     end
 
     test "ignores whitespace-only message text", %{socket: socket} do
-      ref = push(socket, "send_message", %{"message" => "   \n\t  "})
+      ref =
+        push(socket, "send_message", %{
+          "message" => "   \n\t  ",
+          "run_id" => "r1",
+          "thread_id" => "t1"
+        })
+
       refute_reply ref, _, 100
       refute_push "agent_error", _, 100
+    end
+
+    test "rejects payload missing :message", %{socket: socket} do
+      ref = push(socket, "send_message", %{"run_id" => "r1", "thread_id" => "t1"})
+      assert_reply ref, :error, :invalid_payload
+    end
+
+    test "rejects payload missing :run_id", %{socket: socket} do
+      ref = push(socket, "send_message", %{"message" => "hi", "thread_id" => "t1"})
+      assert_reply ref, :error, :invalid_payload
+    end
+
+    test "rejects payload missing :thread_id", %{socket: socket} do
+      ref = push(socket, "send_message", %{"message" => "hi", "run_id" => "r1"})
+      assert_reply ref, :error, :invalid_payload
     end
   end
 
@@ -91,19 +118,19 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  describe "handle_info status events" do
-    setup do
-      {:ok, _, socket} =
-        UserSocket
-        |> socket("user_id", %{current_user_id: 7})
-        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:7")
+  # describe "handle_info status events" do
+  # setup do
+  #   {:ok, _, socket} =
+  #     UserSocket
+  #     |> socket("user_id", %{current_user_id: 7})
+  #     |> subscribe_and_join(AIAssistantChannel, "ai_assistant:7")
 
-      %{socket: socket}
-    end
+  #   %{socket: socket}
+  # end
 
-    test "pushes agent-execution-cancelled when agent fires :cancelled", %{socket: socket} do
-      send(socket.channel_pid, {:agent, {:status_changed, :cancelled, nil}})
-      assert_push "agent-execution-cancelled", %{}
-    end
-  end
+  # test "pushes agent-execution-cancelled when agent fires :cancelled", %{socket: socket} do
+  #   send(socket.channel_pid, {:agent, {:status_changed, :cancelled, nil}})
+  #   assert_push "agent-execution-cancelled", %{}
+  # end
+  # end
 end

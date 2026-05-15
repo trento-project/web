@@ -130,14 +130,22 @@ defmodule TrentoWeb.AIAssistantChannel do
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
   @impl true
-  def handle_in("send_message", %{"message" => message_text} = params, socket) do
-    message_text = String.trim(message_text)
+  def handle_in(
+        "send_message",
+        %{
+          "message" => message_text,
+          "run_id" => run_id,
+          "thread_id" => thread_id
+        } = params,
+        socket
+      )
+      when is_binary(message_text) and is_binary(run_id) and is_binary(thread_id) do
+    do_handle_incoming_message(socket, message_text, params)
+  end
 
-    if message_text == "" or socket.assigns.loading do
-      {:noreply, socket}
-    else
-      execute_agent_message(socket, message_text, params)
-    end
+  def handle_in("send_message", payload, socket) do
+    Logger.warning("Invalid send_message payload: #{inspect(payload)}")
+    {:reply, {:error, :invalid_payload}, socket}
   end
 
   # @impl true
@@ -175,6 +183,16 @@ defmodule TrentoWeb.AIAssistantChannel do
     push(socket, "agent_info", %{message: "New conversation started"})
 
     {:noreply, socket}
+  end
+
+  defp do_handle_incoming_message(socket, message_text, params) do
+    message_text = String.trim(message_text)
+
+    if message_text == "" or socket.assigns.loading do
+      {:noreply, socket}
+    else
+      execute_agent_message(socket, message_text, params)
+    end
   end
 
   # Execute agent message with user input
