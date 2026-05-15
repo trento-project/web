@@ -35,6 +35,7 @@ context('HANA database details', () => {
 
   describe('The database layout shows all the running instances', () => {
     beforeEach(() => {
+      hanaDbDetailsPage.restoreDatabaseInstanceHealth();
       hanaDbDetailsPage.visitDatabase();
     });
 
@@ -83,6 +84,7 @@ context('HANA database details', () => {
 
   describe('The database layout shows system replication data properly', () => {
     beforeEach(() => {
+      hanaDbDetailsPage.restoreDatabaseInstanceHealth();
       hanaDbDetailsPage.visitDatabase();
     });
 
@@ -116,8 +118,16 @@ context('HANA database details', () => {
   });
 
   describe('Deregistration', () => {
-    it('should not include deregistered host in the list of hosts', () => {
+    beforeEach(() => {
+      hanaDbDetailsPage.restoreFirstAttachedHost();
+      hanaDbDetailsPage.visitDatabase();
+      hanaDbDetailsPage.deregisteredHostIsDisplayed();
       hanaDbDetailsPage.deregisterFirstAttachedHost();
+    });
+
+    afterEach(() => hanaDbDetailsPage.restoreFirstAttachedHost());
+
+    it('should not include deregistered host in the list of hosts', () => {
       hanaDbDetailsPage.deregisteredHostIsNotDisplayed();
     });
 

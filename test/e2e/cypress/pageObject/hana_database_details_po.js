@@ -296,7 +296,7 @@ export const deregisteredHostIsNotDisplayed = () =>
   cy.get(newRegisteredHost).should('not.exist');
 
 export const deregisteredHostIsDisplayed = () =>
-  cy.get(newRegisteredHost).should('be.visible');
+  cy.get(newRegisteredHost, { timeout: 20000 }).should('be.visible');
 
 // API
 
