@@ -9,9 +9,8 @@ import Spinner from '@common/Spinner';
 
 export function deriveProgressLabel(content) {
   const lastToolCall = last(filter(content, { type: 'tool-call' }));
-  if (lastToolCall && isUndefined(lastToolCall.result)) {
+  if (lastToolCall && isUndefined(lastToolCall.result))
     return `Calling ${lastToolCall.toolName || 'tool'}...`;
-  }
   return 'Thinking...';
 }
 
