@@ -108,7 +108,7 @@ defmodule TrentoWeb.AIAssistantChannel do
         updated_socket =
           socket
           |> IntegrationHelpers.init_agent_state()
-          |> assign(:timezone, "UTC")
+          # |> assign(:timezone, "UTC")
           |> assign(:current_scope, %{user: %{id: current_user_id}})
 
         # noop here
@@ -248,7 +248,7 @@ defmodule TrentoWeb.AIAssistantChannel do
            # FileSystem middleware commented out in agentic_runtime Factory.
            # filesystem_scope: nil,
            scope: socket.assigns.current_scope,
-           tool_context: %{timezone: socket.assigns.timezone},
+           #  tool_context: %{timezone: socket.assigns.timezone},
            factory_opts: [
              model_config: model_config,
              base_system_prompt: @system_prompt,
@@ -285,8 +285,8 @@ defmodule TrentoWeb.AIAssistantChannel do
 
         {:noreply,
          socket
-         |> assign(:input, "")
-         |> assign(:loading, true)
+         #  |> assign(:input, "")
+         #  |> assign(:loading, true)
          |> assign(:current_run_id, run_id)
          |> assign(:current_thread_id, thread_id)
          |> assign(:message_id, run_id)
@@ -298,7 +298,8 @@ defmodule TrentoWeb.AIAssistantChannel do
 
         push(socket, "agent_error", %{message: "Failed to start agent #{inspect(reason)}"})
 
-        {:noreply, assign(socket, :loading, false)}
+        # {:noreply, assign(socket, :loading, false)}
+        {:noreply, socket}
     end
   end
 
