@@ -183,7 +183,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     # todo: if the user model settings are changed while a conversation is active
     # the new settings won't take effect until a new conversation is started
-    # the following start_agent would load current Agent state and re-use previous model config
+    # the following start_agent would load current Agent state and reuse previous model config
     #
     # we could move user loading at join level instead of per message, but we will have to address the case anyway
     if Trento.AI.LLMRegistry.provider_supported?(provider) do
