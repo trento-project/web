@@ -381,12 +381,11 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     socket =
       if message_started do
-        # Emit completion events now
-        socket = emit_text_message_end(socket, message_id, run_id, thread_id)
-        emit_run_finished(socket, run_id, thread_id)
-        assign(socket, :message_started, false)
+        socket
+        |> emit_text_message_end(message_id)
+        |> emit_run_finished(run_id, thread_id)
+        |> assign(:message_started, false)
       else
-        # Still no message - emit RUN_FINISHED without TEXT_MESSAGE_END
         Logger.warning(
           "No message started even after delay - completing run without text message"
         )
@@ -414,20 +413,15 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
-    run_id = socket.assigns.current_run_id
-    thread_id = socket.assigns.current_thread_id
-
     socket =
       socket
       |> IntegrationHelpers.handle_status_error(reason)
       |> assign(:message_started, false)
-
-    push_ag_ui_event_with_ids(
-      socket,
-      %RunError{message: socket.assigns.last_error_message},
-      run_id,
-      thread_id
-    )
+      |> then(fn updated_socket ->
+        push_ag_ui_event(updated_socket, %RunError{
+          message: updated_socket.assigns.last_error_message
+        })
+      end)
 
     {:noreply, socket}
   end
@@ -460,8 +454,6 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
     updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
 
-    run_id = socket.assigns.current_run_id
-    thread_id = socket.assigns.current_thread_id
     message_id = socket.assigns.message_id
     message_started = socket.assigns[:message_started] || false
 
@@ -509,15 +501,14 @@ defmodule TrentoWeb.AIAssistantChannel do
         start_event = %TextMessageStart{message_id: message_id, role: "assistant"}
 
         updated_socket
-        |> push_ag_ui_event_with_ids(start_event, run_id, thread_id)
+        |> push_ag_ui_event(start_event)
         |> assign(:message_started, true)
       end
 
     # Emit TextMessageContent for the delta (only if there's actual text)
-
     if delta_text != "" do
       content_event = %TextMessageContent{message_id: message_id, delta: delta_text}
-      push_ag_ui_event_with_ids(updated_socket, content_event, run_id, thread_id)
+      push_ag_ui_event(updated_socket, content_event)
     end
 
     {:noreply, updated_socket}
@@ -588,8 +579,6 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
 
-    run_id = socket.assigns.current_run_id
-    thread_id = socket.assigns.current_thread_id
     message_id = socket.assigns.message_id
     tool_name = tool_info[:name]
     tool_arguments = tool_info[:arguments]
@@ -613,9 +602,9 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     updated_socket =
       updated_socket
-      |> push_ag_ui_event_with_ids(start_event, run_id, thread_id)
-      |> push_ag_ui_event_with_ids(args_event, run_id, thread_id)
-      |> push_ag_ui_event_with_ids(end_event, run_id, thread_id)
+      |> push_ag_ui_event(start_event)
+      |> push_ag_ui_event(args_event)
+      |> push_ag_ui_event(end_event)
 
     {:noreply, updated_socket}
   end
@@ -626,8 +615,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     # Emit AG UI ToolCallResult event when execution completes
     if status == :completed do
-      run_id = socket.assigns.current_run_id
-      thread_id = socket.assigns.current_thread_id
       tool_call_id = tool_info[:call_id]
       result = tool_info[:result] || %{}
 
@@ -639,7 +626,7 @@ defmodule TrentoWeb.AIAssistantChannel do
         role: "tool"
       }
 
-      push_ag_ui_event_with_ids(updated_socket, result_event, run_id, thread_id)
+      push_ag_ui_event(updated_socket, result_event)
     end
 
     {:noreply, updated_socket}
@@ -681,7 +668,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     updated_socket =
       if message_started do
         socket
-        |> emit_text_message_end(message_id, run_id, thread_id)
+        |> emit_text_message_end(message_id)
         |> emit_run_finished(run_id, thread_id)
         |> IntegrationHelpers.handle_status_idle()
         |> assign(:message_started, false)
@@ -697,13 +684,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, updated_socket}
   end
 
-  defp emit_text_message_end(socket, message_id, run_id, thread_id) do
-    push_ag_ui_event_with_ids(
-      socket,
-      %TextMessageEnd{message_id: message_id},
-      run_id,
-      thread_id
-    )
+  defp emit_text_message_end(socket, message_id) do
+    push_ag_ui_event(socket, %TextMessageEnd{message_id: message_id})
   end
 
   defp emit_run_finished(socket, run_id, thread_id) do
@@ -777,21 +759,6 @@ defmodule TrentoWeb.AIAssistantChannel do
   # is AgUi.Encoder.EventEncoder.encode_json/1.
   defp push_ag_ui_event(socket, event) do
     payload = event |> EventEncoder.encode_json() |> Jason.decode!()
-    push(socket, "ag_ui_event", payload)
-    socket
-  end
-
-  # Same as push_ag_ui_event/2 but injects runId + threadId after the
-  # round-trip. Events like TextMessage* and ToolCall* don't carry
-  # these fields natively but the client needs them.
-  defp push_ag_ui_event_with_ids(socket, event, run_id, thread_id) do
-    payload =
-      event
-      |> EventEncoder.encode_json()
-      |> Jason.decode!()
-      |> Map.put("runId", run_id)
-      |> Map.put("threadId", thread_id)
-
     push(socket, "ag_ui_event", payload)
     socket
   end
