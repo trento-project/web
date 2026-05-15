@@ -297,19 +297,15 @@ defmodule TrentoWeb.AIAssistantChannel do
       :ok ->
         Logger.info("Agent execution started")
 
-        # Emit AG UI RunStarted event
-        push_ag_ui_event(socket, %RunStarted{
-          thread_id: thread_id,
-          run_id: run_id
-        })
+        socket =
+          socket
+          |> push_ag_ui_event(%RunStarted{thread_id: thread_id, run_id: run_id})
+          |> assign(:loading, true)
+          |> assign(:message_id, run_id)
+          |> assign(:message_started, false)
+          |> assign(:run_has_started, false)
 
-        {:noreply,
-         socket
-         #  |> assign(:input, "")
-         |> assign(:loading, true)
-         |> assign(:message_id, run_id)
-         |> assign(:message_started, false)
-         |> assign(:run_has_started, false)}
+        {:noreply, socket}
 
       {:error, reason} ->
         Logger.error("Failed to execute agent: #{inspect(reason)}")
@@ -510,23 +506,18 @@ defmodule TrentoWeb.AIAssistantChannel do
       if message_started do
         updated_socket
       else
-        event = %TextMessageStart{
-          message_id: message_id,
-          role: "assistant"
-        }
+        start_event = %TextMessageStart{message_id: message_id, role: "assistant"}
 
-        push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
-        assign(updated_socket, :message_started, true)
+        updated_socket
+        |> push_ag_ui_event_with_ids(start_event, run_id, thread_id)
+        |> assign(:message_started, true)
       end
 
     # Emit TextMessageContent for the delta (only if there's actual text)
-    if delta_text != "" do
-      event = %TextMessageContent{
-        message_id: message_id,
-        delta: delta_text
-      }
 
-      push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+    if delta_text != "" do
+      content_event = %TextMessageContent{message_id: message_id, delta: delta_text}
+      push_ag_ui_event_with_ids(updated_socket, content_event, run_id, thread_id)
     end
 
     {:noreply, updated_socket}
@@ -569,11 +560,34 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, IntegrationHelpers.handle_agent_shutdown(socket, shutdown_data)}
   end
 
+  # AG-UI tool-call lifecycle is split across 4 wire events per call:
+  #
+  #   TOOL_CALL_START{tool_call_id, tool_call_name}
+  #   TOOL_CALL_ARGS{tool_call_id, delta}        one or more (streaming)
+  #   TOOL_CALL_END{tool_call_id}
+  #   TOOL_CALL_RESULT{tool_call_id, content}    after execution
+  #
+  # The split exists so LLMs that stream tool-call JSON token-by-token
+  # (e.g. `{"qu` → `ery":` → `"hosts"}`) can deliver args incrementally.
+  # assistant-ui's React runtime requires the full Start → Args → End
+  # sequence — skipping any of them breaks tool-call rendering.
+  #
+  # Sagents collapses the LLM's argument stream into a single in-memory
+  # `tool_call.arguments` map BEFORE broadcasting `:tool_call_identified`
+  # (see deps/sagents/lib/sagents/agent_server.ex around the
+  # `on_tool_call_identified` callback). So we receive the complete args
+  # in one event and synthesize all three (Start, single Args with the
+  # full JSON, End) back-to-back here. Functionally equivalent to true
+  # streaming for assistant-ui — the runtime doesn't care if Args is
+  # 1 chunk or N.
+  #
+  # The result half (TOOL_CALL_RESULT) lives in the :tool_execution_update
+  # handler below and fires once when the tool finishes executing. Same
+  # tool_call_id correlates Start/Args/End with Result on the React side.
   @impl true
   def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
     updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
 
-    # Emit AG UI protocol events for tool call
     run_id = socket.assigns.current_run_id
     thread_id = socket.assigns.current_thread_id
     message_id = socket.assigns.message_id
@@ -582,33 +596,26 @@ defmodule TrentoWeb.AIAssistantChannel do
     tool_display_text = tool_info[:display_text]
     tool_call_id = tool_info[:call_id]
 
-    # ToolCallStart (with runId and threadId).
     # Prefer the human-friendly display_text for the UI label; fall back
     # to the technical tool name if the LLM/tool definition didn't set one.
-    event = %ToolCallStart{
+    start_event = %ToolCallStart{
       tool_call_id: tool_call_id,
       tool_call_name: tool_display_text || tool_name,
       parent_message_id: message_id
     }
 
-    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
-
-    # ToolCallArgs with JSON-encoded arguments (with runId and threadId)
-    args_json = Jason.encode!(tool_arguments)
-
-    event = %ToolCallArgs{
+    args_event = %ToolCallArgs{
       tool_call_id: tool_call_id,
-      delta: args_json
+      delta: Jason.encode!(tool_arguments)
     }
 
-    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+    end_event = %ToolCallEnd{tool_call_id: tool_call_id}
 
-    # ToolCallEnd (with runId and threadId)
-    event = %ToolCallEnd{
-      tool_call_id: tool_call_id
-    }
-
-    push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+    updated_socket =
+      updated_socket
+      |> push_ag_ui_event_with_ids(start_event, run_id, thread_id)
+      |> push_ag_ui_event_with_ids(args_event, run_id, thread_id)
+      |> push_ag_ui_event_with_ids(end_event, run_id, thread_id)
 
     {:noreply, updated_socket}
   end
@@ -624,20 +631,15 @@ defmodule TrentoWeb.AIAssistantChannel do
       tool_call_id = tool_info[:call_id]
       result = tool_info[:result] || %{}
 
-      # Generate a message ID for the tool result
-      result_message_id = "tool_result_#{tool_call_id}"
-
-      # Encode result as JSON string
-      result_json = Jason.encode!(result)
-
-      event = %ToolCallResult{
-        message_id: result_message_id,
+      # Synthesize a stable per-result message id for the AG-UI event
+      result_event = %ToolCallResult{
+        message_id: "tool_result_#{tool_call_id}",
         tool_call_id: tool_call_id,
-        content: result_json,
+        content: Jason.encode!(result),
         role: "tool"
       }
 
-      push_ag_ui_event_with_ids(updated_socket, event, run_id, thread_id)
+      push_ag_ui_event_with_ids(updated_socket, result_event, run_id, thread_id)
     end
 
     {:noreply, updated_socket}
@@ -696,18 +698,16 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   defp emit_text_message_end(socket, message_id, run_id, thread_id) do
-    event = %TextMessageEnd{message_id: message_id}
-    push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
-    socket
+    push_ag_ui_event_with_ids(
+      socket,
+      %TextMessageEnd{message_id: message_id},
+      run_id,
+      thread_id
+    )
   end
 
   defp emit_run_finished(socket, run_id, thread_id) do
-    push_ag_ui_event(socket, %RunFinished{
-      thread_id: thread_id,
-      run_id: run_id
-    })
-
-    socket
+    push_ag_ui_event(socket, %RunFinished{thread_id: thread_id, run_id: run_id})
   end
 
   defp load_conversation(socket, conversation_id) do
