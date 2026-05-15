@@ -41,7 +41,7 @@ jobs:
           version-file: .tool-versions
           version-type: strict
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
         with:
           path: |
@@ -71,7 +71,7 @@ jobs:
         uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
         id: tool-versions
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
@@ -97,7 +97,7 @@ jobs:
         uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
         id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -155,7 +155,7 @@ jobs:
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
         with:
           path: |
@@ -164,14 +164,14 @@ jobs:
             priv/plts
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
