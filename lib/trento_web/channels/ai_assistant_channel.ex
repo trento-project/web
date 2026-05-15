@@ -136,11 +136,14 @@ defmodule TrentoWeb.AIAssistantChannel do
           "message" => message_text,
           "run_id" => run_id,
           "thread_id" => thread_id
-        } = params,
+        },
         socket
       )
       when is_binary(message_text) and is_binary(run_id) and is_binary(thread_id) do
-    do_handle_incoming_message(socket, message_text, params)
+    socket
+    |> assign(:current_run_id, run_id)
+    |> assign(:current_thread_id, thread_id)
+    |> handle_incoming_message(message_text)
   end
 
   def handle_in("send_message", payload, socket) do
@@ -185,18 +188,18 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
-  defp do_handle_incoming_message(socket, message_text, params) do
+  defp handle_incoming_message(socket, message_text) do
     message_text = String.trim(message_text)
 
     if message_text == "" or socket.assigns.loading do
       {:noreply, socket}
     else
-      execute_agent_message(socket, message_text, params)
+      execute_agent_message(socket, message_text)
     end
   end
 
   # Execute agent message with user input
-  defp execute_agent_message(socket, message_text, params) do
+  defp execute_agent_message(socket, message_text) do
     current_user_id = socket.assigns.current_scope.id
 
     {:ok,
@@ -220,17 +223,13 @@ defmodule TrentoWeb.AIAssistantChannel do
         :openai -> AgenticRuntime.build_openai_model_config(model, api_key)
         :anthropic -> AgenticRuntime.build_anthropic_model_config(model, api_key)
       end
-      |> start_agent(socket, message_text, params)
+      |> start_agent(socket, message_text)
     else
       push(socket, "agent_error", %{message: "Failed to start agent. Selected model is invalid."})
     end
   end
 
-  defp start_agent(model_config, socket, message_text, params) do
-    # run_id and thread_id come from the client
-    run_id = params["run_id"]
-    thread_id = params["thread_id"]
-
+  defp start_agent(model_config, socket, message_text) do
     # Create conversation if this is the first message
     socket =
       case socket.assigns.conversation_id do
@@ -244,9 +243,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       socket,
       conversation_id,
       model_config,
-      message_text,
-      run_id,
-      thread_id
+      message_text
     )
   end
 
@@ -255,9 +252,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          socket,
          conversation_id,
          model_config,
-         message_text,
-         run_id,
-         thread_id
+         message_text
        ) do
     case Coordinator.start_conversation_session(conversation_id,
            # DISABLED (plan: valiant-twirling-crown): filesystem_scope no longer required;
@@ -272,7 +267,7 @@ defmodule TrentoWeb.AIAssistantChannel do
            ]
          ) do
       {:ok, session} ->
-        execute_agent_with_message(socket, session, message_text, run_id, thread_id)
+        execute_agent_with_message(socket, session, message_text)
 
       {:error, reason} ->
         Logger.error("Failed to ensure agent running: #{inspect(reason)}")
@@ -286,7 +281,16 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   # Execute agent with user message
-  defp execute_agent_with_message(socket, session, message_text, run_id, thread_id) do
+  defp execute_agent_with_message(
+         %{
+           assigns: %{
+             current_run_id: run_id,
+             current_thread_id: thread_id
+           }
+         } = socket,
+         session,
+         message_text
+       ) do
     langchain_message = AgenticRuntime.build_new_user_message!(message_text)
 
     case AgenticRuntime.add_message(session.agent_id, langchain_message) do
@@ -303,8 +307,6 @@ defmodule TrentoWeb.AIAssistantChannel do
          socket
          #  |> assign(:input, "")
          |> assign(:loading, true)
-         |> assign(:current_run_id, run_id)
-         |> assign(:current_thread_id, thread_id)
          |> assign(:message_id, run_id)
          |> assign(:message_started, false)
          |> assign(:run_has_started, false)}
@@ -384,8 +386,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     socket =
       if message_started do
         # Emit completion events now
-        socket = emit_text_message_end_if_present(socket, message_id, run_id, thread_id)
-        emit_run_finished_if_present(socket, run_id, thread_id)
+        socket = emit_text_message_end(socket, message_id, run_id, thread_id)
+        emit_run_finished(socket, run_id, thread_id)
         assign(socket, :message_started, false)
       else
         # Still no message - emit RUN_FINISHED without TEXT_MESSAGE_END
@@ -393,7 +395,7 @@ defmodule TrentoWeb.AIAssistantChannel do
           "No message started even after delay - completing run without text message"
         )
 
-        emit_run_finished_if_present(socket, run_id, thread_id)
+        emit_run_finished(socket, run_id, thread_id)
       end
 
     {:noreply, socket}
@@ -416,8 +418,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
-    run_id = socket.assigns[:current_run_id]
-    thread_id = socket.assigns[:current_thread_id]
+    run_id = socket.assigns.current_run_id
+    thread_id = socket.assigns.current_thread_id
 
     socket =
       socket
@@ -443,8 +445,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   #     "Agent execution interrupted but no interrupt UI is wired: #{inspect(interrupt_data)}"
   #   )
   #
-  #   run_id = socket.assigns[:current_run_id]
-  #   thread_id = socket.assigns[:current_thread_id]
+  #   run_id = socket.assigns.current_run_id
+  #   thread_id = socket.assigns.current_thread_id
   #
   #   push_ag_ui_event_with_ids(
   #     socket,
@@ -462,9 +464,9 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:llm_deltas, deltas}}, socket) do
     updated_socket = IntegrationHelpers.handle_llm_deltas(socket, deltas)
 
-    run_id = socket.assigns[:current_run_id]
-    thread_id = socket.assigns[:current_thread_id]
-    message_id = socket.assigns[:message_id]
+    run_id = socket.assigns.current_run_id
+    thread_id = socket.assigns.current_thread_id
+    message_id = socket.assigns.message_id
     message_started = socket.assigns[:message_started] || false
 
     delta_text =
@@ -572,9 +574,9 @@ defmodule TrentoWeb.AIAssistantChannel do
     updated_socket = IntegrationHelpers.handle_tool_call_identified(socket, tool_info)
 
     # Emit AG UI protocol events for tool call
-    run_id = socket.assigns[:current_run_id]
-    thread_id = socket.assigns[:current_thread_id]
-    message_id = socket.assigns[:message_id]
+    run_id = socket.assigns.current_run_id
+    thread_id = socket.assigns.current_thread_id
+    message_id = socket.assigns.message_id
     tool_name = tool_info[:name]
     tool_arguments = tool_info[:arguments]
     tool_display_text = tool_info[:display_text]
@@ -617,8 +619,8 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     # Emit AG UI ToolCallResult event when execution completes
     if status == :completed do
-      run_id = socket.assigns[:current_run_id]
-      thread_id = socket.assigns[:current_thread_id]
+      run_id = socket.assigns.current_run_id
+      thread_id = socket.assigns.current_thread_id
       tool_call_id = tool_info[:call_id]
       result = tool_info[:result] || %{}
 
@@ -666,9 +668,9 @@ defmodule TrentoWeb.AIAssistantChannel do
     # Emit TEXT_MESSAGE_END and RUN_FINISHED when agent completes
     # But ONLY if we've started streaming (message_started = true)
     # This prevents race conditions where :idle arrives before :llm_deltas
-    message_id = socket.assigns[:message_id]
-    run_id = socket.assigns[:current_run_id]
-    thread_id = socket.assigns[:current_thread_id]
+    message_id = socket.assigns.message_id
+    run_id = socket.assigns.current_run_id
+    thread_id = socket.assigns.current_thread_id
     message_started = socket.assigns[:message_started] || false
 
     Logger.info("Idle handler - message_started: #{message_started}")
@@ -677,8 +679,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     updated_socket =
       if message_started do
         socket
-        |> emit_text_message_end_if_present(message_id, run_id, thread_id)
-        |> emit_run_finished_if_present(run_id, thread_id)
+        |> emit_text_message_end(message_id, run_id, thread_id)
+        |> emit_run_finished(run_id, thread_id)
         |> IntegrationHelpers.handle_status_idle()
         |> assign(:message_started, false)
         |> assign(:run_has_started, false)
@@ -693,24 +695,17 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, updated_socket}
   end
 
-  # Helper to emit TextMessageEnd if message_id is present
-  defp emit_text_message_end_if_present(socket, message_id, run_id, thread_id) do
-    if message_id do
-      event = %TextMessageEnd{message_id: message_id}
-      push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
-    end
-
+  defp emit_text_message_end(socket, message_id, run_id, thread_id) do
+    event = %TextMessageEnd{message_id: message_id}
+    push_ag_ui_event_with_ids(socket, event, run_id, thread_id)
     socket
   end
 
-  # Helper to emit RunFinished if run_id and thread_id are present
-  defp emit_run_finished_if_present(socket, run_id, thread_id) do
-    if run_id && thread_id do
-      push_ag_ui_event(socket, %RunFinished{
-        thread_id: thread_id,
-        run_id: run_id
-      })
-    end
+  defp emit_run_finished(socket, run_id, thread_id) do
+    push_ag_ui_event(socket, %RunFinished{
+      thread_id: thread_id,
+      run_id: run_id
+    })
 
     socket
   end
