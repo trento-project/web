@@ -77,6 +77,22 @@ test_ai_config =
 
 Application.put_env(:trento, :ai, test_ai_config)
 
+# Mox doubles for the agentic_runtime adapter boundaries used by
+# TrentoWeb.AIAssistantChannel. The Application.put_env override is
+# NOT done globally here — Trento.Application calls
+# `AgenticRuntime.start_runtime([])` at boot, which would hit the
+# Mock without expectations and cascade-crash Trento.Repo. Tests
+# that need the Mock opt in per-describe via
+# `Application.put_env` + `on_exit` (see
+# `test/trento_web/channels/ai_assistant_channel_test.exs`).
+Mox.defmock(AgenticRuntime.Agents.ServerAdapter.Mock,
+  for: AgenticRuntime.Agents.ServerAdapter
+)
+
+Mox.defmock(AgenticRuntime.Agents.SupervisorAdapter.Mock,
+  for: AgenticRuntime.Agents.SupervisorAdapter
+)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do
