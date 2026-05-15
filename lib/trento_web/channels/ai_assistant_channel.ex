@@ -129,16 +129,6 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
-  # Generate a unique run ID for AG UI protocol
-  defp generate_run_id do
-    Base.encode16(:crypto.strong_rand_bytes(16), case: :lower)
-  end
-
-  # Generate a unique tool call ID for AG UI protocol
-  defp generate_tool_call_id do
-    "tool_" <> Base.encode16(:crypto.strong_rand_bytes(8), case: :lower)
-  end
-
   @impl true
   def handle_in("send_message", %{"message" => message_text} = params, socket) do
     message_text = String.trim(message_text)
@@ -219,8 +209,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   defp start_agent(model_config, socket, message_text, params) do
-    # Store run_id for tracking this execution (generate if not provided)
-    run_id = params["run_id"] || generate_run_id()
+    # run_id and thread_id come from the client
+    run_id = params["run_id"]
     thread_id = params["thread_id"]
 
     # Create conversation if this is the first message
@@ -567,22 +557,17 @@ defmodule TrentoWeb.AIAssistantChannel do
     run_id = socket.assigns[:current_run_id]
     thread_id = socket.assigns[:current_thread_id]
     message_id = socket.assigns[:message_id]
-    tool_name = tool_info[:name] || tool_info["name"]
-    tool_arguments = tool_info[:arguments] || tool_info["arguments"]
+    tool_name = tool_info[:name]
+    tool_arguments = tool_info[:arguments]
+    tool_display_text = tool_info[:display_text]
+    tool_call_id = tool_info[:call_id]
 
-    # Get the tool_call_id from tool_info (use call_id, not id)
-    tool_call_id = tool_info[:call_id] || tool_info["call_id"] || generate_tool_call_id()
-
-    # Store tool_call_id mapping for later use (e.g., tool results)
-    tool_call_ids = socket.assigns[:tool_call_ids] || %{}
-
-    updated_socket =
-      assign(updated_socket, :tool_call_ids, Map.put(tool_call_ids, tool_name, tool_call_id))
-
-    # ToolCallStart (with runId and threadId)
+    # ToolCallStart (with runId and threadId).
+    # Prefer the human-friendly display_text for the UI label; fall back
+    # to the technical tool name if the LLM/tool definition didn't set one.
     event = %ToolCallStart{
       tool_call_id: tool_call_id,
-      tool_call_name: tool_name,
+      tool_call_name: tool_display_text || tool_name,
       parent_message_id: message_id
     }
 
@@ -616,16 +601,8 @@ defmodule TrentoWeb.AIAssistantChannel do
     if status == :completed do
       run_id = socket.assigns[:current_run_id]
       thread_id = socket.assigns[:current_thread_id]
-      tool_name = tool_info[:name] || tool_info["name"]
-
-      # Get the tool_call_id (use call_id from tool_info or the stored mapping)
-      tool_call_ids = socket.assigns[:tool_call_ids] || %{}
-
-      tool_call_id =
-        tool_info[:call_id] || tool_info["call_id"] || tool_call_ids[tool_name] ||
-          generate_tool_call_id()
-
-      result = tool_info[:result] || tool_info["result"] || %{}
+      tool_call_id = tool_info[:call_id]
+      result = tool_info[:result] || %{}
 
       # Generate a message ID for the tool result
       result_message_id = "tool_result_#{tool_call_id}"
