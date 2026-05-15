@@ -48,7 +48,7 @@
   "floki": {:hex, :floki, "0.38.1", "f002ccac94b3bcb21d40d9b34cc2cc9fd88a8311879120330075b5dde657ebee", [:mix], [], "hexpm", "e744bf0db7ee34b2c8b62767f04071107af0516a81144b9a2f73fe0494200e5b"},
   "flop": {:hex, :flop, "0.25.0", "0667f3c65f140b2ed7d64dad01b8e0e3dcc071addf8a556d11b36cad1619a6c1", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "7e4b01b76412c77691e9aaea6903c5a8212fb7243198e1d2ba74fa15f2aec34c"},
   "fsm": {:hex, :fsm, "0.3.1", "087aa9b02779a84320dc7a2d8464452b5308e29877921b2bde81cdba32a12390", [:mix], [], "hexpm", "fbf0d53f89e9082b326b0b5828b94b4c549ff9d1452bbfd00b4d1ac082208e96"},
-  "gen_rmq": {:git, "https://github.com/cdimonaco/gen_rmq.git", "b8041734b4e0af61a851087652cb005e0bdec63e", [ref: "v5.0.1"]},
+  "gen_rmq": {:git, "https://github.com/trento-project/trnt_gen_rmq.git", "b8041734b4e0af61a851087652cb005e0bdec63e", [ref: "v5.0.1"]},
   "gen_smtp": {:hex, :gen_smtp, "1.2.0", "9cfc75c72a8821588b9b9fe947ae5ab2aed95a052b81237e0928633a13276fd3", [:rebar3], [{:ranch, ">= 1.8.0", [hex: :ranch, repo: "hexpm", optional: false]}], "hexpm", "5ee0375680bca8f20c4d85f58c2894441443a743355430ff33a783fe03296779"},
   "gen_stage": {:hex, :gen_stage, "1.3.2", "7c77e5d1e97de2c6c2f78f306f463bca64bf2f4c3cdd606affc0100b89743b7b", [:mix], [], "hexpm", "0ffae547fa777b3ed889a6b9e1e64566217413d018cabd825f786e843ffe63e7"},
   "gettext": {:hex, :gettext, "0.24.0", "6f4d90ac5f3111673cbefc4ebee96fe5f37a114861ab8c7b7d5b30a1108ce6d8", [:mix], [{:expo, "~> 0.5.1", [hex: :expo, repo: "hexpm", optional: false]}], "hexpm", "bdf75cdfcbe9e4622dd18e034b227d77dd17f0f133853a1c73b97b3d6c770e8b"},
