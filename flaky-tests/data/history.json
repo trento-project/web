@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-03T03:57:03Z",
-    "commit": "b8ad8ce4166e05da624b4be4751564144bbe6d34",
-    "run_id": "23932773286",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users update_user/2 updates the user abilities",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-03T03:57:46Z",
     "commit": "b8ad8ce4166e05da624b4be4751564144bbe6d34",
     "run_id": "23932773286",
@@ -6619,6 +6591,50 @@
       },
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-16T22:14:51Z",
+    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
+    "run_id": "25970953438",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 18
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1140
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1104
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.08296
+      },
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.07501
+      },
+      {
+        "name": "should not deregister database instances if the SAP system using the database is deregistered::Databases Overview Deregistration should not deregister database instances if the SAP system using the database is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should deregister an application instance::SAP Systems Overview Instance deregistration should deregister an application instance",
+        "score": 0.02501
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.02501
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
       }
     ]
