@@ -6,6 +6,7 @@ const { defineConfig } = require('cypress');
 const DEMO = 'demo';
 const DEV = 'dev';
 
+// Whitelist of environment variables allowed to override 'expose' configuration
 const PUBLIC_CONFIG_KEYS = [
   'ALERTING_DB_TESTS',
   'ALERTING_TESTS',
@@ -20,6 +21,7 @@ const PUBLIC_CONFIG_KEYS = [
   'web_mode',
 ];
 
+// Filters Cypress.env to only include allowed keys from the whitelist
 const getPublicEnvOverrides = (env = {}) => {
   const overrides = {};
 
@@ -30,6 +32,7 @@ const getPublicEnvOverrides = (env = {}) => {
   return overrides;
 };
 
+// Merges default 'expose' config with environment overrides (overrides take precedence)
 const exposePublicConfig = (config) => ({
   ...config.expose,
   ...getPublicEnvOverrides(config.env),
@@ -49,6 +52,7 @@ module.exports = defineConfig({
   viewportWidth: 1366,
   viewportHeight: 768,
   defaultCommandTimeout: 10000,
+  // Default public configuration (can be overridden by environment variables)
   expose: {
     project_root: '../..',
     photofinish_binary: 'photofinish',
@@ -56,6 +60,7 @@ module.exports = defineConfig({
     wanda_mode: DEMO, //demo: local dev instance with, docker compose with wanda profile / prod: instance installed via rpm
     web_mode: DEV, //dev: local dev instance / prod: instance installed via rpm
   },
+  // Internal Cypress environment variables (not exposed by default)
   env: {
     heartbeat_interval: 5000,
     login_user: 'admin',
