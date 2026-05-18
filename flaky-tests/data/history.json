@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-04-04T07:11:08Z",
-    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
-    "run_id": "23971232718",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 18
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
-        "score": 0.5
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1185
-      },
-      {
-        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
-        "score": 0.1127
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-05T04:06:30Z",
     "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
     "run_id": "23993746197",
@@ -6635,6 +6595,22 @@
       {
         "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-18T19:35:30Z",
+    "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
+    "run_id": "26054934825",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05453
       }
     ]
   }
