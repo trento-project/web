@@ -305,7 +305,7 @@ context('HANA cluster details', () => {
     const CHECK_SBD = 'SBD';
 
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
