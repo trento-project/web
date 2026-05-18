@@ -55,7 +55,7 @@ describe('SuseManagerSettingsModal component', () => {
   });
 
   it('should try to save all the fields', async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ delay: null });
     const url = faker.internet.url();
     const username = faker.word.noun();
     const password = faker.word.noun();
