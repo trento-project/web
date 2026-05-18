@@ -32,11 +32,19 @@ const prepareStateData = (checkExecutionStatus) => {
   const [{ id: agent1 }, { id: agent2 }] = clusterHosts;
   const targets = [agent1, agent2];
 
-  const expectationName1 = faker.company.name();
-  const expectationName2 = faker.company.name();
-  const expectationName3 = faker.company.name();
-  const expectationName4 = faker.company.name();
-  const expectationName5 = faker.company.name();
+  const check1Expectations = [
+    ...catalogExpectExpectationFactory.buildList(2),
+    catalogExpectSameExpectationFactory.build(),
+  ];
+  const check2Expectations = catalogExpectExpectationFactory.buildList(2);
+
+  const [
+    { name: expectationName1 },
+    { name: expectationName2 },
+    { name: expectationName3 },
+  ] = check1Expectations;
+  const [{ name: expectationName4 }, { name: expectationName5 }] =
+    check2Expectations;
 
   let checkResult1 = emptyCheckResultFactory.build({
     checkID: checkID1,
@@ -82,29 +90,12 @@ const prepareStateData = (checkExecutionStatus) => {
       catalogCheckFactory.build({
         id: checkID1,
         description: aCheckDescription,
-        expectations: [
-          catalogExpectExpectationFactory.build({
-            name: expectationName1,
-          }),
-          catalogExpectExpectationFactory.build({
-            name: expectationName2,
-          }),
-          catalogExpectSameExpectationFactory.build({
-            name: expectationName3,
-          }),
-        ],
+        expectations: check1Expectations,
       }),
       catalogCheckFactory.build({
         id: checkID2,
         description: anotherCheckDescription,
-        expectations: [
-          catalogExpectExpectationFactory.build({
-            name: expectationName4,
-          }),
-          catalogExpectExpectationFactory.build({
-            name: expectationName5,
-          }),
-        ],
+        expectations: check2Expectations,
       }),
     ],
     error: null,

@@ -5,29 +5,23 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { EXPECT, EXPECT_ENUM, EXPECT_SAME } from '@lib/model';
 
-export const catalogExpectExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT,
-    expression: faker.lorem.sentence(),
-  })
-);
+export const catalogExpectExpectationFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  type: EXPECT,
+  expression: faker.lorem.sentence(),
+}));
 
-export const catalogExpectSameExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT_SAME,
-    expression: faker.lorem.sentence(),
-  })
-);
+export const catalogExpectSameExpectationFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  type: EXPECT_SAME,
+  expression: faker.lorem.sentence(),
+}));
 
-export const catalogExpectEnumExpectationFactory = Factory.define(
-  ({ sequence }) => ({
-    name: `${faker.lorem.word()}_${sequence}`,
-    type: EXPECT_ENUM,
-    expression: faker.lorem.sentence(),
-  })
-);
+export const catalogExpectEnumExpectationFactory = Factory.define(() => ({
+  name: faker.string.uuid(),
+  type: EXPECT_ENUM,
+  expression: faker.lorem.sentence(),
+}));
 
 export const catalogConditionFactory = Factory.define(() => ({
   value: faker.lorem.word(),
