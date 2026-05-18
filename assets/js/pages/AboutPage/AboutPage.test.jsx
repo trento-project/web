@@ -9,7 +9,13 @@ import { renderWithRouter } from '@lib/test-utils';
 import AboutPage from './AboutPage';
 
 describe('AboutPage component', () => {
-  const apiRequestData = aboutFactory.build();
+  const apiRequestData = aboutFactory.build({
+    wanda_version: '1.0.0-wanda',
+    checks_version: '1.0.0-checks',
+    postgres_version: '1.0.0-postgres',
+    rabbitmq_version: '1.0.0-rabbitmq',
+    prometheus_version: '1.0.0-prometheus',
+  });
   it('should render the about page with content from the api', async () => {
     await act(async () => {
       renderWithRouter(
