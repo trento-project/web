@@ -169,17 +169,15 @@ export const removeTagButtonIsEnabled = () =>
 
 const getLoginCredentials = (username, password) => {
   if (username !== undefined && password !== undefined) {
-    return cy.wrap({ username, password }, { log: false });
+    return cy.wrap({ username, password });
   }
 
   return cy
-    .env(['login_user', 'login_password'], { log: false })
-    .then(
-      ({ login_user: defaultUsername, login_password: defaultPassword }) => ({
-        username: username ?? defaultUsername,
-        password: password ?? defaultPassword,
-      })
-    );
+    .env(['login_user', 'login_password'])
+    .then(({ login_user, login_password }) => ({
+      username: login_user,
+      password: login_password,
+    }));
 };
 
 const requestLogin = (credentials) =>
