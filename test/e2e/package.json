@@ -8,7 +8,7 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "cypress": "^15.13.1",
+    "cypress": "^15.14.2",
     "cypress-split": "^1.24.31",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.3.0",
