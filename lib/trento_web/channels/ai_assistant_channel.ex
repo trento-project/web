@@ -9,6 +9,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   `Sagents.AgentServer` keyed on the JS-supplied `thread_id`. State lives in
   the AgentServer until inactivity timeout.
 
+  AG-UI wire emission lives in `TrentoWeb.AIAssistant.AgUi`.
+
   ## Socket assigns
 
   The channel keeps a small set of process-local assigns to track the
@@ -47,21 +49,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.ModelConfig
   alias Trento.Users.User
-
-  alias AgUi.Core.Events.{
-    RunError,
-    RunFinished,
-    RunStarted,
-    TextMessageContent,
-    TextMessageEnd,
-    TextMessageStart,
-    ToolCallArgs,
-    ToolCallEnd,
-    ToolCallResult,
-    ToolCallStart
-  }
-
-  alias AgUi.Encoder.EventEncoder
+  alias TrentoWeb.AIAssistant.AgUi
 
   @impl true
   def join(
@@ -79,20 +67,14 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 
-  def join("ai_assistant:" <> _user_id, _payload, _socket) do
-    {:error, :user_not_logged}
-  end
+  def join("ai_assistant:" <> _user_id, _payload, _socket), do: {:error, :user_not_logged}
 
   defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
 
   @impl true
   def handle_in(
         "send_message",
-        %{
-          "message" => prompt,
-          "run_id" => run_id,
-          "thread_id" => thread_id
-        },
+        %{"message" => prompt, "run_id" => run_id, "thread_id" => thread_id},
         socket
       )
       when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
@@ -109,8 +91,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   defp handle_incoming_prompt(%{assigns: %{loading: true}} = socket, _prompt),
     do: {:noreply, socket}
 
-  defp handle_incoming_prompt(socket, ""),
-    do: {:noreply, socket}
+  defp handle_incoming_prompt(socket, ""), do: {:noreply, socket}
 
   defp handle_incoming_prompt(
          %{assigns: %{current_scope: %{id: current_user_id}}} = socket,
@@ -120,20 +101,18 @@ defmodule TrentoWeb.AIAssistantChannel do
       {:ok, model_config} ->
         run_agent(socket, model_config, prompt)
 
-      error ->
-        emit_run_error(socket, model_setup_error_message(error))
-        {:noreply, socket}
+      {:error, :no_ai_configuration} ->
+        {:noreply,
+         AgUi.run_error(socket, "Failed to start agent. No AI configuration found for user.")}
+
+      {:error, :unsupported_provider} ->
+        {:noreply,
+         AgUi.run_error(socket, "Failed to start agent. Unsupported AI provider configured.")}
+
+      {:error, :user_not_found} ->
+        {:noreply, AgUi.run_error(socket, "Failed to start agent. User not found.")}
     end
   end
-
-  defp model_setup_error_message({:error, :no_ai_configuration}),
-    do: "Failed to start agent. No AI configuration found for user."
-
-  defp model_setup_error_message({:error, :unsupported_provider}),
-    do: "Failed to start agent. Unsupported AI provider configured."
-
-  defp model_setup_error_message({:error, :user_not_found}),
-    do: "Failed to start agent. User not found."
 
   defp run_agent(
          %{
@@ -152,20 +131,17 @@ defmodule TrentoWeb.AIAssistantChannel do
       with {:ok, _} <- ensure_agent_started(thread_id, agent),
            :ok <- AgentServer.subscribe(thread_id),
            :ok <- AgentServer.add_message(thread_id, Message.new_user!(prompt)) do
-        Logger.info("Agent execution started for thread #{thread_id}")
-
         socket
         |> activate_run(run_id)
-        |> push_ag_ui_event(%RunStarted{thread_id: thread_id, run_id: run_id})
+        |> AgUi.run_started(run_id, thread_id)
       else
         {:error, reason} ->
           error_msg = "Failed to start agent: #{inspect(reason)}"
-
           Logger.error(error_msg)
 
           socket
           |> reset_run()
-          |> emit_run_error(error_msg)
+          |> AgUi.run_error(error_msg)
       end
 
     {:noreply, updated_socket}
@@ -180,10 +156,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_info({:agent, {:status_changed, :running, nil}}, socket) do
-    Logger.info("Agent is running")
-    {:noreply, assign(socket, :run_has_started, true)}
-  end
+  def handle_info({:agent, {:status_changed, :running, nil}}, socket),
+    do: {:noreply, assign(socket, :run_has_started, true)}
 
   @impl true
   def handle_info(
@@ -198,13 +172,11 @@ defmodule TrentoWeb.AIAssistantChannel do
           }
         } = socket
       ) do
-    Logger.info("Agent returned to idle state (execution completed)")
-
     {:noreply,
      socket
-     |> maybe_emit_text_message_end(message_started, message_id)
+     |> AgUi.maybe_text_message_end(message_started, message_id)
      |> reset_run()
-     |> emit_run_finished(run_id, thread_id)}
+     |> AgUi.run_finished(run_id, thread_id)}
   end
 
   def handle_info(
@@ -219,10 +191,16 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
+    error_message =
+      case reason do
+        %LangChainError{message: m} -> "Sorry, I encountered an error: #{m}"
+        other -> "Sorry, I encountered an error: #{inspect(other)}"
+      end
+
     {:noreply,
      socket
      |> reset_run()
-     |> emit_run_error(format_error_message(reason))}
+     |> AgUi.run_error(error_message)}
   end
 
   @impl true
@@ -230,121 +208,37 @@ defmodule TrentoWeb.AIAssistantChannel do
         {:agent, {:llm_deltas, deltas}},
         %{assigns: %{message_id: message_id}} = socket
       ) do
-    deltas
-    |> Enum.map_join("", fn
-      %{content: %{type: :text, content: text}} -> text
-      %{content: text} when is_binary(text) -> text
-      text when is_binary(text) -> text
-      _ -> ""
-    end)
-    |> then(
-      &{:noreply,
-       socket
-       |> maybe_emit_text_message_start()
-       |> maybe_emit_text_message_content(message_id, &1)}
-    )
-  end
-
-  # AG-UI tool-call lifecycle is split across 4 wire events per call:
-  #
-  #   TOOL_CALL_START{tool_call_id, tool_call_name}
-  #   TOOL_CALL_ARGS{tool_call_id, delta}        one or more (streaming)
-  #   TOOL_CALL_END{tool_call_id}
-  #   TOOL_CALL_RESULT{tool_call_id, content}    after execution
-  #
-  # Sagents collapses streamed argument JSON into a single in-memory map
-  # before broadcasting :tool_call_identified, so we synthesize Start +
-  # single Args + End back-to-back here. assistant-ui's React runtime
-  # doesn't care if Args is 1 chunk or N.
-  @impl true
-  def handle_info({:agent, {:tool_call_identified, tool_info}}, socket) do
-    message_id = socket.assigns.message_id
-    tool_call_id = tool_info[:call_id]
-    tool_name = tool_info[:name]
-    tool_arguments = tool_info[:arguments]
-    tool_display_text = tool_info[:display_text]
-
-    tool_call_start = %ToolCallStart{
-      tool_call_id: tool_call_id,
-      tool_call_name: tool_display_text || tool_name,
-      parent_message_id: message_id
-    }
-
-    tool_call_args = %ToolCallArgs{
-      tool_call_id: tool_call_id,
-      delta: Jason.encode!(tool_arguments)
-    }
-
-    tool_call_end = %ToolCallEnd{tool_call_id: tool_call_id}
+    text = Enum.map_join(deltas, "", &delta_text/1)
 
     {:noreply,
      socket
-     |> push_ag_ui_event(tool_call_start)
-     |> push_ag_ui_event(tool_call_args)
-     |> push_ag_ui_event(tool_call_end)}
+     |> AgUi.maybe_text_message_start()
+     |> AgUi.maybe_text_message_content(message_id, text)}
   end
 
   @impl true
-  def handle_info({:agent, {:tool_execution_update, :completed, tool_info}}, socket) do
-    tool_call_id = tool_info[:call_id]
-    result = tool_info[:result] || %{}
-
-    {:noreply,
-     push_ag_ui_event(socket, %ToolCallResult{
-       message_id: "tool_result_#{tool_call_id}",
-       tool_call_id: tool_call_id,
-       content: Jason.encode!(result),
-       role: "tool"
-     })}
+  def handle_info(
+        {:agent, {:tool_call_identified, tool_info}},
+        %{assigns: %{message_id: message_id}} = socket
+      ) do
+    {:noreply, AgUi.tool_call_lifecycle(socket, tool_info, message_id)}
   end
 
   @impl true
-  def handle_info(_msg, socket) do
-    {:noreply, socket}
+  def handle_info(
+        {:agent, {:tool_execution_update, :completed, %{call_id: call_id} = tool_info}},
+        socket
+      ) do
+    {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
   end
 
-  defp maybe_emit_text_message_start(%{assigns: %{message_started: true}} = socket), do: socket
+  @impl true
+  def handle_info(_msg, socket), do: {:noreply, socket}
 
-  defp maybe_emit_text_message_start(%{assigns: %{message_id: message_id}} = socket) do
-    socket
-    |> push_ag_ui_event(%TextMessageStart{message_id: message_id, role: "assistant"})
-    |> assign(:message_started, true)
-  end
-
-  defp maybe_emit_text_message_content(socket, _message_id, ""), do: socket
-
-  defp maybe_emit_text_message_content(socket, message_id, delta_text) do
-    push_ag_ui_event(socket, %TextMessageContent{message_id: message_id, delta: delta_text})
-  end
-
-  defp maybe_emit_text_message_end(socket, true, message_id),
-    do: emit_text_message_end(socket, message_id)
-
-  defp maybe_emit_text_message_end(socket, _message_started, _message_id), do: socket
-
-  defp emit_text_message_end(socket, message_id),
-    do: push_ag_ui_event(socket, %TextMessageEnd{message_id: message_id})
-
-  defp emit_run_finished(socket, run_id, thread_id),
-    do: push_ag_ui_event(socket, %RunFinished{thread_id: thread_id, run_id: run_id})
-
-  defp emit_run_error(socket, error_message),
-    do: push_ag_ui_event(socket, %RunError{message: error_message})
-
-  defp format_error_message(%LangChainError{message: message}),
-    do: "Sorry, I encountered an error: #{message}"
-
-  defp format_error_message(reason),
-    do: "Sorry, I encountered an error: #{inspect(reason)}"
-
-  defp push_ag_ui_event(socket, event) do
-    event
-    |> EventEncoder.encode_json()
-    |> Jason.decode!()
-    |> then(&push(socket, "ag_ui_event", &1))
-
-    socket
-  end
+  defp delta_text(%{content: %{type: :text, content: text}}), do: text
+  defp delta_text(%{content: text}) when is_binary(text), do: text
+  defp delta_text(text) when is_binary(text), do: text
+  defp delta_text(_), do: ""
 
   # See "Mutation surfaces" in the moduledoc.
   defp stash_run_ids(socket, run_id, thread_id) do
