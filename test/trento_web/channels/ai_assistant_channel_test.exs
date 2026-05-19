@@ -150,7 +150,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1", "threadId" => "t1"})
     end
 
-    test "schedules delayed_completion when :idle arrives before streaming started",
+    test "skips TEXT_MESSAGE_END when :idle arrives but message_started is false",
          %{socket: socket} do
       seed_assigns(socket, %{
         run_has_started: true,
@@ -162,7 +162,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
 
-      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1"}, 1500)
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1"})
       refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_END"}, 100)
     end
   end
@@ -361,28 +361,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       send(socket.channel_pid, {:agent, {:tool_execution_update, :failed, tool_info}})
 
       refute_push("ag_ui_event", _, 100)
-    end
-  end
-
-  describe "handle_info {:delayed_completion, ...}" do
-    setup :join_socket
-
-    test "emits TEXT_MESSAGE_END + RUN_FINISHED when message_started is true",
-         %{socket: socket} do
-      seed_assigns(socket, %{message_started: true})
-
-      send(socket.channel_pid, {:delayed_completion, "r1", "t1", "m1"})
-
-      assert_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_END", "messageId" => "m1"})
-      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1", "threadId" => "t1"})
-    end
-
-    test "emits only RUN_FINISHED when message_started is false (no text was streamed)",
-         %{socket: socket} do
-      send(socket.channel_pid, {:delayed_completion, "r1", "t1", "m1"})
-
-      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1"})
-      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_END"}, 100)
     end
   end
 

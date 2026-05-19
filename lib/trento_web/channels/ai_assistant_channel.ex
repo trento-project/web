@@ -165,11 +165,25 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info(
         {:agent, {:status_changed, :idle, _data}},
-        %{assigns: %{run_has_started: true}} = socket
+        %{
+          assigns: %{
+            run_has_started: true,
+            message_started: message_started,
+            message_id: message_id,
+            current_thread_id: thread_id,
+            current_run_id: run_id
+          }
+        } = socket
       ) do
     Logger.info("Agent returned to idle state (execution completed)")
 
-    handle_run_completion(socket)
+    {:noreply,
+     socket
+     |> maybe_emit_text_message_end(message_started, message_id)
+     |> emit_run_finished(run_id, thread_id)
+     |> assign(:loading, false)
+     |> assign(:message_started, false)
+     |> assign(:run_has_started, false)}
   end
 
   def handle_info(
@@ -178,29 +192,6 @@ defmodule TrentoWeb.AIAssistantChannel do
       ) do
     Logger.warning("Ignoring stale :idle event - run hasn't started yet")
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(
-        {:delayed_completion, run_id, thread_id, message_id},
-        %{assigns: %{run_has_started: true}} = socket
-      ) do
-    Logger.info("Delayed completion check")
-
-    {:noreply,
-     socket
-     |> emit_text_message_end(message_id)
-     |> emit_run_finished(run_id, thread_id)
-     |> assign(:message_started, false)}
-  end
-
-  def handle_info(
-        {:delayed_completion, run_id, thread_id, _message_id},
-        %{assigns: %{run_has_started: false}} = socket
-      ) do
-    Logger.warning("No message started even after delay - completing run without text message")
-
-    {:noreply, emit_run_finished(socket, run_id, thread_id)}
   end
 
   @impl true
@@ -310,38 +301,10 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
-  defp handle_run_completion(
-         %{
-           assigns: %{
-             message_started: true,
-             message_id: message_id,
-             current_thread_id: thread_id,
-             current_run_id: run_id
-           }
-         } = socket
-       ) do
-    {:noreply,
-     socket
-     |> emit_text_message_end(message_id)
-     |> emit_run_finished(run_id, thread_id)
-     |> assign(:loading, false)
-     |> assign(:message_started, false)
-     |> assign(:run_has_started, false)}
-  end
+  defp maybe_emit_text_message_end(socket, true, message_id),
+    do: emit_text_message_end(socket, message_id)
 
-  defp handle_run_completion(
-         %{
-           assigns: %{
-             message_id: message_id,
-             current_thread_id: thread_id,
-             current_run_id: run_id
-           }
-         } = socket
-       ) do
-    Logger.warning("Idle arrived before message started - scheduling delayed completion")
-    Process.send_after(self(), {:delayed_completion, run_id, thread_id, message_id}, 500)
-    {:noreply, assign(socket, :loading, false)}
-  end
+  defp maybe_emit_text_message_end(socket, _message_started, _message_id), do: socket
 
   defp emit_text_message_end(socket, message_id),
     do: push_ag_ui_event(socket, %TextMessageEnd{message_id: message_id})
