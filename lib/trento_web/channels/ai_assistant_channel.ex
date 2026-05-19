@@ -97,14 +97,16 @@ defmodule TrentoWeb.AIAssistantChannel do
       {:ok, model_config} ->
         run_agent(socket, model_config, prompt)
 
-      {:error, :no_ai_configuration} ->
-        {:noreply,
-         AgUi.run_error(socket, "Failed to start agent. No AI configuration found for user.")}
-
-      {:error, :user_not_found} ->
-        {:noreply, AgUi.run_error(socket, "Failed to start agent. User not found.")}
+      {:error, reason} ->
+        {:noreply, AgUi.run_error(socket, model_setup_error(reason))}
     end
   end
+
+  defp model_setup_error(:no_ai_configuration),
+    do: "Failed to start agent. No AI configuration found for user."
+
+  defp model_setup_error(:user_not_found),
+    do: "Failed to start agent. User not found."
 
   defp run_agent(
          %{
