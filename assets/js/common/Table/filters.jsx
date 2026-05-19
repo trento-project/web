@@ -60,6 +60,7 @@ const filterOptionsFromTableConfig = (config, data, value) =>
         type: 'select',
         title,
         options: filterOptions,
+        hideMobile: config.hideMobile,
       };
     });
 
