@@ -3,9 +3,21 @@
 
 defmodule Trento.AI.Agent do
   @moduledoc """
-  Factory for the Trento AI Assistant agent.
+  Factory + lifecycle entrypoint for the Trento AI Assistant agent.
+
+  `run/1` is the single side-effecting entrypoint: it builds the agent,
+  ensures the per-thread `Sagents.AgentServer` is running, subscribes the
+  **calling process** to the agent's `{:agent, ...}` PubSub stream, and
+  sends the user prompt. Callers (the Phoenix channel) only deal with
+  trento-domain arguments + the AG-UI events that arrive in their mailbox;
+  `Sagents` and `LangChain` are implementation details of this module.
+
+  `new!/1` is the pure factory (no side effects). Useful for tests that
+  want to inspect the configured agent.
   """
 
+  alias LangChain.{LangChainError, Message}
+  alias Sagents.{AgentsDynamicSupervisor, AgentServer}
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
 
   alias TrentoWeb.AIAssistantTools
@@ -78,8 +90,29 @@ defmodule Trento.AI.Agent do
   * Be aware of production system sensitivity
   """
 
+  @doc """
+  Ensure the agent for `:agent_id` is running, subscribe the calling
+  process to its event stream, and send the user prompt. Returns `:ok`
+  or the first `{:error, reason}` from the start/subscribe/send chain.
+  """
+  @spec run(keyword()) :: :ok | {:error, term()}
+  def run(opts) do
+    agent_id = Keyword.fetch!(opts, :agent_id)
+    model = Keyword.fetch!(opts, :model)
+    scope = Keyword.fetch!(opts, :scope)
+    prompt = Keyword.fetch!(opts, :prompt)
+
+    agent = new!(agent_id: agent_id, model: model, scope: scope)
+
+    with {:ok, _} <- start(agent_id, agent),
+         :ok <- AgentServer.subscribe(agent_id) do
+      AgentServer.add_message(agent_id, Message.new_user!(prompt))
+      :ok
+    end
+  end
+
   @spec new!(keyword()) :: Sagents.Agent.t()
-  def new!(opts) do
+  defp new!(opts) do
     Sagents.Agent.new!(
       %{
         agent_id: Keyword.fetch!(opts, :agent_id),
@@ -96,4 +129,23 @@ defmodule Trento.AI.Agent do
       replace_default_middleware: true
     )
   end
+
+  defp start(agent_id, agent) do
+    AgentsDynamicSupervisor.start_agent_sync(
+      agent_id: agent_id,
+      agent: agent,
+      pubsub: {Phoenix.PubSub, Trento.PubSub}
+    )
+  end
+
+  @doc """
+  Render a user-facing message for a sagents/langchain error reason
+  broadcast on the `:status_changed, :error` event.
+  """
+  @spec format_error(term()) :: String.t()
+  def format_error(%LangChainError{message: message}),
+    do: "Sorry, I encountered an error: #{message}"
+
+  def format_error(reason),
+    do: "Sorry, I encountered an error: #{inspect(reason)}"
 end

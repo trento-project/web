@@ -42,12 +42,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   use TrentoWeb, :channel
   require Logger
 
-  alias LangChain.LangChainError
-  alias LangChain.Message
-  alias Sagents.{AgentsDynamicSupervisor, AgentServer}
-
   alias Trento.AI.Agent, as: TrentoAIAgent
-  alias Trento.AI.ModelConfig
+  alias Trento.AI.LLMBuilder
   alias Trento.Users.User
   alias TrentoWeb.AIAssistant.AgUi
 
@@ -77,11 +73,11 @@ defmodule TrentoWeb.AIAssistantChannel do
         %{"message" => prompt, "run_id" => run_id, "thread_id" => thread_id},
         socket
       )
-      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
-    socket
-    |> stash_run_ids(run_id, thread_id)
-    |> handle_incoming_prompt(String.trim(prompt))
-  end
+      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id),
+      do:
+        socket
+        |> stash_run_ids(run_id, thread_id)
+        |> handle_incoming_prompt(String.trim(prompt))
 
   def handle_in("send_message", payload, socket) do
     Logger.warning("Invalid send_message payload: #{inspect(payload)}")
@@ -97,17 +93,13 @@ defmodule TrentoWeb.AIAssistantChannel do
          %{assigns: %{current_scope: %{id: current_user_id}}} = socket,
          prompt
        ) do
-    case ModelConfig.build_user_model_config(current_user_id) do
+    case LLMBuilder.build_for_user(current_user_id) do
       {:ok, model_config} ->
         run_agent(socket, model_config, prompt)
 
       {:error, :no_ai_configuration} ->
         {:noreply,
          AgUi.run_error(socket, "Failed to start agent. No AI configuration found for user.")}
-
-      {:error, :unsupported_provider} ->
-        {:noreply,
-         AgUi.run_error(socket, "Failed to start agent. Unsupported AI provider configured.")}
 
       {:error, :user_not_found} ->
         {:noreply, AgUi.run_error(socket, "Failed to start agent. User not found.")}
@@ -125,34 +117,23 @@ defmodule TrentoWeb.AIAssistantChannel do
          model_config,
          prompt
        ) do
-    agent = TrentoAIAgent.new!(agent_id: thread_id, model: model_config, scope: scope)
-
-    updated_socket =
-      with {:ok, _} <- ensure_agent_started(thread_id, agent),
-           :ok <- AgentServer.subscribe(thread_id),
-           :ok <- AgentServer.add_message(thread_id, Message.new_user!(prompt)) do
+    [agent_id: thread_id, model: model_config, scope: scope, prompt: prompt]
+    |> TrentoAIAgent.run()
+    |> case do
+      :ok ->
         socket
         |> activate_run(run_id)
         |> AgUi.run_started(run_id, thread_id)
-      else
-        {:error, reason} ->
-          error_msg = "Failed to start agent: #{inspect(reason)}"
-          Logger.error(error_msg)
 
-          socket
-          |> reset_run()
-          |> AgUi.run_error(error_msg)
-      end
+      {:error, reason} ->
+        error_msg = "Failed to start agent: #{inspect(reason)}"
+        Logger.error(error_msg)
 
-    {:noreply, updated_socket}
-  end
-
-  defp ensure_agent_started(thread_id, agent) do
-    AgentsDynamicSupervisor.start_agent_sync(
-      agent_id: thread_id,
-      agent: agent,
-      pubsub: {Phoenix.PubSub, Trento.PubSub}
-    )
+        socket
+        |> reset_run()
+        |> AgUi.run_error(error_msg)
+    end
+    |> then(&{:noreply, &1})
   end
 
   @impl true
@@ -171,13 +152,13 @@ defmodule TrentoWeb.AIAssistantChannel do
             current_run_id: run_id
           }
         } = socket
-      ) do
-    {:noreply,
-     socket
-     |> AgUi.maybe_text_message_end(message_started, message_id)
-     |> reset_run()
-     |> AgUi.run_finished(run_id, thread_id)}
-  end
+      ),
+      do:
+        {:noreply,
+         socket
+         |> AgUi.maybe_text_message_end(message_started, message_id)
+         |> reset_run()
+         |> AgUi.run_finished(run_id, thread_id)}
 
   def handle_info(
         {:agent, {:status_changed, :idle, _data}},
@@ -191,46 +172,40 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
-    error_message =
-      case reason do
-        %LangChainError{message: m} -> "Sorry, I encountered an error: #{m}"
-        other -> "Sorry, I encountered an error: #{inspect(other)}"
-      end
-
     {:noreply,
      socket
      |> reset_run()
-     |> AgUi.run_error(error_message)}
+     |> AgUi.run_error(reason)}
   end
 
   @impl true
   def handle_info(
         {:agent, {:llm_deltas, deltas}},
         %{assigns: %{message_id: message_id}} = socket
-      ) do
-    text = Enum.map_join(deltas, "", &delta_text/1)
-
-    {:noreply,
-     socket
-     |> AgUi.maybe_text_message_start()
-     |> AgUi.maybe_text_message_content(message_id, text)}
-  end
+      ),
+      do:
+        deltas
+        |> Enum.map_join("", &delta_text/1)
+        |> then(
+          &{:noreply,
+           socket
+           |> AgUi.maybe_text_message_start()
+           |> AgUi.maybe_text_message_content(message_id, &1)}
+        )
 
   @impl true
   def handle_info(
         {:agent, {:tool_call_identified, tool_info}},
         %{assigns: %{message_id: message_id}} = socket
-      ) do
-    {:noreply, AgUi.tool_call_lifecycle(socket, tool_info, message_id)}
-  end
+      ),
+      do: {:noreply, AgUi.tool_call_lifecycle(socket, tool_info, message_id)}
 
   @impl true
   def handle_info(
         {:agent, {:tool_execution_update, :completed, %{call_id: call_id} = tool_info}},
         socket
-      ) do
-    {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
-  end
+      ),
+      do: {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
 
   @impl true
   def handle_info(_msg, socket), do: {:noreply, socket}
@@ -241,24 +216,24 @@ defmodule TrentoWeb.AIAssistantChannel do
   defp delta_text(_), do: ""
 
   # See "Mutation surfaces" in the moduledoc.
-  defp stash_run_ids(socket, run_id, thread_id) do
-    socket
-    |> assign(:current_run_id, run_id)
-    |> assign(:current_thread_id, thread_id)
-  end
+  defp stash_run_ids(socket, run_id, thread_id),
+    do:
+      socket
+      |> assign(:current_run_id, run_id)
+      |> assign(:current_thread_id, thread_id)
 
-  defp activate_run(socket, run_id) do
-    socket
-    |> assign(:loading, true)
-    |> assign(:message_id, run_id)
-    |> assign(:message_started, false)
-    |> assign(:run_has_started, false)
-  end
+  defp activate_run(socket, run_id),
+    do:
+      socket
+      |> assign(:loading, true)
+      |> assign(:message_id, run_id)
+      |> assign(:message_started, false)
+      |> assign(:run_has_started, false)
 
-  defp reset_run(socket) do
-    socket
-    |> assign(:loading, false)
-    |> assign(:message_started, false)
-    |> assign(:run_has_started, false)
-  end
+  defp reset_run(socket),
+    do:
+      socket
+      |> assign(:loading, false)
+      |> assign(:message_started, false)
+      |> assign(:run_has_started, false)
 end
