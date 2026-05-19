@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-05T04:07:17Z",
-    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
-    "run_id": "23993746197",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.07953
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should move an application instance if the host_id changed and the instance number already exists and the application is clustered",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-05T04:37:46Z",
     "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
     "run_id": "23994134670",
@@ -6630,6 +6602,34 @@
       },
       {
         "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-19T19:24:35Z",
+    "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
+    "run_id": "26119309340",
+    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05158
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users update_user/2 deletes the user abilities",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
         "score": 0.02501
       }
     ]
