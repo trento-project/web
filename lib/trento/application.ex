@@ -36,7 +36,8 @@ defmodule Trento.Application do
         Trento.Vault,
         Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
         {Samly.Provider, []},
-        AgenticRuntime.start_runtime([])
+        Sagents.Supervisor
+        # {Sagents.Supervisor, []}
         # Start a worker by calling: Trento.Worker.start_link(arg)
         # {Trento.Worker, arg}
       ] ++

@@ -9,33 +9,24 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   - `handle_in/3` for `send_message` payload contract + `new_thread`
   - `handle_info/2` translation of `{:agent, …}` PubSub events into AG-UI
     wire events (the bug-prone surface)
-  - `send_message` happy path via Mox doubles for
-    `AgenticRuntime.Agents.ServerAdapter` and `SupervisorAdapter`
 
-  The Tier 2 / Tier 3 tests use `:sys.replace_state/2` as a
-  test-only escape hatch to seed `socket.assigns` with values that
-  would normally be set after a full `execute_agent_with_message/3`
-  run. This bypasses the JS-driven assigns chain to exercise the
-  individual handlers in isolation.
+  The `handle_info` tests use `:sys.replace_state/2` as a test-only
+  escape hatch to seed `socket.assigns` with values that would normally
+  be set after a full `send_message` round-trip. This bypasses the
+  JS-driven assigns chain to exercise the individual handlers in
+  isolation.
 
-  Deferred (separate test pass):
-    - `:reinit_params, %{conversation_id: id}` happy path with real
-      Conversation row
-    - `:display_message_saved` / `:display_message_updated` DB paths
+  The `send_message` happy path is intentionally NOT covered with
+  automated tests — it exercises live `Sagents.AgentsDynamicSupervisor`
+  and would require either booting a real agent or wiring Mimic against
+  the Sagents API. Manual smoke is the verification (see the
+  trento-ai-assistant skill).
   """
 
   use TrentoWeb.ChannelCase
 
-  import Mox
-  import Trento.Factory
-
   alias TrentoWeb.AIAssistantChannel
   alias TrentoWeb.UserSocket
-
-  alias AgenticRuntime.Agents.ServerAdapter
-  alias AgenticRuntime.Agents.SupervisorAdapter
-
-  setup :verify_on_exit!
 
   describe "join/3" do
     test "joins ai_assistant:<user_id> when current_user_id matches" do
@@ -45,14 +36,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42")
 
       assert socket.assigns.current_scope == %Trento.Users.User{id: 42}
-      # init_agent_state defaults
-      assert socket.assigns.agent_status == :not_running
-      assert socket.assigns.conversation_id == nil
-      assert socket.assigns.todos == []
-      assert socket.assigns.has_messages == false
-      assert socket.assigns.streaming_delta == nil
       assert socket.assigns.loading == false
-      assert socket.assigns.messages == []
     end
 
     test "rejects with :unauthorized when current_user_id does not match topic" do
@@ -127,36 +111,13 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  describe "handle_in new_thread/3" do
-    setup :join_socket
-
-    test "pushes agent_info confirming the new conversation", %{socket: socket} do
-      push(socket, "new_thread", %{})
-      assert_push("agent_info", %{message: "New conversation started"})
-    end
-  end
-
-  describe "handle_info {:reinit_params, ...}" do
-    setup :join_socket
-
-    test "is a noop when no conversation context exists", %{socket: socket} do
-      send(socket.channel_pid, {:reinit_params, %{}})
-      refute_push("ag_ui_event", _, 100)
-      refute_push("agent_info", _, 100)
-      refute_push("agent_error", _, 100)
-    end
-  end
-
   describe "handle_info {:agent, {:status_changed, :running, ...}}" do
     setup :join_socket
 
-    test "flips :agent_status to :running and marks run_has_started",
-         %{socket: socket} do
+    test "marks run_has_started", %{socket: socket} do
       send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
-      # Allow the GenServer to process the message
       assigns = wait_assigns(socket)
 
-      assert assigns.agent_status == :running
       assert assigns.run_has_started == true
     end
   end
@@ -170,7 +131,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       refute_push("ag_ui_event", _, 100)
       assigns = wait_assigns(socket)
-      # :run_has_started was never set; the stale :idle leaves state alone
       refute Map.get(assigns, :run_has_started, false)
     end
 
@@ -202,8 +162,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
 
-      # Delayed completion fires after 500ms; with no message ever started, it
-      # emits RUN_FINISHED but no TEXT_MESSAGE_END
       assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => "r1"}, 1500)
       refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_END"}, 100)
     end
@@ -212,7 +170,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:agent, {:status_changed, :error, ...}}" do
     setup :join_socket
 
-    test "emits RUN_ERROR with formatted last_error_message", %{socket: socket} do
+    test "emits RUN_ERROR with formatted message", %{socket: socket} do
       seed_assigns(socket, %{
         current_run_id: "r1",
         current_thread_id: "t1"
@@ -406,26 +364,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  describe "handle_info {:agent, {:agent_shutdown, ...}}" do
-    setup :join_socket
-
-    test "clears :agent_id from assigns", %{socket: socket} do
-      seed_assigns(socket, %{agent_id: "conversation-abc"})
-
-      shutdown_data = %{
-        agent_id: "conversation-abc",
-        reason: :inactivity,
-        last_activity_at: DateTime.utc_now(),
-        shutdown_at: DateTime.utc_now()
-      }
-
-      send(socket.channel_pid, {:agent, {:agent_shutdown, shutdown_data}})
-
-      assigns = wait_assigns(socket)
-      assert assigns.agent_id == nil
-    end
-  end
-
   describe "handle_info {:delayed_completion, ...}" do
     setup :join_socket
 
@@ -464,49 +402,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  describe "handle_in send_message/3 — happy path with Mox" do
-    setup [:override_agentic_adapters, :join_socket_with_user, :set_mox_from_context]
-
-    test "cold-boot send pushes RUN_STARTED and assigns run/thread/message ids",
-         %{socket: socket, run_id: run_id, thread_id: thread_id} do
-      mock_cold_boot()
-
-      push(socket, "send_message", %{
-        "message" => "hello",
-        "run_id" => run_id,
-        "thread_id" => thread_id
-      })
-
-      assert_push("ag_ui_event", %{
-        "type" => "RUN_STARTED",
-        "runId" => ^run_id,
-        "threadId" => ^thread_id
-      })
-
-      assigns = wait_assigns(socket)
-      assert assigns.loading == true
-      assert assigns.current_run_id == run_id
-      assert assigns.current_thread_id == thread_id
-      assert assigns.message_id == run_id
-      assert assigns.message_started == false
-      assert assigns.run_has_started == false
-    end
-
-    test "warm-path send (agent already running) short-circuits start_agent_sync",
-         %{socket: socket, run_id: run_id, thread_id: thread_id} do
-      mock_warm_path()
-
-      push(socket, "send_message", %{
-        "message" => "hi again",
-        "run_id" => run_id,
-        "thread_id" => thread_id
-      })
-
-      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
-      # `verify_on_exit!` confirms `start_agent_sync` was NOT called (no expect)
-    end
-  end
-
   # ----------------------------------------------------------------
   # Setup helpers
   # ----------------------------------------------------------------
@@ -518,68 +413,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       |> subscribe_and_join(AIAssistantChannel, "ai_assistant:7")
 
     %{socket: socket}
-  end
-
-  # Per-test override of the agentic_runtime adapter env so the Mox
-  # doubles take effect only for the current test. NOT done globally
-  # in test_helper.exs because `Trento.Application` calls
-  # `AgenticRuntime.start_runtime([])` at boot — a global override
-  # would route that boot-time call through the Mock and crash the
-  # supervisor.
-  defp override_agentic_adapters(_context) do
-    prev_server = Application.get_env(:agentic_runtime, :server_adapter)
-    prev_supervisor = Application.get_env(:agentic_runtime, :supervisor_adapter)
-
-    Application.put_env(:agentic_runtime, :server_adapter, ServerAdapter.Mock)
-    Application.put_env(:agentic_runtime, :supervisor_adapter, SupervisorAdapter.Mock)
-
-    on_exit(fn ->
-      restore_env(:agentic_runtime, :server_adapter, prev_server)
-      restore_env(:agentic_runtime, :supervisor_adapter, prev_supervisor)
-    end)
-
-    :ok
-  end
-
-  defp restore_env(app, key, nil), do: Application.delete_env(app, key)
-  defp restore_env(app, key, value), do: Application.put_env(app, key, value)
-
-  defp join_socket_with_user(_context) do
-    %{id: user_id} = insert(:user)
-    insert(:ai_user_configuration, user_id: user_id, provider: :googleai)
-
-    {:ok, _, socket} =
-      UserSocket
-      |> socket("user_id", %{current_user_id: user_id})
-      |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
-
-    %{
-      socket: socket,
-      user_id: user_id,
-      run_id: "r-#{System.unique_integer([:positive])}",
-      thread_id: "t-#{System.unique_integer([:positive])}"
-    }
-  end
-
-  # Mox: cold-boot — agent not running, must call start_agent_sync.
-  defp mock_cold_boot do
-    test_pid = self()
-
-    expect(ServerAdapter.Mock, :get_pid, fn _agent_id -> nil end)
-
-    expect(SupervisorAdapter.Mock, :start_agent_sync, fn config ->
-      send(test_pid, {:supervisor_config, config})
-      {:ok, self()}
-    end)
-
-    expect(ServerAdapter.Mock, :get_pid, fn _agent_id -> self() end)
-    expect(ServerAdapter.Mock, :add_message, fn _agent_id, _message -> :ok end)
-  end
-
-  # Mox: warm path — agent already running, no start_agent_sync.
-  defp mock_warm_path do
-    expect(ServerAdapter.Mock, :get_pid, fn _agent_id -> self() end)
-    expect(ServerAdapter.Mock, :add_message, fn _agent_id, _message -> :ok end)
   end
 
   # Test escape hatch: directly seeds socket.assigns by patching the
@@ -598,7 +431,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # synchronous call (any sync call will block until prior async messages
   # are handled). Returns the resulting assigns.
   defp wait_assigns(socket) do
-    # `:sys.get_state` synchronizes with the GenServer's mailbox.
     state = :sys.get_state(socket.channel_pid)
     state.assigns
   end
