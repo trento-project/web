@@ -665,6 +665,9 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: echo "path=$(which photofinish)" >> $GITHUB_OUTPUT
       - name: Cypress run
         uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         env:
@@ -676,7 +679,7 @@ jobs:
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=$(whereis photofinish | cut -d" " -f2)
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -772,6 +775,9 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: echo "path=$(which photofinish)" >> $GITHUB_OUTPUT
       - name: Cypress run
         uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         env:
@@ -781,7 +787,7 @@ jobs:
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=$(whereis photofinish | cut -d" " -f2)
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -903,6 +909,9 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: echo "path=$(which photofinish)" >> $GITHUB_OUTPUT
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
         with:
@@ -924,7 +933,7 @@ jobs:
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=$(whereis photofinish | cut -d" " -f2),${{ matrix.cypress_expose }}
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
