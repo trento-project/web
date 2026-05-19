@@ -3,7 +3,7 @@
 
 import * as hanaClusterDetailsPage from '../pageObject/hana_cluster_details_po';
 
-if (Cypress.env('REAL_CLUSTER_TESTS')) {
+if (Cypress.expose('REAL_CLUSTER_TESTS')) {
   context('HANA scale-up checks', () => {
     const clusterID = 'd2522281-2c76-52dc-8500-10bdf2cc6664';
 
