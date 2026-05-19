@@ -18,6 +18,8 @@ defmodule TrentoWeb.AIAssistantTools do
   alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Users
 
+  alias LangChain.Function
+
   alias TrentoWeb.{V1, V2}
 
   def tools do
@@ -32,9 +34,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp host_list_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Host_list",
-      summary: "List all hosts with their basic information.",
       description:
         "Retrieves a comprehensive list of all hosts discovered on the target infrastructure. " <>
           "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
@@ -56,9 +57,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp sap_system_list_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Sap_system_list",
-      summary: "List SAP Systems.",
       description:
         "Retrieves a comprehensive list of all SAP Systems discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
@@ -78,9 +78,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp databases_list_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Database_list",
-      summary: "List HANA Databases.",
       description:
         "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
@@ -100,9 +99,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp clusters_list_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Cluster_list",
-      summary: "List Pacemaker Clusters.",
       description:
         "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
       function: fn _args, context ->
@@ -122,9 +120,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp instant_query_host_metrics_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Instant_query_host_prometheus_metrics",
-      summary: "Execute a PromQL query scoped to a host at a specific point in time.",
       description:
         "Executes an arbitrary PromQL query against Prometheus, automatically injecting the host's agentID label into all vector selectors to scope results to the specified host. " <>
           "Supports only instant queries.",
@@ -179,9 +176,8 @@ defmodule TrentoWeb.AIAssistantTools do
   end
 
   defp range_query_host_metrics_tool do
-    AgenticRuntime.new_tool!(%{
+    Function.new!(%{
       name: "Range_query_host_prometheus_metrics",
-      summary: "Execute a PromQL query scoped to a host over a specified time period.",
       description:
         "Executes an arbitrary PromQL query against Prometheus, automatically injecting the host's agentID label into all vector selectors to scope results to the specified host. " <>
           "Supports only range queries ('from' and 'to' must be provided).",

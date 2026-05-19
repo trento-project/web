@@ -57,8 +57,11 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:agentic_runtime,
-       github: "trento-project/agentic_runtime", ref: "049c633a4e7d87f3a8cd05166151a5fea7fcbc2e"},
+      {:sagents, "~> 0.7.0"},
+      {:langchain,
+       github: "nelsonkopliku/langchain",
+       ref: "468f0a99c834ba66f35a8996dd305fa9b3df8bf4",
+       override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
