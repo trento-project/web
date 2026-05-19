@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-04-05T04:37:46Z",
-    "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
-    "run_id": "23994134670",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      },
-      {
-        "name": "search::should not match not included words",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-05T04:38:41Z",
     "commit": "431dcff683cd2d9e07cce42a08f1e9bba3f3ccef",
     "run_id": "23994134670",
@@ -6631,6 +6599,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-19T19:25:31Z",
+    "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
+    "run_id": "26119309340",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
+        "score": 0.05001
       }
     ]
   }
