@@ -167,6 +167,12 @@ export const removeTagButtonIsEnabled = () =>
 
 // API Interactions & Validations
 
+export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
+  cy
+    .wait(`@${endpointAlias}`)
+    .its('response.statusCode')
+    .should('eq', expectedStatusCode);
+
 const getLoginCredentials = (username, password) => {
   if (username !== undefined && password !== undefined) {
     return cy.wrap({ username, password });
@@ -192,12 +198,6 @@ const requestLogin = (credentials) =>
         response.body;
       return { accessToken, refreshToken };
     });
-
-export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
-  cy
-    .wait(`@${endpointAlias}`)
-    .its('response.statusCode')
-    .should('eq', expectedStatusCode);
 
 export const apiLogin = (username, password) =>
   getLoginCredentials(username, password).then(requestLogin);
