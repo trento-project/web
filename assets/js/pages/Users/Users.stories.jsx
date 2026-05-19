@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { adminUser, userFactory } from '@lib/test-utils/factories/users';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
-import { adminUser, userFactory } from '@lib/test-utils/factories/users';
+import { action } from 'storybook/actions';
 
 import Users from './Users';
 
@@ -36,12 +36,10 @@ export default {
   argTypes: {
     onDeleteUser: {
       description: 'Function to handle deleting a user',
-      control: { type: 'function' },
       action: 'onDeleteUser',
     },
     navigate: {
       description: 'Function to navigate pages',
-      control: { type: 'function' },
       action: 'navigate',
     },
     users: {
@@ -56,22 +54,40 @@ export default {
       description: 'Single sign on login is enabled',
       control: { type: 'boolean' },
     },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+    },
   },
 };
 
 export const Default = {
-  args: { users: [adminUser.build()] },
+  args: {
+    users: [adminUser.build()],
+    navigate: action('navigate'),
+    loading: false,
+    singleSignOnEnabled: false,
+    timezone: 'Etc/UTC',
+    onDeleteUser: action('onDeleteUser'),
+  },
   render: withContainerWrapper,
 };
+
 export const Loading = {
-  args: { loading: true },
+  args: {
+    ...Default.args,
+    loading: true,
+  },
   render: withContainerWrapper,
 };
+
 export const EmptyUsersTable = {
   render: withContainerWrapper,
 };
+
 export const UsersOverview = {
   args: {
+    ...Default.args,
     users: [
       adminUser.build(),
       userFactory.build(),
@@ -83,7 +99,11 @@ export const UsersOverview = {
   },
   render: withContainerWrapper,
 };
+
 export const SingleSignOn = {
-  args: { singleSignOnEnabled: true },
+  args: {
+    ...Default.args,
+    singleSignOnEnabled: true,
+  },
   render: withContainerWrapper,
 };

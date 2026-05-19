@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import CleanUpButton from '.';
+import { abilityFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
+import CleanUpButton from './CleanUpButton';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/CleanUpButton',
@@ -10,51 +15,42 @@ export default {
     cleaning: {
       control: { type: 'boolean' },
       description: 'Cleaning state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     permittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check selection',
     },
-    onClick: { action: 'Click button' },
+    onClick: { action: 'onClick' },
     className: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'CSS classes',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     size: {
       control: { type: 'radio' },
       options: ['small', 'fit'],
       description: 'Button size',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'small' },
-      },
     },
     type: {
       control: { type: 'radio' },
       options: ['primary-white', 'transparent'],
       description: 'Style type',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'primary-white' },
-      },
     },
   },
 };
 
 export const Default = {
   args: {
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
+    permittedFor: [],
+    onClick: action('onClick'),
+    cleaning: false,
+    className: '',
+    size: 'small',
+    type: 'primary-white',
   },
 };
 

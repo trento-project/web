@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-
 import { action } from 'storybook/actions';
+
 import AnalyticsEulaModal from './AnalyticsEulaModal';
 
 export default {
@@ -19,16 +19,15 @@ export default {
   },
   argTypes: {
     isOpen: {
-      type: 'boolean',
       description: 'Sets the visibility of the modal',
     },
     onEnable: {
       description: 'Callback when the Enable button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
     onCancel: {
       description: 'Callback when the Cancel button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
   },
   args: {
@@ -38,6 +37,10 @@ export default {
   },
 };
 
-export function Default(args) {
-  return <AnalyticsEulaModal {...args} />;
-}
+export const Default = {
+  args: {
+    isOpen: true,
+    onEnable: action('enable clicked'),
+    onCancel: action('cancel clicked'),
+  },
+};

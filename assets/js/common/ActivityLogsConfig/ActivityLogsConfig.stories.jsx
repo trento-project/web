@@ -1,8 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { abilityFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
-import ActivityLogsConfig from '.';
+
+import ActivityLogsConfig from './ActivityLogsConfig';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/ActivityLogsConfig',
@@ -11,17 +15,15 @@ export default {
     retentionTime: {
       description:
         'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `day`, `month`, `year`.',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     onEditClick: {
       description: 'Callback when the edit button is clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
     userAbilities: {
       description: 'Users abilities that allow editing activity logs settings',
-      control: 'array',
+      control: { type: 'object' },
     },
   },
 };
@@ -29,8 +31,8 @@ export default {
 export const Default = {
   args: {
     retentionTime: { value: 1, unit: 'month' },
-    onEditClick: action('edit clicked'),
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    onEditClick: action('onEditClick'),
+    userAbilities: [allAbility],
   },
 };
 
@@ -47,6 +49,7 @@ export const WithInvalidValue = {
     retentionTime: { is: 'invalid' },
   },
 };
+
 export const EditUnauthorized = {
   args: {
     ...Default.args,

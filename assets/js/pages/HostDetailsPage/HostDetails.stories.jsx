@@ -1,26 +1,30 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
+import { architectures, providers } from '@lib/model';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
 } from '@lib/operations';
-
 import {
-  clusterFactory,
-  hostFactory,
-  databaseInstanceFactory,
-  sapSystemApplicationInstanceFactory,
+  abilityFactory,
   catalogFactory,
+  clusterFactory,
+  databaseInstanceFactory,
+  hostFactory,
+  sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import HostDetails from './HostDetails';
 
 const host = hostFactory.build({ provider: 'azure', agent_version: '2.0.0' });
 const cluster = clusterFactory.build({ id: host.cluster_id });
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const sapInstances = sapSystemApplicationInstanceFactory
   .buildList(1)
   .map((instance) => ({ ...instance, type: APPLICATION_TYPE }))
@@ -41,119 +45,86 @@ export default {
   component: HostDetails,
   argTypes: {
     agentVersion: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The version of the installed agent',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     cluster: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The cluster which this host belongs to',
     },
     arch: {
-      control: 'text',
+      control: { type: 'select' },
+      options: architectures,
       description: 'The architecture of the host',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     deregisterable: {
       control: { type: 'boolean' },
       description: 'The host is in deregisterable state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     deregistering: {
       control: { type: 'boolean' },
       description: 'The host is in deregistering state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     exportersStatus: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Status of the prometheus exporters',
     },
     heartbeat: {
       control: { type: 'radio' },
       options: ['passing', 'critical'],
       description: 'Host heartbeat state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'passing' },
-      },
     },
     hostID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     hostname: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     ipAddresses: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'IP addresses',
     },
     netmasks: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Netmasks associated to ip addresses',
     },
     provider: {
-      control: 'text',
-      description: 'The discovered CSP where the host is running',
-      table: {
-        type: { summary: 'string' },
-      },
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     providerData: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The discovered CSP data',
     },
-    sapSystems: {
-      control: { type: 'array' },
-      description: 'SAP systems running on the host',
-    },
     saptuneStatus: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Saptune status data',
     },
     savingChecks: {
       control: { type: 'boolean' },
       description: 'The checks are being saved',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     selectedChecks: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'The selected checks',
     },
     slesSubscriptions: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Registered SLES subscriptions on the host',
     },
     catalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Catalog data',
     },
     lastExecution: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Last execution data',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     operationsEnabled: {
@@ -162,7 +133,7 @@ export default {
         'Operations framework enabled. Remove once it is ready to release',
     },
     runningOperation: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Currently running operation data',
     },
     cleanUpHost: {
@@ -179,6 +150,56 @@ export default {
     },
     navigate: {
       description: 'Navigate function',
+      action: 'navigate',
+    },
+    chartsEnabled: {
+      description:
+        'Whether to render system performance charts (CPU, memory, disk space)',
+      control: { type: 'boolean' },
+    },
+    lastBootTimestamp: {
+      description: 'Timestamp of when the host was last rebooted',
+      control: { type: 'text' },
+    },
+    sapInstances: {
+      description:
+        'List of SAP application and database instances running on the host',
+      control: { type: 'object' },
+    },
+    relevantPatches: {
+      description: 'Patches available for installation on the host',
+      control: { type: 'number' },
+    },
+    upgradablePackages: {
+      description: 'Packages on the host that have newer versions available',
+      control: { type: 'number' },
+    },
+    softwareUpdatesLoading: {
+      description: 'Whether software update data is currently being loaded',
+      control: { type: 'boolean' },
+    },
+    softwareUpdatesSettingsSaved: {
+      description:
+        "Whether the host's software update settings have been saved",
+      control: { type: 'boolean' },
+    },
+    softwareUpdatesErrorMessage: {
+      description: 'Error message displayed when software updates fail',
+      control: { type: 'text' },
+    },
+    softwareUpdatesTooltip: {
+      description:
+        'Tooltip text providing additional information about software updates',
+      control: { type: 'text' },
+    },
+    cleanForbiddenOperation: {
+      description:
+        'Callback function to close the operation forbidden error modal',
+      action: 'Clean forbidden operation',
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
   decorators: [
@@ -200,6 +221,8 @@ export const Default = {
     agentVersion: host.agent_version,
     arch: host.arch,
     chartsEnabled: false,
+    cleanUpHost: action('cleanUpHost'),
+    cleanForbiddenOperation: action('cleanForbiddenOperation'),
     cluster,
     deregisterable: false,
     deregistering: false,
@@ -208,9 +231,12 @@ export const Default = {
     hostID: host.id,
     hostname: host.hostname,
     ipAddresses: host.ip_addresses,
+    navigate: action('navigate'),
     netmasks: host.netmasks,
     provider: host.provider,
     providerData: host.provider_data,
+    requestHostChecksExecution: action('requestHostChecksExecution'),
+    requestOperation: action('requestOperation'),
     sapInstances,
     savingChecks: false,
     saptuneStatus: {
@@ -233,7 +259,7 @@ export const Default = {
     softwareUpdatesTooltip: undefined,
     selectedChecks: [],
     slesSubscriptions: host.sles_subscriptions,
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
     operationsEnabled: true,
     runningOperations: {},
   },

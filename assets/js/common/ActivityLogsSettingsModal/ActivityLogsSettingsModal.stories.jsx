@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import ActivityLogsSettingsModal from '.';
+import { action } from 'storybook/actions';
+
+import ActivityLogsSettingsModal from './ActivityLogsSettingsModal';
 
 export default {
   title: 'Components/ActivityLogsSettingsModal',
@@ -9,19 +11,36 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     initialRetentionTime: {
       description:
         'A structured `{value,unit}` object that defines a retention time interval. `unit` is one of `day`, `week`, `month`, `year`.',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     errors: {
       description: 'The validation error to be shown',
+      control: { type: 'object' },
+    },
+    loading: {
+      description:
+        'Boolean flag indicating whether a save operation is in progress to disable the Save Settings button',
+      control: { type: 'boolean' },
+    },
+    onSave: {
+      description:
+        'Callback function invoked when the Save Settings button is clicked',
+      action: 'onSave',
+    },
+    onCancel: {
+      description:
+        'Callback function invoked when the Cancel button is clicked or the modal is closed',
+      action: 'onCancel',
+    },
+    onClearErrors: {
+      description:
+        'Callback function invoked when the retention time is modified to clear previous validation errors',
+      action: 'onClearErrors',
     },
   },
 };
@@ -31,11 +50,15 @@ export const Default = {
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+    onClearErrors: action('onClearErrors'),
   },
 };
 
 export const WithFieldValidationError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [
@@ -50,6 +73,7 @@ export const WithFieldValidationError = {
 
 export const WithCompositeFieldValidationError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: [
@@ -69,6 +93,7 @@ export const WithCompositeFieldValidationError = {
 
 export const WithGlobalError = {
   args: {
+    ...Default.args,
     open: false,
     initialRetentionTime: { value: 1, unit: 'month' },
     errors: ['any error'],

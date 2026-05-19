@@ -1,12 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-
 import Button from '@common/Button';
 import Tooltip, { PLACES } from '@common/Tooltip';
+import { abilityFactory } from '@lib/test-utils/factories';
+import React from 'react';
 
-import DisabledGuard from '.';
+import DisabledGuard from './DisabledGuard';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 
 export default {
   title: 'Components/DisabledGuard',
@@ -33,6 +35,16 @@ export default {
       options: PLACES,
       description: 'Tooltip place',
     },
+    tooltipWrap: {
+      description:
+        'Determines if the tooltip content should wrap or stay on a single line',
+      control: { type: 'boolean' },
+    },
+    children: {
+      description:
+        'The element to be guarded, which becomes disabled if the user lacks authorization',
+      control: { type: 'text' },
+    },
   },
 };
 
@@ -54,9 +66,22 @@ const guardElementWithTooltip = (args) => (
   </div>
 );
 
+export const Default = {
+  args: {
+    userAbilities: [allAbility],
+    permitted: [],
+    withTooltip: false,
+    tooltipMessage: 'You do not have permission',
+    tooltipPlace: 'top',
+    tooltipWrap: false,
+  },
+  render: (args) => guardElement(args),
+};
+
 export const Authorized = {
   args: {
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    ...Default.args,
+    userAbilities: [allAbility],
     tooltipMessage: 'Some tooltip',
   },
   render: (args) => guardElement(args),
