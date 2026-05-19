@@ -205,11 +205,11 @@ jobs:
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           working-directory: test/e2e
           wait-on-timeout: 30
+          expose: photofinish_binary=$(whereis photofinish | cut -d" " -f2)
       - name: Upload cypress test junit reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
