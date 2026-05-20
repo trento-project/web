@@ -8,18 +8,32 @@ defmodule Trento.AI.Agent.SupervisorAdapter do
   substitute a Mox mock.
   """
 
-  @callback start_agent_sync(keyword()) ::
-              {:ok, pid()} | {:ok, pid(), :already_started} | {:error, term()}
+  @doc """
+  Start an agent supervisor synchronously.
+
+  Sagents.AgentsDynamicSupervisor.start_agent_sync/1 spec declares
+
+  @spec start_agent_sync(keyword()) ::
+          {:ok, pid()} | {:ok, pid(), :already_started} | {:error, term()}
+
+  however, the `:already_started` case is not actually returned by the implementation.
+  """
+  @callback start_agent_sync(keyword()) :: {:ok, pid()} | {:error, term()}
 
   def start_agent_sync(opts), do: impl().start_agent_sync(opts)
 
   defp impl,
-    do: Application.get_env(:trento, :ai_sagents_supervisor_adapter, __MODULE__.Sagents)
+    do:
+      Application.get_env(
+        :trento,
+        :ai_sagents_supervisor_adapter,
+        __MODULE__.SagentsDynamicSupervisor
+      )
 
-  defmodule Sagents do
+  defmodule SagentsDynamicSupervisor do
     @moduledoc false
     @behaviour Trento.AI.Agent.SupervisorAdapter
 
-    defdelegate start_agent_sync(opts), to: Elixir.Sagents.AgentsDynamicSupervisor
+    defdelegate start_agent_sync(opts), to: Sagents.AgentsDynamicSupervisor
   end
 end
