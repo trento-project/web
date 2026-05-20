@@ -17,8 +17,8 @@ defmodule Trento.AI.Agent do
   """
 
   alias LangChain.{LangChainError, Message}
-  alias Sagents.{AgentsDynamicSupervisor, AgentServer}
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
+  alias Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}
 
   alias TrentoWeb.AIAssistantTools
 
@@ -91,28 +91,10 @@ defmodule Trento.AI.Agent do
   """
 
   @doc """
-  Ensure the agent for `:agent_id` is running, subscribe the calling
-  process to its event stream, and send the user prompt. Returns `:ok`
-  or the first `{:error, reason}` from the start/subscribe/send chain.
+  Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
   """
-  @spec run(keyword()) :: :ok | {:error, term()}
-  def run(opts) do
-    agent_id = Keyword.fetch!(opts, :agent_id)
-    model = Keyword.fetch!(opts, :model)
-    scope = Keyword.fetch!(opts, :scope)
-    prompt = Keyword.fetch!(opts, :prompt)
-
-    agent = new!(agent_id: agent_id, model: model, scope: scope)
-
-    with {:ok, _} <- start(agent_id, agent),
-         :ok <- AgentServer.subscribe(agent_id) do
-      AgentServer.add_message(agent_id, Message.new_user!(prompt))
-      :ok
-    end
-  end
-
   @spec new!(keyword()) :: Sagents.Agent.t()
-  defp new!(opts) do
+  def new!(opts) do
     Sagents.Agent.new!(
       %{
         agent_id: Keyword.fetch!(opts, :agent_id),
@@ -130,12 +112,28 @@ defmodule Trento.AI.Agent do
     )
   end
 
-  defp start(agent_id, agent) do
-    AgentsDynamicSupervisor.start_agent_sync(
+  @doc """
+  Ensure the agent for `:agent_id` is running, subscribe the calling
+  process to its event stream, and send the user prompt. Returns `:ok`
+  or the first `{:error, reason}` from the start/subscribe/send chain.
+  """
+  @spec run(Sagents.Agent.t(), String.t()) :: :ok | {:error, term()}
+  def run(%Sagents.Agent{agent_id: agent_id} = agent, prompt) do
+    with {:ok, _} <-
+           agent_id
+           |> start_opts(agent)
+           |> SupervisorAdapter.start_agent_sync(),
+         :ok <- ServerAdapter.subscribe(agent_id) do
+      ServerAdapter.add_message(agent_id, Message.new_user!(prompt))
+    end
+  end
+
+  defp start_opts(agent_id, agent) do
+    [
       agent_id: agent_id,
       agent: agent,
       pubsub: {Phoenix.PubSub, Trento.PubSub}
-    )
+    ]
   end
 
   @doc """

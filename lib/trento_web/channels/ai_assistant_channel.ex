@@ -119,8 +119,9 @@ defmodule TrentoWeb.AIAssistantChannel do
          model_config,
          prompt
        ) do
-    [agent_id: thread_id, model: model_config, scope: scope, prompt: prompt]
-    |> TrentoAIAgent.run()
+    [agent_id: thread_id, model: model_config, scope: scope]
+    |> TrentoAIAgent.new!()
+    |> TrentoAIAgent.run(prompt)
     |> case do
       :ok ->
         socket
