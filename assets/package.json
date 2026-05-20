@@ -95,7 +95,10 @@
     "eos-icons-react": {
       "react": "$react"
     },
-    "@assistant-ui/core": "0.1.13"
+    "@assistant-ui/core": "0.1.13",
+    "tailwindcss": {
+      "yaml": "^1.10.0"
+    }
   },
   "scripts": {
     "tailwind:build": "tailwindcss --postcss --minify --input=css/app.css --output=../priv/static/assets/app.css",
