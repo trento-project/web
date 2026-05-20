@@ -10,7 +10,7 @@ defmodule Trento.AI.LLMBuilder do
   alias Trento.Users.User
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
-  @spec build_for_user(String.t()) ::
+  @spec build_for_user(non_neg_integer()) ::
           {:ok, struct()}
           | {:error, :user_not_found | :no_ai_configuration}
   def build_for_user(user_id) do
