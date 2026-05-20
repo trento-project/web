@@ -77,11 +77,6 @@ test_ai_config =
 
 Application.put_env(:trento, :ai, test_ai_config)
 
-# Mox doubles for the sagents adapter boundary used by
-# `Trento.AI.Agent.run/1`. The `Application.put_env` swap is NOT done
-# globally — production boot doesn't hit these adapters, but per-test
-# opt-in keeps test isolation clean. Tests that exercise `run/1` use
-# `setup :override_adapters` (see `test/trento/ai/agent_test.exs`).
 Mox.defmock(Trento.AI.Agent.ServerAdapter.Mock,
   for: Trento.AI.Agent.ServerAdapter
 )
@@ -90,8 +85,13 @@ Mox.defmock(Trento.AI.Agent.SupervisorAdapter.Mock,
   for: Trento.AI.Agent.SupervisorAdapter
 )
 
-Application.put_env(:trento, :ai_sagents_server_adapter, ServerAdapter.Mock)
-Application.put_env(:trento, :ai_sagents_supervisor_adapter, SupervisorAdapter.Mock)
+Application.put_env(:trento, :ai_sagents_server_adapter, Trento.AI.Agent.ServerAdapter.Mock)
+
+Application.put_env(
+  :trento,
+  :ai_sagents_supervisor_adapter,
+  Trento.AI.Agent.SupervisorAdapter.Mock
+)
 
 Application.ensure_all_started(:ex_machina, :faker)
 

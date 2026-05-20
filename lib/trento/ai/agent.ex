@@ -16,7 +16,7 @@ defmodule Trento.AI.Agent do
   want to inspect the configured agent.
   """
 
-  alias LangChain.{LangChainError, Message}
+  alias LangChain.Message
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}
 
@@ -135,15 +135,4 @@ defmodule Trento.AI.Agent do
       pubsub: {Phoenix.PubSub, Trento.PubSub}
     ]
   end
-
-  @doc """
-  Render a user-facing message for a sagents/langchain error reason
-  broadcast on the `:status_changed, :error` event.
-  """
-  @spec format_error(term()) :: String.t()
-  def format_error(%LangChainError{message: message}),
-    do: "Sorry, I encountered an error: #{message}"
-
-  def format_error(reason),
-    do: "Sorry, I encountered an error: #{inspect(reason)}"
 end

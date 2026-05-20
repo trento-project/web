@@ -6,54 +6,65 @@ defmodule Trento.AI.AgentTest do
 
   import Mox
 
-  alias LangChain.ChatModels.ChatGoogleAI
-  alias LangChain.LangChainError
+  import Trento.Factory
+
   alias LangChain.Message
+  alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent, as: TrentoAIAgent
-  alias Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}
   alias Trento.Users.User
 
   setup :verify_on_exit!
 
-  describe "format_error/1" do
-    test "renders a %LangChainError{}'s message inline" do
-      error = LangChainError.exception(type: "boom", message: "stream gone")
+  describe "new!/1" do
+    test "builds a %Sagents.Agent{} with the supplied agent_id, scope, and model" do
+      model = build(:random_langchain_model)
+      scope = build(:user)
 
-      assert TrentoAIAgent.format_error(error) ==
-               "Sorry, I encountered an error: stream gone"
+      assert %Sagents.Agent{
+               agent_id: "thread-1",
+               scope: ^scope,
+               model: ^model
+             } = TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
     end
 
-    test "inspects an arbitrary atom reason" do
-      assert TrentoAIAgent.format_error(:timeout) ==
-               "Sorry, I encountered an error: :timeout"
-    end
+    test "uses only TodoList + Summarization + PatchToolCalls middleware" do
+      model = build(:random_langchain_model)
+      scope = %User{id: 42}
 
-    test "inspects an arbitrary tuple reason" do
-      assert TrentoAIAgent.format_error({:err, "boom"}) ==
-               "Sorry, I encountered an error: {:err, \"boom\"}"
+      agent = TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
+
+      modules = Enum.map(agent.middleware, & &1.module)
+
+      assert TodoList in modules
+      assert Summarization in modules
+      assert PatchToolCalls in modules
+      refute Sagents.Middleware.FileSystem in modules
+      refute Sagents.Middleware.SubAgent in modules
+      refute Sagents.Middleware.HumanInTheLoop in modules
     end
   end
 
-  describe "run/1" do
-    setup [:override_adapters, :run_opts]
+  describe "run/2" do
+    setup :run_opts
 
     test "returns :ok when start_agent_sync, subscribe, and add_message all succeed",
-         %{opts: opts, agent_id: agent_id} do
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
       test_pid = self()
 
-      expect(SupervisorAdapter.Mock, :start_agent_sync, fn start_opts ->
+      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn start_opts ->
         send(test_pid, {:start_agent_sync, start_opts})
         {:ok, self()}
       end)
 
-      expect(ServerAdapter.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn ^agent_id -> :ok end)
 
-      expect(ServerAdapter.Mock, :add_message, fn ^agent_id, %Message{role: :user} = msg ->
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn ^agent_id,
+                                                                  %Message{role: :user} = msg ->
         send(test_pid, {:add_message, msg})
         :ok
       end)
 
-      assert :ok = TrentoAIAgent.run(opts)
+      assert :ok = TrentoAIAgent.run(agent, prompt)
 
       assert_received {:start_agent_sync, start_opts}
       assert Keyword.fetch!(start_opts, :agent_id) == agent_id
@@ -63,62 +74,37 @@ defmodule Trento.AI.AgentTest do
     end
 
     test "short-circuits when start_agent_sync fails (subscribe + add_message NOT called)",
-         %{opts: opts} do
-      expect(SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:error, :boom} end)
+         %{agent: agent, prompt: prompt} do
+      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ ->
+        {:error, :boom}
+      end)
 
-      assert {:error, :boom} = TrentoAIAgent.run(opts)
+      assert {:error, :boom} = TrentoAIAgent.run(agent, prompt)
     end
 
-    test "short-circuits when subscribe fails (add_message NOT called)", %{opts: opts} do
-      expect(SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
-      expect(ServerAdapter.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
+    test "short-circuits when subscribe fails (add_message NOT called)",
+         %{agent: agent, prompt: prompt} do
+      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
 
-      assert {:error, :no_pubsub} = TrentoAIAgent.run(opts)
+      assert {:error, :no_pubsub} = TrentoAIAgent.run(agent, prompt)
     end
 
-    test "surfaces an add_message failure", %{opts: opts} do
-      expect(SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
-      expect(ServerAdapter.Mock, :subscribe, fn _ -> :ok end)
-      expect(ServerAdapter.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
+    test "surfaces an add_message failure", %{agent: agent, prompt: prompt} do
+      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
 
-      assert {:error, :timeout} = TrentoAIAgent.run(opts)
+      assert {:error, :timeout} = TrentoAIAgent.run(agent, prompt)
     end
   end
-
-  # ----------------------------------------------------------------
-  # Setup helpers
-  # ----------------------------------------------------------------
 
   defp run_opts(_ctx) do
-    agent_id = "thread-#{System.unique_integer([:positive])}"
-    model = ChatGoogleAI.new!(%{model: "gemini-2.5-flash", api_key: "x", stream: true})
-    scope = %User{id: 42}
+    agent_id = "thread-#{Faker.UUID.v4()}"
+    model = build(:random_langchain_model)
+    scope = build(:user)
+    agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: scope)
 
-    %{
-      opts: [agent_id: agent_id, model: model, scope: scope, prompt: "hello"],
-      agent_id: agent_id
-    }
+    %{agent: agent, agent_id: agent_id, prompt: "hello"}
   end
-
-  # Per-test override of the sagents adapter env so the Mox doubles take
-  # effect only for the current test. NOT done globally in test_helper.exs
-  # because other tests in the suite must continue to route to the real
-  # sagents impl (default adapter).
-  defp override_adapters(_ctx) do
-    # prev_server = Application.get_env(:trento, :ai_sagents_server_adapter)
-    # prev_supervisor = Application.get_env(:trento, :ai_sagents_supervisor_adapter)
-
-    # Application.put_env(:trento, :ai_sagents_server_adapter, ServerAdapter.Mock)
-    # Application.put_env(:trento, :ai_sagents_supervisor_adapter, SupervisorAdapter.Mock)
-
-    # on_exit(fn ->
-    #   restore_env(:ai_sagents_server_adapter, prev_server)
-    #   restore_env(:ai_sagents_supervisor_adapter, prev_supervisor)
-    # end)
-
-    :ok
-  end
-
-  defp restore_env(key, nil), do: Application.delete_env(:trento, key)
-  defp restore_env(key, value), do: Application.put_env(:trento, key, value)
 end

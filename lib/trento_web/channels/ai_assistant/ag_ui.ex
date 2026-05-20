@@ -28,7 +28,7 @@ defmodule TrentoWeb.AIAssistant.AgUi do
 
   alias AgUi.Encoder.EventEncoder
 
-  alias Trento.AI.Agent, as: TrentoAIAgent
+  alias LangChain.LangChainError
 
   @spec run_started(Socket.t(), String.t(), String.t()) :: Socket.t()
   def run_started(socket, run_id, thread_id),
@@ -42,7 +42,7 @@ defmodule TrentoWeb.AIAssistant.AgUi do
   def run_error(socket, message),
     do:
       message
-      |> TrentoAIAgent.format_error()
+      |> format_error()
       |> then(&push_event(socket, %RunError{message: &1}))
 
   @doc """
@@ -106,6 +106,13 @@ defmodule TrentoWeb.AIAssistant.AgUi do
         content: Jason.encode!(result),
         role: "tool"
       })
+
+  @spec format_error(term()) :: String.t()
+  defp format_error(%LangChainError{message: message}),
+    do: "Sorry, I encountered an error: #{message}"
+
+  defp format_error(reason),
+    do: "Sorry, I encountered an error: #{inspect(reason)}"
 
   @spec push_event(Socket.t(), struct()) :: Socket.t()
   defp push_event(socket, event) do
