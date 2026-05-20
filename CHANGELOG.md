@@ -1,5 +1,351 @@
 # Changelog
 
+## [3.1.0](https://github.com/trento-project/web/tree/2.4.0/compare/3.0.0...3.1.0) - 2026-05-20
+
+### What's Changed
+
+* Update NodeJS dependency to v24 (#4039) @skrech
+* FIx flaky check result test (#4303) @balanza
+* Fix flaky about page test (#4304) @balanza
+* Fix flaky suma settings test (#4305) @balanza
+* Stabilize HANA database details deregistration (#4309) @vicenteqa
+* Update reference to gen rmq (#4306) @chargio
+* Fix flaky notification box test (#4302) @balanza
+* Fix flaky patch list test (#4301) @balanza
+* Update Phoenix to 1.7.23 (#4273) @balanza
+* fix: use dynamic future date in SettingsPage API key expiration test (#4298) @[copilot-swe-agent[bot]](https://github.com/apps/copilot-swe-agent)
+* Stabilize hosts overview navigation tests (#4291) @vicenteqa
+* Fix flaky test on user form (#4294) @balanza
+* Fix flaky test on personal access token (#4293) @balanza
+* Fix wanda versioning (#4278) @balanza
+* Fix flaky tests hana db details & host details (#4286) @vicenteqa
+* [TRNT-4358] Remove wrong headers (#4276) @antgamdia
+* Send warning to #proj-trento-bots when failure rate of flaky tests analysis jobs exceeds a threshold. (#4275) @vicenteqa
+* Persist the number of elements when clicking again on the same page (#4272) @balanza
+* [TRNT-4358] Add license headers (#4237) @antgamdia
+* Add agent version filter in the host overview page (#4217) @balanza
+* Fix timezone flaky test (#4270) @nelsonkopliku
+* Fix polyfilled warning in frontend UT (#4256) @arbulu89
+* Remove not needed act usage from tests to silence warning (#4253) @arbulu89
+* Prune events cron job (#4244) @balanza
+* Fix test modal component not wrapped in `act` warning (#4255) @arbulu89
+* Fix copy button usage warning in test (#4252) @arbulu89
+* Add timings file for cypress split plugin (#4241) @vicenteqa
+* Fix CheckResultDetailPage.test warnings (#4243) @arbulu89
+* Refactor selector warnings (#4235) @arbulu89
+* Refactor table filter tests (#4220) @arbulu89
+* Adapt e2e tests for remote instance (#4210) @vicenteqa
+* Fix misused waitFor (#4224) @balanza
+* Fix flaky async test (#4223) @balanza
+* Add component versioning (#4155) @balanza
+* Detect majority maker nodes (#4188) @balanza
+* Separate elixir test and coveralls upload (#4221) @balanza
+* modify cron for scheduled flaky tests jobs (#4199) @vicenteqa
+* Ai onboarding e2e (#4166) @nelsonkopliku
+* AI onboarding UI: show current config (#4160) @nelsonkopliku
+* Remove saptune operation forbidden msg (#4157) @arbulu89
+* [TRNT-4326] Add cleanup in Dockerfile (#4156) @antgamdia
+* Preserve pagination (#4114) @balanza
+* Fix log level on production config (#4141) @balanza
+* [TRNT-4317] Pin GHA to SHA instead of tags (#4139) @antgamdia
+* Preserve table filters on browser history (#4101) @balanza
+* Host metrics API (#4096) @balanza
+* Updated dependencies to avoid old phoenix view (#4104) @chargio
+* Add test release job (#4090) @balanza
+* Add missing heartbeat config key (#4089) @balanza
+* [TRNT-4227] Add additional labels to the container image (#4050) @antgamdia
+* Host heartbeat config (#4082) @balanza
+* Fix flaky test: should not be able to login with deleted user (#4076) @vicenteqa
+* Make flaky tests analysis data flow to dashboard (#4065) @vicenteqa
+* Reusable workflow for flaky tests analysis jobs (#4037) @vicenteqa
+* Add hana-scale-up-multi-tier photofinish scenario (#4018) @skrech
+* Expected exporters (#3988) @balanza
+* Add last reboot info (#3950) @balanza
+* Check lockfile integrity (#3957) @balanza
+* Update lockfile (#3951) @balanza
+* Add last login e2e tests (#3936) @arbulu89
+* Host last reboot (#3932) @balanza
+* Fix typo in changelog (#3937) @balanza
+
+#### Features
+
+* Load OS CA certificates when calling wanda (#4297) @nelsonkopliku
+* Display empty swap chart when data is not available (#4289) @arbulu89
+* Analytics Modal Docs Link (#4267) @jagabomb
+* Analytics - Mask events data (#4287) @arbulu89
+* Ai assistant UI core (#4245) @nelsonkopliku
+* Add Filesystem type filter to File System Capacity chart (#4274) @arbulu89
+* Add navigation links for clusters, SAP systems and databases in tables (#4269) @arbulu89
+* [TRNT-4339] Add timezone awareness (#4242) @antgamdia
+* Improve SAP link tooltip (#4222) @arbulu89
+* Reword forbidden operation modal texts (#4216) @arbulu89
+* Group operation abilities by resource (#4212) @arbulu89
+* Unify select component (#4192) @arbulu89
+* Validate operation request site parameter in database operation policy (#4211) @arbulu89
+* Improve database start/stop operation policies to handle multi-tier setup (#4172) @arbulu89
+* Add resources links in operation forbidden modal (#4162) @arbulu89
+* Ai onboarding UI create/update (#4163) @nelsonkopliku
+* Remove unnecessary LLMRegistry.get_model_provider/1 function (#4168) @nelsonkopliku
+* Create/update AI Configuration (#4147) @nelsonkopliku
+* Expose AI configuration in profile (#4143) @nelsonkopliku
+* Basic AI config functions (#4140) @nelsonkopliku
+* Rename cluster start stop op frontend text (#4161) @arbulu89
+* Operation request failed (#4133) @arbulu89
+* Add basic AI provider/models configuration (#4127) @nelsonkopliku
+* Multi tier database start/stop operations (#4081) @arbulu89
+* Save system replication tier when the instance is stopped (#4103) @arbulu89
+* Improve database operation forbidden usage whe heartbeat is not passing (#4094) @arbulu89
+* Filesystem chart UI (#4095) @nelsonkopliku
+* Operations forbidden button based on heartbeat (#4085) @arbulu89
+* Operations heartbeat passing required (#4080) @arbulu89
+* Force to send cluster operation to host with passing heartbeat (#4078) @arbulu89
+* Expose filesystem usage metrics (#4079) @nelsonkopliku
+* Set default Unknown value to system replicaiton in cluster discovery (#4070) @arbulu89
+* Prom query filesystem metrics (#4072) @nelsonkopliku
+* Consolidate http client usage in Prometheus API (#4064) @nelsonkopliku
+* Update prometheus references in local docker compose (#4054) @nelsonkopliku
+* Parse operation completed errors (#4043) @arbulu89
+* Make prometheus reverse proxy upstream variable (#4044) @nelsonkopliku
+* Show cluster state (#4032) @arbulu89
+* update template to point to docs (#4020) @EMaksy
+* Replace npm install with npm ci (#4004) @EMaksy
+* SSO enabled profile update (#3985) @arbulu89
+* Enable analytics and add e2e tests (#3975) @arbulu89
+* Operation 2 stage modal (#3976) @nelsonkopliku
+* Cluster resources refresh operation frontend usage (#3970) @arbulu89
+* Handle Prometheus push mode (#3972) @balanza
+* Operations hardcoded routing (#3971) @arbulu89
+* Analytics - Add Google Tag Manager usage (#3877) @arbulu89
+* Cluster resource refresh (#3963) @arbulu89
+* Improve details about still running instances for reboot operation (#3964) @nelsonkopliku
+* Revisit saptune operations policy (#3962) @nelsonkopliku
+* Rephrase operations disclaimer message (#3958) @nelsonkopliku
+* Add last login at timestamp (#3930) @arbulu89
+
+#### Bug Fixes
+
+* Fix refresh token flow execution in frontend (#4249) @arbulu89
+* Use clustered SAP system/database instances to create SAP system link (#4234) @arbulu89
+* Update sles subscription on host deregister (#4213) @arbulu89
+* Make sure heartbeat interval is runtime env (#4120) @nelsonkopliku
+* Fix SR failing discovery with more than 2 nodes (#3990) @skrech
+* Analytics Storybook Fix (#3983) @jagabomb
+* CI - Fix PR-ENV docker-network-name (#3982) @skrech
+* CI - Correct ansible args on PR-ENV (#3980) @skrech
+* Analytics Eula Modal Fix (#3973) @jagabomb
+
+#### Maintenance
+
+* Fix npm11/node24 resolution problem with optional peerDep (#4321) @skrech
+* Set late in the day scheduled execution and specify timezone for flaky tests jobs (#4308) @vicenteqa
+* [TRNT-4376] Align DB dependencies (#4290) @antgamdia
+* Turn off AI features (#4277) @nelsonkopliku
+* Addded a short version tag for OBS container image packaging (#4288) @skrech
+* [TRNT-4358] Add license headers linter (#4236) @antgamdia
+* [TRNT-4358] Update LICENSE to match Apache-2.0 verbatim text (#4240) @antgamdia
+* Fix storybook PLACES not found warning (#4268) @arbulu89
+* Apply eslint rules to prefer arrow functions in test folder (#4219) @vicenteqa
+* Exclude common workflows from cooldown and group them into single PR (#4189) @skrech
+* [TRNT-1598] Extract versions to env in CI (#4170) @antgamdia
+* Group dependabot eslint updates & Add e2e deps to dependabot config (#4177) @vicenteqa
+* Fix flaky tests jobs schedules (#4175) @vicenteqa
+* Build pr env image with pr branch (#4158) @arbulu89
+* Fix publish-containers config on release workflow (#4159) @skrech
+* Fix wrong conditions for demo deploy (#4153) @skrech
+* New release process (#4146) @skrech
+* Common obs-sync and switch to git-flow for rolling builds (#4142) @skrech
+* Implements dependabot cooldown (#4134) @gagandeepb
+* Use common publish-containers workflow in CI (#4102) @skrech
+* Disable prometheus in demo (#4100) @nelsonkopliku
+* [TRNT-4227] Add missing arg in dockerfile (#4087) @antgamdia
+* Set trento_prometheus_auth in PR env CI (#4071) @arbulu89
+* Preserve flaky-tests directory on gh-pages deployment (#4068) @vicenteqa
+* Remove compile time usage of UTC as default value (#4060) @arbulu89
+* Workaround api_docs_checks linter to use previous version (#4066) @arbulu89
+* Add State value in ha_cluster_discovery photofinish payloads (#4040) @arbulu89
+* Cluster state e2e tests (#4036) @arbulu89
+* Add prometheus hosts for ansible PR usage (#4035) @arbulu89
+* Make docker-compose SElinux-compatible (#3986) @skrech
+* Increase the :pool_size when running tests (#3991) @skrech
+* Analytics Storybook Fix (#3983) @jagabomb
+* Package analytics GTM_ID value (#3987) @arbulu89
+* Bump BCI references to 15.7 (#3984) @nelsonkopliku
+* CI - Fix PR-ENV docker-network-name (#3982) @skrech
+* CI - Correct ansible args on PR-ENV (#3980) @skrech
+* [TRNT-4139] Update unversioned paths in API calls (#3956) @antgamdia
+* Fix package-lock.json after last PR (#3960) @skrech
+
+#### Dependencies
+
+<details>
+<summary>163 changes</summary>
+* Bump fast-uri from 3.1.0 to 3.1.2 in /assets (#4280) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group with 3 updates (#4311) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 7.1.9 to 7.1.10 (#4316) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump fast-uri from 3.1.0 to 3.1.2 in /test/e2e (#4279) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 in /test/e2e (#4284) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump globals from 17.5.0 to 17.6.0 in /test/e2e (#4315) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/preset-env from 7.29.2 to 7.29.3 in /assets (#4310) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group in /test/e2e with 2 updates (#4314) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 16.6.0 to 16.6.3 (#4318) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.8.1 to 3.8.3 in /assets (#4263) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/cache from 5.0.4 to 5.0.5 (#4258) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 2.5.0 to 2.6.0 (#4259) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/github-script from 8.0.0 to 9.0.0 (#4227) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react-webpack5 from 10.3.3 to 10.3.6 in /assets (#4230) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump axios from 1.15.0 to 1.16.1 in /assets (#4271) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 3.8.1 to 3.8.3 in /test/e2e (#4261) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump npm from 11.12.1 to 11.13.0 in /test/e2e (#4282) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/plugin-transform-modules-systemjs from 7.29.0 to 7.29.4 in /assets (#4285) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump autoprefixer from 10.4.27 to 10.5.0 in /assets (#4260) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 2 updates (#4262) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 16.1.0 to 16.6.0 (#4283) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.364.6 to 1.369.3 in /assets (#4265) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the common-workflows group with 3 updates (#4281) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump systeminformation from 5.31.5 to 5.31.6 in /test/e2e (#4296) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump protobufjs from 7.5.5 to 7.5.8 in /assets (#4295) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the cypress group across 1 directory with 3 updates (#4179) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump postcss from 8.4.49 to 8.5.12 in /test/e2e (#4248) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump postcss from 8.5.8 to 8.5.12 in /assets (#4247) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/upload-artifact from 7.0.0 to 7.0.1 (#4231) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump the eslint group across 1 directory with 3 updates (#4181) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react from 10.3.3 to 10.3.4 in /assets (#4206) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild from 0.27.4 to 0.28.0 in /assets (#4205) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-docs from 10.3.3 to 10.3.4 in /assets (#4204) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 4.0.0 to 4.1.0 (#4203) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump totp-generator from 1.0.0 to 2.0.1 in /test/e2e (#4202) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 16.0.0 to 16.1.0 (#4201) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump protobufjs from 7.5.4 to 7.5.5 in /assets (#4198) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.364.3 to 1.364.4 in /assets (#4191) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dompurify from 3.3.2 to 3.4.0 in /assets (#4193) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/core from 7.28.5 to 7.29.0 in /assets (#4185) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump npm from 10.9.6 to 11.12.1 in /test/e2e (#4184) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump date-fns from 3.3.1 to 4.1.0 in /test/e2e (#4183) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/preset-env from 7.29.0 to 7.29.2 in /assets (#4180) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump prettier from 2.6.2 to 3.8.1 in /test/e2e (#4182) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump openapi-diff from 2.0.1 to 2.1.7 (#4194) @antgamdia
+* Bump the common-workflows group with 3 updates (#4190) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump follow-redirects from 1.15.11 to 1.16.0 in /assets (#4176) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump postcss from 8.5.6 to 8.5.8 in /assets (#4150) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Updating mix dependencies for liveview to 1.1 (#4173) @chargio
+* Bump axios from 1.13.5 to 1.15.0 in /assets (#4167) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump endorama/asdf-parse-tool-versions from 1.0.0 to 1.5.1 (#4151) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump jest from 30.2.0 to 30.3.0 in /assets (#4152) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump lodash from 4.17.23 to 4.18.1 in /test/e2e (#4145) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump lodash from 4.17.23 to 4.18.1 in /assets (#4144) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump babel-jest from 30.2.0 to 30.3.0 in /assets (#4137) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @eslint/compat from 2.0.2 to 2.0.3 in /assets (#4136) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump semver from 7.7.3 to 7.7.4 in /assets (#4135) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/setup-buildx-action from 3 to 4 (#4062) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 15.3.0 to 16.0.0 in /assets (#4128) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump jaxxstorm/action-install-gh-release from 2.1.0 to 3.0.0 (#4132) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-jest from 29.12.2 to 29.15.1 in /assets (#4131) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.358.1 to 1.364.2 in /assets (#4130) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @faker-js/faker from 10.3.0 to 10.4.0 in /assets (#4129) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump brace-expansion from 1.1.12 to 1.1.13 in /test/e2e (#4126) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.13.0 to 7.13.2 in /assets (#4124) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-error-boundary from 6.0.0 to 6.1.1 in /assets (#4123) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump minimatch in /test/e2e (#4125) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react-webpack5 from 10.2.6 to 10.3.3 in /assets (#4122) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump serialize-javascript and terser-webpack-plugin in /assets (#4121) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump babel-loader from 10.0.0 to 10.1.1 in /assets (#4118) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump jest-environment-jsdom from 30.2.0 to 30.3.0 in /assets (#4116) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump axios-auth-refresh from 3.3.6 to 5.0.2 in /assets (#4117) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-webpack5-compiler-babel from 4.0.0 to 4.0.1 in /assets (#4115) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump release-drafter/release-drafter from 6 to 7 (#4099) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump autoprefixer from 10.4.21 to 10.4.27 in /assets (#4108) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild from 0.27.3 to 0.27.4 in /assets (#4111) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-storybook from 10.2.8 to 10.3.3 in /assets (#4110) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump picomatch from 2.3.1 to 2.3.2 in /assets (#4112) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dawidd6/action-ansible-playbook from 7 to 9 (#4107) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump picomatch in /test/e2e (#4105) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 15.2.0 to 16.0.0 (#4109) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump stefanzweifel/git-auto-commit-action from 5 to 7 (#4093) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react from 10.2.6 to 10.2.15 in /assets (#4058) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump flatted from 3.2.5 to 3.4.2 in /test/e2e (#4091) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/build-push-action from 6 to 7 (#4074) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.336.4 to 1.358.1 in /assets (#4059) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 15.0.0 to 15.2.0 in /assets (#4057) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-docs from 10.2.4 to 10.2.15 in /assets (#4056) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 3.7.0 to 4.0.0 (#4055) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react from 10.2.6 to 10.2.8 in /assets (#4023) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump geekyeggo/delete-artifact from 5 to 6 (#4086) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump flatted from 3.3.3 to 3.4.2 in /assets (#4092) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dorny/paths-filter from 3 to 4 (#4083) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dompurify from 3.3.1 to 3.3.2 in /assets (#4067) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/checkout from 4 to 6 (#4073) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tar and npm in /test/e2e (#4077) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/download-artifact from 7 to 8 (#4046) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/upload-artifact from 6 to 7 (#4045) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild from 0.27.2 to 0.27.3 in /assets (#4031) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump storybook from 10.2.8 to 10.2.13 in /assets (#4047) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump minimatch from 3.1.2 to 3.1.5 in /assets (#4049) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Make prettier npm dev dependency explicit (#4053) @arbulu89
+* Remove unused eslint-prettier-cli (#4052) @arbulu89
+* Fix npm yaml dependency missmatch (#4051) @arbulu89
+* Bump ajv from 6.12.6 to 6.14.0 in /test/e2e (#4038) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 15.0.0 to 15.2.0 (#4041) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump qs from 6.14.1 to 6.14.2 in /test/e2e (#4033) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @eslint/compat from 2.0.0 to 2.0.2 in /assets (#4024) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump axios from 1.13.2 to 1.13.5 in /assets (#4027) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @faker-js/faker from 10.2.0 to 10.3.0 in /assets (#4025) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-storybook from 10.2.3 to 10.2.8 in /assets (#4026) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump webpack from 5.94.0 to 5.105.0 in /test/e2e (#4016) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-dom from 19.2.3 to 19.2.4 in /assets (#4009) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-jest from 29.9.0 to 29.12.2 in /assets (#4014) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @testing-library/react from 16.3.0 to 16.3.2 in /assets (#4013) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump webpack from 5.102.1 to 5.105.0 in /assets (#4017) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @faker-js/faker from 9.9.0 to 10.2.0 in /assets (#4010) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump html-webpack-plugin from 5.6.5 to 5.6.6 in /assets (#4015) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-webpack5-compiler-babel from 3.0.6 to 4.0.0 in /assets (#4002) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react-webpack5 from 10.2.3 to 10.2.6 in /assets (#4011) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump storybook from 10.2.5 to 10.2.6 in /assets (#4012) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 13.3.4 to 15.0.0 in /assets (#4003) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/preset-env from 7.28.5 to 7.29.0 in /assets (#4008) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 13.3.5 to 15.0.0 (#3998) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react from 10.2.3 to 10.2.4 in /assets (#3999) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump fishery from 2.3.1 to 2.4.0 in /assets (#4007) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 2.4.3 to 2.5.0 (#4006) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Replace npm install with npm ci (#4004) @EMaksy
+* Bump @storybook/addon-docs from 10.1.11 to 10.2.4 in /assets (#4000) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-react-hooks from 5.2.0 to 7.0.1 in /assets (#3994) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/react-webpack5 from 10.0.8 to 10.2.3 in /assets (#3995) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.309.1 to 1.336.4 in /assets (#3996) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-storybook from 10.0.8 to 10.2.3 in /assets (#3997) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dawidd6/action-ansible-playbook from 6 to 7 (#3992) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.12.0 to 7.13.0 in /assets (#3993) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @babel/plugin-transform-modules-commonjs from 7.27.1 to 7.28.6 in /assets (#3966) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump tailwindcss from 3.4.18 to 3.4.19 in /assets (#3965) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/login-action from 3.6.0 to 3.7.0 (#3989) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump cypress-io/github-action from 6 to 7 (#3979) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump lodash from 4.17.21 to 4.17.23 in /assets (#3978) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump lodash from 4.17.21 to 4.17.23 in /test/e2e (#3977) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @eslint/js from 9.39.1 to 9.39.2 in /assets (#3946) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-dom from 19.2.0 to 19.2.3 in /assets (#3944) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump preact from 10.27.2 to 10.28.2 in /assets (#3952) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump qs and @cypress/request in /test/e2e (#3955) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump esbuild from 0.27.0 to 0.27.2 in /assets (#3945) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.11.0 to 7.12.0 in /assets (#3954) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 2.4.2 to 2.4.3 (#3953) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @storybook/addon-docs from 10.0.8 to 10.1.10 in /assets (#3943) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump storybook from 10.0.8 to 10.1.10 in /assets (#3941) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromaui/action from 13.3.4 to 13.3.5 (#3949) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump dawidd6/action-ansible-playbook from 5 to 6 (#3947) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump mdast-util-to-hast from 13.2.0 to 13.2.1 in /assets (#3934) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump docker/metadata-action from 5.9.0 to 5.10.0 (#3933) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump isbang/compose-action from 2.4.1 to 2.4.2 (#3935) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/cache from 4 to 5 (#3938) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/upload-artifact from 5 to 6 (#3939) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump actions/download-artifact from 6 to 7 (#3940) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump react-router from 7.9.5 to 7.9.6 in /assets (#3928) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump eslint-plugin-jest from 29.1.0 to 29.2.1 in /assets (#3927) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump posthog-js from 1.297.0 to 1.298.0 in /assets (#3926) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump @eslint/compat from 1.4.1 to 2.0.0 in /assets (#3922) @[dependabot[bot]](https://github.com/apps/dependabot)
+* Bump chromatic from 13.3.3 to 13.3.4 in /assets (#3921) @[dependabot[bot]](https://github.com/apps/dependabot)
+
+</details>
+**Full Changelog**: https://github.com/trento-project/web/compare/3.0.0...3.1.0
+
 ## [3.0.0](https://github.com/trento-project/web/tree/2.4.0/compare/2.5.0...3.0.0) - 2025-11-27
 
 ### What's Changed
@@ -344,10 +690,8 @@
 * Bump isbang/compose-action from 2.1.0 to 2.2.0 (#3264) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump undici from 5.28.5 to 5.29.0 in /test/e2e (#3505) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump axios from 1.7.9 to 1.9.0 in /assets (#3475) @[dependabot[bot]](https://github.com/apps/dependabot)
-
 </details>
 **Full Changelog**: https://github.com/trento-project/web/compare/2.5.0...3.0.0
-
 ## [2.5.0](https://github.com/trento-project/web/tree/2.4.0/compare/2.4.0...2.5.0) - 2025-05-20
 
 ### What's Changed
@@ -581,7 +925,6 @@
 </details>
 **Full Changelog**: https://github.com/trento-project/web/compare/2.4.0...2.5.0
 ## [2.4.0](https://github.com/trento-project/web/tree/2.4.0) (2024-11-12)
-
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.2...2.4.0)
 
 **Merged pull requests:**
