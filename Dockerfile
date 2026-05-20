@@ -8,7 +8,7 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 # RUN zypper ar https://download.opensuse.org/repositories/devel:sap:trento:builddeps/${OS_VER} builddeps
-RUN zypper ar http://cdn.opensuse.org/distribution/leap/16.0/repo/oss/x86_64 oss
+RUN zypper ar https://cdn.opensuse.org/distribution/leap/16.0/repo/oss/x86_64 oss
 RUN zypper -n --gpg-auto-import-keys ref
 RUN zypper -n in make gcc git-core elixir elixir-hex erlang erlang-rebar3
 COPY . /build
