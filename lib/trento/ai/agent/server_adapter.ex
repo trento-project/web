@@ -18,13 +18,14 @@ defmodule Trento.AI.Agent.ServerAdapter do
   def subscribe(agent_id), do: impl().subscribe(agent_id)
   def add_message(agent_id, message), do: impl().add_message(agent_id, message)
 
-  defp impl, do: Application.get_env(:trento, :ai_sagents_server_adapter, __MODULE__.Sagents)
+  defp impl,
+    do: Application.get_env(:trento, :ai_sagents_server_adapter, __MODULE__.SagentsAgentServer)
 
-  defmodule Sagents do
+  defmodule SagentsAgentServer do
     @moduledoc false
     @behaviour Trento.AI.Agent.ServerAdapter
 
-    defdelegate subscribe(agent_id), to: Elixir.Sagents.AgentServer
-    defdelegate add_message(agent_id, message), to: Elixir.Sagents.AgentServer
+    defdelegate subscribe(agent_id), to: Sagents.AgentServer
+    defdelegate add_message(agent_id, message), to: Sagents.AgentServer
   end
 end
