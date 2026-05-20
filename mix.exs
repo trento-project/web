@@ -57,6 +57,13 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:sagents, "~> 0.7.0"},
+      {:langchain,
+       github: "nelsonkopliku/langchain",
+       ref: "468f0a99c834ba66f35a8996dd305fa9b3df8bf4",
+       override: true},
+      # used for the event  envelopes
+      {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
       {:commanded, "~> 1.4"},
       {:commanded_ecto_projections, "~> 1.4"},
@@ -75,7 +82,7 @@ defmodule Trento.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:flop, "~> 0.25.0"},
       {:floki, ">= 0.36.2", only: :test},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.3.0"},
       # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
       {:ranch, "~> 2.2.0", override: true},
