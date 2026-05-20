@@ -77,6 +77,22 @@ test_ai_config =
 
 Application.put_env(:trento, :ai, test_ai_config)
 
+Mox.defmock(Trento.AI.Agent.ServerAdapter.Mock,
+  for: Trento.AI.Agent.ServerAdapter
+)
+
+Mox.defmock(Trento.AI.Agent.SupervisorAdapter.Mock,
+  for: Trento.AI.Agent.SupervisorAdapter
+)
+
+Application.put_env(:trento, :ai_sagents_server_adapter, Trento.AI.Agent.ServerAdapter.Mock)
+
+Application.put_env(
+  :trento,
+  :ai_sagents_supervisor_adapter,
+  Trento.AI.Agent.SupervisorAdapter.Mock
+)
+
 Application.ensure_all_started(:ex_machina, :faker)
 
 if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do

@@ -191,6 +191,8 @@ defmodule Trento.Factory do
 
   alias Trento.AI.AICase
 
+  alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
+
   use ExMachina.Ecto, repo: Trento.Repo
 
   def host_registered_event_factory do
@@ -1511,5 +1513,27 @@ defmodule Trento.Factory do
       model: model,
       api_key: api_key
     }
+  end
+
+  def random_langchain_model_factory(attrs) do
+    provider = Map.get(attrs, :provider, build(:random_ai_provider))
+    model = Map.get(attrs, :model, build(:random_ai_model, provider: provider))
+    api_key = Map.get(attrs, :api_key, Faker.String.base64(32))
+
+    case provider do
+      :openai ->
+        ChatOpenAI.new!(%{model: model, api_key: api_key, stream: true})
+
+      :anthropic ->
+        ChatAnthropic.new!(%{
+          model: model,
+          api_key: api_key,
+          stream: true,
+          thinking: %{type: "enabled"}
+        })
+
+      _ ->
+        ChatGoogleAI.new!(%{model: model, api_key: api_key, stream: true})
+    end
   end
 end
