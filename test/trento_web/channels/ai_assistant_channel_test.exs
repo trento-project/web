@@ -16,17 +16,21 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   JS-driven assigns chain to exercise the individual handlers in
   isolation.
 
-  The `send_message` happy path is intentionally NOT covered with
-  automated tests — it exercises live `Sagents.AgentsDynamicSupervisor`
-  and would require either booting a real agent or wiring Mimic against
-  the Sagents API. Manual smoke is the verification (see the
-  trento-ai-assistant skill).
+  Happy-path `send_message` coverage uses Mox doubles for the sagents
+  adapter boundary (`Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}`,
+  routed via `config/test.exs`). See
+  `describe "handle_in send_message/3 — happy path"`.
   """
 
   use TrentoWeb.ChannelCase
 
+  import Mox
+  import Trento.Factory
+
   alias TrentoWeb.AIAssistantChannel
   alias TrentoWeb.UserSocket
+
+  setup :verify_on_exit!
 
   describe "join/3" do
     test "joins ai_assistant:<user_id> when current_user_id matches" do
@@ -380,9 +384,54 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  # ----------------------------------------------------------------
-  # Setup helpers
-  # ----------------------------------------------------------------
+  describe "handle_in send_message/3 — happy path" do
+    test "calls Agent.run/2 and pushes RUN_STARTED on success" do
+      %{id: user_id} = insert(:user)
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: :googleai,
+        model: "gemini-2.5-flash"
+      )
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: user_id})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
+
+      Mox.allow(Trento.AI.Agent.SupervisorAdapter.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.ServerAdapter.Mock, self(), socket.channel_pid)
+
+      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _opts ->
+        {:ok, self()}
+      end)
+
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _agent_id -> :ok end)
+      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn _agent_id, _msg -> :ok end)
+
+      run_id = "run-#{System.unique_integer([:positive])}"
+      thread_id = "thread-#{System.unique_integer([:positive])}"
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => run_id,
+        "thread_id" => thread_id
+      })
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_STARTED",
+        "runId" => ^run_id,
+        "threadId" => ^thread_id
+      })
+
+      assert %{
+               loading: true,
+               message_id: ^run_id,
+               message_started: false,
+               run_has_started: false
+             } = wait_assigns(socket)
+    end
+  end
 
   defp join_socket(_context) do
     {:ok, _, socket} =
