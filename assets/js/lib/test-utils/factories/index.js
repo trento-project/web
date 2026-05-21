@@ -62,6 +62,7 @@ export const checkFactory = Factory.define(() => ({
 export const healthSummaryFactory = Factory.define(() => ({
   application_cluster_id: faker.string.uuid(),
   application_cluster_health: healthEnum(),
+  application_health: healthEnum(),
   database_health: healthEnum(),
   database_id: faker.string.uuid(),
   database_cluster_id: faker.string.uuid(),
