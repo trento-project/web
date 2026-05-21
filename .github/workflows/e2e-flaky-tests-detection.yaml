@@ -195,11 +195,12 @@ jobs:
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
       - name: Get photofinish path
         id: photofinish-path
-        run: echo "path=$(which photofinish)" >> $GITHUB_OUTPUT
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
