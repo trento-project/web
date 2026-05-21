@@ -71,7 +71,16 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   def join("ai_assistant:" <> _user_id, _payload, _socket), do: {:error, :user_not_logged}
 
-  defp allowed?(user_id, current_user_id), do: String.to_integer(user_id) == current_user_id
+  defp allowed?(user_id, current_user_id) do
+    case Integer.parse(user_id) do
+      {id, ""} ->
+        id == current_user_id
+
+      _ ->
+        Logger.warning("Invalid user_id in topic: #{user_id}")
+        false
+    end
+  end
 
   @impl true
   def handle_in(

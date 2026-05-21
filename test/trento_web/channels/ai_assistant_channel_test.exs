@@ -75,6 +75,20 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                |> socket("user_id", %{current_user_id: 1})
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:2")
     end
+
+    test "rejects with :unauthorized for non-numeric topic suffix (does not crash)" do
+      assert {:error, :unauthorized} =
+               UserSocket
+               |> socket("user_id", %{current_user_id: 42})
+               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:abc")
+    end
+
+    test "rejects with :unauthorized for numeric topic with trailing garbage" do
+      assert {:error, :unauthorized} =
+               UserSocket
+               |> socket("user_id", %{current_user_id: 42})
+               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42xyz")
+    end
   end
 
   describe "handle_in send_message/3 — payload contract" do
