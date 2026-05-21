@@ -30,8 +30,9 @@ env:
   NODEJS_BC: "20.20.0"
   OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
-  K3S_VERSION: "v1.31.2+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
-  CERT_MANAGER_VERSION: "v1.14.5" # https://github.com/cert-manager/cert-manager/releases
+  K3S_VERSION: "v1.36.1+k3s1" # https://hub.docker.com/r/rancher/k3s/tags
+  CERT_MANAGER_VERSION: "v1.20.2" # https://github.com/cert-manager/cert-manager/releases
+  HELM_VERSION: "v4.2.0" # https://github.com/helm/helm/releases
   POSTGRESQL_VERSION: "17" # (major version) https://registry.suse.com/repositories/suse-postgres17?tag=17.5
 
 jobs:
@@ -1164,53 +1165,72 @@ jobs:
       - name: Cleanup previous run
         run: |
           rm -fr calico/
+      - name: Resolve latest chart version
+        id: chart-version
+        run: |
+          command -v skopeo >/dev/null || { echo "ERROR: skopeo not installed"; exit 1; }
+          VERSION=$(skopeo list-tags "docker://ghcr.io/trento-project/helm-charts/trento-server" | jq -r '.Tags[]' | grep -E '^[0-9]+\.[0-9]+\.[0-9]' | sort -rV | head -1)
+          echo "Using chart version: ${VERSION}"
+          echo "value=${VERSION}" >> $GITHUB_OUTPUT
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@502a9ff4d816dad543e359971fe2c3128d0f4c6e # v4
         with:
           k3s-version: ${{ env.K3S_VERSION }}
-      - name: Add bitnami & jetstack(cert-manager) helm deps
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add jetstack https://charts.jetstack.io
-          helm repo update
-      - name: Install CRDs for cert-manager
-        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/${{ env.CERT_MANAGER_VERSION }}/cert-manager.crds.yaml
+          helm-version: ${{ env.HELM_VERSION }}
+          metrics-enabled: false
       - name: Install cert-manager
-        run: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version ${{ env.CERT_MANAGER_VERSION }}
-        continue-on-error: true
-      - name: Download and unzip helm chart
         run: |
-          rm rolling.zip | true
-          rm -rf helm-charts-rolling | true
-          wget https://github.com/trento-project/helm-charts/archive/refs/tags/rolling.zip
-          unzip rolling.zip
-      - name: Prepare valid cluster-issuer and certificate (for cert-manager)
+          helm install cert-manager oci://quay.io/jetstack/charts/cert-manager \
+            --version ${{ env.CERT_MANAGER_VERSION }} \
+            --namespace cert-manager \
+            --create-namespace \
+            --set crds.enabled=true
+          kubectl wait --for=condition=available --timeout=300s \
+            deployment/cert-manager -n cert-manager
+      - name: Checkout helm-charts repository for cert-manager templates
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: trento-project/helm-charts
+          ref: rolling
+          path: helm-charts
+      - name: Prepare cert-manager resources and values for ingress
         run: |
-          envsubst < helm-charts-rolling/hack/cert-manager/certificate.tpl.yaml > helm-charts-rolling/hack/cert-manager/certificate.yaml
-          envsubst < helm-charts-rolling/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
-          envsubst < helm-charts-rolling/hack/cert-manager/override-values.tpl.yaml > helm-charts-rolling/hack/cert-manager/override-values.yaml
-      - name: Apply cluster-issuer and certificate (for cert-manager)
+          envsubst < helm-charts/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts/hack/cert-manager/cluster-issuer.yaml
+          envsubst < helm-charts/hack/cert-manager/certificate.tpl.yaml > helm-charts/hack/cert-manager/certificate.yaml
+          envsubst < helm-charts/hack/cert-manager/override-values.tpl.yaml > helm-charts/hack/cert-manager/override-values.yaml
+      - name: Apply cert-manager resources
         run: |
-          kubectl apply -f helm-charts-rolling/hack/cert-manager/cluster-issuer.yaml
-          kubectl apply -f helm-charts-rolling/hack/cert-manager/certificate.yaml
-      - name: Install trento-server helm chart
+          kubectl create namespace ${{ env.TRENTO_NAMESPACE }} || true
+          kubectl apply -f helm-charts/hack/cert-manager/cluster-issuer.yaml
+          kubectl apply -f helm-charts/hack/cert-manager/certificate.yaml
+      - name: Login to GHCR for pulling OCI chart
         run: |
-          cd helm-charts-rolling/charts/trento-server
-          helm dependency update
-          helm upgrade -i trento --wait . \
+          echo "${{ github.token }}" | helm registry login ghcr.io --username ${{ github.actor }} --password-stdin
+      - name: Install trento-server helm chart from OCI registry
+        run: |
+          helm upgrade -i trento oci://ghcr.io/trento-project/helm-charts/trento-server --wait \
+            --version ${{ steps.chart-version.outputs.value }} \
+            --namespace ${{ env.TRENTO_NAMESPACE }} \
+            --create-namespace \
+            --timeout 3m \
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
             --set trento-web.image.pullPolicy=Always \
             --set trento-web.image.repository="${IMAGE_REPOSITORY}/trento-web" \
-            --set trento-web.image.tag="demo" \
+            --set trento-web.image.tag="rolling" \
             --set trento-wanda.image.pullPolicy=Always \
             --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
-            --set trento-wanda.image.tag="demo" \
+            --set trento-wanda.image.tag="rolling" \
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
+            --set trento-mcp-server.enabled=true \
+            --set trento-mcp-server.image.pullPolicy=Always \
+            --set trento-mcp-server.image.repository="${IMAGE_REPOSITORY}/mcp-server-trento" \
+            --set trento-mcp-server.image.tag="rolling" \
+            --set prometheus.server.auth.type=none \
             --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
             --set prometheus.enabled=false \
-            -f ../../hack/cert-manager/override-values.yaml
+            -f helm-charts/hack/cert-manager/override-values.yaml
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the demo environment
