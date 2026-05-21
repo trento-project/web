@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-08T04:03:46Z",
-    "commit": "c1c8179aea75eb25e7a1b991435fe595884aa945",
-    "run_id": "24116678483",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.3531
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting software updates successfully returns software updates",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-08T04:04:28Z",
     "commit": "c1c8179aea75eb25e7a1b991435fe595884aa945",
     "run_id": "24116678483",
@@ -6605,6 +6585,66 @@
       {
         "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-21T22:54:20Z",
+    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
+    "run_id": "26250407287",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 24
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
+        "score": 0.1309
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.1301
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1062
+      },
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1015
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.07251
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.07251
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.07251
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.05407
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.05001
+      },
+      {
+        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.02501
+      },
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.02501
       }
     ]
   }
