@@ -22,7 +22,7 @@ defmodule Trento.AI.LLMBuilder do
         {:error, :no_ai_configuration}
 
       {:ok, %User{ai_configuration: %{provider: provider, model: model, api_key: api_key}}} ->
-        # not checking whether the provide/model pair is valid here
+        # not checking whether the provider/model pair is valid here
         # because it was validated when saving the user configuration.
         # The question is whether after a user has configured their AI settings,
         # the model/provider pair can be invalidated. Not at the moment
