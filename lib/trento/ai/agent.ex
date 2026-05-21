@@ -102,9 +102,13 @@ defmodule Trento.AI.Agent do
         scope: Keyword.fetch!(opts, :scope),
         base_system_prompt: @system_prompt,
         tools: AIAssistantTools.tools(),
+        # see https://github.com/sagents-ai/sagents#provided-middleware
         middleware: [
+          # Task management with write_todos tool for tracking multi-step work
           {TodoList, []},
+          # Automatic conversation compression when token limits approach
           {Summarization, []},
+          # Fix dangling tool calls from interrupted conversations
           {PatchToolCalls, []}
         ]
       },
