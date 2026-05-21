@@ -52,6 +52,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       id: id,
       sid: sid,
       sapsystem_health: health,
+      application_health: compute_application_health(application_instances),
       database_id: database_id,
       database_health: database_health,
       application_cluster_health: compute_cluster_health(application_instances),
@@ -90,4 +91,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> Enum.filter(& &1)
     |> HealthService.compute_aggregated_health()
   end
+
+  defp compute_application_health(application_instances),
+    do:
+      application_instances |> Enum.map(& &1.health) |> HealthService.compute_aggregated_health()
 end
