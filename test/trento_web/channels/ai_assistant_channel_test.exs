@@ -119,18 +119,26 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_reply(ref, :error, :invalid_payload)
     end
 
-    test "drops send while :loading is true (double-send guard)", %{socket: socket} do
-      seed_assigns(socket, %{loading: true})
+    test "drops send while :loading is true and does NOT overwrite prior run_id/thread_id",
+         %{socket: socket} do
+      seed_assigns(socket, %{
+        loading: true,
+        current_run_id: "prior-run",
+        current_thread_id: "prior-thread"
+      })
 
       ref =
         push(socket, "send_message", %{
           "message" => "hi",
-          "run_id" => "r1",
-          "thread_id" => "t1"
+          "run_id" => "new-run",
+          "thread_id" => "new-thread"
         })
 
       refute_reply(ref, _, 100)
       refute_push("ag_ui_event", _, 100)
+
+      assert %{current_run_id: "prior-run", current_thread_id: "prior-thread"} =
+               wait_assigns(socket)
     end
   end
 
@@ -487,6 +495,27 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         "type" => "RUN_ERROR",
         "message" => "Failed to start agent. No AI configuration found for user."
       })
+    end
+
+    test "does NOT stash run_id/thread_id when LLMBuilder errors out" do
+      %{id: user_id} = insert(:user)
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: user_id})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "should-not-stash",
+        "thread_id" => "should-not-stash"
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_ERROR"})
+
+      assigns = wait_assigns(socket)
+      refute Map.has_key?(assigns, :current_run_id)
+      refute Map.has_key?(assigns, :current_thread_id)
     end
 
     test "emits verbatim RUN_ERROR when sagents start_agent_sync fails" do
