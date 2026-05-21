@@ -42,6 +42,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   use TrentoWeb, :channel
   require Logger
 
+  alias Trento.AI
   alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.LLMBuilder
   alias Trento.Users.User
@@ -53,13 +54,18 @@ defmodule TrentoWeb.AIAssistantChannel do
         _session,
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
-    if allowed?(user_id, current_user_id) do
-      {:ok,
-       socket
-       |> assign(:current_scope, %User{id: current_user_id})
-       |> assign(:loading, false)}
-    else
-      {:error, :unauthorized}
+    case {AI.enabled?(), allowed?(user_id, current_user_id)} do
+      {false, _} ->
+        {:error, :ai_assistant_disabled}
+
+      {_, false} ->
+        {:error, :unauthorized}
+
+      {true, true} ->
+        {:ok,
+         socket
+         |> assign(:current_scope, %User{id: current_user_id})
+         |> assign(:loading, false)}
     end
   end
 

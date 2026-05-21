@@ -23,6 +23,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   """
 
   use TrentoWeb.ChannelCase
+  use Trento.AI.AICase
 
   import Mox
   import Trento.Factory
@@ -55,6 +56,24 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                UserSocket
                |> socket("user_id", %{})
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42")
+    end
+
+    test "rejects with :ai_assistant_disabled when AI features are disabled" do
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+
+      assert {:error, :ai_assistant_disabled} =
+               UserSocket
+               |> socket("user_id", %{current_user_id: 42})
+               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42")
+    end
+
+    test "prefers :ai_assistant_disabled over :unauthorized when AI is disabled with mismatched user_id" do
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+
+      assert {:error, :ai_assistant_disabled} =
+               UserSocket
+               |> socket("user_id", %{current_user_id: 1})
+               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:2")
     end
   end
 
