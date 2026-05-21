@@ -51,15 +51,15 @@ defmodule Trento.AI.AgentTest do
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
       test_pid = self()
 
-      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn start_opts ->
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn start_opts ->
         send(test_pid, {:start_agent_sync, start_opts})
         {:ok, self()}
       end)
 
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
 
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn ^agent_id,
-                                                                  %Message{role: :user} = msg ->
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id,
+                                                           %Message{role: :user} = msg ->
         send(test_pid, {:add_message, msg})
         :ok
       end)
@@ -75,7 +75,7 @@ defmodule Trento.AI.AgentTest do
 
     test "short-circuits when start_agent_sync fails (subscribe + add_message NOT called)",
          %{agent: agent, prompt: prompt} do
-      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ ->
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ ->
         {:error, :boom}
       end)
 
@@ -84,16 +84,16 @@ defmodule Trento.AI.AgentTest do
 
     test "short-circuits when subscribe fails (add_message NOT called)",
          %{agent: agent, prompt: prompt} do
-      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
 
       assert {:error, :no_pubsub} = TrentoAIAgent.run(agent, prompt)
     end
 
     test "surfaces an add_message failure", %{agent: agent, prompt: prompt} do
-      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _ -> :ok end)
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
 
       assert {:error, :timeout} = TrentoAIAgent.run(agent, prompt)
     end
