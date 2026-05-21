@@ -318,7 +318,9 @@ config :trento, :ai,
         "claude-haiku-4-5"
       ]
     ]
-  ]
+  ],
+  agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
+  agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

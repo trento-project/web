@@ -1,12 +1,16 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
-
-defmodule Trento.AI.Agent.SupervisorAdapter do
+defmodule Trento.AI.Agent.Supervisor do
   @moduledoc """
   Behaviour wrapping `Sagents.AgentsDynamicSupervisor.start_agent_sync/1`.
-  Configurable via `:ai_sagents_supervisor_adapter` so tests can
+
+  Default production implementation lives at
+  `Trento.Infrastructure.AI.SagentsDynamicSupervisor`. Override via the
+  `:trento, :ai, agent_supervisor_adapter:` config so tests can
   substitute a Mox mock.
   """
+
+  alias Trento.AI.ApplicationConfigLoader
 
   @doc """
   Start an agent supervisor synchronously.
@@ -22,18 +26,5 @@ defmodule Trento.AI.Agent.SupervisorAdapter do
 
   def start_agent_sync(opts), do: impl().start_agent_sync(opts)
 
-  defp impl,
-    do:
-      Application.get_env(
-        :trento,
-        :ai_sagents_supervisor_adapter,
-        __MODULE__.SagentsDynamicSupervisor
-      )
-
-  defmodule SagentsDynamicSupervisor do
-    @moduledoc false
-    @behaviour Trento.AI.Agent.SupervisorAdapter
-
-    defdelegate start_agent_sync(opts), to: Sagents.AgentsDynamicSupervisor
-  end
+  defp impl, do: Keyword.get(ApplicationConfigLoader.load(), :agent_supervisor_adapter)
 end

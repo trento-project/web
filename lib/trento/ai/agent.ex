@@ -18,7 +18,8 @@ defmodule Trento.AI.Agent do
 
   alias LangChain.Message
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
-  alias Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}
+  alias Trento.AI.Agent.Server, as: AgentServer
+  alias Trento.AI.Agent.Supervisor, as: AgentSupervisor
 
   alias TrentoWeb.AIAssistantTools
 
@@ -126,9 +127,9 @@ defmodule Trento.AI.Agent do
     with {:ok, _} <-
            agent_id
            |> start_opts(agent)
-           |> SupervisorAdapter.start_agent_sync(),
-         :ok <- ServerAdapter.subscribe(agent_id) do
-      ServerAdapter.add_message(agent_id, Message.new_user!(prompt))
+           |> AgentSupervisor.start_agent_sync(),
+         :ok <- AgentServer.subscribe(agent_id) do
+      AgentServer.add_message(agent_id, Message.new_user!(prompt))
     end
   end
 
