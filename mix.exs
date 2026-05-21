@@ -58,6 +58,8 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:sagents, "~> 0.7.0"},
+      # temporary override to pull in a couple of relevant fixes
+      # upstream PR here https://github.com/brainlid/langchain/pull/548
       {:langchain,
        github: "nelsonkopliku/langchain",
        ref: "468f0a99c834ba66f35a8996dd305fa9b3df8bf4",
