@@ -445,7 +445,7 @@ jobs:
   coveralls-finish:
     needs: [test-elixir]
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
@@ -688,7 +688,7 @@ jobs:
     name: Regression tests
     needs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
@@ -793,7 +793,7 @@ jobs:
     name: Integration tests
     needs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:

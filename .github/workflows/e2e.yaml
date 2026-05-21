@@ -19,7 +19,7 @@ concurrency: cluster_e2e_tests
 jobs:
   e2e_tests:
     name: E2E tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       TF_VAR_aws_region: "eu-central-1"
       TF_VAR_aws_secret_key: "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
@@ -95,7 +95,7 @@ jobs:
                 trento_server:
                   hosts:
                     server:
-                      ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }} 
+                      ansible_host: ${{ steps.tf-outputs.outputs.trento_server_public_ip }}
                 postgres_hosts:
                   hosts:
                     server:
@@ -111,12 +111,12 @@ jobs:
                 agents:
                   hosts:
                     hana01:
-                      ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[0] }}  
+                      ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[0] }}
                     hana02:
                       ansible_host: ${{ fromJson(steps.tf-outputs.outputs.hana_public_ip)[1] }}
           options: |
-            --extra-vars "web_postgres_password='pass' \ 
-            wanda_postgres_password='wanda' \ 
+            --extra-vars "web_postgres_password='pass' \
+            wanda_postgres_password='wanda' \
             rabbitmq_password='trento' \
             prometheus_url='http://localhost' \
             web_admin_password='adminpassword' \
