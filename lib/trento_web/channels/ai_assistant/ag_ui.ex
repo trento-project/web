@@ -108,6 +108,8 @@ defmodule TrentoWeb.AIAssistant.AgUi do
       })
 
   @spec format_error(term()) :: String.t()
+  defp format_error(message) when is_binary(message), do: message
+
   defp format_error(%LangChainError{message: message}),
     do: "Sorry, I encountered an error: #{message}"
 
