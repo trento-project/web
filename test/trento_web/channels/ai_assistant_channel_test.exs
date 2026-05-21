@@ -193,16 +193,32 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:agent, {:status_changed, :error, ...}}" do
     setup :join_socket
 
-    test "emits RUN_ERROR with formatted message", %{socket: socket} do
-      seed_assigns(socket, %{
-        current_run_id: "r1",
-        current_thread_id: "t1"
-      })
-
+    test "emits RUN_ERROR with the binary reason passed verbatim (no prefix)",
+         %{socket: socket} do
       send(socket.channel_pid, {:agent, {:status_changed, :error, "boom"}})
 
-      assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => message})
-      assert message =~ "boom"
+      assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => "boom"})
+    end
+
+    test "emits RUN_ERROR with `Sorry, ...` prefix for %LangChainError{}",
+         %{socket: socket} do
+      error = LangChain.LangChainError.exception(type: "x", message: "stream gone")
+      send(socket.channel_pid, {:agent, {:status_changed, :error, error}})
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Sorry, I encountered an error: stream gone"
+      })
+    end
+
+    test "emits RUN_ERROR with `Sorry, ...` + inspect for arbitrary term",
+         %{socket: socket} do
+      send(socket.channel_pid, {:agent, {:status_changed, :error, :timeout}})
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Sorry, I encountered an error: :timeout"
+      })
     end
   end
 
@@ -449,6 +465,60 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                message_started: false,
                run_has_started: false
              } = wait_assigns(socket)
+    end
+  end
+
+  describe "handle_in send_message/3 — error paths" do
+    test "emits verbatim RUN_ERROR when user has no AI configuration" do
+      %{id: user_id} = insert(:user)
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: user_id})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1"
+      })
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Failed to start agent. No AI configuration found for user."
+      })
+    end
+
+    test "emits verbatim RUN_ERROR when sagents start_agent_sync fails" do
+      %{id: user_id} = insert(:user)
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: :googleai,
+        model: "gemini-2.5-flash"
+      )
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: user_id})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
+
+      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ ->
+        {:error, :boom}
+      end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1"
+      })
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Failed to start agent: :boom"
+      })
     end
   end
 
