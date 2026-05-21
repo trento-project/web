@@ -3,6 +3,7 @@
 
 defmodule Trento.AI.AgentTest do
   use ExUnit.Case, async: false
+  use Trento.AI.AICase
 
   import Mox
 
