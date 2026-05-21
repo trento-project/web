@@ -80,28 +80,34 @@ defmodule TrentoWeb.AIAssistantChannel do
         socket
       )
       when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id),
-      do:
-        socket
-        |> stash_run_ids(run_id, thread_id)
-        |> handle_incoming_prompt(String.trim(prompt))
+      do: handle_incoming_prompt(socket, String.trim(prompt), run_id, thread_id)
 
   def handle_in("send_message", payload, socket) do
     Logger.warning("Invalid send_message payload: #{inspect(payload)}")
     {:reply, {:error, :invalid_payload}, socket}
   end
 
-  defp handle_incoming_prompt(%{assigns: %{loading: true}} = socket, _prompt),
-    do: {:noreply, socket}
+  defp handle_incoming_prompt(
+         %{assigns: %{loading: true}} = socket,
+         _prompt,
+         _run_id,
+         _thread_id
+       ),
+       do: {:noreply, socket}
 
-  defp handle_incoming_prompt(socket, ""), do: {:noreply, socket}
+  defp handle_incoming_prompt(socket, "", _run_id, _thread_id), do: {:noreply, socket}
 
   defp handle_incoming_prompt(
          %{assigns: %{current_scope: %{id: current_user_id}}} = socket,
-         prompt
+         prompt,
+         run_id,
+         thread_id
        ) do
     case LLMBuilder.build_for_user(current_user_id) do
       {:ok, model_config} ->
-        run_agent(socket, model_config, prompt)
+        socket
+        |> stash_run_ids(run_id, thread_id)
+        |> run_agent(model_config, prompt)
 
       {:error, reason} ->
         {:noreply, AgUi.run_error(socket, model_setup_error(reason))}
