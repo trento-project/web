@@ -17,7 +17,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   isolation.
 
   Happy-path `send_message` coverage uses Mox doubles for the sagents
-  adapter boundary (`Trento.AI.Agent.{ServerAdapter, SupervisorAdapter}`,
+  adapter boundary (`Trento.AI.Agent.{Server, Supervisor}`,
   routed via `config/test.exs`). See
   `describe "handle_in send_message/3 — happy path"`.
   """
@@ -399,15 +399,15 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         |> socket("user_id", %{current_user_id: user_id})
         |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
 
-      Mox.allow(Trento.AI.Agent.SupervisorAdapter.Mock, self(), socket.channel_pid)
-      Mox.allow(Trento.AI.Agent.ServerAdapter.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
 
-      expect(Trento.AI.Agent.SupervisorAdapter.Mock, :start_agent_sync, fn _opts ->
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _opts ->
         {:ok, self()}
       end)
 
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :subscribe, fn _agent_id -> :ok end)
-      expect(Trento.AI.Agent.ServerAdapter.Mock, :add_message, fn _agent_id, _msg -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _msg -> :ok end)
 
       run_id = "run-#{System.unique_integer([:positive])}"
       thread_id = "thread-#{System.unique_integer([:positive])}"
