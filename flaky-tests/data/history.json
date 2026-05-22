@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-04-08T07:04:35Z",
-    "commit": "c1c8179aea75eb25e7a1b991435fe595884aa945",
-    "run_id": "24118118793",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 16
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
-        "score": 0.1786
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.05001
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.02501
-      },
-      {
-        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-09T04:00:00Z",
     "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
     "run_id": "24171279252",
@@ -6628,6 +6588,30 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-22T19:36:39Z",
+    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
+    "run_id": "26307226888",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.1469
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.08646
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
       }
     ]
   }
