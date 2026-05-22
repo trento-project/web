@@ -9,30 +9,32 @@ defmodule TrentoWeb.AIAssistant.ToolCatalogTest do
   alias TrentoWeb.V1
 
   describe "entries/0" do
-    test "returns a non-empty list of %Entry{} structs" do
+    test "returns a non-empty list of fully populated %Entry{} structs" do
       entries = ToolCatalog.entries()
 
       assert is_list(entries)
       assert length(entries) > 0
-      assert Enum.all?(entries, &match?(%Entry{}, &1))
-    end
 
-    test "every entry's {controller, action} resolves to an MCP-tagged OpenApiSpex operation" do
-      for %Entry{controller: controller, action: action} <- ToolCatalog.entries() do
-        operation = controller.open_api_operation(action)
-
-        assert operation,
-               "no open_api_operation for #{inspect(controller)}.#{action}"
-
-        assert "MCP" in (operation.tags || []),
-               "#{inspect(controller)}.#{action} is in the catalog but is not MCP-tagged"
+      for %Entry{
+            controller: c,
+            action: a,
+            verb: verb,
+            path: path,
+            tool_name: name,
+            operation: op
+          } <- entries do
+        assert is_atom(c)
+        assert is_atom(a)
+        assert verb in [:get, :post, :put, :patch, :delete]
+        assert is_binary(path)
+        assert is_binary(name) and name != ""
+        assert %OpenApiSpex.Operation{} = op
       end
     end
 
-    test "every catalog entry has a tool_name and a display_text" do
-      for %Entry{tool_name: tn, display_text: dt} <- ToolCatalog.entries() do
-        assert is_binary(tn) and tn != ""
-        assert is_binary(dt) and dt != ""
+    test "every entry corresponds to an MCP-tagged OpenApiSpex operation (filter is correct)" do
+      for %Entry{operation: %OpenApiSpex.Operation{tags: tags}} <- ToolCatalog.entries() do
+        assert "MCP" in (tags || [])
       end
     end
 
@@ -43,65 +45,47 @@ defmodule TrentoWeb.AIAssistant.ToolCatalogTest do
 
     test "every catalog entry has a unique {controller, action}" do
       keys = Enum.map(ToolCatalog.entries(), fn %Entry{controller: c, action: a} -> {c, a} end)
-
       assert length(keys) == length(Enum.uniq(keys))
     end
 
-    test "Host_list and Cluster_list tool_names are preserved (system-prompt compat)" do
-      host_entry =
-        Enum.find(ToolCatalog.entries(), fn e ->
-          e.controller == V1.HostController and e.action == :list
-        end)
-
-      cluster_entry =
-        Enum.find(ToolCatalog.entries(), fn e ->
-          e.controller == V1.ClusterController and e.action == :list
-        end)
+    test "default tool_name follows <Stem>_<action> derivation" do
+      host_entry = find_entry(V1.HostController, :list)
+      sap_entry = find_entry(V1.SapSystemController, :list)
+      cluster_entry = find_entry(TrentoWeb.V2.ClusterController, :list)
 
       assert host_entry.tool_name == "Host_list"
+      assert sap_entry.tool_name == "SapSystem_list"
       assert cluster_entry.tool_name == "Cluster_list"
     end
+
+    test "default display_text comes from operation.summary" do
+      host_entry = find_entry(V1.HostController, :list)
+      assert host_entry.display_text == host_entry.operation.summary
+    end
+
+    test "ai_tool/2 override wins over derivation (V1.UsersController :index)" do
+      entry = find_entry(V1.UsersController, :index)
+      assert entry.tool_name == "Users_list"
+      assert entry.display_text == "List users"
+    end
+
+    test "catalog size matches the number of MCP-tagged operations in v1/v2 controllers" do
+      {grep_count, 0} =
+        System.cmd("bash", [
+          "-c",
+          ~s(grep -rE 'tags:.*"MCP"' lib/trento_web/controllers/ | wc -l)
+        ])
+
+      expected = grep_count |> String.trim() |> String.to_integer()
+      assert length(ToolCatalog.entries()) == expected
+    end
+
   end
 
-  describe "route!/1" do
-    test "returns the HTTP verb and path template from the router" do
-      entry =
-        Enum.find(ToolCatalog.entries(), fn e ->
-          e.controller == V1.HostController and e.action == :list
-        end)
-
-      assert %{verb: :get, path: "/api/v1/hosts"} = ToolCatalog.route!(entry)
-    end
-
-    test "returns path templates with :param placeholders" do
-      entry =
-        Enum.find(ToolCatalog.entries(), fn e ->
-          e.controller == V1.HostController and e.action == :request_checks_execution
-        end)
-
-      assert %{verb: :post, path: "/api/v1/hosts/:id/checks/request_execution"} =
-               ToolCatalog.route!(entry)
-    end
-
-    test "raises ArgumentError for an unknown {controller, action}" do
-      entry = %Entry{
-        controller: V1.HostController,
-        action: :nonexistent_action,
-        tool_name: "fake",
-        display_text: "fake"
-      }
-
-      assert_raise ArgumentError, ~r/no route registered/, fn ->
-        ToolCatalog.route!(entry)
-      end
-    end
-
-    test "every catalog entry resolves to a route" do
-      for entry <- ToolCatalog.entries() do
-        assert %{verb: verb, path: path} = ToolCatalog.route!(entry)
-        assert verb in [:get, :post, :put, :patch, :delete]
-        assert is_binary(path)
-      end
-    end
+  defp find_entry(controller, action) do
+    Enum.find(ToolCatalog.entries(), fn e ->
+      e.controller == controller and e.action == action
+    end) ||
+      flunk("no catalog entry for #{inspect(controller)}.#{action}")
   end
 end
