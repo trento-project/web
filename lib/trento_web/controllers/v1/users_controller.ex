@@ -91,6 +91,8 @@ defmodule TrentoWeb.V1.UsersController do
          "application/json", UserCollection}
     ]
 
+  ai_tool :index, name: "Users_list", display_text: "List users"
+
   def index(conn, _params) do
     users = Users.list_users()
     render(conn, :index, users: users)

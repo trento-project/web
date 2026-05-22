@@ -28,6 +28,8 @@ defmodule TrentoWeb do
         formats: [:html, :json],
         layouts: [html: TrentoWeb.Layouts]
 
+      use TrentoWeb.AIAssistant.ControllerSpecs
+
       import Plug.Conn
       import TrentoWeb.Gettext
 
