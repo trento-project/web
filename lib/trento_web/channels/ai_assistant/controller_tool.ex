@@ -27,16 +27,13 @@ defmodule TrentoWeb.AIAssistant.ControllerTool do
   alias LangChain.Function
   alias OpenApiSpex.{Operation, Parameter, RequestBody}
   alias Trento.Users
-  alias TrentoWeb.AIAssistant.ToolCatalog
   alias TrentoWeb.AIAssistant.ToolCatalog.Entry
 
   @doc """
   Build a `%LangChain.Function{}` for the given catalog entry.
   """
   @spec build(Entry.t()) :: Function.t()
-  def build(%Entry{controller: controller, action: action} = entry) do
-    operation = controller.open_api_operation(action)
-
+  def build(%Entry{operation: operation} = entry) do
     Function.new!(%{
       name: entry.tool_name,
       display_text: entry.display_text || entry.tool_name,
@@ -171,8 +168,7 @@ defmodule TrentoWeb.AIAssistant.ControllerTool do
 
   def invoke(_, _, _), do: "unauthorized"
 
-  defp dispatch(%Entry{} = entry, args, user) do
-    %{verb: verb, path: path_template} = ToolCatalog.route!(entry)
+  defp dispatch(%Entry{verb: verb, path: path_template} = entry, args, user) do
     {path, body} = render_request(verb, path_template, args)
 
     verb

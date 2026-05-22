@@ -8,53 +8,43 @@ defmodule TrentoWeb.AIAssistant.ControllerToolTest do
 
   alias LangChain.Function
   alias TrentoWeb.AIAssistant.{ControllerTool, ToolCatalog}
-  alias TrentoWeb.AIAssistant.ToolCatalog.Entry
   alias TrentoWeb.V1
 
-  defp host_list_entry do
-    %Entry{
-      controller: V1.HostController,
-      action: :list,
-      tool_name: "Host_list",
-      display_text: "List hosts"
-    }
-  end
-
-  defp host_query_metrics_entry do
-    %Entry{
-      controller: V1.HostController,
-      action: :query_metrics,
-      tool_name: "Host_query_metrics",
-      display_text: "Query Prometheus metrics for a host"
-    }
+  defp entry_for(controller, action) do
+    Enum.find(ToolCatalog.entries(), fn e ->
+      e.controller == controller and e.action == action
+    end) ||
+      flunk("no catalog entry for #{inspect(controller)}.#{action}")
   end
 
   describe "build/1" do
     test "returns a %LangChain.Function{} with name, display_text, description, parameters_schema, and function" do
-      entry = host_list_entry()
+      entry = entry_for(V1.HostController, :list)
 
       assert %Function{
-               name: "Host_list",
-               display_text: "List hosts",
+               name: name,
+               display_text: display_text,
                description: description,
                parameters_schema: %{type: "object", properties: properties, required: required},
                function: function
              } = ControllerTool.build(entry)
 
-      assert is_binary(description)
-      assert description != ""
+      assert is_binary(name) and name != ""
+      assert is_binary(display_text) and display_text != ""
+      assert is_binary(description) and description != ""
       assert is_map(properties)
       assert is_list(required)
       assert is_function(function, 2)
     end
 
     test "propagates entry.display_text to LangChain.Function.display_text (powers AG-UI label)" do
-      entry = host_list_entry()
-      assert %Function{display_text: "List hosts"} = ControllerTool.build(entry)
+      entry = entry_for(V1.HostController, :list)
+      assert %Function{display_text: dt} = ControllerTool.build(entry)
+      assert dt == entry.display_text
     end
 
     test "translates path UUID parameters into JSON schema strings with uuid format" do
-      entry = host_query_metrics_entry()
+      entry = entry_for(V1.HostController, :query_metrics)
 
       assert %Function{parameters_schema: %{properties: properties, required: required}} =
                ControllerTool.build(entry)
@@ -86,7 +76,9 @@ defmodule TrentoWeb.AIAssistant.ControllerToolTest do
       user: user
     } do
       result =
-        ControllerTool.invoke(host_list_entry(), %{}, %{scope: %Trento.Users.User{id: user.id}})
+        ControllerTool.invoke(entry_for(V1.HostController, :list), %{}, %{
+          scope: %Trento.Users.User{id: user.id}
+        })
 
       assert is_binary(result)
       assert {:ok, decoded} = Jason.decode(result)
@@ -97,13 +89,14 @@ defmodule TrentoWeb.AIAssistant.ControllerToolTest do
 
   describe "invoke/3 — error paths" do
     test "returns \"unauthorized\" when the scope's user_id does not exist" do
-      assert ControllerTool.invoke(host_list_entry(), %{}, %{
+      assert ControllerTool.invoke(entry_for(V1.HostController, :list), %{}, %{
                scope: %Trento.Users.User{id: 999_999}
              }) == "unauthorized"
     end
 
     test "returns \"unauthorized\" when the context is missing scope" do
-      assert ControllerTool.invoke(host_list_entry(), %{}, %{}) == "unauthorized"
+      assert ControllerTool.invoke(entry_for(V1.HostController, :list), %{}, %{}) ==
+               "unauthorized"
     end
   end
 end
