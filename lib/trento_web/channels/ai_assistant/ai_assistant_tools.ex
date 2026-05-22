@@ -4,119 +4,35 @@
 defmodule TrentoWeb.AIAssistantTools do
   @moduledoc """
   AI Assistant tools for querying Trento infrastructure resources.
+
+  Most tools are derived automatically from MCP-tagged v1 controllers via
+  `TrentoWeb.AIAssistant.ToolCatalog` + `TrentoWeb.AIAssistant.ControllerTool`,
+  so the controller is the single source of truth for auth, data access, and
+  JSON shape. The two Prometheus tools below are kept as bespoke
+  `LangChain.Function`s because they shape PromQL arguments in a way that
+  is more useful for the LLM than the raw `query_metrics` controller action.
   """
 
   require Logger
-  alias Trento.Clusters
-  alias Trento.Clusters.Projections.ClusterReadModel
-  alias Trento.Databases
-  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Hosts
   alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Infrastructure.Prometheus
-  alias Trento.SapSystems
-  alias Trento.SapSystems.Projections.SapSystemReadModel
   alias Trento.Users
 
   alias LangChain.Function
 
-  alias TrentoWeb.{V1, V2}
+  alias TrentoWeb.AIAssistant.{ControllerTool, ToolCatalog}
 
   def tools do
-    [
-      host_list_tool(),
-      sap_system_list_tool(),
-      databases_list_tool(),
-      clusters_list_tool(),
-      instant_query_host_metrics_tool(),
-      range_query_host_metrics_tool()
-    ]
-  end
+    catalog_tools = Enum.map(ToolCatalog.entries(), &ControllerTool.build/1)
 
-  defp host_list_tool do
-    Function.new!(%{
-      name: "Host_list",
-      description:
-        "Retrieves a comprehensive list of all hosts discovered on the target infrastructure. " <>
-          "Returns host details including id, hostname, IP addresses, provider, and cluster_id (if the host belongs to a cluster). " <>
-          "Note: To get detailed cluster information (name, type, etc.), use the Cluster_list tool with the cluster_id.",
-      function: fn _args, context ->
-        user = Users.get_user(context.scope.id)
+    # IO.inspect(length(catalog_tools), label: "Number of catalog-derived tools")
 
-        case Hosts.Policy.authorize(:list, user, HostReadModel) do
-          true ->
-            hosts = Hosts.get_all_hosts()
-
-            Jason.encode!(V1.HostJSON.hosts(%{hosts: hosts}))
-
-          _ ->
-            "unauthorized"
-        end
-      end
-    })
-  end
-
-  defp sap_system_list_tool do
-    Function.new!(%{
-      name: "Sap_system_list",
-      description:
-        "Retrieves a comprehensive list of all SAP Systems discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
-      function: fn _args, context ->
-        user = Users.get_user(context.scope.id)
-
-        case SapSystems.Policy.authorize(:list, user, SapSystemReadModel) do
-          true ->
-            sap_systems = SapSystems.get_all_sap_systems()
-
-            Jason.encode!(V1.SapSystemJSON.sap_systems(%{sap_systems: sap_systems}))
-
-          _ ->
-            "unauthorized"
-        end
-      end
-    })
-  end
-
-  defp databases_list_tool do
-    Function.new!(%{
-      name: "Database_list",
-      description:
-        "Retrieves a comprehensive list of all HANA Databases discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
-      function: fn _args, context ->
-        user = Users.get_user(context.scope.id)
-
-        case Databases.Policy.authorize(:list, user, DatabaseReadModel) do
-          true ->
-            databases = Databases.get_all_databases()
-
-            Jason.encode!(V1.DatabaseJSON.databases(%{databases: databases}))
-
-          _ ->
-            "unauthorized"
-        end
-      end
-    })
-  end
-
-  defp clusters_list_tool do
-    Function.new!(%{
-      name: "Cluster_list",
-      description:
-        "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
-      function: fn _args, context ->
-        user = Users.get_user(context.scope.id)
-
-        case Clusters.Policy.authorize(:list, user, ClusterReadModel) do
-          true ->
-            clusters = Clusters.get_all_clusters()
-
-            Jason.encode!(V2.ClusterJSON.clusters(%{clusters: clusters}))
-
-          _ ->
-            "unauthorized"
-        end
-      end
-    })
+    catalog_tools ++
+      [
+        instant_query_host_metrics_tool(),
+        range_query_host_metrics_tool()
+      ]
   end
 
   defp instant_query_host_metrics_tool do
