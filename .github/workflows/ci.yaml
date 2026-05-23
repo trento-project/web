@@ -559,7 +559,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@42839e8c28caf61a16433fa96a03b312bbc47ab5 # v16.6.3
+        uses: chromaui/action@8d925269a481085d451544f6bd9aa2ab3af55b5d # v16.9.1
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
