@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-04-09T07:00:13Z",
-    "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
-    "run_id": "24172712574",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.5
-      },
-      {
-        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
-        "score": 0.1177
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.07251
-      },
-      {
-        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
-        "score": 0.05969
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-10T04:20:00Z",
     "commit": "54bd084c152259334fd242f53ab63870b360ad6d",
     "run_id": "24225844167",
@@ -6620,6 +6588,22 @@
       {
         "name": "UpgradablePackagesPage::should render correctly",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-23T18:59:57Z",
+    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
+    "run_id": "26340535113",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.1428
       }
     ]
   }
