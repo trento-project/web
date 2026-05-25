@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-04-11T04:20:51Z",
-    "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
-    "run_id": "24274249598",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-11T04:21:34Z",
     "commit": "8b846349ed7ab730785cb8395f839a927bde9b76",
     "run_id": "24274249598",
@@ -6600,6 +6576,30 @@
       {
         "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting software updates successfully returns software updates",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-25T19:03:20Z",
+    "commit": "13fc6ee5fa7cf8103ba27f1a88958c20833bd6f6",
+    "run_id": "26415160388",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
       }
     ]
   }
