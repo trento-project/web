@@ -1216,10 +1216,10 @@ jobs:
             --set trento-web.adminUser.password="${{ secrets.DEMO_PASSWORD }}" \
             --set trento-web.image.pullPolicy=Always \
             --set trento-web.image.repository="${IMAGE_REPOSITORY}/trento-web" \
-            --set trento-web.image.tag="rolling" \
+            --set trento-web.image.tag="demo" \
             --set trento-wanda.image.pullPolicy=Always \
             --set trento-wanda.image.repository="${IMAGE_REPOSITORY}/trento-wanda" \
-            --set trento-wanda.image.tag="rolling" \
+            --set trento-wanda.image.tag="demo" \
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
