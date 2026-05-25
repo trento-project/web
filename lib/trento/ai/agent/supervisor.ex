@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.AI.Agent.Supervisor do
   @moduledoc """
   Behaviour wrapping `Sagents.AgentsDynamicSupervisor.start_agent_sync/1`.
