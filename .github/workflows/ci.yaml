@@ -1193,12 +1193,12 @@ jobs:
           repository: trento-project/helm-charts
           ref: rolling
           path: helm-charts
-      - name: Prepare cert-manager resources and values for ingress
+      - name: Prepare valid cluster-issuer and certificate (for cert-manager) and values for ingress
         run: |
           envsubst < helm-charts/hack/cert-manager/cluster-issuer.tpl.yaml > helm-charts/hack/cert-manager/cluster-issuer.yaml
           envsubst < helm-charts/hack/cert-manager/certificate.tpl.yaml > helm-charts/hack/cert-manager/certificate.yaml
           envsubst < helm-charts/hack/cert-manager/override-values.tpl.yaml > helm-charts/hack/cert-manager/override-values.yaml
-      - name: Apply cert-manager resources
+      - name: Apply cluster-issuer and certificate (for cert-manager)
         run: |
           kubectl create namespace ${{ env.TRENTO_NAMESPACE }} || true
           kubectl apply -f helm-charts/hack/cert-manager/cluster-issuer.yaml
@@ -1223,7 +1223,7 @@ jobs:
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
-            --set trento-mcp-server.enabled=true \
+            --set trento-mcp-server.enabled=false \
             --set trento-mcp-server.image.pullPolicy=Always \
             --set trento-mcp-server.image.repository="${IMAGE_REPOSITORY}/mcp-server-trento" \
             --set trento-mcp-server.image.tag="rolling" \
