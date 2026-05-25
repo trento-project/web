@@ -43,7 +43,7 @@ const clusterStates = {
 //Attributes
 
 const url = '/clusters';
-const wandaUrl = Cypress.env('wandaUrl');
+const wandaUrl = Cypress.expose('wandaUrl');
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 const getChecksEndpointAlias = 'getChecks';

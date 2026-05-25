@@ -4,10 +4,6 @@
 import { TOTP } from 'totp-generator';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
-// Test data
-const DEFAULT_USERNAME = Cypress.env('login_user');
-const DEFAULT_PASSWORD = Cypress.env('login_password');
-
 export const plainUser = {
   username: 'trentoidp',
   password: 'password',
@@ -177,15 +173,25 @@ export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
     .its('response.statusCode')
     .should('eq', expectedStatusCode);
 
-export const apiLogin = (
-  username = DEFAULT_USERNAME,
-  password = DEFAULT_PASSWORD
-) =>
+const getLoginCredentials = (username, password) => {
+  if (username !== undefined && password !== undefined) {
+    return cy.wrap({ username, password });
+  }
+
+  return cy
+    .env(['login_user', 'login_password'])
+    .then(({ login_user, login_password }) => ({
+      username: login_user,
+      password: login_password,
+    }));
+};
+
+const requestLogin = (credentials) =>
   cy
     .request({
       method: 'POST',
       url: '/api/session',
-      body: { username, password },
+      body: credentials,
     })
     .then((response) => {
       const { access_token: accessToken, refresh_token: refreshToken } =
@@ -193,16 +199,18 @@ export const apiLogin = (
       return { accessToken, refreshToken };
     });
 
-export const apiLoginAndCreateSession = (
-  username = DEFAULT_USERNAME,
-  password = DEFAULT_PASSWORD
-) =>
-  cy.session([username, password], () => {
-    apiLogin(username, password).then(({ accessToken, refreshToken }) => {
-      window.localStorage.setItem('access_token', accessToken);
-      window.localStorage.setItem('refresh_token', refreshToken);
-    });
-  });
+export const apiLogin = (username, password) =>
+  getLoginCredentials(username, password).then(requestLogin);
+
+export const apiLoginAndCreateSession = (username, password) =>
+  getLoginCredentials(username, password).then((credentials) =>
+    cy.session([credentials.username, credentials.password], () => {
+      requestLogin(credentials).then(({ accessToken, refreshToken }) => {
+        window.localStorage.setItem('access_token', accessToken);
+        window.localStorage.setItem('refresh_token', refreshToken);
+      });
+    })
+  );
 
 export const logout = () => {
   cy.window().then((win) => {
@@ -251,10 +259,10 @@ export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
 
 export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary] = [
-    Cypress.env('project_root'),
-    Cypress.env('photofinish_binary'),
+    Cypress.expose('project_root'),
+    Cypress.expose('photofinish_binary'),
   ];
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
   const photofinishExecTimeout = isTrentoProdInstance ? 180000 : 60000;
 
   const baseUrl = Cypress.config().baseUrl;
@@ -276,7 +284,7 @@ export const loadScenario = (scenario) => {
     });
   };
 
-  if (Cypress.env('web_mode') === 'dev') return runPhotofinish();
+  if (Cypress.expose('web_mode') === 'dev') return runPhotofinish();
   else return getApiKey().then((apiKey) => runPhotofinish(apiKey));
 };
 
@@ -307,7 +315,7 @@ const isTestDataLoaded = () =>
   );
 
 export const startAgentsHeartbeat = (agents) => {
-  if (Cypress.env('web_mode') === 'dev') {
+  if (Cypress.expose('web_mode') === 'dev') {
     return cy.task('startAgentHeartbeat', { agents });
   }
 
