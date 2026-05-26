@@ -14,6 +14,7 @@ import HomeHealthSummary from './HomeHealthSummary';
 const homeHealthSummaryData = [
   healthSummaryFactory.build({
     application_cluster_health: 'passing',
+    application_health: 'passing',
     database_cluster_health: 'passing',
     database_health: 'passing',
     hosts_health: 'critical',
@@ -22,15 +23,16 @@ const homeHealthSummaryData = [
     database_sid: 'HDD',
   }),
   healthSummaryFactory.build({
-    application_cluster_health: 'passing',
+    application_cluster_health: 'critical',
+    application_health: 'passing',
     database_health: 'passing',
-    hosts_health: 'critical',
+    hosts_health: 'passing',
     sapsystem_health: 'passing',
   }),
   healthSummaryFactory.build({
     database_cluster_health: 'passing',
-    database_health: 'passing',
-    hosts_health: 'critical',
+    database_health: 'critical',
+    hosts_health: 'passing',
     sapsystem_health: 'passing',
   }),
   healthSummaryFactory.build({
@@ -38,8 +40,9 @@ const homeHealthSummaryData = [
     database_cluster_id: null,
     application_cluster_health: 'unknown',
     database_cluster_health: 'unknown',
+    application_health: 'critical',
     database_health: 'passing',
-    hosts_health: 'critical',
+    hosts_health: 'passing',
     sapsystem_health: 'passing',
   }),
 ];

@@ -31,7 +31,7 @@ const healthSummaryTableConfig = {
     },
     {
       title: 'Application instances',
-      key: 'sapsystemHealth',
+      key: 'applicationHealth',
       className: 'text-center w-1/6',
       render: (content, item) => (
         <Link to={`/sap_systems/${item.id}`}>
@@ -156,7 +156,7 @@ function HomeHealthSummary({ sapSystemsHealth, loading }) {
     databaseId: summaryDataEntry.database_id,
     hostsHealth: summaryDataEntry.hosts_health,
     id: summaryDataEntry.id,
-    sapsystemHealth: summaryDataEntry.sapsystem_health,
+    applicationHealth: summaryDataEntry.application_health,
     sid: summaryDataEntry.sid,
     databaseSid: summaryDataEntry.database_sid,
   }));

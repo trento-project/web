@@ -292,6 +292,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           },
           sapsystem_health: ResourceHealth,
           database_health: ResourceHealth,
+          application_health: ResourceHealth,
           hosts_health: ResourceHealth,
           clusters_health: %Schema{
             deprecated: true,
@@ -317,6 +318,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_cluster_id: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8",
           database_id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
           sapsystem_health: "passing",
+          application_health: "passing",
           database_health: "passing",
           hosts_health: "passing",
           clusters_health: "passing",
