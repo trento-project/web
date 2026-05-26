@@ -41,26 +41,15 @@ export const expectedGithubUrlIsDisplayed = () =>
     .get(githubRepositoryLabel)
     .should('have.text', 'https://github.com/trento-project/web');
 
-export const expectedComponentVersionIsDisplayed = (component) => {
-  const isTrentoWebDevMode = Cypress.expose('web_mode') === 'dev';
-  const componentIsWandaOrChecks =
-    component === 'wanda' || component === 'checks';
-
-  const componentVersionSelector = versionLabels[component];
-
-  if (componentIsWandaOrChecks && isTrentoWebDevMode) {
-    return cy.get(componentVersionSelector).should('have.text', 'N/A');
-  }
-
-  return cy
-    .get(componentVersionSelector)
+export const expectedComponentVersionIsDisplayed = (component) =>
+  cy
+    .get(versionLabels[component])
     .invoke('text')
     .should((version) => {
       const isValidVersion = semver.valid(semver.coerce(version)) !== null;
       expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
         .true;
     });
-};
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
   cy
