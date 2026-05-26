@@ -26,7 +26,7 @@ import { formatDateTime } from '@lib/timezones';
 import BackButton from '@common/BackButton';
 import Button from '@common/Button';
 import CleanUpButton from '@common/CleanUpButton';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import Table from '@common/Table';
 import Tooltip from '@common/Tooltip';
 import Banner from '@common/Banners';
@@ -76,6 +76,7 @@ function HostDetails({
   deregistering,
   exportersStatus = {},
   heartbeat,
+  health,
   hostID,
   hostname,
   ipAddresses = [],
@@ -230,9 +231,9 @@ function HostDetails({
         <BackButton url="/hosts">Back to Hosts</BackButton>
         <div className="flex flex-wrap">
           <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-            <PageHeader>
+            <DetailsViewHeader health={health}>
               Host Details: <span className="font-bold">{hostname}</span>
-            </PageHeader>
+            </DetailsViewHeader>
           </div>
           <div className="flex w-1/2 justify-end">
             <div className="flex w-fit whitespace-nowrap">
@@ -366,8 +367,10 @@ function HostDetails({
               timezone={timezone}
               loading={catalogLoading || lastExecutionLoading}
               error={catalogError || lastExecutionError}
-              onCheckClick={(health) =>
-                navigate(`/hosts/${hostID}/executions/last?health=${health}`)
+              onCheckClick={(checksHealth) =>
+                navigate(
+                  `/hosts/${hostID}/executions/last?health=${checksHealth}`
+                )
               }
             />
           </div>

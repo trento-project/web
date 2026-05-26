@@ -27,8 +27,8 @@ import ClusterDetails from './ClusterDetails';
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('ClusterDetails ClusterDetails component', () => {
-  it('should display cluster name', () => {
-    const { id, name, details } = clusterFactory.build();
+  it('should display cluster name and health', () => {
+    const { id, name, health, details } = clusterFactory.build();
 
     renderWithRouter(
       <ClusterDetails
@@ -37,6 +37,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         details={details}
         hasSelectedChecks={false}
         hosts={[]}
+        health={health}
         selectedChecks={[]}
         userAbilities={userAbilities}
         onStartExecution={noop}
@@ -44,11 +45,13 @@ describe('ClusterDetails ClusterDetails component', () => {
       />
     );
 
-    expect(
-      screen.getByRole('heading', {
-        name: `Pacemaker Cluster Details: ${name}`,
-      })
-    ).toBeInTheDocument();
+    const header = screen.getByRole('heading', {
+      name: `Pacemaker Cluster Details: ${name}`,
+    });
+
+    expect(header).toBeInTheDocument();
+    const { getByTestId } = within(header);
+    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
   });
 
   it.each([
