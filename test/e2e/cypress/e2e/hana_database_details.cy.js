@@ -18,6 +18,7 @@ context('HANA database details', () => {
 
     it('should display the expected SID in database details page', () => {
       hanaDbDetailsPage.pageTitleIsCorrectlyDisplayed('HANA Database Details');
+      hanaDbDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       hanaDbDetailsPage.databaseHasExpectedName();
       hanaDbDetailsPage.databaseHasExpectedType();
     });

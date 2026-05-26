@@ -208,6 +208,9 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
   validateUrl(`/${availableHanaClusterCostOpt.id}`);
 
 export const expectedClusterNameIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
+
+export const expectedClusterHealthIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
 
 export const expectedProviderIsDisplayed = (clusterType) => {

@@ -3,6 +3,7 @@
 
 export const selectedDatabase = {
   Id: 'f534a4ad-cef7-5234-b196-e67082ffb50c',
+  Health: 'fill-jungle-green-500',
   Sid: 'HDD',
   Type: 'HANA Database',
   SystemReplication: 'True',
