@@ -212,7 +212,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
       {:error, :command_dispatching, dispatching_error, _} ->
         {:error, dispatching_error}
 
-      {:error, _} = error ->
+      {:error, _failed_operation, _failed_value, _changes_so_far} = error ->
         Logger.error(
           "Error while finalizing software updates discovery for host #{host_id}, error: #{inspect(error)}"
         )

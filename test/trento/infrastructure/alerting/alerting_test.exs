@@ -48,7 +48,7 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
     end
 
     test "Notify api key will be expired soon" do
-      insert(:api_key_settings, expire_at: DateTime.add(DateTime.utc_now(), 28, :day))
+      insert(:api_key_settings, expire_at: DateTime.add(DateTime.utc_now(), 28 * 24 + 1, :hour))
 
       Alerting.notify_api_key_expiration()
 

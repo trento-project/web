@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabledTest do
+defmodule TrentoWeb.Plugs.Unplug.Predicates.ChartsDisabledPlugTest do
   use TrentoWeb.ConnCase, async: true
   import Plug.Test
 

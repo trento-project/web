@@ -236,7 +236,7 @@ defmodule Trento.UsersTest do
       insert(:users_abilities, user_id: user_id, ability_id: ability_id)
       %{id: identity_id} = insert(:user_identity, user_id: user_id)
 
-      pat = insert(:personal_access_token, user_id: user_id)
+      %PersonalAccessToken{} = pat = insert(:personal_access_token, user_id: user_id)
 
       %{id: deleted_user_id} = insert(:user, deleted_at: DateTime.utc_now())
       insert(:personal_access_token, user_id: deleted_user_id, expires_at: nil)

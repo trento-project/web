@@ -48,9 +48,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        include:
-          - nodejs: ${{ needs.setup-matrix.outputs.NODEJS_BC }}
-          - nodejs: ${{ needs.setup-matrix.outputs.NODEJS_DEV }}
+        nodejs: [${{ needs.setup-matrix.outputs.NODEJS_BC }}, ${{ needs.setup-matrix.outputs.NODEJS_DEV }}]
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -122,15 +120,11 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        include:
-          - suite-name: "Jest — Node ${{ needs.setup-matrix.outputs.NODEJS_DEV }}"
-            junit-artifact-pattern: jest-junit-reports-node${{ needs.setup-matrix.outputs.NODEJS_DEV }}-*
-          - suite-name: "Jest — Node ${{ needs.setup-matrix.outputs.NODEJS_BC }}"
-            junit-artifact-pattern: jest-junit-reports-node${{ needs.setup-matrix.outputs.NODEJS_BC }}-*
+        nodejs: [${{ needs.setup-matrix.outputs.NODEJS_BC }}, ${{ needs.setup-matrix.outputs.NODEJS_DEV }}]
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: ${{ matrix.suite-name }}
-      junit-artifact-pattern: ${{ matrix.junit-artifact-pattern }}
+      suite-name: "Jest — Node ${{ matrix.nodejs }}"
+      junit-artifact-pattern: jest-junit-reports-node${{ matrix.nodejs }}-*
       total-runs: ${{ needs.setup-matrix.outputs.total-runs }}
     secrets:
       SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
