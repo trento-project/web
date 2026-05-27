@@ -27,6 +27,7 @@ header:
     - "VERSION"
     - "assets/vendor/**"
     - "mix.lock"
+    - "packaging/suse/rpm/trento-web.spec"
 
   language:
     JavaScript:
