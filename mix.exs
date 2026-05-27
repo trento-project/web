@@ -125,6 +125,7 @@ defmodule Trento.MixProject do
       {:nimble_totp, "~> 1.0"},
       {:phoenix_html_helpers, "~> 1.0"},
       {:pow_assent, "~> 0.4.18"},
+      {:assent, "== 0.2.10", override: true},
       {:samly, "~> 1.0"}
     ]
   end
