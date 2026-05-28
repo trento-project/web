@@ -19,7 +19,6 @@ const clusterNames = '.tn-clustername';
 const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
 const tableRows = 'tbody tr';
 const rowCells = 'td';
-
 //Test data
 export const healthyClusterName = healthyClusterScenario.clusterName;
 export const unhealthyClusterName = unhealthyClusterScenario.clusterName;
@@ -76,9 +75,10 @@ export const hanaCluster1TagsAreDisplayed = () =>
 
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = _clusterIdByName(clusterName);
+  const clusterNameLinkCellSelector = `${tableRows} > ${rowCells}:nth-child(2):contains("${clusterID}")`;
   basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
-  return cy.get(tableRows).eq(8).find(rowCells).eq(1).should('have.text', clusterID);
+  return cy.get(clusterNameLinkCellSelector).should('have.text', clusterID);
 };
 
 export const allRegisteredClustersAreDisplayed = () =>
