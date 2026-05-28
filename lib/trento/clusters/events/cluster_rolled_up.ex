@@ -34,7 +34,7 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
       when type in ["hana_scale_up", "hana_scale_out"] do
     new_snapshot =
       snapshot
-      |> Map.put("replication_health", discovered_health)
+      |> Map.put("health_details", %{"replication_health" => discovered_health})
       |> Map.drop("discovered_health")
 
     Map.put(params, "snapshot", new_snapshot)
@@ -53,7 +53,7 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
       ) do
     new_snapshot =
       snapshot
-      |> Map.put("distributed_health", discovered_health)
+      |> Map.put("health_details", %{"distributed_health" => discovered_health})
       |> Map.drop("discovered_health")
 
     Map.put(params, "snapshot", new_snapshot)

@@ -16,6 +16,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
     HanaClusterDetails,
+    HealthDetails,
     SapInstance
   }
 
@@ -29,6 +30,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     field :replication_health, Ecto.Enum, values: Health.values()
     field :distributed_health, Ecto.Enum, values: Health.values()
     field :health, Ecto.Enum, values: Health.values()
+    embeds_one :health_details, HealthDetails
     field :state, Ecto.Enum, values: ClusterState.values()
 
     polymorphic_embeds_one(:details,
@@ -49,10 +51,10 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
 
   def upcast(%{"health" => health, "type" => type} = params, _, 3)
       when type in ["hana_scale_up", "hana_scale_out"],
-      do: Map.put(params, "replication_health", health)
+      do: Map.put(params, "health_details", %{"replication_health" => health})
 
   def upcast(%{"health" => health, "type" => "ascs_ers"} = params, _, 3),
-    do: Map.put(params, "distributed_health", health)
+    do: Map.put(params, "health_details", %{"distributed_health" => health})
 
   def upcast(params, _, 3), do: params
 end
