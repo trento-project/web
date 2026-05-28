@@ -7,7 +7,7 @@ context('Clusters Overview', () => {
   before(() => clustersOverviewPage.preloadTestData());
 
   beforeEach(() => {
-    clustersOverviewPage.interceptClustersEndpoint();
+    clustersOverviewPage.interceptInitialDataFetch();
     clustersOverviewPage.visit();
     clustersOverviewPage.validateUrl();
   });

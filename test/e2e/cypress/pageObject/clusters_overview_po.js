@@ -87,15 +87,23 @@ export const allRegisteredClustersAreDisplayed = () =>
 export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');
 
-export const clustersDataIsDisplayedAsExpected = () =>
-  waitForClustersEndpoint().then(() =>
-    cy.get(tableRows).each(($row, index) => {
-      const cluster = availableClusters[index];
-      cy.wrap($row).find('td').eq(1).should('have.text', cluster.name);
-      cy.wrap($row).find('td').eq(2).should('have.text', cluster.sid);
-      return cy.wrap($row).find('td').eq(5).should('have.text', cluster.type);
-    })
-  );
+export const clustersDataIsDisplayedAsExpected = () => {
+  basePage.waitForInitialDataFetch();
+  cy.get(tableRows).should('have.length', availableClusters.length);
+  return cy.wrap(availableClusters).each((cluster, index) => {
+    cy.get(`${tableRows}:eq(${index}) > ${rowCells}:eq(1)`).should(
+      'have.text',
+      cluster.name
+    );
+    cy.get(`${tableRows}:eq(${index}) > ${rowCells}:eq(2)`).should(
+      'have.text',
+      cluster.sid
+    );
+    return cy
+      .get(`${tableRows}:eq(${index}) > ${rowCells}:eq(5)`)
+      .should('have.text', cluster.type);
+  });
+};
 
 export const healthyClusterNameDisplaysHealthyState = () =>
   clusterHealthIconHasExpectedClass(
