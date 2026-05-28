@@ -19,6 +19,7 @@ const clusterNames = '.tn-clustername';
 const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
 const tableRows = 'tbody tr';
 const rowCells = 'td';
+
 //Test data
 export const healthyClusterName = healthyClusterScenario.clusterName;
 export const unhealthyClusterName = unhealthyClusterScenario.clusterName;
