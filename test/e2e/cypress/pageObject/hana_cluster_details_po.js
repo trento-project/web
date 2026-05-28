@@ -208,10 +208,10 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
   validateUrl(`/${availableHanaClusterCostOpt.id}`);
 
 export const expectedClusterNameIsDisplayedInHeader = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
+  basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
 
 export const expectedClusterHealthIsDisplayedInHeader = () =>
-  basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
+  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
