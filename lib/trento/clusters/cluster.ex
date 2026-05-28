@@ -35,16 +35,23 @@ defmodule Trento.Clusters.Cluster do
   what is the roout cause of the issue and if there is some possible remediation.
   It is composed by sub-health elements:
 
-  - Discovered health
+  - Replication health (only applicable for HANA clusters)
+  - Distributed health (only applicable for ASCS/ERS clusters)
   - Checks health
 
-  The main cluster health is computed using the values from these two. This means that the cluster health is the
+  The main cluster health is computed using the values from all of them. This means that the cluster health is the
   worst of the two.
 
-  ### Discovered health
+  ### Replication health
 
-  The discovered health comes from the cluster discovery messages and it depends on the cluster type.
-  Each cluster type has a different way of evaluating the health.
+  The discovered replication health. It is based in the cluster replication values coming from cluster attributes.
+  The health is passing if the SR health is 4 and the secondary sync state "SOK". It is critical otherwise or
+  unknown (when the data is not available) otherwise.
+
+  # Distributed health
+
+  The discovered distributed health checks if ASCS and ERS workloads are distributed among 2 nodes and not running
+  in a single one.
 
   ### Checks health
 
