@@ -175,6 +175,8 @@ defmodule Trento.SoftwareUpdates.Discovery do
     %DiscoveryResult{}
     |> DiscoveryResult.changeset(%{
       host_id: host_id,
+      # if system_id is nil, wrapping it into a string makes it an empty string ""
+      # however when provided to the changeset it ends up as nil, as intended
       system_id: "#{system_id}",
       relevant_patches: [],
       upgradable_packages: [],
