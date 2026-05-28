@@ -77,6 +77,8 @@ defmodule TrentoWeb.V2.ClusterJSON do
   end
 
   defp remove_sid_from_resources(resources) do
-    Enum.map(resources, &Map.drop(&1, [:sid]))
+    # Cannot use Map.from_struct to remove __struct__
+    # as the object can be loaded from the db already as map
+    Enum.map(resources, &Map.drop(&1, [:__struct__, :sid]))
   end
 end
