@@ -76,9 +76,9 @@ export const hanaCluster1TagsAreDisplayed = () =>
 
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = _clusterIdByName(clusterName);
-  return waitForClustersEndpoint().then(() =>
-    cy.get(tableRows).eq(8).find(rowCells).eq(1).should('have.text', clusterID)
-  );
+  basePage.waitForInitialDataFetch();
+  cy.get(tableRows).should('have.length', availableClusters.length);
+  return cy.get(tableRows).eq(8).find(rowCells).eq(1).should('have.text', clusterID);
 };
 
 export const allRegisteredClustersAreDisplayed = () =>
