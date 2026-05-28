@@ -87,6 +87,15 @@ export default {
         defaultValue: { summary: 'passing' },
       },
     },
+    health: {
+      control: { type: 'radio' },
+      options: ['passing', 'warning', 'critical', 'unknown'],
+      description: 'Host health',
+      table: {
+        type: { summary: 'string' },
+        defaultValue: { summary: 'passing' },
+      },
+    },
     hostID: {
       control: 'text',
       description: 'The host identifier',
@@ -205,6 +214,7 @@ export const Default = {
     deregistering: false,
     exportersStatus: {},
     heartbeat: host.heartbeat,
+    health: host.health,
     hostID: host.id,
     hostname: host.hostname,
     ipAddresses: host.ip_addresses,

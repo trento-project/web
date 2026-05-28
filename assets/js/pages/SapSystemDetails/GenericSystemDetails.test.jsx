@@ -125,7 +125,14 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    expect(screen.getByText(title)).toBeTruthy();
+    const header = screen.getByRole('heading', {
+      name: title,
+    });
+
+    expect(header).toBeInTheDocument();
+    const { getByTestId } = within(header);
+    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+
     expect(screen.getByText('Application server')).toBeTruthy();
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
@@ -316,7 +323,7 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
-    const [_sapSystemIcon, health, _cleanUpIcon] =
+    const [_mainHealth, _sapSystemIcon, health, _cleanUpIcon] =
       screen.getAllByTestId('eos-svg-component');
     expect(health).toHaveClass('fill-black');
   });

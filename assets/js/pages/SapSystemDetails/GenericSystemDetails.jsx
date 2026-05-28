@@ -47,7 +47,7 @@ import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
@@ -285,7 +285,9 @@ export function GenericSystemDetails({
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <PageHeader className="font-bold">{title}</PageHeader>
+          <DetailsViewHeader className="font-bold" health={system.health}>
+            {title}
+          </DetailsViewHeader>
         </div>
         {operationsEnabled && (
           <div className="flex w-1/2 justify-end">

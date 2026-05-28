@@ -15,6 +15,7 @@ context('SAP system details', () => {
 
     it('should display the selected system details page', () => {
       sapSystemDetailsPage.pageTitleIsCorrectlyDisplayed('SAP System Details');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       sapSystemDetailsPage.sapSystemHasExpectedName();
       sapSystemDetailsPage.sapSystemHasExpectedType();
     });

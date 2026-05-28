@@ -47,6 +47,9 @@ export const validatePageUrl = () =>
 export const validateNonExistentDatabaseUrl = () =>
   basePage.validateUrl(`${url}/other`);
 
+export const pageTitleHealthIsCorrectlyDisplayed = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedDatabase.Health);
+
 export const databaseHasExpectedName = () =>
   cy.get(databaseNameLabel).should('have.text', selectedDatabase.Sid);
 

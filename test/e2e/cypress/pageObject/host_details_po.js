@@ -207,6 +207,9 @@ export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
 
+export const healthHasExpectedValue = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedHost.health);
+
 export const clusterNameHasExpectedValue = () =>
   cy.get(clusterNameLabel).should('have.text', selectedHost.clusterName);
 

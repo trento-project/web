@@ -45,6 +45,9 @@ export const visitNonExistentSapSystem = () =>
 export const validatePageUrl = (systemId = selectedSystem.Id) =>
   basePage.validateUrl(`/sap_systems/${systemId}`);
 
+export const pageTitleHealthIsCorrectlyDisplayed = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedSystem.Health);
+
 export const sapSystemHasExpectedName = () =>
   cy.get(sapSystemName).should('have.text', selectedSystem.Sid);
 

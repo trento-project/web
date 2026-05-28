@@ -28,6 +28,7 @@ const user = createUserRequestFactory.build({
 
 // Selectors
 const pageTitle = 'h1';
+const pageTitleHealth = 'h1 div svg';
 const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
 const accessForbiddenMessage =
@@ -141,6 +142,9 @@ export const userDropdownMenuButtonHasTheExpectedText = (username) =>
 
 export const pageTitleIsCorrectlyDisplayed = (title) =>
   cy.get(pageTitle).should('contain', title);
+
+export const pageTitleHealthIsCorrectlyDisplayed = (health) =>
+  cy.get(pageTitleHealth).should('have.class', health);
 
 export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');

@@ -210,6 +210,9 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
 export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
 
+export const expectedClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
+
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
   return cy.get(providerLabel).should('have.text', provider);

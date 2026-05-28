@@ -124,6 +124,7 @@ export function ClusterDetailsPage() {
       details={cluster.details}
       hasSelectedChecks={hasSelectedChecks}
       hosts={clusterHosts}
+      health={cluster.health}
       state={cluster.state}
       lastExecution={lastExecution}
       operationsEnabled={operationsEnabled}
