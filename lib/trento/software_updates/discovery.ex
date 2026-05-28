@@ -129,15 +129,15 @@ defmodule Trento.SoftwareUpdates.Discovery do
 
   def discover_host_software_updates(host_id, fully_qualified_domain_name) do
     get_system_id_result = get_system_id(fully_qualified_domain_name)
-    resolved_system_id = extract_system_id(get_system_id_result)
+    system_id = extract_system_id(get_system_id_result)
 
-    with {:ok, system_id} <- get_system_id_result,
+    with {:ok, ^system_id} <- get_system_id_result,
          {:ok, relevant_patches} <- get_relevant_patches(system_id),
          {:ok, upgradable_packages} <- get_upgradable_packages(system_id),
          {:ok, _} <-
            finalize_successful_discovery(
              host_id,
-             resolved_system_id,
+             system_id,
              relevant_patches,
              upgradable_packages
            ) do
@@ -151,13 +151,13 @@ defmodule Trento.SoftwareUpdates.Discovery do
           "An error occurred during software updates discovery for host #{host_id}:  #{inspect(error)}"
         )
 
-        finalize_failed_discovery(host_id, resolved_system_id, error)
+        finalize_failed_discovery(host_id, system_id, error)
 
         error
     end
   end
 
-  defp extract_system_id({:ok, system_id}), do: "#{system_id}"
+  defp extract_system_id({:ok, system_id}), do: system_id
   defp extract_system_id(_), do: nil
 
   defp discover_host_software_updates(_, _, {:error, :settings_not_configured} = error),
@@ -175,7 +175,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     %DiscoveryResult{}
     |> DiscoveryResult.changeset(%{
       host_id: host_id,
-      system_id: system_id,
+      system_id: "#{system_id}",
       relevant_patches: [],
       upgradable_packages: [],
       failure_reason: Atom.to_string(reason)
@@ -187,7 +187,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     %DiscoveryResult{}
     |> DiscoveryResult.changeset(%{
       host_id: host_id,
-      system_id: system_id,
+      system_id: "#{system_id}",
       relevant_patches: relevant_patches,
       upgradable_packages: upgradable_packages
     })
