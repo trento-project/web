@@ -226,7 +226,7 @@ jobs:
 
   generate-docs:
     name: Generate project documentation
-    needs: [detect-changes]
+    needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
@@ -235,8 +235,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -245,7 +245,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@a745603eef443621976df401f45aaff4d849056b # v1
       - name: Generate openapi.json
@@ -500,7 +500,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
@@ -669,8 +669,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
@@ -684,7 +684,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
@@ -829,8 +829,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
@@ -844,7 +844,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache

@@ -26,8 +26,26 @@ env:
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
 
 jobs:
+  setup-matrix-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
+      ERLANG_DEV: ${{ env.ERLANG_VERSION }}
+      NODEJS_DEV: ${{ env.NODEJS_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: gather versions
+        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
+      - name: Compute matrix
+        run: |
+          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -38,8 +56,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -48,7 +66,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -61,52 +79,48 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm ci
 
   npm-e2e-deps:
     name: Npm E2E dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm ci
@@ -129,7 +143,7 @@ jobs:
 
   test-e2e:
     name: Cypress Run
-    needs: [elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -145,15 +159,12 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -162,21 +173,21 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
         with:
