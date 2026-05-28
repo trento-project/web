@@ -25,7 +25,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Operations.DatabaseStartStopParams do
           example: "primary"
         },
         timeout: %Schema{
-          type: :number,
+          type: :integer,
           description:
             "The maximum time in seconds to wait for the database to complete the start or stop operation, supporting reliability and error handling.",
           example: 300
