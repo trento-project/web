@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-15T03:47:29Z",
-    "commit": "8360d6b6b5a0426e4e554ed7f3490430c5b87d10",
-    "run_id": "24435018271",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-15T03:48:12Z",
     "commit": "8360d6b6b5a0426e4e554ed7f3490430c5b87d10",
     "run_id": "24435018271",
@@ -6554,6 +6526,62 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-28T23:24:39Z",
+    "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
+    "run_id": "26600794103",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 100
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.25
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.2032
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1086
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.08692
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.06823
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.06823
+      },
+      {
+        "name": "should have expected cluster health in header::HANA cluster details HANA cluster details should be consistent with the state of the cluster should have expected cluster health in header",
+        "score": 0.06641
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.05781
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.05781
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.04323
+      },
+      {
+        "name": "should have a correct link to the cluster::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the cluster",
+        "score": 0.02501
       }
     ]
   }
