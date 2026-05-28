@@ -30,7 +30,7 @@ defmodule Trento.MixProject do
   end
 
   def cli do
-    [preferred_cli_env: [coveralls: :test, "coveralls.github": :test]]
+    [preferred_envs: [coveralls: :test, "coveralls.github": :test]]
   end
 
   # Configuration for the OTP application.
