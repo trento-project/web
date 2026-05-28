@@ -92,17 +92,13 @@ export const clustersDataIsDisplayedAsExpected = () => {
   basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
   return cy.wrap(availableClusters).each((cluster, index) => {
-    cy.get(`${tableRows}:eq(${index}) > ${rowCells}:eq(1)`).should(
-      'have.text',
-      cluster.name
-    );
-    cy.get(`${tableRows}:eq(${index}) > ${rowCells}:eq(2)`).should(
-      'have.text',
-      cluster.sid
-    );
-    return cy
-      .get(`${tableRows}:eq(${index}) > ${rowCells}:eq(5)`)
-      .should('have.text', cluster.type);
+    const clusterNameSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(1)`;
+    const clusterSidSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(2)`;
+    const clusterTypeSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(5)`;
+
+    cy.get(clusterNameSelector).should('have.text', cluster.name);
+    cy.get(clusterSidSelector).should('have.text', cluster.sid);
+    return cy.get(clusterTypeSelector).should('have.text', cluster.type);
   });
 };
 
