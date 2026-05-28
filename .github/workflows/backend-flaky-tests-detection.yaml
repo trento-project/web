@@ -20,11 +20,15 @@ concurrency:
 env:
   MIX_ENV: test
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
+  ELIXIR_BC: "1.15.7-otp-26"
+  ERLANG_BC: "26.2.1"
 
 jobs:
   setup-matrix:
     runs-on: ubuntu-24.04
     outputs:
+      ELIXIR_BC: ${{ steps.compute-matrix.outputs.ELIXIR_BC }}
+      ERLANG_BC: ${{ steps.compute-matrix.outputs.ERLANG_BC }}
       ELIXIR_DEV: ${{ steps.compute-matrix.outputs.ELIXIR_DEV }}
       ERLANG_DEV: ${{ steps.compute-matrix.outputs.ERLANG_DEV }}
       run_range: ${{ steps.compute-matrix.outputs.run_range }}
@@ -37,15 +41,24 @@ jobs:
       - name: Compute matrix
         id: compute-matrix
         run: |
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
           echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
           echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
 
   elixir-deps:
-    name: Elixir test dependencies
+    name: Elixir test dependencies (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix]
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -55,8 +68,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -65,7 +78,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -77,13 +90,21 @@ jobs:
           mix dialyzer --plt
 
   test-backend:
-    name: Backend Tests (Run ${{ matrix.run }})
+    name: Backend Tests (Elixir ${{ matrix.elixir }}, Run ${{ matrix.run }})
     needs: [setup-matrix, elixir-deps]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         run: ${{ fromJson(needs.setup-matrix.outputs.run_range) }}
+        elixir:
+          - ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+        include:
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -94,8 +115,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -104,7 +125,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -131,17 +152,25 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-run${{ matrix.run }}
+          name: backend-junit-reports-elixir${{ matrix.elixir }}-run${{ matrix.run }}
           path: junit-reports/*.xml
           retention-days: 1
 
   flaky-tests-analysis:
     needs: [setup-matrix, test-backend]
     if: ${{ !cancelled() }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_DEV }}"
+            junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-*
+          - suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_BC }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_BC }}"
+            junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_BC }}-*
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: "Backend — Elixir ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}, OTP ${{ needs.setup-matrix.outputs.ERLANG_DEV }}"
-      junit-artifact-pattern: backend-junit-reports-elixir${{ needs.setup-matrix.outputs.ELIXIR_DEV }}-*
+      suite-name: ${{ matrix.suite-name }}
+      junit-artifact-pattern: ${{ matrix.junit-artifact-pattern }}
       total-runs: ${{ needs.setup-matrix.outputs.total-runs }}
     secrets:
       SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}

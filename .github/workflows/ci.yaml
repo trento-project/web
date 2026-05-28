@@ -25,6 +25,8 @@ concurrency:
 
 env:
   MIX_ENV: test
+  ELIXIR_BC: "1.15.7-otp-26"
+  ERLANG_BC: "26.2.1"
   NODEJS_BC: "20.20.0"
   OPENAPI_DIFF_VERSION: "2.1.7" # https://github.com/OpenAPITools/openapi-diff/releases
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
@@ -107,6 +109,8 @@ jobs:
       ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
       ERLANG_DEV: ${{ env.ERLANG_VERSION }}
       NODEJS_DEV: ${{ env.NODEJS_VERSION }}
+      ELIXIR_BC: ${{ env.ELIXIR_BC }}
+      ERLANG_BC: ${{ env.ERLANG_BC }}
       NODEJS_BC: ${{ env.NODEJS_BC }}
     steps:
       - name: Checkout
@@ -118,16 +122,36 @@ jobs:
           echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
           echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
 
   elixir-deps:
-    name: Elixir ${{ matrix.mix_env }} dependencies
+    name: Elixir ${{ matrix.mix_env }} dependencies (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        mix_env: [dev, test, prod]
+        include:
+          - mix_env: dev
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - mix_env: dev
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - mix_env: test
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - mix_env: test
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - mix_env: prod
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - mix_env: prod
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -139,8 +163,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -149,7 +173,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -296,10 +320,17 @@ jobs:
         run: cd assets && npm run format:check
 
   static-code-analysis-elixir:
-    name: Static Code Analysis Elixir
+    name: Static Code Analysis Elixir (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -309,8 +340,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -319,7 +350,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Check for unused dependencies
         run: mix deps.unlock --check-unused
       - name: Check Code Format
@@ -360,10 +391,17 @@ jobs:
         run: cd assets && npm test
 
   test-elixir:
-    name: Elixir tests
+    name: Elixir tests (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -373,8 +411,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -383,7 +421,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
@@ -402,7 +440,7 @@ jobs:
           file: cover/excoveralls.json
           format: coveralls
           parallel: true
-          flag-name: Elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          flag-name: Elixir-${{ matrix.elixir }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   coveralls-finish:
@@ -417,10 +455,17 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   test-release:
-    name: Test release build
+    name: Test release build (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     env:
       MIX_ENV: prod
     steps:
@@ -432,8 +477,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
@@ -442,7 +487,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Build release
         run: mix release
       - name: Start release
@@ -904,9 +949,16 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   target-branch-deps:
-    name: Rebuild target branch dependencies
+    name: Rebuild target branch dependencies (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -917,8 +969,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - target branch
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache-target
@@ -927,7 +979,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install missing dependencies
         if: steps.mix-cache-target.outputs.cache-hit != 'true'
         run: |
@@ -939,10 +991,17 @@ jobs:
           mix dialyzer --plt
 
   api-docs-check:
-    name: API docs check
+    name: API docs check (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -952,8 +1011,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache-current
@@ -962,7 +1021,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Setup Node.js
         id: setup-node
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
@@ -977,13 +1036,31 @@ jobs:
         run: ./hack/api_docs_check.sh
 
   api-bc-check:
-    name: API bc check
+    name: API bc check (${{ matrix.version }}, Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, elixir-deps, target-branch-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        version: [Unversioned, V1, V2]
+        include:
+          - version: Unversioned
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - version: Unversioned
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - version: V1
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - version: V1
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          - version: V2
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
+          - version: V2
+            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -991,8 +1068,8 @@ jobs:
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - current branch
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache-current
@@ -1001,7 +1078,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Generate current openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
@@ -1017,7 +1094,7 @@ jobs:
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Generate target openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/target-spec.json
