@@ -11,7 +11,6 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
     :host_id,
     :type,
     :designated_controller,
-    :discovered_health,
     :provider
   ]
 
@@ -37,7 +36,6 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
     field :designated_controller, :boolean
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :discovered_health, Ecto.Enum, values: Health.values()
     field :cib_last_written, :string
     field :state, Ecto.Enum, values: ClusterState.values()
 
