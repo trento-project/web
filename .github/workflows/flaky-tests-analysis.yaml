@@ -283,7 +283,7 @@ jobs:
           name: ${{ inputs.junit-artifact-pattern }}
           failOnError: false
       - name: Delete screenshot artifacts
-        if: inputs.screenshot-artifact-pattern != ''
+        if: inputs.screenshot-artifact-pattern != '' && steps.build-evidence.outputs.bundle-dir != ''
         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
           name: ${{ inputs.screenshot-artifact-pattern }}
