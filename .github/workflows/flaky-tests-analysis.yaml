@@ -256,6 +256,7 @@ jobs:
           }
 
           WORKFLOW_SLUG="$(echo '${{ github.workflow }}' | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
+          SUITE_SLUG="$(echo '${{ inputs.suite-name }}' | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
           BUNDLE_DIR="$RUNNER_TEMP/evidence"
           rm -rf "$BUNDLE_DIR"
           mkdir -p "$BUNDLE_DIR"
@@ -265,7 +266,7 @@ jobs:
 
           if find "$BUNDLE_DIR" -mindepth 2 -type f | grep -q .; then
             echo "bundle-dir=$BUNDLE_DIR" >> "$GITHUB_OUTPUT"
-            echo "artifact-name=evidence-${WORKFLOW_SLUG}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+            echo "artifact-name=evidence-${WORKFLOW_SLUG}-${SUITE_SLUG}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
           else
             echo "No evidence files were collected for the aggregated artifact."
           fi
