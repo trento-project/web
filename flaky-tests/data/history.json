@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-17T03:50:50Z",
-    "commit": "315db7fc47e870e5494c263354f648081a07d4b7",
-    "run_id": "24546373414",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-17T03:51:37Z",
     "commit": "315db7fc47e870e5494c263354f648081a07d4b7",
     "run_id": "24546373414",
@@ -6530,6 +6510,70 @@
       {
         "name": "Label Component::should display an info tooltip if specified",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-05-30T22:26:57Z",
+    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
+    "run_id": "26693125527",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 100
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.25
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1202
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1154
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.09501
+      },
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.07036
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.05453
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.05453
+      },
+      {
+        "name": "should have expected cluster health in header::HANA cluster details HANA cluster details should be consistent with the state of the cluster should have expected cluster health in header",
+        "score": 0.05158
+      },
+      {
+        "name": "should mark an instance as absent and restore it as present on received respective discovery messages::SAP Systems Overview Instance deregistration should mark an instance as absent and restore it as present on received respective discovery messages",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the correct host health::Host Details Detailed view for a specific host should be available should show the correct host health",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.04892
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.04892
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.03696
       }
     ]
   }
