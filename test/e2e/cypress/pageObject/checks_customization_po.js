@@ -91,8 +91,6 @@ const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-const corosyncheckSelectionToggle =
-  'div[aria-label="accordion-header"]:contains("Corosync") button';
 
 const modifiedCheckID =
   'tbody tr td span[class="inline-flex leading-5 cursor-pointer"]';
@@ -136,8 +134,10 @@ export const clickStartExecutionButton = () =>
 export const inputCheckValue = (valueName, newValue) =>
   _setInputValue(valueName, newValue);
 
-export const clickCorosyncSelectionToggle = () =>
-  cy.get(corosyncheckSelectionToggle).click();
+export const selectCheck = (checkID) => {
+  const checkSelection = `a[class*="block"]:contains("${checkID}") button[role="switch"]`;
+  return cy.get(checkSelection).click();
+};
 
 export const expandModifiedCheckResult = () =>
   cy.get(checkResultCollapsibleCell).click();
