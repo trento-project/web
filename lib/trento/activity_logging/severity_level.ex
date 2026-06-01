@@ -79,10 +79,26 @@ defmodule Trento.ActivityLog.SeverityLevel do
     },
     "cluster_deregistered" => :warning,
     "cluster_details_updated" => :debug,
-    "cluster_discovered_health_changed" => %{
+    "cluster_replication_health_changed" => %{
       type: :kv,
       key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
+      condition: :map_value_to_severity
+    },
+    "cluster_distributed_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
       condition: :map_value_to_severity
     },
     "cluster_health_changed" => %{
