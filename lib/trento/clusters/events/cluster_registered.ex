@@ -54,5 +54,5 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
   def upcast(%{"health" => health, "type" => "ascs_ers"} = params, _, 3),
     do: Map.put(params, "health_details", %{"distributed_health" => health})
 
-  def upcast(params, _, 3), do: params
+  def upcast(params, _, 3), do: Map.put(params, "health_details", %{})
 end

@@ -62,7 +62,6 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
   def upcast(params, _, 2),
     do:
       params
-      |> Map.put("replication_health", :unknown)
-      |> Map.put("distributed_health", :unknown)
+      |> Map.put("health_details", %{})
       |> Map.drop("discovered_health")
 end

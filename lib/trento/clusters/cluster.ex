@@ -136,7 +136,7 @@ defmodule Trento.Clusters.Cluster do
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    embeds_one :health_details, HealthDetails
+    embeds_one :health_details, HealthDetails, defaults_to_struct: true
     field :state, Ecto.Enum, values: ClusterState.values()
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
