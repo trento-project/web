@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-04-18T03:56:05Z",
-    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
-    "run_id": "24596065451",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-04-18T06:43:02Z",
     "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
     "run_id": "24596484822",
@@ -6630,6 +6619,30 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-01T21:36:36Z",
+    "commit": "c601be9e2da4d0e015bc5d9aa740ca4b6bf2406f",
+    "run_id": "26782577237",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
         "score": 0.02501
       }
     ]
