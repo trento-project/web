@@ -1179,13 +1179,6 @@ jobs:
       - name: Cleanup previous run
         run: |
           rm -fr calico/
-      - name: Resolve latest chart version
-        id: chart-version
-        run: |
-          command -v skopeo >/dev/null || { echo "ERROR: skopeo not installed"; exit 1; }
-          VERSION=$(skopeo list-tags "docker://ghcr.io/trento-project/helm-charts/trento-server" | jq -r '.Tags[]' | grep -E '^[0-9]+\.[0-9]+\.[0-9]' | sort -rV | head -1)
-          echo "Using chart version: ${VERSION}"
-          echo "value=${VERSION}" >> $GITHUB_OUTPUT
       - name: Start a local k8s cluster
         uses: jupyterhub/action-k3s-helm@502a9ff4d816dad543e359971fe2c3128d0f4c6e # v4
         with:
@@ -1223,7 +1216,7 @@ jobs:
       - name: Install trento-server helm chart from OCI registry
         run: |
           helm upgrade -i trento oci://ghcr.io/trento-project/helm-charts/trento-server --wait \
-            --version ${{ steps.chart-version.outputs.value }} \
+            --version devel \
             --namespace ${{ env.TRENTO_NAMESPACE }} \
             --create-namespace \
             --timeout 3m \
