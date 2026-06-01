@@ -16,7 +16,10 @@ context('Checks customization', () => {
   });
 
   after(() => {
+    // Reset checks and run new execution to restore health
     checksSelectionPage.apiResetAllChecks();
+    checksSelectionPage.apiRequestExecution();
+    checksSelectionPage.waitUntilExecutionFinished();
   });
 
   describe('Checks customization should be possible for a cluster target', () => {
@@ -130,7 +133,7 @@ context('Checks customization', () => {
       checksSelectionPage.clickOnWarningCheckbox();
       checksSelectionPage.inputCheckValue('expected_max_messages', '100');
       checksSelectionPage.clickModalSaveButton();
-      checksSelectionPage.clickCorosyncSelectionToggle();
+      checksSelectionPage.selectCheck('00081D');
       checksSelectionPage.clickSaveChecksSelectionButton();
       checksSelectionPage.clickStartExecutionButton();
       checksSelectionPage.waitForCustomizedCheckElements();

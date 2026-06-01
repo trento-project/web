@@ -10,6 +10,7 @@ import {
 } from '@lib/test-utils/factories';
 
 import { availableHanaCluster } from '../fixtures/hana-cluster-details/available_hana_cluster.js';
+import { apiRequestChecksExecution } from './clusters_overview_po.js';
 
 const url = '/clusters';
 
@@ -90,8 +91,6 @@ const saveChecksSelectionButton = 'button:contains("Save Checks Selection")';
 const startExecutionButton = 'button:contains("Start Execution")';
 const checkCustomizationToastSuccess = `p:contains(${checkCustomizationToastSuccessLabel})`;
 const checkCustomizationToastReset = `p:contains(${checkCustomizationToastResetLabel})`;
-const corosyncheckSelectionToggle =
-  'div[aria-label="accordion-header"]:contains("Corosync") button';
 
 const modifiedCheckID =
   'tbody tr td span[class="inline-flex leading-5 cursor-pointer"]';
@@ -135,8 +134,10 @@ export const clickStartExecutionButton = () =>
 export const inputCheckValue = (valueName, newValue) =>
   _setInputValue(valueName, newValue);
 
-export const clickCorosyncSelectionToggle = () =>
-  cy.get(corosyncheckSelectionToggle).click();
+export const selectCheck = (checkID) => {
+  const checkSelection = `a[class*="block"]:contains("${checkID}") button[role="switch"]`;
+  return cy.get(checkSelection).click();
+};
 
 export const expandModifiedCheckResult = () =>
   cy.get(checkResultCollapsibleCell).click();
@@ -261,6 +262,11 @@ export const validateCustomValue = () =>
 export const vailidateGatheredFactsValue = () =>
   cy.get(gatheredFactsValue).should('have.text', firstCheckValue);
 
+export const waitUntilExecutionFinished = () => {
+  cy.intercept('/api/**/executions/last').as('executionFinished');
+  return basePage.waitForRequest('executionFinished');
+};
+
 // Api
 export const visit = (clusterId = '') =>
   basePage.visit(`${url}/${clusterId}/settings`);
@@ -284,3 +290,6 @@ export const apiResetAllChecks = () => _resetChecks(checkList);
 
 export const apiResetCheckSelection = () =>
   basePage.apiSelectChecks(availableHanaCluster.id, []);
+
+export const apiRequestExecution = () =>
+  apiRequestChecksExecution(availableHanaCluster.id);

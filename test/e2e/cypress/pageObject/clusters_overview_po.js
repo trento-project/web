@@ -206,7 +206,7 @@ export const apiSetTagsHanaCluster1 = () => {
     .each((tag) => _apiSetTag('hana_cluster_1', tag));
 };
 
-const apiRequestChecksExecution = (clusterId) =>
+export const apiRequestChecksExecution = (clusterId) =>
   basePage.apiLogin().then(({ accessToken }) => {
     const url = `/api/v1/clusters/${clusterId}/checks/request_execution`;
     return cy.request({
