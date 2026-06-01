@@ -27,8 +27,6 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     field :provider, Ecto.Enum, values: Provider.values()
     field :resources_number, :integer
     field :hosts_number, :integer
-    field :replication_health, Ecto.Enum, values: Health.values()
-    field :distributed_health, Ecto.Enum, values: Health.values()
     field :health, Ecto.Enum, values: Health.values()
     embeds_one :health_details, HealthDetails
     field :state, Ecto.Enum, values: ClusterState.values()
