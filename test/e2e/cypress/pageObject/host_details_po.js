@@ -207,6 +207,9 @@ export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
 
+export const healthHasExpectedValue = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedHost.health);
+
 export const clusterNameHasExpectedValue = () =>
   cy.get(clusterNameLabel).should('have.text', selectedHost.clusterName);
 
@@ -533,7 +536,7 @@ const _validateCell = (tableName, header, rowIndex, expectedValue) => {
 
 // API
 export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     return cy
@@ -546,7 +549,7 @@ export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
 };
 
 export const interceptSumaRequestsMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
@@ -571,7 +574,7 @@ export const interceptSumaRequestsMockedForProdInstance = () => {
 };
 
 export const interceptNodeExporterStatusMockedForProdInstance = () => {
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     return cy.intercept('/api/v1/hosts/*/exporters_status', {

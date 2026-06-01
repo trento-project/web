@@ -29,7 +29,7 @@ import {
 // eslint-disable-next-line mocha/no-top-level-hooks
 before(() => {
   Cypress.session.clearAllSavedSessions();
-  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
     apiLoginAndCreateSession();
   }
 

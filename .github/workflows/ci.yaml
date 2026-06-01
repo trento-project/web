@@ -666,18 +666,24 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -773,16 +779,22 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         env:
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -801,43 +813,41 @@ jobs:
           - test: oidc
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=oidc
             config_file_content: |
               import Config
 
               config :trento, :oidc, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: oidc
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: oauth2
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=oauth2
             config_file_content: |
               import Config
 
               config :trento, :oauth2, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: oauth2
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: saml
             cypress_spec: |
               cypress/e2e/sso_integration.cy.js
+            cypress_expose: SSO_INTEGRATION_TESTS=true,SSO_TYPE=saml
             config_file_content: |
               import Config
 
               config :trento, :saml, enabled: true
             env:
               MIX_ENV: dev
-              CYPRESS_SSO_INTEGRATION_TESTS: true
-              CYPRESS_SSO_TYPE: saml
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_db
             cypress_spec: |
               cypress/e2e/settings_integration.cy.js
               cypress/e2e/alerting.cy.js
+            cypress_expose: ALERTING_DB_TESTS=true,ALERTING_TESTS=true
             config_file_content: |
               import Config
 
@@ -849,15 +859,13 @@ jobs:
                 smtp_password: nil
             env:
               MIX_ENV: dev
-              CYPRESS_ALERTING_DB_TESTS: true
-              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
           - test: alerting_from_env
             cypress_spec: |
               cypress/e2e/alerting.cy.js
+            cypress_expose: ALERTING_TESTS=true
             env:
               MIX_ENV: dev
-              CYPRESS_ALERTING_TESTS: true
               NODEJS_VERSION: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     env: ${{ matrix.env }}
     steps:
@@ -908,6 +916,12 @@ jobs:
           chmod: 0755
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@d2bee4f07e8ca410d6b196d00f90c12e7d48c33a # v2.6.0
         with:
@@ -921,15 +935,15 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@dace029018fcdf86e0df89a31bc3cfa5b32570d8 # v7.3.0
         env:
           cypress_video: false
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()

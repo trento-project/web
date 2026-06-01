@@ -18,6 +18,10 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedClusterNameIsDisplayedInHeader();
     });
 
+    it('should have expected cluster health in header', () => {
+      hanaClusterDetailsPage.expectedClusterHealthIsDisplayedInHeader();
+    });
+
     it('should have expected provider', () => {
       hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });
@@ -305,7 +309,7 @@ context('HANA cluster details', () => {
     const CHECK_SBD = 'SBD';
 
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());

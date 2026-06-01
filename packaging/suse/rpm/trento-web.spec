@@ -1,8 +1,7 @@
 #
 # spec file for package trento-web
 #
-# SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# Copyright SUSE LLC
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -14,6 +13,7 @@
 # published by the Open Source Initiative.
 
 # Please submit bugfixes or comments via https://bugs.opensuse.org/
+#
 
 
 Name:           trento-web
@@ -29,7 +29,14 @@ Source2:        package-lock.json
 Source3:        node_modules.spec.inc
 %include        %{_sourcedir}/node_modules.spec.inc
 Group:          System/Monitoring
-BuildRequires:  elixir >= 1.15, elixir-hex, npm >= 20, erlang-rebar3, git-core, local-npm-registry, make, gcc
+BuildRequires:  elixir >= 1.15
+BuildRequires:  elixir-hex
+BuildRequires:  erlang-rebar3
+BuildRequires:  gcc
+BuildRequires:  git-core
+BuildRequires:  local-npm-registry
+BuildRequires:  make
+BuildRequires:  npm >= 20
 
 %description
 Trento is an open cloud-native web application for SAP Applications administrators.
@@ -55,6 +62,7 @@ export MIX_HOME=/usr/bin
 export MIX_REBAR3=/usr/bin/rebar3
 export MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 export GTM_ID=%%GTM_ID%%
+export VERSION=%{version}
 mix phx.digest
 mix release
 

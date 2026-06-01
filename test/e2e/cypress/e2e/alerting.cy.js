@@ -5,7 +5,7 @@ import * as alertingPage from '../pageObject/alerting_po';
 
 context('Email Alerting feature', () => {
   before(function () {
-    if (!Cypress.env('ALERTING_TESTS')) {
+    if (!Cypress.expose('ALERTING_TESTS')) {
       this.skip();
     }
     alertingPage.deleteAllEmailsFromMailpit();

@@ -32,7 +32,7 @@ import BackButton from '@common/BackButton';
 import Button from '@common/Button';
 import DisabledGuard from '@common/DisabledGuard';
 import OperationsButton from '@common/OperationsButton';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import Tooltip from '@common/Tooltip';
 import {
   OperationForbiddenModal,
@@ -56,6 +56,7 @@ function ClusterDetails({
   details,
   hasSelectedChecks,
   hosts,
+  health,
   state,
   lastExecution = {},
   operationsEnabled = false,
@@ -187,10 +188,10 @@ function ClusterDetails({
       <BackButton url="/clusters">Back to Clusters</BackButton>
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <PageHeader className="whitespace-normal">
+          <DetailsViewHeader className="whitespace-normal" health={health}>
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>
-          </PageHeader>
+          </DetailsViewHeader>
         </div>
         <div className="flex w-1/2 justify-end">
           <div className="flex w-fit whitespace-nowrap">

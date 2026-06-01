@@ -43,7 +43,7 @@ const clusterStates = {
 //Attributes
 
 const url = '/clusters';
-const wandaUrl = Cypress.env('wandaUrl');
+const wandaUrl = Cypress.expose('wandaUrl');
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 const getChecksEndpointAlias = 'getChecks';
@@ -209,6 +209,9 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
 
 export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
+
+export const expectedClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
