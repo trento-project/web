@@ -1216,7 +1216,7 @@ jobs:
       - name: Install trento-server helm chart from OCI registry
         run: |
           helm upgrade -i trento oci://ghcr.io/trento-project/helm-charts/trento-server --wait \
-            --version devel \
+            --devel \
             --namespace ${{ env.TRENTO_NAMESPACE }} \
             --create-namespace \
             --timeout 3m \
