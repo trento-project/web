@@ -1187,7 +1187,7 @@ jobs:
           metrics-enabled: false
       - name: Install cert-manager
         run: |
-          helm install cert-manager oci://quay.io/jetstack/charts/cert-manager \
+          helm upgrade -i cert-manager oci://quay.io/jetstack/charts/cert-manager \
             --version ${{ env.CERT_MANAGER_VERSION }} \
             --namespace cert-manager \
             --create-namespace \
