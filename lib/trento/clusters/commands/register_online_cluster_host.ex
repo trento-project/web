@@ -19,7 +19,6 @@ defmodule Trento.Clusters.Commands.RegisterOnlineClusterHost do
   require Trento.Enums.Provider, as: Provider
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
-  require Trento.Enums.Health, as: Health
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,

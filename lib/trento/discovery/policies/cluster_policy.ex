@@ -10,7 +10,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
-  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
