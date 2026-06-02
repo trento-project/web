@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-19T04:13:51Z",
-    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
-    "run_id": "24620463069",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "NotificationBox Component::should display the title",
-        "score": 0.5
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
-        "score": 0.05001
-      },
-      {
-        "name": "search::should not match not included words",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-19T04:15:00Z",
     "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
     "run_id": "24620463069",
@@ -6640,6 +6612,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request ha cluster discovery request when cluster_maintenance_change operation is completed",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-02T20:27:40Z",
+    "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
+    "run_id": "26845287462",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
       }
     ]
   }
