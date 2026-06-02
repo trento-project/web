@@ -136,7 +136,7 @@ defmodule Trento.Clusters.Cluster do
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    embeds_one :health_details, HealthDetails, defaults_to_struct: true
+    embeds_one :health_details, HealthDetails, defaults_to_struct: true, on_replace: :update
     field :state, Ecto.Enum, values: ClusterState.values()
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
@@ -364,6 +364,16 @@ defmodule Trento.Clusters.Cluster do
     end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_details_updated_event(cluster, command)
+    end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_replication_health_changed_event(cluster, %HealthDetails{
+        replication_health: Health.unknown()
+      })
+    end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_distributed_health_changed_event(cluster, %HealthDetails{
+        distributed_health: Health.unknown()
+      })
     end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
@@ -799,10 +809,6 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: hosts_number,
         state: ClusterState.stopped(),
         details: details
-      },
-      %ClusterDiscoveredHealthChanged{
-        cluster_id: cluster_id,
-        discovered_health: :unknown
       }
     ]
   end
@@ -934,12 +940,6 @@ defmodule Trento.Clusters.Cluster do
          secondary_sync_state: "SOK"
        }),
        do: Health.passing()
-
-  defp parse_replication_health(%HanaClusterDetails{
-         sr_health_state: "",
-         secondary_sync_state: ""
-       }),
-       do: Health.unknown()
 
   defp parse_replication_health(%HanaClusterDetails{sr_health_state: _, secondary_sync_state: _}),
     do: Health.critical()
