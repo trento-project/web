@@ -1230,7 +1230,7 @@ jobs:
             --set trento-wanda.checks.image.pullPolicy=Always \
             --set trento-wanda.checks.image.repository="${IMAGE_REPOSITORY}/checks" \
             --set trento-wanda.checks.image.tag="rolling" \
-            --set trento-mcp-server.enabled=false \
+            --set trento-mcp-server.enabled=true \
             --set trento-mcp-server.image.pullPolicy=Always \
             --set trento-mcp-server.image.repository="${IMAGE_REPOSITORY}/mcp-server-trento" \
             --set trento-mcp-server.image.tag="rolling" \
