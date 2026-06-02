@@ -8,6 +8,8 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
   import OpenApiSpex.TestAssertions
   import Trento.Support.Helpers.AbilitiesTestHelper
 
+  alias Trento.ActivityLog.SeverityLevel
+
   setup :setup_api_spec_v1
   setup :setup_user
 
@@ -326,6 +328,30 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
         resp["data"] |> Enum.map(fn entry -> entry["severity"] end) |> Enum.uniq() |> Enum.sort()
 
       assert severity_levels == Enum.sort(["critical"])
+      assert_schema(resp, "ActivityLogV1", api_spec)
+    end
+
+    test "should use query string fields without brackets as list", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      %{actor: actor1, type: type1, severity: severity1} = insert(:activity_log_entry)
+      %{actor: actor2, type: type2, severity: severity2} = insert(:activity_log_entry)
+
+      query =
+        "actor=#{actor1}&" <>
+          "type=#{type1}&" <>
+          "severity=#{SeverityLevel.map_severity_integer_to_text(severity1)}&" <>
+          "actor=#{actor2}&" <>
+          "type=#{type2}&" <>
+          "severity=#{SeverityLevel.map_severity_integer_to_text(severity2)}"
+
+      resp =
+        conn
+        |> get("/api/v1/activity_log?#{query}")
+        |> json_response(200)
+
+      assert length(resp["data"]) == 2
       assert_schema(resp, "ActivityLogV1", api_spec)
     end
   end
