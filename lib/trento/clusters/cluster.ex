@@ -503,22 +503,34 @@ defmodule Trento.Clusters.Cluster do
 
   # Handle old ClusterDiscoveredHealthChanged event.
   # Cannot be superseded by other events as it has different meanings for each cluster type.
-  def apply(%Cluster{type: cluster_type} = cluster, %ClusterDiscoveredHealthChanged{
-        discovered_health: discovered_health
-      })
+  def apply(
+        %Cluster{type: cluster_type, health_details: health_details} = cluster,
+        %ClusterDiscoveredHealthChanged{
+          discovered_health: discovered_health
+        }
+      )
       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     %Cluster{
       cluster
-      | health_details: %HealthDetails{replication_health: discovered_health}
+      | health_details: %HealthDetails{
+          health_details
+          | replication_health: discovered_health
+        }
     }
   end
 
-  def apply(%Cluster{type: ClusterType.ascs_ers()} = cluster, %ClusterDiscoveredHealthChanged{
-        discovered_health: discovered_health
-      }) do
+  def apply(
+        %Cluster{type: ClusterType.ascs_ers(), health_details: health_details} = cluster,
+        %ClusterDiscoveredHealthChanged{
+          discovered_health: discovered_health
+        }
+      ) do
     %Cluster{
       cluster
-      | health_details: %HealthDetails{distributed_health: discovered_health}
+      | health_details: %HealthDetails{
+          health_details
+          | distributed_health: discovered_health
+        }
     }
   end
 
