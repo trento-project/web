@@ -14,7 +14,7 @@
 
     <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
     <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-57F9004D.js"></script>
+    <script src="dist/sidebar_items-CF629CA3.js"></script>
     <script src="docs_config.js"></script>
     <script async src="dist/html-YIPIRHGU.js"></script>
 
@@ -4591,6 +4591,18 @@ password, and optional TOTP code for secure login to the Trento platform.</p></d
 
     <div class="summary-synopsis"><p>LoadUserPlug loads the stateless user from jwt from the database.
 The current user is replaced with the stateful user for subsequent plugs</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.Plugs.NormalizeListsPlug.html" translate="no">TrentoWeb.Plugs.NormalizeListsPlug</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>This plug normalizes query string elements into lists when they are not formmated
+in brackets format.
+This is needed to be compatible with openAPI 3.0, as brackets format is not supported.
+The plug must be used before <code class="inline">plug OpenApiSpex.Plug.CastAndValidate</code> to make effect.</p></div>
 
 </div>
 <div class="summary-row">
