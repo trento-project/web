@@ -449,7 +449,6 @@ defmodule Trento.ClusterTest do
     test "should set a the cluster state to stopped and health to unknown when all nodes go offline" do
       cluster_id = Faker.UUID.v4()
       host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
 
       scenarios = [
         %{
@@ -559,11 +558,12 @@ defmodule Trento.ClusterTest do
               cluster_host_status: ClusterHostStatus.offline()
             )
           ],
-          RegisterOfflineClusterHost.new!(%{
+          build_list(
+            2,
+            :register_offline_cluster_host,
             cluster_id: cluster_id,
-            host_id: host_id,
-            name: name
-          }),
+            host_id: host_id
+          ),
           [
             %ClusterHostStatusChanged{
               cluster_id: cluster_id,
@@ -590,6 +590,76 @@ defmodule Trento.ClusterTest do
                        replication_health: Health.unknown(),
                        distributed_health: Health.unknown()
                      }
+                   } = cluster
+          end
+        )
+      end
+    end
+
+    test "should not change cluster health when first node goes offline" do
+      cluster_id = Faker.UUID.v4()
+      host_id = Faker.UUID.v4()
+
+      scenarios = [
+        %{
+          type: :hana_scale_up,
+          health_details: %HealthDetails{
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :hana_scale_out,
+          health_details: %HealthDetails{
+            replication_health: Health.passing()
+          }
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %HealthDetails{
+            distributed_health: Health.passing()
+          }
+        }
+      ]
+
+      for %{type: type, health_details: health_details} <- scenarios do
+        registered_cluster =
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            type: type,
+            health: Health.passing(),
+            health_details: health_details
+          )
+
+        assert_events_and_state(
+          [
+            registered_cluster,
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            ),
+            build(:host_added_to_cluster_event,
+              cluster_id: cluster_id,
+              host_id: Faker.UUID.v4(),
+              cluster_host_status: ClusterHostStatus.online()
+            )
+          ],
+          build_list(
+            2,
+            :register_offline_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_id
+          ),
+          [
+            %ClusterHostStatusChanged{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.offline()
+            }
+          ],
+          fn cluster ->
+            assert %Cluster{
+                     health: Health.passing()
                    } = cluster
           end
         )

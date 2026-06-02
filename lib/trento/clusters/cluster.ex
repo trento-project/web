@@ -366,12 +366,12 @@ defmodule Trento.Clusters.Cluster do
       maybe_emit_cluster_details_updated_event(cluster, command)
     end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_replication_health_changed_event(cluster, %HealthDetails{
+      maybe_emit_cluster_replication_health_changed_event(cluster, command, %HealthDetails{
         replication_health: Health.unknown()
       })
     end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_distributed_health_changed_event(cluster, %HealthDetails{
+      maybe_emit_cluster_distributed_health_changed_event(cluster, command, %HealthDetails{
         distributed_health: Health.unknown()
       })
     end)
@@ -714,12 +714,12 @@ defmodule Trento.Clusters.Cluster do
     end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_replication_health_changed_event(cluster, health_details)
+      maybe_emit_cluster_replication_health_changed_event(cluster, command, health_details)
     end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_distributed_health_changed_event(cluster, health_details)
+      maybe_emit_cluster_distributed_health_changed_event(cluster, command, health_details)
     end)
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_changed_event(cluster) end)
+    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
   defp maybe_emit_cluster_details_updated_event(
@@ -821,12 +821,22 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_replication_health_changed_event(
          %Cluster{health_details: %HealthDetails{replication_health: replication_health}},
+         __command,
          %HealthDetails{replication_health: replication_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_replication_health_changed_event(
+         %Cluster{state: state},
+         %RegisterOfflineClusterHost{},
+         %HealthDetails{}
+       )
+       when state != ClusterState.stopped(),
+       do: nil
+
+  defp maybe_emit_cluster_replication_health_changed_event(
          %Cluster{cluster_id: cluster_id},
+         _command,
          %HealthDetails{replication_health: replication_health}
        ) do
     %ClusterReplicationHealthChanged{
@@ -837,12 +847,22 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_distributed_health_changed_event(
          %Cluster{health_details: %HealthDetails{distributed_health: distributed_health}},
+         _command,
          %HealthDetails{distributed_health: distributed_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_distributed_health_changed_event(
+         %Cluster{state: state},
+         %RegisterOfflineClusterHost{},
+         %HealthDetails{}
+       )
+       when state != ClusterState.stopped(),
+       do: nil
+
+  defp maybe_emit_cluster_distributed_health_changed_event(
          %Cluster{cluster_id: cluster_id},
+         _command,
          %HealthDetails{distributed_health: distributed_health}
        ) do
     %ClusterDistributedHealthChanged{
