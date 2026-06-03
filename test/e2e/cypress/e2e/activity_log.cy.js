@@ -44,8 +44,8 @@ context('Activity Log page', () => {
     it('should render without selected filters', () => {
       activityLogPage.visit();
       activityLogPage.filterTypeHasNothingSelected();
-      activityLogPage.filterStartDateHasNothingSelected();
-      activityLogPage.filterEndDateHasNothingSelected();
+      activityLogPage.filterFromDateHasNothingSelected();
+      activityLogPage.filterToDateHasNothingSelected();
       activityLogPage.metadataSearchHasTheExpectedPlaceholder();
       activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
@@ -59,8 +59,8 @@ context('Activity Log page', () => {
       activityLogPage.filteredActionsAreTheExpectedOnes(
         'Login Attempt, Tag Added'
       );
-      activityLogPage.filterStartDateHasTheExpectedValue(fromDate);
-      activityLogPage.filterEndDateHasTheExpectedValue(toDate);
+      activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
+      activityLogPage.filterToDateHasTheExpectedValue(toDate);
 
       activityLogPage.metadataSearchHasTheExpectedValue('foo bar');
       activityLogPage.activityLogRequestHasExpectedStatusCode(200);
@@ -72,11 +72,11 @@ context('Activity Log page', () => {
 
       activityLogPage.visit(`?${defaultSeverity}`);
 
-      activityLogPage.clickFilterStartDateButton();
-      activityLogPage.typeFilterStartDateInputField(fromDate);
+      activityLogPage.clickFilterFromDateButton();
+      activityLogPage.typeFilterFromDateInputField(fromDate);
 
-      activityLogPage.clickFilterEndDateButton();
-      activityLogPage.typeFilterEndDateInputField(toDate);
+      activityLogPage.clickFilterToDateButton();
+      activityLogPage.typeFilterToDateInputField(toDate);
 
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
@@ -99,8 +99,8 @@ context('Activity Log page', () => {
       activityLogPage.visit(queryString);
       activityLogPage.clickResetFiltersButton();
       activityLogPage.filterTypeHasNothingSelected();
-      activityLogPage.filterStartDateHasNothingSelected();
-      activityLogPage.filterEndDateHasNothingSelected();
+      activityLogPage.filterFromDateHasNothingSelected();
+      activityLogPage.filterToDateHasNothingSelected();
       activityLogPage.metadataSearchHasTheExpectedPlaceholder();
       activityLogPage.activityLogRequestHasExpectedStatusCode(200);
     });
@@ -168,11 +168,11 @@ context('Activity Log page', () => {
       const fromDate = '2024-08-14T10%3A21%3A00.000Z';
       const queryString = `?from_date=custom&from_date=${fromDate}`;
       activityLogPage.visit(queryString);
-      activityLogPage.filterStartDateHasTheExpectedValue(fromDate);
+      activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        activityLogPage.filterStartDateHasTheExpectedValue(fromDate);
+        activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
         const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
         activityLogPage.validateUrl(expectedUrl);
       });

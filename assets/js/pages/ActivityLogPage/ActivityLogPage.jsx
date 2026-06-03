@@ -251,7 +251,7 @@ function ActivityLogPage() {
     },
     {
       key: 'from_date',
-      title: 'Start date',
+      title: 'From date',
       type: 'date',
       prefilled: true,
       timezone,
@@ -259,7 +259,7 @@ function ActivityLogPage() {
     },
     {
       key: 'to_date',
-      title: 'End date',
+      title: 'To date',
       type: 'date',
       prefilled: true,
       timezone,

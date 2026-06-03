@@ -36,8 +36,8 @@ describe('ActivityLogPage', () => {
     await act(() => renderWithRouter(StatefulActivityLogPage));
     expect(screen.getByText('Filter Type...')).toBeInTheDocument();
     expect(screen.getByText('Filter User...')).toBeInTheDocument();
-    expect(screen.getByText('Filter Start date...')).toBeInTheDocument();
-    expect(screen.getByText('Filter End date...')).toBeInTheDocument();
+    expect(screen.getByText('Filter From date...')).toBeInTheDocument();
+    expect(screen.getByText('Filter To date...')).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText('Filter by metadata')
     ).toBeInTheDocument();
@@ -176,7 +176,7 @@ describe('ActivityLogPage', () => {
 
     await act(() => renderWithRouter(StatefulActivityLogPage));
 
-    await user.click(screen.getByText('Filter Start date...'));
+    await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
     await user.type(input, datetime);

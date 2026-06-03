@@ -13,11 +13,11 @@ const refreshRateLabel = '[aria-label="refresh-rate"]';
 const refreshRateFilter = basePage.getSelectControlValue(refreshRateLabel);
 const metadataSearchInput = 'input[name="metadata-search"]';
 
-const filterStartDateButton = 'button:contains("Filter Start date...")';
-const filterStartDateInputField = `${filterStartDateButton} + div input`;
+const filterFromDateButton = 'button:contains("Filter From date...")';
+const filterFromDateInputField = `${filterFromDateButton} + div input`;
 
-const filterEndDateButton = 'button:contains("Filter End date...")';
-const filterEndDateInputField = `${filterEndDateButton} + div input`;
+const filterToDateButton = 'button:contains("Filter To date...")';
+const filterToDateInputField = `${filterToDateButton} + div input`;
 
 const filterTypeButton = 'button[data-testid="filter-Type"]';
 
@@ -70,11 +70,10 @@ export const clickAutoRefreshRateButton = () => {
   return cy.get(refreshRateFilter).click();
 };
 
-export const clickFilterStartDateButton = () =>
-  cy.get(filterStartDateButton).click();
+export const clickFilterFromDateButton = () =>
+  cy.get(filterFromDateButton).click();
 
-export const clickFilterEndDateButton = () =>
-  cy.get(filterEndDateButton).click();
+export const clickFilterToDateButton = () => cy.get(filterToDateButton).click();
 
 export const clickRefreshButton = () =>
   cy.get(refreshButton).click({ force: true });
@@ -91,11 +90,11 @@ export const clickFirstPageButton = () => cy.get(firstPageButton).click();
 
 export const clickLastPageButton = () => cy.get(lastPageButton).click();
 
-export const typeFilterStartDateInputField = (filterValue) =>
-  cy.get(filterStartDateInputField).type(filterValue);
+export const typeFilterFromDateInputField = (filterValue) =>
+  cy.get(filterFromDateInputField).type(filterValue);
 
-export const typeFilterEndDateInputField = (filterValue) =>
-  cy.get(filterEndDateInputField).type(filterValue);
+export const typeFilterToDateInputField = (filterValue) =>
+  cy.get(filterToDateInputField).type(filterValue);
 
 export const selectFilterTypeOption = (option) =>
   cy.get(`span:contains("${option}")`).click();
@@ -140,7 +139,7 @@ export const filteredActionsAreTheExpectedOnes = (filteredActions) =>
     .find('span span')
     .should('have.text', filteredActions);
 
-export const filterStartDateHasTheExpectedValue = (filterValue) => {
+export const filterFromDateHasTheExpectedValue = (filterValue) => {
   let expectedValue;
   _isUriComponentDate(filterValue)
     ? (expectedValue = formatEncodedDate(filterValue))
@@ -153,7 +152,7 @@ export const filterStartDateHasTheExpectedValue = (filterValue) => {
     .should('have.text', expectedValue);
 };
 
-export const filterEndDateHasTheExpectedValue = (filterValue) => {
+export const filterToDateHasTheExpectedValue = (filterValue) => {
   let expectedValue;
   _isUriComponentDate(filterValue)
     ? (expectedValue = formatEncodedDate(filterValue))
@@ -165,11 +164,11 @@ export const filterEndDateHasTheExpectedValue = (filterValue) => {
     .should('have.text', expectedValue);
 };
 
-export const filterStartDateHasNothingSelected = () =>
-  filterStartDateHasTheExpectedValue('Filter Start date...');
+export const filterFromDateHasNothingSelected = () =>
+  filterFromDateHasTheExpectedValue('Filter From date...');
 
-export const filterEndDateHasNothingSelected = () =>
-  filterEndDateHasTheExpectedValue('Filter End date...');
+export const filterToDateHasNothingSelected = () =>
+  filterToDateHasTheExpectedValue('Filter To date...');
 
 export const filterTypeHasNothingSelected = () =>
   filteredActionsAreTheExpectedOnes('Filter Type...');

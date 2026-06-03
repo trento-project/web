@@ -318,7 +318,7 @@ describe('ComposedFilter component', () => {
       {
         key: 'from_date',
         type: 'date',
-        title: 'Start date',
+        title: 'From date',
         prefilled: true,
         timezone,
       },
@@ -328,7 +328,7 @@ describe('ComposedFilter component', () => {
       <ComposedFilter filters={filters} onChange={mockOnChange} autoApply />
     );
 
-    await user.click(screen.getByText('Filter Start date...'));
+    await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
     await user.type(input, datetime);
