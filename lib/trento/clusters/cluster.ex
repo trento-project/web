@@ -39,19 +39,19 @@ defmodule Trento.Clusters.Cluster do
   - Distributed health (only applicable for ASCS/ERS clusters)
   - Checks health
 
-  The main cluster health is computed using the values from all of them. This means that the cluster health is the
-  worst of the two.
+  The main cluster health is computed using the values from all of them. This means that the cluster health is a
+  computation of them.
 
   ### Replication health
 
   The discovered replication health. It is based in the cluster replication values coming from cluster attributes.
-  The health is passing if the SR health is 4 and the secondary sync state "SOK". It is critical otherwise or
+  The health is passing if the SR health is 4 and the secondary sync state "SOK". It is critical or
   unknown (when the data is not available) otherwise.
 
   # Distributed health
 
-  The discovered distributed health checks if ASCS and ERS workloads are distributed among 2 nodes and not running
-  in a single one.
+  The discovered distributed health. It checks if ASCS and ERS workloads are distributed among 2 nodes and not running
+  in a single one. It is passing if all handled SAP systems are distributed and critical otherwise.
 
   ### Checks health
 
