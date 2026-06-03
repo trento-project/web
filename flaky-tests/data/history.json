@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-20T04:17:42Z",
-    "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
-    "run_id": "24647765014",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "NotificationBox Component::should display the title",
-        "score": 0.05001
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-20T06:53:41Z",
     "commit": "d3b89ea0fb095b38fb28affaaecd1058c5459931",
     "run_id": "24648421289",
@@ -6596,6 +6568,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-03T20:59:24Z",
+    "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
+    "run_id": "26911691713",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
       }
     ]
   }
