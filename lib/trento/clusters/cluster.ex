@@ -944,11 +944,12 @@ defmodule Trento.Clusters.Cluster do
   defp maybe_emit_cluster_replication_health_changed_event(
          %Cluster{
            cluster_id: cluster_id,
-           health_details: %HanaClusterHealthDetails{}
+           type: cluster_type
          },
          _command,
          %HanaClusterHealthDetails{replication_health: replication_health}
-       ) do
+       )
+       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
     %ClusterReplicationHealthChanged{
       cluster_id: cluster_id,
       replication_health: replication_health
@@ -977,7 +978,7 @@ defmodule Trento.Clusters.Cluster do
   defp maybe_emit_cluster_distributed_health_changed_event(
          %Cluster{
            cluster_id: cluster_id,
-           health_details: %AscsErsClusterHealthDetails{}
+           type: ClusterType.ascs_ers()
          },
          _command,
          %AscsErsClusterHealthDetails{distributed_health: distributed_health}
@@ -1005,8 +1006,6 @@ defmodule Trento.Clusters.Cluster do
       checks_health: checks_health
     }
   end
-
-  defp maybe_emit_cluster_checks_health_changed_event(_, _), do: nil
 
   defp maybe_emit_cluster_deregistered_event(
          %Cluster{cluster_id: cluster_id, hosts: []},
