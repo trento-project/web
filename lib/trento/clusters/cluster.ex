@@ -496,7 +496,8 @@ defmodule Trento.Clusters.Cluster do
           replication_health: replication_health
         }
       ) do
-    current_health_details = health_details || %HanaClusterHealthDetails{}
+    %HanaClusterHealthDetails{} =
+      current_health_details = health_details || %HanaClusterHealthDetails{}
 
     %Cluster{
       cluster
@@ -513,7 +514,8 @@ defmodule Trento.Clusters.Cluster do
           distributed_health: distributed_health
         }
       ) do
-    current_health_details = health_details || %AscsErsClusterHealthDetails{}
+    %AscsErsClusterHealthDetails{} =
+      current_health_details = health_details || %AscsErsClusterHealthDetails{}
 
     %Cluster{
       cluster
@@ -533,7 +535,8 @@ defmodule Trento.Clusters.Cluster do
         }
       )
       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
-    current_health_details = health_details || %HanaClusterHealthDetails{}
+    %HanaClusterHealthDetails{} =
+      current_health_details = health_details || %HanaClusterHealthDetails{}
 
     %Cluster{
       cluster
@@ -550,7 +553,8 @@ defmodule Trento.Clusters.Cluster do
           discovered_health: discovered_health
         }
       ) do
-    current_health_details = health_details || %AscsErsClusterHealthDetails{}
+    %AscsErsClusterHealthDetails{} =
+      current_health_details = health_details || %AscsErsClusterHealthDetails{}
 
     %Cluster{
       cluster
