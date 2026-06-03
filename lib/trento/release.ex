@@ -9,8 +9,6 @@ defmodule Trento.Release do
 
   require Logger
 
-  alias Mix.Tasks.Phx.Gen.Cert
-
   alias Trento.Settings.{
     ActivityLogSettings,
     ApiKeySettings,
@@ -215,14 +213,16 @@ defmodule Trento.Release do
   end
 
   defp create_certificates_content(name, hostnames) do
-    {certificate, private_key} = Cert.certificate_and_key(2048, name, hostnames)
+    key = X509.PrivateKey.new_rsa(2048)
 
-    keyfile_content =
-      :public_key.pem_encode([:public_key.pem_entry_encode(:RSAPrivateKey, private_key)])
+    cert =
+      X509.Certificate.self_signed(key, "/CN=#{name}",
+        extensions: [
+          subject_alt_name: X509.Certificate.Extension.subject_alt_name(hostnames)
+        ]
+      )
 
-    certfile_content = :public_key.pem_encode([{:Certificate, certificate, :not_encrypted}])
-
-    {keyfile_content, certfile_content}
+    {X509.PrivateKey.to_pem(key), X509.Certificate.to_pem(cert)}
   end
 
   defp get_saml_metadata_file(%{"SAML_METADATA_URL" => metadata_url}) when metadata_url != "" do

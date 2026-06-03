@@ -41,7 +41,7 @@ defmodule TrentoWeb.V1.ProfileJSON do
         analytics_enabled: analytics_enabled_at != nil,
         analytics_eula_accepted: analytics_eula_accepted_at != nil,
         ai_configuration: AIConfigurationJSON.ai_configuration_entry(ai_configuration),
-        idp_user: length(user_identities) > 0,
+        idp_user: user_identities != [],
         timezone: timezone,
         updated_at: updated_at
       }

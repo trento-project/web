@@ -10,6 +10,7 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
   import Trento.Factory
 
   alias Trento.ActivityLog.Logger.Parser.QueueEventParser
+  alias Trento.Checks.V1.CheckCustomValue
   alias Trento.Users
   alias Trento.Users.User
 
@@ -241,9 +242,12 @@ defmodule Trento.ActivityLog.QueueEventParserTest do
           group_id: group_id,
           target_type: target_type,
           custom_values: [
-            %{name: "value_1", value: {:string_value, "string_value"}},
-            %{name: "value_2", value: {:int_value, 1}},
-            %{name: "value_3", value: {:bool_value, true}}
+            %CheckCustomValue{
+              name: "value_1",
+              value: {:string_value, "string_value"}
+            },
+            %CheckCustomValue{name: "value_2", value: {:int_value, 1}},
+            %CheckCustomValue{name: "value_3", value: {:bool_value, true}}
           ]
         )
 

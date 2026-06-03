@@ -61,17 +61,20 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
       sid = String.upcase(Faker.Lorem.word())
       lpa_attribute = "lpa_#{String.downcase(sid)}_lpt"
 
-      node1 =
+      %HanaClusterNode{} =
+        node1 =
         build(:hana_cluster_node,
           attributes: %{lpa_attribute => "17465345", "relevant" => "foo"}
         )
 
-      node2 =
+      %HanaClusterNode{} =
+        node2 =
         build(:hana_cluster_node,
           attributes: %{lpa_attribute => "30", "another_relevant" => "bar"}
         )
 
-      initial_details =
+      %HanaClusterDetails{} =
+        initial_details =
         build(:hana_cluster_details,
           nodes: [
             node1,
@@ -79,7 +82,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
           ]
         )
 
-      initial_command =
+      %RegisterOnlineClusterHost{} =
+        initial_command =
         build(
           :register_online_cluster_host,
           details: initial_details,

@@ -181,7 +181,7 @@ defmodule Trento.Factory do
     OperationRequestFailedDetails
   }
 
-  alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
+  alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset, CheckCustomValue}
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
@@ -1148,7 +1148,7 @@ defmodule Trento.Factory do
       advisory_name: String.downcase(Faker.Pokemon.name()),
       advisory_type: Faker.Util.pick(AdvisoryType.values()),
       advisory_status: "stable",
-      id: RandomElixir.random_between(2000, 5000),
+      id: sequence(:patch_id, & &1),
       advisory_synopsis: Faker.Lorem.sentence(),
       update_date: Faker.Date.backward(30)
     }
@@ -1348,7 +1348,7 @@ defmodule Trento.Factory do
   end
 
   def user_with_abilities_factory do
-    user = build(:user)
+    %User{} = user = build(:user)
     ability = build(:ability)
     build(:users_abilities, user_id: user.id, ability_id: ability.id)
 
@@ -1396,7 +1396,8 @@ defmodule Trento.Factory do
   end
 
   def operation_completed_with_errors_v1_factory(attrs) do
-    operation_completed =
+    %OperationCompleted{} =
+      operation_completed =
       build(
         :operation_completed_v1,
         Map.drop(attrs, [:step, :target_errors])
@@ -1421,7 +1422,8 @@ defmodule Trento.Factory do
   end
 
   def operation_completed_with_failed_request_v1_factory(attrs) do
-    operation_completed =
+    %OperationCompleted{} =
+      operation_completed =
       build(
         :operation_completed_v1,
         Map.drop(attrs, [:error])
@@ -1451,7 +1453,7 @@ defmodule Trento.Factory do
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"]),
       custom_values: [
-        %{
+        %CheckCustomValue{
           name: Faker.Pokemon.name(),
           value: {:string_value, Faker.Pokemon.name()}
         }
