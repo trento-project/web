@@ -6,9 +6,10 @@ defmodule Trento.AI.LLMBuilder do
   Builds a LangChain chat-model struct for a given User.
   """
 
+  alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
+
   alias Trento.Users
   alias Trento.Users.User
-  alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
   @spec build_for_user(non_neg_integer()) ::
           {:ok, struct()}

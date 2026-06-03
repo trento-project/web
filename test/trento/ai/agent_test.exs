@@ -43,6 +43,44 @@ defmodule Trento.AI.AgentTest do
       refute Sagents.Middleware.SubAgent in modules
       refute Sagents.Middleware.HumanInTheLoop in modules
     end
+
+    test "populates base_system_prompt by reading the file at the configured path" do
+      model = build(:random_langchain_model)
+      scope = build(:user)
+
+      expected =
+        :trento
+        |> Application.app_dir("priv/ai/BASE_SYSTEM_PROMPT.md")
+        |> File.read!()
+
+      agent = TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
+
+      assert %Sagents.Agent{base_system_prompt: ^expected} = agent
+    end
+
+    test "raises File.Error when the configured path does not exist" do
+      model = build(:random_langchain_model)
+      scope = build(:user)
+
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn ->
+        [base_system_prompt: "priv/ai/does_not_exist.md"]
+      end)
+
+      assert_raise File.Error, fn ->
+        TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
+      end
+    end
+
+    test "raises KeyError when :base_system_prompt is missing from config" do
+      model = build(:random_langchain_model)
+      scope = build(:user)
+
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [] end)
+
+      assert_raise KeyError, fn ->
+        TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
+      end
+    end
   end
 
   describe "run/2" do
