@@ -724,6 +724,53 @@ defmodule Trento.Clusters.Cluster do
 
   def apply(%Cluster{} = cluster, %ClusterTombstoned{}), do: cluster
 
+  defp parse_discovered_health(%HanaClusterDetails{} = details) do
+    %HanaClusterHealthDetails{
+      replication_health: parse_replication_health(details)
+    }
+  end
+
+  defp parse_discovered_health(%AscsErsClusterDetails{} = details) do
+    %AscsErsClusterHealthDetails{
+      distributed_health: parse_distributed_health(details)
+    }
+  end
+
+  defp parse_discovered_health(_), do: nil
+
+  # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
+  # If data is not present for some reason the state goes to unknown
+  defp parse_replication_health(%HanaClusterDetails{
+         sr_health_state: "4",
+         secondary_sync_state: "SOK"
+       }),
+       do: Health.passing()
+
+  defp parse_replication_health(%HanaClusterDetails{sr_health_state: _, secondary_sync_state: _}),
+    do: Health.critical()
+
+  defp parse_replication_health(_), do: Health.unknown()
+
+  defp parse_distributed_health(%AscsErsClusterDetails{sap_systems: sap_systems}) do
+    Enum.find_value(sap_systems, Health.passing(), fn %{distributed: distributed} ->
+      if not distributed, do: Health.critical()
+    end)
+  end
+
+  defp parse_distributed_health(_), do: Health.unknown()
+
+  defp compute_discovered_health(%HanaClusterHealthDetails{
+         replication_health: replication_health
+       }),
+       do: replication_health
+
+  defp compute_discovered_health(%AscsErsClusterHealthDetails{
+         distributed_health: distributed_health
+       }),
+       do: distributed_health
+
+  defp compute_discovered_health(_), do: Health.unknown()
+
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts, offline_hosts: offline_hosts},
          host_id,
@@ -1006,51 +1053,4 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_add_checks_health(healths, Health.unknown()), do: healths
   defp maybe_add_checks_health(healths, checks_health), do: [checks_health | healths]
-
-  defp parse_discovered_health(%HanaClusterDetails{} = details) do
-    %HanaClusterHealthDetails{
-      replication_health: parse_replication_health(details)
-    }
-  end
-
-  defp parse_discovered_health(%AscsErsClusterDetails{} = details) do
-    %AscsErsClusterHealthDetails{
-      distributed_health: parse_distributed_health(details)
-    }
-  end
-
-  defp parse_discovered_health(_), do: nil
-
-  # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
-  # If data is not present for some reason the state goes to unknown
-  defp parse_replication_health(%HanaClusterDetails{
-         sr_health_state: "4",
-         secondary_sync_state: "SOK"
-       }),
-       do: Health.passing()
-
-  defp parse_replication_health(%HanaClusterDetails{sr_health_state: _, secondary_sync_state: _}),
-    do: Health.critical()
-
-  defp parse_replication_health(_), do: Health.unknown()
-
-  defp parse_distributed_health(%AscsErsClusterDetails{sap_systems: sap_systems}) do
-    Enum.find_value(sap_systems, Health.passing(), fn %{distributed: distributed} ->
-      if not distributed, do: Health.critical()
-    end)
-  end
-
-  defp parse_distributed_health(_), do: Health.unknown()
-
-  defp compute_discovered_health(%HanaClusterHealthDetails{
-         replication_health: replication_health
-       }),
-       do: replication_health
-
-  defp compute_discovered_health(%AscsErsClusterHealthDetails{
-         distributed_health: distributed_health
-       }),
-       do: distributed_health
-
-  defp compute_discovered_health(_), do: Health.unknown()
 end
