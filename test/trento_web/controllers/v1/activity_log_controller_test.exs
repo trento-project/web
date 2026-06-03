@@ -174,21 +174,21 @@ defmodule TrentoWeb.V1.ActivityLogControllerTest do
 
       resp =
         conn
-        |> get("/api/v1/activity_log?from_date=#{now}&to_date=#{now_minus_30d}")
+        |> get("/api/v1/activity_log?from_date=#{now_minus_30d}&to_date=#{now}")
         |> json_response(200)
 
       assert length(resp["data"]) == 6
 
       resp =
         conn
-        |> get("/api/v1/activity_log?from_date=#{now}&to_date=#{now_minus_60d}")
+        |> get("/api/v1/activity_log?from_date=#{now_minus_60d}&to_date=#{now}")
         |> json_response(200)
 
       assert length(resp["data"]) == 12
 
       resp =
         conn
-        |> get("/api/v1/activity_log?from_date=#{now_minus_30d}&to_date=#{now_minus_90d}")
+        |> get("/api/v1/activity_log?from_date=#{now_minus_90d}&to_date=#{now_minus_30d}")
         |> json_response(200)
 
       assert length(resp["data"]) == 18

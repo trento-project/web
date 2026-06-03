@@ -316,9 +316,9 @@ describe('ComposedFilter component', () => {
     const datetime = '2024-01-10T09:30';
     const filters = [
       {
-        key: 'to_date',
+        key: 'from_date',
         type: 'date',
-        title: 'newer than',
+        title: 'From date',
         prefilled: true,
         timezone,
       },
@@ -328,7 +328,7 @@ describe('ComposedFilter component', () => {
       <ComposedFilter filters={filters} onChange={mockOnChange} autoApply />
     );
 
-    await user.click(screen.getByText('Filter newer than...'));
+    await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
     await user.type(input, datetime);
@@ -336,7 +336,7 @@ describe('ComposedFilter component', () => {
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
 
     expect(mockOnChange).toHaveBeenLastCalledWith({
-      to_date: ['custom', expectedDate],
+      from_date: ['custom', expectedDate],
     });
   });
 });
