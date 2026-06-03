@@ -36,8 +36,8 @@ describe('ActivityLogPage', () => {
     await act(() => renderWithRouter(StatefulActivityLogPage));
     expect(screen.getByText('Filter Type...')).toBeInTheDocument();
     expect(screen.getByText('Filter User...')).toBeInTheDocument();
-    expect(screen.getByText('Filter newer than...')).toBeInTheDocument();
-    expect(screen.getByText('Filter older than...')).toBeInTheDocument();
+    expect(screen.getByText('Filter From date...')).toBeInTheDocument();
+    expect(screen.getByText('Filter To date...')).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText('Filter by metadata')
     ).toBeInTheDocument();
@@ -158,7 +158,7 @@ describe('ActivityLogPage', () => {
     );
   });
 
-  it('should send to_date as timezone-aware ISO when custom date is selected', async () => {
+  it('should send from_date as timezone-aware ISO when custom date is selected', async () => {
     const user = userEvent.setup();
     const timezone = 'Pacific/Kiritimati';
     const datetime = '2024-08-14T21:00';
@@ -176,7 +176,7 @@ describe('ActivityLogPage', () => {
 
     await act(() => renderWithRouter(StatefulActivityLogPage));
 
-    await user.click(screen.getByText('Filter newer than...'));
+    await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
     await user.type(input, datetime);
@@ -191,7 +191,7 @@ describe('ActivityLogPage', () => {
       '/activity_log',
       expect.objectContaining({
         params: expect.objectContaining({
-          to_date: expectedToDate,
+          from_date: expectedToDate,
         }),
       })
     );
