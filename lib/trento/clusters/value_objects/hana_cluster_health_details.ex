@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Clusters.ValueObjects.HealthDetails do
+defmodule Trento.Clusters.ValueObjects.HanaClusterHealthDetails do
   @moduledoc """
-  Cluster health details.
+  Hana cluster health details.
 
   Additional information about the fields available in the cluster
   aggregate docstring.
@@ -17,7 +17,6 @@ defmodule Trento.Clusters.ValueObjects.HealthDetails do
 
   deftype do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    field :distributed_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :replication_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
   end
 end

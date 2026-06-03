@@ -78,8 +78,9 @@ defmodule Trento.Clusters.Cluster do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
+    AscsErsClusterHealthDetails,
     HanaClusterDetails,
-    HealthDetails,
+    HanaClusterHealthDetails,
     SapInstance
   }
 
@@ -136,7 +137,6 @@ defmodule Trento.Clusters.Cluster do
     field :hosts_number, :integer
     field :provider, Ecto.Enum, values: Provider.values()
     field :health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    embeds_one :health_details, HealthDetails, defaults_to_struct: true, on_replace: :update
     field :state, Ecto.Enum, values: ClusterState.values()
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
@@ -153,6 +153,17 @@ defmodule Trento.Clusters.Cluster do
         ascs_ers: [module: AscsErsClusterDetails, identify_by_fields: [:sap_systems]]
       ],
       on_replace: :update
+    )
+
+    polymorphic_embeds_one(:health_details,
+      types: [
+        hana_scale_up: HanaClusterHealthDetails,
+        hana_scale_out: HanaClusterHealthDetails,
+        ascs_ers: AscsErsClusterHealthDetails
+      ],
+      on_replace: :update,
+      use_parent_field_for_type: :type,
+      on_type_not_found: :nilify
     )
 
     embeds_many :sap_instances, SapInstance
@@ -179,7 +190,7 @@ defmodule Trento.Clusters.Cluster do
         }
       ) do
     health_details = parse_discovered_health(details)
-    health = compute_discovered_health(type, health_details)
+    health = compute_discovered_health(health_details)
 
     [
       %ClusterRegistered{
@@ -222,7 +233,7 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: nil,
         details: nil,
         health: Health.unknown(),
-        health_details: %HealthDetails{},
+        health_details: nil,
         state: ClusterState.unknown()
       },
       %HostAddedToCluster{
@@ -251,7 +262,7 @@ defmodule Trento.Clusters.Cluster do
         hosts_number: nil,
         details: nil,
         health: Health.unknown(),
-        health_details: %HealthDetails{},
+        health_details: nil,
         state: ClusterState.unknown()
       },
       %HostAddedToCluster{
@@ -366,14 +377,22 @@ defmodule Trento.Clusters.Cluster do
       maybe_emit_cluster_details_updated_event(cluster, command)
     end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_replication_health_changed_event(cluster, command, %HealthDetails{
-        replication_health: Health.unknown()
-      })
+      maybe_emit_cluster_replication_health_changed_event(
+        cluster,
+        command,
+        %HanaClusterHealthDetails{
+          replication_health: Health.unknown()
+        }
+      )
     end)
     |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_distributed_health_changed_event(cluster, command, %HealthDetails{
-        distributed_health: Health.unknown()
-      })
+      maybe_emit_cluster_distributed_health_changed_event(
+        cluster,
+        command,
+        %AscsErsClusterHealthDetails{
+          distributed_health: Health.unknown()
+        }
+      )
     end)
     |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
@@ -477,10 +496,12 @@ defmodule Trento.Clusters.Cluster do
           replication_health: replication_health
         }
       ) do
+    current_health_details = health_details || %HanaClusterHealthDetails{}
+
     %Cluster{
       cluster
-      | health_details: %HealthDetails{
-          health_details
+      | health_details: %HanaClusterHealthDetails{
+          current_health_details
           | replication_health: replication_health
         }
     }
@@ -492,10 +513,12 @@ defmodule Trento.Clusters.Cluster do
           distributed_health: distributed_health
         }
       ) do
+    current_health_details = health_details || %AscsErsClusterHealthDetails{}
+
     %Cluster{
       cluster
-      | health_details: %HealthDetails{
-          health_details
+      | health_details: %AscsErsClusterHealthDetails{
+          current_health_details
           | distributed_health: distributed_health
         }
     }
@@ -510,10 +533,12 @@ defmodule Trento.Clusters.Cluster do
         }
       )
       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()] do
+    current_health_details = health_details || %HanaClusterHealthDetails{}
+
     %Cluster{
       cluster
-      | health_details: %HealthDetails{
-          health_details
+      | health_details: %HanaClusterHealthDetails{
+          current_health_details
           | replication_health: discovered_health
         }
     }
@@ -525,10 +550,12 @@ defmodule Trento.Clusters.Cluster do
           discovered_health: discovered_health
         }
       ) do
+    current_health_details = health_details || %AscsErsClusterHealthDetails{}
+
     %Cluster{
       cluster
-      | health_details: %HealthDetails{
-          health_details
+      | health_details: %AscsErsClusterHealthDetails{
+          current_health_details
           | distributed_health: discovered_health
         }
     }
@@ -539,14 +566,29 @@ defmodule Trento.Clusters.Cluster do
   end
 
   def apply(
-        %Cluster{health_details: health_details} = cluster,
+        %Cluster{health_details: %HanaClusterHealthDetails{} = health_details} = cluster,
         %ClusterChecksHealthChanged{
           checks_health: checks_health
         }
       ) do
     %Cluster{
       cluster
-      | health_details: %HealthDetails{
+      | health_details: %HanaClusterHealthDetails{
+          health_details
+          | checks_health: checks_health
+        }
+    }
+  end
+
+  def apply(
+        %Cluster{health_details: %AscsErsClusterHealthDetails{} = health_details} = cluster,
+        %ClusterChecksHealthChanged{
+          checks_health: checks_health
+        }
+      ) do
+    %Cluster{
+      cluster
+      | health_details: %AscsErsClusterHealthDetails{
           health_details
           | checks_health: checks_health
         }
@@ -832,24 +874,29 @@ defmodule Trento.Clusters.Cluster do
        do: nil
 
   defp maybe_emit_cluster_replication_health_changed_event(
-         %Cluster{health_details: %HealthDetails{replication_health: replication_health}},
+         %Cluster{
+           health_details: %HanaClusterHealthDetails{replication_health: replication_health}
+         },
          __command,
-         %HealthDetails{replication_health: replication_health}
+         %HanaClusterHealthDetails{replication_health: replication_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_replication_health_changed_event(
          %Cluster{state: state},
          %RegisterOfflineClusterHost{},
-         %HealthDetails{}
+         %HanaClusterHealthDetails{}
        )
        when state != ClusterState.stopped(),
        do: nil
 
   defp maybe_emit_cluster_replication_health_changed_event(
-         %Cluster{cluster_id: cluster_id},
+         %Cluster{
+           cluster_id: cluster_id,
+           health_details: %HanaClusterHealthDetails{}
+         },
          _command,
-         %HealthDetails{replication_health: replication_health}
+         %HanaClusterHealthDetails{replication_health: replication_health}
        ) do
     %ClusterReplicationHealthChanged{
       cluster_id: cluster_id,
@@ -857,25 +904,32 @@ defmodule Trento.Clusters.Cluster do
     }
   end
 
+  defp maybe_emit_cluster_replication_health_changed_event(_, _, _), do: nil
+
   defp maybe_emit_cluster_distributed_health_changed_event(
-         %Cluster{health_details: %HealthDetails{distributed_health: distributed_health}},
+         %Cluster{
+           health_details: %AscsErsClusterHealthDetails{distributed_health: distributed_health}
+         },
          _command,
-         %HealthDetails{distributed_health: distributed_health}
+         %AscsErsClusterHealthDetails{distributed_health: distributed_health}
        ),
        do: nil
 
   defp maybe_emit_cluster_distributed_health_changed_event(
          %Cluster{state: state},
          %RegisterOfflineClusterHost{},
-         %HealthDetails{}
+         %AscsErsClusterHealthDetails{}
        )
        when state != ClusterState.stopped(),
        do: nil
 
   defp maybe_emit_cluster_distributed_health_changed_event(
-         %Cluster{cluster_id: cluster_id},
+         %Cluster{
+           cluster_id: cluster_id,
+           health_details: %AscsErsClusterHealthDetails{}
+         },
          _command,
-         %HealthDetails{distributed_health: distributed_health}
+         %AscsErsClusterHealthDetails{distributed_health: distributed_health}
        ) do
     %ClusterDistributedHealthChanged{
       cluster_id: cluster_id,
@@ -883,8 +937,10 @@ defmodule Trento.Clusters.Cluster do
     }
   end
 
+  defp maybe_emit_cluster_distributed_health_changed_event(_, _, _), do: nil
+
   defp maybe_emit_cluster_checks_health_changed_event(
-         %Cluster{health_details: %HealthDetails{checks_health: checks_health}},
+         %Cluster{health_details: %{checks_health: checks_health}},
          %CompleteChecksExecution{health: checks_health}
        ),
        do: nil
@@ -898,6 +954,8 @@ defmodule Trento.Clusters.Cluster do
       checks_health: checks_health
     }
   end
+
+  defp maybe_emit_cluster_checks_health_changed_event(_, _), do: nil
 
   defp maybe_emit_cluster_deregistered_event(
          %Cluster{cluster_id: cluster_id, hosts: []},
@@ -916,18 +974,15 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
-         health_details: %HealthDetails{
-           replication_health: replication_health,
-           distributed_health: distributed_health,
-           checks_health: checks_health
-         },
-         health: health,
-         type: cluster_type
+         health_details:
+           %{
+             checks_health: checks_health
+           } = health_details,
+         health: health
        }) do
     new_health =
-      []
-      |> maybe_add_replication_health(replication_health, cluster_type)
-      |> maybe_add_distributed_health(distributed_health, cluster_type)
+      health_details
+      |> add_primary_health()
       |> maybe_add_checks_health(checks_health)
       |> Enum.filter(& &1)
       |> HealthService.compute_aggregated_health()
@@ -937,33 +992,34 @@ defmodule Trento.Clusters.Cluster do
     end
   end
 
-  defp maybe_add_replication_health(healths, replication_health, cluster_type)
-       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
-       do: [replication_health | healths]
+  defp maybe_emit_cluster_health_changed_event(_), do: nil
 
-  defp maybe_add_replication_health(healths, _, _), do: healths
+  defp add_primary_health(%HanaClusterHealthDetails{
+         replication_health: replication_health
+       }),
+       do: [replication_health]
 
-  defp maybe_add_distributed_health(healths, distributed_health, ClusterType.ascs_ers()),
-    do: [distributed_health | healths]
-
-  defp maybe_add_distributed_health(healths, _, _), do: healths
+  defp add_primary_health(%AscsErsClusterHealthDetails{
+         distributed_health: distributed_health
+       }),
+       do: [distributed_health]
 
   defp maybe_add_checks_health(healths, Health.unknown()), do: healths
   defp maybe_add_checks_health(healths, checks_health), do: [checks_health | healths]
 
   defp parse_discovered_health(%HanaClusterDetails{} = details) do
-    %HealthDetails{
+    %HanaClusterHealthDetails{
       replication_health: parse_replication_health(details)
     }
   end
 
   defp parse_discovered_health(%AscsErsClusterDetails{} = details) do
-    %HealthDetails{
+    %AscsErsClusterHealthDetails{
       distributed_health: parse_distributed_health(details)
     }
   end
 
-  defp parse_discovered_health(_), do: %HealthDetails{}
+  defp parse_discovered_health(_), do: nil
 
   # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
   # If data is not present for some reason the state goes to unknown
@@ -986,16 +1042,15 @@ defmodule Trento.Clusters.Cluster do
 
   defp parse_distributed_health(_), do: Health.unknown()
 
-  defp compute_discovered_health(cluster_type, %HealthDetails{
+  defp compute_discovered_health(%HanaClusterHealthDetails{
          replication_health: replication_health
-       })
-       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
+       }),
        do: replication_health
 
-  defp compute_discovered_health(ClusterType.ascs_ers(), %HealthDetails{
+  defp compute_discovered_health(%AscsErsClusterHealthDetails{
          distributed_health: distributed_health
        }),
        do: distributed_health
 
-  defp compute_discovered_health(_, _), do: Health.unknown()
+  defp compute_discovered_health(_), do: Health.unknown()
 end

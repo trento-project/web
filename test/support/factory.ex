@@ -29,9 +29,9 @@ defmodule Trento.Factory do
     ClusterResource,
     ClusterResourceParent,
     HanaClusterDetails,
+    HanaClusterHealthDetails,
     HanaClusterNode,
     HanaClusterSite,
-    HealthDetails,
     SapInstance,
     SbdDevice
   }
@@ -329,7 +329,9 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      health_details: %HealthDetails{},
+      health_details: %HanaClusterHealthDetails{
+        replication_health: Health.passing()
+      },
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
     }

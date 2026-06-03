@@ -7,7 +7,10 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Enums.Health, as: Health
 
-  alias Trento.Clusters.ValueObjects.HealthDetails
+  alias Trento.Clusters.ValueObjects.{
+    AscsErsClusterHealthDetails,
+    HanaClusterHealthDetails
+  }
 
   alias Trento.Clusters.Events.ClusterRegistered
 
@@ -26,9 +29,8 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
       for cluster_type <- ["hana_scale_up", "hana_scale_out"] do
         assert %ClusterRegistered{
                  version: 3,
-                 health_details: %HealthDetails{
+                 health_details: %HanaClusterHealthDetails{
                    checks_health: Health.unknown(),
-                   distributed_health: Health.unknown(),
                    replication_health: Health.passing()
                  }
                } =
@@ -41,10 +43,9 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
     test "should upcast ClusterRegistered event with ASCS/ERS type properly from version 1" do
       assert %ClusterRegistered{
                version: 3,
-               health_details: %HealthDetails{
+               health_details: %AscsErsClusterHealthDetails{
                  checks_health: Health.unknown(),
-                 distributed_health: Health.passing(),
-                 replication_health: Health.unknown()
+                 distributed_health: Health.passing()
                }
              } =
                %{"type" => "ascs_ers", "health" => Health.passing()}
@@ -55,11 +56,7 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
     test "should upcast ClusterRegistered event with unknown type properly from version 1" do
       assert %ClusterRegistered{
                version: 3,
-               health_details: %HealthDetails{
-                 checks_health: Health.unknown(),
-                 distributed_health: Health.unknown(),
-                 replication_health: Health.unknown()
-               }
+               health_details: nil
              } =
                %{"type" => "unknown", "health" => Health.unknown()}
                |> ClusterRegistered.upcast(%{})

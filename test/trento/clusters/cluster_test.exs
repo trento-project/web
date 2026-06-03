@@ -47,7 +47,10 @@ defmodule Trento.ClusterTest do
     HostRemovedFromCluster
   }
 
-  alias Trento.Clusters.ValueObjects.HealthDetails
+  alias Trento.Clusters.ValueObjects.{
+    AscsErsClusterHealthDetails,
+    HanaClusterHealthDetails
+  }
 
   alias Trento.Clusters.Cluster
 
@@ -83,7 +86,7 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             type: type,
             health: Health.unknown(),
-            health_details: %HealthDetails{},
+            health_details: nil,
             details: nil,
             state: state
           },
@@ -101,7 +104,7 @@ defmodule Trento.ClusterTest do
           provider: :azure,
           hosts: [host_id],
           health: Health.unknown(),
-          health_details: %HealthDetails{},
+          health_details: nil,
           state: state
         }
       )
@@ -169,7 +172,7 @@ defmodule Trento.ClusterTest do
               type: :hana_scale_up,
               details: details,
               health: expected_health,
-              health_details: %HealthDetails{
+              health_details: %HanaClusterHealthDetails{
                 replication_health: expected_health
               },
               state: :S_IDLE
@@ -189,7 +192,7 @@ defmodule Trento.ClusterTest do
             hosts: [host_id],
             details: details,
             health: expected_health,
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               replication_health: expected_health
             },
             state: :S_IDLE
@@ -246,7 +249,7 @@ defmodule Trento.ClusterTest do
               type: :ascs_ers,
               details: details,
               health: expected_health,
-              health_details: %HealthDetails{
+              health_details: %AscsErsClusterHealthDetails{
                 distributed_health: expected_health
               },
               state: :S_IDLE
@@ -266,7 +269,7 @@ defmodule Trento.ClusterTest do
             hosts: [host_id],
             details: details,
             health: expected_health,
-            health_details: %HealthDetails{
+            health_details: %AscsErsClusterHealthDetails{
               distributed_health: expected_health
             },
             state: :S_IDLE
@@ -300,7 +303,7 @@ defmodule Trento.ClusterTest do
             provider: :unknown,
             type: :unknown,
             health: Health.unknown(),
-            health_details: %HealthDetails{},
+            health_details: nil,
             details: nil,
             state: ClusterState.unknown()
           },
@@ -319,7 +322,7 @@ defmodule Trento.ClusterTest do
           hosts: [host_id],
           offline_hosts: [],
           health: Health.unknown(),
-          health_details: %HealthDetails{},
+          health_details: nil,
           state: ClusterState.unknown()
         }
       )
@@ -345,7 +348,7 @@ defmodule Trento.ClusterTest do
             provider: :unknown,
             type: :unknown,
             health: Health.unknown(),
-            health_details: %HealthDetails{},
+            health_details: nil,
             details: nil,
             state: ClusterState.unknown()
           },
@@ -364,7 +367,7 @@ defmodule Trento.ClusterTest do
           hosts: [host_id],
           offline_hosts: [host_id],
           health: Health.unknown(),
-          health_details: %HealthDetails{},
+          health_details: nil,
           state: ClusterState.unknown()
         }
       )
@@ -413,7 +416,7 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.unknown()),
+          build(:cluster_registered_event, cluster_id: cluster_id),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id_1,
@@ -454,8 +457,11 @@ defmodule Trento.ClusterTest do
         %{
           type: :hana_scale_up,
           health: Health.passing(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
           },
           health_change_events: [
             %ClusterReplicationHealthChanged{
@@ -471,8 +477,11 @@ defmodule Trento.ClusterTest do
         %{
           type: :hana_scale_out,
           health: Health.passing(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
           },
           health_change_events: [
             %ClusterReplicationHealthChanged{
@@ -488,8 +497,11 @@ defmodule Trento.ClusterTest do
         %{
           type: :ascs_ers,
           health: Health.passing(),
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
           },
           health_change_events: [
             %ClusterDistributedHealthChanged{
@@ -506,7 +518,10 @@ defmodule Trento.ClusterTest do
         %{
           type: :hana_scale_up,
           health: Health.unknown(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
             replication_health: Health.unknown()
           },
           health_change_events: []
@@ -514,7 +529,10 @@ defmodule Trento.ClusterTest do
         %{
           type: :hana_scale_out,
           health: Health.unknown(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
             replication_health: Health.unknown()
           },
           health_change_events: []
@@ -522,7 +540,10 @@ defmodule Trento.ClusterTest do
         %{
           type: :ascs_ers,
           health: Health.unknown(),
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.unknown()
           },
           health_change_events: []
@@ -533,6 +554,7 @@ defmodule Trento.ClusterTest do
             type: type,
             health: health,
             health_details: health_details,
+            expected_health_details: expected_health_details,
             health_change_events: health_change_events
           } <-
             scenarios do
@@ -586,10 +608,7 @@ defmodule Trento.ClusterTest do
             assert %Cluster{
                      state: ClusterState.stopped(),
                      health: Health.unknown(),
-                     health_details: %HealthDetails{
-                       replication_health: Health.unknown(),
-                       distributed_health: Health.unknown()
-                     }
+                     health_details: ^expected_health_details
                    } = cluster
           end
         )
@@ -603,19 +622,19 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           }
         },
         %{
           type: :hana_scale_out,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           }
         },
         %{
           type: :ascs_ers,
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing()
           }
         }
@@ -676,7 +695,10 @@ defmodule Trento.ClusterTest do
           build(:cluster_registered_event,
             cluster_id: cluster_id,
             state: ClusterState.stopped(),
-            health: Health.unknown()
+            health: Health.unknown(),
+            health_details: %HanaClusterHealthDetails{
+              replication_health: Health.unknown()
+            }
           ),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
@@ -748,7 +770,11 @@ defmodule Trento.ClusterTest do
 
       assert_events_and_state(
         [
-          build(:cluster_registered_event, cluster_id: cluster_id, health: Health.unknown()),
+          build(:cluster_registered_event,
+            cluster_id: cluster_id,
+            health: Health.unknown(),
+            health_details: nil
+          ),
           build(:host_added_to_cluster_event,
             cluster_id: cluster_id,
             host_id: host_id,
@@ -805,6 +831,7 @@ defmodule Trento.ClusterTest do
             name: name,
             details: nil,
             health: Health.unknown(),
+            health_details: nil,
             state: state
           ),
           build(:host_added_to_cluster_event, cluster_id: cluster_id)
@@ -850,7 +877,7 @@ defmodule Trento.ClusterTest do
         build(:cluster_registered_event,
           cluster_id: cluster_id,
           health: Health.passing(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           }
         ),
@@ -920,7 +947,7 @@ defmodule Trento.ClusterTest do
           provider: :azure,
           state: state,
           health: Health.unknown(),
-          health_details: %HealthDetails{}
+          health_details: nil
         ),
         build(:host_added_to_cluster_event,
           cluster_id: cluster_id,
@@ -991,7 +1018,7 @@ defmodule Trento.ClusterTest do
             :cluster_registered_event,
             cluster_id: cluster_id,
             health: Health.passing(),
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               checks_health: Health.passing(),
               replication_health: Health.passing()
             }
@@ -1025,19 +1052,19 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           }
         },
         %{
           type: :hana_scale_out,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           }
         },
         %{
           type: :ascs_ers,
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing()
           }
         }
@@ -1075,7 +1102,7 @@ defmodule Trento.ClusterTest do
             assert %Cluster{
                      cluster_id: ^cluster_id,
                      health: Health.critical(),
-                     health_details: %HealthDetails{
+                     health_details: %{
                        checks_health: Health.critical()
                      }
                    } = cluster
@@ -1091,21 +1118,21 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.passing(),
             replication_health: Health.critical()
           }
         },
         %{
           type: :hana_scale_out,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.passing(),
             replication_health: Health.critical()
           }
         },
         %{
           type: :ascs_ers,
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             checks_health: Health.passing(),
             distributed_health: Health.critical()
           }
@@ -1140,7 +1167,7 @@ defmodule Trento.ClusterTest do
             assert %Cluster{
                      cluster_id: ^cluster_id,
                      health: Health.critical(),
-                     health_details: %HealthDetails{
+                     health_details: %{
                        checks_health: Health.warning()
                      }
                    } = cluster
@@ -1158,7 +1185,7 @@ defmodule Trento.ClusterTest do
           build(:cluster_registered_event,
             cluster_id: cluster_id,
             health: Health.passing(),
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               replication_health: Health.passing()
             }
           ),
@@ -1176,7 +1203,7 @@ defmodule Trento.ClusterTest do
           assert %Cluster{
                    cluster_id: ^cluster_id,
                    health: Health.passing(),
-                   health_details: %HealthDetails{
+                   health_details: %HanaClusterHealthDetails{
                      replication_health: Health.passing(),
                      checks_health: Health.unknown()
                    }
@@ -1194,7 +1221,7 @@ defmodule Trento.ClusterTest do
           build(:cluster_registered_event,
             cluster_id: cluster_id,
             health: Health.critical(),
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               replication_health: Health.critical()
             }
           ),
@@ -1231,7 +1258,7 @@ defmodule Trento.ClusterTest do
           build(:cluster_registered_event,
             cluster_id: cluster_id,
             health: Health.critical(),
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               checks_health: Health.critical(),
               replication_health: Health.critical()
             }
@@ -1250,7 +1277,7 @@ defmodule Trento.ClusterTest do
           assert %Cluster{
                    cluster_id: ^cluster_id,
                    health: Health.critical(),
-                   health_details: %HealthDetails{
+                   health_details: %HanaClusterHealthDetails{
                      checks_health: Health.critical()
                    }
                  } = cluster
@@ -1266,7 +1293,7 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.unknown(),
             replication_health: Health.passing()
           },
@@ -1276,14 +1303,14 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             replication_health: Health.critical()
           },
-          expected_health_details: %HealthDetails{
+          expected_health_details: %HanaClusterHealthDetails{
             checks_health: Health.unknown(),
             replication_health: Health.critical()
           }
         },
         %{
           type: :hana_scale_out,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.unknown(),
             replication_health: Health.passing()
           },
@@ -1293,14 +1320,14 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             replication_health: Health.critical()
           },
-          expected_health_details: %HealthDetails{
+          expected_health_details: %HanaClusterHealthDetails{
             checks_health: Health.unknown(),
             replication_health: Health.critical()
           }
         },
         %{
           type: :ascs_ers,
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             checks_health: Health.unknown(),
             distributed_health: Health.passing()
           },
@@ -1316,7 +1343,7 @@ defmodule Trento.ClusterTest do
             cluster_id: cluster_id,
             distributed_health: Health.critical()
           },
-          expected_health_details: %HealthDetails{
+          expected_health_details: %AscsErsClusterHealthDetails{
             checks_health: Health.unknown(),
             distributed_health: Health.critical()
           }
@@ -1395,21 +1422,21 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           },
           details: build(:hana_cluster_details)
         },
         %{
           type: :hana_scale_out,
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           },
           details: build(:hana_cluster_details)
         },
         %{
           type: :ascs_ers,
-          health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing()
           },
           details:
@@ -1471,7 +1498,7 @@ defmodule Trento.ClusterTest do
           health: :passing,
           provider: :azure,
           health: Health.critical(),
-          health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
             checks_health: Health.critical(),
             replication_health: Health.passing()
           },
@@ -1525,7 +1552,7 @@ defmodule Trento.ClusterTest do
         fn cluster ->
           assert %Cluster{
                    health: :critical,
-                   health_details: %HealthDetails{
+                   health_details: %HanaClusterHealthDetails{
                      checks_health: Health.critical(),
                      replication_health: Health.critical()
                    }
@@ -1562,10 +1589,9 @@ defmodule Trento.ClusterTest do
             hosts_number: cluster_registered_event.hosts_number,
             details: cluster_registered_event.details,
             health: cluster_registered_event.health,
-            health_details: %HealthDetails{
+            health_details: %HanaClusterHealthDetails{
               checks_health: Health.unknown(),
-              distributed_health: Health.unknown(),
-              replication_health: Health.unknown()
+              replication_health: Health.passing()
             },
             state: cluster_registered_event.state,
             hosts: [],
@@ -1596,10 +1622,9 @@ defmodule Trento.ClusterTest do
               hosts_number: cluster_registered_event.hosts_number,
               details: cluster_registered_event.details,
               health: cluster_registered_event.health,
-              health_details: %HealthDetails{
+              health_details: %HanaClusterHealthDetails{
                 checks_health: Health.unknown(),
-                distributed_health: Health.passing(),
-                replication_health: Health.warning()
+                replication_health: Health.passing()
               },
               hosts: [],
               selected_checks: []
@@ -1620,10 +1645,9 @@ defmodule Trento.ClusterTest do
           assert cluster.selected_checks == []
           assert cluster.hosts == []
 
-          assert cluster.health_details == %HealthDetails{
+          assert cluster.health_details == %HanaClusterHealthDetails{
                    checks_health: Health.unknown(),
-                   distributed_health: Health.passing(),
-                   replication_health: Health.warning()
+                   replication_health: Health.passing()
                  }
         end
       )
@@ -2031,41 +2055,51 @@ defmodule Trento.ClusterTest do
       scenarios = [
         %{
           type: :hana_scale_up,
-          expected_health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
             checks_health: Health.warning(),
             replication_health: Health.passing()
           }
         },
         %{
           type: :hana_scale_out,
-          expected_health_details: %HealthDetails{
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.unknown()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
             checks_health: Health.warning(),
             replication_health: Health.passing()
           }
         },
         %{
           type: :ascs_ers,
-          expected_health_details: %HealthDetails{
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.unknown()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
             checks_health: Health.warning(),
             distributed_health: Health.passing()
           }
         },
         %{
           type: :unknown,
-          expected_health_details: %HealthDetails{
-            checks_health: Health.warning(),
-            replication_health: Health.unknown(),
-            distributed_health: Health.unknown()
-          }
+          expected_health_details: nil
         }
       ]
 
-      for %{type: type, expected_health_details: expected_health_details} <- scenarios do
+      for %{
+            type: type,
+            health_details: health_details,
+            expected_health_details: expected_health_details
+          } <- scenarios do
         cluster_registered_event =
           build(
             :cluster_registered_event,
             cluster_id: cluster_id,
-            type: type
+            type: type,
+            health_details: health_details
           )
 
         assert_state(

@@ -8,7 +8,11 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
 
   alias Trento.Clusters.Cluster
   alias Trento.Clusters.Events.ClusterRolledUp
-  alias Trento.Clusters.ValueObjects.HealthDetails
+
+  alias Trento.Clusters.ValueObjects.{
+    AscsErsClusterHealthDetails,
+    HanaClusterHealthDetails
+  }
 
   describe "ClusterRolledUp event upcasting, version 2" do
     test "should upcast the legacy snapshot with HANA type" do
@@ -19,9 +23,8 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
                  version: 2,
                  cluster_id: ^cluster_id,
                  snapshot: %Cluster{
-                   health_details: %HealthDetails{
+                   health_details: %HanaClusterHealthDetails{
                      checks_health: Health.warning(),
-                     distributed_health: Health.unknown(),
                      replication_health: Health.passing()
                    }
                  }
@@ -47,10 +50,9 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
                version: 2,
                cluster_id: ^cluster_id,
                snapshot: %Cluster{
-                 health_details: %HealthDetails{
+                 health_details: %AscsErsClusterHealthDetails{
                    checks_health: Health.warning(),
-                   distributed_health: Health.passing(),
-                   replication_health: Health.unknown()
+                   distributed_health: Health.passing()
                  }
                }
              } =
@@ -74,11 +76,7 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
                version: 2,
                cluster_id: ^cluster_id,
                snapshot: %Cluster{
-                 health_details: %HealthDetails{
-                   checks_health: Health.unknown(),
-                   distributed_health: Health.unknown(),
-                   replication_health: Health.unknown()
-                 }
+                 health_details: nil
                }
              } =
                %{
