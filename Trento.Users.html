@@ -4,35 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.34.2">
+    <meta name="generator" content="ExDoc v0.40.3">
     <meta name="project" content="Trento Web v3.1.0">
 
 
     <title>Trento.Users — Trento Web v3.1.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-CF629CA3.js"></script>
-    <script src="docs_config.js"></script>
-    <script async src="dist/html-YIPIRHGU.js"></script>
+    <script defer src="dist/sidebar_items-F4AA9DA8.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
-
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
 <div class="body-wrapper">
 
@@ -58,63 +45,47 @@ Trento Web
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Info
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-        <li>
-          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
-            <span translate="no">Mix</span> Tasks
-          </button>
-        </li>
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
-    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
-      <ul id="tasks-full-list" class="full-list"></ul>
-    </div>
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
+<output role="status" id="toast"></output>
 
+<main class="content page-module" id="main" data-type="modules">
   <div id="content" class="content-inner">
     <div class="top-search">
       <div class="search-settings">
         <form class="search-bar" action="search.html">
           <label class="search-label">
             <span class="sr-only">Search documentation of Trento Web</span>
-            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
           </label>
-          <button type="submit" class="search-button" aria-label="Submit Search">
-            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-          </button>
-          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-            <i class="ri-close-line ri-lg" title="Cancel search"></i>
-          </button>
         </form>
         <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
         </div>
         <button class="icon-settings display-settings">
           <i class="ri-settings-3-line"></i>
@@ -124,17 +95,26 @@ Info
     </div>
 
 <div id="top-content">
-  <h1>
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Trento.<wbr />Users</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L4" title="View Source" class="icon-action" rel="help">
+    </h1>
+
+<a href="Trento.Users.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">Trento.Users</span> 
-    <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
-
-  </h1>
+  </div>
 
 
     <section id="moduledoc">
@@ -144,20 +124,20 @@ Info
 </div>
 
   <section id="summary" class="details-list">
-    <h1 class="section-heading">
+    <h2 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
       <span class="text">Summary</span>
-    </h1>
+    </h2>
 <div class="summary-functions summary">
-  <h2>
+  <h3>
     <a href="#functions">Functions</a>
-  </h2>
+  </h3>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#authenticate/1" data-no-tooltip translate="no">authenticate(params)</a>
+        <a href="#authenticate/1" data-no-tooltip="" translate="no">authenticate(params)</a>
 
       </div>
 
@@ -167,7 +147,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#by_id/1" data-no-tooltip translate="no">by_id(id)</a>
+        <a href="#by_id/1" data-no-tooltip="" translate="no">by_id(id)</a>
 
       </div>
 
@@ -175,7 +155,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#confirm_totp_enrollment/2" data-no-tooltip translate="no">confirm_totp_enrollment(user, totp_code)</a>
+        <a href="#confirm_totp_enrollment/2" data-no-tooltip="" translate="no">confirm_totp_enrollment(user, totp_code)</a>
 
       </div>
 
@@ -183,7 +163,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#create/1" data-no-tooltip translate="no">create(params)</a>
+        <a href="#create/1" data-no-tooltip="" translate="no">create(params)</a>
 
       </div>
 
@@ -193,7 +173,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#create_user/1" data-no-tooltip translate="no">create_user(attrs)</a>
+        <a href="#create_user/1" data-no-tooltip="" translate="no">create_user(attrs)</a>
 
       </div>
 
@@ -201,7 +181,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete/1" data-no-tooltip translate="no">delete(user)</a>
+        <a href="#delete/1" data-no-tooltip="" translate="no">delete(user)</a>
 
       </div>
 
@@ -211,7 +191,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#delete_user/1" data-no-tooltip translate="no">delete_user(user)</a>
+        <a href="#delete_user/1" data-no-tooltip="" translate="no">delete_user(user)</a>
 
       </div>
 
@@ -219,7 +199,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_by/1" data-no-tooltip translate="no">get_by(clauses)</a>
+        <a href="#get_by/1" data-no-tooltip="" translate="no">get_by(clauses)</a>
 
       </div>
 
@@ -231,7 +211,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_user/1" data-no-tooltip translate="no">get_user(id)</a>
+        <a href="#get_user/1" data-no-tooltip="" translate="no">get_user(id)</a>
 
       </div>
 
@@ -239,7 +219,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#initiate_totp_enrollment/1" data-no-tooltip translate="no">initiate_totp_enrollment(user)</a>
+        <a href="#initiate_totp_enrollment/1" data-no-tooltip="" translate="no">initiate_totp_enrollment(user)</a>
 
       </div>
 
@@ -247,7 +227,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#list_users/0" data-no-tooltip translate="no">list_users()</a>
+        <a href="#list_users/0" data-no-tooltip="" translate="no">list_users()</a>
 
       </div>
 
@@ -255,7 +235,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#maybe_disable_totp/1" data-no-tooltip translate="no">maybe_disable_totp(attrs)</a>
+        <a href="#maybe_disable_totp/1" data-no-tooltip="" translate="no">maybe_disable_totp(attrs)</a>
 
       </div>
 
@@ -263,7 +243,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#pow_authenticate/1" data-no-tooltip translate="no">pow_authenticate(params)</a>
+        <a href="#pow_authenticate/1" data-no-tooltip="" translate="no">pow_authenticate(params)</a>
 
       </div>
 
@@ -271,7 +251,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#pow_create/1" data-no-tooltip translate="no">pow_create(params)</a>
+        <a href="#pow_create/1" data-no-tooltip="" translate="no">pow_create(params)</a>
 
       </div>
 
@@ -279,7 +259,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#pow_delete/1" data-no-tooltip translate="no">pow_delete(user)</a>
+        <a href="#pow_delete/1" data-no-tooltip="" translate="no">pow_delete(user)</a>
 
       </div>
 
@@ -287,7 +267,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#pow_get_by/1" data-no-tooltip translate="no">pow_get_by(clauses)</a>
+        <a href="#pow_get_by/1" data-no-tooltip="" translate="no">pow_get_by(clauses)</a>
 
       </div>
 
@@ -295,7 +275,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#pow_update/2" data-no-tooltip translate="no">pow_update(user, params)</a>
+        <a href="#pow_update/2" data-no-tooltip="" translate="no">pow_update(user, params)</a>
 
       </div>
 
@@ -303,7 +283,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#reset_totp/1" data-no-tooltip translate="no">reset_totp(user)</a>
+        <a href="#reset_totp/1" data-no-tooltip="" translate="no">reset_totp(user)</a>
 
       </div>
 
@@ -311,7 +291,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update/2" data-no-tooltip translate="no">update(user, params)</a>
+        <a href="#update/2" data-no-tooltip="" translate="no">update(user, params)</a>
 
       </div>
 
@@ -321,7 +301,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update_last_login_at/1" data-no-tooltip translate="no">update_last_login_at(user)</a>
+        <a href="#update_last_login_at/1" data-no-tooltip="" translate="no">update_last_login_at(user)</a>
 
       </div>
 
@@ -329,7 +309,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update_user/2" data-no-tooltip translate="no">update_user(user, attrs)</a>
+        <a href="#update_user/2" data-no-tooltip="" translate="no">update_user(user, attrs)</a>
 
       </div>
 
@@ -337,7 +317,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update_user_profile/2" data-no-tooltip translate="no">update_user_profile(user, attrs)</a>
+        <a href="#update_user_profile/2" data-no-tooltip="" translate="no">update_user_profile(user, attrs)</a>
 
       </div>
 
@@ -345,7 +325,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#update_user_profile_sso_enabled/2" data-no-tooltip translate="no">update_user_profile_sso_enabled(user, attrs)</a>
+        <a href="#update_user_profile_sso_enabled/2" data-no-tooltip="" translate="no">update_user_profile_sso_enabled(user, attrs)</a>
 
       </div>
 
@@ -353,7 +333,7 @@ deleted and locked users</p></div>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#validate_totp/2" data-no-tooltip translate="no">validate_totp(user, totp_code)</a>
+        <a href="#validate_totp/2" data-no-tooltip="" translate="no">validate_totp(user, totp_code)</a>
 
       </div>
 
@@ -365,28 +345,29 @@ deleted and locked users</p></div>
 
 
   <section id="functions" class="details-list">
-    <h1 class="section-heading">
+    <h2 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
       <span class="text">Functions</span>
-    </h1>
+    </h2>
+
     <div class="functions-list">
 <section class="detail" id="authenticate/1">
 
   <div class="detail-header">
-    <a href="#authenticate/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#authenticate/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">authenticate(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">authenticate(params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -397,18 +378,18 @@ deleted and locked users</p></div>
 <section class="detail" id="by_id/1">
 
   <div class="detail-header">
-    <a href="#by_id/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#by_id/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">by_id(id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L26" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">by_id(id)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L26" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -426,18 +407,18 @@ deleted and locked users</p></div>
 <section class="detail" id="confirm_totp_enrollment/2">
 
   <div class="detail-header">
-    <a href="#confirm_totp_enrollment/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#confirm_totp_enrollment/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">confirm_totp_enrollment(user, totp_code)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L234" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">confirm_totp_enrollment(user, totp_code)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L234" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -448,18 +429,18 @@ deleted and locked users</p></div>
 <section class="detail" id="create/1">
 
   <div class="detail-header">
-    <a href="#create/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#create/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">create(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">create(params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -470,18 +451,18 @@ deleted and locked users</p></div>
 <section class="detail" id="create_user/1">
 
   <div class="detail-header">
-    <a href="#create_user/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#create_user/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">create_user(attrs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L70" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">create_user(attrs)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L70" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -492,18 +473,18 @@ deleted and locked users</p></div>
 <section class="detail" id="delete/1">
 
   <div class="detail-header">
-    <a href="#delete/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#delete/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delete(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -514,18 +495,18 @@ deleted and locked users</p></div>
 <section class="detail" id="delete_user/1">
 
   <div class="detail-header">
-    <a href="#delete_user/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#delete_user/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">delete_user(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L168" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">delete_user(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L168" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -536,18 +517,18 @@ deleted and locked users</p></div>
 <section class="detail" id="get_by/1">
 
   <div class="detail-header">
-    <a href="#get_by/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#get_by/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_by(clauses)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L39" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_by(clauses)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L39" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -560,18 +541,18 @@ deleted and locked users</p>
 <section class="detail" id="get_user/1">
 
   <div class="detail-header">
-    <a href="#get_user/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#get_user/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_user(id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L57" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_user(id)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L57" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -582,18 +563,18 @@ deleted and locked users</p>
 <section class="detail" id="initiate_totp_enrollment/1">
 
   <div class="detail-header">
-    <a href="#initiate_totp_enrollment/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#initiate_totp_enrollment/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">initiate_totp_enrollment(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L202" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">initiate_totp_enrollment(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L202" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -604,18 +585,18 @@ deleted and locked users</p>
 <section class="detail" id="list_users/0">
 
   <div class="detail-header">
-    <a href="#list_users/0" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#list_users/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">list_users()</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L47" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">list_users()</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L47" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -626,18 +607,18 @@ deleted and locked users</p>
 <section class="detail" id="maybe_disable_totp/1">
 
   <div class="detail-header">
-    <a href="#maybe_disable_totp/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#maybe_disable_totp/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">maybe_disable_totp(attrs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L163" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">maybe_disable_totp(attrs)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L163" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -648,18 +629,18 @@ deleted and locked users</p>
 <section class="detail" id="pow_authenticate/1">
 
   <div class="detail-header">
-    <a href="#pow_authenticate/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#pow_authenticate/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">pow_authenticate(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pow_authenticate(params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -670,18 +651,18 @@ deleted and locked users</p>
 <section class="detail" id="pow_create/1">
 
   <div class="detail-header">
-    <a href="#pow_create/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#pow_create/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">pow_create(params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pow_create(params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -692,18 +673,18 @@ deleted and locked users</p>
 <section class="detail" id="pow_delete/1">
 
   <div class="detail-header">
-    <a href="#pow_delete/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#pow_delete/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">pow_delete(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pow_delete(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -714,18 +695,18 @@ deleted and locked users</p>
 <section class="detail" id="pow_get_by/1">
 
   <div class="detail-header">
-    <a href="#pow_get_by/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#pow_get_by/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">pow_get_by(clauses)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pow_get_by(clauses)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -736,18 +717,18 @@ deleted and locked users</p>
 <section class="detail" id="pow_update/2">
 
   <div class="detail-header">
-    <a href="#pow_update/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#pow_update/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">pow_update(user, params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">pow_update(user, params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -758,18 +739,18 @@ deleted and locked users</p>
 <section class="detail" id="reset_totp/1">
 
   <div class="detail-header">
-    <a href="#reset_totp/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#reset_totp/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">reset_totp(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L194" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">reset_totp(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L194" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -780,18 +761,18 @@ deleted and locked users</p>
 <section class="detail" id="update/2">
 
   <div class="detail-header">
-    <a href="#update/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#update/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update(user, params)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update(user, params)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L9" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -802,18 +783,18 @@ deleted and locked users</p>
 <section class="detail" id="update_last_login_at/1">
 
   <div class="detail-header">
-    <a href="#update_last_login_at/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#update_last_login_at/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_last_login_at(user)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L265" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_last_login_at(user)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L265" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -824,18 +805,18 @@ deleted and locked users</p>
 <section class="detail" id="update_user/2">
 
   <div class="detail-header">
-    <a href="#update_user/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#update_user/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_user(user, attrs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L133" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_user(user, attrs)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L133" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -846,18 +827,18 @@ deleted and locked users</p>
 <section class="detail" id="update_user_profile/2">
 
   <div class="detail-header">
-    <a href="#update_user_profile/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#update_user_profile/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_user_profile(user, attrs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L102" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_user_profile(user, attrs)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L102" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -868,18 +849,18 @@ deleted and locked users</p>
 <section class="detail" id="update_user_profile_sso_enabled/2">
 
   <div class="detail-header">
-    <a href="#update_user_profile_sso_enabled/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#update_user_profile_sso_enabled/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">update_user_profile_sso_enabled(user, attrs)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L118" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">update_user_profile_sso_enabled(user, attrs)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L118" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -890,18 +871,18 @@ deleted and locked users</p>
 <section class="detail" id="validate_totp/2">
 
   <div class="detail-header">
-    <a href="#validate_totp/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#validate_totp/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">validate_totp(user, totp_code)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L252" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">validate_totp(user, totp_code)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/users.ex#L252" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -914,27 +895,34 @@ deleted and locked users</p>
   </section>
 
     <footer class="footer">
-      <p>
 
-        <span class="line">
-          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-            Search HexDocs
-          </button>
+        <p>
 
-            <a href="Trento Web.epub" title="ePub version">
-              Download ePub version
-            </a>
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
 
-        </span>
-      </p>
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
 
-      <p class="built-using">
-        Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
 
-      </p>
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
 
     </footer>
   </div>

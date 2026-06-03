@@ -4,35 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.34.2">
+    <meta name="generator" content="ExDoc v0.40.3">
     <meta name="project" content="Trento Web v3.1.0">
 
 
     <title>Trento.Infrastructure.Prometheus.PrometheusApi — Trento Web v3.1.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-CF629CA3.js"></script>
-    <script src="docs_config.js"></script>
-    <script async src="dist/html-YIPIRHGU.js"></script>
+    <script defer src="dist/sidebar_items-F4AA9DA8.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
-
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
 <div class="body-wrapper">
 
@@ -58,63 +45,47 @@ Trento Web
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Info
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-        <li>
-          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
-            <span translate="no">Mix</span> Tasks
-          </button>
-        </li>
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
-    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
-      <ul id="tasks-full-list" class="full-list"></ul>
-    </div>
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
+<output role="status" id="toast"></output>
 
+<main class="content page-module" id="main" data-type="modules">
   <div id="content" class="content-inner">
     <div class="top-search">
       <div class="search-settings">
         <form class="search-bar" action="search.html">
           <label class="search-label">
             <span class="sr-only">Search documentation of Trento Web</span>
-            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
           </label>
-          <button type="submit" class="search-button" aria-label="Submit Search">
-            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-          </button>
-          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-            <i class="ri-close-line ri-lg" title="Cancel search"></i>
-          </button>
         </form>
         <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
         </div>
         <button class="icon-settings display-settings">
           <i class="ri-settings-3-line"></i>
@@ -124,17 +95,26 @@ Info
     </div>
 
 <div id="top-content">
-  <h1>
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Trento.<wbr />Infrastructure.<wbr />Prometheus.<wbr />PrometheusApi</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L4" title="View Source" class="icon-action" rel="help">
+    </h1>
+
+<a href="Trento.Infrastructure.Prometheus.PrometheusApi.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">Trento.Infrastructure.Prometheus.PrometheusApi</span> 
-    <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
-
-  </h1>
+  </div>
 
 
     <section id="moduledoc">
@@ -144,20 +124,20 @@ Info
 </div>
 
   <section id="summary" class="details-list">
-    <h1 class="section-heading">
+    <h2 class="section-heading">
       <a class="hover-link" href="#summary">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
       <span class="text">Summary</span>
-    </h1>
+    </h2>
 <div class="summary-functions summary">
-  <h2>
+  <h3>
     <a href="#functions">Functions</a>
-  </h2>
+  </h3>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_iowait/3" data-no-tooltip translate="no">cpu_busy_iowait(host_id, from, to)</a>
+        <a href="#cpu_busy_iowait/3" data-no-tooltip="" translate="no">cpu_busy_iowait(host_id, from, to)</a>
 
       </div>
 
@@ -167,7 +147,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_irqs/3" data-no-tooltip translate="no">cpu_busy_irqs(host_id, from, to)</a>
+        <a href="#cpu_busy_irqs/3" data-no-tooltip="" translate="no">cpu_busy_irqs(host_id, from, to)</a>
 
       </div>
 
@@ -177,7 +157,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_other/3" data-no-tooltip translate="no">cpu_busy_other(host_id, from, to)</a>
+        <a href="#cpu_busy_other/3" data-no-tooltip="" translate="no">cpu_busy_other(host_id, from, to)</a>
 
       </div>
 
@@ -187,7 +167,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_system/3" data-no-tooltip translate="no">cpu_busy_system(host_id, from, to)</a>
+        <a href="#cpu_busy_system/3" data-no-tooltip="" translate="no">cpu_busy_system(host_id, from, to)</a>
 
       </div>
 
@@ -197,7 +177,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_busy_user/3" data-no-tooltip translate="no">cpu_busy_user(host_id, from, to)</a>
+        <a href="#cpu_busy_user/3" data-no-tooltip="" translate="no">cpu_busy_user(host_id, from, to)</a>
 
       </div>
 
@@ -207,7 +187,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#cpu_idle/3" data-no-tooltip translate="no">cpu_idle(host_id, from, to)</a>
+        <a href="#cpu_idle/3" data-no-tooltip="" translate="no">cpu_idle(host_id, from, to)</a>
 
       </div>
 
@@ -217,7 +197,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#devices_avail/2" data-no-tooltip translate="no">devices_avail(host_id, time)</a>
+        <a href="#devices_avail/2" data-no-tooltip="" translate="no">devices_avail(host_id, time)</a>
 
       </div>
 
@@ -227,7 +207,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#devices_size/2" data-no-tooltip translate="no">devices_size(host_id, time)</a>
+        <a href="#devices_size/2" data-no-tooltip="" translate="no">devices_size(host_id, time)</a>
 
       </div>
 
@@ -237,7 +217,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#filesystems_avail/2" data-no-tooltip translate="no">filesystems_avail(host_id, time)</a>
+        <a href="#filesystems_avail/2" data-no-tooltip="" translate="no">filesystems_avail(host_id, time)</a>
 
       </div>
 
@@ -247,7 +227,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#filesystems_size/2" data-no-tooltip translate="no">filesystems_size(host_id, time)</a>
+        <a href="#filesystems_size/2" data-no-tooltip="" translate="no">filesystems_size(host_id, time)</a>
 
       </div>
 
@@ -257,7 +237,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_exporters_status/1" data-no-tooltip translate="no">get_exporters_status(host_id)</a>
+        <a href="#get_exporters_status/1" data-no-tooltip="" translate="no">get_exporters_status(host_id)</a>
 
       </div>
 
@@ -267,7 +247,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#num_cpus/2" data-no-tooltip translate="no">num_cpus(from, to)</a>
+        <a href="#num_cpus/2" data-no-tooltip="" translate="no">num_cpus(from, to)</a>
 
       </div>
 
@@ -277,7 +257,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#query/2" data-no-tooltip translate="no">query(query, time)</a>
+        <a href="#query/2" data-no-tooltip="" translate="no">query(query, time)</a>
 
       </div>
 
@@ -287,7 +267,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#query_range/3" data-no-tooltip translate="no">query_range(query, from, to)</a>
+        <a href="#query_range/3" data-no-tooltip="" translate="no">query_range(query, from, to)</a>
 
       </div>
 
@@ -297,7 +277,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_cache_and_buffer/3" data-no-tooltip translate="no">ram_cache_and_buffer(host_id, from, to)</a>
+        <a href="#ram_cache_and_buffer/3" data-no-tooltip="" translate="no">ram_cache_and_buffer(host_id, from, to)</a>
 
       </div>
 
@@ -307,7 +287,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_free/3" data-no-tooltip translate="no">ram_free(host_id, from, to)</a>
+        <a href="#ram_free/3" data-no-tooltip="" translate="no">ram_free(host_id, from, to)</a>
 
       </div>
 
@@ -317,7 +297,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_total/3" data-no-tooltip translate="no">ram_total(host_id, from, to)</a>
+        <a href="#ram_total/3" data-no-tooltip="" translate="no">ram_total(host_id, from, to)</a>
 
       </div>
 
@@ -327,7 +307,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#ram_used/3" data-no-tooltip translate="no">ram_used(host_id, from, to)</a>
+        <a href="#ram_used/3" data-no-tooltip="" translate="no">ram_used(host_id, from, to)</a>
 
       </div>
 
@@ -337,7 +317,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#swap_avail/2" data-no-tooltip translate="no">swap_avail(host_id, time)</a>
+        <a href="#swap_avail/2" data-no-tooltip="" translate="no">swap_avail(host_id, time)</a>
 
       </div>
 
@@ -347,7 +327,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#swap_total/2" data-no-tooltip translate="no">swap_total(host_id, time)</a>
+        <a href="#swap_total/2" data-no-tooltip="" translate="no">swap_total(host_id, time)</a>
 
       </div>
 
@@ -357,7 +337,7 @@ Info
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#swap_used/3" data-no-tooltip translate="no">swap_used(host_id, from, to)</a>
+        <a href="#swap_used/3" data-no-tooltip="" translate="no">swap_used(host_id, from, to)</a>
 
       </div>
 
@@ -371,28 +351,29 @@ Info
 
 
   <section id="functions" class="details-list">
-    <h1 class="section-heading">
+    <h2 class="section-heading">
       <a class="hover-link" href="#functions">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
       <span class="text">Functions</span>
-    </h1>
+    </h2>
+
     <div class="functions-list">
 <section class="detail" id="cpu_busy_iowait/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_iowait/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_busy_iowait/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_busy_iowait(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L67" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_busy_iowait(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L67" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -403,18 +384,18 @@ Info
 <section class="detail" id="cpu_busy_irqs/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_irqs/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_busy_irqs/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_busy_irqs(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L53" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_busy_irqs(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L53" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -425,18 +406,18 @@ Info
 <section class="detail" id="cpu_busy_other/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_other/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_busy_other/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_busy_other(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L60" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_busy_other(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L60" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -447,18 +428,18 @@ Info
 <section class="detail" id="cpu_busy_system/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_system/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_busy_system/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_busy_system(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L88" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_busy_system(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L88" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -469,18 +450,18 @@ Info
 <section class="detail" id="cpu_busy_user/3">
 
   <div class="detail-header">
-    <a href="#cpu_busy_user/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_busy_user/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_busy_user(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L74" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_busy_user(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L74" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -491,18 +472,18 @@ Info
 <section class="detail" id="cpu_idle/3">
 
   <div class="detail-header">
-    <a href="#cpu_idle/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#cpu_idle/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">cpu_idle(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L81" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">cpu_idle(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L81" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -513,18 +494,18 @@ Info
 <section class="detail" id="devices_avail/2">
 
   <div class="detail-header">
-    <a href="#devices_avail/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#devices_avail/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">devices_avail(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L109" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">devices_avail(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L109" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -535,18 +516,18 @@ Info
 <section class="detail" id="devices_size/2">
 
   <div class="detail-header">
-    <a href="#devices_size/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#devices_size/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">devices_size(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L103" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">devices_size(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L103" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -557,18 +538,18 @@ Info
 <section class="detail" id="filesystems_avail/2">
 
   <div class="detail-header">
-    <a href="#filesystems_avail/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#filesystems_avail/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">filesystems_avail(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L121" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">filesystems_avail(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L121" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -579,18 +560,18 @@ Info
 <section class="detail" id="filesystems_size/2">
 
   <div class="detail-header">
-    <a href="#filesystems_size/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#filesystems_size/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">filesystems_size(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L115" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">filesystems_size(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L115" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -601,18 +582,18 @@ Info
 <section class="detail" id="get_exporters_status/1">
 
   <div class="detail-header">
-    <a href="#get_exporters_status/1" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#get_exporters_status/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">get_exporters_status(host_id)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L139" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_exporters_status(host_id)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -623,18 +604,18 @@ Info
 <section class="detail" id="num_cpus/2">
 
   <div class="detail-header">
-    <a href="#num_cpus/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#num_cpus/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">num_cpus(from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L95" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">num_cpus(from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L95" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -645,18 +626,18 @@ Info
 <section class="detail" id="query/2">
 
   <div class="detail-header">
-    <a href="#query/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#query/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">query(query, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L160" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">query(query, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L160" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -667,18 +648,18 @@ Info
 <section class="detail" id="query_range/3">
 
   <div class="detail-header">
-    <a href="#query_range/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#query_range/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">query_range(query, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L178" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">query_range(query, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L178" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -689,18 +670,18 @@ Info
 <section class="detail" id="ram_cache_and_buffer/3">
 
   <div class="detail-header">
-    <a href="#ram_cache_and_buffer/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#ram_cache_and_buffer/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">ram_cache_and_buffer(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L33" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ram_cache_and_buffer(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -711,18 +692,18 @@ Info
 <section class="detail" id="ram_free/3">
 
   <div class="detail-header">
-    <a href="#ram_free/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#ram_free/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">ram_free(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L40" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ram_free(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L40" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -733,18 +714,18 @@ Info
 <section class="detail" id="ram_total/3">
 
   <div class="detail-header">
-    <a href="#ram_total/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#ram_total/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">ram_total(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L20" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ram_total(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L20" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -755,18 +736,18 @@ Info
 <section class="detail" id="ram_used/3">
 
   <div class="detail-header">
-    <a href="#ram_used/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#ram_used/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">ram_used(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L26" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ram_used(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L26" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -777,18 +758,18 @@ Info
 <section class="detail" id="swap_avail/2">
 
   <div class="detail-header">
-    <a href="#swap_avail/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#swap_avail/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">swap_avail(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L133" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">swap_avail(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L133" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -799,18 +780,18 @@ Info
 <section class="detail" id="swap_total/2">
 
   <div class="detail-header">
-    <a href="#swap_total/2" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#swap_total/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">swap_total(host_id, time)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L127" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">swap_total(host_id, time)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L127" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -821,18 +802,18 @@ Info
 <section class="detail" id="swap_used/3">
 
   <div class="detail-header">
-    <a href="#swap_used/3" class="detail-link" data-no-tooltip title="Link to this function">
+    <a href="#swap_used/3" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
-      <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature" translate="no">swap_used(host_id, from, to)</h1>
-
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L46" class="icon-action" rel="help" title="View Source">
-       <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-       <span class="sr-only">View Source</span>
-     </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">swap_used(host_id, from, to)</h1>
 
 
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/prometheus/adapter/prometheus_api.ex#L46" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
   </div>
 
   <section class="docstring">
@@ -845,27 +826,34 @@ Info
   </section>
 
     <footer class="footer">
-      <p>
 
-        <span class="line">
-          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-            Search HexDocs
-          </button>
+        <p>
 
-            <a href="Trento Web.epub" title="ePub version">
-              Download ePub version
-            </a>
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
 
-        </span>
-      </p>
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
 
-      <p class="built-using">
-        Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
 
-      </p>
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
 
     </footer>
   </div>

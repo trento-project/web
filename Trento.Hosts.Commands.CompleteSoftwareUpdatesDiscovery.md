@@ -1,0 +1,45 @@
+# `Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery`
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/hosts/commands/complete_software_updates_discovery.ex#L4)
+
+Complete the software updates discovery with the computed health based on detected info
+
+# `t`
+
+```elixir
+@type t() :: %Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery{
+  health: term(),
+  host_id: term()
+}
+```
+
+# `cast_and_validate_required_embed`
+
+# `cast_and_validate_required_polymorphic_embed`
+
+# `changeset`
+
+Casts the fields by using Ecto reflection,
+validates the required ones and returns a changeset.
+
+# `new`
+
+```elixir
+@spec new(map() | [map()]) :: {:ok, t() | [t()]} | {:error, any()}
+```
+
+Returns an ok tuple if the params are valid, otherwise returns `{:error, {:validation, errors}}`.
+Accepts a map or a list of maps.
+
+# `new!`
+
+```elixir
+@spec new!(map() | [map()]) :: t() | [t()]
+```
+
+Returns new struct(s) if the params are valid, otherwise raises a `RuntimeError`.
+
+# `validate_required_fields`
+
+---
+
+*Consult [api-reference.md](api-reference.md) for complete listing*

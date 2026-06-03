@@ -1,0 +1,51 @@
+# `Trento.Discovery.Payloads.SlesSubscriptionDiscoveryPayload`
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/discovery/payloads/subscription_discovery_payload.ex#L4)
+
+Subscription discovery integration event payload
+
+# `t`
+
+```elixir
+@type t() :: %Trento.Discovery.Payloads.SlesSubscriptionDiscoveryPayload{
+  arch: term(),
+  expires_at: term(),
+  identifier: term(),
+  starts_at: term(),
+  status: term(),
+  subscription_status: term(),
+  type: term(),
+  version: term()
+}
+```
+
+# `cast_and_validate_required_embed`
+
+# `cast_and_validate_required_polymorphic_embed`
+
+# `changeset`
+
+Casts the fields by using Ecto reflection,
+validates the required ones and returns a changeset.
+
+# `new`
+
+```elixir
+@spec new(map() | [map()]) :: {:ok, t() | [t()]} | {:error, any()}
+```
+
+Returns an ok tuple if the params are valid, otherwise returns `{:error, {:validation, errors}}`.
+Accepts a map or a list of maps.
+
+# `new!`
+
+```elixir
+@spec new!(map() | [map()]) :: t() | [t()]
+```
+
+Returns new struct(s) if the params are valid, otherwise raises a `RuntimeError`.
+
+# `validate_required_fields`
+
+---
+
+*Consult [api-reference.md](api-reference.md) for complete listing*

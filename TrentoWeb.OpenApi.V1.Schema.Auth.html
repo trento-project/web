@@ -4,35 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.34.2">
+    <meta name="generator" content="ExDoc v0.40.3">
     <meta name="project" content="Trento Web v3.1.0">
 
 
     <title>TrentoWeb.OpenApi.V1.Schema.Auth — Trento Web v3.1.0</title>
-    <link rel="stylesheet" href="dist/html-elixir-F2VRIOKR.css" />
 
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script src="dist/handlebars.runtime-NWIB6V2M.js"></script>
-    <script src="dist/handlebars.templates-K7URE6B4.js"></script>
-    <script src="dist/sidebar_items-CF629CA3.js"></script>
-    <script src="docs_config.js"></script>
-    <script async src="dist/html-YIPIRHGU.js"></script>
+    <script defer src="dist/sidebar_items-F4AA9DA8.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
 
   </head>
-  <body data-type="modules" class="page-module">
-    <script>
-
-      try {
-        var settings = JSON.parse(localStorage.getItem('ex_doc:settings') || '{}');
-
-        if (settings.theme === 'dark' ||
-           ((settings.theme === 'system' || settings.theme == null) &&
-             window.matchMedia('(prefers-color-scheme: dark)').matches)
-           ) {
-          document.body.classList.add('dark')
-        }
-      } catch (error) { }
-    </script>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
 
 <div class="body-wrapper">
 
@@ -58,63 +45,47 @@ Trento Web
         </div>
       </div>
     </div>
-    <ul id="sidebar-listNav" class="sidebar-listNav" role="tablist">
-      <li>
-        <button id="extras-list-tab-button" role="tab" data-type="extras" aria-controls="extras-tab-panel" aria-selected="true" tabindex="0">
-Info
-        </button>
-      </li>
-
-        <li>
-          <button id="modules-list-tab-button" role="tab" data-type="modules" aria-controls="modules-tab-panel" aria-selected="false" tabindex="-1">
-            Modules
-          </button>
-        </li>
-
-
-        <li>
-          <button id="tasks-list-tab-button" role="tab" data-type="tasks" aria-controls="tasks-tab-panel" aria-selected="false" tabindex="-1">
-            <span translate="no">Mix</span> Tasks
-          </button>
-        </li>
-
-    </ul>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
   </div>
-
-  <div id="extras-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="extras-list-tab-button">
-    <ul id="extras-full-list" class="full-list"></ul>
-  </div>
-
-    <div id="modules-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="modules-list-tab-button" hidden>
-      <ul id="modules-full-list" class="full-list"></ul>
-    </div>
-
-
-    <div id="tasks-tab-panel" class="sidebar-tabpanel" role="tabpanel" aria-labelledby="tasks-list-tab-button" hidden>
-      <ul id="tasks-full-list" class="full-list"></ul>
-    </div>
-
 </nav>
 
-<main class="content">
-  <output role="status" id="toast"></output>
+<output role="status" id="toast"></output>
 
+<main class="content page-module" id="main" data-type="modules">
   <div id="content" class="content-inner">
     <div class="top-search">
       <div class="search-settings">
         <form class="search-bar" action="search.html">
           <label class="search-label">
             <span class="sr-only">Search documentation of Trento Web</span>
-            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
           </label>
-          <button type="submit" class="search-button" aria-label="Submit Search">
-            <i class="ri-search-2-line ri-lg" aria-hidden="true" title="Submit search"></i>
-          </button>
-          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
-            <i class="ri-close-line ri-lg" title="Cancel search"></i>
-          </button>
         </form>
         <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
         </div>
         <button class="icon-settings display-settings">
           <i class="ri-settings-3-line"></i>
@@ -124,49 +95,34 @@ Info
     </div>
 
 <div id="top-content">
-  <h1>
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">TrentoWeb.<wbr />OpenApi.<wbr />V1.<wbr />Schema.<wbr />Auth</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
 
-      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L4" title="View Source" class="icon-action" rel="help">
+    </h1>
+
+<a href="TrentoWeb.OpenApi.V1.Schema.Auth.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/openapi/v1/schema/auth.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
 
-    <span translate="no">TrentoWeb.OpenApi.V1.Schema.Auth</span> 
-    <small class="app-vsn" translate="no">(Trento Web v3.1.0)</small>
-
-  </h1>
+  </div>
 
 
     <section id="moduledoc">
 <p>Authentication and Authorization Schemas for Trento Web API</p><p>This module contains all OpenAPI schemas related to authentication, authorization,
 and session management in the Trento platform. It provides comprehensive validation
-and documentation for all credential-related API endpoints.</p><h2 id="module-overview" class="section-heading">
-  <a href="#module-overview" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Overview</span>
-</h2>
-<p>The schemas in this module support various authentication flows:</p><ul><li>Username/password authentication with optional TOTP</li><li>Token refresh mechanisms for session management</li><li>External identity provider integration (OAuth2, OIDC, SAML)</li><li>Federated authentication and single sign-on (SSO)</li></ul><h2 id="module-schema-categories" class="section-heading">
-  <a href="#module-schema-categories" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Schema Categories</span>
-</h2>
-<ul><li><strong>Request Schemas</strong>: Validate incoming authentication requests</li><li><strong>Response Schemas</strong>: Define successful authentication responses</li><li><strong>Token Schemas</strong>: Handle JWT token structures and validation</li><li><strong>External IDP Schemas</strong>: Support federated authentication flows</li></ul><h2 id="module-security-considerations" class="section-heading">
-  <a href="#module-security-considerations" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Security Considerations</span>
-</h2>
-<p>All schemas include appropriate validation constraints, security annotations,
+and documentation for all credential-related API endpoints.</p><h2 id="module-overview" class="section-heading"><a href="#module-overview" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Overview</span></h2><p>The schemas in this module support various authentication flows:</p><ul><li>Username/password authentication with optional TOTP</li><li>Token refresh mechanisms for session management</li><li>External identity provider integration (OAuth2, OIDC, SAML)</li><li>Federated authentication and single sign-on (SSO)</li></ul><h2 id="module-schema-categories" class="section-heading"><a href="#module-schema-categories" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Schema Categories</span></h2><ul><li><strong>Request Schemas</strong>: Validate incoming authentication requests</li><li><strong>Response Schemas</strong>: Define successful authentication responses</li><li><strong>Token Schemas</strong>: Handle JWT token structures and validation</li><li><strong>External IDP Schemas</strong>: Support federated authentication flows</li></ul><h2 id="module-security-considerations" class="section-heading"><a href="#module-security-considerations" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Security Considerations</span></h2><p>All schemas include appropriate validation constraints, security annotations,
 and follow best practices for authentication system design. Sensitive fields
-like passwords are properly marked and should never be logged or exposed.</p><h2 id="module-usage" class="section-heading">
-  <a href="#module-usage" class="hover-link">
-    <i class="ri-link-m" aria-hidden="true"></i>
-  </a>
-  <span class="text">Usage</span>
-</h2>
-<p>These schemas are used by OpenAPI specification generation and request/response
+like passwords are properly marked and should never be logged or exposed.</p><h2 id="module-usage" class="section-heading"><a href="#module-usage" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Usage</span></h2><p>These schemas are used by OpenAPI specification generation and request/response
 validation in the Trento Web API controllers, particularly the SessionController.</p>
     </section>
 
@@ -174,27 +130,34 @@ validation in the Trento Web API controllers, particularly the SessionController
 
 
     <footer class="footer">
-      <p>
 
-        <span class="line">
-          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
-            Search HexDocs
-          </button>
+        <p>
 
-            <a href="Trento Web.epub" title="ePub version">
-              Download ePub version
-            </a>
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
 
-        </span>
-      </p>
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
 
-      <p class="built-using">
-        Built using
-        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.34.2) for the
 
-          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
 
-      </p>
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
 
     </footer>
   </div>

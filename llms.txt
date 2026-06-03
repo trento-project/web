@@ -1,0 +1,1038 @@
+# Trento Web v3.1.0 - Table of Contents
+
+> Easing your life in administering SAP applications. Trento is an open-source web application, built by SUSE, to enhance day-2 operations of SAP workloads. It can be used to proactively prevent infrastructural issues by diagnosing common issues, validate systems configuration against best practices, and remove toil from routine OS tasks on mission-critical systems.
+
+## Info
+
+- [Changelog](changelog.md)
+
+## Modules
+
+- [TestCommandedApp](TestCommandedApp.md): InMemory commanded app used in tests.
+
+- [TestEventHandlerWithFailureContext](TestEventHandlerWithFailureContext.md): This module defines an event handler that fails.
+
+- [Trento.AI](Trento.AI.md): The `Trento.AI` module provides functions to interact with the AI features of the Trento application.
+
+- [Trento.AI.ApplicationConfigLoader](Trento.AI.ApplicationConfigLoader.md): This module is responsible for loading the AI application configuration and providing access to it.
+
+- [Trento.AI.Configurations](Trento.AI.Configurations.md): This module is responsible for managing user AI configurations.
+
+- [Trento.AI.LLMRegistry](Trento.AI.LLMRegistry.md): This module is responsible for managing the registry of available LLM providers and their models.
+
+- [Trento.Abilities](Trento.Abilities.md): The Abilities context.
+
+- [Trento.Abilities.UsersAbilities](Trento.Abilities.UsersAbilities.md): Many to many table schema used to connect users and abilities.
+- [Trento.ActivityLog](Trento.ActivityLog.md): Activity Log module provides functionality to manage activity log settings and track activity.
+
+- [Trento.ActivityLog.ActivityCatalog](Trento.ActivityLog.ActivityCatalog.md): Activity logging catalog
+
+- [Trento.ActivityLog.ActivityLog](Trento.ActivityLog.ActivityLog.md): ActivityLog represents an interesting activity that is tracked
+
+- [Trento.ActivityLog.ActivityLogger](Trento.ActivityLog.ActivityLogger.md): ActivityLogger entry point
+
+- [Trento.ActivityLog.Correlations.TestCorrelations](Trento.ActivityLog.Correlations.TestCorrelations.md): For usage in test suites where-in we want per test process isolation
+of the cache keys.
+
+- [Trento.ActivityLog.Correlations.UnscopedCorrelations](Trento.ActivityLog.Correlations.UnscopedCorrelations.md): For usage in application code.
+
+- [Trento.ActivityLog.Logger.Parser.EventParser](Trento.ActivityLog.Logger.Parser.EventParser.md): Event parser extracts the event relevant information from the context.
+
+- [Trento.ActivityLog.Logger.Parser.MetadataEnricher](Trento.ActivityLog.Logger.Parser.MetadataEnricher.md): Metadata enricher enriches metadata extracted by activity parser.
+
+- [Trento.ActivityLog.Logger.Parser.PhoenixConnParser](Trento.ActivityLog.Logger.Parser.PhoenixConnParser.md): Phoenix connection activity parser
+
+- [Trento.ActivityLog.Logger.Parser.QueueEventParser](Trento.ActivityLog.Logger.Parser.QueueEventParser.md): Queue event activity parser
+
+- [Trento.ActivityLog.Parser.ActivityParser](Trento.ActivityLog.Parser.ActivityParser.md): Activity parser extracts the activity relevant information from the context.
+
+- [Trento.ActivityLog.Policy](Trento.ActivityLog.Policy.md): Policy for the Activity Log resource
+
+- [Trento.ActivityLog.RetentionPeriodUnit](Trento.ActivityLog.RetentionPeriodUnit.md): Type that represents the possible retention period units.
+
+- [Trento.ActivityLog.RetentionTime](Trento.ActivityLog.RetentionTime.md): This module Represents the Activity Log Retention Time
+
+- [Trento.AggregateCase](Trento.AggregateCase.md): This module defines the test case to be used by aggregate tests.
+Derived from Commanded.AggregateCase
+
+- [Trento.Charts](Trento.Charts.md): Charts module, responsible for assembling the charts
+
+- [Trento.Charts.ChartTimeSeries](Trento.Charts.ChartTimeSeries.md):  Represents a time series of a chart
+ The series has a label and the samples distributed through time
+
+- [Trento.Charts.ChartTimeSeriesSample](Trento.Charts.ChartTimeSeriesSample.md): ChartTimeSeriesSample represent a sample in a chart timeseries according to the Trento Domain.
+- [Trento.Charts.HostDataFetcher](Trento.Charts.HostDataFetcher.md): Behaviour of host charts data fetcher
+
+- [Trento.Charts.Hosts.HostCpuChart](Trento.Charts.Hosts.HostCpuChart.md): Represents CPU chart data for a single host
+- [Trento.Charts.Hosts.HostFilesystemChart](Trento.Charts.Hosts.HostFilesystemChart.md): Represents filesystem metrics for a host
+
+- [Trento.Charts.Hosts.HostMemoryChart](Trento.Charts.Hosts.HostMemoryChart.md): Represents Memory chart data for a single host
+- [Trento.Charts.SampledMetric](Trento.Charts.SampledMetric.md): Represents metric and its sample at a given time
+
+- [Trento.Commanded](Trento.Commanded.md): Trento Commanded Application
+
+- [Trento.DataCase](Trento.DataCase.md): This module defines the setup for tests requiring
+access to the application's data layer.
+- [Trento.Databases](Trento.Databases.md): Provides a set of functions to interact with databases.
+
+- [Trento.Databases.Commands.DeregisterDatabaseInstance](Trento.Databases.Commands.DeregisterDatabaseInstance.md): Deregister (decommission) a database instance from the monitoring system.
+
+- [Trento.Databases.Commands.MarkDatabaseInstanceAbsent](Trento.Databases.Commands.MarkDatabaseInstanceAbsent.md): Mark a database instance as absent
+
+- [Trento.Databases.Commands.RegisterDatabaseInstance](Trento.Databases.Commands.RegisterDatabaseInstance.md): Register a database instance to the monitoring system.
+
+- [Trento.Databases.Commands.RollUpDatabase](Trento.Databases.Commands.RollUpDatabase.md): Start a database aggregate rollup.
+
+- [Trento.Databases.Database](Trento.Databases.Database.md): The database aggregate manages all the domain logic related to
+deployed HANA database.
+- [Trento.Databases.Event.Upcaster.UpcastDatabaseId](Trento.Databases.Event.Upcaster.UpcastDatabaseId.md): Adds the required upcast function to upcast from legacy events where
+sap_system_id was still used.
+
+- [Trento.Databases.Events.DatabaseDeregistered](Trento.Databases.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned).
+
+- [Trento.Databases.Events.DatabaseHealthChanged](Trento.Databases.Events.DatabaseHealthChanged.md): This event is emitted when a database health has changed.
+
+- [Trento.Databases.Events.DatabaseInstanceDeregistered](Trento.Databases.Events.DatabaseInstanceDeregistered.md): This event is emitted when a database instance is deregistered (decommissioned).
+
+- [Trento.Databases.Events.DatabaseInstanceHealthChanged](Trento.Databases.Events.DatabaseInstanceHealthChanged.md): This event is emitted when a database instance health has changed.
+
+- [Trento.Databases.Events.DatabaseInstanceMarkedAbsent](Trento.Databases.Events.DatabaseInstanceMarkedAbsent.md): This event is emitted when a database instance is marked as absent.
+
+- [Trento.Databases.Events.DatabaseInstanceMarkedPresent](Trento.Databases.Events.DatabaseInstanceMarkedPresent.md): This event is emitted when a database instance is marked as present.
+
+- [Trento.Databases.Events.DatabaseInstanceRegistered](Trento.Databases.Events.DatabaseInstanceRegistered.md): This event is emitted when a database instance is registered.
+
+- [Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged](Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged.md): This event is emitted when a database instance system replication has changed.
+
+- [Trento.Databases.Events.DatabaseRegistered](Trento.Databases.Events.DatabaseRegistered.md): This event is emitted when a database is registered.
+
+- [Trento.Databases.Events.DatabaseRestored](Trento.Databases.Events.DatabaseRestored.md): This event is emitted when a database is restored.
+
+- [Trento.Databases.Events.DatabaseRollUpRequested](Trento.Databases.Events.DatabaseRollUpRequested.md): This event is emitted when an database roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the database aggregate.
+
+- [Trento.Databases.Events.DatabaseRolledUp](Trento.Databases.Events.DatabaseRolledUp.md): This event is emitted when a database roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the database aggregate.
+
+- [Trento.Databases.Events.DatabaseTenantsUpdated](Trento.Databases.Events.DatabaseTenantsUpdated.md): This event is emitted when the tenants of a database are updated
+
+- [Trento.Databases.Events.DatabaseTombstoned](Trento.Databases.Events.DatabaseTombstoned.md): This event is emitted when a database is deregistered (decommissioned)
+
+- [Trento.Databases.Lifespan](Trento.Databases.Lifespan.md): Database aggregate lifespan.
+- [Trento.Databases.Policy](Trento.Databases.Policy.md): Policy for the Database resource
+- [Trento.Databases.Projections.DatabaseInstanceReadModel](Trento.Databases.Projections.DatabaseInstanceReadModel.md): Database instance read model
+
+- [Trento.Databases.Projections.DatabaseProjector](Trento.Databases.Projections.DatabaseProjector.md): Database projector
+
+- [Trento.Databases.Projections.DatabaseReadModel](Trento.Databases.Projections.DatabaseReadModel.md): Database read model
+
+- [Trento.Databases.ValueObjects.Tenant](Trento.Databases.ValueObjects.Tenant.md): Database tenant information
+
+- [Trento.DeregistrationProcessManager](Trento.DeregistrationProcessManager.md): Legacy DeregistrationProcessManager module
+
+- [Trento.EventStoreCase](Trento.EventStoreCase.md): This module defines the test case to be used by
+tests that require setting an event store.
+
+- [Trento.Factory](Trento.Factory.md): A simple Factory helper module to be used within tests to generate test data
+
+- [Trento.Heartbeats](Trento.Heartbeats.md): Heartbeat related functions
+
+- [Trento.Heartbeats.Faker](Trento.Heartbeats.Faker.md): Heartbeat faker for demo environment
+
+- [Trento.MessagingCase](Trento.MessagingCase.md): This test case makes sure that the messaging system is properly stubbed for tests where a defined behavior is sufficient.
+
+- [Trento.Operations.ApplicationInstancePolicy](Trento.Operations.ApplicationInstancePolicy.md): ApplicationInstanceReadModel operation policies
+
+- [Trento.Operations.ClusterPolicy](Trento.Operations.ClusterPolicy.md): ClusterReadModel operation policies
+
+- [Trento.Operations.DatabaseInstancePolicy](Trento.Operations.DatabaseInstancePolicy.md): DatabaseInstanceReadModel operation policies
+
+- [Trento.Operations.DatabasePolicy](Trento.Operations.DatabasePolicy.md): DatabaseReadModel operation policies
+
+- [Trento.Operations.Enums.ClusterHostOperations](Trento.Operations.Enums.ClusterHostOperations.md): Cluster host operations
+
+- [Trento.Operations.Enums.ClusterOperations](Trento.Operations.Enums.ClusterOperations.md): Cluster operations
+
+- [Trento.Operations.Enums.DatabaseOperations](Trento.Operations.Enums.DatabaseOperations.md): Database operations
+
+- [Trento.Operations.Enums.HostOperations](Trento.Operations.Enums.HostOperations.md): Host operations
+
+- [Trento.Operations.Enums.SapInstanceOperations](Trento.Operations.Enums.SapInstanceOperations.md): SAP instance operations
+
+- [Trento.Operations.Enums.SapSystemOperations](Trento.Operations.Enums.SapSystemOperations.md): SAP system operations
+
+- [Trento.Operations.HostPolicy](Trento.Operations.HostPolicy.md): HostReadModel operation policies
+
+- [Trento.Operations.PolicyBehaviour](Trento.Operations.PolicyBehaviour.md): Behaviour of the operations policies.
+
+- [Trento.Operations.SapSystemPolicy](Trento.Operations.SapSystemPolicy.md): SapSystemReadModel operation policies
+
+- [Trento.PersonalAccessTokens](Trento.PersonalAccessTokens.md): Context for managing user personal access tokens.
+
+- [Trento.PersonalAccessTokens.PersonalAccessToken](Trento.PersonalAccessTokens.PersonalAccessToken.md): Represents a Personal Access Token for a user.
+
+- [Trento.ProjectorTestHelper](Trento.ProjectorTestHelper.md): This module contains helper functions for testing projectors
+
+- [Trento.Release](Trento.Release.md): Used for executing DB release tasks when run in production without Mix
+installed.
+
+- [Trento.Repo](Trento.Repo.md)
+- [Trento.Router](Trento.Router.md)
+- [Trento.Scheduler](Trento.Scheduler.md): Defines a quantum Scheduler.
+- [Trento.Settings](Trento.Settings.md): Provides a set of functions of settings related usecases.
+
+- [Trento.Settings.ActivityLogSettings](Trento.Settings.ActivityLogSettings.md): ActivityLogSettings is the STI projection of activity log related settings
+
+- [Trento.Settings.AlertingSettings](Trento.Settings.AlertingSettings.md): Schema and functions related to alerting settings.
+
+- [Trento.Settings.ApiKeySettings](Trento.Settings.ApiKeySettings.md): ApiKeySettings is the STI projection of api key related settings
+
+- [Trento.Settings.InstallationSettings](Trento.Settings.InstallationSettings.md): InstallationSettings is the STI projection containing installation related settings
+
+- [Trento.Settings.Policy](Trento.Settings.Policy.md): Policy for the Settings resource
+- [Trento.Settings.SSOCertificatesSettings](Trento.Settings.SSOCertificatesSettings.md): SSOCertificatesSettings is the STI projection containing SSL certificates
+
+- [Trento.Settings.SuseManagerSettings](Trento.Settings.SuseManagerSettings.md): Schema for SUSE Multi-Linux Manager settings.
+
+- [Trento.SoftwareUpdates](Trento.SoftwareUpdates.md): Entry point for the software updates feature.
+
+- [Trento.SoftwareUpdates.Discovery](Trento.SoftwareUpdates.Discovery.md): Software updates integration service
+
+- [Trento.SoftwareUpdates.Discovery.DiscoveryResult](Trento.SoftwareUpdates.Discovery.DiscoveryResult.md): This is the schema used to store the results of the software updates discovery process.
+
+- [Trento.SoftwareUpdates.Discovery.DiscoveryResult.RelevantPatch](Trento.SoftwareUpdates.Discovery.DiscoveryResult.RelevantPatch.md)
+- [Trento.SoftwareUpdates.Discovery.DiscoveryResult.UpgradablePackage](Trento.SoftwareUpdates.Discovery.DiscoveryResult.UpgradablePackage.md)
+- [Trento.SoftwareUpdates.Discovery.Gen](Trento.SoftwareUpdates.Discovery.Gen.md): Behaviour of the software updates discovery process.
+
+- [Trento.SoftwareUpdates.Enums.AdvisoryType](Trento.SoftwareUpdates.Enums.AdvisoryType.md): Enum representing possible advisory types.
+
+- [Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth](Trento.SoftwareUpdates.Enums.SoftwareUpdatesHealth.md): Type that represents the possible health values for the software updates discovery process.
+
+- [Trento.Tags](Trento.Tags.md): Tag related functions
+
+- [Trento.Tags.Policy](Trento.Tags.Policy.md): Policy for the Tag resource
+- [Trento.TaskCase](Trento.TaskCase.md): This module defines the test case to be used by tests that require operating on async tasks.
+
+- [Trento.Tasks.Helper](Trento.Tasks.Helper.md): Helper functions for tasks.
+
+- [Trento.UserIdentities](Trento.UserIdentities.md): The UserIdentities context, serves as custom context for PowAssent
+
+- [Trento.Users](Trento.Users.md): The Users context.
+
+- [Trento.Users.Policy](Trento.Users.Policy.md): Policy for the User resource
+- [Trento.Vault](Trento.Vault.md): Trento secret vault.
+
+- Clusters
+  - [Trento.Clusters](Trento.Clusters.md): Provides a set of functions to interact with clusters.
+
+  - [Trento.Clusters.Cluster](Trento.Clusters.Cluster.md): The cluster aggregate manages all the domain logic related to
+deployed HA Clusters (Pacemaker, Corosync, etc).
+The HA cluster is used to handle the high availability scenarios on the installed
+SAP infrastructure. That's why this domain is tailored to work on clusters managing
+SAP workloads.
+  - [Trento.Clusters.ClusterEnrichmentData](Trento.Clusters.ClusterEnrichmentData.md): Enriched cluster data
+
+  - [Trento.Clusters.Lifespan](Trento.Clusters.Lifespan.md): Cluster aggregate lifespan.
+  - [Trento.Clusters.Policy](Trento.Clusters.Policy.md): Policy for the Clusters resource
+
+  - [Trento.Clusters.Commands.CompleteChecksExecution](Trento.Clusters.Commands.CompleteChecksExecution.md): Complete the checks execution with the incoming result
+
+  - [Trento.Clusters.Commands.DeregisterClusterHost](Trento.Clusters.Commands.DeregisterClusterHost.md): Deregister a host from a cluster
+
+  - [Trento.Clusters.Commands.RegisterOfflineClusterHost](Trento.Clusters.Commands.RegisterOfflineClusterHost.md): Command to register a host in a cluster when the host is offline.
+
+  - [Trento.Clusters.Commands.RegisterOnlineClusterHost](Trento.Clusters.Commands.RegisterOnlineClusterHost.md): Register a cluster node to the monitoring system.
+
+  - [Trento.Clusters.Commands.RollUpCluster](Trento.Clusters.Commands.RollUpCluster.md): Start a cluster aggregate rollup.
+
+  - [Trento.Clusters.Commands.SelectChecks](Trento.Clusters.Commands.SelectChecks.md): Select the checks to be executed in the cluster.
+
+  - [Trento.Clusters.Enums.AscsErsClusterRole](Trento.Clusters.Enums.AscsErsClusterRole.md): Type that represents the ASCS/ERS cluster roles.
+
+  - [Trento.Clusters.Enums.ClusterEnsaVersion](Trento.Clusters.Enums.ClusterEnsaVersion.md): Type that represents the ENSA version info for a cluster.
+
+  - [Trento.Clusters.Enums.ClusterHostStatus](Trento.Clusters.Enums.ClusterHostStatus.md): Type that represents whether a host is online or offline in a cluster.
+
+  - [Trento.Clusters.Enums.ClusterState](Trento.Clusters.Enums.ClusterState.md): Type that represents the cluster state.
+Values are coming from pacemaker directly:
+https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa.h#L23
+  - [Trento.Clusters.Enums.ClusterType](Trento.Clusters.Enums.ClusterType.md): Type that represents the supported cluster types.
+
+  - [Trento.Clusters.Enums.FilesystemType](Trento.Clusters.Enums.FilesystemType.md): Type that represents the filesystem types used by an ASCS/ERS cluster.
+
+  - [Trento.Clusters.Enums.HanaArchitectureType](Trento.Clusters.Enums.HanaArchitectureType.md): Type that represents the supported HANA architecture types.
+
+  - [Trento.Clusters.Enums.HanaScenario](Trento.Clusters.Enums.HanaScenario.md): Type that represents the supported HANA scenario types.
+
+  - [Trento.Clusters.Enums.SapInstanceResourceType](Trento.Clusters.Enums.SapInstanceResourceType.md): Type that represents the discovered type of a clustered SAP instance.
+
+  - [Trento.Clusters.Events.ChecksSelected](Trento.Clusters.Events.ChecksSelected.md): Event of the checks selected in a cluster.
+
+  - [Trento.Clusters.Events.ClusterChecksHealthChanged](Trento.Clusters.Events.ClusterChecksHealthChanged.md): This event is emitted when the checks health of a cluster changes.
+
+  - [Trento.Clusters.Events.ClusterDeregistered](Trento.Clusters.Events.ClusterDeregistered.md): This event is emitted when a cluster is deregistered.
+
+  - [Trento.Clusters.Events.ClusterDetailsUpdated](Trento.Clusters.Events.ClusterDetailsUpdated.md): This event is emitted when cluster details are updated.
+
+  - [Trento.Clusters.Events.ClusterDiscoveredHealthChanged](Trento.Clusters.Events.ClusterDiscoveredHealthChanged.md): This event is emitted when the discovered health of a cluster changes.
+
+  - [Trento.Clusters.Events.ClusterHealthChanged](Trento.Clusters.Events.ClusterHealthChanged.md): ClusterHealthChanged event
+
+  - [Trento.Clusters.Events.ClusterHostStatusChanged](Trento.Clusters.Events.ClusterHostStatusChanged.md): When a host's cluster status changes, from online to offline or vice versa,
+
+  - [Trento.Clusters.Events.ClusterRegistered](Trento.Clusters.Events.ClusterRegistered.md): This event is emitted when a cluster is registered.
+
+  - [Trento.Clusters.Events.ClusterRestored](Trento.Clusters.Events.ClusterRestored.md): This event is emitted after a cluster is restored from a deregistered state
+
+  - [Trento.Clusters.Events.ClusterRollUpRequested](Trento.Clusters.Events.ClusterRollUpRequested.md): This event is emitted when a cluster roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the cluster aggregate.
+
+  - [Trento.Clusters.Events.ClusterRolledUp](Trento.Clusters.Events.ClusterRolledUp.md): This event is emitted when a cluster is rolled up and its stream is archived.
+It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.
+
+  - [Trento.Clusters.Events.ClusterTombstoned](Trento.Clusters.Events.ClusterTombstoned.md):   This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate
+
+  - [Trento.Clusters.Events.HostAddedToCluster](Trento.Clusters.Events.HostAddedToCluster.md): This event is emitted when a host is added to a cluster
+
+  - [Trento.Clusters.Events.HostRemovedFromCluster](Trento.Clusters.Events.HostRemovedFromCluster.md): This event is emitted when a host is removed from a cluster.
+
+  - [Trento.Clusters.Projections.ClusterProjector](Trento.Clusters.Projections.ClusterProjector.md): Cluster projector
+
+  - [Trento.Clusters.Projections.ClusterReadModel](Trento.Clusters.Projections.ClusterReadModel.md): Cluster read model
+
+  - [Trento.Clusters.ValueObjects.AscsErsClusterDetails](Trento.Clusters.ValueObjects.AscsErsClusterDetails.md): Represents the details of a ASCS/ERS cluster.
+
+  - [Trento.Clusters.ValueObjects.AscsErsClusterNode](Trento.Clusters.ValueObjects.AscsErsClusterNode.md): Represents the node of a ASCS/ERS cluster.
+
+  - [Trento.Clusters.ValueObjects.AscsErsClusterSapSystem](Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.md): Represents ASCS/ERS cluster SAP system.
+
+  - [Trento.Clusters.ValueObjects.CheckResult](Trento.Clusters.ValueObjects.CheckResult.md): Check result value object
+
+  - [Trento.Clusters.ValueObjects.ClusterResource](Trento.Clusters.ValueObjects.ClusterResource.md): Represents the resource of a HANA cluster.
+
+  - [Trento.Clusters.ValueObjects.ClusterResourceParent](Trento.Clusters.ValueObjects.ClusterResourceParent.md): Represents the parent of a cluster resource
+  - [Trento.Clusters.ValueObjects.HanaClusterDetails](Trento.Clusters.ValueObjects.HanaClusterDetails.md): Represents the details of a HANA cluster.
+
+  - [Trento.Clusters.ValueObjects.HanaClusterNode](Trento.Clusters.ValueObjects.HanaClusterNode.md): Represents the node of a HANA cluster.
+
+  - [Trento.Clusters.ValueObjects.HanaClusterSite](Trento.Clusters.ValueObjects.HanaClusterSite.md): Represents the details of a HANA site.
+
+  - [Trento.Clusters.ValueObjects.HostExecution](Trento.Clusters.ValueObjects.HostExecution.md): Host checks results value object
+
+  - [Trento.Clusters.ValueObjects.SapInstance](Trento.Clusters.ValueObjects.SapInstance.md): Clustered SAP instance
+
+  - [Trento.Clusters.ValueObjects.SbdDevice](Trento.Clusters.ValueObjects.SbdDevice.md): Represents the SBDDevice of a HANA cluster.
+
+- Hosts
+  - [Trento.Hosts](Trento.Hosts.md): Provides a set of functions to interact with hosts.
+
+  - [Trento.Hosts.Enums.Architecture](Trento.Hosts.Enums.Architecture.md): Type that represents the supported architectures by our agent.
+
+  - [Trento.Hosts.Enums.PrometheusMode](Trento.Hosts.Enums.PrometheusMode.md): Type that represents the Prometheus mode for a host.
+  - [Trento.Hosts.Host](Trento.Hosts.Host.md): The host aggregate manages all the domain logic related to individual hosts
+(agent, in other term) that compose the target infrastructure running SAP systems.
+  - [Trento.Hosts.Lifespan](Trento.Hosts.Lifespan.md): Host aggregate lifespan.
+  - [Trento.Hosts.Policy](Trento.Hosts.Policy.md): Policy for the Host resource
+  - [Trento.Hosts.Commands.ClearSoftwareUpdatesDiscovery](Trento.Hosts.Commands.ClearSoftwareUpdatesDiscovery.md): Clears the software updates discovery when its output is not needed anymore
+
+  - [Trento.Hosts.Commands.CompleteHostChecksExecution](Trento.Hosts.Commands.CompleteHostChecksExecution.md): Complete the checks execution with the incoming result
+
+  - [Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery](Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery.md): Complete the software updates discovery with the computed health based on detected info
+
+  - [Trento.Hosts.Commands.DeregisterHost](Trento.Hosts.Commands.DeregisterHost.md):   Deregister a host
+
+  - [Trento.Hosts.Commands.RegisterHost](Trento.Hosts.Commands.RegisterHost.md): Register a host to the monitoring system.
+
+  - [Trento.Hosts.Commands.RequestHostDeregistration](Trento.Hosts.Commands.RequestHostDeregistration.md):   Request a deregistration of a host
+
+  - [Trento.Hosts.Commands.RollUpHost](Trento.Hosts.Commands.RollUpHost.md): Start a host aggregate rollup
+
+  - [Trento.Hosts.Commands.SelectHostChecks](Trento.Hosts.Commands.SelectHostChecks.md): Select the checks to be executed on a host.
+
+  - [Trento.Hosts.Commands.UpdateHeartbeat](Trento.Hosts.Commands.UpdateHeartbeat.md): Updated the host heartbeat.
+
+  - [Trento.Hosts.Commands.UpdateProvider](Trento.Hosts.Commands.UpdateProvider.md): Update the provider to a specific host.
+
+  - [Trento.Hosts.Commands.UpdateSaptuneStatus](Trento.Hosts.Commands.UpdateSaptuneStatus.md): Update the saptune status on a specific host.
+
+  - [Trento.Hosts.Commands.UpdateSlesSubscriptions](Trento.Hosts.Commands.UpdateSlesSubscriptions.md): Update data relative to subscriptions.
+
+  - [Trento.Hosts.Events.HeartbeatFailed](Trento.Hosts.Events.HeartbeatFailed.md): Heartbeat failed event
+
+  - [Trento.Hosts.Events.HeartbeatSucceeded](Trento.Hosts.Events.HeartbeatSucceeded.md): Heartbeat succeeded event
+
+  - [Trento.Hosts.Events.HostChecksHealthChanged](Trento.Hosts.Events.HostChecksHealthChanged.md): This event is emitted when a host's checks result changes.
+
+  - [Trento.Hosts.Events.HostChecksSelected](Trento.Hosts.Events.HostChecksSelected.md): Event of the checks selected for a host.
+
+  - [Trento.Hosts.Events.HostDeregistered](Trento.Hosts.Events.HostDeregistered.md):   This event is emitted when a deregistration (decommission) of a host is completed.
+
+  - [Trento.Hosts.Events.HostDeregistrationRequested](Trento.Hosts.Events.HostDeregistrationRequested.md):   This event is emitted when a deregistration (decommission) of a host is requested.
+
+  - [Trento.Hosts.Events.HostDetailsUpdated](Trento.Hosts.Events.HostDetailsUpdated.md): This event is emitted when host details are updated.
+
+  - [Trento.Hosts.Events.HostHealthChanged](Trento.Hosts.Events.HostHealthChanged.md): This event is emitted when the health of a host changes because of
+- an heartbeat failure/recovery
+- a check's execution result
+
+  - [Trento.Hosts.Events.HostRegistered](Trento.Hosts.Events.HostRegistered.md): This event is emitted when a host is registered.
+
+  - [Trento.Hosts.Events.HostRestored](Trento.Hosts.Events.HostRestored.md): This event is emitted when a host is restored from a deregistered state
+
+  - [Trento.Hosts.Events.HostRollUpRequested](Trento.Hosts.Events.HostRollUpRequested.md): This event is emitted when an host roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the host aggregate.
+
+  - [Trento.Hosts.Events.HostRolledUp](Trento.Hosts.Events.HostRolledUp.md): This event is emitted when an host is rolled up and its stream is archived.
+It contains the snapshot of the host aggregate that will be used to restore the aggregate state.
+
+  - [Trento.Hosts.Events.HostSaptuneHealthChanged](Trento.Hosts.Events.HostSaptuneHealthChanged.md): This event is emitted when a host's saptune health changes.
+
+  - [Trento.Hosts.Events.HostTombstoned](Trento.Hosts.Events.HostTombstoned.md):   This event is emitted after a successful host deregistration, to tombstone and stop the host aggregate
+
+  - [Trento.Hosts.Events.ProviderUpdated](Trento.Hosts.Events.ProviderUpdated.md): This event is emitted when a provider data is updated in a specific host.
+
+  - [Trento.Hosts.Events.SaptuneStatusUpdated](Trento.Hosts.Events.SaptuneStatusUpdated.md): This event is emitted when saptune status is updated in a specific host.
+
+  - [Trento.Hosts.Events.SlesSubscriptionsUpdated](Trento.Hosts.Events.SlesSubscriptionsUpdated.md): Subscriptions updated event
+
+  - [Trento.Hosts.Events.SoftwareUpdatesDiscoveryCleared](Trento.Hosts.Events.SoftwareUpdatesDiscoveryCleared.md): This event is emitted when a host's software updates discovery is cleared
+
+  - [Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested](Trento.Hosts.Events.SoftwareUpdatesDiscoveryRequested.md): This event is emitted when a host's software updates discovery process is issued
+
+  - [Trento.Hosts.Events.SoftwareUpdatesHealthChanged](Trento.Hosts.Events.SoftwareUpdatesHealthChanged.md): This event is emitted when a host's software updates discovery process complete
+and its calculated health is taken into account in host's aggregated health.
+
+  - [Trento.Hosts.Projections.HostProjector](Trento.Hosts.Projections.HostProjector.md): Host projector
+
+  - [Trento.Hosts.Projections.HostReadModel](Trento.Hosts.Projections.HostReadModel.md): Host read model
+
+  - [Trento.Hosts.Projections.SlesSubscriptionReadModel](Trento.Hosts.Projections.SlesSubscriptionReadModel.md): SLES subscriptions read model
+
+  - [Trento.Hosts.Projections.SlesSubscriptionsProjector](Trento.Hosts.Projections.SlesSubscriptionsProjector.md): Check result projector
+
+  - [Trento.Hosts.ValueObjects.AwsProvider](Trento.Hosts.ValueObjects.AwsProvider.md): AWS provider value object
+
+  - [Trento.Hosts.ValueObjects.AzureProvider](Trento.Hosts.ValueObjects.AzureProvider.md): Azure provider value object
+
+  - [Trento.Hosts.ValueObjects.GcpProvider](Trento.Hosts.ValueObjects.GcpProvider.md): Gcp provider value object
+
+  - [Trento.Hosts.ValueObjects.SaptuneNote](Trento.Hosts.ValueObjects.SaptuneNote.md): Represents a SAP note.
+
+  - [Trento.Hosts.ValueObjects.SaptuneServiceStatus](Trento.Hosts.ValueObjects.SaptuneServiceStatus.md): Represents the status of a Saptune service.
+
+  - [Trento.Hosts.ValueObjects.SaptuneSolution](Trento.Hosts.ValueObjects.SaptuneSolution.md): Represents a Saptune solution
+
+  - [Trento.Hosts.ValueObjects.SaptuneStaging](Trento.Hosts.ValueObjects.SaptuneStaging.md): Represents the Staging of Saptune.
+
+  - [Trento.Hosts.ValueObjects.SaptuneStatus](Trento.Hosts.ValueObjects.SaptuneStatus.md): Represents the status of Saptune.
+
+  - [Trento.Hosts.ValueObjects.SlesSubscription](Trento.Hosts.ValueObjects.SlesSubscription.md): SLES subscriptions value object
+
+  - [Trento.Hosts.ValueObjects.SystemdUnit](Trento.Hosts.ValueObjects.SystemdUnit.md): Systemd unit value object
+
+- SapSystems
+  - [Trento.SapSystems](Trento.SapSystems.md): Provides a set of functions to interact with SAP systems.
+
+  - [Trento.SapSystems.Instance](Trento.SapSystems.Instance.md): This module represents a SAP System instance.
+
+  - [Trento.SapSystems.Lifespan](Trento.SapSystems.Lifespan.md): SapSystem aggregate lifespan.
+  - [Trento.SapSystems.Policy](Trento.SapSystems.Policy.md): Policy for the SAP systems resource
+  - [Trento.SapSystems.SapSystem](Trento.SapSystems.SapSystem.md): The SAP system aggregate manages all the domain logic related to
+deployed SAP systems, which is composed by the application layer.
+  - [Trento.SapSystems.Commands.DeregisterApplicationInstance](Trento.SapSystems.Commands.DeregisterApplicationInstance.md): Deregister (decommission) an application instance from the monitoring system.
+
+  - [Trento.SapSystems.Commands.DeregisterSapSystem](Trento.SapSystems.Commands.DeregisterSapSystem.md): Deregister (decommission) a SAP System
+
+  - [Trento.SapSystems.Commands.MarkApplicationInstanceAbsent](Trento.SapSystems.Commands.MarkApplicationInstanceAbsent.md): Mark an application instance as absent
+
+  - [Trento.SapSystems.Commands.RegisterApplicationInstance](Trento.SapSystems.Commands.RegisterApplicationInstance.md): Register an application instance to the monitoring system.
+  - [Trento.SapSystems.Commands.RestoreSapSystem](Trento.SapSystems.Commands.RestoreSapSystem.md): Restore a previously deregistered SapSystem.
+
+  - [Trento.SapSystems.Commands.RollUpSapSystem](Trento.SapSystems.Commands.RollUpSapSystem.md): Start a sap system aggregate rollup.
+
+  - [Trento.SapSystems.Commands.UpdateDatabaseHealth](Trento.SapSystems.Commands.UpdateDatabaseHealth.md): Update the health of the database associated to the SAP system.
+
+  - [Trento.SapSystems.Enums.EnsaVersion](Trento.SapSystems.Enums.EnsaVersion.md): Type that represents the supported ENSA versions.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceDeregistered](Trento.SapSystems.Events.ApplicationInstanceDeregistered.md): This event is emitted when a database application is deregistered (decommissioned) from the SAP system.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceHealthChanged](Trento.SapSystems.Events.ApplicationInstanceHealthChanged.md): This event is emitted when a application instance health has changed.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent](Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.md): This event is emitted when an application instance is marked as absent from the SAP system.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceMarkedPresent](Trento.SapSystems.Events.ApplicationInstanceMarkedPresent.md): This event is emitted when an application instance is marked as present in the SAP system.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceMoved](Trento.SapSystems.Events.ApplicationInstanceMoved.md): This event is emitted when an application instance is moved from a host to another.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceRegistered](Trento.SapSystems.Events.ApplicationInstanceRegistered.md): This event is emitted when a database application is registered to the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseDeregistered](Trento.SapSystems.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned) from the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseHealthChanged](Trento.SapSystems.Events.DatabaseHealthChanged.md): This event is emitted when a database health has changed.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceDeregistered](Trento.SapSystems.Events.DatabaseInstanceDeregistered.md): This event is emitted when a database instance is deregistered (decommissioned) from the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceHealthChanged](Trento.SapSystems.Events.DatabaseInstanceHealthChanged.md): This event is emitted when a database instance health has changed.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceMarkedAbsent](Trento.SapSystems.Events.DatabaseInstanceMarkedAbsent.md): This event is emitted when a database instance is marked as absent from the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceMarkedPresent](Trento.SapSystems.Events.DatabaseInstanceMarkedPresent.md): This event is emitted when a database instance is marked as present in the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceRegistered](Trento.SapSystems.Events.DatabaseInstanceRegistered.md): This event is emitted when a database instance is registered to the SAP system.
+
+  - [Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged](Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged.md): This event is emitted when a database instance system replication has changed.
+
+  - [Trento.SapSystems.Events.DatabaseRegistered](Trento.SapSystems.Events.DatabaseRegistered.md): This event is emitted when a database is registered.
+
+  - [Trento.SapSystems.Events.DatabaseRestored](Trento.SapSystems.Events.DatabaseRestored.md): This event is emitted when a database is restored.
+
+  - [Trento.SapSystems.Events.SapSystemDatabaseHealthChanged](Trento.SapSystems.Events.SapSystemDatabaseHealthChanged.md): This event is emitted when the SAP System database health has changed.
+
+  - [Trento.SapSystems.Events.SapSystemDeregistered](Trento.SapSystems.Events.SapSystemDeregistered.md): This event is emitted when a SAP system is deregistered (decommissioned).
+
+  - [Trento.SapSystems.Events.SapSystemHealthChanged](Trento.SapSystems.Events.SapSystemHealthChanged.md): This event is emitted when the SAP System health has changed.
+
+  - [Trento.SapSystems.Events.SapSystemRegistered](Trento.SapSystems.Events.SapSystemRegistered.md): This event is emitted when a sap system is registered.
+
+  - [Trento.SapSystems.Events.SapSystemRestored](Trento.SapSystems.Events.SapSystemRestored.md): This event is emitted when a sap system is restored.
+
+  - [Trento.SapSystems.Events.SapSystemRollUpRequested](Trento.SapSystems.Events.SapSystemRollUpRequested.md): This event is emitted when an sap system roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
+
+  - [Trento.SapSystems.Events.SapSystemRolledUp](Trento.SapSystems.Events.SapSystemRolledUp.md): This event is emitted when a sap system roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
+
+  - [Trento.SapSystems.Events.SapSystemTombstoned](Trento.SapSystems.Events.SapSystemTombstoned.md): This event is emitted when a SAP system is deregistered (decommissioned)
+
+  - [Trento.SapSystems.Events.SapSystemUpdated](Trento.SapSystems.Events.SapSystemUpdated.md): This event is emitted when some of the fields in the SAP system are updated
+
+  - [Trento.SapSystems.Projections.ApplicationInstanceReadModel](Trento.SapSystems.Projections.ApplicationInstanceReadModel.md): Application instance read model
+
+  - [Trento.SapSystems.Projections.SapSystemProjector](Trento.SapSystems.Projections.SapSystemProjector.md): SAP System projector
+
+  - [Trento.SapSystems.Projections.SapSystemReadModel](Trento.SapSystems.Projections.SapSystemReadModel.md): SAP System read model
+
+  - [Trento.SapSystems.Services.HealthSummaryService](Trento.SapSystems.Services.HealthSummaryService.md): Provides a set of functions to interact with SAP systems Health Summary
+
+- Discovery
+  - [Trento.Discovery](Trento.Discovery.md): Discovery integration context.
+
+  - [Trento.Discovery.DiscardedDiscoveryEvent](Trento.Discovery.DiscardedDiscoveryEvent.md): This module contains the schema used to store an append log of the discarded discovery events,
+for debugging and auditing purposes.
+No changeset is defined here, since the schema is used to store append-only data.
+
+  - [Trento.Discovery.DiscoveryEvent](Trento.Discovery.DiscoveryEvent.md): This module contains the schema used to store an append log of the handled discovery events,
+for debugging and auditing purposes.
+No changeset is defined here, since the schema is used to store append-only data.
+
+  - [Trento.DiscoveryFixturesHelper](Trento.DiscoveryFixturesHelper.md): This module contains helper functions for loading discovery fixtures.
+
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload](Trento.Discovery.Payloads.CloudDiscoveryPayload.md): Cloud discovery integration event payload
+
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.AwsMetadata](Trento.Discovery.Payloads.CloudDiscoveryPayload.AwsMetadata.md)
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata](Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.md)
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute](Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.md)
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile](Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.OsProfile.md)
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile](Trento.Discovery.Payloads.CloudDiscoveryPayload.AzureMetadata.Compute.StorageProfile.md)
+  - [Trento.Discovery.Payloads.CloudDiscoveryPayload.GcpMetadata](Trento.Discovery.Payloads.CloudDiscoveryPayload.GcpMetadata.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.md): Cib field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.md): Resources field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Clone.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Group.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Master](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.CibResources.Master.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints.RscLocation](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.Constraints.RscLocation.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration.CrmConfig.ClusterProperties.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.md): Primitive field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.InstanceAttribute](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.InstanceAttribute.md)
+  - [Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.Operation](Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Primitive.Operation.md)
+  - [Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload](Trento.Discovery.Payloads.Cluster.ClusterDiscoveryPayload.md): Cluster discovery integration event payload
+
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.md): Crmmon field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonClone](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonClone.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonGroup](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonGroup.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.md): CrmmonResource field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.ResourceNode](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonResource.ResourceNode.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Node](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Node.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.Attribute](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeAttributes.Node.Attribute.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.md): NodeHistory field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.HistoryDetail](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.NodeHistory.Node.HistoryDetail.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.md): Summary field payload
+
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.LastChangeSummary](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.LastChangeSummary.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.NodesSummary](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.NodesSummary.md)
+  - [Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.ResourceSummary](Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.Summary.ResourceSummary.md)
+  - [Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload](Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload.md): SBD field payload
+
+  - [Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload.Device](Trento.Discovery.Payloads.Cluster.SbdDiscoveryPayload.Device.md)
+  - [Trento.Discovery.Payloads.HostDiscoveryPayload](Trento.Discovery.Payloads.HostDiscoveryPayload.md): Host discovery integration event payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.md): SAP system discovery integration event payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Database](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Database.md): Databases field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.HdbnsutilSRstate](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.HdbnsutilSRstate.md): HdbnsutilSRstate field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Instance](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Instance.md): Instances field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Profile](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.Profile.md): Profile field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControl](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControl.md): SAP control field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlInstance](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlInstance.md): SAP control instances field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProcess](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProcess.md): SAP control process field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProperty](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SapControlProperty.md): SAP control property field payload
+
+  - [Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SystemReplication](Trento.Discovery.Payloads.SapSystemDiscoveryPayload.SystemReplication.md): SystemReplication process field payload
+
+  - [Trento.Discovery.Payloads.SaptuneDiscoveryPayload](Trento.Discovery.Payloads.SaptuneDiscoveryPayload.md): Saptune discovery integration event payload
+
+  - [Trento.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput](Trento.Discovery.Payloads.SaptuneDiscoveryPayload.SaptuneOutput.md): Saptune Output payload
+
+  - [Trento.Discovery.Payloads.SlesSubscriptionDiscoveryPayload](Trento.Discovery.Payloads.SlesSubscriptionDiscoveryPayload.md): Subscription discovery integration event payload
+
+  - [Trento.Discovery.Policies.ClusterPolicy](Trento.Discovery.Policies.ClusterPolicy.md): This module contains functions to transform cluster related integration events into commands.
+
+  - [Trento.Discovery.Policies.HostPolicy](Trento.Discovery.Policies.HostPolicy.md): This module contains functions to transform host related integration events into commands.
+
+  - [Trento.Discovery.Policies.SapSystemPolicy](Trento.Discovery.Policies.SapSystemPolicy.md): This module contains functions to transform SAP system related integration events into commands..
+
+- Enums
+  - [Trento.Enums.Health](Trento.Enums.Health.md): Type that represents the possible health values in the system.
+
+  - [Trento.Enums.Provider](Trento.Enums.Provider.md): Type that represents the supported provider values by our agent.
+
+- Services
+  - [Trento.Services.HealthService](Trento.Services.HealthService.md): This module contains the domain logic for everything health related.
+
+- Event handlers
+  - [Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandler](Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandler.md): Event handler responsible to log activity from emitted domain events
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler](Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler.md): This event handler is responsible to forward checks execution request to the agent.
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler](Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler.md): This event handler is responsible to forward deregistration commands to the SAP systems
+related to a deregistered database
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler](Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler.md): This event handler is responsible to forward restore commands to the SAP systems
+related to a restored database
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler](Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.md): This event handler is responsible for rolling-up aggregates when a requested event is received.
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.md): This event handler is responsible to forward update database health commands to the SAP systems
+related to a database that has a new health state
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.md): Event handler to update saptune status when application or HANA database instances are registered/deregistered.
+A host saptune health depends on SAP instances running on the host, so any update on that
+needs to be applied in the saptune state health.
+  - [Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler.md): Event handler for software updates discovery related events.
+Here is where the actual integration with the external system happens and relevant changes in Host are triggered.
+
+  - [Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler](Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.md): This module is responsible for triggering the roll-up of an aggregate.
+
+- Infrastructure
+  - [Trento.Infrastructure.Alerting.Alerting](Trento.Infrastructure.Alerting.Alerting.md): Provides a set of functions of Alerting related usecases.
+
+  - [Trento.Infrastructure.Catalog.AMQP.Consumer](Trento.Infrastructure.Catalog.AMQP.Consumer.md): AMQP catalog consumer.
+
+  - [Trento.Infrastructure.Catalog.AMQP.Processor](Trento.Infrastructure.Catalog.AMQP.Processor.md): AMQP processor for the operations events
+
+  - [Trento.Infrastructure.Checks](Trento.Infrastructure.Checks.md): Checks Engine service integration
+
+  - [Trento.Infrastructure.Commanded.Middleware.Enrich](Trento.Infrastructure.Commanded.Middleware.Enrich.md): Command enrichment middleware.
+
+  - [Trento.Infrastructure.Commanded.Middleware.Enrichable](Trento.Infrastructure.Commanded.Middleware.Enrichable.md)
+  - [Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager](Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.md):   DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
+  for the deregistration procedure for the aggregates
+  - [Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance](Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance.md): An application or database instance and which SAP System/Database it belongs to.
+
+  - [Trento.Infrastructure.Commanded.RollUp.Queries](Trento.Infrastructure.Commanded.RollUp.Queries.md): This module contains the SQL queries used to archive a stream.
+
+  - [Trento.Infrastructure.Commanded.RollUp.RollUp](Trento.Infrastructure.Commanded.RollUp.RollUp.md): This module is responsible for archiving a stream and appending a roll-up event to it.
+  - [Trento.Infrastructure.ComponentVersions](Trento.Infrastructure.ComponentVersions.md): Fetches version information from all platform components.
+
+  - [Trento.Infrastructure.ComponentVersions.Gen](Trento.Infrastructure.ComponentVersions.Gen.md): Behaviour for fetching component versions.
+
+  - [Trento.Infrastructure.Discovery.AMQP.Publisher](Trento.Infrastructure.Discovery.AMQP.Publisher.md): AMQP discovery publisher
+
+  - [Trento.Infrastructure.Messaging](Trento.Infrastructure.Messaging.md): Publishes messages to the message bus
+
+  - [Trento.Infrastructure.Messaging.Adapter.AMQP](Trento.Infrastructure.Messaging.Adapter.AMQP.md): AMQP adapter
+
+  - [Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer](Trento.Infrastructure.Messaging.Adapter.AMQP.Consumer.md): AMQP consumer.
+
+  - [Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher](Trento.Infrastructure.Messaging.Adapter.AMQP.Publisher.md): AMQP publisher.
+
+  - [Trento.Infrastructure.Operations](Trento.Infrastructure.Operations.md): Operations integration
+
+  - [Trento.Infrastructure.Operations.AMQP.Consumer](Trento.Infrastructure.Operations.AMQP.Consumer.md): AMQP operations consumer.
+
+  - [Trento.Infrastructure.Operations.AMQP.Processor](Trento.Infrastructure.Operations.AMQP.Processor.md): AMQP processor for the operations events
+
+  - [Trento.Infrastructure.Operations.AMQP.Publisher](Trento.Infrastructure.Operations.AMQP.Publisher.md): AMQP operations publisher
+
+  - [Trento.Infrastructure.Prometheus](Trento.Infrastructure.Prometheus.md): Prometheus integration service
+
+  - [Trento.Infrastructure.Prometheus.Adapter.HttpClient](Trento.Infrastructure.Prometheus.Adapter.HttpClient.md): HTTP client behaviour for Prometheus API calls.
+
+  - [Trento.Infrastructure.Prometheus.ChartIntegration](Trento.Infrastructure.Prometheus.ChartIntegration.md): ChartIntegration provides a mechanism for mapping prometheus query information to domain
+Chart time series objects
+
+  - [Trento.Infrastructure.Prometheus.Gen](Trento.Infrastructure.Prometheus.Gen.md): Behaviour of a prometheus adapter.
+
+  - [Trento.Infrastructure.Prometheus.MockPrometheusApi](Trento.Infrastructure.Prometheus.MockPrometheusApi.md): Mocks prometheus API calls
+
+  - [Trento.Infrastructure.Prometheus.PromQL](Trento.Infrastructure.Prometheus.PromQL.md): PromQL query manipulation utilities.
+  - [Trento.Infrastructure.Prometheus.PrometheusApi](Trento.Infrastructure.Prometheus.PrometheusApi.md): Prometheus API adapter
+
+  - [Trento.Infrastructure.Prometheus.PrometheusSamples](Trento.Infrastructure.Prometheus.PrometheusSamples.md): PrometheusSamples represent a prometheus sample returned from a range query, having a unix timestamp and a float value
+
+  - [Trento.Infrastructure.SSO](Trento.Infrastructure.SSO.md): Provides a set of functions related to SSO (Single Sign On).
+
+  - [Trento.Infrastructure.SSO.Config](Trento.Infrastructure.SSO.Config.md): Provides a set of functions related to SSO configuration.
+
+  - [Trento.Infrastructure.SoftwareUpdates.Auth.Gen](Trento.Infrastructure.SoftwareUpdates.Auth.Gen.md): Behaviour of the SUSE Multi-Linux Manager authentication process.
+
+  - [Trento.Infrastructure.SoftwareUpdates.Auth.State](Trento.Infrastructure.SoftwareUpdates.Auth.State.md): State for the SUSE Multi-Linux Manager Software Updates discovery adapter
+
+  - [Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth](Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth.md): GenServer module to authenticate with SUSE Multi-Linux Manager
+
+  - [Trento.Infrastructure.SoftwareUpdates.MockSuma](Trento.Infrastructure.SoftwareUpdates.MockSuma.md): Mocked SUSE Multi-Linux Manager Software updates discovery adapter
+
+  - [Trento.Infrastructure.SoftwareUpdates.Suma](Trento.Infrastructure.SoftwareUpdates.Suma.md): SUSE Multi-Linux Manager Software updates discovery adapter
+
+  - [Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor](Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.md): SUSE Multi-Linux Manager Http requests executor
+
+  - [Trento.Infrastructure.SoftwareUpdates.SumaApi](Trento.Infrastructure.SoftwareUpdates.SumaApi.md): SUSE Multi-Linux Manager API client supporting software updates discovery.
+
+  - [Trento.Infrastructure.Checks.AMQP.Consumer](Trento.Infrastructure.Checks.AMQP.Consumer.md): AMQP checks consumer.
+
+  - [Trento.Infrastructure.Checks.AMQP.Processor](Trento.Infrastructure.Checks.AMQP.Processor.md): AMQP processor for the checks execution events
+
+  - [Trento.Infrastructure.Checks.AMQP.Publisher](Trento.Infrastructure.Checks.AMQP.Publisher.md): AMQP checks publisher
+
+  - [Trento.Infrastructure.Checks.ClusterExecutionEnv](Trento.Infrastructure.Checks.ClusterExecutionEnv.md): Cluster checks execution env map
+
+  - [Trento.Infrastructure.Checks.HostExecutionEnv](Trento.Infrastructure.Checks.HostExecutionEnv.md): Host checks execution env map
+
+  - [Trento.Infrastructure.Checks.TargetType](Trento.Infrastructure.Checks.TargetType.md): Type that represents the possible target types for a check execution.
+
+- Support
+  - [Trento.Support.AbilitiesHelper](Trento.Support.AbilitiesHelper.md): Helper functions for bodyguard policies
+
+  - [Trento.Support.Command](Trento.Support.Command.md): Adds the macro `defcommand` which is used to define a new command.
+
+  - [Trento.Support.DateService](Trento.Support.DateService.md): DateTime service
+
+  - [Trento.Support.Ecto.EncryptedBinary](Trento.Support.Ecto.EncryptedBinary.md): Ecto Type that represents an encrypted binary.
+
+  - [Trento.Support.Ecto.Payload](Trento.Support.Ecto.Payload.md): Ecto Type that represents a JSONB payload that contains an array or a map.
+  - [Trento.Support.Ecto.STI](Trento.Support.Ecto.STI.md): Helpers module for Single Table Inheritance in ecto schemas
+
+  - [Trento.Support.Enum](Trento.Support.Enum.md): Enum  module with added macros to define a type,
+check supported values and validate possible values
+
+  - [Trento.Support.Event](Trento.Support.Event.md): Adds the macro `defevent` which is used to define a new event.
+
+  - [Trento.Support.EventHandlerFailureContext](Trento.Support.EventHandlerFailureContext.md): Event handler failure context
+  - [Trento.Support.Helpers.AbilitiesTestHelper](Trento.Support.Helpers.AbilitiesTestHelper.md): Helper functions to setup abilities.
+  - [Trento.Support.Helpers.AlertingSettingsHelper](Trento.Support.Helpers.AlertingSettingsHelper.md): Test helper functions for alerting settings.
+
+  - [Trento.Support.IntermediateEvent](Trento.Support.IntermediateEvent.md): Represents an event that has been deserialized from the database, but not yet casted to its final type.
+  - [Trento.Support.JsonbSerializer](Trento.Support.JsonbSerializer.md): Serialize to/from PostgreSQL's native `jsonb` format.
+Requires events to be defined by the `defevent` macro.
+  - [Trento.Support.ListHelper](Trento.Support.ListHelper.md): This module provides list utility functions
+
+  - [Trento.Support.OperationsHelper](Trento.Support.OperationsHelper.md): Helper functions for operations
+
+  - [Trento.Support.Protobuf](Trento.Support.Protobuf.md): Helper functions to use Protobuf mapping
+
+  - [Trento.Support.StructHelper](Trento.Support.StructHelper.md): This module provides structs utility functions
+
+  - [Trento.Support.Type](Trento.Support.Type.md): This module defines the macro `deftype` which is used to define a new type,
+for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.
+
+- Web
+  - [TrentoWeb](TrentoWeb.md): The entrypoint for defining your web interface, such
+as controllers, views, channels and so on.
+  - [TrentoWeb.ActivityLogChannel](TrentoWeb.ActivityLogChannel.md): Activity Log channel, each user is subscribed to this channel,
+  - [TrentoWeb.Auth.AccessToken](TrentoWeb.Auth.AccessToken.md):   Jwt Token is the module responsible for creating a proper jwt access token.
+  - [TrentoWeb.Auth.ApiKey](TrentoWeb.Auth.ApiKey.md): ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
+The token uses the same signer as app access token
+Uses Joken as jwt base library
+
+  - [TrentoWeb.Auth.AssentSamlStrategy](TrentoWeb.Auth.AssentSamlStrategy.md): Assent strategy to handle SAML authentication
+
+  - [TrentoWeb.Auth.PersonalAccessToken](TrentoWeb.Auth.PersonalAccessToken.md): PersonalAccessToken represents a users' generated token.
+
+  - [TrentoWeb.Auth.RefreshToken](TrentoWeb.Auth.RefreshToken.md):   Refresh token is the module responsible for creating a proper jwt refresh token
+  - [TrentoWeb.Auth.Tokens](TrentoWeb.Auth.Tokens.md): Module responsible to deal with tokens concerns like introspection and validation.
+
+  - [TrentoWeb.ChannelCase](TrentoWeb.ChannelCase.md): This module defines the test case to be used by
+channel tests.
+  - [TrentoWeb.ConnCase](TrentoWeb.ConnCase.md): This module defines the test case to be used by
+tests that require setting up a connection.
+  - [TrentoWeb.Endpoint](TrentoWeb.Endpoint.md)
+  - [TrentoWeb.ErrorHelpers](TrentoWeb.ErrorHelpers.md): Conveniences for translating and building error messages.
+
+  - [TrentoWeb.ErrorJSON](TrentoWeb.ErrorJSON.md)
+  - [TrentoWeb.FallbackController](TrentoWeb.FallbackController.md)
+  - [TrentoWeb.Gettext](TrentoWeb.Gettext.md): A module providing Internationalization with a gettext-based API.
+  - [TrentoWeb.HealthController](TrentoWeb.HealthController.md)
+  - [TrentoWeb.HealthJSON](TrentoWeb.HealthJSON.md)
+  - [TrentoWeb.Layouts](TrentoWeb.Layouts.md): This module holds different layouts used by your application.
+  - [TrentoWeb.MonitoringChannel](TrentoWeb.MonitoringChannel.md): Monitoring CHannel
+
+  - [TrentoWeb.OpenApi.All.ApiSpec](TrentoWeb.OpenApi.All.ApiSpec.md): OpenApi all specification
+
+  - [TrentoWeb.OpenApi.ApiSpec](TrentoWeb.OpenApi.ApiSpec.md): OpenApi specification entry point
+  - [TrentoWeb.OpenApi.Unversioned.ApiSpec](TrentoWeb.OpenApi.Unversioned.ApiSpec.md): OpenApi specification entry point for unversioned endpoints
+
+  - [TrentoWeb.OpenApi.V1.ApiSpec](TrentoWeb.OpenApi.V1.ApiSpec.md): OpenApi specification entry point for V1 version
+
+  - [TrentoWeb.OpenApi.V1.Schema.Auth](TrentoWeb.OpenApi.V1.Schema.Auth.md): Authentication and Authorization Schemas for Trento Web API
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.Credentials](TrentoWeb.OpenApi.V1.Schema.Auth.Credentials.md): Schema for successful authentication responses.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.ExternalIdpCallback](TrentoWeb.OpenApi.V1.Schema.Auth.ExternalIdpCallback.md): Schema for external identity provider callback requests.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectTokenRequest](TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectTokenRequest.md): Schema for introspect token requests.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectedToken](TrentoWeb.OpenApi.V1.Schema.Auth.IntrospectedToken.md): Schema for introspected tokens.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.LoginCredentials](TrentoWeb.OpenApi.V1.Schema.Auth.LoginCredentials.md): This schema defines the structure for authentication requests containing username,
+password, and optional TOTP code for secure login to the Trento platform.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.RefreshTokenRequest](TrentoWeb.OpenApi.V1.Schema.Auth.RefreshTokenRequest.md): Schema for refresh token requests.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.RefreshedCredentials](TrentoWeb.OpenApi.V1.Schema.Auth.RefreshedCredentials.md): Schema for refreshed authentication results.
+  - [TrentoWeb.OpenApi.V1.Schema.Auth.UserIDPCredentials](TrentoWeb.OpenApi.V1.Schema.Auth.UserIDPCredentials.md): Schema for successful IDP authentication responses.
+  - [TrentoWeb.OpenApi.V1.Schema.BadRequest](TrentoWeb.OpenApi.V1.Schema.BadRequest.md): Bad Request.
+
+  - [TrentoWeb.OpenApi.V1.Schema.Conflict](TrentoWeb.OpenApi.V1.Schema.Conflict.md): 409 - Conflict.
+
+  - [TrentoWeb.OpenApi.V1.Schema.Forbidden](TrentoWeb.OpenApi.V1.Schema.Forbidden.md): 403 - Forbidden.
+
+  - [TrentoWeb.OpenApi.V1.Schema.Health](TrentoWeb.OpenApi.V1.Schema.Health.md): Healthcheck
+
+  - [TrentoWeb.OpenApi.V1.Schema.NotFound](TrentoWeb.OpenApi.V1.Schema.NotFound.md): 404 - Not Found.
+
+  - [TrentoWeb.OpenApi.V1.Schema.PreconditionFailed](TrentoWeb.OpenApi.V1.Schema.PreconditionFailed.md): 412 - Precondition Failed.
+
+  - [TrentoWeb.OpenApi.V1.Schema.PreconditionRequired](TrentoWeb.OpenApi.V1.Schema.PreconditionRequired.md): 428 - Precondition Required.
+
+  - [TrentoWeb.OpenApi.V1.Schema.Ready](TrentoWeb.OpenApi.V1.Schema.Ready.md): Ready
+
+  - [TrentoWeb.OpenApi.V1.Schema.Unauthorized](TrentoWeb.OpenApi.V1.Schema.Unauthorized.md): 401 - Unauthorized.
+
+  - [TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity](TrentoWeb.OpenApi.V1.Schema.UnprocessableEntity.md): 422 - Unprocessable Entity.
+
+  - [TrentoWeb.OpenApi.V2.ApiSpec](TrentoWeb.OpenApi.V2.ApiSpec.md): OpenApi specification entry point for V2 version
+
+  - [TrentoWeb.PageController](TrentoWeb.PageController.md)
+  - [TrentoWeb.PageHTML](TrentoWeb.PageHTML.md): This module contains pages rendered by PageController.
+  - [TrentoWeb.Plugs.ActivityLoggingPlug](TrentoWeb.Plugs.ActivityLoggingPlug.md): This plug is responsible for auditing the requests made to the API.
+
+  - [TrentoWeb.Plugs.ApiAuthErrorHandler](TrentoWeb.Plugs.ApiAuthErrorHandler.md): Used to handle authentication error in APIs
+  - [TrentoWeb.Plugs.ApiRedirector](TrentoWeb.Plugs.ApiRedirector.md):   This Plug is responsible for redirecting api requests without a specific version
+  to the latest available version, when the requested path exists
+  - [TrentoWeb.Plugs.AppJWTAuthPlug](TrentoWeb.Plugs.AppJWTAuthPlug.md):   The AppJWTAuthPlug is a Pow compatible authorization flow.
+  Handles the login and the credentials recovery at each request
+  - [TrentoWeb.Plugs.AuthenticateAPIKeyPlug](TrentoWeb.Plugs.AuthenticateAPIKeyPlug.md): A Plug that authenticates API calls via an API Key provided in `X-Trento-apiKey` HTTP header
+
+  - [TrentoWeb.Plugs.ChartsDisabledPlug](TrentoWeb.Plugs.ChartsDisabledPlug.md):   This plug acts as a barrier for the charts endpoint, return 501 for all the requests.
+  - [TrentoWeb.Plugs.ExternalIdpGuardPlug](TrentoWeb.Plugs.ExternalIdpGuardPlug.md): This plug acts as a guard for certain actions/endpoint to disable them when an external idp integration is enabled
+
+  - [TrentoWeb.Plugs.LoadUserPlug](TrentoWeb.Plugs.LoadUserPlug.md): LoadUserPlug loads the stateless user from jwt from the database.
+The current user is replaced with the stateful user for subsequent plugs
+
+  - [TrentoWeb.Plugs.NormalizeListsPlug](TrentoWeb.Plugs.NormalizeListsPlug.md): This plug normalizes query string elements into lists when they are not formmated
+in brackets format.
+This is needed to be compatible with openAPI 3.0, as brackets format is not supported.
+The plug must be used before `plug OpenApiSpex.Plug.CastAndValidate` to make effect.
+  - [TrentoWeb.Plugs.OperationsPolicyPlug](TrentoWeb.Plugs.OperationsPolicyPlug.md): This plug is responsible for authorizing operations. It falls back to `{:error, :forbidden}` if
+the resource is not authorized.
+  - [TrentoWeb.Plugs.UpdateLastLoginAtPlug](TrentoWeb.Plugs.UpdateLastLoginAtPlug.md): This plug updates the last login at value in a successful login attempt.
+
+  - [TrentoWeb.Router](TrentoWeb.Router.md)
+  - [TrentoWeb.SessionController](TrentoWeb.SessionController.md)
+  - [TrentoWeb.SessionJSON](TrentoWeb.SessionJSON.md)
+  - [TrentoWeb.TokensCase](TrentoWeb.TokensCase.md): Custom tokens used in tests to cover edge cases.
+
+  - [TrentoWeb.UserChannel](TrentoWeb.UserChannel.md): User channel, each user is subscribed to his channel,
+to receive personal broadcasts
+  - [TrentoWeb.UserSocket](TrentoWeb.UserSocket.md)
+  - [TrentoWeb.V1.AIConfigurationController](TrentoWeb.V1.AIConfigurationController.md)
+  - [TrentoWeb.V1.AIConfigurationJSON](TrentoWeb.V1.AIConfigurationJSON.md)
+  - [TrentoWeb.V1.AbilityController](TrentoWeb.V1.AbilityController.md)
+  - [TrentoWeb.V1.AbilityJSON](TrentoWeb.V1.AbilityJSON.md)
+  - [TrentoWeb.V1.AboutController](TrentoWeb.V1.AboutController.md)
+  - [TrentoWeb.V1.AboutJSON](TrentoWeb.V1.AboutJSON.md)
+  - [TrentoWeb.V1.ActivityLogController](TrentoWeb.V1.ActivityLogController.md)
+  - [TrentoWeb.V1.ActivityLogJSON](TrentoWeb.V1.ActivityLogJSON.md)
+  - [TrentoWeb.V1.ChartController](TrentoWeb.V1.ChartController.md)
+  - [TrentoWeb.V1.ChartJSON](TrentoWeb.V1.ChartJSON.md)
+  - [TrentoWeb.V1.ClusterController](TrentoWeb.V1.ClusterController.md)
+  - [TrentoWeb.V1.ClusterJSON](TrentoWeb.V1.ClusterJSON.md)
+  - [TrentoWeb.V1.DatabaseController](TrentoWeb.V1.DatabaseController.md)
+  - [TrentoWeb.V1.DatabaseJSON](TrentoWeb.V1.DatabaseJSON.md)
+  - [TrentoWeb.V1.DiscoveryController](TrentoWeb.V1.DiscoveryController.md)
+  - [TrentoWeb.V1.HealthOverviewController](TrentoWeb.V1.HealthOverviewController.md)
+  - [TrentoWeb.V1.HealthOverviewJSON](TrentoWeb.V1.HealthOverviewJSON.md)
+  - [TrentoWeb.V1.HostController](TrentoWeb.V1.HostController.md)
+  - [TrentoWeb.V1.HostJSON](TrentoWeb.V1.HostJSON.md)
+  - [TrentoWeb.V1.PersonalAccessTokensController](TrentoWeb.V1.PersonalAccessTokensController.md)
+  - [TrentoWeb.V1.ProfileController](TrentoWeb.V1.ProfileController.md)
+  - [TrentoWeb.V1.ProfileJSON](TrentoWeb.V1.ProfileJSON.md)
+  - [TrentoWeb.V1.PrometheusController](TrentoWeb.V1.PrometheusController.md)
+  - [TrentoWeb.V1.PrometheusJSON](TrentoWeb.V1.PrometheusJSON.md)
+  - [TrentoWeb.V1.SUSEManagerController](TrentoWeb.V1.SUSEManagerController.md)
+  - [TrentoWeb.V1.SUSEManagerJSON](TrentoWeb.V1.SUSEManagerJSON.md)
+  - [TrentoWeb.V1.SapSystemController](TrentoWeb.V1.SapSystemController.md)
+  - [TrentoWeb.V1.SapSystemJSON](TrentoWeb.V1.SapSystemJSON.md)
+  - [TrentoWeb.V1.SettingsController](TrentoWeb.V1.SettingsController.md)
+  - [TrentoWeb.V1.SettingsJSON](TrentoWeb.V1.SettingsJSON.md)
+  - [TrentoWeb.V1.TagsController](TrentoWeb.V1.TagsController.md)
+  - [TrentoWeb.V1.UsersController](TrentoWeb.V1.UsersController.md)
+  - [TrentoWeb.V1.UsersJSON](TrentoWeb.V1.UsersJSON.md)
+  - [TrentoWeb.V2.ClusterController](TrentoWeb.V2.ClusterController.md)
+  - [TrentoWeb.V2.ClusterJSON](TrentoWeb.V2.ClusterJSON.md)
+
+- Legacy events
+  - [Trento.Domain.Events.ApplicationInstanceDeregistered](Trento.Domain.Events.ApplicationInstanceDeregistered.md): This event is emitted when a database application is deregistered (decommissioned) from the SAP system.
+
+  - [Trento.Domain.Events.ApplicationInstanceHealthChanged](Trento.Domain.Events.ApplicationInstanceHealthChanged.md): This event is emitted when a application instance health has changed.
+
+  - [Trento.Domain.Events.ApplicationInstanceMarkedAbsent](Trento.Domain.Events.ApplicationInstanceMarkedAbsent.md): This event is emitted when an application instance is marked as absent from the SAP system.
+
+  - [Trento.Domain.Events.ApplicationInstanceMarkedPresent](Trento.Domain.Events.ApplicationInstanceMarkedPresent.md): This event is emitted when an application instance is marked as present in the SAP system.
+
+  - [Trento.Domain.Events.ApplicationInstanceMoved](Trento.Domain.Events.ApplicationInstanceMoved.md): This event is emitted when an application instance is moved from a host to another.
+
+  - [Trento.Domain.Events.ApplicationInstanceRegistered](Trento.Domain.Events.ApplicationInstanceRegistered.md): This event is emitted when a database application is registered to the SAP system.
+
+  - [Trento.Domain.Events.ChecksExecutionCompleted](Trento.Domain.Events.ChecksExecutionCompleted.md): Event of the checks execution completed.
+
+  - [Trento.Domain.Events.ChecksExecutionRequested](Trento.Domain.Events.ChecksExecutionRequested.md): Event of the request of a checks execution.
+
+  - [Trento.Domain.Events.ChecksExecutionStarted](Trento.Domain.Events.ChecksExecutionStarted.md): Event of emitted when a checks execution is started.
+
+  - [Trento.Domain.Events.ChecksSelected](Trento.Domain.Events.ChecksSelected.md): Event of the checks selected in a cluster.
+
+  - [Trento.Domain.Events.ClusterChecksHealthChanged](Trento.Domain.Events.ClusterChecksHealthChanged.md): This event is emitted when the checks health of a cluster changes.
+
+  - [Trento.Domain.Events.ClusterDeregistered](Trento.Domain.Events.ClusterDeregistered.md): This event is emitted when a cluster is deregistered.
+
+  - [Trento.Domain.Events.ClusterDetailsUpdated](Trento.Domain.Events.ClusterDetailsUpdated.md): This event is emitted when cluster details are updated.
+
+  - [Trento.Domain.Events.ClusterDiscoveredHealthChanged](Trento.Domain.Events.ClusterDiscoveredHealthChanged.md): This event is emitted when the discovered health of a cluster changes.
+
+  - [Trento.Domain.Events.ClusterHealthChanged](Trento.Domain.Events.ClusterHealthChanged.md): ClusterHealthChanged event
+
+  - [Trento.Domain.Events.ClusterRegistered](Trento.Domain.Events.ClusterRegistered.md): This event is emitted when a cluster is registered.
+
+  - [Trento.Domain.Events.ClusterRestored](Trento.Domain.Events.ClusterRestored.md): This event is emitted after a cluster is restored from a deregistered state
+
+  - [Trento.Domain.Events.ClusterRollUpRequested](Trento.Domain.Events.ClusterRollUpRequested.md): This event is emitted when a cluster roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the cluster aggregate.
+
+  - [Trento.Domain.Events.ClusterRolledUp](Trento.Domain.Events.ClusterRolledUp.md): This event is emitted when a cluster is rolled up and its stream is archived.
+It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.
+
+  - [Trento.Domain.Events.ClusterTombstoned](Trento.Domain.Events.ClusterTombstoned.md):   This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate
+
+  - [Trento.Domain.Events.DatabaseDeregistered](Trento.Domain.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned) from the SAP system.
+
+  - [Trento.Domain.Events.DatabaseHealthChanged](Trento.Domain.Events.DatabaseHealthChanged.md): This event is emitted when a database health has changed.
+
+  - [Trento.Domain.Events.DatabaseInstanceDeregistered](Trento.Domain.Events.DatabaseInstanceDeregistered.md): This event is emitted when a database instance is deregistered (decommissioned) from the SAP system.
+
+  - [Trento.Domain.Events.DatabaseInstanceHealthChanged](Trento.Domain.Events.DatabaseInstanceHealthChanged.md): This event is emitted when a database instance health has changed.
+
+  - [Trento.Domain.Events.DatabaseInstanceMarkedAbsent](Trento.Domain.Events.DatabaseInstanceMarkedAbsent.md): This event is emitted when a database instance is marked as absent from the SAP system.
+
+  - [Trento.Domain.Events.DatabaseInstanceMarkedPresent](Trento.Domain.Events.DatabaseInstanceMarkedPresent.md): This event is emitted when a database instance is marked as present in the SAP system.
+
+  - [Trento.Domain.Events.DatabaseInstanceRegistered](Trento.Domain.Events.DatabaseInstanceRegistered.md): This event is emitted when a database instance is registered to the SAP system.
+
+  - [Trento.Domain.Events.DatabaseInstanceSystemReplicationChanged](Trento.Domain.Events.DatabaseInstanceSystemReplicationChanged.md): This event is emitted when a database instance system replication has changed.
+
+  - [Trento.Domain.Events.DatabaseRegistered](Trento.Domain.Events.DatabaseRegistered.md): This event is emitted when a database is registered.
+
+  - [Trento.Domain.Events.DatabaseRestored](Trento.Domain.Events.DatabaseRestored.md): This event is emitted when a database is restored.
+
+  - [Trento.Domain.Events.HeartbeatFailed](Trento.Domain.Events.HeartbeatFailed.md): Heartbeat failed event
+
+  - [Trento.Domain.Events.HeartbeatSucceded](Trento.Domain.Events.HeartbeatSucceded.md): Heartbeat succeeded event
+
+  - [Trento.Domain.Events.HostAddedToCluster](Trento.Domain.Events.HostAddedToCluster.md): This event is emitted when a host is added to a cluster
+
+  - [Trento.Domain.Events.HostChecksExecutionCompleted](Trento.Domain.Events.HostChecksExecutionCompleted.md): Event of the checks execution completed of a host.
+
+  - [Trento.Domain.Events.HostChecksHealthChanged](Trento.Domain.Events.HostChecksHealthChanged.md): This event is emitted when a host's checks result changes.
+
+  - [Trento.Domain.Events.HostChecksSelected](Trento.Domain.Events.HostChecksSelected.md): Event of the checks selected for a host.
+
+  - [Trento.Domain.Events.HostDeregistered](Trento.Domain.Events.HostDeregistered.md):   This event is emitted when a deregistration (decommission) of a host is completed.
+
+  - [Trento.Domain.Events.HostDeregistrationRequested](Trento.Domain.Events.HostDeregistrationRequested.md):   This event is emitted when a deregistration (decommission) of a host is requested.
+
+  - [Trento.Domain.Events.HostDetailsUpdated](Trento.Domain.Events.HostDetailsUpdated.md): This event is emitted when host details are updated.
+
+  - [Trento.Domain.Events.HostHealthChanged](Trento.Domain.Events.HostHealthChanged.md): This event is emitted when the health of a host changes because of
+- an heartbeat failure/recovery
+- a check's execution result
+
+  - [Trento.Domain.Events.HostRegistered](Trento.Domain.Events.HostRegistered.md): This event is emitted when a host is registered.
+
+  - [Trento.Domain.Events.HostRemovedFromCluster](Trento.Domain.Events.HostRemovedFromCluster.md): This event is emitted when a host is removed from a cluster.
+
+  - [Trento.Domain.Events.HostRestored](Trento.Domain.Events.HostRestored.md): This event is emitted when a host is restored from a deregistered state
+
+  - [Trento.Domain.Events.HostRollUpRequested](Trento.Domain.Events.HostRollUpRequested.md): This event is emitted when an host roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the host aggregate.
+
+  - [Trento.Domain.Events.HostRolledUp](Trento.Domain.Events.HostRolledUp.md): This event is emitted when an host is rolled up and its stream is archived.
+It contains the snapshot of the host aggregate that will be used to restore the aggregate state.
+
+  - [Trento.Domain.Events.HostSaptuneHealthChanged](Trento.Domain.Events.HostSaptuneHealthChanged.md): This event is emitted when a host's saptune health changes.
+
+  - [Trento.Domain.Events.HostTombstoned](Trento.Domain.Events.HostTombstoned.md):   This event is emitted after a successful host deregistration, to tombstone and stop the host aggregate
+
+  - [Trento.Domain.Events.ProviderUpdated](Trento.Domain.Events.ProviderUpdated.md): This event is emitted when a provider data is updated in a specific host.
+
+  - [Trento.Domain.Events.SapSystemDeregistered](Trento.Domain.Events.SapSystemDeregistered.md): This event is emitted when a SAP system is deregistered (decommissioned).
+
+  - [Trento.Domain.Events.SapSystemHealthChanged](Trento.Domain.Events.SapSystemHealthChanged.md): This event is emitted when the SAP System health has changed.
+
+  - [Trento.Domain.Events.SapSystemRegistered](Trento.Domain.Events.SapSystemRegistered.md): This event is emitted when a sap system is registered.
+
+  - [Trento.Domain.Events.SapSystemRestored](Trento.Domain.Events.SapSystemRestored.md): This event is emitted when a sap system is restored.
+
+  - [Trento.Domain.Events.SapSystemRollUpRequested](Trento.Domain.Events.SapSystemRollUpRequested.md): This event is emitted when an sap system roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
+
+  - [Trento.Domain.Events.SapSystemRolledUp](Trento.Domain.Events.SapSystemRolledUp.md): This event is emitted when a sap system roll-up is requested.
+It is used to trigger the stream archiving process and it contains the snapshot of the sap system aggregate.
+
+  - [Trento.Domain.Events.SapSystemTombstoned](Trento.Domain.Events.SapSystemTombstoned.md): This event is emitted when a SAP system is deregistered (decommissioned)
+
+  - [Trento.Domain.Events.SapSystemUpdated](Trento.Domain.Events.SapSystemUpdated.md): This event is emitted when some of the fields in the SAP system are updated
+
+  - [Trento.Domain.Events.SaptuneStatusUpdated](Trento.Domain.Events.SaptuneStatusUpdated.md): This event is emitted when saptune status is updated in a specific host.
+
+  - [Trento.Domain.Events.SlesSubscriptionsUpdated](Trento.Domain.Events.SlesSubscriptionsUpdated.md): Subscriptions updated event
+
+## Mix Tasks
+
+- [mix clear_alerting_settings](Mix.Tasks.ClearAlertingSettings.md): Delete the record for alerting settings from the DB.
+- [mix dump_scenario](Mix.Tasks.DumpScenario.md): Dump the current discovery scenario and
+  discarded discovery events.
+- [mix prune_events](Mix.Tasks.PruneEvents.md): Delete events older than X days.
+- [mix version](Mix.Tasks.Version.md): Print application version.
+
