@@ -387,4 +387,7 @@ if config_env() in [:prod, :demo] do
         }
       ]
   end
+
+  config :trento, :ai,
+    base_system_prompt: Application.app_dir(:trento, "priv/ai/BASE_SYSTEM_PROMPT.md")
 end

@@ -290,6 +290,7 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 
 config :trento, :ai,
   enabled: true,
+  base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
   providers: [
     googleai: [
       models: [
