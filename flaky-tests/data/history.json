@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-21T03:59:19Z",
-    "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
-    "run_id": "24702847600",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-21T04:11:58Z",
     "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
     "run_id": "24703130333",
@@ -6592,6 +6572,26 @@
       {
         "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T19:43:20Z",
+    "commit": "820e5898b6f6b38e97f37c5f5577e9a6cc002ba5",
+    "run_id": "26974559100",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.02501
       }
     ]
   }
