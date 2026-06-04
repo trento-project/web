@@ -22,7 +22,7 @@
     "@cypress/webpack-preprocessor": "^7.1.0",
     "date-fns": "^4.1.0",
     "lodash": "^4.18.1",
-    "npm": "^11.13.0",
+    "npm": "^11.14.1",
     "semver": "^7.8.1",
     "totp-generator": "^2.0.1"
   }
