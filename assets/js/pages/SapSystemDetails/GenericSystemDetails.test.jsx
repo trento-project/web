@@ -133,7 +133,6 @@ describe('GenericSystemDetails', () => {
     const { getByTestId } = within(header);
     expect(getByTestId('eos-svg-component')).toBeInTheDocument();
 
-    expect(screen.getByText('Application server')).toBeTruthy();
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
     expect(screen.queryByText('System Replication')).not.toBeInTheDocument();
@@ -168,6 +167,66 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
+  });
+
+  it.each([
+    {
+      type: 'ABAP',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'ABAP+JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+  ])('should render proper $type SAP system type', ({ type, system }) => {
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={system}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(type);
+  });
+
+  it('should render proper HANA database type', () => {
+    const database = databaseFactory.build({
+      instances: databaseInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(
+      'HANA Database'
+    );
   });
 
   it.each([

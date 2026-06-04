@@ -3,9 +3,9 @@
 
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
-import { filter, uniq, flatMap } from 'lodash';
+import { filter } from 'lodash';
 
-import { getEnsaVersionLabel } from '@lib/model/sapSystems';
+import { getEnsaVersionLabel, getSapSystemType } from '@lib/model/sapSystems';
 
 import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
@@ -82,14 +82,8 @@ function SapSystemsOverview({
       {
         title: 'Type',
         key: 'applicationInstances',
-        render: (content) =>
-          uniq(flatMap(content, ({ features }) => features.split('|')))
-            .filter((item) => item === 'J2EE' || item === 'ABAP')
-            .map((item) => (item === 'J2EE' ? 'JAVA' : item))
-            .toSorted()
-            .join('+'),
+        render: (content) => getSapSystemType(content),
       },
-
       {
         title: 'DB Address',
         key: 'dbAddress',

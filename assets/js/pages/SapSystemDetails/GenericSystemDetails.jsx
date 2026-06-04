@@ -42,6 +42,7 @@ import {
   APPLICATION_TYPE,
   DATABASE_TYPE,
   getEnsaVersionLabel,
+  getSapSystemType,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 
@@ -67,8 +68,8 @@ import {
 
 const SR_INACTIVE = 'INACTIVE';
 
-const renderType = (t) =>
-  t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
+const renderType = (t, system) =>
+  t === APPLICATION_TYPE ? getSapSystemType(system.instances) : 'HANA Database';
 
 const getUniqueHosts = (hosts) =>
   Array.from(
@@ -310,7 +311,8 @@ export function GenericSystemDetails({
             { title: 'Name', content: system.sid },
             {
               title: 'Type',
-              content: renderType(type),
+              content: type,
+              render: (content) => renderType(content, system),
             },
             ...(type === APPLICATION_TYPE
               ? [
