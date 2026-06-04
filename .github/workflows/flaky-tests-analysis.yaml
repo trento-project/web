@@ -264,7 +264,7 @@ jobs:
           copy_artifacts "${{ steps.analyze.outputs.failed-reports-dir }}" "${{ inputs.junit-artifact-pattern }}" "junit"
           copy_artifacts "${{ steps.download-screenshots.outputs.download-path }}" "${{ inputs.screenshot-artifact-pattern }}" "screenshots"
 
-          if find "$BUNDLE_DIR" -mindepth 2 -type f | grep -q .; then
+          if [ -n "$(find "$BUNDLE_DIR" -mindepth 2 -type f -print -quit)" ]; then
             echo "bundle-dir=$BUNDLE_DIR" >> "$GITHUB_OUTPUT"
             echo "artifact-name=evidence-${WORKFLOW_SLUG}-${SUITE_SLUG}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
           else
