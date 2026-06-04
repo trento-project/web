@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
           %{
             application_instances: application_instances,
             database_instances: database_instances,
-            database: %{sid: database_sid}
+            database: %{sid: database_sid, health: database_health}
           } = sap_system
       }) do
     rendered_application_instances =
@@ -43,10 +43,8 @@ defmodule TrentoWeb.V1.SapSystemJSON do
       :database_instances,
       rendered_database_instances
     )
-    |> Map.put(
-      :database_sid,
-      database_sid
-    )
+    |> Map.put(:database_sid, database_sid)
+    |> Map.put(:database_health, database_health)
     |> Map.put(
       :application_instances,
       rendered_application_instances

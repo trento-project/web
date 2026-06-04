@@ -175,6 +175,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             example: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8"
           },
           database_sid: %Schema{type: :string, description: "Database SID.", example: "HA1"},
+          database_health: ResourceHealth,
           database_instances: Database.DatabaseInstances,
           tags: Tags,
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
