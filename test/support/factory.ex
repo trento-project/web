@@ -29,6 +29,7 @@ defmodule Trento.Factory do
     ClusterResource,
     ClusterResourceParent,
     HanaClusterDetails,
+    HanaClusterHealthDetails,
     HanaClusterNode,
     HanaClusterSite,
     SapInstance,
@@ -275,7 +276,6 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
-      discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0)),
       state: :S_IDLE
@@ -329,6 +329,9 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
+      health_details: %HanaClusterHealthDetails{
+        replication_health: Health.passing()
+      },
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
     }
@@ -714,7 +717,7 @@ defmodule Trento.Factory do
   def ascs_ers_cluster_node_factory do
     %AscsErsClusterNode{
       name: Faker.Pokemon.name(),
-      roles: [Enum.random(["ascs", "ers"])],
+      roles: [Enum.random([:ascs, :ers])],
       virtual_ips: [Faker.Internet.ip_v4_address()],
       filesystems: [Faker.File.file_name()],
       status: "Online",

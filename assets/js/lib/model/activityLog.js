@@ -75,7 +75,11 @@ export const CLUSTER_CHECKS_HEALTH_CHANGED = 'cluster_checks_health_changed';
 export const CLUSTER_DEREGISTERED = 'cluster_deregistered';
 export const CLUSTER_DETAILS_UPDATED = 'cluster_details_updated';
 export const CLUSTER_DISCOVERED_HEALTH_CHANGED =
-  'cluster_discovered_health_changed';
+  'cluster_discovered_health_changed'; // deprecated
+export const CLUSTER_REPLICATION_HEALTH_CHANGED =
+  'cluster_replication_health_changed';
+export const CLUSTER_DISTRIBUTED_HEALTH_CHANGED =
+  'cluster_distributed_health_changed';
 export const CLUSTER_HEALTH_CHANGED = 'cluster_health_changed';
 export const CLUSTER_REGISTERED = 'cluster_registered';
 export const CLUSTER_RESTORED = 'cluster_restored';
@@ -462,6 +466,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [CLUSTER_DISCOVERED_HEALTH_CHANGED]: {
     label: 'Cluster Discovered Health Changed',
     message: (_entry) => `Cluster's discovered health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_REPLICATION_HEALTH_CHANGED]: {
+    label: 'Cluster Replication Health Changed',
+    message: (_entry) => `Cluster's replication health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DISTRIBUTED_HEALTH_CHANGED]: {
+    label: 'Cluster Distributed Health Changed',
+    message: (_entry) => `Cluster's ASCS/ERS nodes distribution health changed`,
     resource: clusterResourceType,
   },
   [CLUSTER_HEALTH_CHANGED]: {

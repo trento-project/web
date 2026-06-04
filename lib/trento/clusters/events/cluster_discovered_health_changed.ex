@@ -4,6 +4,8 @@
 defmodule Trento.Clusters.Events.ClusterDiscoveredHealthChanged do
   @moduledoc """
   This event is emitted when the discovered health of a cluster changes.
+
+  This event is deprecated in favor of specific health change events.
   """
 
   use Trento.Support.Event

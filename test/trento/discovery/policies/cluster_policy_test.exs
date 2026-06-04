@@ -437,7 +437,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -850,7 +849,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -1180,7 +1178,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -1500,7 +1497,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 9,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -1820,7 +1816,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 9,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -1905,7 +1900,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :unknown,
                 hosts_number: 2,
                 resources_number: 5,
-                discovered_health: :unknown,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -2494,7 +2488,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :ascs_ers,
                 hosts_number: 2,
                 resources_number: 17,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -2769,7 +2762,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   end
 
   describe "ascs/ers clusters health" do
-    test "should set the health to critical when one of the nodes is unclean" do
+    test "should set SAP system distributed to false when a node in unclean" do
       assert {:ok,
               [
                 %RegisterOnlineClusterHost{
@@ -2780,8 +2773,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         distributed: false
                       }
                     ]
-                  },
-                  discovered_health: :critical
+                  }
                 }
               ]} =
                "ha_cluster_discovery_ascs_ers"
@@ -2793,7 +2785,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
 
-    test "should set the health to critical when the SAPInstance resource is Stopped" do
+    test "should set SAP system distributed to false when the SAPInstance resource is Stopped" do
       group_1_resources =
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ASCS00",
@@ -2820,8 +2812,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         distributed: false
                       }
                     ]
-                  },
-                  discovered_health: :critical
+                  }
                 }
               ]} =
                "ha_cluster_discovery_ascs_ers"
@@ -2833,7 +2824,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
 
-    test "should set the health to critical when the SAPInstance resource is running the same node" do
+    test "should set SAP system distributed to false when the SAPInstance resource is running the same node" do
       group_1_resources =
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ASCS00",
@@ -2858,8 +2849,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         distributed: false
                       }
                     ]
-                  },
-                  discovered_health: :critical
+                  }
                 }
               ]} =
                "ha_cluster_discovery_ascs_ers"
@@ -2871,7 +2861,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
 
-    test "should set the health to critical when the SAPInstance is on failed state" do
+    test "should set SAP system distributed to false when the SAPInstance is on failed state" do
       group_1_resources =
         build_list(1, :crm_resource, %{
           "Id" => "rsc_sap_NWP_ASCS00",
@@ -2898,8 +2888,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         distributed: false
                       }
                     ]
-                  },
-                  discovered_health: :critical
+                  }
                 }
               ]} =
                "ha_cluster_discovery_ascs_ers"
@@ -3159,7 +3148,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ]
                 },
-                discovered_health: :passing,
                 host_id: "a3279fd0-0443-1234-9354-2d7909fd6bc6",
                 hosts_number: 2,
                 name: "hana_cluster",
@@ -3491,7 +3479,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ]
                 },
-                discovered_health: :critical,
                 host_id: "1dc79771-0a96-1234-b5b6-cd4d0aef6acc",
                 hosts_number: 2,
                 name: "hana_cluster",
@@ -3918,7 +3905,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -4157,7 +4143,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                 type: :hana_scale_up,
                 hosts_number: 2,
                 resources_number: 8,
-                discovered_health: :passing,
                 provider: Provider.azure(),
                 state: :S_IDLE
               }
@@ -4213,7 +4198,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   designated_controller: true,
                   resources_number: 15,
                   hosts_number: 6,
-                  discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
                     architecture_type: HanaArchitectureType.classic(),
@@ -4773,7 +4757,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   designated_controller: false,
                   resources_number: 13,
                   hosts_number: 5,
-                  discovered_health: :passing,
                   cib_last_written: "Tue Jan 23 12:49:07 2024",
                   details: %HanaClusterDetails{
                     architecture_type: HanaArchitectureType.classic(),
@@ -5266,7 +5249,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   designated_controller: true,
                   resources_number: 15,
                   hosts_number: 6,
-                  discovered_health: :passing,
                   cib_last_written: "Thu Feb 23 15:59:56 2023",
                   details: %HanaClusterDetails{
                     architecture_type: HanaArchitectureType.classic(),
@@ -6389,7 +6371,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       }
                     ]
                   },
-                  discovered_health: :passing,
                   host_id: "6eabc497-6067-4de9-b583-e4c63334ff64",
                   hosts_number: 5,
                   name: "hacluster",
@@ -6668,7 +6649,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        }
                      ]
                    },
-                   discovered_health: :passing,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                    hosts_number: 2,
                    name: "hana_cluster",
@@ -6911,7 +6891,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        }
                      ]
                    },
-                   discovered_health: :critical,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                    hosts_number: 2,
                    name: "hana_cluster",
@@ -6947,7 +6926,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                    cluster_id: "34a94290-2236-5e4d-8def-05beb32d14d4",
                    designated_controller: true,
                    details: nil,
-                   discovered_health: :unknown,
                    host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
                    hosts_number: 2,
                    name: "hana_cluster",
