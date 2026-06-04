@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-04-21T04:11:58Z",
-    "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
-    "run_id": "24703130333",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as false",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-21T04:12:42Z",
     "commit": "40ee410fd78efc136289b345a934a765ef278eb0",
     "run_id": "24703130333",
@@ -6592,6 +6560,22 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-04T19:44:29Z",
+    "commit": "820e5898b6f6b38e97f37c5f5577e9a6cc002ba5",
+    "run_id": "26974559100",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 1
       }
     ]
   }
