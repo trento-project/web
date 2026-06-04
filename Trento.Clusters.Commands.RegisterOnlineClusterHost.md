@@ -11,7 +11,6 @@ Register a cluster node to the monitoring system.
   cluster_id: term(),
   designated_controller: term(),
   details: term(),
-  discovered_health: term(),
   host_id: term(),
   hosts_number: term(),
   name: term(),

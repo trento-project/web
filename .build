@@ -56,9 +56,11 @@ Trento.Clusters.Events.ClusterChecksHealthChanged.html
 Trento.Clusters.Events.ClusterDeregistered.html
 Trento.Clusters.Events.ClusterDetailsUpdated.html
 Trento.Clusters.Events.ClusterDiscoveredHealthChanged.html
+Trento.Clusters.Events.ClusterDistributedHealthChanged.html
 Trento.Clusters.Events.ClusterHealthChanged.html
 Trento.Clusters.Events.ClusterHostStatusChanged.html
 Trento.Clusters.Events.ClusterRegistered.html
+Trento.Clusters.Events.ClusterReplicationHealthChanged.html
 Trento.Clusters.Events.ClusterRestored.html
 Trento.Clusters.Events.ClusterRollUpRequested.html
 Trento.Clusters.Events.ClusterRolledUp.html
@@ -70,12 +72,14 @@ Trento.Clusters.Policy.html
 Trento.Clusters.Projections.ClusterProjector.html
 Trento.Clusters.Projections.ClusterReadModel.html
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.html
+Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails.html
 Trento.Clusters.ValueObjects.AscsErsClusterNode.html
 Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.html
 Trento.Clusters.ValueObjects.CheckResult.html
 Trento.Clusters.ValueObjects.ClusterResource.html
 Trento.Clusters.ValueObjects.ClusterResourceParent.html
 Trento.Clusters.ValueObjects.HanaClusterDetails.html
+Trento.Clusters.ValueObjects.HanaClusterHealthDetails.html
 Trento.Clusters.ValueObjects.HanaClusterNode.html
 Trento.Clusters.ValueObjects.HanaClusterSite.html
 Trento.Clusters.ValueObjects.HostExecution.html
@@ -554,7 +558,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-266EACBF.js
-dist/sidebar_items-FA90AF1A.js
+dist/search_data-4E852006.js
+dist/sidebar_items-D09C8134.js
 index.html
 search.html

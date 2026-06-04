@@ -55,9 +55,11 @@ Trento.Clusters.Events.ClusterChecksHealthChanged.md
 Trento.Clusters.Events.ClusterDeregistered.md
 Trento.Clusters.Events.ClusterDetailsUpdated.md
 Trento.Clusters.Events.ClusterDiscoveredHealthChanged.md
+Trento.Clusters.Events.ClusterDistributedHealthChanged.md
 Trento.Clusters.Events.ClusterHealthChanged.md
 Trento.Clusters.Events.ClusterHostStatusChanged.md
 Trento.Clusters.Events.ClusterRegistered.md
+Trento.Clusters.Events.ClusterReplicationHealthChanged.md
 Trento.Clusters.Events.ClusterRestored.md
 Trento.Clusters.Events.ClusterRollUpRequested.md
 Trento.Clusters.Events.ClusterRolledUp.md
@@ -69,12 +71,14 @@ Trento.Clusters.Policy.md
 Trento.Clusters.Projections.ClusterProjector.md
 Trento.Clusters.Projections.ClusterReadModel.md
 Trento.Clusters.ValueObjects.AscsErsClusterDetails.md
+Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails.md
 Trento.Clusters.ValueObjects.AscsErsClusterNode.md
 Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.md
 Trento.Clusters.ValueObjects.CheckResult.md
 Trento.Clusters.ValueObjects.ClusterResource.md
 Trento.Clusters.ValueObjects.ClusterResourceParent.md
 Trento.Clusters.ValueObjects.HanaClusterDetails.md
+Trento.Clusters.ValueObjects.HanaClusterHealthDetails.md
 Trento.Clusters.ValueObjects.HanaClusterNode.md
 Trento.Clusters.ValueObjects.HanaClusterSite.md
 Trento.Clusters.ValueObjects.HostExecution.md

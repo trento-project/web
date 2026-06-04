@@ -10,6 +10,7 @@ This event is emitted when a cluster is registered.
   cluster_id: term(),
   details: term(),
   health: term(),
+  health_details: term(),
   hosts_number: term(),
   name: term(),
   provider: term(),

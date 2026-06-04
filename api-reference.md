@@ -269,12 +269,17 @@ https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa
   - [Trento.Clusters.Events.ClusterDetailsUpdated](Trento.Clusters.Events.ClusterDetailsUpdated.md): This event is emitted when cluster details are updated.
 
   - [Trento.Clusters.Events.ClusterDiscoveredHealthChanged](Trento.Clusters.Events.ClusterDiscoveredHealthChanged.md): This event is emitted when the discovered health of a cluster changes.
+  - [Trento.Clusters.Events.ClusterDistributedHealthChanged](Trento.Clusters.Events.ClusterDistributedHealthChanged.md): This event is emitted when the distribution of ASCS/ERS nodes in a cluster changes.
+Only applicable for ASCS/ERS clusters.
 
   - [Trento.Clusters.Events.ClusterHealthChanged](Trento.Clusters.Events.ClusterHealthChanged.md): ClusterHealthChanged event
 
   - [Trento.Clusters.Events.ClusterHostStatusChanged](Trento.Clusters.Events.ClusterHostStatusChanged.md): When a host's cluster status changes, from online to offline or vice versa,
 
   - [Trento.Clusters.Events.ClusterRegistered](Trento.Clusters.Events.ClusterRegistered.md): This event is emitted when a cluster is registered.
+
+  - [Trento.Clusters.Events.ClusterReplicationHealthChanged](Trento.Clusters.Events.ClusterReplicationHealthChanged.md): This event is emitted when the replication health of a cluster changes.
+Only applicable for HANA clusters.
 
   - [Trento.Clusters.Events.ClusterRestored](Trento.Clusters.Events.ClusterRestored.md): This event is emitted after a cluster is restored from a deregistered state
 
@@ -296,6 +301,7 @@ It contains the snapshot of the cluster aggregate that will be used to restore t
 
   - [Trento.Clusters.ValueObjects.AscsErsClusterDetails](Trento.Clusters.ValueObjects.AscsErsClusterDetails.md): Represents the details of a ASCS/ERS cluster.
 
+  - [Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails](Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails.md): ASCS/ERS cluster health details.
   - [Trento.Clusters.ValueObjects.AscsErsClusterNode](Trento.Clusters.ValueObjects.AscsErsClusterNode.md): Represents the node of a ASCS/ERS cluster.
 
   - [Trento.Clusters.ValueObjects.AscsErsClusterSapSystem](Trento.Clusters.ValueObjects.AscsErsClusterSapSystem.md): Represents ASCS/ERS cluster SAP system.
@@ -307,6 +313,7 @@ It contains the snapshot of the cluster aggregate that will be used to restore t
   - [Trento.Clusters.ValueObjects.ClusterResourceParent](Trento.Clusters.ValueObjects.ClusterResourceParent.md): Represents the parent of a cluster resource
   - [Trento.Clusters.ValueObjects.HanaClusterDetails](Trento.Clusters.ValueObjects.HanaClusterDetails.md): Represents the details of a HANA cluster.
 
+  - [Trento.Clusters.ValueObjects.HanaClusterHealthDetails](Trento.Clusters.ValueObjects.HanaClusterHealthDetails.md): Hana cluster health details.
   - [Trento.Clusters.ValueObjects.HanaClusterNode](Trento.Clusters.ValueObjects.HanaClusterNode.md): Represents the node of a HANA cluster.
 
   - [Trento.Clusters.ValueObjects.HanaClusterSite](Trento.Clusters.ValueObjects.HanaClusterSite.md): Represents the details of a HANA site.

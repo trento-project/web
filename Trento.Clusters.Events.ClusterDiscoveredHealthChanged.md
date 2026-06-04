@@ -3,6 +3,8 @@
 
 This event is emitted when the discovered health of a cluster changes.
 
+This event is deprecated in favor of specific health change events.
+
 # `t`
 
 ```elixir
