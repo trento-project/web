@@ -12,7 +12,11 @@ export const selectedSystem = {
   Id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
   Health: 'fill-jungle-green-500',
   Sid: 'NWD',
-  Type: 'Application server',
+  Type: 'ABAP',
+  EnsaVersion: 'ENSA1',
+  Database: 'HDD',
+  DatabaseHealth: 'fill-jungle-green-500',
+  DatabaseTenant: 'HDD',
   Hosts: [
     {
       Hostname: 'sapnwdas',
