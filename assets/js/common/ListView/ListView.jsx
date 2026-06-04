@@ -21,12 +21,13 @@ function ListView({
       {data.map(
         ({
           title,
+          key,
           content,
           className: contentClassName = '',
           render = (component) => <span>{component}</span>,
         }) => (
           <div
-            key={title}
+            key={key || title}
             className={
               orientation === 'vertical'
                 ? 'grid grid-flow-row'

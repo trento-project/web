@@ -110,9 +110,9 @@ describe('GenericSystemDetails', () => {
     const sapSystem = sapSystemFactory.build({
       ensa_version: 'ensa1',
       instances: sapSystemApplicationInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+      database_health: 'passing',
     });
-
-    sapSystem.hosts = hostFactory.buildList(5);
 
     const { sid, application_instances: applicationInstances } = sapSystem;
     const { features } = applicationInstances[0];
@@ -139,6 +139,18 @@ describe('GenericSystemDetails', () => {
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
+    const databaseLink = screen.getByText('Database').nextSibling.firstChild;
+    expect(databaseLink).toHaveTextContent(sapSystem.database_sid);
+    expect(databaseLink).toHaveAttribute(
+      'href',
+      `/databases/${sapSystem.database_id}`
+    );
+    expect(
+      screen.getByText('Database health').nextSibling.firstChild
+    ).toHaveClass('fill-jungle-green-500');
+    expect(screen.getByText('Tenant').nextSibling).toHaveTextContent(
+      sapSystem.tenant
+    );
   });
 
   it('should render a not found label if system is not there', () => {
@@ -382,8 +394,14 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
-    const [_mainHealth, _sapSystemIcon, health, _cleanUpIcon] =
-      screen.getAllByTestId('eos-svg-component');
+    const [
+      _mainHealth,
+      _sapSystemIcon,
+      _databaseHealth,
+      _databaseIcon,
+      health,
+      _cleanUpIcon,
+    ] = screen.getAllByTestId('eos-svg-component');
     expect(health).toHaveClass('fill-black');
   });
 
