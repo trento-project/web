@@ -10,6 +10,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   import Trento.Factory
 
+  require Trento.Enums.Health, as: Health
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.SapSystems.Projections.{
@@ -24,6 +25,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
+    SapSystemDatabaseHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRestored,
@@ -47,7 +49,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
-    %{id: database_id, sid: database_sid} = insert(:database)
+    %{id: database_id, sid: database_sid, health: database_health} = insert(:database)
     event = build(:sap_system_registered_event, database_id: database_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -78,7 +80,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         tenant: ^tenant,
         ensa_version: ^ensa_version,
         database_id: ^database_id,
-        database_sid: ^database_sid
+        database_sid: ^database_sid,
+        database_health: ^database_health
       },
       1000
     )
@@ -436,6 +439,26 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       %{
         id: ^id,
         ensa_version: ^ensa_version
+      },
+      1000
+    )
+  end
+
+  test "should broadcast database health change when a SapSystemDatabaseHealthChanged event is received" do
+    sap_system_id = Faker.UUID.v4()
+
+    event = %SapSystemDatabaseHealthChanged{
+      sap_system_id: sap_system_id,
+      database_health: Health.critical()
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    assert_broadcast(
+      "sap_system_updated",
+      %{
+        id: ^sap_system_id,
+        database_health: Health.critical()
       },
       1000
     )

@@ -18,6 +18,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    SapSystemDatabaseHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -266,6 +267,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     end
   )
 
+  # Do nothing in the projection.
+  # This event is only here to broadcast the new health in the after_update
+  project(
+    %SapSystemDatabaseHealthChanged{},
+    fn multi -> multi end
+  )
+
   @sap_systems_topic "monitoring:sap_systems"
 
   @impl true
@@ -488,6 +496,25 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       @sap_systems_topic,
       "sap_system_updated",
       SapSystemJSON.sap_system_updated(%{id: sap_system_id, ensa_version: ensa_version})
+    )
+  end
+
+  @impl true
+  def after_update(
+        %SapSystemDatabaseHealthChanged{
+          sap_system_id: sap_system_id,
+          database_health: database_health
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_updated",
+      SapSystemJSON.sap_system_database_health_changed(%{
+        id: sap_system_id,
+        database_health: database_health
+      })
     )
   end
 
