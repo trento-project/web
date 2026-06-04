@@ -189,7 +189,7 @@ defmodule Trento.Clusters.Cluster do
           designated_controller: true
         }
       ) do
-    health_details = parse_discovered_health(details)
+    health_details = derive_discovered_health(details)
     health = compute_discovered_health(health_details)
 
     [
@@ -728,40 +728,43 @@ defmodule Trento.Clusters.Cluster do
 
   def apply(%Cluster{} = cluster, %ClusterTombstoned{}), do: cluster
 
-  defp parse_discovered_health(%HanaClusterDetails{} = details) do
+  defp derive_discovered_health(%HanaClusterDetails{} = details) do
     %HanaClusterHealthDetails{
-      replication_health: parse_replication_health(details)
+      replication_health: derive_replication_health(details)
     }
   end
 
-  defp parse_discovered_health(%AscsErsClusterDetails{} = details) do
+  defp derive_discovered_health(%AscsErsClusterDetails{} = details) do
     %AscsErsClusterHealthDetails{
-      distributed_health: parse_distributed_health(details)
+      distributed_health: derive_distributed_health(details)
     }
   end
 
-  defp parse_discovered_health(_), do: nil
+  defp derive_discovered_health(_), do: nil
 
   # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
   # If data is not present for some reason the state goes to unknown
-  defp parse_replication_health(%HanaClusterDetails{
+  defp derive_replication_health(%HanaClusterDetails{
          sr_health_state: "4",
          secondary_sync_state: "SOK"
        }),
        do: Health.passing()
 
-  defp parse_replication_health(%HanaClusterDetails{sr_health_state: _, secondary_sync_state: _}),
-    do: Health.critical()
+  defp derive_replication_health(%HanaClusterDetails{
+         sr_health_state: _,
+         secondary_sync_state: _
+       }),
+       do: Health.critical()
 
-  defp parse_replication_health(_), do: Health.unknown()
+  defp derive_replication_health(_), do: Health.unknown()
 
-  defp parse_distributed_health(%AscsErsClusterDetails{sap_systems: sap_systems}) do
+  defp derive_distributed_health(%AscsErsClusterDetails{sap_systems: sap_systems}) do
     Enum.find_value(sap_systems, Health.passing(), fn %{distributed: distributed} ->
       if not distributed, do: Health.critical()
     end)
   end
 
-  defp parse_distributed_health(_), do: Health.unknown()
+  defp derive_distributed_health(_), do: Health.unknown()
 
   defp compute_discovered_health(%HanaClusterHealthDetails{
          replication_health: replication_health
@@ -811,7 +814,7 @@ defmodule Trento.Clusters.Cluster do
          multi,
          %RegisterOnlineClusterHost{host_id: host_id, details: details} = command
        ) do
-    health_details = parse_discovered_health(details)
+    health_details = derive_discovered_health(details)
 
     multi
     |> Multi.execute(fn cluster ->
