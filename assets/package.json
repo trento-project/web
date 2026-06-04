@@ -88,7 +88,7 @@
     "remark-gfm": "^4.0.1",
     "rxjs": "^7.8.1",
     "semver": "^7.7.4",
-    "tzdata": "^1.0.48",
+    "tzdata": "^1.0.49",
     "uuid": "^11.1.0"
   },
   "overrides": {
