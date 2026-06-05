@@ -42,7 +42,7 @@ defmodule TrentoWeb.AI.McpRouteIndex do
         function_exported?(controller, :open_api_operation, 1),
         operation = OpenApiSpex.Operation.from_route(route),
         is_struct(operation, OpenApiSpex.Operation),
-        "MCP" in operation.tags,
+        "MCP" in (operation.tags || []),
         do: {route, operation}
   end
 
