@@ -5,6 +5,7 @@ defmodule TrentoWeb.V1.PrometheusController do
   use TrentoWeb, :controller
 
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Infrastructure.Prometheus
 
@@ -24,6 +25,8 @@ defmodule TrentoWeb.V1.PrometheusController do
         {"Comprehensive list of Prometheus exporter targets in Http Discovery format for infrastructure monitoring and integration.",
          "application/json", Schema.HttpStd.TargetList}
     ]
+
+  ai_tool :prometheus_targets, display_text: "List Prometheus targets"
 
   def targets(conn, _) do
     targets = Prometheus.get_targets()
@@ -54,6 +57,9 @@ defmodule TrentoWeb.V1.PrometheusController do
          "application/json", Schema.Prometheus.ExporterStatus},
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :prometheus_exporters_status,
+    display_text: "Get Prometheus exporters status for a host"
 
   def exporters_status(conn, %{"id" => host_id}) do
     with {:ok, exporters_status} <- Prometheus.get_exporters_status(host_id) do

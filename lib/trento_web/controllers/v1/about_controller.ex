@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.AboutController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Hosts
 
@@ -21,6 +22,8 @@ defmodule TrentoWeb.V1.AboutController do
         {"General information about the platform installation, including version and subscription details.",
          "application/json", Schema.Platform.GeneralInformation}
     ]
+
+  ai_tool :about_info, display_text: "Get platform info"
 
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
