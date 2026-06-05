@@ -7,7 +7,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
   - `join/3` — happy path + auth rejections
   - `handle_in/3` for `send_message` payload contract + `new_thread`
-  - `handle_info/2` translation of `{:agent, …}` PubSub events into AG-UI
+  - `handle_info/2` translation of `{:agent, ...}` PubSub events into AG-UI
     wire events (the bug-prone surface)
 
   The `handle_info` tests use `:sys.replace_state/2` as a test-only
