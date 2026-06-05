@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.HealthOverviewController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.SapSystems.Services.HealthSummaryService
 
@@ -20,6 +21,8 @@ defmodule TrentoWeb.V1.HealthOverviewController do
          "application/json", Schema.SAPSystem.HealthOverview}
     ]
   )
+
+  ai_tool :health_overview, display_text: "Health overview"
 
   @spec overview(Plug.Conn.t(), any) :: Plug.Conn.t()
   def overview(conn, _) do

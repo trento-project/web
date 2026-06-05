@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.HostController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Repo
 
@@ -64,6 +65,8 @@ defmodule TrentoWeb.V1.HostController do
         {"Comprehensive list of all hosts discovered on the target infrastructure for monitoring and management.",
          "application/json", Schema.Host.HostsCollection}
     ]
+
+  ai_tool :host_list, display_text: "List hosts"
 
   @spec list(Plug.Conn.t(), map) :: Plug.Conn.t()
   def list(conn, _) do
@@ -195,6 +198,9 @@ defmodule TrentoWeb.V1.HostController do
       not_found: NotFound.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
+
+  ai_tool :request_host_checks_execution,
+    display_text: "Request checks execution for a host"
 
   def request_checks_execution(conn, %{id: host_id}) do
     with :ok <- Hosts.request_checks_execution(host_id) do
@@ -336,6 +342,8 @@ defmodule TrentoWeb.V1.HostController do
          Schema.Prometheus.QueryResponse},
       unprocessable_entity: UnprocessableEntity.response()
     ]
+
+  ai_tool :query_host_metrics, display_text: "Query Prometheus metrics for a host"
 
   def query_metrics(conn, %{id: host_id, query: query} = params) do
     result =

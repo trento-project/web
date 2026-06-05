@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.ProfileController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias OpenApiSpex.Operation
 
@@ -30,6 +31,8 @@ defmodule TrentoWeb.V1.ProfileController do
         {"Profile information of the currently authenticated user, supporting account management and personalization features.",
          "application/json", Schema.User.UserProfile}
     ]
+
+  ai_tool :profile_show, display_text: "Get current user profile"
 
   def show(conn, _) do
     %User{} = user = Pow.Plug.current_user(conn)

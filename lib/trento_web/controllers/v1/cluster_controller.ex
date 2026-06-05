@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Clusters
 
@@ -95,6 +96,9 @@ defmodule TrentoWeb.V1.ClusterController do
       bad_request: BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
+
+  ai_tool :request_cluster_checks_execution,
+    display_text: "Request checks execution for a cluster"
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
     with :ok <- Clusters.request_checks_execution(cluster_id) do

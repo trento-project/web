@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.ActivityLogController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.ActivityLog
   alias Trento.ActivityLog.Policy
@@ -57,14 +58,22 @@ defmodule TrentoWeb.V1.ActivityLogController do
         in: :query,
         description:
           "Filters Activity Log entries to include only those occurring on or after the specified start date, supporting time-based queries.",
-        schema: %OpenApiSpex.Schema{type: :string, example: "2024-01-01T00:00:00Z"},
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-01T00:00:00Z"
+        },
         required: false
       ],
       to_date: [
         in: :query,
         description:
           "Filters Activity Log entries to include only those occurring on or before the specified end date, useful for defining a time range.",
-        schema: %OpenApiSpex.Schema{type: :string, example: "2024-01-31T23:59:59Z"},
+        schema: %OpenApiSpex.Schema{
+          type: :string,
+          format: :"date-time",
+          example: "2024-01-31T23:59:59Z"
+        },
         required: false
       ],
       actor: [
@@ -110,7 +119,10 @@ defmodule TrentoWeb.V1.ActivityLogController do
           "Filters Activity Log entries by severity level, allowing users to prioritize or review events based on their importance or impact.",
         schema: %OpenApiSpex.Schema{
           type: :array,
-          items: %OpenApiSpex.Schema{type: :string},
+          items: %OpenApiSpex.Schema{
+            type: :string,
+            enum: ["debug", "info", "warning", "critical"]
+          },
           default: ["debug", "info", "warning", "critical"]
         },
         explode: true,
@@ -122,6 +134,8 @@ defmodule TrentoWeb.V1.ActivityLogController do
         {"Comprehensive list of activity log entries retrieved for monitoring system events, user actions, and platform changes.",
          "application/json", Schema.ActivityLog.ActivityLog}
     ]
+
+  ai_tool :get_activity_log, display_text: "Get activity log"
 
   def get_activity_log(conn, params) do
     user = Pow.Plug.current_user(conn)
