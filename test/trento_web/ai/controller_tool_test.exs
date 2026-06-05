@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.AI.ControllerToolTest do
+  alias TrentoWeb.V1.ClusterController
   use Trento.DataCase
 
   import Mox
@@ -80,6 +81,28 @@ defmodule TrentoWeb.AI.ControllerToolTest do
 
       assert properties["id"]["description"] =~ "Unique identifier of the host"
       assert properties["query"]["description"] =~ "PromQL query expression"
+    end
+
+    test "request body schema's `required` list wins over RequestBody.required flag" do
+      operation =
+        ClusterController.open_api_operation(:cluster_maintenance_change)
+
+      entry = %McpRouteIndex.Entry{
+        controller: ClusterController,
+        action: :cluster_maintenance_change,
+        tool_name: "synthetic_cmc",
+        display_text: "test",
+        operation: operation,
+        verb: :post,
+        path: "/api/v1/clusters/:id/operations/cluster_maintenance_change"
+      }
+
+      assert %Function{parameters_schema: %{"required" => required}} =
+               ControllerTool.build(entry)
+
+      assert "maintenance" in required
+      refute "resource_id" in required
+      refute "node_id" in required
     end
 
     test "Function.display_text falls back to entry.tool_name when entry.display_text is nil" do
