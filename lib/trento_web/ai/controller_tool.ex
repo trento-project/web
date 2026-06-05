@@ -143,18 +143,15 @@ defmodule TrentoWeb.AI.ControllerTool do
   defp resolve_schema(_), do: %OpenApiSpex.Schema{}
 
   defp request_body_props(%Operation{
-         requestBody: %RequestBody{content: content, required: required}
+         requestBody: %RequestBody{content: content}
        })
        when is_map(content) do
     case Map.get(content, "application/json") do
       %{schema: schema} ->
-        schema_map = schema |> resolve_schema() |> OpenApi.to_map()
-        properties = Map.get(schema_map, "properties", %{})
-
-        body_required =
-          if required, do: Map.keys(properties), else: Map.get(schema_map, "required", [])
-
-        {properties, body_required}
+        schema
+        |> resolve_schema()
+        |> OpenApi.to_map()
+        |> then(&{Map.get(&1, "properties", %{}), Map.get(&1, "required", [])})
 
       _ ->
         {%{}, []}
