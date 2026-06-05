@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.SettingsController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.ActivityLog
   alias Trento.Settings
@@ -50,6 +51,8 @@ defmodule TrentoWeb.V1.SettingsController do
          "application/json", Schema.Platform.ApiKeySettings},
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :settings_get_api_key, display_text: "Get API key settings"
 
   def get_api_key_settings(conn, _) do
     with {:ok, api_key_settings} <- Settings.get_api_key_settings() do
@@ -144,6 +147,8 @@ defmodule TrentoWeb.V1.SettingsController do
       not_found: Schema.NotFound.response()
     ]
 
+  ai_tool :settings_get_activity_log, display_text: "Get activity log settings"
+
   def get_activity_log_settings(conn, _) do
     case Settings.get_activity_log_settings() do
       {:ok, settings} -> render(conn, :activity_log_settings, %{activity_log_settings: settings})
@@ -162,6 +167,8 @@ defmodule TrentoWeb.V1.SettingsController do
          "application/json", Schema.Platform.SuseManagerSettings},
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :settings_get_suse_manager, display_text: "Get Multi-Linux-Manager settings"
 
   @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_suse_manager_settings(conn, _) do
@@ -235,6 +242,8 @@ defmodule TrentoWeb.V1.SettingsController do
          Schema.UnprocessableEntity}
     ]
 
+  ai_tool :settings_test_suse_manager, display_text: "Test Multi-Linux-Manager connection"
+
   @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def test_suse_manager_settings(conn, _) do
     with :ok <- SoftwareUpdates.test_connection_settings() do
@@ -255,6 +264,8 @@ defmodule TrentoWeb.V1.SettingsController do
          "application/json", Schema.Platform.PublicKeys}
     ]
 
+  ai_tool :settings_get_public_keys, display_text: "Get JWT public keys"
+
   @spec get_public_keys(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_public_keys(conn, _) do
     certificates = Settings.get_sso_certificates()
@@ -273,6 +284,8 @@ defmodule TrentoWeb.V1.SettingsController do
       unauthorized: Schema.Unauthorized.response(),
       not_found: Schema.NotFound.response()
     ]
+
+  ai_tool :settings_get_alerting, display_text: "Get alerting settings"
 
   def get_alerting_settings(conn, _params) do
     with {:ok, settings} <- Settings.get_alerting_settings() do
