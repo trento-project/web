@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-04-23T04:13:21Z",
-    "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
-    "run_id": "24815824984",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-23T04:14:14Z",
     "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
     "run_id": "24815824984",
@@ -6496,5 +6472,16 @@
         "score": 0.1153
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-06T18:32:05Z",
+    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
+    "run_id": "27070108266",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
