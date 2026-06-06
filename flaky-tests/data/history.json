@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-23T04:00:29Z",
-    "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
-    "run_id": "24815500202",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 42,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-23T04:13:21Z",
     "commit": "54feddca92f5302bf6ad90fd3e708b6508fc6392",
     "run_id": "24815824984",
@@ -6498,6 +6478,22 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-06T18:29:34Z",
+    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
+    "run_id": "27070108266",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.1153
       }
     ]
   }
