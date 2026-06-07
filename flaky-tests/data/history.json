@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-04-24T06:36:23Z",
-    "commit": "4d018d598251ab302f8515535a0582af06fcc0e4",
-    "run_id": "24872211653",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 43
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.5
-      },
-      {
-        "name": "should preserve pagination when coming back from another page::Hosts Overview Pagination and browser navigation should preserve pagination when coming back from another page",
-        "score": 0.4624
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.1438
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.1247
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.1232
-      },
-      {
-        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
-        "score": 0.1021
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.07001
-      },
-      {
-        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
-        "score": 0.05572
-      },
-      {
-        "name": "should complete host deregistration when all instances are moved out::Hosts Overview Deregistration Clean-up button should deregister a host Movement of application instances on hosts should complete host deregistration when all instances are moved out",
-        "score": 0.05001
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-25T03:45:40Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24921546293",
@@ -6405,6 +6349,30 @@
       },
       {
         "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-07T19:12:29Z",
+    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
+    "run_id": "27101638584",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05781
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
         "score": 0.02501
       }
     ]
