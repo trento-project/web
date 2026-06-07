@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-04-24T04:17:48Z",
-    "commit": "4d018d598251ab302f8515535a0582af06fcc0e4",
-    "run_id": "24871468908",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-04-24T06:36:23Z",
     "commit": "4d018d598251ab302f8515535a0582af06fcc0e4",
     "run_id": "24872211653",
@@ -6397,6 +6386,26 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.3334
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-07T19:11:43Z",
+    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
+    "run_id": "27101638584",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.4301
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
       }
     ]
   }
