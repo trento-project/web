@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-26T04:09:52Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24947671833",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-26T04:10:45Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24947671833",
@@ -6313,6 +6293,34 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.09501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-08T23:22:00Z",
+    "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
+    "run_id": "27165255973",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 34
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.3423
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1917
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.05001
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.05001
       }
     ]
   }
