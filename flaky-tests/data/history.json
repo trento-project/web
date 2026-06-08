@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-04-25T03:59:43Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24921768160",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › operations::should show Host reboot operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show system/database operation sap_system_stop in running state",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune change solution operation button based on user abilities",
-        "score": 0.02501
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-25T04:00:34Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24921768160",
@@ -6378,6 +6346,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.06823
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-08T19:46:48Z",
+    "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
+    "run_id": "27161781713",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
       }
     ]
   }
