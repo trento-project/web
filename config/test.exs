@@ -165,6 +165,10 @@ config :trento,
        enabled?: System.get_env("WRITE_JUNIT") == "1"
 
 config :trento, :ai,
+  warm_tool_cache_at_boot: false,
+  # Avoid the live Wanda fetch during test app boot. Individual tests
+  # opt in by overriding :tool_sources via ApplicationConfigLoader.Mock.
+  tool_sources: [TrentoWeb.AI.ControllerToolSource],
   providers: [
     provider1: [
       models: [

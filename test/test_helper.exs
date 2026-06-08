@@ -76,12 +76,17 @@ Mox.defmock(Trento.AI.Agent.Supervisor.Mock,
   for: Trento.AI.Agent.Supervisor
 )
 
+Mox.defmock(Trento.AI.HttpClient.Mock,
+  for: Trento.AI.HttpClient
+)
+
 default_ai_config = Application.get_env(:trento, :ai, [])
 
 test_ai_config = [
   application_config_loader: Trento.AI.ApplicationConfigLoader.Mock,
   agent_server_adapter: Trento.AI.Agent.Server.Mock,
-  agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock
+  agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock,
+  http_client: Trento.AI.HttpClient.Mock
 ]
 
 Application.put_env(:trento, :ai, Keyword.merge(default_ai_config, test_ai_config))

@@ -441,6 +441,53 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "handle_in send_message/3 — tool_context" do
+    test "forwards socket :access_token to the agent as tool_context.access_token" do
+      %{id: user_id} = insert(:user)
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: :googleai,
+        model: "gemini-2.5-flash"
+      )
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{
+          current_user_id: user_id,
+          access_token: "ws-jwt-token-xyz"
+        })
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}")
+
+      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
+
+      test_pid = self()
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn opts ->
+        send(test_pid, {:agent_opts, opts})
+        {:ok, self()}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-jwt",
+        "thread_id" => "t-jwt"
+      })
+
+      # Wait until the channel process finishes the send_message round-trip
+      # so every Mox expectation in the chain (start_agent_sync → subscribe
+      # → add_message) actually runs before the test exits.
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      assert_receive {:agent_opts, opts}, 1_000
+      assert %Sagents.Agent{tool_context: %{access_token: "ws-jwt-token-xyz"}} = opts[:agent]
+    end
+  end
+
   describe "handle_in send_message/3 — happy path" do
     test "calls Agent.run/2 and pushes RUN_STARTED on success" do
       %{id: user_id} = insert(:user)
