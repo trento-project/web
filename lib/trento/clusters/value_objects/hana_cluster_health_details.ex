@@ -9,7 +9,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterHealthDetails do
   aggregate docstring.
   """
 
-  @required_fields []
+  @required_fields [:sbd_health]
 
   use Trento.Support.Type
 
