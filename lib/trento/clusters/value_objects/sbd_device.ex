@@ -7,11 +7,17 @@ defmodule Trento.Clusters.ValueObjects.SbdDevice do
   """
 
   @required_fields :all
+  @allowed_statuses ["healthy", "unhealthy"]
 
   use Trento.Support.Type
 
   deftype do
     field :device, :string
     field :status, :string
+  end
+
+  def changeset(%__MODULE__{} = struct, params) do
+    super(struct, params)
+    |> validate_inclusion(:status, @allowed_statuses)
   end
 end
