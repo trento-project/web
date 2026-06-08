@@ -127,7 +127,12 @@ function CheckResultDetailPage({ targetType }) {
     );
   }
 
-  if (!target || !executionData || executionData.status === 'running') {
+  if (
+    !target ||
+    !executionData ||
+    executionData.status === 'running' ||
+    catalogLoading
+  ) {
     return (
       <div>
         <LoadingBox text="Loading..." />
