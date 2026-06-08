@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-25T04:00:34Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24921768160",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.4146
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.2276
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-25T06:35:24Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24922231118",
@@ -6364,5 +6344,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-08T20:11:25Z",
+    "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
+    "run_id": "27162869545",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
