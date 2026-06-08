@@ -81,7 +81,8 @@ defmodule Trento.Clusters.Cluster do
     AscsErsClusterHealthDetails,
     HanaClusterDetails,
     HanaClusterHealthDetails,
-    SapInstance
+    SapInstance,
+    SbdDevice
   }
 
   alias Trento.Clusters.Commands.{
@@ -730,17 +731,27 @@ defmodule Trento.Clusters.Cluster do
 
   defp derive_discovered_health(%HanaClusterDetails{} = details) do
     %HanaClusterHealthDetails{
+      sbd_health: derive_sbd_health(details),
       replication_health: derive_replication_health(details)
     }
   end
 
   defp derive_discovered_health(%AscsErsClusterDetails{} = details) do
     %AscsErsClusterHealthDetails{
+      sbd_health: derive_sbd_health(details),
       distributed_health: derive_distributed_health(details)
     }
   end
 
   defp derive_discovered_health(_), do: nil
+
+  defp derive_sbd_health(%{sbd_devices: sbd_devices}) do
+    Enum.find_value(sbd_devices, Health.passing(), fn %SbdDevice{status: status} ->
+      if String.downcase(status) != "healthy", do: Health.critical()
+    end)
+  end
+
+  defp derive_sbd_health(_), do: Health.unknown()
 
   # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
   # If data is not present for some reason the state goes to unknown

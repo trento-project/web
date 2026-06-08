@@ -249,9 +249,10 @@ defmodule Trento.ClusterTest do
               type: :ascs_ers,
               details: details,
               health: expected_health,
-              health_details: %AscsErsClusterHealthDetails{
+              health_details: AscsErsClusterHealthDetails.new!(%{
+                sbd_health: Health.passing(),
                 distributed_health: expected_health
-              },
+              }),
               state: :S_IDLE
             },
             %HostAddedToCluster{
@@ -269,9 +270,10 @@ defmodule Trento.ClusterTest do
             hosts: [host_id],
             details: details,
             health: expected_health,
-            health_details: %AscsErsClusterHealthDetails{
+            health_details: AscsErsClusterHealthDetails.new!(%{
+              sbd_health: Health.passing(),
               distributed_health: expected_health
-            },
+            }),
             state: :S_IDLE
           }
         )

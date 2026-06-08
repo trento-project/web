@@ -329,9 +329,10 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      health_details: %HanaClusterHealthDetails{
+      health_details: HanaClusterHealthDetails.new!(%{
+        sbd_health: Health.passing(),
         replication_health: Health.passing()
-      },
+      }),
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
     }
@@ -737,11 +738,16 @@ defmodule Trento.Factory do
     }
   end
 
-  def sbd_device_factory do
-    %SbdDevice{
+  def sbd_device_factory(attrs) do
+    sbd_device = %{
       device: Faker.File.file_name(),
-      status: Enum.random(["healthy", "unhealthy"])
+      status: "healthy"
     }
+
+    sbd_device
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SbdDevice.new!
   end
 
   def cluster_resource_factory do
