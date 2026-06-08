@@ -19,6 +19,7 @@ defmodule Trento.Factory do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -329,10 +330,11 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
-      health_details: HanaClusterHealthDetails.new!(%{
-        sbd_health: Health.passing(),
-        replication_health: Health.passing()
-      }),
+      health_details:
+        HanaClusterHealthDetails.new!(%{
+          sbd_health: Health.passing(),
+          replication_health: Health.passing()
+        }),
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
     }
@@ -676,10 +678,7 @@ defmodule Trento.Factory do
         }
       ],
       sbd_devices: [
-        %SbdDevice{
-          device: "/dev/vdc",
-          status: "healthy"
-        }
+        build(:sbd_device, device: "/dev/vdc")
       ],
       secondary_sync_state: "SOK",
       sr_health_state: "4",
@@ -741,7 +740,7 @@ defmodule Trento.Factory do
   def sbd_device_factory(attrs) do
     sbd_device = %{
       device: Faker.File.file_name(),
-      status: "healthy"
+      status: SbdDeviceStatus.healthy()
     }
 
     sbd_device

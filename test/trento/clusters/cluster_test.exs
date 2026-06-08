@@ -172,9 +172,11 @@ defmodule Trento.ClusterTest do
               type: :hana_scale_up,
               details: details,
               health: expected_health,
-              health_details: %HanaClusterHealthDetails{
-                replication_health: expected_health
-              },
+              health_details:
+                HanaClusterHealthDetails.new!(%{
+                  sbd_health: Health.passing(),
+                  replication_health: expected_health
+                }),
               state: :S_IDLE
             },
             %HostAddedToCluster{
@@ -192,9 +194,11 @@ defmodule Trento.ClusterTest do
             hosts: [host_id],
             details: details,
             health: expected_health,
-            health_details: %HanaClusterHealthDetails{
-              replication_health: expected_health
-            },
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                sbd_health: Health.passing(),
+                replication_health: expected_health
+              }),
             state: :S_IDLE
           }
         )
@@ -249,10 +253,11 @@ defmodule Trento.ClusterTest do
               type: :ascs_ers,
               details: details,
               health: expected_health,
-              health_details: AscsErsClusterHealthDetails.new!(%{
-                sbd_health: Health.passing(),
-                distributed_health: expected_health
-              }),
+              health_details:
+                AscsErsClusterHealthDetails.new!(%{
+                  sbd_health: Health.passing(),
+                  distributed_health: expected_health
+                }),
               state: :S_IDLE
             },
             %HostAddedToCluster{
@@ -270,10 +275,11 @@ defmodule Trento.ClusterTest do
             hosts: [host_id],
             details: details,
             health: expected_health,
-            health_details: AscsErsClusterHealthDetails.new!(%{
-              sbd_health: Health.passing(),
-              distributed_health: expected_health
-            }),
+            health_details:
+              AscsErsClusterHealthDetails.new!(%{
+                sbd_health: Health.passing(),
+                distributed_health: expected_health
+              }),
             state: :S_IDLE
           }
         )
@@ -1591,10 +1597,12 @@ defmodule Trento.ClusterTest do
             hosts_number: cluster_registered_event.hosts_number,
             details: cluster_registered_event.details,
             health: cluster_registered_event.health,
-            health_details: %HanaClusterHealthDetails{
-              checks_health: Health.unknown(),
-              replication_health: Health.passing()
-            },
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                checks_health: Health.unknown(),
+                sbd_health: Health.passing(),
+                replication_health: Health.passing()
+              }),
             state: cluster_registered_event.state,
             hosts: [],
             selected_checks: []

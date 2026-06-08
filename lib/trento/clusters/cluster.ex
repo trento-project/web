@@ -747,7 +747,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp derive_sbd_health(%{sbd_devices: sbd_devices}) do
     Enum.find_value(sbd_devices, Health.passing(), fn %SbdDevice{status: status} ->
-      if String.downcase(status) != "healthy", do: Health.critical()
+      if status != :healthy, do: Health.critical()
     end)
   end
 

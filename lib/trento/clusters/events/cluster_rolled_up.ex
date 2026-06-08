@@ -9,9 +9,11 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
 
   use Trento.Support.Event
 
+  require Trento.Enums.Health, as: Health
+
   alias Trento.Clusters.Cluster
 
-  defevent resource: "cluster", version: 2 do
+  defevent resource: "cluster", version: 3 do
     field :cluster_id, Ecto.UUID
     embeds_one :snapshot, Cluster
   end
@@ -72,4 +74,23 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
       params
       |> Map.put("health_details", %{})
       |> Map.delete("discovered_health")
+
+  # Version 3 -- Add "sbd_health" to "health_details" if that exists
+  def upcast(
+        %{
+          "snapshot" => %{
+            "health_details" => %{}
+          }
+        } = params,
+        _,
+        3
+      ) do
+    update_in(
+      params,
+      ["snapshot", "health_details"],
+      &Map.put(&1, "sbd_health", Health.unknown())
+    )
+  end
+
+  def upcast(params, _, 3), do: params
 end

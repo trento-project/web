@@ -20,11 +20,12 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
 
       for cluster_type <- ["hana_scale_up", "hana_scale_out"] do
         assert %ClusterRolledUp{
-                 version: 2,
+                 version: 3,
                  cluster_id: ^cluster_id,
                  snapshot: %Cluster{
                    health_details: %HanaClusterHealthDetails{
                      checks_health: Health.warning(),
+                     sbd_health: Health.unknown(),
                      replication_health: Health.passing()
                    }
                  }
@@ -47,11 +48,12 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
       cluster_id = Faker.UUID.v4()
 
       assert %ClusterRolledUp{
-               version: 2,
+               version: 3,
                cluster_id: ^cluster_id,
                snapshot: %Cluster{
                  health_details: %AscsErsClusterHealthDetails{
                    checks_health: Health.warning(),
+                   sbd_health: Health.unknown(),
                    distributed_health: Health.passing()
                  }
                }
@@ -73,7 +75,7 @@ defmodule Trento.Clusters.Events.ClusterRolledUpTest do
       cluster_id = Faker.UUID.v4()
 
       assert %ClusterRolledUp{
-               version: 2,
+               version: 3,
                cluster_id: ^cluster_id,
                snapshot: %Cluster{
                  health_details: nil
