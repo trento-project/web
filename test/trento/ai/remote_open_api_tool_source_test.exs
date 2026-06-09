@@ -140,34 +140,28 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
   end
 
   describe "tools/1 — failure modes" do
-    test "raises when spec endpoint returns non-200" do
+    test "returns [] when spec endpoint returns non-200" do
       expect(HttpClient.Mock, :get, fn _, _, _ ->
         {:ok, %HTTPoison.Response{status_code: 503, body: ""}}
       end)
 
-      assert_raise RuntimeError, ~r/spec fetch failed/, fn ->
-        RemoteOpenApiToolSource.tools(source_opts())
-      end
+      assert [] = RemoteOpenApiToolSource.tools(source_opts())
     end
 
-    test "raises on transport error" do
+    test "returns [] on transport error" do
       expect(HttpClient.Mock, :get, fn _, _, _ ->
         {:error, %HTTPoison.Error{reason: :timeout}}
       end)
 
-      assert_raise RuntimeError, ~r/spec fetch failed/, fn ->
-        RemoteOpenApiToolSource.tools(source_opts())
-      end
+      assert [] = RemoteOpenApiToolSource.tools(source_opts())
     end
 
-    test "raises on invalid JSON body" do
+    test "returns [] on invalid JSON body" do
       expect(HttpClient.Mock, :get, fn _, _, _ ->
         {:ok, %HTTPoison.Response{status_code: 200, body: "not json"}}
       end)
 
-      assert_raise RuntimeError, ~r/spec fetch failed/, fn ->
-        RemoteOpenApiToolSource.tools(source_opts())
-      end
+      assert [] = RemoteOpenApiToolSource.tools(source_opts())
     end
   end
 end

@@ -322,7 +322,6 @@ config :trento, :ai,
   ],
   agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
   agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
-  warm_tool_cache_at_boot: true,
   tool_sources: [
     TrentoWeb.AI.ControllerToolSource,
     {Trento.AI.RemoteOpenApiToolSource,

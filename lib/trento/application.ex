@@ -45,38 +45,7 @@ defmodule Trento.Application do
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Trento.Supervisor]
-    result = Supervisor.start_link(children, opts)
-
-    warm_ai_tools_cache()
-
-    result
-  end
-
-  # Pre-populates the AI tools cache so the first agent run doesn't pay
-  # the cost of a router scan + (network-bound) remote OpenAPI fetch.
-  # Each source is invoked in isolation under `Task.Supervisor`; failures
-  # are absorbed by `Trento.AI.ToolsRegistry` (logged + per-source cache
-  # left untouched). Gated by `:warm_tool_cache_at_boot` so tests / specs
-  # opt out cleanly.
-  defp warm_ai_tools_cache do
-    ai_config = Application.get_env(:trento, :ai, [])
-
-    if Keyword.get(ai_config, :warm_tool_cache_at_boot, false) do
-      Task.Supervisor.start_child(Trento.TasksSupervisor, fn ->
-        try do
-          _ = Trento.AI.ToolsRegistry.refresh!()
-          :ok
-        rescue
-          exception ->
-            require Logger
-
-            Logger.warning(
-              "Trento.Application: AI tools cache warm failed: " <>
-                Exception.format(:error, exception, __STACKTRACE__)
-            )
-        end
-      end)
-    end
+    Supervisor.start_link(children, opts)
   end
 
   # Tell Phoenix to update the endpoint configuration

@@ -20,10 +20,6 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
      `\#{verb}_<slugified path>` / `tool_name`.
   5. Map each entry through `Trento.AI.RemoteHttpTool.build/2`.
 
-  Every `Trento.AI.ToolsRegistry.refresh!/0` re-fetches the spec; the
-  registry caches only the aggregated tool list, so there is no
-  per-source short-circuit.
-
   ## Configuration
 
       config :trento, :ai,
@@ -36,8 +32,8 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
         ]
 
   Spec-fetch failures are logged and raise so that `Trento.AI.ToolsRegistry`
-  treats this source as contributing `[]` for the current refresh; the
-  agent still boots with whatever other sources succeeded.
+  treats this source as contributing `[]` for the current call; other
+  configured sources still surface their tools.
   """
 
   @behaviour Trento.AI.ToolSource
@@ -65,15 +61,10 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
       {:error, reason} ->
         Logger.warning(
           "Trento.AI.RemoteOpenApiToolSource[#{inspect(name)}]: spec fetch failed " <>
-            "(#{inspect(reason)}); this source contributes no tools for this refresh."
+            "(#{inspect(reason)}); this source contributes no tools for this call."
         )
 
-        # Raise so ToolsRegistry.materialise_one's rescue treats this
-        # source as []; other sources still contribute. The registry no
-        # longer keeps a per-source cache, so there is no stale list to
-        # fall back to — losing that path was the trade-off accepted when
-        # the per-source cache was removed.
-        raise "spec fetch failed: #{inspect(reason)}"
+        []
     end
   end
 
