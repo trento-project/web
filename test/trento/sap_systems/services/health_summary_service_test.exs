@@ -12,6 +12,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
   alias Trento.SapSystems.Services.HealthSummaryService
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Databases.Projections.DatabaseReadModel
@@ -86,7 +87,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
-          health: Health.warning(),
+          status: Status.yellow(),
           host: db_host
         ),
         insert(
@@ -94,7 +95,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           database_id: database_id,
           instance_number: "01",
           host_id: db_host_id_2,
-          health: Health.passing(),
+          status: Status.green(),
           host: db_host_2
         )
       ]
@@ -106,7 +107,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           instance_number: "10",
           sid: sid,
           host_id: app_host_id,
-          health: Health.passing(),
+          status: Status.green(),
           host: app_host
         ),
         insert(
@@ -115,7 +116,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           instance_number: "11",
           sid: sid,
           host_id: app_host_id_2,
-          health: Health.critical(),
+          status: Status.red(),
           host: app_host_2
         )
       ]
@@ -162,7 +163,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           database_id: database_id,
           instance_number: "00",
           host_id: db_host_id,
-          health: Health.warning(),
+          status: Status.yellow(),
           host: db_host
         )
 
@@ -174,7 +175,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
           instance_number: "10",
           sid: sid,
           host_id: app_host_id,
-          health: Health.passing(),
+          status: Status.green(),
           host: app_host
         )
 
