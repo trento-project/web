@@ -2563,7 +2563,7 @@ defmodule Trento.Databases.DatabaseTest do
         initial_events ++
           [
             %SapSystemEvents.ApplicationInstanceDeregistered{sap_system_id: sap_system_id},
-            %SapSystemEvents.ApplicationInstanceHealthChanged{sap_system_id: sap_system_id},
+            %SapSystemEvents.ApplicationInstanceStatusChanged{sap_system_id: sap_system_id},
             %SapSystemEvents.ApplicationInstanceMarkedAbsent{sap_system_id: sap_system_id},
             %SapSystemEvents.ApplicationInstanceMarkedPresent{sap_system_id: sap_system_id},
             %SapSystemEvents.ApplicationInstanceMoved{sap_system_id: sap_system_id},

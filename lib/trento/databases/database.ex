@@ -56,7 +56,7 @@ defmodule Trento.Databases.Database do
 
   @legacy_events [
     SapSystemEvents.ApplicationInstanceDeregistered,
-    SapSystemEvents.ApplicationInstanceHealthChanged,
+    SapSystemEvents.ApplicationInstanceStatusChanged,
     SapSystemEvents.ApplicationInstanceMarkedAbsent,
     SapSystemEvents.ApplicationInstanceMarkedPresent,
     SapSystemEvents.ApplicationInstanceMoved,
