@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-04-26T04:24:05Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24947852183",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should clean up an instance on request",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-26T06:41:18Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24948300517",
@@ -6290,5 +6266,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-06-09T19:59:29Z",
+    "commit": "4903c3710377c570e534fb5dda833da8166bc726",
+    "run_id": "27230957924",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.25
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "HostsLists component › list content::should show only unique SIDs",
+        "score": 0.05001
+      }
+    ]
   }
 ]
