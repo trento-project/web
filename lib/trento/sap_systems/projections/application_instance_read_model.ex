@@ -10,7 +10,7 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Enums.Health, as: Health
+  require Trento.SapSystems.Enums.Status, as: Status
 
   @type t :: %__MODULE__{}
 
@@ -30,7 +30,7 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
     field :absent_at, :utc_datetime_usec
 
     belongs_to :host, HostReadModel,

@@ -13,11 +13,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
-    ApplicationInstanceHealthChanged,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    ApplicationInstanceStatusChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -33,6 +33,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   }
 
   alias Trento.Repo
+
+  alias Trento.SapSystems.Services.HealthService
 
   project(
     %SapSystemRegistered{
@@ -86,7 +88,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       https_port: https_port,
       start_priority: start_priority,
       host_id: host_id,
-      health: health
+      status: status
     },
     fn multi ->
       changeset =
@@ -100,7 +102,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          health: health
+          status: status
         })
 
       Ecto.Multi.insert(multi, :application_instance, changeset)
@@ -129,11 +131,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
   )
 
   project(
-    %ApplicationInstanceHealthChanged{
+    %ApplicationInstanceStatusChanged{
       sap_system_id: sap_system_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: health
+      status: status
     },
     fn multi ->
       changeset =
@@ -143,7 +145,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           instance_number: instance_number,
           host_id: host_id
         )
-        |> ApplicationInstanceReadModel.changeset(%{health: health})
+        |> ApplicationInstanceReadModel.changeset(%{status: status})
 
       Ecto.Multi.update(multi, :application_instance, changeset)
     end
@@ -346,28 +348,31 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   @impl true
   def after_update(
-        %ApplicationInstanceHealthChanged{},
+        %ApplicationInstanceStatusChanged{},
         _,
         %{
           application_instance: %ApplicationInstanceReadModel{
             sap_system_id: sap_system_id,
             host_id: host_id,
             instance_number: instance_number,
-            health: health
+            status: status
           }
         }
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "application_instance_health_changed",
-      SapSystemJSON.application_instance_health_changed(%{
-        health: %{
-          sap_system_id: sap_system_id,
-          host_id: host_id,
-          instance_number: instance_number,
-          health: health
-        }
-      })
+      # TODO: to remove `add_deprecated_health` once frontend is aligned
+      HealthService.add_deprecated_health(
+        SapSystemJSON.application_instance_status_changed(%{
+          instance: %{
+            sap_system_id: sap_system_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            status: status
+          }
+        })
+      )
     )
   end
 

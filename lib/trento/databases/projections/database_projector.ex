@@ -22,10 +22,10 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     DatabaseRestored,
@@ -33,6 +33,8 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   }
 
   alias Trento.Repo
+
+  alias Trento.SapSystems.Services.HealthService
 
   @databases_topic "monitoring:databases"
 
@@ -99,7 +101,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       system_replication_operation_mode: system_replication_operation_mode,
       system_replication_source_site: system_replication_source_site,
       system_replication_tier: system_replication_tier,
-      health: health
+      status: status
     },
     fn multi ->
       database_instance_changeset =
@@ -121,7 +123,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           system_replication_operation_mode: system_replication_operation_mode,
           system_replication_source_site: system_replication_source_site,
           system_replication_tier: system_replication_tier,
-          health: health
+          status: status
         })
 
       Ecto.Multi.insert(multi, :database_instance, database_instance_changeset)
@@ -129,11 +131,11 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   )
 
   project(
-    %DatabaseInstanceHealthChanged{
+    %DatabaseInstanceStatusChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: health
+      status: status
     },
     fn multi ->
       changeset =
@@ -143,7 +145,7 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
           instance_number: instance_number,
           host_id: host_id
         )
-        |> DatabaseInstanceReadModel.changeset(%{health: health})
+        |> DatabaseInstanceReadModel.changeset(%{status: status})
 
       Ecto.Multi.update(multi, :database_instance, changeset)
     end
@@ -334,28 +336,31 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
 
   @impl true
   def after_update(
-        %DatabaseInstanceHealthChanged{},
+        %DatabaseInstanceStatusChanged{},
         _,
         %{
           database_instance: %DatabaseInstanceReadModel{
             database_id: database_id,
             host_id: host_id,
             instance_number: instance_number,
-            health: health
+            status: status
           }
         }
       ) do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
       "database_instance_health_changed",
-      DatabaseJSON.database_instance_health_changed(%{
-        instance: %{
-          database_id: database_id,
-          host_id: host_id,
-          instance_number: instance_number,
-          health: health
-        }
-      })
+      # TODO: to remove `add_deprecated_health` once frontend is aligned
+      HealthService.add_deprecated_health(
+        DatabaseJSON.database_instance_status_changed(%{
+          instance: %{
+            database_id: database_id,
+            host_id: host_id,
+            instance_number: instance_number,
+            status: status
+          }
+        })
+      )
     )
   end
 

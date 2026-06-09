@@ -38,6 +38,7 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
             |> Map.delete(:__meta__)
             |> Map.delete(:host)
             |> Map.delete(:sap_system)
+            |> Map.put(:health, :unknown)
           end)
         )
         |> Map.put(
@@ -48,6 +49,7 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
             |> Map.delete(:__meta__)
             |> Map.delete(:host)
             |> Map.put(:sap_system_id, database_id)
+            |> Map.put(:health, :unknown)
           end)
         )
 

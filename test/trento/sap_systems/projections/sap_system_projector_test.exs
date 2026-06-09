@@ -11,6 +11,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   import Trento.Factory
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -20,10 +21,10 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   alias Trento.SapSystems.Events.{
     ApplicationInstanceDeregistered,
-    ApplicationInstanceHealthChanged,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
+    ApplicationInstanceStatusChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRestored,
@@ -115,7 +116,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       host_id: host_id,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
-      health: health,
+      status: status,
       features: features,
       start_priority: start_priority
     } =
@@ -130,13 +131,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     assert event.instance_number == projection.instance_number
     assert event.features == projection.features
     assert event.host_id == projection.host_id
-    assert event.health == projection.health
+    assert event.status == projection.status
 
     assert_broadcast(
       "application_instance_registered",
       %{
         features: ^features,
-        health: ^health,
+        status: ^status,
         host_id: ^host_id,
         http_port: 8080,
         https_port: 8443,
@@ -202,9 +203,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: event.host_id
       )
 
-    health_event = %ApplicationInstanceHealthChanged{
+    health_event = %ApplicationInstanceStatusChanged{
       sap_system_id: sap_system_id,
-      health: :critical,
+      status: Status.red(),
       instance_number: instance_number,
       host_id: host_id
     }
@@ -215,6 +216,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       "application_instance_health_changed",
       %{
         health: :critical,
+        status: Status.red(),
         host_id: ^host_id,
         instance_number: ^instance_number,
         sap_system_id: ^sap_system_id
@@ -348,7 +350,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Repo.preload([:tags, :database])
 
     adapted_database_instance =
-      Map.put(database_instance, :sap_system_id, database_id)
+      database_instance
+      |> Map.put(:sap_system_id, database_id)
+      # TODO: to remove once frontend is aligned
+      |> Map.put(:health, :unknown)
+
+    # TODO: to remove once frontend is aligned
+    application_instance = Map.put(application_instance, :health, :unknown)
 
     assert_broadcast(
       "sap_system_restored",
