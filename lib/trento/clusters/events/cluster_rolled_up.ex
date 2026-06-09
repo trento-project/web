@@ -85,10 +85,10 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
         _,
         3
       ) do
-    update_in(
+    put_in(
       params,
-      ["snapshot", "health_details"],
-      &Map.put(&1, "sbd_health", Health.unknown())
+      ["snapshot", "health_details", "sbd_health"],
+      Health.unknown()
     )
   end
 
