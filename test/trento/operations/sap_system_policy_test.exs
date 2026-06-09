@@ -5,8 +5,8 @@ defmodule Trento.Operations.SapSystemPolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  require Trento.Enums.Health, as: Health
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Operations.SapSystemPolicy
 
@@ -104,7 +104,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
           database_instances: [
             %{database_id: database_id, sid: sid} =
               build(:database_instance,
-                health: Health.unknown(),
+                status: Status.gray(),
                 system_replication: nil
               )
           ],
@@ -132,12 +132,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
           database_instances: [
             %{database_id: database_id, sid: sid} =
               build(:database_instance,
-                health: Health.unknown(),
+                status: Status.gray(),
                 system_replication: "Primary",
                 system_replication_site: "Site1"
               ),
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Secondary"
             )
           ],
@@ -166,7 +166,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
           application_instances: [
             %{sid: sid, instance_number: inst_number} =
               build(:application_instance,
-                health: Health.unknown(),
+                status: Status.gray(),
                 features: "MESSAGESERVER|ENQUE",
                 host: build(:host, heartbeat: :passing, cluster: nil)
               )
@@ -234,7 +234,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
         build(:sap_system,
           database_instances: [
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: nil
             )
           ],
@@ -254,7 +254,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
           database_instances: [],
           application_instances: [
             build(:application_instance,
-              health: Health.passing(),
+              status: Status.green(),
               features: "MESSAGESERVER|ENQUE",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
@@ -280,7 +280,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
             database_instances: [],
             application_instances: [
               build(:application_instance,
-                health: Health.unknown(),
+                status: Status.gray(),
                 features: "MESSAGESERVER|ENQUE",
                 host: build(:host, heartbeat: :passing, cluster: nil)
               )
@@ -332,12 +332,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
           application_instances: [
             %{sid: sid, instance_number: inst_number} =
               build(:application_instance,
-                health: Health.passing(),
+                status: Status.green(),
                 features: "ABAP|GATEWAY|ICMAN|IGS",
                 host: build(:host, heartbeat: :passing, cluster: nil)
               ),
             build(:application_instance,
-              health: Health.passing(),
+              status: Status.green(),
               features: "MESSAGESERVER|ENQUE",
               host: build(:host, heartbeat: :critical, cluster: nil)
             )
@@ -403,7 +403,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
         build(:sap_system,
           application_instances: [
             build(:application_instance,
-              health: Health.passing(),
+              status: Status.green(),
               features: "MESSAGESERVER|ENQUE",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
@@ -421,7 +421,7 @@ defmodule Trento.Operations.SapSystemPolicyTest do
         build(:sap_system,
           application_instances: [
             build(:application_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               features: "MESSAGESERVER|ENQUE",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
@@ -439,12 +439,12 @@ defmodule Trento.Operations.SapSystemPolicyTest do
         build(:sap_system,
           application_instances: [
             build(:application_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               features: "J2EE|IGS",
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:application_instance,
-              health: Health.passing(),
+              status: Status.green(),
               features: "GATEWAY|MESSAGESERVER|ENQUE",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )

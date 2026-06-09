@@ -563,7 +563,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
