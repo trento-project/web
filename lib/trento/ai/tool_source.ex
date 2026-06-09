@@ -12,16 +12,13 @@ defmodule Trento.AI.ToolSource do
 
   Sources are wired in via the `:tool_sources` key under
   `config :trento, :ai, ...`. Each entry is either a bare module
-  (callback invoked as `tools/0` with no options) or a `{module, opts}`
-  tuple (callback invoked as `tools/1` with the opts kw list — typically
-  carrying the source `:name`, `:spec_url`, `:base_url`, etc.).
+  `MyToolSource` (normalised to `{MyToolSource, []}`) or a `{module, opts}`
+  tuple — the opts kw list typically carries the source `:name`,
+  `:spec_url`, `:base_url`, etc.
 
-  Implementations only need to define ONE of the two callbacks. The
-  registry dispatches to `tools/1` when exported, otherwise to `tools/0`.
+  Implementations must export `tools/1`. Sources that don't need
+  configuration match the argument with `_opts`.
   """
 
-  @callback tools() :: [LangChain.Function.t()]
   @callback tools(opts :: keyword()) :: [LangChain.Function.t()]
-
-  @optional_callbacks tools: 0, tools: 1
 end

@@ -20,10 +20,9 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
      `\#{verb}_<slugified path>` / `tool_name`.
   5. Map each entry through `Trento.AI.RemoteHttpTool.build/2`.
 
-  The configured source `:name` keys the `:persistent_term` cache, so a
-  second `tools/1` call returns the previously-built `LangChain.Function`
-  list without re-fetching. `Trento.AI.ToolsRegistry.refresh!/1` busts
-  the cache by name.
+  Every `Trento.AI.ToolsRegistry.refresh!/0` re-fetches the spec; the
+  registry caches only the aggregated tool list, so there is no
+  per-source short-circuit.
 
   ## Configuration
 
@@ -36,9 +35,9 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
            base_url: "http://localhost:4001"}
         ]
 
-  Spec-fetch failures are logged and degrade gracefully: stale cached
-  entries are returned if any; otherwise the source contributes an empty
-  list and the agent still boots with whatever other sources succeeded.
+  Spec-fetch failures are logged and raise so that `Trento.AI.ToolsRegistry`
+  treats this source as contributing `[]` for the current refresh; the
+  agent still boots with whatever other sources succeeded.
   """
 
   @behaviour Trento.AI.ToolSource
@@ -58,7 +57,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     spec_url = Keyword.fetch!(opts, :spec_url)
     base_url = Keyword.fetch!(opts, :base_url)
 
-    case fetch_and_decode(spec_url) |> IO.inspect(label: "speczz") do
+    case fetch_and_decode(spec_url) do
       {:ok, spec} ->
         entries = build_entries(spec, name)
         Enum.map(entries, &RemoteHttpTool.build(&1, base_url))
@@ -66,13 +65,14 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
       {:error, reason} ->
         Logger.warning(
           "Trento.AI.RemoteOpenApiToolSource[#{inspect(name)}]: spec fetch failed " <>
-            "(#{inspect(reason)}); leaving previous cache untouched."
+            "(#{inspect(reason)}); this source contributes no tools for this refresh."
         )
 
-        # Letting the exception propagate would trash ToolsRegistry's
-        # per-source cache via materialise_and_cache's rescue path. Reraise
-        # so the registry's rescue branch falls back to the prior cached
-        # list (if any) and otherwise yields []. See registry.materialise_and_cache.
+        # Raise so ToolsRegistry.materialise_one's rescue treats this
+        # source as []; other sources still contribute. The registry no
+        # longer keeps a per-source cache, so there is no stale list to
+        # fall back to — losing that path was the trade-off accepted when
+        # the per-source cache was removed.
         raise "spec fetch failed: #{inspect(reason)}"
     end
   end

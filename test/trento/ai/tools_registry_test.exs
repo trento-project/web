@@ -22,14 +22,14 @@ defmodule Trento.AI.ToolsRegistryTest do
     @behaviour Trento.AI.ToolSource
 
     @impl true
-    def tools, do: [Function.new!(%{name: "a", function: fn _, _ -> "a" end})]
+    def tools(_opts), do: [Function.new!(%{name: "a", function: fn _, _ -> "a" end})]
   end
 
   defmodule SourceB do
     @behaviour Trento.AI.ToolSource
 
     @impl true
-    def tools,
+    def tools(_opts),
       do: [
         Function.new!(%{name: "b1", function: fn _, _ -> "b1" end}),
         Function.new!(%{name: "b2", function: fn _, _ -> "b2" end})
@@ -40,7 +40,7 @@ defmodule Trento.AI.ToolsRegistryTest do
     @behaviour Trento.AI.ToolSource
 
     @impl true
-    def tools, do: []
+    def tools(_opts), do: []
   end
 
   defmodule OptsSource do
@@ -57,7 +57,7 @@ defmodule Trento.AI.ToolsRegistryTest do
     @behaviour Trento.AI.ToolSource
 
     @impl true
-    def tools, do: raise("boom")
+    def tools(_opts), do: raise("boom")
   end
 
   defp stub_config(config) do
@@ -97,10 +97,9 @@ defmodule Trento.AI.ToolsRegistryTest do
     end
 
     test "serves subsequent calls from :persistent_term cache" do
-      # ApplicationConfigLoader called twice for first tools/0 (refresh:
-      # configured_sources/0 is called once for the rebuild path and once
-      # to know which keys to refresh). A second tools/0 must NOT trigger
-      # another config load — confirmed by Mox `times: 2`.
+      # First tools/0 misses the aggregated cache and triggers
+      # refresh!/0, which loads config once. Subsequent tools/0 calls hit
+      # the cached aggregated list and skip configured_sources/0 entirely.
       stub_config(tool_sources: [SourceA])
 
       _first = ToolsRegistry.tools()
@@ -124,40 +123,11 @@ defmodule Trento.AI.ToolsRegistryTest do
     end
   end
 
-  describe "refresh!/1" do
-    test "refreshes a single source by :name" do
-      stub_config(tool_sources: [{OptsSource, name: :alpha}])
-
-      ToolsRegistry.tools()
-      assert [%Function{name: "alpha_tool"}] = ToolsRegistry.refresh!(:alpha)
-      assert [%Function{name: "alpha_tool"}] = ToolsRegistry.tools()
-    end
-
-    test "refreshes a single bare-module source by module" do
-      stub_config(tool_sources: [SourceA])
-
-      ToolsRegistry.tools()
-      assert [%Function{name: "a"}] = ToolsRegistry.refresh!(SourceA)
-    end
-
-    test "warns + returns [] when source name unknown" do
-      stub_config(tool_sources: [SourceA])
-
-      assert [] = ToolsRegistry.refresh!(:unknown)
-    end
-  end
-
   describe "failure tolerance" do
-    test "logs + preserves prior cache when a source raises" do
-      # Build cache from a healthy source first.
-      stub_config(tool_sources: [SourceA])
-      ToolsRegistry.tools()
-
-      # Now swap config to include a raising source. Aggregated cache
-      # should still hold whatever non-raising sources returned this
-      # round. The raising source falls back to its (empty) per-source
-      # cache, so the aggregated list becomes the union of healthy
-      # sources plus the empty contribution of the raising one.
+    test "logs + drops a raising source while keeping the rest" do
+      # Healthy + raising source mixed. The raising source contributes
+      # [] (no per-source cache to fall back to); the healthy source's
+      # tools still surface in the aggregated list.
       stub_config(tool_sources: [SourceA, RaisingSource])
 
       assert [%Function{name: "a"}] = ToolsRegistry.refresh!()

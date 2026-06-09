@@ -95,7 +95,7 @@ defmodule Trento.AI.RemoteHttpTool do
     headers = build_headers(jwt, body)
     options = [recv_timeout: @default_recv_timeout]
 
-    IO.inspect({url, body, headers, options}, label: "request to wanda")
+    # IO.inspect({url, body, headers, options}, label: "request to wanda")
 
     decode_response(HttpClient.impl().request(verb, url, body, headers, options))
   end
