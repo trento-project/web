@@ -6,6 +6,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
   use ExUnit.Case, async: true
 
   require Trento.Operations.Enums.SapInstanceOperations, as: SapInstanceOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Operations.ApplicationInstancePolicy
 
@@ -56,9 +57,9 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       sid = "PRD"
 
       scenarios = [
-        %{health: :passing, result: :ok},
+        %{status: Status.green(), result: :ok},
         %{
-          health: :unknown,
+          status: Status.gray(),
           result:
             {:error,
              [
@@ -70,11 +71,11 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         }
       ]
 
-      for %{health: health, result: result} <- scenarios do
+      for %{status: status, result: result} <- scenarios do
         message_server_instance =
           build(:application_instance,
             instance_number: instance_number,
-            health: health,
+            status: status,
             features: "MESSAGESERVER|ENQUE"
           )
 
@@ -130,7 +131,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       for database_health <- [:unknown, :passing] do
         message_server_instance =
           build(:application_instance,
-            health: :passing,
+            status: Status.green(),
             features: "MESSAGESERVER|ENQUE"
           )
 
@@ -177,7 +178,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
       for %{database_health: database_health, result: result} <- scenarios do
         message_server_instance =
           build(:application_instance,
-            health: :passing,
+            status: Status.green(),
             features: "MESSAGESERVER|ENQUE"
           )
 
@@ -210,7 +211,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
           host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
         )
 
-      other_instances = build_list(2, :application_instance, health: :unknown)
+      other_instances = build_list(2, :application_instance, status: Status.gray())
 
       sap_system =
         build(:sap_system,
@@ -234,7 +235,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         )
 
       [%{instance_number: inst_number_1}, %{instance_number: inst_number_2}] =
-        other_instances = build_list(2, :application_instance, health: :passing)
+        other_instances = build_list(2, :application_instance, status: Status.green())
 
       sap_system =
         build(:sap_system,
@@ -266,7 +267,7 @@ defmodule Trento.Operations.ApplicationInstancePolicyTest do
         host: build(:host, heartbeat: :passing, cluster: @empty_ascs_ers_cluster)
       )
 
-    other_instances = build_list(2, :application_instance, health: :unknown)
+    other_instances = build_list(2, :application_instance, status: Status.gray())
 
     sap_system =
       build(:sap_system,
