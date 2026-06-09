@@ -69,7 +69,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
 
   # Version 4 -- Adds "sbd_health" to "health_details" key if it exists
   def upcast(%{"health_details" => %{}} = params, _, 4),
-    do: Map.update!(params, "health_details", &Map.put(&1, "sbd_health", Health.unknown()))
+    do: put_in(params, ["health_details", "sbd_health"], Health.unknown())
 
   def upcast(params, _, 4), do: params
 end
