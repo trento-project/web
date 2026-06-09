@@ -3,12 +3,14 @@
 
 defmodule Trento.AI.RemoteHttpToolTest do
   use ExUnit.Case, async: true
+  use Trento.AI.AICase
 
   import Mox
 
   alias LangChain.Function
   alias OpenApiSpex.{Operation, Parameter, Schema}
-  alias Trento.AI.{HttpClient, OperationEntry, RemoteHttpTool}
+  alias Trento.AI.{OperationEntry, RemoteHttpTool}
+  alias Trento.Support.HttpClient
 
   setup :verify_on_exit!
 

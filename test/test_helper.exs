@@ -11,9 +11,7 @@ Application.put_env(:trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.Mock
 )
 
-Mox.defmock(Trento.Infrastructure.Prometheus.Adapter.HttpClient.Mock,
-  for: Trento.Infrastructure.Prometheus.Adapter.HttpClient
-)
+Mox.defmock(Trento.Support.HttpClient.Mock, for: Trento.Support.HttpClient)
 
 Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock,
   for: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
@@ -76,17 +74,13 @@ Mox.defmock(Trento.AI.Agent.Supervisor.Mock,
   for: Trento.AI.Agent.Supervisor
 )
 
-Mox.defmock(Trento.AI.HttpClient.Mock,
-  for: Trento.AI.HttpClient
-)
-
 default_ai_config = Application.get_env(:trento, :ai, [])
 
 test_ai_config = [
   application_config_loader: Trento.AI.ApplicationConfigLoader.Mock,
   agent_server_adapter: Trento.AI.Agent.Server.Mock,
   agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock,
-  http_client: Trento.AI.HttpClient.Mock
+  http_client: Trento.Support.HttpClient.Mock
 ]
 
 Application.put_env(:trento, :ai, Keyword.merge(default_ai_config, test_ai_config))

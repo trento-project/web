@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule Trento.Support.HttpUtils do
   @moduledoc """
   Utility functions for HTTP-related operations, such as extracting request origins.

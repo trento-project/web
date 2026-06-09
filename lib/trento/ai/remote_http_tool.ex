@@ -38,7 +38,9 @@ defmodule Trento.AI.RemoteHttpTool do
   require Logger
 
   alias LangChain.Function
-  alias Trento.AI.{HttpClient, OpenApiToolBuilder, OperationEntry}
+
+  alias Trento.AI.ApplicationConfigLoader
+  alias Trento.AI.{OpenApiToolBuilder, OperationEntry}
 
   @default_recv_timeout 30_000
 
@@ -97,7 +99,7 @@ defmodule Trento.AI.RemoteHttpTool do
 
     # IO.inspect({url, body, headers, options}, label: "request to wanda")
 
-    decode_response(HttpClient.impl().request(verb, url, body, headers, options))
+    decode_response(http_client().request(verb, url, body, headers, options))
   end
 
   defp encode_body(verb, body_args)
@@ -149,4 +151,7 @@ defmodule Trento.AI.RemoteHttpTool do
   defp body_to_string(nil), do: ""
   defp body_to_string(body) when is_binary(body), do: body
   defp body_to_string(other), do: inspect(other)
+
+  defp http_client,
+    do: Keyword.fetch!(ApplicationConfigLoader.load(), :http_client)
 end

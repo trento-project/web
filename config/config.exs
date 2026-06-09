@@ -220,13 +220,14 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
   ]
 
 config :trento, :component_versions, adapter: Trento.Infrastructure.ComponentVersions
+config :trento, Trento.Infrastructure.ComponentVersions, http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
   url: "http://localhost:9090",
-  http_client: Trento.Infrastructure.Prometheus.Adapter.HttpClient
+  http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Charts,
   enabled: true,
@@ -328,7 +329,8 @@ config :trento, :ai,
      name: :wanda,
      spec_url: "http://localhost:4001/api/all/openapi",
      base_url: "http://localhost:4001"}
-  ]
+  ],
+  http_client: Trento.Support.HttpClient
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -113,7 +113,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     url = "#{prometheus_url}/api/v1/status/buildinfo"
     headers = [{"Accept", "application/json"}]
 
-    case HTTPoison.get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
+    case http_client().get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => %{"version" => version}}} -> {:ok, %{prometheus_version: version}}
@@ -133,10 +133,9 @@ defmodule Trento.Infrastructure.ComponentVersions do
   defp fetch_wanda_info(origin) do
     url = Wanda.resolve_url("/api", origin)
 
-    case HTTPoison.get(url, [{"Accept", "application/json"}],
+    case http_client().get(url, [{"Accept", "application/json"}],
            recv_timeout: @timeout,
-           follow_redirect: true,
-           ssl: [verify: :verify_peer, cacerts: resolve_ca_certs()]
+           follow_redirect: true
          ) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
@@ -160,11 +159,9 @@ defmodule Trento.Infrastructure.ComponentVersions do
     end
   end
 
-  defp resolve_ca_certs do
-    :public_key.cacerts_get()
-  rescue
-    e ->
-      Logger.error("Failed to load system CA certificates: #{inspect(e)}")
-      []
-  end
+  defp http_client,
+    do:
+      :trento
+      |> Application.get_env(__MODULE__, [])
+      |> Keyword.fetch!(:http_client)
 end

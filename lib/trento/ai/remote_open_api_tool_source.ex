@@ -40,7 +40,8 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
 
   require Logger
 
-  alias Trento.AI.{HttpClient, OperationEntry, RemoteHttpTool}
+  alias Trento.AI.ApplicationConfigLoader
+  alias Trento.AI.{OperationEntry, RemoteHttpTool}
 
   @verbs [:get, :put, :post, :delete, :options, :head, :patch, :trace]
   @mcp_tag "MCP"
@@ -73,7 +74,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     options = [recv_timeout: @default_recv_timeout]
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           HttpClient.impl().get(spec_url, headers, options),
+           http_client().get(spec_url, headers, options),
          {:ok, json} <- Jason.decode(body) do
       {:ok, OpenApiSpex.OpenApi.Decode.decode(json)}
     else
@@ -151,4 +152,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     |> String.trim("_")
     |> String.downcase()
   end
+
+  defp http_client,
+    do: Keyword.fetch!(ApplicationConfigLoader.load(), :http_client)
 end
