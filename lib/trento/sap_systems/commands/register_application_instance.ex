@@ -30,12 +30,13 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     :http_port,
     :https_port,
     :start_priority,
-    :health
+    :status
   ]
 
   use Trento.Support.Command
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
   require Trento.Enums.Health, as: Health
 
   defcommand do
@@ -52,7 +53,7 @@ defmodule Trento.SapSystems.Commands.RegisterApplicationInstance do
     field :https_port, :integer
     field :database_id, Ecto.UUID
     field :start_priority, :string
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
     field :database_health, Ecto.Enum, values: Health.values()
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values()
   end
