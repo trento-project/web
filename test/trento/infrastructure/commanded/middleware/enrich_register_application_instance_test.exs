@@ -7,6 +7,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
 
   import Trento.Factory
 
+  require Trento.SapSystems.Enums.Status, as: Status
+
   alias Trento.Infrastructure.Commanded.Middleware.Enrichable
   alias Trento.SapSystems.Commands.RegisterApplicationInstance
 
@@ -26,7 +28,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     expected_sap_system_id = UUID.uuid5(database_id, tenant_name)
@@ -66,7 +68,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})
@@ -83,7 +85,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
         instance_number: "00",
         features: Faker.Pokemon.name(),
         host_id: Faker.UUID.v4(),
-        health: :passing
+        status: Status.green()
       )
 
     assert {:error, :associated_database_not_found} = Enrichable.enrich(command, %{})
