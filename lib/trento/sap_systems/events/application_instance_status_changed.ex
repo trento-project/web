@@ -19,11 +19,6 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceStatusChanged do
     field :status, Ecto.Enum, values: Status.values()
   end
 
-  def upcast(%{"health" => health} = params, _, 2),
-    do:
-      params
-      |> Map.put("status", HealthService.health_to_status(health))
-      |> Map.delete("health")
-
-  def upcast(params, _, 2), do: params
+  def upcast(params, _, 2),
+    do: HealthService.upcast_health_to_status(params)
 end

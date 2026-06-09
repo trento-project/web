@@ -22,14 +22,15 @@ defmodule Trento.SapSystems.Services.HealthServiceTest do
       end
     end
 
-    test "should convert health to status for legacy handling purposes" do
+    test "should upcast health to status for legacy handling purposes" do
       for [health, status] <- [
             ["passing", Status.green()],
             ["warning", Status.yellow()],
             ["critical", Status.red()],
             ["unknown", Status.gray()]
           ] do
-        assert status == HealthService.health_to_status(health)
+        assert %{"status" => status} ==
+                 HealthService.upcast_health_to_status(%{"health" => health})
       end
     end
 

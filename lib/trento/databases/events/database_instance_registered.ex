@@ -43,11 +43,6 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
 
   def upcast(params, _, 4), do: params
 
-  def upcast(%{"health" => health} = params, _, 5),
-    do:
-      params
-      |> Map.put("status", HealthService.health_to_status(health))
-      |> Map.delete("health")
-
-  def upcast(params, _, 5), do: params
+  def upcast(params, _, 5),
+    do: HealthService.upcast_health_to_status(params)
 end

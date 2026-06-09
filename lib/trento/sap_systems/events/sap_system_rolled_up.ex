@@ -42,18 +42,10 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
       "sap_system_id" => sap_system_id,
       "snapshot" => %{
         snapshot
-        | "instances" => Enum.map(instances, &handle_instance_status_change/1)
+        | "instances" => Enum.map(instances, &HealthService.upcast_health_to_status/1)
       }
     }
   end
 
   def upcast(params, _, 3), do: params
-
-  defp handle_instance_status_change(%{"health" => health} = instance),
-    do:
-      instance
-      |> Map.put("status", HealthService.health_to_status(health))
-      |> Map.delete("health")
-
-  defp handle_instance_status_change(instance), do: instance
 end

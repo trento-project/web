@@ -8,7 +8,6 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
 
   use Trento.Support.Event
 
-  require Trento.Enums.Health, as: Health
   require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.SapSystems.Services.HealthService
@@ -26,11 +25,6 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
     field :status, Ecto.Enum, values: Status.values()
   end
 
-  def upcast(%{"health" => health} = params, _, 2),
-    do:
-      params
-      |> Map.put("status", HealthService.health_to_status(health))
-      |> Map.delete("health")
-
-  def upcast(params, _, 2), do: params
+  def upcast(params, _, 2),
+    do: HealthService.upcast_health_to_status(params)
 end

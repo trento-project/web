@@ -20,11 +20,6 @@ defmodule Trento.Databases.Events.DatabaseInstanceStatusChanged do
     field :status, Ecto.Enum, values: Status.values()
   end
 
-  def upcast(%{"health" => health} = params, _, 3),
-    do:
-      params
-      |> Map.put("status", HealthService.health_to_status(health))
-      |> Map.delete("health")
-
-  def upcast(params, _, 3), do: params
+  def upcast(params, _, 3),
+    do: HealthService.upcast_health_to_status(params)
 end
