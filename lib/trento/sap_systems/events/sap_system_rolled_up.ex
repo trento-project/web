@@ -8,6 +8,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
   """
 
   alias Trento.Databases.Events.DatabaseRolledUp
+  alias Trento.SapSystems.Services.HealthService
 
   use Trento.Support.Event
 
@@ -19,8 +20,40 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
     DatabaseRolledUp
   end
 
-  defevent resource: "sap_system", version: 2 do
+  defevent resource: "sap_system", version: 3 do
     field :sap_system_id, Ecto.UUID
     embeds_one :snapshot, Trento.SapSystems.SapSystem
   end
+
+  def upcast(params, _, 2), do: params
+
+  def upcast(
+        %{
+          "sap_system_id" => sap_system_id,
+          "snapshot" =>
+            %{
+              "instances" => instances
+            } = snapshot
+        },
+        _,
+        3
+      ) do
+    %{
+      "sap_system_id" => sap_system_id,
+      "snapshot" => %{
+        snapshot
+        | "instances" => Enum.map(instances, &handle_instance_status_change/1)
+      }
+    }
+  end
+
+  def upcast(params, _, 3), do: params
+
+  defp handle_instance_status_change(%{"health" => health} = instance),
+    do:
+      instance
+      |> Map.put("status", HealthService.health_to_status(health))
+      |> Map.delete("health")
+
+  defp handle_instance_status_change(instance), do: instance
 end
