@@ -9,7 +9,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails do
   aggregate docstring.
   """
 
-  @required_fields [:sbd_health]
+  @required_fields [:sbd_health, :distributed_health]
 
   use Trento.Support.Type
 
