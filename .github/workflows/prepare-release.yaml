@@ -1,0 +1,164 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: "Which part of the semver to bump from the current VERSION"
+        required: true
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Compose ${{ inputs.version_bump }} release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ secrets.TRENTOBOT_GH_PAT }}
+    steps:
+      - name: Check out 'release' branch
+        uses: actions/checkout@v4
+        with:
+          ref: release
+          fetch-depth: 0
+          token: ${{ secrets.TRENTOBOT_GH_PAT }}
+
+      - name: Configure git author
+        run: |
+          git config user.name 'trento-bot'
+          git config user.email 'trentobot@users.noreply.github.com'
+
+      - name: Compute current and next version
+        id: versions
+        run: |
+          set -euo pipefail
+          current=$(tr -d '[:space:]' < VERSION)
+          if ! [[ "$current" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            echo "::error::Unexpected VERSION content '$current' (expected MAJOR.MINOR.PATCH)"
+            exit 1
+          fi
+          major=${BASH_REMATCH[1]}
+          minor=${BASH_REMATCH[2]}
+          patch=${BASH_REMATCH[3]}
+          case "${{ inputs.version_bump }}" in
+            major) next="$((major + 1)).0.0" ;;
+            minor) next="${major}.$((minor + 1)).0" ;;
+            patch) next="${major}.${minor}.$((patch + 1))" ;;
+          esac
+          echo "Bumping ${current} -> ${next}"
+          {
+            echo "current=${current}"
+            echo "next=${next}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Ensure no release is already in flight
+        run: |
+          set -euo pipefail
+          open=$(gh pr list \
+            --base release --state open \
+            --json number,title,headRefName)
+          count=$(echo "$open" | jq 'length')
+          if [ "$count" -gt 0 ]; then
+            echo "::error::Found ${count} open PR(s) against 'release'. Close or merge them before starting a new release."
+            echo "$open" | jq -r '.[] | "  #\(.number) \(.title) (head: \(.headRefName))"'
+            exit 1
+          fi
+
+      - name: Fetch merged PRs for milestone ${{ steps.versions.outputs.next }}
+        run: |
+          set -euo pipefail
+          gh pr list \
+            --state merged \
+            --base main \
+            --search "milestone:${{ steps.versions.outputs.next }}" \
+            --json number,title,headRefName,mergeCommit \
+            --limit 200 > prs.json
+          count=$(jq 'length' prs.json)
+          if [ "$count" -eq 0 ]; then
+            echo "::error::No merged PRs found on 'main' with milestone '${{ steps.versions.outputs.next }}'. Assign the milestone to the PRs you want to port and try again."
+            exit 1
+          fi
+          echo "Found ${count} PR(s) to port:"
+          jq -r '.[] | "  #\(.number) \(.title)"' prs.json
+
+      - name: Open porting PRs against 'release'
+        run: |
+          set -euo pipefail
+          git fetch origin main
+
+          mapfile -t rows < <(jq -c '.[]' prs.json)
+          for row in "${rows[@]}"; do
+            num=$(echo "$row" | jq -r '.number')
+            title=$(echo "$row" | jq -r '.title')
+            sha=$(echo "$row"  | jq -r '.mergeCommit.oid')
+            branch="port/${{ steps.versions.outputs.next }}/pr-${num}"
+
+            echo "::group::Porting PR #${num} (${sha}) onto ${branch}"
+
+            git checkout release
+            git checkout -b "$branch"
+
+            # Most merges on this repo are squash commits (single parent, picks cleanly).
+            # Fall back to -m 1 for true merge commits.
+            if ! git cherry-pick -x "$sha" 2> cp.err; then
+              if grep -q 'is a merge' cp.err; then
+                git cherry-pick --abort
+                git cherry-pick -x -m 1 "$sha"
+              else
+                cat cp.err
+                echo "::error::cherry-pick of ${sha} (PR #${num}) failed. Resolve the conflict manually, close any partially-opened porting PRs, delete their branches, then re-run this workflow."
+                exit 1
+              fi
+            fi
+
+            git push origin "$branch"
+
+            gh pr create \
+              --base release \
+              --head "$branch" \
+              --title "(porting) ${title}" \
+              --body "porting PR #${num} to version ${{ steps.versions.outputs.next }}"
+
+            echo "::endgroup::"
+          done
+
+      - name: Open the version-trigger PR
+        env:
+          NEXT: ${{ steps.versions.outputs.next }}
+        run: |
+          set -euo pipefail
+          branch="version/${NEXT}"
+
+          git checkout release
+          git checkout -b "$branch"
+          echo "${NEXT}" > VERSION
+          git add VERSION
+          git commit -m "Bump VERSION to ${NEXT}"
+          git push origin "$branch"
+
+          body=$(cat <<EOF
+          Bumps the VERSION file to **${NEXT}**.
+
+          Merging this PR triggers the release workflow. Do not merge until all porting PRs against \`release\` have been merged — the *Validate Release Trigger PR* check enforces this.
+          EOF
+          )
+
+          gh pr create \
+            --base release \
+            --head "$branch" \
+            --title "Trigger release ${NEXT}" \
+            --label skip-release-notes \
+            --body "$body"
