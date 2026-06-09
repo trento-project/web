@@ -9,6 +9,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
   @behaviour Trento.Infrastructure.ComponentVersions.Gen
 
   alias Ecto.Adapters.SQL
+  alias Trento.Support.Wanda
 
   require Logger
 
@@ -130,7 +131,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
   end
 
   defp fetch_wanda_info(origin) do
-    url = resolve_checks_url("/api", origin)
+    url = Wanda.resolve_url("/api", origin)
 
     case HTTPoison.get(url, [{"Accept", "application/json"}],
            recv_timeout: @timeout,
@@ -156,22 +157,6 @@ defmodule Trento.Infrastructure.ComponentVersions do
 
       _ ->
         {:error, :unexpected_response}
-    end
-  end
-
-  @doc false
-  def resolve_checks_url(path, origin) do
-    base_url = Application.fetch_env!(:trento, :checks_service)[:base_url] || ""
-
-    case URI.parse(base_url) do
-      %URI{scheme: scheme} when scheme in ["http", "https"] ->
-        base_url <> path
-
-      _ when is_binary(origin) and origin != "" ->
-        origin <> base_url <> path
-
-      _ ->
-        base_url <> path
     end
   end
 
