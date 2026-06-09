@@ -6,6 +6,8 @@ defmodule Trento.Databases.DatabaseTest do
 
   import Trento.Factory
 
+  require Trento.SapSystems.Enums.Status, as: Status
+
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
@@ -17,10 +19,10 @@ defmodule Trento.Databases.DatabaseTest do
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     DatabaseRestored,
@@ -74,7 +76,7 @@ defmodule Trento.Databases.DatabaseTest do
           start_priority: start_priority,
           host_id: host_id,
           system_replication: nil,
-          health: :passing
+          status: Status.green()
         },
         [
           %DatabaseRegistered{
@@ -100,7 +102,7 @@ defmodule Trento.Databases.DatabaseTest do
             system_replication_operation_mode: nil,
             system_replication_source_site: nil,
             system_replication_tier: nil,
-            health: :passing
+            status: Status.green()
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
@@ -127,7 +129,7 @@ defmodule Trento.Databases.DatabaseTest do
               instance_number: instance_number,
               features: features,
               host_id: host_id,
-              health: :passing,
+              status: Status.green(),
               absent_at: nil
             }
           ]
@@ -168,7 +170,7 @@ defmodule Trento.Databases.DatabaseTest do
           system_replication_operation_mode: "primary",
           system_replication_source_site: nil,
           system_replication_tier: 1,
-          health: :passing
+          status: Status.green()
         },
         [
           %DatabaseRegistered{
@@ -194,7 +196,7 @@ defmodule Trento.Databases.DatabaseTest do
             system_replication_operation_mode: "primary",
             system_replication_source_site: nil,
             system_replication_tier: 1,
-            health: :passing
+            status: Status.green()
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
@@ -221,7 +223,7 @@ defmodule Trento.Databases.DatabaseTest do
               instance_number: instance_number,
               features: features,
               host_id: host_id,
-              health: :passing
+              status: Status.green()
             }
           ]
         }
@@ -260,7 +262,7 @@ defmodule Trento.Databases.DatabaseTest do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: :passing
+          status: Status.green()
         ),
         [
           build(
@@ -270,7 +272,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: instance_number,
             features: features,
             host_id: host_id,
-            health: :passing
+            status: Status.green()
           ),
           build(:database_tenants_updated_event, database_id: database_id, tenants: tenants)
         ],
@@ -282,7 +284,7 @@ defmodule Trento.Databases.DatabaseTest do
                        instance_number: ^instance_number,
                        features: ^features,
                        host_id: ^host_id,
-                       health: :passing
+                       status: Status.green()
                      }
                      | _
                    ]
@@ -322,7 +324,7 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: database_instance_registered_event.host_id,
           system_replication: database_instance_registered_event.system_replication,
           system_replication_status: database_instance_registered_event.system_replication_status,
-          health: :passing
+          status: Status.green()
         ),
         []
       )
@@ -370,7 +372,7 @@ defmodule Trento.Databases.DatabaseTest do
               instance_number: database_instance_registered_event.instance_number,
               features: database_instance_registered_event.features,
               host_id: database_instance_registered_event.host_id,
-              health: :passing
+              status: Status.green()
             },
             changed_field,
             Faker.StarWars.planet()
@@ -458,7 +460,7 @@ defmodule Trento.Databases.DatabaseTest do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: :critical
+          status: Status.red()
         ),
         [
           build(
@@ -468,7 +470,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: instance_number,
             features: features,
             host_id: host_id,
-            health: :critical
+            status: Status.red()
           ),
           %DatabaseHealthChanged{
             database_id: database_id,
@@ -480,10 +482,10 @@ defmodule Trento.Databases.DatabaseTest do
             health: :critical,
             instances: [
               %Instance{
-                health: :critical
+                status: Status.red()
               },
               %Instance{
-                health: :passing
+                status: Status.green()
               }
             ]
           } = state
@@ -525,14 +527,14 @@ defmodule Trento.Databases.DatabaseTest do
           instance_number: instance_number,
           features: database_instance_registered_event.features,
           host_id: host_id,
-          health: :critical
+          status: Status.red()
         ),
         [
-          %DatabaseInstanceHealthChanged{
+          %DatabaseInstanceStatusChanged{
             database_id: database_id,
             instance_number: instance_number,
             host_id: host_id,
-            health: :critical
+            status: Status.red()
           },
           %DatabaseHealthChanged{
             database_id: database_id,
@@ -546,7 +548,7 @@ defmodule Trento.Databases.DatabaseTest do
                      %Instance{
                        instance_number: ^instance_number,
                        host_id: ^host_id,
-                       health: :critical
+                       status: Status.red()
                      }
                    ]
                  } = state
@@ -567,7 +569,7 @@ defmodule Trento.Databases.DatabaseTest do
         build(
           :database_instance_registered_event,
           database_id: database_id,
-          health: :warning
+          status: Status.yellow()
         )
 
       initial_events = [
@@ -590,7 +592,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: database_instance_registered_event.instance_number,
             features: database_instance_registered_event.features,
             host_id: database_instance_registered_event.host_id,
-            health: :warning
+            status: Status.yellow()
           ),
           build(
             :register_database_instance_command,
@@ -600,7 +602,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
-            health: :warning
+            status: Status.yellow()
           )
         ],
         [
@@ -611,7 +613,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: new_instance_number,
             features: new_instance_features,
             host_id: new_instance_host_id,
-            health: :warning
+            status: Status.yellow()
           )
         ],
         fn state ->
@@ -619,10 +621,10 @@ defmodule Trento.Databases.DatabaseTest do
                    health: :warning,
                    instances: [
                      %Instance{
-                       health: :warning
+                       status: Status.yellow()
                      },
                      %Instance{
-                       health: :warning
+                       status: Status.yellow()
                      }
                    ]
                  } = state
@@ -874,7 +876,7 @@ defmodule Trento.Databases.DatabaseTest do
           start_priority: start_priority,
           host_id: host_id,
           system_replication: nil,
-          health: :passing
+          status: Status.green()
         },
         [
           %DatabaseRegistered{
@@ -894,7 +896,7 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: host_id,
             system_replication: nil,
             system_replication_status: nil,
-            health: :passing
+            status: Status.green()
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
@@ -915,7 +917,7 @@ defmodule Trento.Databases.DatabaseTest do
               instance_number: instance_number,
               features: features,
               host_id: host_id,
-              health: :passing,
+              status: Status.green(),
               absent_at: nil
             }
           ]
@@ -958,7 +960,7 @@ defmodule Trento.Databases.DatabaseTest do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: :passing
+          status: Status.green()
         ),
         [
           build(
@@ -968,7 +970,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: instance_number,
             features: features,
             host_id: host_id,
-            health: :passing
+            status: Status.green()
           ),
           build(
             :database_tenants_updated_event,
@@ -986,7 +988,7 @@ defmodule Trento.Databases.DatabaseTest do
                        instance_number: ^instance_number,
                        features: ^features,
                        host_id: ^host_id,
-                       health: :passing
+                       status: Status.green()
                      }
                      | _
                    ]
@@ -1028,7 +1030,7 @@ defmodule Trento.Databases.DatabaseTest do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: :passing
+          status: Status.green()
         ),
         [
           build(
@@ -1038,7 +1040,7 @@ defmodule Trento.Databases.DatabaseTest do
             instance_number: instance_number,
             features: features,
             host_id: host_id,
-            health: :passing
+            status: Status.green()
           )
         ],
         fn state ->
@@ -1050,7 +1052,7 @@ defmodule Trento.Databases.DatabaseTest do
                        instance_number: ^instance_number,
                        features: ^features,
                        host_id: ^host_id,
-                       health: :passing
+                       status: Status.green()
                      }
                      | _
                    ]
@@ -1111,7 +1113,7 @@ defmodule Trento.Databases.DatabaseTest do
 
       new_tenants = build_list(3, :tenant)
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: nil,
@@ -1136,11 +1138,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: Status.green()
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           },
           %DatabaseTenantsUpdated{
             database_id: database_id,
@@ -1158,7 +1160,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health
+                       status: ^status
                      },
                      %Instance{}
                    ]
@@ -1217,7 +1219,7 @@ defmodule Trento.Databases.DatabaseTest do
         )
       ]
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: nil,
@@ -1242,11 +1244,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: command.status
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           }
         ],
         fn state ->
@@ -1259,7 +1261,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health
+                       status: ^status
                      },
                      %Instance{}
                    ]
@@ -1381,7 +1383,7 @@ defmodule Trento.Databases.DatabaseTest do
         )
       ]
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: nil,
@@ -1406,11 +1408,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: command.status
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           }
         ],
         fn state ->
@@ -1422,7 +1424,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health
+                       status: ^status
                      },
                      %Instance{}
                    ]
@@ -1486,7 +1488,7 @@ defmodule Trento.Databases.DatabaseTest do
         )
       ]
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: nil,
@@ -1511,11 +1513,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: command.status
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           }
         ],
         fn state ->
@@ -1529,7 +1531,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health,
+                       status: ^status,
                        system_replication: nil
                      }
                    ]
@@ -1594,7 +1596,7 @@ defmodule Trento.Databases.DatabaseTest do
         )
       ]
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: "Primary",
@@ -1619,11 +1621,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: command.status
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           }
         ],
         fn state ->
@@ -1637,7 +1639,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health,
+                       status: ^status,
                        system_replication: "Primary"
                      }
                    ]
@@ -1696,7 +1698,7 @@ defmodule Trento.Databases.DatabaseTest do
         )
       ]
 
-      %{features: features, instance_number: instance_number, health: health} =
+      %{features: features, instance_number: instance_number, status: status} =
         command =
         build(:register_database_instance_command,
           system_replication: "Primary",
@@ -1721,11 +1723,11 @@ defmodule Trento.Databases.DatabaseTest do
             host_id: command.host_id,
             system_replication: command.system_replication,
             system_replication_status: command.system_replication_status,
-            health: command.health
+            status: command.status
           },
           %DatabaseRestored{
             database_id: database_id,
-            health: command.health
+            health: :passing
           }
         ],
         fn state ->
@@ -1739,7 +1741,7 @@ defmodule Trento.Databases.DatabaseTest do
                        sid: ^db_sid,
                        instance_number: ^instance_number,
                        features: ^features,
-                       health: ^health,
+                       status: ^status,
                        system_replication: "Primary"
                      },
                      %Instance{}
@@ -2506,13 +2508,13 @@ defmodule Trento.Databases.DatabaseTest do
             database_id: database_id,
             host_id: host_id,
             instance_number: absent_db_instance_number,
-            health: :passing
+            status: Status.green()
           },
           %RegisterDatabaseInstance{
             database_id: database_id,
             host_id: host_id,
             instance_number: present_db_instance_number,
-            health: :passing
+            status: Status.green()
           }
         ],
         [

@@ -503,7 +503,7 @@ defmodule Trento.Factory do
       system_replication_operation_mode: nil,
       system_replication_source_site: nil,
       system_replication_tier: nil,
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -831,7 +831,7 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
