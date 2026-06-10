@@ -191,7 +191,7 @@ defmodule Trento.Clusters.Cluster do
         }
       ) do
     health_details = derive_discovered_health(details)
-    health = compute_discovered_health(health_details)
+    health = aggregate_health_details(health_details)
 
     [
       %ClusterRegistered{
@@ -777,17 +777,16 @@ defmodule Trento.Clusters.Cluster do
 
   defp derive_distributed_health(_), do: Health.unknown()
 
-  defp compute_discovered_health(%HanaClusterHealthDetails{
-         replication_health: replication_health
-       }),
-       do: replication_health
+  defp aggregate_health_details(nil), do: Health.unknown()
 
-  defp compute_discovered_health(%AscsErsClusterHealthDetails{
-         distributed_health: distributed_health
-       }),
-       do: distributed_health
-
-  defp compute_discovered_health(_), do: Health.unknown()
+  defp aggregate_health_details(health_details) when is_struct(health_details) do
+    health_details
+    |> Map.from_struct()
+    |> maybe_remove_checks_health()
+    |> Map.values()
+    |> Enum.reject(&is_nil/1)
+    |> HealthService.compute_aggregated_health()
+  end
 
   defp maybe_emit_host_added_to_cluster_event(
          %Cluster{cluster_id: cluster_id, hosts: hosts, offline_hosts: offline_hosts},
@@ -1038,19 +1037,10 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
-         health_details:
-           %{
-             checks_health: checks_health
-           } = health_details,
+         health_details: %{} = health_details,
          health: health
        }) do
-    new_health =
-      health_details
-      |> add_primary_health()
-      |> maybe_add_checks_health(checks_health)
-      |> Enum.filter(& &1)
-      |> HealthService.compute_aggregated_health()
-
+    new_health = aggregate_health_details(health_details)
     if new_health != health do
       %ClusterHealthChanged{cluster_id: cluster_id, health: new_health}
     end
@@ -1058,16 +1048,8 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(_), do: nil
 
-  defp add_primary_health(%HanaClusterHealthDetails{
-         replication_health: replication_health
-       }),
-       do: [replication_health]
+  defp maybe_remove_checks_health(%{checks_health: Health.unknown()} = health_details),
+    do: Map.delete(health_details, :checks_health)
 
-  defp add_primary_health(%AscsErsClusterHealthDetails{
-         distributed_health: distributed_health
-       }),
-       do: [distributed_health]
-
-  defp maybe_add_checks_health(healths, Health.unknown()), do: healths
-  defp maybe_add_checks_health(healths, checks_health), do: [checks_health | healths]
+  defp maybe_remove_checks_health(health_details), do: health_details
 end

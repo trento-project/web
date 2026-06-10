@@ -6,6 +6,7 @@ defmodule Trento.ClusterTest do
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Enums.Health, as: Health
 
   import Trento.Factory
@@ -54,6 +55,7 @@ defmodule Trento.ClusterTest do
 
   alias Trento.Clusters.Cluster
 
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
   require Trento.Enums.Health, as: Health
 
   describe "cluster registration" do
@@ -282,6 +284,104 @@ defmodule Trento.ClusterTest do
               }),
             state: :S_IDLE
           }
+        )
+      end
+    end
+
+    @cluster_confs [
+      %{
+        type: ClusterType.ascs_ers(),
+        details_factory: :ascs_ers_cluster_details,
+        health_details_key: :distributed_health
+      },
+      %{
+        type: ClusterType.hana_scale_up(),
+        details_factory: :hana_cluster_details,
+        health_details_key: :replication_health
+      }
+    ]
+    @health_confs [
+      %{
+        sbd_status: SbdDeviceStatus.healthy(),
+        expected_health: Health.passing()
+      },
+      %{
+        sbd_status: SbdDeviceStatus.unhealthy(),
+        expected_health: Health.critical()
+      }
+    ]
+    for cluster_conf <- @cluster_confs,
+        health_conf <- @health_confs do
+      @tag :wip
+      test "should register a cluster of type #{cluster_conf.type} with #{health_conf.expected_health} health when SBD if #{health_conf.sbd_status}" do
+        cluster_details =
+          params_for(unquote(cluster_conf.details_factory),
+            sbd_devices: [
+              build(:sbd_device),
+              build(:sbd_device, status: unquote(health_conf.sbd_status))
+            ]
+          )
+
+        %RegisterOnlineClusterHost{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sap_instances: sap_instances,
+          provider: provider,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          type: cluster_type,
+          state: state
+        } =
+          register_command =
+          build(:register_online_cluster_host,
+            type: unquote(cluster_conf.type),
+            details: cluster_details
+          )
+
+        assert_events_and_state(
+          [],
+          register_command,
+          [
+            ClusterRegistered.new!(%{
+              cluster_id: cluster_id,
+              name: name,
+              sap_instances: StructHelper.to_map(sap_instances),
+              provider: provider,
+              resources_number: resources_number,
+              hosts_number: hosts_number,
+              type: cluster_type,
+              details: cluster_details,
+              health: unquote(health_conf.expected_health),
+              health_details: %{
+                :sbd_health => unquote(health_conf.expected_health),
+                unquote(cluster_conf.health_details_key) => Health.passing()
+              },
+              state: state
+            }),
+            HostAddedToCluster.new!(%{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            })
+          ],
+          Cluster.new!(%{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: StructHelper.to_map(sap_instances),
+            type: cluster_type,
+            provider: provider,
+            resources_number: resources_number,
+            hosts: [host_id],
+            hosts_number: hosts_number,
+            details: cluster_details,
+            health: unquote(health_conf.expected_health),
+            health_details: %{
+              :sbd_health => unquote(health_conf.expected_health),
+              unquote(cluster_conf.health_details_key) => Health.passing()
+            },
+            state: state
+          })
         )
       end
     end
@@ -1824,7 +1924,7 @@ defmodule Trento.ClusterTest do
           :register_online_cluster_host,
           cluster_id: cluster_id,
           host_id: new_host_id,
-          details: build(:hana_cluster_details, sr_health_state: "1"),
+          details: params_for(:hana_cluster_details, sr_health_state: "1"),
           designated_controller: true
         )
 

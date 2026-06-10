@@ -266,21 +266,26 @@ defmodule Trento.Factory do
     }
   end
 
-  def register_online_cluster_host_factory do
-    %RegisterOnlineClusterHost{
+  def register_online_cluster_host_factory(attrs) do
+    command = %{
       cluster_id: Faker.UUID.v4(),
       host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
-      sap_instances: build_list(1, :clustered_sap_instance),
+      sap_instances: [params_for(:clustered_sap_instance)],
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: build(:hana_cluster_details),
+      details: params_for(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0)),
       state: :S_IDLE
     }
+
+    command
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> RegisterOnlineClusterHost.new!()
   end
 
   def register_offline_cluster_host_factory do
@@ -732,7 +737,7 @@ defmodule Trento.Factory do
     %AscsErsClusterSapSystem{
       sid: sequence(:sid, &"PR#{&1}"),
       filesystem_resource_based: Enum.random([false, true]),
-      distributed: Enum.random([false, true]),
+      distributed: true,
       nodes: build_list(2, :ascs_ers_cluster_node)
     }
   end
@@ -746,7 +751,7 @@ defmodule Trento.Factory do
     sbd_device
     |> merge_attributes(attrs)
     |> evaluate_lazy_attributes
-    |> SbdDevice.new!
+    |> SbdDevice.new!()
   end
 
   def cluster_resource_factory do
