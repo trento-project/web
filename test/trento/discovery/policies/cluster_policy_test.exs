@@ -15,6 +15,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
 
   alias Trento.Discovery.Policies.ClusterPolicy
 
@@ -217,11 +218,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sbd_devices: [
                     SbdDevice.new!(%{
                       device: "/dev/vdc",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     }),
                     SbdDevice.new!(%{
                       device: "/dev/vdb",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   secondary_sync_state: "SOK",
@@ -626,11 +627,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sbd_devices: [
                     SbdDevice.new!(%{
                       device: "/dev/vdc",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     }),
                     SbdDevice.new!(%{
                       device: "/dev/vdb",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   secondary_sync_state: "SOK",
@@ -1032,7 +1033,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     }
                   ],
                   sbd_devices: [
-                    SbdDevice.new!(%{device: "/dev/sdj", status: :healthy})
+                    SbdDevice.new!(%{device: "/dev/sdj", status: SbdDeviceStatus.healthy()})
                   ],
                   secondary_sync_state: "SOK",
                   sr_health_state: "4",
@@ -1335,7 +1336,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     SbdDevice.new!(%{
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   resources: [
@@ -1654,7 +1655,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     SbdDevice.new!(%{
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   resources: [
@@ -2188,7 +2189,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     SbdDevice.new!(%{
                       device:
                         "/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_e34218cd-0d9a-4b21-b6d5-a313980baa82",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   resources: [
@@ -3682,11 +3683,11 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                   sbd_devices: [
                     SbdDevice.new!(%{
                       device: "/dev/vdc",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     }),
                     SbdDevice.new!(%{
                       device: "/dev/vdb",
-                      status: :healthy
+                      status: SbdDeviceStatus.healthy()
                     })
                   ],
                   secondary_sync_state: "SOK",
@@ -4509,7 +4510,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sbd_devices: [
                       SbdDevice.new!(%{
                         device: "/dev/vdb",
-                        status: :healthy
+                        status: SbdDeviceStatus.healthy()
                       })
                     ],
                     resources: [
@@ -5023,7 +5024,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       SbdDevice.new!(%{
                         device:
                           "/dev/disk/by-id/scsi-1LIO-ORG_sbdnfs:01144514-24f0-4386-83c2-321e6b1af8b0",
-                        status: :healthy
+                        status: SbdDeviceStatus.healthy()
                       })
                     ],
                     resources: [
@@ -5560,7 +5561,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     sbd_devices: [
                       SbdDevice.new!(%{
                         device: "/dev/vdb",
-                        status: :healthy
+                        status: SbdDeviceStatus.healthy()
                       })
                     ],
                     resources: [
@@ -6554,7 +6555,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                          virtual_ip: nil
                        }
                      ],
-                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: :healthy})],
+                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})],
                      secondary_sync_state: "SOK",
                      sites: [
                        %HanaClusterSite{name: "WDF", sr_health_state: "4", state: "Primary"},
@@ -6786,7 +6787,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                          virtual_ip: "10.70.1.13"
                        }
                      ],
-                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: :healthy})],
+                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})],
                      secondary_sync_state: "SFAIL",
                      sites: [
                        %HanaClusterSite{name: "ROT", sr_health_state: "4", state: "Primary"},

@@ -7,6 +7,7 @@ defmodule Trento.ClusterTest do
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
   require Trento.Enums.Health, as: Health
 
   import Trento.Factory
@@ -54,9 +55,6 @@ defmodule Trento.ClusterTest do
   }
 
   alias Trento.Clusters.Cluster
-
-  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
-  require Trento.Enums.Health, as: Health
 
   describe "cluster registration" do
     test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do
@@ -312,7 +310,6 @@ defmodule Trento.ClusterTest do
     ]
     for cluster_conf <- @cluster_confs,
         health_conf <- @health_confs do
-      @tag :wip
       test "should register a cluster of type #{cluster_conf.type} with #{health_conf.expected_health} health when SBD if #{health_conf.sbd_status}" do
         cluster_details =
           params_for(unquote(cluster_conf.details_factory),
