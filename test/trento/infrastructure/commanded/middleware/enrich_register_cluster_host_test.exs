@@ -24,6 +24,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
   alias Trento.Clusters.ClusterEnrichmentData
   alias Trento.Repo
 
+  alias Trento.Support.StructHelper
+
   @endpoint TrentoWeb.Endpoint
 
   setup do
@@ -86,13 +88,15 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
         initial_command =
         build(
           :register_online_cluster_host,
-          details: initial_details,
+          details: StructHelper.to_map(initial_details),
           type: :hana_scale_up,
-          sap_instances:
-            build_list(1, :clustered_sap_instance,
+          sap_instances: [
+            params_for(
+              :clustered_sap_instance,
               sid: sid,
               resource_type: SapInstanceResourceType.sap_hana_topology()
             )
+          ]
         )
 
       assert {:ok, enriched_command} = Enrichable.enrich(initial_command, %{})
@@ -119,7 +123,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterClusterHostTe
 
     test "should not strip attributes from non hana-scale-up cluster nodes" do
       initial_details =
-        build(:hana_cluster_details,
+        params_for(:hana_cluster_details,
           nodes: [
             build(:hana_cluster_node,
               attributes: %{"lpa_FOO_lpt" => "initial-timestamp", "relevant" => "foo"}

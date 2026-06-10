@@ -18,6 +18,6 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails do
   deftype do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :sbd_health, Ecto.Enum, values: Health.values()
-    field :distributed_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
+    field :distributed_health, Ecto.Enum, values: Health.values()
   end
 end
