@@ -41,6 +41,7 @@ defmodule Trento.AI.RemoteHttpTool do
 
   alias Trento.AI.ApplicationConfigLoader
   alias Trento.AI.{OpenApiToolBuilder, OperationEntry}
+  alias Trento.Support.HttpUtils
 
   @default_recv_timeout 30_000
 
@@ -99,7 +100,7 @@ defmodule Trento.AI.RemoteHttpTool do
   defp fetch_request_origin(_), do: nil
 
   defp dispatch_request(verb, base_url, resolved_path, body_args, jwt, request_origin) do
-    url = resolve_url(base_url, resolved_path, request_origin)
+    url = HttpUtils.resolve_url(base_url, resolved_path, request_origin)
     body = encode_body(verb, body_args)
     headers = build_headers(jwt, body)
     options = [recv_timeout: @default_recv_timeout]
@@ -107,19 +108,6 @@ defmodule Trento.AI.RemoteHttpTool do
     verb
     |> http_client().request(url, body, headers, options)
     |> decode_response()
-  end
-
-  defp resolve_url(base_url, path, origin) do
-    case URI.parse(base_url) do
-      %URI{scheme: scheme} when scheme in ["http", "https"] ->
-        base_url <> path
-
-      _ when is_binary(origin) and origin != "" ->
-        origin <> base_url <> path
-
-      _ ->
-        base_url <> path
-    end
   end
 
   defp encode_body(verb, body_args)

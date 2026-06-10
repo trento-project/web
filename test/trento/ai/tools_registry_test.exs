@@ -3,6 +3,7 @@
 
 defmodule Trento.AI.ToolsRegistryTest do
   use ExUnit.Case, async: true
+  use Trento.AI.AICase
 
   import Mox
 
