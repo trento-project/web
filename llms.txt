@@ -639,8 +639,7 @@ related to a restored database
   - [Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler](Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.md): This event handler is responsible for rolling-up aggregates when a requested event is received.
 
   - [Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.md): This event handler is responsible to forward update database health commands to the SAP systems
-related to a database that has a new health state
-
+related to a database that has a new health state.
   - [Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.md): Event handler to update saptune status when application or HANA database instances are registered/deregistered.
 A host saptune health depends on SAP instances running on the host, so any update on that
 needs to be applied in the saptune state health.

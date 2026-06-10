@@ -13,6 +13,8 @@
 
 # `sap_system`
 
+# `sap_system_database_health_changed`
+
 # `sap_system_deregistered`
 
 # `sap_system_health_changed`

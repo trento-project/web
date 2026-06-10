@@ -2,7 +2,9 @@
 [🔗](https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/event_handlers/sap_system_database_health_event_handler.ex#L4)
 
 This event handler is responsible to forward update database health commands to the SAP systems
-related to a database that has a new health state
+related to a database that has a new health state.
+
+Once the resulting event is emitted, the event handler broadcasts its results.
 
 # `child_spec`
 
