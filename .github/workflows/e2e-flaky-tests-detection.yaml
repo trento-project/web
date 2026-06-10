@@ -94,7 +94,7 @@ jobs:
             assets/node_modules
           key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install NPM dependencies
@@ -118,7 +118,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install E2E NPM dependencies
@@ -162,7 +162,7 @@ jobs:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
