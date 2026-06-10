@@ -18,7 +18,10 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
      `operation.extensions["x-ai-tool"]["name" | "display_text"]` →
      `operation.operation_id` / `operation.summary` → derived
      `\#{verb}_<slugified path>` / `tool_name`.
-  5. Map each entry through `Trento.AI.RemoteHttpTool.build/2`.
+  5. Extract the dispatch base URL from `spec.servers |> List.first()`'s
+     `:url` field.
+  6. Map each entry through `Trento.AI.RemoteHttpTool.build/2`, threading
+     that base URL into the dispatcher's closure.
 
   ## Configuration
 
@@ -27,12 +30,17 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
           ...,
           {Trento.AI.RemoteOpenApiToolSource,
            name: :wanda,
-           spec_url: "http://localhost:4001/api/all/openapi",
-           base_url: "http://localhost:4001"}
+           spec_url: "http://localhost:4001/api/all/openapi"}
         ]
 
-  Spec-fetch failures are logged and raise so that `Trento.AI.ToolsRegistry`
-  treats this source as contributing `[]` for the current call; other
+  The base URL used for tool invocations comes from `spec.servers[0].url`
+  in the fetched OpenAPI document — the spec itself is the source of
+  truth. Relative server URLs (no http/https scheme) are resolved against
+  `tool_context.request_origin` at request time — see
+  `Trento.AI.RemoteHttpTool`.
+
+  Spec-fetch failures, and specs missing a usable `servers[0].url`, are
+  logged and the source contributes `[]` for the current call; other
   configured sources still surface their tools.
   """
 
@@ -52,12 +60,10 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   def tools(opts) do
     name = Keyword.fetch!(opts, :name)
     spec_url = Keyword.fetch!(opts, :spec_url)
-    base_url = Keyword.fetch!(opts, :base_url)
 
     case fetch_and_decode(spec_url) do
       {:ok, spec} ->
-        entries = build_entries(spec, name)
-        Enum.map(entries, &RemoteHttpTool.build(&1, base_url))
+        build_tools(spec, name)
 
       {:error, reason} ->
         Logger.warning(
@@ -68,6 +74,28 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
         []
     end
   end
+
+  defp build_tools(spec, name) do
+    case extract_base_url(spec) do
+      {:ok, base_url} ->
+        spec
+        |> build_entries(name)
+        |> Enum.map(&RemoteHttpTool.build(&1, base_url))
+
+      {:error, reason} ->
+        Logger.warning("Trento.AI.RemoteOpenApiToolSource[#{inspect(name)}]: #{reason}")
+        []
+    end
+  end
+
+  defp extract_base_url(%OpenApiSpex.OpenApi{
+         servers: [%OpenApiSpex.Server{url: url} | _]
+       })
+       when is_binary(url) and url != "",
+       do: {:ok, url}
+
+  defp extract_base_url(_),
+    do: {:error, "spec missing servers[0].url; this source contributes no tools for this call."}
 
   defp fetch_and_decode(spec_url) do
     headers = [{"accept", "application/json"}]

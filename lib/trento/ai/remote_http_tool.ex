@@ -45,16 +45,19 @@ defmodule Trento.AI.RemoteHttpTool do
   @default_recv_timeout 30_000
 
   @doc """
-  Build a `%LangChain.Function{}` for the given entry. `base_url` is the
-  absolute URL prefix that resolved paths are appended to (no trailing
-  slash; e.g. `"http://localhost:4001"`).
+  Build a `%LangChain.Function{}` for the given entry. `base_url` is
+  the dispatch base supplied by the source (typically
+  `spec.servers[0].url`). When `base_url` carries an http/https scheme
+  it's used verbatim; otherwise the websocket request origin forwarded
+  through `tool_context.request_origin` is prepended at request time.
   """
   @spec build(OperationEntry.t(), String.t()) :: Function.t()
   def build(
         %OperationEntry{tool_name: tool_name, display_text: display_text, operation: operation} =
           entry,
         base_url
-      ) do
+      )
+      when is_binary(base_url) do
     Function.new!(%{
       name: tool_name,
       display_text: display_text || tool_name,
@@ -72,7 +75,8 @@ defmodule Trento.AI.RemoteHttpTool do
        ) do
     with {:ok, jwt} <- fetch_access_token(context) do
       {resolved_path, body_args} = resolve_path_and_body(path_template, operation, tool_args)
-      dispatch_request(verb, base_url, resolved_path, body_args, jwt)
+      origin = fetch_request_origin(context)
+      dispatch_request(verb, base_url, resolved_path, body_args, jwt, origin)
     end
   rescue
     exception ->
@@ -91,15 +95,31 @@ defmodule Trento.AI.RemoteHttpTool do
   defp fetch_access_token(_context),
     do: {:error, "tool invocation failed (missing access_token in tool context)"}
 
-  defp dispatch_request(verb, base_url, resolved_path, body_args, jwt) do
-    url = base_url <> resolved_path
+  defp fetch_request_origin(%{tool_context: %{request_origin: origin}}), do: origin
+  defp fetch_request_origin(_), do: nil
+
+  defp dispatch_request(verb, base_url, resolved_path, body_args, jwt, request_origin) do
+    url = resolve_url(base_url, resolved_path, request_origin)
     body = encode_body(verb, body_args)
     headers = build_headers(jwt, body)
     options = [recv_timeout: @default_recv_timeout]
 
-    # IO.inspect({url, body, headers, options}, label: "request to wanda")
+    verb
+    |> http_client().request(url, body, headers, options)
+    |> decode_response()
+  end
 
-    decode_response(http_client().request(verb, url, body, headers, options))
+  defp resolve_url(base_url, path, origin) do
+    case URI.parse(base_url) do
+      %URI{scheme: scheme} when scheme in ["http", "https"] ->
+        base_url <> path
+
+      _ when is_binary(origin) and origin != "" ->
+        origin <> base_url <> path
+
+      _ ->
+        base_url <> path
+    end
   end
 
   defp encode_body(verb, body_args)

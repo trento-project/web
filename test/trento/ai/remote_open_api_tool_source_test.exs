@@ -7,6 +7,8 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
 
   import Mox
 
+  import ExUnit.CaptureLog
+
   alias LangChain.Function
   alias Trento.AI.RemoteOpenApiToolSource
   alias Trento.Support.HttpClient
@@ -17,6 +19,7 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
     %{
       "openapi" => "3.0.0",
       "info" => %{"title" => "Wanda", "version" => "1"},
+      "servers" => [%{"url" => "http://wanda"}],
       "paths" => %{
         "/api/v1/groups/{group_id}/checks" => %{
           "get" => %{
@@ -79,8 +82,7 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
     Keyword.merge(
       [
         name: :wanda_test,
-        spec_url: "http://wanda/api/all/openapi",
-        base_url: "http://wanda"
+        spec_url: "http://wanda/api/all/openapi"
       ],
       extra
     )
@@ -164,6 +166,60 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
       end)
 
       assert [] = RemoteOpenApiToolSource.tools(source_opts())
+    end
+  end
+
+  describe "tools/1 — base_url extraction from servers[0].url" do
+    test "returns [] and logs when spec has no servers key" do
+      spec = Map.delete(synthetic_spec(), "servers")
+      expect_spec_fetch_ok(spec)
+
+      log =
+        capture_log(fn ->
+          assert [] = RemoteOpenApiToolSource.tools(source_opts())
+        end)
+
+      assert log =~ "missing servers[0].url"
+    end
+
+    test "returns [] and logs when servers list is empty" do
+      spec = Map.put(synthetic_spec(), "servers", [])
+      expect_spec_fetch_ok(spec)
+
+      log =
+        capture_log(fn ->
+          assert [] = RemoteOpenApiToolSource.tools(source_opts())
+        end)
+
+      assert log =~ "missing servers[0].url"
+    end
+
+    test "returns [] and logs when servers[0].url is nil" do
+      spec = Map.put(synthetic_spec(), "servers", [%{"url" => nil}])
+      expect_spec_fetch_ok(spec)
+
+      log =
+        capture_log(fn ->
+          assert [] = RemoteOpenApiToolSource.tools(source_opts())
+        end)
+
+      assert log =~ "missing servers[0].url"
+    end
+
+    test "extracted base_url is used as dispatch prefix" do
+      spec = Map.put(synthetic_spec(), "servers", [%{"url" => "http://elsewhere.example"}])
+      expect_spec_fetch_ok(spec)
+
+      expect(HttpClient.Mock, :request, fn :get, url, _body, _headers, _opts ->
+        assert String.starts_with?(url, "http://elsewhere.example/")
+        {:ok, %HTTPoison.Response{status_code: 200, body: ~s({"ok":true})}}
+      end)
+
+      tools = RemoteOpenApiToolSource.tools(source_opts())
+      tool = Enum.find(tools, &(&1.name == "selectable_checks"))
+
+      ctx = %{tool_context: %{access_token: "JWT", request_origin: nil}}
+      assert {:ok, _} = Function.execute(tool, %{"group_id" => "g1"}, ctx)
     end
   end
 end

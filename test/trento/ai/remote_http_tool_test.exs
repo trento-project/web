@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule Trento.AI.RemoteHttpToolTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   use Trento.AI.AICase
 
   import Mox
@@ -13,6 +13,8 @@ defmodule Trento.AI.RemoteHttpToolTest do
   alias Trento.Support.HttpClient
 
   setup :verify_on_exit!
+
+  @base_url "http://wanda"
 
   defp entry(verb, path, parameters \\ []) do
     %OperationEntry{
@@ -30,7 +32,8 @@ defmodule Trento.AI.RemoteHttpToolTest do
     }
   end
 
-  defp context(jwt), do: %{tool_context: %{access_token: jwt}}
+  defp context(jwt, request_origin \\ nil),
+    do: %{tool_context: %{access_token: jwt, request_origin: request_origin}}
 
   describe "build/2 — function metadata" do
     test "wires tool_name, display_text, description, parameters_schema, function" do
@@ -40,14 +43,14 @@ defmodule Trento.AI.RemoteHttpToolTest do
                description: "test\n\ndesc",
                parameters_schema: %{"type" => "object"},
                function: function
-             } = RemoteHttpTool.build(entry(:get, "/x"), "http://wanda")
+             } = RemoteHttpTool.build(entry(:get, "/x"), @base_url)
 
       assert is_function(function, 2)
     end
 
     test "falls back to tool_name when display_text is nil" do
       e = %{entry(:get, "/x") | display_text: nil}
-      assert %Function{display_text: "test_tool"} = RemoteHttpTool.build(e, "http://wanda")
+      assert %Function{display_text: "test_tool"} = RemoteHttpTool.build(e, @base_url)
     end
   end
 
@@ -71,7 +74,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
       assert {:ok, ~s({"ok":true})} =
                e
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{"id" => "42", "limit" => 10}, context("JWT123"))
     end
 
@@ -91,7 +94,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
       assert {:ok, _} =
                e
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(
                  %{"group_id" => "g1", "checks" => ["c1", "c2"]},
                  context("JWT")
@@ -107,7 +110,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
       assert {:error, msg} =
                entry(:get, "/x")
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
 
       assert msg =~ "404"
@@ -121,7 +124,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
       assert {:error, "500 boom"} =
                entry(:get, "/x")
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
     end
 
@@ -132,7 +135,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
       assert {:error, msg} =
                entry(:get, "/x")
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
 
       assert msg =~ "tool invocation failed"
@@ -142,7 +145,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
     test "refuses to dispatch when access_token missing from tool_context" do
       assert {:error, msg} =
                entry(:get, "/x")
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, %{tool_context: %{}})
 
       assert msg =~ "missing access_token"
@@ -151,10 +154,24 @@ defmodule Trento.AI.RemoteHttpToolTest do
     test "refuses to dispatch when context has no tool_context at all" do
       assert {:error, msg} =
                entry(:get, "/x")
-               |> RemoteHttpTool.build("http://wanda")
+               |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, %{scope: nil})
 
       assert msg =~ "missing access_token"
+    end
+  end
+
+  describe "dispatch — URL resolution from base_url + request_origin" do
+    test "prepends request_origin when base_url is relative" do
+      expect(HttpClient.Mock, :request, fn :get, url, _body, _headers, _opts ->
+        assert url == "https://trento.example.com/wanda/x"
+        {:ok, %HTTPoison.Response{status_code: 200, body: ""}}
+      end)
+
+      assert {:ok, _} =
+               entry(:get, "/x")
+               |> RemoteHttpTool.build("/wanda")
+               |> Function.execute(%{}, context("JWT", "https://trento.example.com"))
     end
   end
 end

@@ -326,9 +326,7 @@ config :trento, :ai,
   tool_sources: [
     TrentoWeb.AI.ControllerToolSource,
     {Trento.AI.RemoteOpenApiToolSource,
-     name: :wanda,
-     spec_url: "http://localhost:4001/api/all/openapi",
-     base_url: "http://localhost:4001"}
+     name: :wanda, spec_url: "http://localhost:4001/api/all/openapi"}
   ],
   http_client: Trento.Support.HttpClient
 
