@@ -10,7 +10,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
 
   import Trento.Factory
 
-  require Trento.Enums.Health, as: Health
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
 
   alias Trento.SapSystems.Projections.{
@@ -25,7 +24,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
-    SapSystemDatabaseHealthChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRestored,
@@ -439,26 +437,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       %{
         id: ^id,
         ensa_version: ^ensa_version
-      },
-      1000
-    )
-  end
-
-  test "should broadcast database health change when a SapSystemDatabaseHealthChanged event is received" do
-    sap_system_id = Faker.UUID.v4()
-
-    event = %SapSystemDatabaseHealthChanged{
-      sap_system_id: sap_system_id,
-      database_health: Health.critical()
-    }
-
-    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
-
-    assert_broadcast(
-      "sap_system_updated",
-      %{
-        id: ^sap_system_id,
-        database_health: Health.critical()
       },
       1000
     )
