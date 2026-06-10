@@ -131,13 +131,13 @@ defmodule Trento.Infrastructure.ComponentVersions do
   end
 
   defp fetch_wanda_info(origin) do
-    base_url = Application.fetch_env!(:trento, :checks_service)[:base_url] || ""
-    url = HttpUtils.resolve_url(base_url, "/api", origin)
-
-    case http_client().get(url, [{"Accept", "application/json"}],
-           recv_timeout: @timeout,
-           follow_redirect: true
-         ) do
+    "/api"
+    |> resolve_checks_url(origin)
+    |> http_client().get([{"Accept", "application/json"}],
+      recv_timeout: @timeout,
+      follow_redirect: true
+    )
+    |> case do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"version" => version} = data} ->
@@ -158,6 +158,13 @@ defmodule Trento.Infrastructure.ComponentVersions do
       _ ->
         {:error, :unexpected_response}
     end
+  end
+
+  @doc false
+  def resolve_checks_url(path, origin) do
+    base_url = Application.fetch_env!(:trento, :checks_service)[:base_url] || ""
+
+    HttpUtils.resolve_url(base_url, path, origin)
   end
 
   defp http_client,
