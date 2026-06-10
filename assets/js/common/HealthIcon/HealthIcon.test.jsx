@@ -31,6 +31,11 @@ describe('HealthIcon', () => {
     const svgEl = container.querySelector("[data-testid='eos-svg-component']");
     expect(svgEl.classList.toString()).toContain('fill-gray-500');
   });
+  it('should display a gray dash icon when the health is not available', () => {
+    const { container } = render(<HealthIcon health="not_available" />);
+    const svgEl = container.querySelector("[data-testid='eos-svg-component']");
+    expect(svgEl.classList.toString()).toContain('fill-gray-500');
+  });
   it('should display an svg without hovering effect', () => {
     const { container } = render(<HealthIcon health="" hoverOpacity={false} />);
     const svgEl = container.querySelector("[data-testid='eos-svg-component']");
