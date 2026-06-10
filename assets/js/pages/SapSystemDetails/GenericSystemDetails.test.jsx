@@ -110,9 +110,9 @@ describe('GenericSystemDetails', () => {
     const sapSystem = sapSystemFactory.build({
       ensa_version: 'ensa1',
       instances: sapSystemApplicationInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+      database_health: 'passing',
     });
-
-    sapSystem.hosts = hostFactory.buildList(5);
 
     const { sid, application_instances: applicationInstances } = sapSystem;
     const { features } = applicationInstances[0];
@@ -133,13 +133,24 @@ describe('GenericSystemDetails', () => {
     const { getByTestId } = within(header);
     expect(getByTestId('eos-svg-component')).toBeInTheDocument();
 
-    expect(screen.getByText('Application server')).toBeTruthy();
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
     expect(screen.queryByText('System Replication')).not.toBeInTheDocument();
     features.split('|').forEach((role) => {
       expect(screen.queryAllByText(role)).toBeTruthy();
     });
+    const databaseLink = screen.getByText('Database').nextSibling.firstChild;
+    expect(databaseLink).toHaveTextContent(sapSystem.database_sid);
+    expect(databaseLink).toHaveAttribute(
+      'href',
+      `/databases/${sapSystem.database_id}`
+    );
+    expect(
+      screen.getByText('Database health').nextSibling.firstChild
+    ).toHaveClass('fill-jungle-green-500');
+    expect(screen.getByText('Tenant').nextSibling).toHaveTextContent(
+      sapSystem.tenant
+    );
   });
 
   it('should render a not found label if system is not there', () => {
@@ -168,6 +179,66 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.getByText('ENSA version').nextSibling).toHaveTextContent('-');
+  });
+
+  it.each([
+    {
+      type: 'ABAP',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+    {
+      type: 'ABAP+JAVA',
+      system: sapSystemFactory.build({
+        instances: [
+          sapSystemApplicationInstanceFactory.build({ features: 'ABAP' }),
+          sapSystemApplicationInstanceFactory.build({ features: 'J2EE' }),
+        ],
+        hosts: hostFactory.buildList(5),
+      }),
+    },
+  ])('should render proper $type SAP system type', ({ type, system }) => {
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={system}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(type);
+  });
+
+  it('should render proper HANA database type', () => {
+    const database = databaseFactory.build({
+      instances: databaseInstanceFactory.buildList(5),
+      hosts: hostFactory.buildList(5),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+      />
+    );
+
+    expect(screen.getByText('Type').nextSibling).toHaveTextContent(
+      'HANA Database'
+    );
   });
 
   it.each([
@@ -323,8 +394,14 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
-    const [_mainHealth, _sapSystemIcon, health, _cleanUpIcon] =
-      screen.getAllByTestId('eos-svg-component');
+    const [
+      _mainHealth,
+      _sapSystemIcon,
+      _databaseHealth,
+      _databaseIcon,
+      health,
+      _cleanUpIcon,
+    ] = screen.getAllByTestId('eos-svg-component');
     expect(health).toHaveClass('fill-black');
   });
 

@@ -9,6 +9,10 @@ context('SAP system details', () => {
   describe('SAP system details page is available', () => {
     beforeEach(() => sapSystemDetailsPage.visit());
 
+    after(() => {
+      sapSystemDetailsPage.restoreDatabaseInstanceHealth();
+    });
+
     it('should have expected url', () => {
       sapSystemDetailsPage.validatePageUrl();
     });
@@ -18,12 +22,24 @@ context('SAP system details', () => {
       sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       sapSystemDetailsPage.sapSystemHasExpectedName();
       sapSystemDetailsPage.sapSystemHasExpectedType();
+      sapSystemDetailsPage.sapSystemHasExpectedEnsaVersion();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabase();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseTenant();
     });
 
     it(`should display "Not found" page when SAP system doesn't exist`, () => {
       sapSystemDetailsPage.visitNonExistentSapSystem();
       sapSystemDetailsPage.validatePageUrl('other');
       sapSystemDetailsPage.notFoundLabelIsDisplayed();
+    });
+
+    it('should update system and database health icons when database health is changed', () => {
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.loadScenario('hana-database-detail-RED');
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth('fill-red-500');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
     });
   });
 

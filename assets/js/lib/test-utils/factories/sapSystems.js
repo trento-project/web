@@ -57,6 +57,7 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     sid,
     tags: [],
     database_sid: databaseSid,
+    database_health: healthEnum(),
     tenant: databaseSid,
     database_id: databaseId,
   };

@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
           %{
             application_instances: application_instances,
             database_instances: database_instances,
-            database: %{sid: database_sid}
+            database: %{sid: database_sid, health: database_health}
           } = sap_system
       }) do
     rendered_application_instances =
@@ -43,10 +43,8 @@ defmodule TrentoWeb.V1.SapSystemJSON do
       :database_instances,
       rendered_database_instances
     )
-    |> Map.put(
-      :database_sid,
-      database_sid
-    )
+    |> Map.put(:database_sid, database_sid)
+    |> Map.put(:database_health, database_health)
     |> Map.put(
       :application_instances,
       rendered_application_instances
@@ -54,7 +52,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
   end
 
   def sap_system_registered(%{
-        sap_system: %{database: %{sid: database_sid}} = sap_system
+        sap_system: %{database: %{sid: database_sid, health: database_health}} = sap_system
       }) do
     sap_system
     |> Map.from_struct()
@@ -64,6 +62,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     |> Map.delete(:application_instances)
     |> Map.delete(:tags)
     |> Map.put(:database_sid, database_sid)
+    |> Map.put(:database_health, database_health)
   end
 
   def sap_system_restored(%{sap_system: sap_system}), do: sap_system(%{sap_system: sap_system})
@@ -72,6 +71,9 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     do: %{id: id, ensa_version: ensa_version}
 
   def sap_system_health_changed(%{health: health}), do: health
+
+  def sap_system_database_health_changed(%{id: id, database_health: database_health}),
+    do: %{id: id, database_health: database_health}
 
   def sap_system_deregistered(%{id: id, sid: sid}), do: %{id: id, sid: sid}
 
