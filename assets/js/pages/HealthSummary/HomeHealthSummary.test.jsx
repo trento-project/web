@@ -38,8 +38,8 @@ const homeHealthSummaryData = [
   healthSummaryFactory.build({
     application_cluster_id: null,
     database_cluster_id: null,
-    application_cluster_health: 'unknown',
-    database_cluster_health: 'unknown',
+    application_cluster_health: null,
+    database_cluster_health: null,
     application_health: 'critical',
     database_health: 'passing',
     hosts_health: 'passing',
