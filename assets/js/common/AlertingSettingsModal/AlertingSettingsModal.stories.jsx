@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { within, userEvent } from 'storybook/test';
+import { action } from 'storybook/actions';
+import { userEvent, within } from 'storybook/test';
 
 import AlertingSettingsModal from './AlertingSettingsModal';
 
@@ -28,53 +29,55 @@ export default {
   argTypes: {
     previousSettings: {
       description: 'Alerting settings that could be configured',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
 
     errors: {
       description: 'Errors from failed submission',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
 
     open: {
       description: 'Whether the dialog is open or not',
-      type: 'boolean',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
 
     loading: {
       description: 'Whether submission is in progress',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
 
     onSave: {
       description: 'Callback that would run on submit',
-      control: { type: 'function' },
+      action: 'callback',
     },
 
     onCancel: {
       description: 'Callback that would run on Cancel button clicked',
-      control: { type: 'function' },
+      action: 'callback',
     },
   },
 };
 
 export const Default = {
   args: {
+    previousSettings: {
+      alertingEnabled: false,
+      smtpServer: '',
+      smtpPort: 587,
+      smtpUsername: '',
+      senderEmail: '',
+      recipientEmail: '',
+    },
     open: true,
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
   },
 };
 
 export const WithPreviousSettings = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
   },
@@ -82,6 +85,7 @@ export const WithPreviousSettings = {
 
 export const WithPreviousSettingsAndEditablePassword = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
   },
@@ -93,6 +97,7 @@ export const WithPreviousSettingsAndEditablePassword = {
 
 export const WithErrors = {
   args: {
+    ...Default.args,
     previousSettings: {
       alertingEnabled: true,
       smtpServer: 'localhost',
@@ -139,6 +144,7 @@ export const WithErrors = {
 
 export const Loading = {
   args: {
+    ...Default.args,
     previousSettings: validSettings,
     open: true,
     loading: true,

@@ -1,11 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { userFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
-import ProfileMenu from '.';
 
+import ProfileMenu from './ProfileMenu';
+
+const user = userFactory.build();
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-xs mx-auto px-2 sm:px-4 lg:px-6 flex justify-center h-48">
@@ -18,9 +21,18 @@ export default {
   title: 'Components/ProfileMenu',
   component: ProfileMenu,
   argTypes: {
-    username: { control: 'text' },
-    email: { control: 'text' },
-    logout: { action: 'logout' },
+    username: {
+      description: 'Username to display in the menu',
+      control: { type: 'text' },
+    },
+    email: {
+      description: 'Email address to display in the menu',
+      control: { type: 'text' },
+    },
+    logout: {
+      description: 'Callback function invoked when user logs out',
+      action: 'logout',
+    },
   },
   decorators: [
     (Story) => (
@@ -29,17 +41,17 @@ export default {
       </MemoryRouter>
     ),
   ],
+};
+
+export const Default = {
+  args: {
+    username: user.username,
+    email: user.email,
+    logout: action('logout'),
+  },
   render: (args) => (
     <ContainerWrapper>
       <ProfileMenu {...args} />
     </ContainerWrapper>
   ),
-};
-
-export const Default = {
-  args: {
-    username: 'John Doe',
-    email: 'john@example.com',
-    logout: action('logout'),
-  },
 };

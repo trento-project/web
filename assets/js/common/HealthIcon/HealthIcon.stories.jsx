@@ -2,42 +2,106 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import HealthIcon from '.';
+
+import HealthIcon from './HealthIcon';
 
 export default {
   title: 'Components/HealthIcon',
   component: HealthIcon,
   argTypes: {
     isLink: {
-      control: 'boolean',
+      control: { type: 'boolean' },
+    },
+    health: {
+      description: 'The health status to display',
+      control: { type: 'select' },
+      options: [
+        'passing',
+        'warning',
+        'critical',
+        'absent',
+        'pending',
+        'unknown',
+      ],
+    },
+    centered: {
+      description: 'Whether to apply centering styles to the health icon',
+      control: { type: 'boolean' },
+    },
+    hoverOpacity: {
+      description: 'Whether to apply opacity change on hover',
+      control: { type: 'boolean' },
+    },
+    size: {
+      description: 'The icon size',
+      control: { type: 'select' },
+      options: ['xs', 's', 'm', 'l', 'xl'],
     },
   },
 };
 
+export const Default = {
+  args: {
+    health: 'unknown',
+    isLink: false,
+    centered: false,
+    hoverOpacity: false,
+    size: 'm',
+  },
+};
+
 export const Passing = {
-  args: { health: 'passing', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'passing',
+    isLink: false,
+  },
 };
 
 export const Warning = {
-  args: { health: 'warning', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'warning',
+    isLink: false,
+  },
 };
 
 export const Critical = {
-  args: { health: 'critical', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'critical',
+    isLink: false,
+  },
 };
 
-export function Pending() {
-  return <HealthIcon health="pending" />;
-}
+export const Pending = {
+  args: {
+    ...Default.args,
+    health: 'pending',
+    isLink: false,
+  },
+};
 
 export const Absent = {
-  args: { health: 'absent', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'absent',
+    isLink: false,
+  },
 };
 
-export function Default() {
-  return <HealthIcon health="unknown" />;
-}
+export const Linked = {
+  args: {
+    ...Default.args,
+    isLink: true,
+  },
+};
 
 export const ExtraLarge = {
-  args: { health: 'passing', size: 'xl', isLink: false },
+  args: {
+    ...Default.args,
+    health: 'passing',
+    size: 'xl',
+    isLink: false,
+  },
 };

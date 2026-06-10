@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { action } from 'storybook/actions';
+
 import OperationForbiddenModal from './OperationForbiddenModal';
 
 export default {
@@ -8,29 +10,35 @@ export default {
   component: OperationForbiddenModal,
   argTypes: {
     operation: {
-      type: 'string',
       description: 'Operation name',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'Authorization errors as string',
-      control: 'array',
+      control: { type: 'object' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
   },
   args: {
     operation: 'My operation',
     errors: ['Authorization error 1', 'Authorization error 2'],
     isOpen: true,
+    onCancel: action('onCancel'),
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    operation: 'Clean up resource',
+    errors: [],
+    isOpen: false,
+    onCancel: action('onCancel'),
+  },
+};

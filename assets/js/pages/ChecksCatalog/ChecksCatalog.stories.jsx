@@ -1,10 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { catalogCheckFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
-import { catalogCheckFactory } from '@lib/test-utils/factories';
 import ChecksCatalog from './ChecksCatalog';
 
 const groupName1 = 'group 1';
@@ -42,27 +43,20 @@ export default {
   component: ChecksCatalog,
   argTypes: {
     completeCatalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The whole Catalog content',
     },
     filteredCatalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'The filtered Catalog content',
     },
     catalogError: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'Error message getting catalog data',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Catalog data is being loaded',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     updateCatalog: {
       action: 'Update catalog',
@@ -86,6 +80,10 @@ export default {
 export const Default = {
   args: {
     completeCatalog: catalogData,
+    filteredCatalog: catalogData,
+    loading: false,
+    catalogError: '',
+    updateCatalog: action('updateCatalog'),
   },
 };
 
