@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-27T04:28:15Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24976109847",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "checksUtils::should get host expectation statements results",
-        "score": 0.5
-      },
-      {
-        "name": "AboutPage component::should render the about page with content from the api",
-        "score": 0.25
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-27T07:07:45Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24976928057",
@@ -6276,6 +6248,26 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.09051
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-10T20:16:42Z",
+    "commit": "bd3d63abe0e3ffae0c60b2a057d3ab9784b0829a",
+    "run_id": "27302376097",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
+        "score": 0.25
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.08646
       }
     ]
   }
