@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-27T04:13:32Z",
-    "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
-    "run_id": "24975804778",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-27T04:27:10Z",
     "commit": "f003f86717bdf66015b8712a9443c63b345089d1",
     "run_id": "24976109847",
@@ -6287,6 +6267,30 @@
       },
       {
         "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-10T19:57:50Z",
+    "commit": "bd3d63abe0e3ffae0c60b2a057d3ab9784b0829a",
+    "run_id": "27301581039",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07953
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.V1.SettingsControllerTest::test AlertingSettings should successfully create settings",
         "score": 0.02501
       }
     ]
