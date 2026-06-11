@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { computeTimezoneOffsets, formatOffset } from '@lib/timezones';
-import { Link } from 'react-router';
 import { noop } from 'lodash';
 import { getError } from '@lib/api/validationErrors';
 import Button from '@common/Button';
@@ -22,13 +21,14 @@ import { REQUIRED_FIELD_TEXT, errorMessage } from '@lib/forms';
 const ANALYTICS_TOOLTIP_MESSAGE = (
   <span>
     Allow the collection of{' '}
-    <Link
-      to="https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics"
+    <a
+      href="https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics"
       className="text-jungle-green-500 hover:opacity-75"
       target="_blank"
+      rel="noreferrer"
     >
       anonymous metrics
-    </Link>{' '}
+    </a>{' '}
     to help improve Trento.
   </span>
 );
