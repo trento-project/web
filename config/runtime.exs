@@ -388,6 +388,13 @@ if config_env() in [:prod, :demo] do
       ]
   end
 
+  wanda_base_url = Application.get_env(:trento, :checks_service)[:base_url]
+
   config :trento, :ai,
-    base_system_prompt: Application.app_dir(:trento, "priv/ai/BASE_SYSTEM_PROMPT.md")
+    base_system_prompt: Application.app_dir(:trento, "priv/ai/BASE_SYSTEM_PROMPT.md"),
+    tool_sources: [
+      TrentoWeb.AI.ControllerToolSource,
+      {Trento.AI.RemoteOpenApiToolSource,
+       name: :wanda, spec_url: "#{wanda_base_url}/api/all/openapi"}
+    ]
 end
