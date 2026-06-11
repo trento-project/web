@@ -69,8 +69,8 @@ defmodule Trento.AI.OpenApiToolBuilder do
   def parameters_schema(_), do: %{"type" => "object", "properties" => %{}}
 
   @doc """
-  Map of parameter name (string) → declared `:in` location
-  (`:path | :query | :body | :header`) for an `%Operation{}`.
+  Map of parameter name (string) → declared `:in` location atom
+  (`:path | :query | :header | :cookie`) for an `%Operation{}`.
   """
   @spec param_locations(Operation.t() | any()) :: %{String.t() => atom()}
   def param_locations(%Operation{parameters: params}) when is_list(params) do
@@ -83,8 +83,9 @@ defmodule Trento.AI.OpenApiToolBuilder do
 
   @doc """
   Splits the LLM-supplied `tool_args` map into `{path, query, body}`
-  according to each key's declared `:in` location. Unknown keys land in
-  the body bucket.
+  according to each key's declared `:in` location. Unknown keys (and any
+  non-`:path`/`:query` locations like `:header` or `:cookie`) land in the
+  body bucket.
   """
   @spec split_args(%{String.t() => atom()}, map()) :: {map(), map(), map()}
   def split_args(locations, tool_args) do
