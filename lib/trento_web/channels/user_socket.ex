@@ -33,7 +33,7 @@ defmodule TrentoWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(%{"access_token" => access_token}, socket, %{uri: %URI{} = uri}) do
+  def connect(%{"access_token" => access_token}, socket, connect_info) do
     case AccessToken.verify_and_validate(access_token) do
       {:ok, %{"sub" => user_id}} ->
         # Keep the raw JWT alongside the resolved user id so downstream
@@ -45,7 +45,7 @@ defmodule TrentoWeb.UserSocket do
          socket
          |> assign(:current_user_id, user_id)
          |> assign(:access_token, access_token)
-         |> assign(:request_origin, HttpUtils.request_origin(uri))}
+         |> assign(:request_origin, detect_request_origin(connect_info))}
 
       {:error, reason} ->
         Logger.error("Could not authenticate user socket: #{inspect(reason)}")
@@ -70,4 +70,7 @@ defmodule TrentoWeb.UserSocket do
   # Returning `nil` makes this socket anonymous.
   @impl true
   def id(socket), do: "user_socket:#{socket.assigns.current_user_id}"
+
+  defp detect_request_origin(%{uri: uri}), do: HttpUtils.request_origin(uri)
+  defp detect_request_origin(_), do: nil
 end
