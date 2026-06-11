@@ -11,9 +11,7 @@ Application.put_env(:trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.Mock
 )
 
-Mox.defmock(Trento.Infrastructure.Prometheus.Adapter.HttpClient.Mock,
-  for: Trento.Infrastructure.Prometheus.Adapter.HttpClient
-)
+Mox.defmock(Trento.Support.HttpClient.Mock, for: Trento.Support.HttpClient)
 
 Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock,
   for: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor

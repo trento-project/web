@@ -9,6 +9,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
   @behaviour Trento.Infrastructure.ComponentVersions.Gen
 
   alias Ecto.Adapters.SQL
+  alias Trento.Support.HttpUtils
 
   require Logger
 
@@ -112,7 +113,7 @@ defmodule Trento.Infrastructure.ComponentVersions do
     url = "#{prometheus_url}/api/v1/status/buildinfo"
     headers = [{"Accept", "application/json"}]
 
-    case HTTPoison.get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
+    case http_client().get(url, headers, recv_timeout: @timeout, follow_redirect: true) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"data" => %{"version" => version}}} -> {:ok, %{prometheus_version: version}}
@@ -130,13 +131,13 @@ defmodule Trento.Infrastructure.ComponentVersions do
   end
 
   defp fetch_wanda_info(origin) do
-    url = resolve_checks_url("/api", origin)
-
-    case HTTPoison.get(url, [{"Accept", "application/json"}],
-           recv_timeout: @timeout,
-           follow_redirect: true,
-           ssl: [verify: :verify_peer, cacerts: resolve_ca_certs()]
-         ) do
+    "/api"
+    |> resolve_checks_url(origin)
+    |> http_client().get([{"Accept", "application/json"}],
+      recv_timeout: @timeout,
+      follow_redirect: true
+    )
+    |> case do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"version" => version} = data} ->
@@ -163,23 +164,12 @@ defmodule Trento.Infrastructure.ComponentVersions do
   def resolve_checks_url(path, origin) do
     base_url = Application.fetch_env!(:trento, :checks_service)[:base_url] || ""
 
-    case URI.parse(base_url) do
-      %URI{scheme: scheme} when scheme in ["http", "https"] ->
-        base_url <> path
-
-      _ when is_binary(origin) and origin != "" ->
-        origin <> base_url <> path
-
-      _ ->
-        base_url <> path
-    end
+    HttpUtils.resolve_url(base_url, path, origin)
   end
 
-  defp resolve_ca_certs do
-    :public_key.cacerts_get()
-  rescue
-    e ->
-      Logger.error("Failed to load system CA certificates: #{inspect(e)}")
-      []
-  end
+  defp http_client,
+    do:
+      :trento
+      |> Application.get_env(__MODULE__, [])
+      |> Keyword.fetch!(:http_client)
 end
