@@ -138,7 +138,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
              ] == HealthSummaryService.get_health_summary()
     end
 
-    test "should set as unknown the clusters health when they are not available" do
+    test "should set as nil the database and application clusters health when those clusters do not exist" do
       %HostReadModel{id: db_host_id} =
         db_host = insert(:host, cluster_id: nil, health: Health.passing())
 
@@ -185,9 +185,9 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
                  sapsystem_health: Health.critical(),
                  application_health: Health.passing(),
                  database_health: database_health,
-                 database_cluster_health: Health.unknown(),
+                 database_cluster_health: nil,
                  database_id: database_id,
-                 application_cluster_health: Health.unknown(),
+                 application_cluster_health: nil,
                  hosts_health: Health.passing(),
                  database_instances: database_instances,
                  application_instances: application_instances,

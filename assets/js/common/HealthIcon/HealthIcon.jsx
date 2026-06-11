@@ -14,6 +14,7 @@ import {
   EOS_ERROR_FILLED,
   EOS_WARNING_FILLED,
   EOS_INFO_FILLED,
+  EOS_REMOVE_FILLED,
 } from 'eos-icons-react';
 
 import Spinner from '@common/Spinner';
@@ -87,6 +88,16 @@ function HealthIcon({
       );
     case 'pending':
       return <Spinner />;
+    case 'not_available':
+      return (
+        <EOS_REMOVE_FILLED
+          size={size}
+          className={classNames(
+            hoverOpacityClass,
+            computedIconCssClass('fill-gray-500', centered)
+          )}
+        />
+      );
     default:
       return (
         <EOS_LENS_FILLED

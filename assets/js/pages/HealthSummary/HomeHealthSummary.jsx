@@ -51,7 +51,7 @@ const healthSummaryTableConfig = {
             <HealthIcon health={content} centered isLink />
           </Link>
         ) : (
-          <HealthIcon health={content} centered hoverOpacity={false} />
+          <HealthIcon health={'not_available'} centered hoverOpacity={false} />
         );
       },
     },
@@ -80,7 +80,7 @@ const healthSummaryTableConfig = {
             <HealthIcon health={content} centered isLink />
           </Link>
         ) : (
-          <HealthIcon health={content} centered hoverOpacity={false} />
+          <HealthIcon health={'not_available'} centered hoverOpacity={false} />
         );
       },
     },

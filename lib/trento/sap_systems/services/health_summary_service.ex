@@ -8,8 +8,6 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   import Ecto.Query
 
-  require Trento.Enums.Health, as: HealthEnum
-
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
 
   alias Trento.SapSystems.Projections.{
@@ -67,7 +65,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   @spec compute_cluster_health(
           [DatabaseInstanceReadModel.t()]
           | [ApplicationInstanceReadModel.t()]
-        ) :: Health.t()
+        ) :: Health.t() | nil
   defp compute_cluster_health(instances) do
     cluster_id =
       Enum.find_value(instances, nil, fn
@@ -77,7 +75,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       end)
 
     case cluster_id do
-      nil -> HealthEnum.unknown()
+      nil -> nil
       cluster_id -> ClusterReadModel |> Repo.get!(cluster_id) |> Map.get(:health)
     end
   end
