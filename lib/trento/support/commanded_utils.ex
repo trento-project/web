@@ -28,6 +28,7 @@ defmodule Trento.Support.CommandedUtils do
     end)
   end
 
+  def dispatch(command, []), do: commanded().dispatch(command)
   def dispatch(command, opts), do: commanded().dispatch(command, opts)
 
   def correlated_dispatch(command, ctx) do

@@ -76,7 +76,7 @@ defmodule Trento.Support.CommandedUtilsTest do
         expect(
           Trento.Commanded.Mock,
           :dispatch,
-          fn ^some_command, [] ->
+          fn ^some_command ->
             :ok
           end
         )
