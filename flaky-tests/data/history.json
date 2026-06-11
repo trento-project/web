@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-04-28T04:40:35Z",
-    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
-    "run_id": "25033785516",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › operations::should show Host reboot operation running",
-        "score": 0.02501
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-28T04:41:40Z",
     "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
     "run_id": "25033785516",
@@ -6285,6 +6257,38 @@
       {
         "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-11T19:55:05Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27372688003",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 7
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added",
+        "score": 0.5
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.1201
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
+        "score": 0.02501
       }
     ]
   }
