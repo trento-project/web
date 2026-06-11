@@ -50,5 +50,20 @@ defmodule TrentoWeb.UserSocketTest do
       assert {:error, :missing_auth_token} =
                UserSocket.connect(%{}, socket(UserSocket), connect_info)
     end
+
+    test "authenticates and sets request_origin to nil when connect_info has no :uri" do
+      stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_700_000_000 end)
+
+      jwt = AccessToken.generate_access_token!(%{"sub" => 42})
+
+      assert {:ok, %{assigns: assigns}} =
+               UserSocket.connect(%{"access_token" => jwt}, socket(UserSocket), %{})
+
+      assert %{
+               current_user_id: 42,
+               access_token: ^jwt,
+               request_origin: nil
+             } = assigns
+    end
   end
 end
