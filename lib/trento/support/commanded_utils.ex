@@ -5,7 +5,31 @@ defmodule Trento.Support.CommandedUtils do
   @moduledoc false
   alias Trento.ActivityLog
 
-  def dispatch(command), do: commanded().dispatch(command)
+  @type command :: struct
+
+  @spec dispatch(command | [command], Keyword.t()) :: :ok | {:error, any}
+  def dispatch(commands, opts \\ [])
+
+  def dispatch(commands, opts) when is_list(commands) do
+    Enum.reduce(commands, :ok, fn command, acc ->
+      case {commanded().dispatch(command, opts), acc} do
+        {:ok, :ok} ->
+          :ok
+
+        {:ok, {:error, errors}} ->
+          {:error, errors}
+
+        {{:error, error}, :ok} ->
+          {:error, [error]}
+
+        {{:error, error}, {:error, errors}} ->
+          {:error, [error | errors]}
+      end
+    end)
+  end
+
+  def dispatch(command, []), do: commanded().dispatch(command)
+  def dispatch(command, opts), do: commanded().dispatch(command, opts)
 
   def correlated_dispatch(command, ctx) do
     key = ActivityLog.correlation_key(ctx)

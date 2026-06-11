@@ -16,6 +16,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
   alias Trento.Repo
   alias Trento.SapSystems.Commands.RestoreSapSystem
 
+  alias Trento.Support.CommandedUtils
+
   import Ecto.Query, only: [from: 2]
 
   require Logger
@@ -36,7 +38,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
     for %{id: sap_system_id, tenant: tenant, db_host: db_host, sid: sid} <- sap_systems do
       Logger.info("Restoring sap system #{sid} attached to database #{database_id}")
 
-      commanded().dispatch(
+      CommandedUtils.dispatch(
         %RestoreSapSystem{
           sap_system_id: sap_system_id,
           db_host: db_host,
@@ -49,7 +51,4 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
 
     :ok
   end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

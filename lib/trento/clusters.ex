@@ -39,6 +39,8 @@ defmodule Trento.Clusters do
 
   alias Trento.Repo
 
+  alias Trento.Support.CommandedUtils
+
   @checkable_clusters [
     ClusterType.hana_scale_up(),
     ClusterType.hana_scale_out(),
@@ -65,7 +67,7 @@ defmodule Trento.Clusters do
     Logger.debug("Selecting checks, cluster: #{cluster_id}")
 
     with {:ok, command} <- SelectChecks.new(%{cluster_id: cluster_id, checks: checks}) do
-      commanded().dispatch(command)
+      CommandedUtils.dispatch(command)
     end
   end
 
@@ -255,9 +257,6 @@ defmodule Trento.Clusters do
 
   defp managed?(%{id: resource_id, managed: managed}, resource_id), do: managed
   defp managed?(_, _), do: false
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 
   @spec enrich_cluster_model_query(Ecto.Query.t()) :: Ecto.Query.t()
   defp enrich_cluster_model_query(query) do

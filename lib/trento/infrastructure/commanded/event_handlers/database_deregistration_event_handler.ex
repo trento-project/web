@@ -22,6 +22,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
   alias Trento.SapSystems.Commands.DeregisterSapSystem
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
+  alias Trento.Support.CommandedUtils
+
   import Ecto.Query, only: [from: 2]
 
   require Logger
@@ -42,7 +44,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
     for %{id: sap_system_id, sid: sid} <- sap_systems do
       Logger.info("Deregistering sap system #{sid} attached to database #{database_id}")
 
-      commanded().dispatch(
+      CommandedUtils.dispatch(
         %DeregisterSapSystem{sap_system_id: sap_system_id, deregistered_at: deregistered_at},
         consistency: :strong
       )
@@ -74,7 +76,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
           "Deregistering sap system #{sid} attached to database #{database_id} with tenant #{tenant_name}"
         )
 
-        commanded().dispatch(
+        CommandedUtils.dispatch(
           %DeregisterSapSystem{sap_system_id: sap_system_id, deregistered_at: dereregistered_at},
           consistency: :strong
         )
@@ -83,7 +85,4 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
 
     :ok
   end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

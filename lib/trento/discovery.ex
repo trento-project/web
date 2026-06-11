@@ -30,7 +30,7 @@ defmodule Trento.Discovery do
 
   alias Trento.Discoveries.V1.DiscoveryRequested
 
-  @type command :: struct
+  alias Trento.Support.CommandedUtils
 
   @doc """
   Transform a discovery in a list of commands event by using the appropriate policy.
@@ -41,7 +41,7 @@ defmodule Trento.Discovery do
   def handle(event) do
     with {:ok, commands} <- do_handle(event),
          {:ok, _} <- store_discovery_event(event),
-         :ok <- dispatch(commands) do
+         :ok <- CommandedUtils.dispatch(commands) do
       :ok
     else
       {:error, reason} = error ->
@@ -217,27 +217,6 @@ defmodule Trento.Discovery do
   defp do_handle(_),
     do: {:error, :unknown_discovery_type}
 
-  @spec dispatch(command | [command]) :: :ok | {:error, any}
-  defp dispatch(commands) when is_list(commands) do
-    Enum.reduce(commands, :ok, fn command, acc ->
-      case {commanded().dispatch(command), acc} do
-        {:ok, :ok} ->
-          :ok
-
-        {:ok, {:error, errors}} ->
-          {:error, errors}
-
-        {{:error, error}, :ok} ->
-          {:error, [error]}
-
-        {{:error, error}, {:error, errors}} ->
-          {:error, [error | errors]}
-      end
-    end)
-  end
-
-  defp dispatch(command), do: commanded().dispatch(command)
-
   @spec request_discovery(String.t(), [String.t()]) ::
           :ok | {:error, any}
   defp request_discovery(discovery_type, targets) do
@@ -256,7 +235,4 @@ defmodule Trento.Discovery do
         error
     end
   end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end

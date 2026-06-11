@@ -21,6 +21,8 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
 
   alias TrentoWeb.V1.SapSystemJSON
 
+  alias Trento.Support.CommandedUtils
+
   import Ecto.Query, only: [from: 2]
 
   require Logger
@@ -41,7 +43,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
     for %{id: sap_system_id, sid: sid} <- sap_systems do
       Logger.info("Updating database health of #{sid} SAP system to #{health}")
 
-      commanded().dispatch(
+      CommandedUtils.dispatch(
         %UpdateDatabaseHealth{sap_system_id: sap_system_id, database_health: health},
         consistency: :strong
       )
@@ -66,7 +68,4 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
       })
     )
   end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
