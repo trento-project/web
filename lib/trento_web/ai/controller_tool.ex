@@ -70,7 +70,9 @@ defmodule TrentoWeb.AI.ControllerTool do
          tool_args,
          %{scope: %User{id: user_id}} = _context
        ) do
-    {resolved_path, body_args} = resolve_path_and_body(path_template, operation, tool_args)
+    {resolved_path, body_args} =
+      OpenApiToolBuilder.resolve_path_and_body(path_template, operation, tool_args)
+
     dispatch_request(verb, resolved_path, body_args, user_id)
   rescue
     exception ->
@@ -116,29 +118,11 @@ defmodule TrentoWeb.AI.ControllerTool do
 
   defp maybe_put_json_content_type(conn, _), do: conn
 
-  defp resolve_path_and_body(path_template, operation, tool_args) do
-    {path_args, query_args, body_args} =
-      operation
-      |> OpenApiToolBuilder.param_locations()
-      |> OpenApiToolBuilder.split_args(tool_args)
-
-    resolved_path =
-      path_template
-      |> OpenApiToolBuilder.substitute_path(path_args)
-      |> OpenApiToolBuilder.append_query(query_args)
-
-    {resolved_path, body_args}
-  end
-
   defp decode_response(%Plug.Conn{status: status, resp_body: body}) when status in 200..299,
-    do: {:ok, body_to_string(body)}
+    do: {:ok, OpenApiToolBuilder.body_to_string(body)}
 
   defp decode_response(%Plug.Conn{status: status, resp_body: body}),
-    do: {:error, "#{status} #{body_to_string(body)}"}
+    do: {:error, "#{status} #{OpenApiToolBuilder.body_to_string(body)}"}
 
   defp decode_response(other), do: {:error, "unexpected response #{inspect(other)}"}
-
-  defp body_to_string(nil), do: ""
-  defp body_to_string(body) when is_binary(body), do: body
-  defp body_to_string(other), do: inspect(other)
 end

@@ -323,7 +323,12 @@ config :trento, :ai,
   ],
   agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
   agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
-  tool_sources: [TrentoWeb.AI.ControllerToolSource]
+  tool_sources: [
+    TrentoWeb.AI.ControllerToolSource,
+    {Trento.AI.RemoteOpenApiToolSource,
+     name: :wanda, spec_url: "http://localhost:4001/api/all/openapi"}
+  ],
+  http_client: Trento.Support.HttpClient
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

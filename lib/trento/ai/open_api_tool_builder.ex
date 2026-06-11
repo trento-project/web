@@ -14,10 +14,9 @@ defmodule Trento.AI.OpenApiToolBuilder do
      adapter (Anthropic, Google AI, OpenAI) eventually forwards to the
      model.
 
-  2. **Arg routing** — `param_locations/1`, `split_args/2`,
-     `substitute_path/2`, `append_query/2` turn the LLM-supplied
-     argument map into a `{path, body}` pair, respecting each parameter's
-     declared `in:` location.
+  2. **Arg routing** — `resolve_path_and_body/3` turns the LLM-supplied
+     argument map into a `{resolved_path, body_args}` pair, respecting
+     each parameter's declared `in:` location.
 
   Both `TrentoWeb.AI.ControllerTool` (local Plug.Test dispatch) and
   `Trento.AI.RemoteHttpTool` (remote HTTP dispatch) consume these helpers,
@@ -69,26 +68,43 @@ defmodule Trento.AI.OpenApiToolBuilder do
   def parameters_schema(_), do: %{"type" => "object", "properties" => %{}}
 
   @doc """
-  Map of parameter name (string) → declared `:in` location atom
-  (`:path | :query | :header | :cookie`) for an `%Operation{}`.
+  Resolves a path template and splits `tool_args` into `{resolved_path, body_args}`.
+  Combines `param_locations/1`, `split_args/2`, `substitute_path/2`, and `append_query/2`.
   """
-  @spec param_locations(Operation.t() | any()) :: %{String.t() => atom()}
-  def param_locations(%Operation{parameters: params}) when is_list(params) do
+  @spec resolve_path_and_body(String.t() | nil, Operation.t() | nil, map()) ::
+          {String.t() | nil, map()}
+  def resolve_path_and_body(path_template, operation, tool_args) do
+    {path_args, query_args, body_args} =
+      operation
+      |> param_locations()
+      |> split_args(tool_args)
+
+    resolved_path =
+      path_template
+      |> substitute_path(path_args)
+      |> append_query(query_args)
+
+    {resolved_path, body_args}
+  end
+
+  @doc """
+  Coerces a response body to `String.t()`. `nil` → `""`, binaries pass through,
+  anything else is `inspect`-ed.
+  """
+  @spec body_to_string(String.t() | nil | any()) :: String.t()
+  def body_to_string(nil), do: ""
+  def body_to_string(body) when is_binary(body), do: body
+  def body_to_string(other), do: inspect(other)
+
+  defp param_locations(%Operation{parameters: params}) when is_list(params) do
     Map.new(params, fn %Parameter{name: name, in: location} ->
       {to_string(name), location}
     end)
   end
 
-  def param_locations(_), do: %{}
+  defp param_locations(_), do: %{}
 
-  @doc """
-  Splits the LLM-supplied `tool_args` map into `{path, query, body}`
-  according to each key's declared `:in` location. Unknown keys (and any
-  non-`:path`/`:query` locations like `:header` or `:cookie`) land in the
-  body bucket.
-  """
-  @spec split_args(%{String.t() => atom()}, map()) :: {map(), map(), map()}
-  def split_args(locations, tool_args) do
+  defp split_args(locations, tool_args) do
     Enum.reduce(tool_args, {%{}, %{}, %{}}, fn {k, v}, {path_map, query_map, body_map} ->
       key = to_string(k)
 
@@ -100,17 +116,7 @@ defmodule Trento.AI.OpenApiToolBuilder do
     end)
   end
 
-  @doc """
-  Substitutes `:placeholder` (Phoenix-style) and `{placeholder}`
-  (OpenAPI-style) segments in the path template with URI-encoded values
-  from `path_args`.
-
-  Phoenix routes carry `:id`-style templates; OpenAPI specs carry
-  `{id}`-style templates. Supporting both lets the same helper drive both
-  local controller routes and remote OpenAPI-described endpoints.
-  """
-  @spec substitute_path(String.t(), map()) :: String.t()
-  def substitute_path(path_template, path_args) do
+  defp substitute_path(path_template, path_args) do
     Enum.reduce(path_args, path_template, fn {name, value}, acc ->
       encoded = URI.encode_www_form(to_string(value || ""))
 
@@ -120,14 +126,9 @@ defmodule Trento.AI.OpenApiToolBuilder do
     end)
   end
 
-  @doc """
-  Appends a `?k=v&...` query string to `path`. Array values explode into
-  repeated keys, matching OpenAPI 3 `style: form, explode: true`.
-  """
-  @spec append_query(String.t(), map()) :: String.t()
-  def append_query(path, query) when map_size(query) == 0, do: path
+  defp append_query(path, query) when map_size(query) == 0, do: path
 
-  def append_query(path, query) do
+  defp append_query(path, query) do
     query_string =
       query
       |> Enum.flat_map(&expand_query_pair/1)
