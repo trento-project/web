@@ -7,6 +7,8 @@ defmodule TrentoWeb.UserSocket do
   require Logger
   alias TrentoWeb.Auth.AccessToken
 
+  alias Trento.Support.HttpUtils
+
   # A Socket handler
   #
   # It's possible to control the websocket connection and
@@ -31,10 +33,19 @@ defmodule TrentoWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(%{"access_token" => access_token}, socket, _connect_info) do
+  def connect(%{"access_token" => access_token}, socket, %{uri: %URI{} = uri}) do
     case AccessToken.verify_and_validate(access_token) do
       {:ok, %{"sub" => user_id}} ->
-        {:ok, assign(socket, :current_user_id, user_id)}
+        # Keep the raw JWT alongside the resolved user id so downstream
+        # tools (e.g. Trento.AI.RemoteHttpTool) can forward it as the
+        # Authorization header on outbound calls. The token is the
+        # caller's own credential — never persisted, only attached to
+        # in-flight requests originating from this socket.
+        {:ok,
+         socket
+         |> assign(:current_user_id, user_id)
+         |> assign(:access_token, access_token)
+         |> assign(:request_origin, HttpUtils.request_origin(uri))}
 
       {:error, reason} ->
         Logger.error("Could not authenticate user socket: #{inspect(reason)}")
