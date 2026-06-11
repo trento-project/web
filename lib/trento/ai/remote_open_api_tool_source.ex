@@ -51,7 +51,6 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   alias Trento.AI.ApplicationConfigLoader
   alias Trento.AI.{OperationEntry, RemoteHttpTool}
 
-  @verbs [:get, :put, :post, :delete, :options, :head, :patch, :trace]
   @mcp_tag "MCP"
   @x_ai_tool_extension "x-ai-tool"
   @default_recv_timeout 15_000
@@ -115,8 +114,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
 
   defp build_entries(%OpenApiSpex.OpenApi{paths: paths}) when is_map(paths) do
     for {path, %OpenApiSpex.PathItem{} = path_item} <- paths,
-        verb <- @verbs,
-        operation = Map.get(path_item, verb),
+        {verb, operation} <- Map.from_struct(path_item),
         is_struct(operation, OpenApiSpex.Operation),
         @mcp_tag in (operation.tags || []) do
       build_entry(path, verb, operation)
