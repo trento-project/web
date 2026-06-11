@@ -18,7 +18,6 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
   defp entry(verb, path, parameters \\ []) do
     %OperationEntry{
-      source: :test,
       tool_name: "test_tool",
       display_text: "Test Tool",
       operation: %Operation{

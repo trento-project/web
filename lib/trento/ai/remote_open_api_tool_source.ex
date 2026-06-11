@@ -79,7 +79,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     case extract_base_url(spec) do
       {:ok, base_url} ->
         spec
-        |> build_entries(name)
+        |> build_entries()
         |> Enum.map(&RemoteHttpTool.build(&1, base_url))
 
       {:error, reason} ->
@@ -113,23 +113,22 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     end
   end
 
-  defp build_entries(%OpenApiSpex.OpenApi{paths: paths}, source_name) when is_map(paths) do
+  defp build_entries(%OpenApiSpex.OpenApi{paths: paths}) when is_map(paths) do
     for {path, %OpenApiSpex.PathItem{} = path_item} <- paths,
         verb <- @verbs,
         operation = Map.get(path_item, verb),
         is_struct(operation, OpenApiSpex.Operation),
         @mcp_tag in (operation.tags || []) do
-      build_entry(source_name, path, verb, operation)
+      build_entry(path, verb, operation)
     end
   end
 
-  defp build_entries(_, _), do: []
+  defp build_entries(_), do: []
 
-  defp build_entry(source_name, path, verb, %OpenApiSpex.Operation{} = operation) do
+  defp build_entry(path, verb, %OpenApiSpex.Operation{} = operation) do
     overrides = ai_tool_overrides(operation)
 
     %OperationEntry{
-      source: source_name,
       tool_name: tool_name(overrides, operation, verb, path),
       display_text: display_text(overrides, operation),
       operation: normalize_operation(operation),
