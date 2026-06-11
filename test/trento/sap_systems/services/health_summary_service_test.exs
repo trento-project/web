@@ -138,7 +138,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
              ] == HealthSummaryService.get_health_summary()
     end
 
-    test "should set as nil the clusters health when they are not available" do
+    test "should set as nil the database and application clusters health when those clusters do not exist" do
       %HostReadModel{id: db_host_id} =
         db_host = insert(:host, cluster_id: nil, health: Health.passing())
 
