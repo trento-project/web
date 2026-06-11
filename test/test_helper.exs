@@ -79,7 +79,8 @@ default_ai_config = Application.get_env(:trento, :ai, [])
 test_ai_config = [
   application_config_loader: Trento.AI.ApplicationConfigLoader.Mock,
   agent_server_adapter: Trento.AI.Agent.Server.Mock,
-  agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock
+  agent_supervisor_adapter: Trento.AI.Agent.Supervisor.Mock,
+  http_client: Trento.Support.HttpClient.Mock
 ]
 
 Application.put_env(:trento, :ai, Keyword.merge(default_ai_config, test_ai_config))

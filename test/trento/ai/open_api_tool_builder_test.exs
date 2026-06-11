@@ -150,33 +150,8 @@ defmodule Trento.AI.OpenApiToolBuilderTest do
     end
   end
 
-  describe "param_locations/1" do
-    test "returns a map of string parameter names to their declared location" do
-      op = %Operation{
-        parameters: [
-          %Parameter{name: :id, in: :path},
-          %Parameter{name: "verbose", in: :query}
-        ],
-        responses: %{}
-      }
-
-      assert OpenApiToolBuilder.param_locations(op) == %{
-               "id" => :path,
-               "verbose" => :query
-             }
-    end
-
-    test "returns an empty map for an empty parameter list" do
-      assert OpenApiToolBuilder.param_locations(%Operation{parameters: [], responses: %{}}) == %{}
-    end
-
-    test "returns an empty map for non-operation input" do
-      assert OpenApiToolBuilder.param_locations(nil) == %{}
-    end
-  end
-
-  describe "param_locations/1 + split_args/2" do
-    test "buckets args by declared :in field; unknown keys land in body" do
+  describe "resolve_path_and_body/3" do
+    test "routes path param into URL, query param into URL, body param into body map" do
       op = %Operation{
         parameters: [
           %Parameter{name: :id, in: :path, required: true, schema: %Schema{type: :string}},
@@ -185,14 +160,12 @@ defmodule Trento.AI.OpenApiToolBuilderTest do
         responses: %{}
       }
 
-      locations = OpenApiToolBuilder.param_locations(op)
-
-      assert {%{"id" => "abc"}, %{"limit" => 10}, %{"extra" => "x"}} =
-               OpenApiToolBuilder.split_args(locations, %{
-                 "id" => "abc",
-                 "limit" => 10,
-                 "extra" => "x"
-               })
+      assert {"/api/users/abc?limit=10", %{"extra" => "x"}} =
+               OpenApiToolBuilder.resolve_path_and_body(
+                 "/api/users/:id",
+                 op,
+                 %{"id" => "abc", "limit" => 10, "extra" => "x"}
+               )
     end
 
     test "atom keys in args are stringified" do
@@ -203,46 +176,91 @@ defmodule Trento.AI.OpenApiToolBuilderTest do
         responses: %{}
       }
 
-      locations = OpenApiToolBuilder.param_locations(op)
-
-      assert {%{"id" => "abc"}, %{}, %{}} =
-               OpenApiToolBuilder.split_args(locations, %{id: "abc"})
+      assert {"/api/users/abc", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/api/users/:id", op, %{id: "abc"})
     end
-  end
 
-  describe "substitute_path/2" do
+    test "no declared params — all args land in body, path unchanged" do
+      op = %Operation{parameters: [], responses: %{}}
+
+      assert {"/api/things", %{"foo" => "bar"}} =
+               OpenApiToolBuilder.resolve_path_and_body("/api/things", op, %{"foo" => "bar"})
+    end
+
+    test "nil operation — all args land in body, path unchanged" do
+      assert {"/api/things", %{"foo" => "bar"}} =
+               OpenApiToolBuilder.resolve_path_and_body("/api/things", nil, %{"foo" => "bar"})
+    end
+
     test "fills :placeholder segments (Phoenix style)" do
-      assert OpenApiToolBuilder.substitute_path("/api/users/:id", %{"id" => "alice"}) ==
-               "/api/users/alice"
+      op = %Operation{
+        parameters: [%Parameter{name: :id, in: :path, schema: %Schema{type: :string}}],
+        responses: %{}
+      }
+
+      assert {"/api/users/alice", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/api/users/:id", op, %{"id" => "alice"})
     end
 
     test "fills {placeholder} segments (OpenAPI style)" do
-      assert OpenApiToolBuilder.substitute_path("/api/users/{id}", %{"id" => "alice"}) ==
-               "/api/users/alice"
+      op = %Operation{
+        parameters: [%Parameter{name: :id, in: :path, schema: %Schema{type: :string}}],
+        responses: %{}
+      }
+
+      assert {"/api/users/alice", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/api/users/{id}", op, %{"id" => "alice"})
     end
 
-    test "URI-encodes values" do
-      assert OpenApiToolBuilder.substitute_path("/api/users/{id}", %{"id" => "a b/c"}) ==
-               "/api/users/a+b%2Fc"
+    test "URI-encodes path values" do
+      op = %Operation{
+        parameters: [%Parameter{name: :id, in: :path, schema: %Schema{type: :string}}],
+        responses: %{}
+      }
+
+      assert {"/api/users/a+b%2Fc", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body(
+                 "/api/users/{id}",
+                 op,
+                 %{"id" => "a b/c"}
+               )
     end
 
-    test "treats nil values as empty" do
-      assert OpenApiToolBuilder.substitute_path("/x/:id", %{"id" => nil}) == "/x/"
-    end
-  end
+    test "nil path param value substitutes to empty string" do
+      op = %Operation{
+        parameters: [%Parameter{name: :id, in: :path, schema: %Schema{type: :string}}],
+        responses: %{}
+      }
 
-  describe "append_query/2" do
-    test "no query → unchanged path" do
-      assert OpenApiToolBuilder.append_query("/x", %{}) == "/x"
-    end
-
-    test "scalar values → ?k=v" do
-      assert OpenApiToolBuilder.append_query("/x", %{"a" => 1}) == "/x?a=1"
+      assert {"/x/", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/x/:id", op, %{"id" => nil})
     end
 
-    test "list values explode into repeated keys" do
-      result = OpenApiToolBuilder.append_query("/x", %{"sev" => ["a", "b"]})
-      assert result == "/x?sev=a&sev=b"
+    test "no query params — path has no query string" do
+      op = %Operation{parameters: [], responses: %{}}
+
+      assert {"/x", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/x", op, %{})
+    end
+
+    test "scalar query param appended as ?k=v" do
+      op = %Operation{
+        parameters: [%Parameter{name: :a, in: :query, schema: %Schema{type: :integer}}],
+        responses: %{}
+      }
+
+      assert {"/x?a=1", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/x", op, %{"a" => 1})
+    end
+
+    test "list query param explodes into repeated keys" do
+      op = %Operation{
+        parameters: [%Parameter{name: :sev, in: :query, schema: %Schema{type: :string}}],
+        responses: %{}
+      }
+
+      assert {"/x?sev=a&sev=b", %{}} =
+               OpenApiToolBuilder.resolve_path_and_body("/x", op, %{"sev" => ["a", "b"]})
     end
   end
 end
