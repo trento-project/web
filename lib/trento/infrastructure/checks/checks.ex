@@ -24,7 +24,10 @@ defmodule Trento.Infrastructure.Checks do
     HostExecutionEnv
   }
 
-  alias Trento.Support.Protobuf
+  alias Trento.Support.{
+    CommandedUtils,
+    Protobuf
+  }
 
   require Logger
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
@@ -98,7 +101,7 @@ defmodule Trento.Infrastructure.Checks do
   def complete_execution(_, _, _, _), do: {:error, :target_not_supported}
 
   defp dispatch_completion_command(execution_id, command) do
-    commanded().dispatch(command, correlation_id: execution_id)
+    CommandedUtils.dispatch(command, correlation_id: execution_id)
   end
 
   defp build_env(%ClusterExecutionEnv{
@@ -147,7 +150,4 @@ defmodule Trento.Infrastructure.Checks do
       provider: provider
     })
   end
-
-  defp commanded,
-    do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
 end
