@@ -36,11 +36,6 @@ defmodule TrentoWeb.UserSocket do
   def connect(%{"access_token" => access_token}, socket, connect_info) do
     case AccessToken.verify_and_validate(access_token) do
       {:ok, %{"sub" => user_id}} ->
-        # Keep the raw JWT alongside the resolved user id so downstream
-        # tools (e.g. Trento.AI.RemoteHttpTool) can forward it as the
-        # Authorization header on outbound calls. The token is the
-        # caller's own credential — never persisted, only attached to
-        # in-flight requests originating from this socket.
         {:ok,
          socket
          |> assign(:current_user_id, user_id)
