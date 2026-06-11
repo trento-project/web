@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-04-28T04:18:27Z",
-    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
-    "run_id": "25033209810",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-04-28T04:40:35Z",
     "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
     "run_id": "25033785516",
@@ -6276,6 +6265,26 @@
       {
         "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-11T19:54:14Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27372688003",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07001
+      },
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.05001
       }
     ]
   }
