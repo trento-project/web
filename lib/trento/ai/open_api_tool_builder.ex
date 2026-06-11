@@ -71,8 +71,7 @@ defmodule Trento.AI.OpenApiToolBuilder do
   Resolves a path template and splits `tool_args` into `{resolved_path, body_args}`.
   Combines `param_locations/1`, `split_args/2`, `substitute_path/2`, and `append_query/2`.
   """
-  @spec resolve_path_and_body(String.t() | nil, Operation.t() | nil, map()) ::
-          {String.t() | nil, map()}
+  @spec resolve_path_and_body(String.t(), Operation.t() | nil, map()) :: {String.t(), map()}
   def resolve_path_and_body(path_template, operation, tool_args) do
     {path_args, query_args, body_args} =
       operation
