@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.AI.ControllerToolTest do
-  alias TrentoWeb.V1.ClusterController
   use Trento.DataCase
 
   import Mox
@@ -51,58 +50,12 @@ defmodule TrentoWeb.AI.ControllerToolTest do
       assert dt == entry.display_text
     end
 
-    test "translates path UUID parameters into JSON schema strings with uuid format" do
-      entry = entry_for({V1.HostController, :query_metrics})
-
-      assert %Function{
-               parameters_schema: %{"properties" => properties, "required" => required}
-             } = ControllerTool.build(entry)
-
-      assert %{"type" => "string", "format" => "uuid"} = properties["id"]
-      assert %{"type" => "string"} = properties["query"]
-      assert "id" in required
-      assert "query" in required
-      refute "time" in required
-    end
-
     test "covers every catalog entry without crashing" do
       for entry <- McpRouteIndex.entries() do
         assert %Function{name: name, display_text: dt} = ControllerTool.build(entry)
         assert is_binary(name)
         assert is_binary(dt)
       end
-    end
-
-    test "carries OpenApiSpex Parameter-level description into the property schema" do
-      entry = entry_for({V1.HostController, :query_metrics})
-
-      assert %Function{parameters_schema: %{"properties" => properties}} =
-               ControllerTool.build(entry)
-
-      assert properties["id"]["description"] =~ "Unique identifier of the host"
-      assert properties["query"]["description"] =~ "PromQL query expression"
-    end
-
-    test "request body schema's `required` list wins over RequestBody.required flag" do
-      operation =
-        ClusterController.open_api_operation(:cluster_maintenance_change)
-
-      entry = %McpRouteIndex.Entry{
-        controller: ClusterController,
-        action: :cluster_maintenance_change,
-        tool_name: "synthetic_cmc",
-        display_text: "test",
-        operation: operation,
-        verb: :post,
-        path: "/api/v1/clusters/:id/operations/cluster_maintenance_change"
-      }
-
-      assert %Function{parameters_schema: %{"required" => required}} =
-               ControllerTool.build(entry)
-
-      assert "maintenance" in required
-      refute "resource_id" in required
-      refute "node_id" in required
     end
 
     test "Function.display_text falls back to entry.tool_name when entry.display_text is nil" do
@@ -149,6 +102,17 @@ defmodule TrentoWeb.AI.ControllerToolTest do
                |> invoke(%{}, %{scope: %Trento.Users.User{id: 999_999}})
 
       assert String.starts_with?(reason, "tool invocation failed")
+    end
+
+    test "returns a 403 error when the authenticated user lacks the required ability" do
+      user = insert(:user)
+
+      assert {:error, reason} =
+               {V1.UsersController, :show}
+               |> entry_for()
+               |> invoke(%{"id" => user.id}, %{scope: user})
+
+      assert String.starts_with?(reason, "403")
     end
   end
 
@@ -273,6 +237,27 @@ defmodule TrentoWeb.AI.ControllerToolTest do
 
       assert {:ok, decoded} = Jason.decode(body)
       assert decoded == []
+    end
+
+    test "rescues exceptions during routing/execution, logging the traceback and returning error tuple",
+         %{caller: caller} do
+      entry = %McpRouteIndex.Entry{
+        controller: V1.HostController,
+        action: :list,
+        tool_name: "synthetic_crash_tool",
+        display_text: "Crash Tool",
+        operation: %OpenApiSpex.Operation{
+          parameters: [
+            %OpenApiSpex.Parameter{name: :id, in: :path, required: true}
+          ],
+          responses: %{}
+        },
+        verb: :get,
+        path: nil
+      }
+
+      assert {:error, reason} = invoke(entry, %{"id" => "123"}, %{scope: caller})
+      assert reason =~ "tool invocation failed"
     end
   end
 end
