@@ -7,9 +7,9 @@ defmodule TrentoWeb.AI.ControllerToolSourceTest do
   alias LangChain.Function
   alias TrentoWeb.AI.{ControllerToolSource, McpRouteIndex}
 
-  describe "tools/0" do
+  describe "tools/1" do
     test "returns one %LangChain.Function{} per MCP-tagged route" do
-      tools = ControllerToolSource.tools()
+      tools = ControllerToolSource.tools([])
 
       assert is_list(tools)
       assert length(tools) == length(McpRouteIndex.entries())
