@@ -31,6 +31,11 @@ defmodule Trento.Support.HttpUtilsTest do
         expected: "https://trento.example.com:4443"
       },
       %{
+        name: "URI with no port",
+        source: %URI{scheme: "https", host: "trento.example.com", port: nil},
+        expected: "https://trento.example.com"
+      },
+      %{
         name: "Plug.Conn with default HTTP port",
         source: %Plug.Conn{scheme: :http, host: "trento.example.com", port: 80},
         expected: "http://trento.example.com"
@@ -46,6 +51,7 @@ defmodule Trento.Support.HttpUtilsTest do
         expected: "https://trento.example.com:4443"
       },
       %{
+        name: "Nil input",
         source: nil,
         expected: nil
       },
