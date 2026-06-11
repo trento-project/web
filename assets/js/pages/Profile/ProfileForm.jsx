@@ -23,7 +23,7 @@ const ANALYTICS_TOOLTIP_MESSAGE = (
   <span>
     Allow the collection of{' '}
     <Link
-      to="https://www.trento-project.io/docs/"
+      to="https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics"
       className="text-jungle-green-500 hover:opacity-75"
       target="_blank"
     >
