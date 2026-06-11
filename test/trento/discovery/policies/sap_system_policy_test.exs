@@ -8,6 +8,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
   import Trento.Factory
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   import Trento.DiscoveryFixturesHelper
 
@@ -38,7 +39,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication: nil,
                 system_replication_status: nil,
                 system_replication_site_id: nil,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_multi_tenant"
@@ -65,7 +66,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "primary",
                 system_replication_tier: 1,
                 system_replication_active_primary_site: nil,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database"
@@ -92,7 +93,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
                 system_replication_active_primary_site: 1,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_secondary"
@@ -119,7 +120,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
                 system_replication_active_primary_site: 1,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_secondary"
@@ -153,7 +154,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_site_id: 1,
                 system_replication_tier: 1,
                 system_replication_active_primary_site: nil,
-                health: :unknown
+                status: Status.gray()
               }
             ]} =
              "sap_system_discovery_database_stopped_instance"
@@ -179,7 +180,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: true,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -208,7 +209,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: false,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -242,7 +243,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: false,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -264,7 +265,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 ensa_version: EnsaVersion.no_ensa()
               }
             ]} =
@@ -284,7 +285,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_application_diagnostics"
@@ -310,7 +311,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: true
               }
             ]} =
@@ -466,7 +467,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                   sap_system_id: nil,
                   sid: "HA1",
                   tenant: "PRD",
-                  health: :passing
+                  status: Status.green()
                 }
               ]} =
                "sap_system_discovery_application"

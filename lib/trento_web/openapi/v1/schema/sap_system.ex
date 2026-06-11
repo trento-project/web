@@ -8,6 +8,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
   alias OpenApiSpex.Schema
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias TrentoWeb.OpenApi.V1.Schema.{Database, ResourceHealth, Tags}
 
@@ -18,7 +19,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
       %{
         title: "ApplicationInstanceV1",
         description:
-          "Represents a discovered SAP application instance on the target infrastructure, including identification, features, ports, and health status for monitoring and management.",
+          "Represents a discovered SAP application instance on the target infrastructure, including identification, features, ports, and operational status for monitoring and management.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -90,7 +91,20 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             format: :uuid,
             example: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244"
           },
-          health: ResourceHealth,
+          health: %Schema{
+            description: "Usage replaced by status field.",
+            deprecated: true,
+            allOf: [
+              ResourceHealth
+            ]
+          },
+          status: %Schema{
+            type: :string,
+            description:
+              "The status of this SAP application instance, supporting status monitoring.",
+            enum: Status.values(),
+            example: "green"
+          },
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
           updated_at: %Schema{
             type: :string,
@@ -111,6 +125,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           start_priority: "1",
           host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
           health: "passing",
+          status: "green",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:30:00Z"
         }

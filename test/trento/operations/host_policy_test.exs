@@ -5,9 +5,9 @@ defmodule Trento.Operations.HostPolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Operations.HostPolicy
 
@@ -55,12 +55,12 @@ defmodule Trento.Operations.HostPolicyTest do
 
       test "should forbid operation '#{operation}' if an application instance is not stopped. Scenario: #{name}" do
         application_instances = [
-          build(:application_instance, health: Health.unknown()),
+          build(:application_instance, status: Status.gray()),
           %{sap_system_id: sap_system_id, sid: sid, instance_number: instance_number} =
-            build(:application_instance, health: Health.passing())
+            build(:application_instance, status: Status.green())
         ]
 
-        database_instances = build_list(2, :database_instance, health: Health.unknown())
+        database_instances = build_list(2, :database_instance, status: Status.gray())
 
         host =
           build(:host,
@@ -81,12 +81,12 @@ defmodule Trento.Operations.HostPolicyTest do
       end
 
       test "should forbid operation '#{operation}' if a database instance is not stopped. Scenario: #{name}" do
-        application_instances = build_list(2, :application_instance, health: Health.unknown())
+        application_instances = build_list(2, :application_instance, status: Status.gray())
 
         database_instances = [
-          build(:database_instance, health: Health.unknown()),
+          build(:database_instance, status: Status.gray()),
           %{database_id: database_id, sid: sid, instance_number: instance_number} =
-            build(:database_instance, health: Health.passing())
+            build(:database_instance, status: Status.green())
         ]
 
         host =
@@ -109,15 +109,15 @@ defmodule Trento.Operations.HostPolicyTest do
 
       test "should forbid operation '#{operation}' if an application and database instances are not stopped. Scenario: #{name}" do
         application_instances = [
-          build(:application_instance, health: Health.unknown()),
+          build(:application_instance, status: Status.gray()),
           %{sap_system_id: sap_system_id, sid: app_sid, instance_number: app_instance_number} =
-            build(:application_instance, health: Health.passing())
+            build(:application_instance, status: Status.green())
         ]
 
         database_instances = [
-          build(:database_instance, health: Health.unknown()),
+          build(:database_instance, status: Status.gray()),
           %{database_id: database_id, sid: db_sid, instance_number: db_instance_number} =
-            build(:database_instance, health: Health.passing())
+            build(:database_instance, status: Status.green())
         ]
 
         host =
@@ -156,8 +156,8 @@ defmodule Trento.Operations.HostPolicyTest do
       end
 
       test "should authorize operation '#{operation}' if all instances are stopped and the host is not clustered. Scenario: #{name}" do
-        application_instances = build_list(2, :application_instance, health: Health.unknown())
-        database_instances = build_list(2, :database_instance, health: Health.unknown())
+        application_instances = build_list(2, :application_instance, status: Status.gray())
+        database_instances = build_list(2, :database_instance, status: Status.gray())
 
         host =
           build(:host,
@@ -172,8 +172,8 @@ defmodule Trento.Operations.HostPolicyTest do
       end
 
       test "should authorize operation '#{operation}' if all instances are stopped. Scenario: #{name}" do
-        application_instances = build_list(2, :application_instance, health: Health.unknown())
-        database_instances = build_list(2, :database_instance, health: Health.unknown())
+        application_instances = build_list(2, :application_instance, status: Status.gray())
+        database_instances = build_list(2, :database_instance, status: Status.gray())
 
         maintenance_cluster =
           build(:cluster, details: build(:hana_cluster_details, maintenance_mode: true))
@@ -318,12 +318,12 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster: nil,
           cluster_id: nil,
           application_instances: [
-            build(:application_instance, health: Health.unknown()),
-            build(:application_instance, health: Health.unknown())
+            build(:application_instance, status: Status.gray()),
+            build(:application_instance, status: Status.gray())
           ],
           database_instances: [
-            build(:database_instance, health: Health.unknown()),
-            build(:database_instance, health: Health.unknown())
+            build(:database_instance, status: Status.gray()),
+            build(:database_instance, status: Status.gray())
           ]
         )
 
@@ -332,15 +332,15 @@ defmodule Trento.Operations.HostPolicyTest do
 
     test "should forbid host reboot if not all application instances are stopped" do
       application_instances = [
-        build(:application_instance, health: Health.unknown()),
+        build(:application_instance, status: Status.gray()),
         %{sap_system_id: sap_system_id, sid: sid1, instance_number: instance_number1} =
-          build(:application_instance, health: Health.passing())
+          build(:application_instance, status: Status.green())
       ]
 
       database_instances = [
-        build(:database_instance, health: Health.unknown()),
+        build(:database_instance, status: Status.gray()),
         %{database_id: database_id, sid: sid2, instance_number: instance_number2} =
-          build(:database_instance, health: Health.passing())
+          build(:database_instance, status: Status.green())
       ]
 
       host =
@@ -373,8 +373,8 @@ defmodule Trento.Operations.HostPolicyTest do
           cluster_id: nil,
           application_instances: [],
           database_instances: [
-            build(:database_instance, health: Health.unknown()),
-            build(:database_instance, health: Health.passing())
+            build(:database_instance, status: Status.gray()),
+            build(:database_instance, status: Status.green())
           ]
         )
 

@@ -9,6 +9,7 @@ defmodule Trento.Operations.DatabasePolicy do
   @behaviour Trento.Operations.PolicyBehaviour
 
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Support.OperationsHelper
 
@@ -178,7 +179,7 @@ defmodule Trento.Operations.DatabasePolicy do
 
     database_instances
     |> Enum.filter(fn %{system_replication_tier: tier} -> tier == requested_site_tier - 1 end)
-    |> Enum.all?(fn %{health: health} -> health == :passing end)
+    |> Enum.all?(fn %{status: status} -> status == Status.green() end)
     |> if do
       :ok
     else
@@ -205,7 +206,7 @@ defmodule Trento.Operations.DatabasePolicy do
        ) do
     database_instances
     |> Enum.filter(fn %{system_replication_source_site: source_site} -> site == source_site end)
-    |> Enum.all?(fn %{health: health} -> health == :unknown end)
+    |> Enum.all?(fn %{status: status} -> status == Status.gray() end)
     |> if do
       :ok
     else
@@ -232,8 +233,8 @@ defmodule Trento.Operations.DatabasePolicy do
        ) do
     sap_systems
     |> Enum.flat_map(fn %{application_instances: app_instances} -> app_instances end)
-    |> Enum.filter(fn %{health: health, features: features} ->
-      health != :unknown and (features =~ "ABAP" or features =~ "J2EE")
+    |> Enum.filter(fn %{status: status, features: features} ->
+      status != Status.gray() and (features =~ "ABAP" or features =~ "J2EE")
     end)
     |> case do
       [] ->

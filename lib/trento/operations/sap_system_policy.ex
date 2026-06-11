@@ -9,6 +9,7 @@ defmodule Trento.Operations.SapSystemPolicy do
   @behaviour Trento.Operations.PolicyBehaviour
 
   require Trento.Operations.Enums.SapSystemOperations, as: SapSystemOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Support.OperationsHelper
 
@@ -100,8 +101,8 @@ defmodule Trento.Operations.SapSystemPolicy do
        }) do
     database_instances
     |> Enum.filter(fn
-      %{health: health, system_replication: sr} when sr in [nil, "Primary"] ->
-        health != :passing
+      %{status: status, system_replication: sr} when sr in [nil, "Primary"] ->
+        status != Status.green()
 
       _ ->
         false
@@ -149,8 +150,8 @@ defmodule Trento.Operations.SapSystemPolicy do
          _
        ) do
     application_instances
-    |> Enum.filter(fn %{features: features, health: health} ->
-      health != :passing && features =~ "MESSAGESERVER"
+    |> Enum.filter(fn %{features: features, status: status} ->
+      status != Status.green() && features =~ "MESSAGESERVER"
     end)
     |> case do
       [] ->
@@ -174,8 +175,8 @@ defmodule Trento.Operations.SapSystemPolicy do
          %{instance_type: "scs"}
        ) do
     application_instances
-    |> Enum.filter(fn %{features: features, health: health} ->
-      health != :unknown && !String.contains?(features, "MESSAGESERVER")
+    |> Enum.filter(fn %{features: features, status: status} ->
+      status != Status.gray() && !String.contains?(features, "MESSAGESERVER")
     end)
     |> case do
       [] ->

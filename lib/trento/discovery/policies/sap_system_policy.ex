@@ -7,6 +7,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
   """
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Databases.Commands.{
     MarkDatabaseInstanceAbsent,
@@ -129,7 +130,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         system_replication_tier: parse_system_replication_tier(instance),
         system_replication_active_primary_site:
           parse_system_replication_active_primary_site(instance),
-        health: parse_dispstatus(instance)
+        status: parse_dispstatus(instance)
       })
     end)
   end
@@ -170,7 +171,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
         https_port: parse_https_port(instance),
         start_priority: parse_start_priority(instance),
         host_id: host_id,
-        health: parse_dispstatus(instance),
+        status: parse_dispstatus(instance),
         ensa_version: parse_ensa_version(instance),
         clustered: clustered
       })
@@ -247,10 +248,10 @@ defmodule Trento.Discovery.Policies.SapSystemPolicy do
       |> parse_sap_control_instance_value(:dispstatus)
       |> normalize_dispstatus
 
-  defp normalize_dispstatus(:"SAPControl-GREEN"), do: :passing
-  defp normalize_dispstatus(:"SAPControl-YELLOW"), do: :warning
-  defp normalize_dispstatus(:"SAPControl-RED"), do: :critical
-  defp normalize_dispstatus(_), do: :unknown
+  defp normalize_dispstatus(:"SAPControl-GREEN"), do: Status.green()
+  defp normalize_dispstatus(:"SAPControl-YELLOW"), do: Status.yellow()
+  defp normalize_dispstatus(:"SAPControl-RED"), do: Status.red()
+  defp normalize_dispstatus(:"SAPControl-GRAY"), do: Status.gray()
 
   defp parse_system_replication(%Instance{
          HdbnsutilSRstate: %HdbnsutilSRstate{mode: mode}

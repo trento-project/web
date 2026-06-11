@@ -8,10 +8,10 @@ defmodule Trento.Operations.HostPolicy do
 
   @behaviour Trento.Operations.PolicyBehaviour
 
-  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Operations.Enums.HostOperations, as: HostOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Support.OperationsHelper
 
@@ -178,9 +178,9 @@ defmodule Trento.Operations.HostPolicy do
          sap_system_id: sap_system_id,
          sid: sid,
          instance_number: instance_number,
-         health: health
+         status: status
        })
-       when health != Health.unknown(),
+       when status != Status.gray(),
        do:
          {:error,
           [
@@ -194,9 +194,9 @@ defmodule Trento.Operations.HostPolicy do
          database_id: database_id,
          sid: sid,
          instance_number: instance_number,
-         health: health
+         status: status
        })
-       when health != Health.unknown(),
+       when status != Status.gray(),
        do:
          {:error,
           [

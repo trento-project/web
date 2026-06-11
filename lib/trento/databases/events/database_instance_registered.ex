@@ -9,9 +9,11 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
   use Trento.Support.Event
   use Trento.Databases.Event.Upcaster.UpcastDatabaseId
 
-  require Trento.Enums.Health, as: Health
+  require Trento.SapSystems.Enums.Status, as: Status
 
-  defevent version: 4 do
+  alias Trento.SapSystems.Services.HealthService
+
+  defevent version: 5 do
     field :database_id, Ecto.UUID
     field :sid, :string
     field :host_id, Ecto.UUID
@@ -29,7 +31,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
     field :system_replication_operation_mode, :string
     field :system_replication_source_site, :string
     field :system_replication_tier, :integer
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
   end
 
   def upcast(params, _, 3),
@@ -40,4 +42,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
     do: Map.put(params, "system_replication_tier", nil)
 
   def upcast(params, _, 4), do: params
+
+  def upcast(params, _, 5),
+    do: HealthService.upcast_health_to_status(params)
 end

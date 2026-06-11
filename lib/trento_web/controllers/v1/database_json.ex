@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.V1.DatabaseJSON do
+  alias Trento.SapSystems.Services.HealthService
+
   def databases(%{databases: databases}), do: Enum.map(databases, &database(%{database: &1}))
 
   def database(%{
@@ -30,6 +32,7 @@ defmodule TrentoWeb.V1.DatabaseJSON do
       |> Map.put(:sap_system_id, database_id)
       |> Map.delete(:__meta__)
       |> Map.delete(:host)
+      |> HealthService.add_deprecated_health()
 
   def database_registered(%{database: database}) do
     database
@@ -52,19 +55,19 @@ defmodule TrentoWeb.V1.DatabaseJSON do
 
   def database_health_changed(%{health: health}), do: health
 
-  def database_instance_health_changed(%{
+  def database_instance_status_changed(%{
         instance: %{
           database_id: database_id,
           host_id: host_id,
           instance_number: instance_number,
-          health: health
+          status: status
         }
       }),
       do: %{
         database_id: database_id,
         host_id: host_id,
         instance_number: instance_number,
-        health: health
+        status: status
       }
 
   def database_instance_system_replication_changed(%{

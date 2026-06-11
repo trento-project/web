@@ -19,6 +19,7 @@ defmodule Trento.Factory do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -502,7 +503,7 @@ defmodule Trento.Factory do
       system_replication_operation_mode: nil,
       system_replication_source_site: nil,
       system_replication_tier: nil,
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -562,7 +563,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -807,7 +808,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "",
       system_replication_status: "",
-      health: Health.unknown(),
+      status: Status.gray(),
       absent_at: nil
     }
   end
@@ -819,7 +820,7 @@ defmodule Trento.Factory do
       instance_number: "00",
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: Health.unknown(),
+      status: Status.gray(),
       absent_at: nil
     }
   end
@@ -830,7 +831,7 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -872,7 +873,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing(),
+      status: Status.green(),
       ensa_version: EnsaVersion.ensa1(),
       database_id: Faker.UUID.v4(),
       database_health: Health.passing(),
@@ -902,7 +903,7 @@ defmodule Trento.Factory do
       system_replication_operation_mode: nil,
       system_replication_source_site: nil,
       system_replication_tier: nil,
-      health: Health.passing()
+      status: Status.green()
     }
   end
 

@@ -10,6 +10,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
   import Trento.Factory
 
+  require Trento.SapSystems.Enums.Status, as: Status
+
   alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
     DatabaseProjector,
@@ -20,9 +22,9 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRestored,
     DatabaseTenantsUpdated
@@ -91,7 +93,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
     %{
-      health: health,
+      status: status,
       sid: sid,
       features: features,
       host_id: host_id
@@ -108,11 +110,11 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert event.instance_number == database_instance_projection.instance_number
     assert event.features == database_instance_projection.features
     assert event.host_id == database_instance_projection.host_id
-    assert event.health == database_instance_projection.health
+    assert event.status == database_instance_projection.status
 
     assert_broadcast "database_instance_registered",
                      %{
-                       health: ^health,
+                       status: ^status,
                        sid: ^sid,
                        features: ^features,
                        host_id: ^host_id,
@@ -315,11 +317,11 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         system_replication_status: ""
       )
 
-    event = %DatabaseInstanceHealthChanged{
+    event = %DatabaseInstanceStatusChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: :critical
+      status: Status.red()
     }
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
@@ -329,6 +331,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                        database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
+                       status: Status.red(),
                        health: :critical
                      },
                      1000
@@ -492,7 +495,10 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert :passing == projection.health
 
     adapted_database_instances =
-      Map.put(database_instances, :sap_system_id, database_id)
+      database_instances
+      |> Map.put(:sap_system_id, database_id)
+      # TODO: to remove once frontend is aligned
+      |> Map.put(:health, :unknown)
 
     assert_broadcast "database_restored",
                      %{

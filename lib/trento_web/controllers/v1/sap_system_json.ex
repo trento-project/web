@@ -5,17 +5,20 @@ defmodule TrentoWeb.V1.SapSystemJSON do
   import TrentoWeb.V1.DatabaseJSON,
     only: [database_instance: 1]
 
+  alias Trento.SapSystems.Services.HealthService
+
   def application_instance(%{instance: instance}) do
     instance
     |> Map.from_struct()
     |> Map.delete(:__meta__)
     |> Map.delete(:host)
     |> Map.delete(:sap_system)
+    |> HealthService.add_deprecated_health()
   end
 
   def application_instance_moved(%{instance_moved: instance_moved}), do: instance_moved
 
-  def application_instance_health_changed(%{health: health}), do: health
+  def application_instance_status_changed(%{instance: instance}), do: instance
 
   def sap_systems(%{sap_systems: sap_systems}),
     do: Enum.map(sap_systems, &sap_system(%{sap_system: &1}))

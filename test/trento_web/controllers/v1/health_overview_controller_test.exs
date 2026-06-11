@@ -11,6 +11,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
   require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.ClusterReadModel
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -24,7 +25,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
 
     %HostReadModel{id: host_1_id} = insert(:host, cluster_id: cluster_id, heartbeat: :unknown)
 
-    %DatabaseReadModel{health: database_health, id: database_id} = insert(:database)
+    %DatabaseReadModel{id: database_id} = insert(:database)
 
     %SapSystemReadModel{
       id: sap_system_id,
@@ -36,7 +37,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
       database_id: database_id,
       sid: "HDD",
       host_id: host_1_id,
-      health: database_health
+      status: Status.gray()
     )
 
     insert(
@@ -44,7 +45,7 @@ defmodule TrentoWeb.V1.HealthOverviewControllerTest do
       sap_system_id: sap_system_id,
       sid: sid,
       host_id: host_1_id,
-      health: Health.critical()
+      status: Status.red()
     )
 
     conn = get(conn, "/api/v1/sap_systems/health")

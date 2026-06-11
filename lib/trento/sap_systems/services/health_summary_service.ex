@@ -18,6 +18,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   alias Trento.Clusters.Projections.ClusterReadModel
 
   alias Trento.Enums.Health
+  alias Trento.SapSystems.Services.HealthService, as: SapSystemsHealthService
   alias Trento.Services.HealthService
 
   alias Trento.Repo
@@ -92,5 +93,9 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   defp compute_application_health(application_instances),
     do:
-      application_instances |> Enum.map(& &1.health) |> HealthService.compute_aggregated_health()
+      application_instances
+      |> Enum.map(fn %{status: status} ->
+        SapSystemsHealthService.derive_health_from_status(status)
+      end)
+      |> HealthService.compute_aggregated_health()
 end
