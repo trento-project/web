@@ -110,44 +110,44 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should register a cluster with correct health for HANA type clusters" do
-      scenarios = [
-        %{
-          sr_health_state: "4",
-          secondary_sync_state: "SOK",
-          expected_health: Health.passing()
-        },
-        %{
-          sr_health_state: "1",
-          secondary_sync_state: "SFAIL",
-          expected_health: Health.critical()
-        },
-        %{
-          sr_health_state: "1",
-          secondary_sync_state: "SOK",
-          expected_health: Health.critical()
-        },
-        %{
-          sr_health_state: "4",
-          secondary_sync_state: "SFAIL",
-          expected_health: Health.critical()
-        }
-      ]
+    @scenarios [
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SOK",
+        expected_health: Health.passing()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SOK",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      }
+    ]
+    for %{
+          sr_health_state: sr_health_state,
+          secondary_sync_state: secondary_sync_state,
+          expected_health: expected_health
+        } <- @scenarios do
+      test "should register a cluster with #{expected_health} health for HANA type clusters (sr_health: #{sr_health_state}, sync: #{secondary_sync_state}), no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
 
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      sap_instances = build_list(2, :clustered_sap_instance)
-
-      for %{
-            sr_health_state: sr_health_state,
-            secondary_sync_state: secondary_sync_state,
-            expected_health: expected_health
-          } <- scenarios do
         details =
           build(:hana_cluster_details,
-            sr_health_state: sr_health_state,
-            secondary_sync_state: secondary_sync_state
+            sr_health_state: unquote(sr_health_state),
+            secondary_sync_state: unquote(secondary_sync_state),
+            sbd_devices: []
           )
 
         assert_events_and_state(
@@ -171,11 +171,10 @@ defmodule Trento.ClusterTest do
               provider: :azure,
               type: :hana_scale_up,
               details: details,
-              health: expected_health,
+              health: unquote(expected_health),
               health_details:
                 HanaClusterHealthDetails.new!(%{
-                  sbd_health: Health.passing(),
-                  replication_health: expected_health
+                  replication_health: unquote(expected_health)
                 }),
               state: :S_IDLE
             },
@@ -193,11 +192,10 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             hosts: [host_id],
             details: details,
-            health: expected_health,
+            health: unquote(expected_health),
             health_details:
               HanaClusterHealthDetails.new!(%{
-                sbd_health: Health.passing(),
-                replication_health: expected_health
+                replication_health: unquote(expected_health)
               }),
             state: :S_IDLE
           }
@@ -205,30 +203,30 @@ defmodule Trento.ClusterTest do
       end
     end
 
-    test "should register a cluster with correct health for ASCS/ERS type clusters" do
-      scenarios = [
-        %{
-          distributed: true,
-          expected_health: Health.passing()
-        },
-        %{
-          distributed: false,
-          expected_health: Health.critical()
-        }
-      ]
+    @scenarios [
+      %{
+        distributed: true,
+        expected_health: Health.passing()
+      },
+      %{
+        distributed: false,
+        expected_health: Health.critical()
+      }
+    ]
+    for scenario <- @scenarios do
+      test "should register a cluster with #{scenario.expected_health} health for ASCS/ERS type clusters, no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
 
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      sap_instances = build_list(2, :clustered_sap_instance)
-
-      for %{
-            distributed: distributed,
-            expected_health: expected_health
-          } <- scenarios do
         details =
           build(:ascs_ers_cluster_details,
-            sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: distributed)
+            sap_systems:
+              build_list(2, :ascs_ers_cluster_sap_system,
+                distributed: unquote(scenario.distributed)
+              ),
+            sbd_devices: []
           )
 
         assert_events_and_state(
@@ -252,11 +250,10 @@ defmodule Trento.ClusterTest do
               provider: :azure,
               type: :ascs_ers,
               details: details,
-              health: expected_health,
+              health: unquote(scenario.expected_health),
               health_details:
                 AscsErsClusterHealthDetails.new!(%{
-                  sbd_health: Health.passing(),
-                  distributed_health: expected_health
+                  distributed_health: unquote(scenario.expected_health)
                 }),
               state: :S_IDLE
             },
@@ -274,11 +271,10 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             hosts: [host_id],
             details: details,
-            health: expected_health,
+            health: unquote(scenario.expected_health),
             health_details:
               AscsErsClusterHealthDetails.new!(%{
-                sbd_health: Health.passing(),
-                distributed_health: expected_health
+                distributed_health: unquote(scenario.expected_health)
               }),
             state: :S_IDLE
           }

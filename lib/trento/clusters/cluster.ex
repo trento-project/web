@@ -745,7 +745,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp derive_discovered_health(_), do: nil
 
-  defp derive_sbd_health(%{sbd_devices: sbd_devices}) do
+  defp derive_sbd_health(%{sbd_devices: [_ | _] = sbd_devices}) do
     Enum.find_value(sbd_devices, Health.passing(), fn %SbdDevice{status: status} ->
       if status != :healthy, do: Health.critical()
     end)
@@ -782,7 +782,7 @@ defmodule Trento.Clusters.Cluster do
   defp aggregate_health_details(health_details) when is_struct(health_details) do
     health_details
     |> Map.from_struct()
-    |> maybe_remove_checks_health()
+    |> remove_optional_unknown_healths()
     |> Map.values()
     |> Enum.reject(&is_nil/1)
     |> HealthService.compute_aggregated_health()
@@ -1048,8 +1048,7 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_health_changed_event(_), do: nil
 
-  defp maybe_remove_checks_health(%{checks_health: Health.unknown()} = health_details),
-    do: Map.delete(health_details, :checks_health)
-
-  defp maybe_remove_checks_health(health_details), do: health_details
+  defp remove_optional_unknown_healths(health_details) do
+    Map.reject(health_details, fn {key, value} -> key in [:checks_health, :sbd_health] and value == Health.unknown() end)
+  end
 end

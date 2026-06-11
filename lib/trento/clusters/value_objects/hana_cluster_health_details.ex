@@ -9,7 +9,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterHealthDetails do
   aggregate docstring.
   """
 
-  @required_fields [:sbd_health, :replication_health]
+  @required_fields [:replication_health]
 
   use Trento.Support.Type
 
@@ -17,7 +17,7 @@ defmodule Trento.Clusters.ValueObjects.HanaClusterHealthDetails do
 
   deftype do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    field :sbd_health, Ecto.Enum, values: Health.values()
+    field :sbd_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :replication_health, Ecto.Enum, values: Health.values()
   end
 end
