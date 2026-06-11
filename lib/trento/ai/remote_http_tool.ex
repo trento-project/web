@@ -24,7 +24,7 @@ defmodule Trento.AI.RemoteHttpTool do
   (`:path` / `:query` / body). Body args for non-GET verbs are
   JSON-encoded and sent with `Content-Type: application/json`. GET
   bodies are dropped — query args end up in the URL via
-  `OpenApiToolBuilder.append_query/2`.
+  `OpenApiToolBuilder.resolve_path_and_body/3`.
 
   Return convention mirrors `ControllerTool` so LangChain marks
   `ToolResult.is_error` correctly:
