@@ -9,7 +9,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails do
   aggregate docstring.
   """
 
-  @required_fields [:sbd_health, :distributed_health]
+  @required_fields [:distributed_health]
 
   use Trento.Support.Type
 
@@ -17,7 +17,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails do
 
   deftype do
     field :checks_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
-    field :sbd_health, Ecto.Enum, values: Health.values()
+    field :sbd_health, Ecto.Enum, values: Health.values(), default: Health.unknown()
     field :distributed_health, Ecto.Enum, values: Health.values()
   end
 end
