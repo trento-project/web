@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.SUSEManagerController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Hosts
   alias Trento.Hosts.Projections.HostReadModel
@@ -48,6 +49,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
+  ai_tool :mlm_software_updates, display_text: "Get software updates for a host"
+
   @spec software_updates(Plug.Conn.t(), any) :: Plug.Conn.t()
   def software_updates(conn, %{id: host_id}) do
     with {:ok,
@@ -84,6 +87,9 @@ defmodule TrentoWeb.V1.SUSEManagerController do
          "application/json", PatchesForPackagesResponse}
     ]
 
+  ai_tool :mlm_patches_for_packages,
+    display_text: "Get patches covered by package upgrades"
+
   @spec patches_for_packages(Plug.Conn.t(), any) :: Plug.Conn.t()
   def patches_for_packages(conn, %{host_id: host_id}) do
     with {:ok, packages_patches} <- SoftwareUpdates.get_packages_patches(host_id) do
@@ -113,6 +119,8 @@ defmodule TrentoWeb.V1.SUSEManagerController do
         {"Detailed information about the specified advisory, including CVEs, bug fixes, affected packages, and systems.",
          "application/json", ErrataDetailsResponse}
     ]
+
+  ai_tool :mlm_errata_details, display_text: "Get advisory errata details"
 
   @spec errata_details(Plug.Conn.t(), any) :: Plug.Conn.t()
   def errata_details(conn, %{advisory_name: advisory_name}) do

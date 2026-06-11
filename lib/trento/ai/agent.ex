@@ -20,9 +20,7 @@ defmodule Trento.AI.Agent do
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent.Server, as: AgentServer
   alias Trento.AI.Agent.Supervisor, as: AgentSupervisor
-  alias Trento.AI.ApplicationConfigLoader
-
-  alias TrentoWeb.AIAssistantTools
+  alias Trento.AI.{ApplicationConfigLoader, ToolsRegistry}
 
   @doc """
   Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
@@ -35,7 +33,7 @@ defmodule Trento.AI.Agent do
         model: Keyword.fetch!(opts, :model),
         scope: Keyword.fetch!(opts, :scope),
         base_system_prompt: load_base_system_prompt(),
-        tools: AIAssistantTools.tools(),
+        tools: ToolsRegistry.tools(),
         # see https://github.com/sagents-ai/sagents#provided-middleware
         middleware: [
           # Task management with write_todos tool for tracking multi-step work
