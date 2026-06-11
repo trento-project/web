@@ -9,7 +9,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   At `tools/1` time:
 
   1. Fetch the spec from `:spec_url` (HTTP GET, JSON response).
-  2. Decode via `OpenApiSpex.OpenApi.Decode.decode/1` into the struct
+  2. Decode via `OpenApiSpex.OpenApi.from_map/1` into the struct
      hierarchy.
   3. Walk every `(path, verb)` pair, keep operations whose `tags`
      include `"MCP"`.
@@ -104,7 +104,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(spec_url, headers, options),
          {:ok, json} <- Jason.decode(body) do
-      {:ok, OpenApiSpex.OpenApi.Decode.decode(json)}
+      {:ok, OpenApiSpex.OpenApi.from_map(json)}
     else
       {:ok, %HTTPoison.Response{status_code: status}} -> {:error, {:http_status, status}}
       {:error, %HTTPoison.Error{reason: reason}} -> {:error, {:transport, reason}}
