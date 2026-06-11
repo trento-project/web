@@ -6,50 +6,40 @@ defmodule Trento.AI.RemoteHttpToolTest do
   use Trento.AI.AICase
 
   import Mox
+  import Trento.Factory
 
   alias LangChain.Function
-  alias OpenApiSpex.{Operation, Parameter, Schema}
-  alias Trento.AI.{OperationEntry, RemoteHttpTool}
+  alias OpenApiSpex.{Parameter, Schema}
+  alias Trento.AI.RemoteHttpTool
   alias Trento.Support.HttpClient
 
   setup :verify_on_exit!
 
   @base_url "http://wanda"
 
-  defp entry(verb, path, parameters \\ []) do
-    %OperationEntry{
-      tool_name: "test_tool",
-      display_text: "Test Tool",
-      operation: %Operation{
-        summary: "test",
-        description: "desc",
-        parameters: parameters,
-        responses: %{}
-      },
-      verb: verb,
-      path: path
-    }
-  end
-
   defp context(jwt, request_origin \\ nil),
     do: %{tool_context: %{access_token: jwt, request_origin: request_origin}}
 
   describe "build/2 — function metadata" do
     test "wires tool_name, display_text, description, parameters_schema, function" do
+      e = build(:operation_entry, verb: :get, path: "/x")
+      tool_name = e.tool_name
+      display_text = e.display_text
+
       assert %Function{
-               name: "test_tool",
-               display_text: "Test Tool",
-               description: "test\n\ndesc",
+               name: ^tool_name,
+               display_text: ^display_text,
                parameters_schema: %{"type" => "object"},
                function: function
-             } = RemoteHttpTool.build(entry(:get, "/x"), @base_url)
+             } = RemoteHttpTool.build(e, @base_url)
 
       assert is_function(function, 2)
     end
 
     test "falls back to tool_name when display_text is nil" do
-      e = %{entry(:get, "/x") | display_text: nil}
-      assert %Function{display_text: "test_tool"} = RemoteHttpTool.build(e, @base_url)
+      e = %{build(:operation_entry, verb: :get, path: "/x") | display_text: nil}
+      tool_name = e.tool_name
+      assert %Function{display_text: ^tool_name} = RemoteHttpTool.build(e, @base_url)
     end
   end
 
@@ -66,10 +56,22 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       e =
-        entry(:get, "/api/v1/users/{id}", [
-          %Parameter{name: :id, in: :path, required: true, schema: %Schema{type: :string}},
-          %Parameter{name: :limit, in: :query, required: false, schema: %Schema{type: :integer}}
-        ])
+        build(:operation_entry,
+          verb: :get,
+          path: "/api/v1/users/{id}",
+          operation: %OpenApiSpex.Operation{
+            parameters: [
+              %Parameter{name: :id, in: :path, required: true, schema: %Schema{type: :string}},
+              %Parameter{
+                name: :limit,
+                in: :query,
+                required: false,
+                schema: %Schema{type: :integer}
+              }
+            ],
+            responses: %{}
+          }
+        )
 
       assert {:ok, ~s({"ok":true})} =
                e
@@ -87,9 +89,21 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       e =
-        entry(:post, "/api/v1/groups/{group_id}/start", [
-          %Parameter{name: :group_id, in: :path, required: true, schema: %Schema{type: :string}}
-        ])
+        build(:operation_entry,
+          verb: :post,
+          path: "/api/v1/groups/{group_id}/start",
+          operation: %OpenApiSpex.Operation{
+            parameters: [
+              %Parameter{
+                name: :group_id,
+                in: :path,
+                required: true,
+                schema: %Schema{type: :string}
+              }
+            ],
+            responses: %{}
+          }
+        )
 
       assert {:ok, _} =
                e
@@ -108,7 +122,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       assert {:error, msg} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
 
@@ -122,7 +136,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       assert {:error, "500 boom"} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
     end
@@ -133,7 +147,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       assert {:error, msg} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, context("JWT"))
 
@@ -143,7 +157,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
     test "refuses to dispatch when access_token missing from tool_context" do
       assert {:error, msg} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, %{tool_context: %{}})
 
@@ -152,7 +166,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
 
     test "refuses to dispatch when context has no tool_context at all" do
       assert {:error, msg} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build(@base_url)
                |> Function.execute(%{}, %{scope: nil})
 
@@ -168,7 +182,7 @@ defmodule Trento.AI.RemoteHttpToolTest do
       end)
 
       assert {:ok, _} =
-               entry(:get, "/x")
+               build(:operation_entry, verb: :get, path: "/x")
                |> RemoteHttpTool.build("/wanda")
                |> Function.execute(%{}, context("JWT", "https://trento.example.com"))
     end
