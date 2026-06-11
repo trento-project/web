@@ -16,8 +16,8 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   4. Build a `Trento.AI.OperationEntry` per operation. `tool_name` and
      `display_text` follow the same fallback chain used locally:
      `operation.extensions["x-ai-tool"]["name" | "display_text"]` →
-     `operation.operation_id` / `operation.summary` → derived
-     `\#{verb}_<slugified path>` / `tool_name`.
+     `operation.operationId` / `operation.summary` → derived
+     `#{verb}_<slugified path>` / `tool_name`.
   5. Extract the dispatch base URL from `spec.servers |> List.first()`'s
      `:url` field.
   6. Map each entry through `Trento.AI.RemoteHttpTool.build/2`, threading
