@@ -19,6 +19,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   | Assign | Type | Lifetime | Why |
   |---|---|---|---|
   | `:current_user_id` | integer | from `UserSocket.connect` | auth + identifies the authenticated user |
+  | `:access_token` | string | from `UserSocket.connect` | raw JWT, forwarded to remote AI tools via `tool_context.access_token` so wanda etc. can authenticate the user on outbound calls |
+  | `:request_origin` | string \| nil | from `UserSocket.connect` | scheme + host + port of the websocket request, forwarded via `tool_context.request_origin` so `Trento.AI.RemoteHttpTool` can resolve partial `:checks_service` base URLs (e.g. `/wanda`) against the same origin the browser used |
   | `:current_scope` | `%Trento.Users.User{id: id}` | from `join/3` | passed to `Sagents.Agent.new!` as `:scope` so tool callbacks see `context.scope.id` |
   | `:loading` | boolean | toggled per run | double-send guard — prevents race conditions |
   | `:current_run_id` | UUID string | set at each `send_message` | echoed in `RUN_STARTED` + `RUN_FINISHED` AG-UI events for client-side correlation |
@@ -131,16 +133,25 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp run_agent(
          %{
-           assigns: %{
-             current_run_id: run_id,
-             current_thread_id: thread_id,
-             current_scope: scope
-           }
+           assigns:
+             %{
+               current_run_id: run_id,
+               current_thread_id: thread_id,
+               current_scope: scope
+             } = assigns
          } = socket,
          model_config,
          prompt
        ) do
-    [agent_id: thread_id, model: model_config, scope: scope]
+    [
+      agent_id: thread_id,
+      model: model_config,
+      scope: scope,
+      tool_context: %{
+        access_token: Map.get(assigns, :access_token),
+        request_origin: Map.get(assigns, :request_origin)
+      }
+    ]
     |> TrentoAIAgent.new!()
     |> TrentoAIAgent.run(prompt)
     |> case do
