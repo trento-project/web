@@ -10,6 +10,11 @@ defmodule TrentoWeb.V1.ActivityLogController do
   alias Trento.Users.User
   alias TrentoWeb.OpenApi.V1.Schema
 
+  plug TrentoWeb.Plugs.NormalizeListsPlug,
+    list_fields: %{
+      get_activity_log: ["severity", "actor", "type"]
+    }
+
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
   plug TrentoWeb.Plugs.LoadUserPlug
@@ -71,6 +76,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           example: ["john.doe@example.com", "admin@example.com"]
         },
+        explode: true,
         required: false,
         example: ["john.doe@example.com", "admin@example.com"]
       ],
@@ -94,6 +100,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           example: ["host_registered", "user_login"]
         },
+        explode: true,
         required: false,
         example: ["host_registered", "user_login"]
       ],
@@ -106,6 +113,7 @@ defmodule TrentoWeb.V1.ActivityLogController do
           items: %OpenApiSpex.Schema{type: :string},
           default: ["debug", "info", "warning", "critical"]
         },
+        explode: true,
         required: false
       ]
     ],
