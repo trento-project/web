@@ -21,7 +21,7 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     SapInstance
   }
 
-  defevent version: 3 do
+  defevent version: 4 do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
@@ -66,4 +66,9 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
     do: Map.put(params, "health_details", %{"distributed_health" => health})
 
   def upcast(params, _, 3), do: Map.put(params, "health_details", nil)
+
+  def upcast(%{"health_details" => %{}} = params, _, 4),
+    do: put_in(params, ["health_details", "sbd_health"], Health.unknown())
+
+  def upcast(params, _, 4), do: params
 end

@@ -85,7 +85,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
             }
           ],
           sbd_devices: [
-            %{device: "/dev/vdc", status: "healthy"}
+            %{device: "/dev/vdc", status: :healthy}
           ],
           secondary_sync_state: "SOK",
           sr_health_state: "4",
@@ -178,7 +178,7 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
             }
           ],
           sbd_devices: [
-            %{device: "/dev/vdc", status: "healthy"}
+            %{device: "/dev/vdc", status: :healthy}
           ],
           secondary_sync_state: "SOK",
           sr_health_state: "4",
