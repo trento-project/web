@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-04-29T04:16:26Z",
-    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
-    "run_id": "25090194322",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-29T04:29:50Z",
     "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
     "run_id": "25090465347",
@@ -6268,6 +6248,30 @@
       },
       {
         "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-12T19:32:20Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27437639947",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
         "score": 0.02501
       }
     ]
