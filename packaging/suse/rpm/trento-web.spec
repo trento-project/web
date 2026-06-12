@@ -55,6 +55,7 @@ export MIX_HOME=/usr/bin
 export MIX_REBAR3=/usr/bin/rebar3
 export MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 export GTM_ID=%%GTM_ID%%
+export VERSION=%{version}
 mix phx.digest
 mix release
 
