@@ -3,6 +3,7 @@
 
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
+import { handleUnrecoverableAuthError } from '@lib/network';
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
 
 jest.mock('@lib/auth', () => ({
@@ -10,10 +11,15 @@ jest.mock('@lib/auth', () => ({
   refreshAndStoreAccessToken: jest.fn(() => Promise.resolve('NEW_TOKEN')),
 }));
 
+jest.mock('@lib/network', () => ({
+  handleUnrecoverableAuthError: jest.fn(),
+}));
+
 beforeEach(() => {
   getAccessTokenFromStore.mockReturnValue('TEST_TOKEN');
   refreshAndStoreAccessToken.mockReset();
   refreshAndStoreAccessToken.mockResolvedValue('NEW_TOKEN');
+  handleUnrecoverableAuthError.mockClear();
 });
 
 // Wrap socket.channel + each channel.leave with jest.fn so the existing
@@ -184,6 +190,7 @@ describe('WebSocketAIAgent', () => {
         'Session expired — please log in again'
       );
       expect(agent._connectionStatus).toBe('disconnected');
+      expect(handleUnrecoverableAuthError).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -277,6 +284,7 @@ describe('WebSocketAIAgent', () => {
         })
       );
       expect(agent._activeSubscriber).toBeNull();
+      expect(handleUnrecoverableAuthError).toHaveBeenCalledTimes(1);
     });
 
     it('errors the subscriber when the retried push also fails', async () => {

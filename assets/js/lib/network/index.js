@@ -64,18 +64,18 @@ createAuthRefresh(networkClient, refreshAuthLogic, {
   deduplicateRefresh: false,
 });
 
+export const handleUnrecoverableAuthError = () => {
+  logWarn('unrecoverable auth flow, session expired');
+  const currentLocationPath = new URLSearchParams();
+  currentLocationPath.append('request_path', windowReference.location.pathname);
+  windowReference.location.assign(
+    `/session/new?${currentLocationPath.toString()}`
+  );
+};
+
 networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
-    logWarn('unrecoverable auth flow, session expired');
-    const currentLocationPath = new URLSearchParams();
-    currentLocationPath.append(
-      'request_path',
-      windowReference.location.pathname
-    );
-
-    windowReference.location.assign(
-      `/session/new?${currentLocationPath.toString()}`
-    );
+    handleUnrecoverableAuthError();
   }
   throw error;
 });

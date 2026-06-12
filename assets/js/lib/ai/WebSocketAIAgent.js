@@ -8,6 +8,7 @@ import { isArray, isString, last } from 'lodash';
 import { EventType } from '@ag-ui/core';
 
 import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
+import { handleUnrecoverableAuthError } from '@lib/network';
 
 import { CONNECTION_STATUS } from './connectionStatus';
 
@@ -87,6 +88,7 @@ export class WebSocketAIAgent extends AbstractAgent {
               await this.initialize();
               resolve();
             } catch {
+              handleUnrecoverableAuthError();
               fail('Session expired — please log in again');
             }
           } else {
@@ -194,6 +196,7 @@ export class WebSocketAIAgent extends AbstractAgent {
                 subscriber.error(err);
               });
           } catch {
+            handleUnrecoverableAuthError();
             if (this._activeRunId === runId) this._clearActiveRun();
             subscriber.error(
               new Error('Session expired — please log in again')
