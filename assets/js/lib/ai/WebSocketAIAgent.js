@@ -7,6 +7,8 @@ import { isArray, isString, last } from 'lodash';
 
 import { EventType } from '@ag-ui/core';
 
+import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
+
 import { CONNECTION_STATUS } from './connectionStatus';
 
 // Pure helper: collapse a message's content (string or array of parts) to
@@ -58,7 +60,9 @@ export class WebSocketAIAgent extends AbstractAgent {
     }
 
     this._setConnectionStatus(CONNECTION_STATUS.CONNECTING);
-    this.channel = this.socket.channel(`ai_assistant:${this.userID}`, {});
+    this.channel = this.socket.channel(`ai_assistant:${this.userID}`, {
+      access_token: getAccessTokenFromStore(),
+    });
     this._setupChannelHandlers();
 
     return new Promise((resolve, reject) => {
@@ -74,8 +78,20 @@ export class WebSocketAIAgent extends AbstractAgent {
           this._setConnectionStatus(CONNECTION_STATUS.CONNECTED);
           resolve();
         })
-        .receive('error', (resp) => {
-          fail(`Failed to join channel: ${JSON.stringify(resp)}`);
+        .receive('error', async (resp) => {
+          if (resp.reason === 'token_expired') {
+            try {
+              // Clear channel so initialize() can create a fresh one with new token
+              this.channel = null;
+              await refreshAndStoreAccessToken();
+              await this.initialize();
+              resolve();
+            } catch {
+              fail('Session expired — please log in again');
+            }
+          } else {
+            fail(`Failed to join channel: ${JSON.stringify(resp)}`);
+          }
         })
         .receive('timeout', () => {
           fail('Channel join timeout');
@@ -141,16 +157,13 @@ export class WebSocketAIAgent extends AbstractAgent {
           this._activeRunId = runId;
           this._activeSubscriber = subscriber;
 
-          this.channel
-            .push('send_message', {
-              message: extractMessageText(lastMessage),
-              thread_id: threadId,
-              run_id: runId,
-            })
-            .receive('error', (error) => {
-              if (this._activeRunId === runId) this._clearActiveRun();
-              subscriber.error(error);
-            });
+          const message = extractMessageText(lastMessage);
+          this._pushSendMessage(
+            { message, thread_id: threadId, run_id: runId },
+            getAccessTokenFromStore(),
+            runId,
+            subscriber
+          );
         } catch (error) {
           subscriber.error(error);
         }
@@ -164,6 +177,33 @@ export class WebSocketAIAgent extends AbstractAgent {
         if (this._activeRunId === runId) this._clearActiveRun();
       };
     });
+  }
+
+  _pushSendMessage(payload, accessToken, runId, subscriber) {
+    this.channel
+      .push('send_message', { ...payload, access_token: accessToken })
+      .receive('error', async (error) => {
+        if (error.reason === 'token_expired') {
+          try {
+            const newToken = await refreshAndStoreAccessToken();
+            // One retry with the fresh token — no further recursion
+            this.channel
+              .push('send_message', { ...payload, access_token: newToken })
+              .receive('error', (err) => {
+                if (this._activeRunId === runId) this._clearActiveRun();
+                subscriber.error(err);
+              });
+          } catch {
+            if (this._activeRunId === runId) this._clearActiveRun();
+            subscriber.error(
+              new Error('Session expired — please log in again')
+            );
+          }
+        } else {
+          if (this._activeRunId === runId) this._clearActiveRun();
+          subscriber.error(error);
+        }
+      });
   }
 
   _failActiveRun(error) {

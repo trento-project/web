@@ -2,7 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
+import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
+
+jest.mock('@lib/auth', () => ({
+  getAccessTokenFromStore: jest.fn(() => 'TEST_TOKEN'),
+  refreshAndStoreAccessToken: jest.fn(() => Promise.resolve('NEW_TOKEN')),
+}));
+
+beforeEach(() => {
+  getAccessTokenFromStore.mockReturnValue('TEST_TOKEN');
+  refreshAndStoreAccessToken.mockReset();
+  refreshAndStoreAccessToken.mockResolvedValue('NEW_TOKEN');
+});
 
 // Wrap socket.channel + each channel.leave with jest.fn so the existing
 // `toHaveBeenCalled` / `mockClear` assertions still apply. The shared
@@ -70,7 +82,9 @@ describe('WebSocketAIAgent', () => {
 
       const initPromise = agent.initialize();
 
-      expect(socket.channel).toHaveBeenCalledWith('ai_assistant:u42', {});
+      expect(socket.channel).toHaveBeenCalledWith('ai_assistant:u42', {
+        access_token: 'TEST_TOKEN',
+      });
       expect(onConnectionChange).toHaveBeenNthCalledWith(1, 'connecting');
 
       getChannel().joinPush.fire('ok');
@@ -132,6 +146,45 @@ describe('WebSocketAIAgent', () => {
 
       expect(socket.channel).not.toHaveBeenCalled();
     });
+
+    it('refreshes and rejoins on join error with reason "token_expired"', async () => {
+      const { agent, socket, getChannel } = makeAgent({ userID: 'u9' });
+
+      const initPromise = agent.initialize();
+      const firstChannel = getChannel();
+
+      // First join attempt fails with token_expired.
+      firstChannel.joinPush.fire('error', { reason: 'token_expired' });
+      await flushMicrotasks();
+
+      // The agent should have requested a refresh and asked for a fresh channel.
+      expect(refreshAndStoreAccessToken).toHaveBeenCalledTimes(1);
+      // Second channel created (initialize re-entered after channel was nulled).
+      expect(socket.channel).toHaveBeenCalledTimes(2);
+
+      // Second join succeeds — initPromise resolves.
+      const secondChannel = getChannel();
+      secondChannel.joinPush.fire('ok');
+      await initPromise;
+
+      expect(agent._connectionStatus).toBe('connected');
+    });
+
+    it('fails initialize when token_expired refresh itself errors', async () => {
+      refreshAndStoreAccessToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+
+      const { agent, getChannel } = makeAgent({ userID: 'u10' });
+      const initPromise = agent.initialize();
+
+      getChannel().joinPush.fire('error', { reason: 'token_expired' });
+
+      await expect(initPromise).rejects.toThrow(
+        'Session expired — please log in again'
+      );
+      expect(agent._connectionStatus).toBe('disconnected');
+    });
   });
 
   describe('connection status changes', () => {
@@ -174,9 +227,70 @@ describe('WebSocketAIAgent', () => {
           message: 'hello there',
           thread_id: 'thread-1',
           run_id: agent._activeRunId,
+          access_token: 'TEST_TOKEN',
         },
       });
       expect(typeof agent._activeRunId).toBe('string');
+    });
+
+    it('refreshes the token and retries send_message once on token_expired error', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error, next } = runAgent(agent);
+
+      // First push fails with token_expired.
+      channel.pushed[0].push.fire('error', { reason: 'token_expired' });
+      await flushMicrotasks();
+
+      // The agent refreshed and re-pushed with the new token.
+      expect(refreshAndStoreAccessToken).toHaveBeenCalledTimes(1);
+      expect(channel.pushed).toHaveLength(2);
+      expect(channel.pushed[1].payload.access_token).toBe('NEW_TOKEN');
+
+      // The retried push then succeeds (no error fired on it). Simulate an
+      // upstream event to confirm the subscriber is still alive.
+      channel.emit('ag_ui_event', {
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+
+      expect(error).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith({
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+    });
+
+    it('errors the subscriber when the refresh itself fails', async () => {
+      refreshAndStoreAccessToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      channel.pushed[0].push.fire('error', { reason: 'token_expired' });
+      await flushMicrotasks();
+
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Session expired — please log in again',
+        })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+    });
+
+    it('errors the subscriber when the retried push also fails', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      channel.pushed[0].push.fire('error', { reason: 'token_expired' });
+      await flushMicrotasks();
+
+      // Retried push fails for some other reason.
+      channel.pushed[1].push.fire('error', { reason: 'still broken' });
+
+      expect(error).toHaveBeenCalledWith({ reason: 'still broken' });
+      expect(agent._activeSubscriber).toBeNull();
     });
 
     it('forwards ag_ui_event payloads to the active subscriber', async () => {

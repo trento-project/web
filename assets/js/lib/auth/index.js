@@ -71,3 +71,18 @@ export const clearCredentialsFromStore = () => {
   window.localStorage.removeItem(STORAGE_ACCESS_TOKEN_IDENTIFIER);
   window.localStorage.removeItem(STORAGE_REFRESH_TOKEN_IDENTIFIER);
 };
+
+// Look up the stored refresh token, exchange it for a new access token, persist
+// the new access token in localStorage, and return it. Throws if no refresh
+// token is stored or the refresh endpoint rejects.
+export const refreshAndStoreAccessToken = async () => {
+  const refreshToken = getRefreshTokenFromStore();
+  if (!refreshToken) {
+    throw new Error('no refresh token available');
+  }
+  const {
+    data: { access_token: accessToken },
+  } = await refreshAccessToken(refreshToken);
+  storeAccessToken(accessToken);
+  return accessToken;
+};

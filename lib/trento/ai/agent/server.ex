@@ -18,9 +18,18 @@ defmodule Trento.AI.Agent.Server do
 
   @callback subscribe(String.t()) :: :ok | {:error, term()}
   @callback add_message(String.t(), Message.t()) :: :ok | {:error, term()}
+  @callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
+  @callback get_state(String.t()) :: Sagents.State.t()
+  @callback update_agent_and_state(String.t(), Sagents.Agent.t(), Sagents.State.t()) ::
+              :ok | {:error, term()}
 
   def subscribe(agent_id), do: impl().subscribe(agent_id)
   def add_message(agent_id, message), do: impl().add_message(agent_id, message)
+  def get_agent(agent_id), do: impl().get_agent(agent_id)
+  def get_state(agent_id), do: impl().get_state(agent_id)
+
+  def update_agent_and_state(agent_id, agent, state),
+    do: impl().update_agent_and_state(agent_id, agent, state)
 
   defp impl, do: Keyword.get(ApplicationConfigLoader.load(), :agent_server_adapter)
 end

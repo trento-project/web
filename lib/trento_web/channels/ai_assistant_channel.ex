@@ -49,25 +49,25 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias Trento.AI.LLMBuilder
   alias Trento.Users.User
   alias TrentoWeb.AIAssistant.AgUi
+  alias TrentoWeb.Auth.AccessToken
 
   @impl true
   def join(
         "ai_assistant:" <> user_id,
-        _session,
+        %{"access_token" => token},
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
-    case {AI.enabled?(), allowed?(user_id, current_user_id)} do
-      {false, _} ->
-        {:error, :ai_assistant_disabled}
-
-      {_, false} ->
-        {:error, :unauthorized}
-
-      {true, true} ->
-        {:ok,
-         socket
-         |> assign(:current_scope, %User{id: current_user_id})
-         |> assign(:loading, false)}
+    with {true, true} <- {AI.enabled?(), allowed?(user_id, current_user_id)},
+         {:ok, _} <- AccessToken.verify_and_validate(token) do
+      {:ok,
+       socket
+       |> assign(:access_token, token)
+       |> assign(:current_scope, %User{id: current_user_id})
+       |> assign(:loading, false)}
+    else
+      {false, _} -> {:error, :ai_assistant_disabled}
+      {_, false} -> {:error, :unauthorized}
+      {:error, _} -> {:error, %{reason: :token_expired}}
     end
   end
 
@@ -87,11 +87,25 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_in(
         "send_message",
-        %{"message" => prompt, "run_id" => run_id, "thread_id" => thread_id},
+        %{
+          "message" => prompt,
+          "run_id" => run_id,
+          "thread_id" => thread_id,
+          "access_token" => token
+        },
         socket
       )
-      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id),
-      do: handle_incoming_prompt(socket, String.trim(prompt), run_id, thread_id)
+      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
+    case AccessToken.verify_and_validate(token) do
+      {:ok, _} ->
+        socket
+        |> assign(:access_token, token)
+        |> handle_incoming_prompt(String.trim(prompt), run_id, thread_id)
+
+      {:error, _} ->
+        {:reply, {:error, %{reason: :token_expired}}, socket}
+    end
+  end
 
   def handle_in("send_message", payload, socket) do
     Logger.warning("Invalid send_message payload: #{inspect(payload)}")

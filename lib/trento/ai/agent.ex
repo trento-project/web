@@ -69,10 +69,33 @@ defmodule Trento.AI.Agent do
            agent_id
            |> start_opts(agent)
            |> AgentSupervisor.start_agent_sync(),
+         :ok <- refresh_agent_context(agent_id, agent),
          :ok <- AgentServer.subscribe(agent_id) do
       AgentServer.add_message(agent_id, Message.new_user!(prompt))
     end
   end
+
+  # Pushes the current agent struct (including tool_context.access_token) into
+  # the running AgentServer only when the token has changed. Required because
+  # start_agent_sync drops the new agent struct when the server is
+  # :already_started — without this call the AgentServer keeps the token from
+  # the first send_message for the thread's entire lifetime.
+  defp refresh_agent_context(agent_id, %{tool_context: %{access_token: new_token}} = agent)
+       when is_binary(new_token) do
+    case AgentServer.get_agent(agent_id) do
+      {:ok, %{tool_context: %{access_token: ^new_token}}} ->
+        :ok
+
+      {:ok, _stale_agent} ->
+        state = AgentServer.get_state(agent_id)
+        AgentServer.update_agent_and_state(agent_id, agent, state)
+
+      {:error, _} ->
+        :ok
+    end
+  end
+
+  defp refresh_agent_context(_, _), do: :ok
 
   defp start_opts(agent_id, agent) do
     [

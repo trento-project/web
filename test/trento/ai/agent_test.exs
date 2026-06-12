@@ -138,6 +138,61 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  describe "run/2 — refresh_agent_context" do
+    setup :run_opts_with_token
+
+    test "skips update_agent_and_state when AgentServer already holds the same token",
+         %{agent: agent, agent_id: agent_id, prompt: prompt, token: token} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %{tool_context: %{access_token: token}}}
+      end)
+
+      # get_state and update_agent_and_state must NOT be called
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "calls update_agent_and_state when AgentServer holds a stale token",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %{tool_context: %{access_token: "old_stale_token"}}}
+      end)
+
+      state = %Sagents.State{agent_id: agent_id}
+      expect(Trento.AI.Agent.Server.Mock, :get_state, fn ^agent_id -> state end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn ^agent_id, ^agent, ^state ->
+        :ok
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "skips update_agent_and_state when the AgentServer is not yet running",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:error, :not_found}
+      end)
+
+      # get_state and update_agent_and_state must NOT be called
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt)
+    end
+  end
+
   defp run_opts(_ctx) do
     agent_id = "thread-#{Faker.UUID.v4()}"
     model = build(:random_langchain_model)
@@ -145,5 +200,22 @@ defmodule Trento.AI.AgentTest do
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: scope)
 
     %{agent: agent, agent_id: agent_id, prompt: "hello"}
+  end
+
+  defp run_opts_with_token(_ctx) do
+    agent_id = "thread-#{Faker.UUID.v4()}"
+    token = "jwt-#{Faker.UUID.v4()}"
+    model = build(:random_langchain_model)
+    scope = build(:user)
+
+    agent =
+      TrentoAIAgent.new!(
+        agent_id: agent_id,
+        model: model,
+        scope: scope,
+        tool_context: %{access_token: token}
+      )
+
+    %{agent: agent, agent_id: agent_id, token: token, prompt: "hello"}
   end
 end
