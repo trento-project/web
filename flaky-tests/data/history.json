@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-04-29T04:30:33Z",
-    "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
-    "run_id": "25090465347",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      },
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-29T06:49:20Z",
     "commit": "c75a8203543a097f7bd551d93a6b165626b58df8",
     "run_id": "25091270446",
@@ -6277,6 +6253,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-12T19:52:12Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27438393190",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
       }
     ]
   }
