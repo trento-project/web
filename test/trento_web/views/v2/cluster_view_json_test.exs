@@ -63,6 +63,7 @@ defmodule TrentoWeb.V2.ClusterJSONTest do
 
     Enum.each(resources, fn resource ->
       refute Map.has_key?(resource, :sid)
+      refute Map.has_key?(resource, :__struct__)
     end)
   end
 end

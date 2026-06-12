@@ -112,9 +112,12 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
         selected_checks: [],
         state: :S_IDLE,
         type: :hana_scale_up
-      },
+      } = message,
       1000
     )
+
+    # Check message can be properly encoded to json
+    assert {:ok, _} = Jason.encode(message)
   end
 
   test "should update the cluster details when ClusterDetailsUpdated is received" do
