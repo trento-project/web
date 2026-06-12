@@ -49,29 +49,68 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias Trento.AI.LLMBuilder
   alias Trento.Users.User
   alias TrentoWeb.AIAssistant.AgUi
+  alias TrentoWeb.Auth.AccessToken
 
   @impl true
   def join(
         "ai_assistant:" <> user_id,
-        _session,
+        %{"access_token" => token},
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
-    case {AI.enabled?(), allowed?(user_id, current_user_id)} do
-      {false, _} ->
-        {:error, :ai_assistant_disabled}
-
-      {_, false} ->
-        {:error, :unauthorized}
-
-      {true, true} ->
-        {:ok,
-         socket
-         |> assign(:current_scope, %User{id: current_user_id})
-         |> assign(:loading, false)}
+    with :ok <- check_ai_enabled(),
+         :ok <- check_socket_and_channel_user_match(user_id, current_user_id),
+         :ok <- validate_access_token(token, current_user_id) do
+      {:ok,
+       socket
+       |> assign(:access_token, token)
+       |> assign(:current_scope, %User{id: current_user_id})
+       |> assign(:loading, false)}
     end
   end
 
   def join("ai_assistant:" <> _user_id, _payload, _socket), do: {:error, :user_not_logged}
+
+  @impl true
+  def handle_in(
+        "send_message",
+        %{
+          "message" => prompt,
+          "run_id" => run_id,
+          "thread_id" => thread_id,
+          "access_token" => token
+        },
+        %{assigns: %{current_user_id: current_user_id}} = socket
+      )
+      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
+    case validate_access_token(token, current_user_id) do
+      :ok ->
+        socket
+        |> assign(:access_token, token)
+        |> handle_incoming_prompt(String.trim(prompt), run_id, thread_id)
+
+      {:error, _} = error ->
+        {:reply, error, socket}
+    end
+  end
+
+  def handle_in("send_message", payload, socket) do
+    Logger.warning("Invalid send_message payload: #{inspect(payload)}")
+    {:reply, {:error, :invalid_payload}, socket}
+  end
+
+  defp check_ai_enabled do
+    case AI.enabled?() do
+      true -> :ok
+      false -> {:error, :ai_assistant_disabled}
+    end
+  end
+
+  defp check_socket_and_channel_user_match(user_id, current_user_id) do
+    case allowed?(user_id, current_user_id) do
+      true -> :ok
+      false -> {:error, :unauthorized}
+    end
+  end
 
   defp allowed?(user_id, current_user_id) do
     case Integer.parse(user_id) do
@@ -79,23 +118,16 @@ defmodule TrentoWeb.AIAssistantChannel do
         id == current_user_id
 
       _ ->
-        Logger.warning("Invalid user_id in topic: #{user_id}")
+        Logger.warning("Invalid user_id in AI Assistant Channel topic: #{user_id}")
         false
     end
   end
 
-  @impl true
-  def handle_in(
-        "send_message",
-        %{"message" => prompt, "run_id" => run_id, "thread_id" => thread_id},
-        socket
-      )
-      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id),
-      do: handle_incoming_prompt(socket, String.trim(prompt), run_id, thread_id)
-
-  def handle_in("send_message", payload, socket) do
-    Logger.warning("Invalid send_message payload: #{inspect(payload)}")
-    {:reply, {:error, :invalid_payload}, socket}
+  defp validate_access_token(token, current_user_id) do
+    case AccessToken.verify_and_validate(token) do
+      {:ok, %{"sub" => ^current_user_id}} -> :ok
+      _ -> {:error, :unauthorized}
+    end
   end
 
   defp handle_incoming_prompt(
