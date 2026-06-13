@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-04-30T04:39:43Z",
-    "commit": "1d3d19c733a35d8280a3d9b7b1bd78851868790b",
-    "run_id": "25147218254",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.05001
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-04-30T04:40:42Z",
     "commit": "1d3d19c733a35d8280a3d9b7b1bd78851868790b",
     "run_id": "25147218254",
@@ -6257,6 +6225,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-13T18:34:08Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27475078579",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.08646
       }
     ]
   }
