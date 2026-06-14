@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-01T04:54:29Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25202443824",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "HostsLists component › filtering::should put the filters values in the query string when filters are selected",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-01T04:55:18Z",
     "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
     "run_id": "25202443824",
@@ -6225,6 +6201,22 @@
       {
         "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-14T18:34:57Z",
+    "commit": "048633810c686cd600096fbe9509b3670f997c24",
+    "run_id": "27507839449",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.02501
       }
     ]
   }
