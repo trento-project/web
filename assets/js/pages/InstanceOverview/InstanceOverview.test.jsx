@@ -31,14 +31,15 @@ describe('InstanceOverview', () => {
   });
 
   it.each([
-    { health: 'passing', expectedClass: 'fill-jungle-green-500' },
-    { health: 'warning', expectedClass: 'fill-yellow-500' },
-    { health: 'critical', expectedClass: 'fill-red-500' },
+    { status: 'green', expectedClass: 'fill-jungle-green-500' },
+    { status: 'yellow', expectedClass: 'fill-yellow-500' },
+    { status: 'red', expectedClass: 'fill-red-500' },
+    { status: 'gray', expectedClass: 'fill-gray-500' },
   ])(
-    'should render $expectedClass for an instance with $health health',
-    ({ health, expectedClass }) => {
+    'should render $expectedClass for an instance with $status status',
+    ({ status, expectedClass }) => {
       const registeredDbInstance = databaseInstanceFactory.build({
-        health,
+        status,
       });
 
       renderWithRouter(
@@ -47,13 +48,13 @@ describe('InstanceOverview', () => {
           instance={registeredDbInstance}
         />
       );
-      const healthIcon = screen.getByTestId('eos-svg-component');
-      expect(healthIcon).toBeDefined();
-      expect(healthIcon).toHaveClass(expectedClass);
+      const statusIcon = screen.getByTestId('eos-svg-component');
+      expect(statusIcon).toBeDefined();
+      expect(statusIcon).toHaveClass(expectedClass);
     }
   );
 
-  it('should render an absent HealthIcon, tooltip content and clean up button for absent instances', async () => {
+  it('should render an absent status icon, tooltip content and clean up button for absent instances', async () => {
     const user = userEvent.setup();
 
     const absentInstance = databaseInstanceFactory.build({
@@ -68,11 +69,11 @@ describe('InstanceOverview', () => {
       />
     );
 
-    const [healthIcon, _cleanUpIcon] =
+    const [statusIcon, _cleanUpIcon] =
       screen.getAllByTestId('eos-svg-component');
-    expect(healthIcon).toHaveClass('fill-black');
+    expect(statusIcon).toHaveClass('fill-black');
     expect(screen.queryByRole('button', { name: 'Clean up' })).toBeVisible();
-    await act(async () => user.hover(healthIcon));
+    await act(async () => user.hover(statusIcon));
     await waitFor(() =>
       expect(screen.queryByText('Registered instance not found.')).toBeVisible()
     );
