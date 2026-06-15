@@ -74,7 +74,7 @@ export const clearCredentialsFromStore = () => {
 };
 
 // Look up the stored refresh token, exchange it for a new access token, persist
-// the new access token in localStorage, and return it. Throws if no refresh
+// the new access token in localStorage. Throws if no refresh
 // token is stored or the refresh endpoint rejects.
 export const refreshAndStoreAccessToken = async () => {
   const refreshToken = getRefreshTokenFromStore();
