@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-02T04:05:42Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25243054240",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-02T04:18:22Z",
     "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
     "run_id": "25243272334",
@@ -6180,6 +6160,22 @@
       {
         "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-15T20:48:24Z",
+    "commit": "5ae823225c85847360779a670a13472a26487e88",
+    "run_id": "27574418337",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
       }
     ]
   }
