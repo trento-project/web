@@ -634,8 +634,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         {:ok, %{tool_context: %{access_token: "stale_token"}}}
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :get_state, fn agent_id ->
-        %Sagents.State{agent_id: agent_id}
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn agent_id ->
+        %{state: %Sagents.State{agent_id: agent_id}}
       end)
 
       expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn _agent_id,
@@ -658,6 +658,101 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
 
       assert_receive {:updated_with, %Sagents.Agent{tool_context: %{access_token: ^jwt}}}, 1_000
+    end
+
+    test "does not call update_agent_and_state when running AgentServer already holds the same token",
+         %{socket: socket, user_id: user_id} do
+      jwt = generate_jwt(user_id)
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ ->
+        {:ok, %Sagents.Agent{tool_context: %{access_token: jwt}}}
+      end)
+
+      # No get_info / update_agent_and_state expectations —
+      # access_token matches so the channel's refresh_when returns :noop.
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-same",
+        "thread_id" => "t-same",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+    end
+
+    test "forwards :request_origin into the agent's tool_context",
+         %{socket: socket, user_id: user_id, request_origin: request_origin} do
+      jwt = generate_jwt(user_id)
+      test_pid = self()
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn opts ->
+        send(test_pid, {:agent_opts, opts})
+        {:ok, self()}
+      end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-origin",
+        "thread_id" => "t-origin",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      assert_receive {:agent_opts, opts}, 1_000
+
+      assert %Sagents.Agent{
+               tool_context: %{request_origin: ^request_origin}
+             } = opts[:agent]
+    end
+
+    test "tolerates :request_origin = nil and still starts the run", %{user_id: user_id} do
+      jwt = generate_jwt(user_id)
+
+      {:ok, _, socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: user_id, request_origin: nil})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
+          "access_token" => jwt
+        })
+
+      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
+
+      test_pid = self()
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn opts ->
+        send(test_pid, {:agent_opts, opts})
+        {:ok, self()}
+      end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-no-origin",
+        "thread_id" => "t-no-origin",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      assert_receive {:agent_opts, opts}, 1_000
+
+      assert %Sagents.Agent{
+               tool_context: %{access_token: ^jwt, request_origin: nil}
+             } = opts[:agent]
     end
   end
 
@@ -706,7 +801,10 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       {:ok, _, socket} =
         UserSocket
-        |> socket("user_id", %{current_user_id: user_id})
+        |> socket("user_id", %{
+          current_user_id: user_id,
+          request_origin: "https://trento.test"
+        })
         |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
           "access_token" => jwt
         })
@@ -730,7 +828,10 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       {:ok, _, socket} =
         UserSocket
-        |> socket("user_id", %{current_user_id: user_id})
+        |> socket("user_id", %{
+          current_user_id: user_id,
+          request_origin: "https://trento.test"
+        })
         |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
           "access_token" => jwt
         })
@@ -761,7 +862,10 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       {:ok, _, socket} =
         UserSocket
-        |> socket("user_id", %{current_user_id: user_id})
+        |> socket("user_id", %{
+          current_user_id: user_id,
+          request_origin: "https://trento.test"
+        })
         |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
           "access_token" => jwt
         })
@@ -788,20 +892,22 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
   defp join_socket(_context) do
     jwt = generate_jwt(7)
+    request_origin = "https://trento.test"
 
     {:ok, _, socket} =
       UserSocket
-      |> socket("user_id", %{current_user_id: 7})
+      |> socket("user_id", %{current_user_id: 7, request_origin: request_origin})
       |> subscribe_and_join(AIAssistantChannel, "ai_assistant:7", %{
         "access_token" => jwt
       })
 
-    %{socket: socket, access_token: jwt}
+    %{socket: socket, access_token: jwt, request_origin: request_origin}
   end
 
   defp join_socket_with_ai_config(_context) do
     %{id: user_id} = insert(:user)
     jwt = generate_jwt(user_id)
+    request_origin = "https://trento.test"
 
     insert(:ai_user_configuration,
       user_id: user_id,
@@ -811,7 +917,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     {:ok, _, socket} =
       UserSocket
-      |> socket("user_id", %{current_user_id: user_id})
+      |> socket("user_id", %{current_user_id: user_id, request_origin: request_origin})
       |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
         "access_token" => jwt
       })
@@ -819,7 +925,12 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
     Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
 
-    %{socket: socket, user_id: user_id, access_token: jwt}
+    %{
+      socket: socket,
+      user_id: user_id,
+      access_token: jwt,
+      request_origin: request_origin
+    }
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})

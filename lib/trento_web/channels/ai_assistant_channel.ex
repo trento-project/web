@@ -165,12 +165,13 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp run_agent(
          %{
-           assigns:
-             %{
-               current_run_id: run_id,
-               current_thread_id: thread_id,
-               current_scope: scope
-             } = assigns
+           assigns: %{
+             current_run_id: run_id,
+             current_thread_id: thread_id,
+             current_scope: scope,
+             access_token: access_token,
+             request_origin: request_origin
+           }
          } = socket,
          model_config,
          prompt
@@ -180,12 +181,15 @@ defmodule TrentoWeb.AIAssistantChannel do
       model: model_config,
       scope: scope,
       tool_context: %{
-        access_token: Map.get(assigns, :access_token),
-        request_origin: Map.get(assigns, :request_origin)
+        access_token: access_token,
+        request_origin: request_origin
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(prompt)
+    |> TrentoAIAgent.run(
+      prompt,
+      refresh_when: &access_token_changed/2
+    )
     |> case do
       :ok ->
         socket
@@ -201,6 +205,19 @@ defmodule TrentoWeb.AIAssistantChannel do
         |> AgUi.run_error(error_msg)
     end
     |> then(&{:noreply, &1})
+  end
+
+  defp access_token_changed(
+         %{tool_context: %{access_token: token}} = _current_agent,
+         %{tool_context: %{access_token: token}} = _new_agent
+       ) do
+    # IO.inspect("access token unchanged - no agent update needed")
+    :noop
+  end
+
+  defp access_token_changed(_current_agent, new_agent) do
+    # IO.inspect("access token changed - refreshing agent with new token")
+    {:ok, new_agent}
   end
 
   @impl true
