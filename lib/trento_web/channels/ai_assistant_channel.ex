@@ -94,7 +94,10 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   def handle_in("send_message", payload, socket) do
-    Logger.warning("Invalid send_message payload: #{inspect(payload)}")
+    payload
+    |> redact_payload()
+    |> then(&Logger.warning("Received invalid send_message payload: #{inspect(&1)}"))
+
     {:reply, {:error, :invalid_payload}, socket}
   end
 
@@ -320,4 +323,9 @@ defmodule TrentoWeb.AIAssistantChannel do
       |> assign(:loading, false)
       |> assign(:message_started, false)
       |> assign(:run_has_started, false)
+
+  defp redact_payload(payload) when is_map(payload),
+    do: Map.replace(payload, "access_token", "<REDACTED>")
+
+  defp redact_payload(payload), do: payload
 end
