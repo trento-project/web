@@ -62,7 +62,7 @@ defmodule Trento.MixProject do
       # upstream PR here https://github.com/brainlid/langchain/pull/548
       {:langchain,
        github: "nelsonkopliku/langchain",
-       ref: "468f0a99c834ba66f35a8996dd305fa9b3df8bf4",
+       ref: "05286abcc80188b42453dec2a468f2f0db4654d6",
        override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
