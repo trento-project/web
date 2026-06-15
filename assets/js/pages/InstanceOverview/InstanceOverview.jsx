@@ -57,7 +57,7 @@ function InstanceOverview({
   const textColor = classNames({ 'text-gray-500': absentAt });
   return (
     <div className={rowClasses}>
-      <div className="table-cell p-2 pl-3 align-center">
+      <div className="table-cell p-2 pl-3 align-middle">
         <InstanceStatus status={status} absent={!!absentAt} />
       </div>
       <div className={classNames(textColor, 'table-cell p-2 text-center')}>
