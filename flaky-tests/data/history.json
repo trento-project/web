@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-02T07:08:44Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25243752398",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 26
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.5
-      },
-      {
-        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
-        "score": 0.1647
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.1128
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.1106
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.1106
-      },
-      {
-        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
-        "score": 0.06641
-      },
-      {
-        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
-        "score": 0.05001
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-03T04:22:34Z",
     "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
     "run_id": "25269479748",
@@ -6180,6 +6132,34 @@
       {
         "name": "UpgradablePackagesPage::should render correctly",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-15T21:07:10Z",
+    "commit": "5ae823225c85847360779a670a13472a26487e88",
+    "run_id": "27574904204",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.25
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.04526
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
       }
     ]
   }
