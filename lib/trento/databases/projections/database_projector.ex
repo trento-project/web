@@ -34,8 +34,6 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
 
   alias Trento.Repo
 
-  alias Trento.SapSystems.Services.HealthService
-
   @databases_topic "monitoring:databases"
 
   project(
@@ -349,18 +347,15 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       ) do
     TrentoWeb.Endpoint.broadcast(
       @databases_topic,
-      "database_instance_health_changed",
-      # TODO: to remove `add_deprecated_health` once frontend is aligned
-      HealthService.add_deprecated_health(
-        DatabaseJSON.database_instance_status_changed(%{
-          instance: %{
-            database_id: database_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            status: status
-          }
-        })
-      )
+      "database_instance_status_changed",
+      DatabaseJSON.database_instance_status_changed(%{
+        instance: %{
+          database_id: database_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          status: status
+        }
+      })
     )
   end
 

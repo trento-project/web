@@ -305,7 +305,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                      1000
   end
 
-  test "should broadcast database_instance_health_changed when DatabaseInstanceHealthChanged is received" do
+  test "should broadcast database_instance_status_changed when DatabaseInstanceStatusChanged is received" do
     %{
       database_id: database_id,
       instance_number: instance_number,
@@ -326,13 +326,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
-    assert_broadcast "database_instance_health_changed",
+    assert_broadcast "database_instance_status_changed",
                      %{
                        database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
-                       status: Status.red(),
-                       health: :critical
+                       status: Status.red()
                      },
                      1000
   end
@@ -497,7 +496,6 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     adapted_database_instances =
       database_instances
       |> Map.put(:sap_system_id, database_id)
-      # TODO: to remove once frontend is aligned
       |> Map.put(:health, :unknown)
 
     assert_broadcast "database_restored",

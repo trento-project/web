@@ -187,7 +187,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     )
   end
 
-  test "should broadcast application_instance_health_changed when ApplicationInstanceHealthChanged event is received" do
+  test "should broadcast application_instance_status_changed when ApplicationInstanceStatusChanged event is received" do
     %{id: sap_system_id} = insert(:sap_system)
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
@@ -213,9 +213,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     ProjectorTestHelper.project(SapSystemProjector, health_event, "sap_system_projector")
 
     assert_broadcast(
-      "application_instance_health_changed",
+      "application_instance_status_changed",
       %{
-        health: :critical,
         status: Status.red(),
         host_id: ^host_id,
         instance_number: ^instance_number,
@@ -352,11 +351,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     adapted_database_instance =
       database_instance
       |> Map.put(:sap_system_id, database_id)
-      # TODO: to remove once frontend is aligned
       |> Map.put(:health, :unknown)
 
-    # TODO: to remove once frontend is aligned
-    application_instance = Map.put(application_instance, :health, :unknown)
+    adapted_application_instance = Map.put(application_instance, :health, :unknown)
 
     assert_broadcast(
       "sap_system_restored",
@@ -367,7 +364,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         sid: ^sid,
         tenant: ^tenant,
         database_instances: [^adapted_database_instance],
-        application_instances: [^application_instance],
+        application_instances: [^adapted_application_instance],
         tags: ^tags,
         database_sid: ^database_sid,
         database_id: ^database_id
