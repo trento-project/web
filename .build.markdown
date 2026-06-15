@@ -100,6 +100,7 @@ Trento.Databases.Events.DatabaseInstanceHealthChanged.md
 Trento.Databases.Events.DatabaseInstanceMarkedAbsent.md
 Trento.Databases.Events.DatabaseInstanceMarkedPresent.md
 Trento.Databases.Events.DatabaseInstanceRegistered.md
+Trento.Databases.Events.DatabaseInstanceStatusChanged.md
 Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged.md
 Trento.Databases.Events.DatabaseRegistered.md
 Trento.Databases.Events.DatabaseRestored.md
@@ -107,6 +108,7 @@ Trento.Databases.Events.DatabaseRollUpRequested.md
 Trento.Databases.Events.DatabaseRolledUp.md
 Trento.Databases.Events.DatabaseTenantsUpdated.md
 Trento.Databases.Events.DatabaseTombstoned.md
+Trento.Databases.Events.Upcaster.UpcastHelper.md
 Trento.Databases.Lifespan.md
 Trento.Databases.Policy.md
 Trento.Databases.Projections.DatabaseInstanceReadModel.md
@@ -372,12 +374,14 @@ Trento.SapSystems.Commands.RestoreSapSystem.md
 Trento.SapSystems.Commands.RollUpSapSystem.md
 Trento.SapSystems.Commands.UpdateDatabaseHealth.md
 Trento.SapSystems.Enums.EnsaVersion.md
+Trento.SapSystems.Enums.Status.md
 Trento.SapSystems.Events.ApplicationInstanceDeregistered.md
 Trento.SapSystems.Events.ApplicationInstanceHealthChanged.md
 Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.md
 Trento.SapSystems.Events.ApplicationInstanceMarkedPresent.md
 Trento.SapSystems.Events.ApplicationInstanceMoved.md
 Trento.SapSystems.Events.ApplicationInstanceRegistered.md
+Trento.SapSystems.Events.ApplicationInstanceStatusChanged.md
 Trento.SapSystems.Events.DatabaseDeregistered.md
 Trento.SapSystems.Events.DatabaseHealthChanged.md
 Trento.SapSystems.Events.DatabaseInstanceDeregistered.md
@@ -404,6 +408,7 @@ Trento.SapSystems.Projections.ApplicationInstanceReadModel.md
 Trento.SapSystems.Projections.SapSystemProjector.md
 Trento.SapSystems.Projections.SapSystemReadModel.md
 Trento.SapSystems.SapSystem.md
+Trento.SapSystems.Services.HealthService.md
 Trento.SapSystems.Services.HealthSummaryService.md
 Trento.SapSystems.md
 Trento.Scheduler.md

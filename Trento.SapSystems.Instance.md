@@ -9,10 +9,10 @@ This module represents a SAP System instance.
 @type t() :: %Trento.SapSystems.Instance{
   absent_at: term(),
   features: term(),
-  health: term(),
   host_id: term(),
   instance_number: term(),
   sid: term(),
+  status: term(),
   system_replication: term(),
   system_replication_mode: term(),
   system_replication_operation_mode: term(),

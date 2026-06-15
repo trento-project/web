@@ -3,6 +3,8 @@
 
 This event is emitted when a database instance health has changed.
 
+This event is deprecated.
+
 # `t`
 
 ```elixir

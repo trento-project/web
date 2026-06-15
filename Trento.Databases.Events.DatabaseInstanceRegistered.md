@@ -9,7 +9,6 @@ This event is emitted when a database instance is registered.
 @type t() :: %Trento.Databases.Events.DatabaseInstanceRegistered{
   database_id: term(),
   features: term(),
-  health: term(),
   host_id: term(),
   http_port: term(),
   https_port: term(),
@@ -17,6 +16,7 @@ This event is emitted when a database instance is registered.
   instance_number: term(),
   sid: term(),
   start_priority: term(),
+  status: term(),
   system_replication: term(),
   system_replication_mode: term(),
   system_replication_operation_mode: term(),

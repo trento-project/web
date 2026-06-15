@@ -89,12 +89,13 @@ sap_system_id was still used.
 - [Trento.Databases.Events.DatabaseInstanceDeregistered](Trento.Databases.Events.DatabaseInstanceDeregistered.md): This event is emitted when a database instance is deregistered (decommissioned).
 
 - [Trento.Databases.Events.DatabaseInstanceHealthChanged](Trento.Databases.Events.DatabaseInstanceHealthChanged.md): This event is emitted when a database instance health has changed.
-
 - [Trento.Databases.Events.DatabaseInstanceMarkedAbsent](Trento.Databases.Events.DatabaseInstanceMarkedAbsent.md): This event is emitted when a database instance is marked as absent.
 
 - [Trento.Databases.Events.DatabaseInstanceMarkedPresent](Trento.Databases.Events.DatabaseInstanceMarkedPresent.md): This event is emitted when a database instance is marked as present.
 
 - [Trento.Databases.Events.DatabaseInstanceRegistered](Trento.Databases.Events.DatabaseInstanceRegistered.md): This event is emitted when a database instance is registered.
+
+- [Trento.Databases.Events.DatabaseInstanceStatusChanged](Trento.Databases.Events.DatabaseInstanceStatusChanged.md): This event is emitted when a database instance status has changed.
 
 - [Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged](Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged.md): This event is emitted when a database instance system replication has changed.
 
@@ -111,6 +112,8 @@ It is used to trigger the stream archiving process and it contains the snapshot 
 - [Trento.Databases.Events.DatabaseTenantsUpdated](Trento.Databases.Events.DatabaseTenantsUpdated.md): This event is emitted when the tenants of a database are updated
 
 - [Trento.Databases.Events.DatabaseTombstoned](Trento.Databases.Events.DatabaseTombstoned.md): This event is emitted when a database is deregistered (decommissioned)
+
+- [Trento.Databases.Events.Upcaster.UpcastHelper](Trento.Databases.Events.Upcaster.UpcastHelper.md): Upcasting function helpers.
 
 - [Trento.Databases.Lifespan](Trento.Databases.Lifespan.md): Database aggregate lifespan.
 - [Trento.Databases.Policy](Trento.Databases.Policy.md): Policy for the Database resource
@@ -455,10 +458,11 @@ deployed SAP systems, which is composed by the application layer.
 
   - [Trento.SapSystems.Enums.EnsaVersion](Trento.SapSystems.Enums.EnsaVersion.md): Type that represents the supported ENSA versions.
 
+  - [Trento.SapSystems.Enums.Status](Trento.SapSystems.Enums.Status.md): Type that represents SAP and HANA instances status.
+
   - [Trento.SapSystems.Events.ApplicationInstanceDeregistered](Trento.SapSystems.Events.ApplicationInstanceDeregistered.md): This event is emitted when a database application is deregistered (decommissioned) from the SAP system.
 
   - [Trento.SapSystems.Events.ApplicationInstanceHealthChanged](Trento.SapSystems.Events.ApplicationInstanceHealthChanged.md): This event is emitted when a application instance health has changed.
-
   - [Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent](Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.md): This event is emitted when an application instance is marked as absent from the SAP system.
 
   - [Trento.SapSystems.Events.ApplicationInstanceMarkedPresent](Trento.SapSystems.Events.ApplicationInstanceMarkedPresent.md): This event is emitted when an application instance is marked as present in the SAP system.
@@ -466,6 +470,8 @@ deployed SAP systems, which is composed by the application layer.
   - [Trento.SapSystems.Events.ApplicationInstanceMoved](Trento.SapSystems.Events.ApplicationInstanceMoved.md): This event is emitted when an application instance is moved from a host to another.
 
   - [Trento.SapSystems.Events.ApplicationInstanceRegistered](Trento.SapSystems.Events.ApplicationInstanceRegistered.md): This event is emitted when a database application is registered to the SAP system.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceStatusChanged](Trento.SapSystems.Events.ApplicationInstanceStatusChanged.md): This event is emitted when a application instance status has changed.
 
   - [Trento.SapSystems.Events.DatabaseDeregistered](Trento.SapSystems.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned) from the SAP system.
 
@@ -512,6 +518,8 @@ It is used to trigger the stream archiving process and it contains the snapshot 
   - [Trento.SapSystems.Projections.SapSystemProjector](Trento.SapSystems.Projections.SapSystemProjector.md): SAP System projector
 
   - [Trento.SapSystems.Projections.SapSystemReadModel](Trento.SapSystems.Projections.SapSystemReadModel.md): SAP System read model
+
+  - [Trento.SapSystems.Services.HealthService](Trento.SapSystems.Services.HealthService.md): Provides SAP system/Database instances health related functions.
 
   - [Trento.SapSystems.Services.HealthSummaryService](Trento.SapSystems.Services.HealthSummaryService.md): Provides a set of functions to interact with SAP systems Health Summary
 

@@ -7,9 +7,9 @@
 
 # `application_instance_deregistered`
 
-# `application_instance_health_changed`
-
 # `application_instance_moved`
+
+# `application_instance_status_changed`
 
 # `sap_system`
 

@@ -101,6 +101,7 @@ Trento.Databases.Events.DatabaseInstanceHealthChanged.html
 Trento.Databases.Events.DatabaseInstanceMarkedAbsent.html
 Trento.Databases.Events.DatabaseInstanceMarkedPresent.html
 Trento.Databases.Events.DatabaseInstanceRegistered.html
+Trento.Databases.Events.DatabaseInstanceStatusChanged.html
 Trento.Databases.Events.DatabaseInstanceSystemReplicationChanged.html
 Trento.Databases.Events.DatabaseRegistered.html
 Trento.Databases.Events.DatabaseRestored.html
@@ -108,6 +109,7 @@ Trento.Databases.Events.DatabaseRollUpRequested.html
 Trento.Databases.Events.DatabaseRolledUp.html
 Trento.Databases.Events.DatabaseTenantsUpdated.html
 Trento.Databases.Events.DatabaseTombstoned.html
+Trento.Databases.Events.Upcaster.UpcastHelper.html
 Trento.Databases.Lifespan.html
 Trento.Databases.Policy.html
 Trento.Databases.Projections.DatabaseInstanceReadModel.html
@@ -373,12 +375,14 @@ Trento.SapSystems.Commands.RestoreSapSystem.html
 Trento.SapSystems.Commands.RollUpSapSystem.html
 Trento.SapSystems.Commands.UpdateDatabaseHealth.html
 Trento.SapSystems.Enums.EnsaVersion.html
+Trento.SapSystems.Enums.Status.html
 Trento.SapSystems.Events.ApplicationInstanceDeregistered.html
 Trento.SapSystems.Events.ApplicationInstanceHealthChanged.html
 Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.html
 Trento.SapSystems.Events.ApplicationInstanceMarkedPresent.html
 Trento.SapSystems.Events.ApplicationInstanceMoved.html
 Trento.SapSystems.Events.ApplicationInstanceRegistered.html
+Trento.SapSystems.Events.ApplicationInstanceStatusChanged.html
 Trento.SapSystems.Events.DatabaseDeregistered.html
 Trento.SapSystems.Events.DatabaseHealthChanged.html
 Trento.SapSystems.Events.DatabaseInstanceDeregistered.html
@@ -405,6 +409,7 @@ Trento.SapSystems.Projections.ApplicationInstanceReadModel.html
 Trento.SapSystems.Projections.SapSystemProjector.html
 Trento.SapSystems.Projections.SapSystemReadModel.html
 Trento.SapSystems.SapSystem.html
+Trento.SapSystems.Services.HealthService.html
 Trento.SapSystems.Services.HealthSummaryService.html
 Trento.SapSystems.html
 Trento.Scheduler.html
@@ -558,7 +563,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-AA587E6B.js
-dist/sidebar_items-2359BBFC.js
+dist/search_data-E19C1844.js
+dist/sidebar_items-417FF836.js
 index.html
 search.html

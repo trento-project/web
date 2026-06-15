@@ -9,7 +9,6 @@ Register a database instance to the monitoring system.
 @type t() :: %Trento.Databases.Commands.RegisterDatabaseInstance{
   database_id: term(),
   features: term(),
-  health: term(),
   host_id: term(),
   http_port: term(),
   https_port: term(),
@@ -17,6 +16,7 @@ Register a database instance to the monitoring system.
   instance_number: term(),
   sid: term(),
   start_priority: term(),
+  status: term(),
   system_replication: term(),
   system_replication_active_primary_site: term(),
   system_replication_mode: term(),

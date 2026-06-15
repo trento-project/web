@@ -26,7 +26,6 @@ This information is required in order to decide whether the instance was moved b
   db_host: term(),
   ensa_version: term(),
   features: term(),
-  health: term(),
   host_id: term(),
   http_port: term(),
   https_port: term(),
@@ -35,6 +34,7 @@ This information is required in order to decide whether the instance was moved b
   sap_system_id: term(),
   sid: term(),
   start_priority: term(),
+  status: term(),
   tenant: term()
 }
 ```

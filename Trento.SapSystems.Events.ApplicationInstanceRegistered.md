@@ -8,7 +8,6 @@ This event is emitted when a database application is registered to the SAP syste
 ```elixir
 @type t() :: %Trento.SapSystems.Events.ApplicationInstanceRegistered{
   features: term(),
-  health: term(),
   host_id: term(),
   http_port: term(),
   https_port: term(),
@@ -17,6 +16,7 @@ This event is emitted when a database application is registered to the SAP syste
   sap_system_id: term(),
   sid: term(),
   start_priority: term(),
+  status: term(),
   version: term()
 }
 ```
