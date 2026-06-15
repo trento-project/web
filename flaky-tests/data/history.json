@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-02T04:19:17Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25243272334",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.3203
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-02T07:08:44Z",
     "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
     "run_id": "25243752398",
@@ -6172,6 +6156,30 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.04751
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-15T21:05:52Z",
+    "commit": "5ae823225c85847360779a670a13472a26487e88",
+    "run_id": "27574904204",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05453
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.05001
       }
     ]
   }
