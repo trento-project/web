@@ -4,6 +4,8 @@
 defmodule Trento.Databases.Events.DatabaseInstanceHealthChanged do
   @moduledoc """
   This event is emitted when a database instance health has changed.
+
+  This event is deprecated.
   """
 
   use Trento.Support.Event
@@ -11,7 +13,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceHealthChanged do
 
   require Trento.Enums.Health, as: Health
 
-  defevent version: 2 do
+  defevent superseded_by: Trento.Databases.Events.DatabaseInstanceStatusChanged, version: 2 do
     field :database_id, Ecto.UUID
     field :host_id, Ecto.UUID
     field :instance_number, :string

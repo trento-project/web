@@ -4,8 +4,8 @@
 defmodule TrentoWeb.V1.HostControllerTest do
   use TrentoWeb.ConnCase, async: true
 
-  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
+  require Trento.SapSystems.Enums.Status, as: Status
 
   import OpenApiSpex.TestAssertions
   import Mox
@@ -641,7 +641,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
            api_spec: api_spec
          } do
       %{id: host_id} = insert(:host, heartbeat: :passing, saptune_status: @saptune_status)
-      insert(:application_instance, host_id: host_id, health: Health.passing())
+      insert(:application_instance, host_id: host_id, status: Status.green())
 
       conn
       |> post("/api/v1/hosts/#{host_id}/operations/#{@saptune_operation}")
@@ -660,7 +660,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
         heartbeat: :passing,
         cluster_id: nil,
         application_instances: [
-          build(:application_instance, health: Health.passing())
+          build(:application_instance, status: Status.green())
         ],
         database_instances: []
       )

@@ -5,8 +5,8 @@ defmodule Trento.Operations.DatabasePolicyTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  require Trento.Enums.Health, as: Health
   require Trento.Operations.Enums.DatabaseOperations, as: DatabaseOperations
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.Operations.DatabasePolicy
 
@@ -188,13 +188,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
         build(:database,
           database_instances: [
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Primary",
               system_replication_tier: 1,
               host: build(:host, heartbeat: :critical, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary",
               system_replication_site: site1,
               system_replication_tier: 2,
@@ -258,7 +258,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
         build(:database,
           database_instances: [
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Primary",
               sid: sid,
               instance_number: instance_number,
@@ -281,13 +281,13 @@ defmodule Trento.Operations.DatabasePolicyTest do
         build(:database,
           database_instances: [
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Primary",
               system_replication_site: "Site1",
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary",
               system_replication_site: "Site2",
               host: build(:host, heartbeat: :passing, cluster: nil)
@@ -328,7 +328,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
         build(:database,
           database_instances: [
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Primary",
               system_replication_site: "Site1",
               host: build(:host, heartbeat: :passing, cluster: nil)
@@ -393,21 +393,21 @@ defmodule Trento.Operations.DatabasePolicyTest do
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Secondary",
               system_replication_site: site2,
               system_replication_source_site: site1,
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary 2",
               system_replication_site: site3,
               system_replication_source_site: site1,
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Secondary",
               system_replication_site: site4,
               system_replication_source_site: site2,
@@ -452,7 +452,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                   %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
-                    health: Health.passing(),
+                    status: Status.green(),
                     features: "ABAP|GATEWAY|ICMAN|IGS"
                   )
             }
@@ -464,7 +464,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
@@ -496,7 +496,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                   %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
-                    health: Health.passing(),
+                    status: Status.green(),
                     features: "ABAP|GATEWAY|ICMAN|IGS"
                   )
             }
@@ -508,7 +508,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary",
               host: build(:host, heartbeat: :passing, cluster: nil)
             )
@@ -546,7 +546,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
                   %{sap_system_id: sap_system_id2, sid: sid2, instance_number: inst_number2}
                 ] =
                   build_list(2, :application_instance,
-                    health: Health.passing(),
+                    status: Status.green(),
                     features: "ABAP|GATEWAY|ICMAN|IGS"
                   )
             }
@@ -605,7 +605,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
         build(:database,
           database_instances: [
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Primary",
               sid: sid,
               instance_number: instance_number,
@@ -630,20 +630,20 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 build_list(2, :application_instance,
-                  health: Health.unknown(),
+                  status: Status.gray(),
                   features: "ABAP|GATEWAY|ICMAN|IGS"
                 )
             }
           ],
           database_instances: [
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Primary",
               system_replication_site: "Site1",
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.passing(),
+              status: Status.green(),
               system_replication: "Secondary",
               system_replication_site: "Site2",
               host: build(:host, heartbeat: :passing, cluster: nil)
@@ -664,7 +664,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
           sap_systems: [],
           database_instances: [
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Primary",
               system_replication_site: "Site1",
               host: build(:host, heartbeat: :passing, cluster: nil)
@@ -688,14 +688,14 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 build_list(2, :application_instance,
-                  health: Health.unknown(),
+                  status: Status.gray(),
                   features: "ABAP|GATEWAY|ICMAN|IGS"
                 )
             },
             %{
               application_instances:
                 build_list(2, :application_instance,
-                  health: Health.unknown(),
+                  status: Status.gray(),
                   features: "J2EE|GATEWAY|ICMAN|IGS"
                 )
             }
@@ -717,7 +717,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
             %{
               application_instances:
                 build_list(2, :application_instance,
-                  health: Health.passing(),
+                  status: Status.green(),
                   features: "ABAP|GATEWAY|ICMAN|IGS"
                 )
             }
@@ -728,7 +728,7 @@ defmodule Trento.Operations.DatabasePolicyTest do
               host: build(:host, heartbeat: :passing, cluster: nil)
             ),
             build(:database_instance,
-              health: Health.unknown(),
+              status: Status.gray(),
               system_replication: "Secondary",
               system_replication_site: "Site2",
               host: build(:host, heartbeat: :passing, cluster: nil)
