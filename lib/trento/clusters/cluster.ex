@@ -849,10 +849,9 @@ defmodule Trento.Clusters.Cluster do
   end
 
   defp maybe_emit_cluster_health_details_events(
-         %Cluster{cluster_id: cluster_id} = cluster,
-         %RegisterOnlineClusterHost{designated_controller: true, details: details}
-       )
-       when not is_nil(cluster_id) do
+         %Cluster{} = cluster,
+         %RegisterOnlineClusterHost{details: details}
+       ) do
     health_details = derive_discovered_health(details)
     accumulate_cluster_health_events(cluster, health_details)
   end
@@ -860,17 +859,13 @@ defmodule Trento.Clusters.Cluster do
   defp maybe_emit_cluster_health_details_events(_, _), do: nil
 
   defp accumulate_cluster_health_events(cluster, health_details) do
-    health_details_emitters = [
-      &maybe_emit_cluster_replication_health_changed_event/2,
-      &maybe_emit_cluster_distributed_health_changed_event/2
-      # &maybe_emit_cluster_sbd_health_changed_event/2
+    events = [
+      maybe_emit_cluster_replication_health_changed_event(cluster, health_details),
+      maybe_emit_cluster_distributed_health_changed_event(cluster, health_details)
+      # maybe_emit_cluster_sbd_health_changed_event(cluster, health_details)
     ]
 
-    health_details_emitters
-    |> Enum.reduce([], fn health_emitter, acc ->
-      [health_emitter.(cluster, health_details) | acc]
-    end)
-    |> Enum.reject(&is_nil/1)
+    Enum.reject(events, &is_nil/1)
   end
 
   defp maybe_emit_cluster_details_updated_event(
