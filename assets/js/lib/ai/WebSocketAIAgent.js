@@ -179,13 +179,11 @@ export class WebSocketAIAgent extends AbstractAgent {
       const setupRun = async () => {
         try {
           await this.initialize();
-          await withRefreshTokenOnUnauthorized(() =>
-            this._sendMessage({
-              message: extractMessageText(lastMessage),
-              thread_id: threadId,
-              run_id: runId,
-            })
-          );
+          await this._sendMessage({
+            message: extractMessageText(lastMessage),
+            thread_id: threadId,
+            run_id: runId,
+          });
         } catch (error) {
           if (this._activeRunId === runId) this._clearActiveRun();
           subscriber.error(error);
