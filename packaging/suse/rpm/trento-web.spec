@@ -29,7 +29,6 @@ Source2:        package-lock.json
 Source3:        node_modules.spec.inc
 %include        %{_sourcedir}/node_modules.spec.inc
 Group:          System/Monitoring
-BuildRequires:  elixir >= 1.15
 BuildRequires:  elixir-hex
 BuildRequires:  erlang-rebar3
 BuildRequires:  gcc
@@ -37,6 +36,15 @@ BuildRequires:  git-core
 BuildRequires:  local-npm-registry
 BuildRequires:  make
 BuildRequires:  npm >= 20
+
+%if !0%{?is_opensuse} && 0%{?suse_version} < 1600
+BuildRequires:  erlang26
+BuildConflicts: erlang27
+BuildRequires:  elixir115
+BuildConflicts: elixir119
+%else
+BuildRequires:  elixir >= 1.15
+%endif
 
 %description
 Trento is an open cloud-native web application for SAP Applications administrators.
