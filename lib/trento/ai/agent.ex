@@ -63,15 +63,37 @@ defmodule Trento.AI.Agent do
   process to its event stream, and send the user prompt. Returns `:ok`
   or the first `{:error, reason}` from the start/subscribe/send chain.
   """
-  @spec run(Sagents.Agent.t(), String.t()) :: :ok | {:error, term()}
-  def run(%Sagents.Agent{agent_id: agent_id} = agent, prompt) do
+  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: :ok | {:error, term()}
+  def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
+    refresh_when = Keyword.get(opts, :refresh_when, &default_refresh_when/2)
+
     with {:ok, _} <-
            agent_id
-           |> start_opts(agent)
+           |> start_opts(maybe_new_agent)
            |> AgentSupervisor.start_agent_sync(),
+         :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
          :ok <- AgentServer.subscribe(agent_id) do
       AgentServer.add_message(agent_id, Message.new_user!(prompt))
     end
+  end
+
+  defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
+    with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
+         {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent) do
+      update_agent(agent_id, updated_agent)
+    end
+
+    :ok
+  end
+
+  defp default_refresh_when(_current_agent, _new_agent), do: :noop
+
+  defp update_agent(agent_id, updated_agent) do
+    %{state: current_state} = AgentServer.get_info(agent_id)
+
+    AgentServer.update_agent_and_state(agent_id, updated_agent, current_state)
+
+    :ok
   end
 
   defp start_opts(agent_id, agent) do
