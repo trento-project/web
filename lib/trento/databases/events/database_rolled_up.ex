@@ -49,22 +49,18 @@ defmodule Trento.Databases.Events.DatabaseRolledUp do
 
   def upcast(
         %{
-          "database_id" => database_id,
-          "snapshot" =>
-            %{
-              "instances" => instances
-            } = snapshot
-        },
+          "snapshot" => %{
+            "instances" => _instances
+          }
+        } = params,
         _,
         3
       ) do
-    %{
-      "database_id" => database_id,
-      "snapshot" => %{
-        snapshot
-        | "instances" => Enum.map(instances, &HealthService.upcast_health_to_status/1)
-      }
-    }
+    update_in(
+      params,
+      ["snapshot", "instances", Access.all()],
+      &UpcastHelper.upcast_health_to_status/1
+    )
   end
 
   def upcast(params, _, 3), do: params
