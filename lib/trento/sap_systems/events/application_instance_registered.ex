@@ -10,7 +10,7 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
 
   require Trento.SapSystems.Enums.Status, as: Status
 
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
 
   defevent version: 2 do
     field :sap_system_id, Ecto.UUID
@@ -26,5 +26,5 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
   end
 
   def upcast(params, _, 2),
-    do: HealthService.upcast_health_to_status(params)
+    do: UpcastHelper.upcast_health_to_status(params)
 end

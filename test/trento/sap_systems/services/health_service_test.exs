@@ -22,18 +22,6 @@ defmodule Trento.SapSystems.Services.HealthServiceTest do
       end
     end
 
-    test "should upcast health to status for legacy handling purposes" do
-      for [health, status] <- [
-            ["passing", Status.green()],
-            ["warning", Status.yellow()],
-            ["critical", Status.red()],
-            ["unknown", Status.gray()]
-          ] do
-        assert %{"status" => status} ==
-                 HealthService.upcast_health_to_status(%{"health" => health})
-      end
-    end
-
     test "should add deprecated health field" do
       for [status, health] <- [
             [Status.green(), Health.passing()],

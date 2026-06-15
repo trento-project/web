@@ -8,7 +8,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
   """
 
   alias Trento.Databases.Events.DatabaseRolledUp
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
 
   use Trento.Support.Event
 

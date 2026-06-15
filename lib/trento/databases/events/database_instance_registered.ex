@@ -11,7 +11,7 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
 
   require Trento.SapSystems.Enums.Status, as: Status
 
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
 
   defevent version: 5 do
     field :database_id, Ecto.UUID
@@ -44,5 +44,5 @@ defmodule Trento.Databases.Events.DatabaseInstanceRegistered do
   def upcast(params, _, 4), do: params
 
   def upcast(params, _, 5),
-    do: HealthService.upcast_health_to_status(params)
+    do: UpcastHelper.upcast_health_to_status(params)
 end

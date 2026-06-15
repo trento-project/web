@@ -9,7 +9,7 @@ defmodule Trento.Databases.Events.DatabaseRolledUp do
 
   use Trento.Support.Event
 
-  alias Trento.SapSystems.Services.HealthService
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
 
   defevent resource: "database", version: 3 do
     field :database_id, Ecto.UUID
