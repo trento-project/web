@@ -3,6 +3,7 @@
 
 import axios from 'axios';
 import { getFromConfig } from '@lib/config';
+import { logError } from '@lib/log';
 
 const STORAGE_ACCESS_TOKEN_IDENTIFIER = 'access_token';
 const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
@@ -70,4 +71,19 @@ export const getRefreshTokenFromStore = () =>
 export const clearCredentialsFromStore = () => {
   window.localStorage.removeItem(STORAGE_ACCESS_TOKEN_IDENTIFIER);
   window.localStorage.removeItem(STORAGE_REFRESH_TOKEN_IDENTIFIER);
+};
+
+// Look up the stored refresh token, exchange it for a new access token, persist
+// the new access token in localStorage, and return it. Throws if no refresh
+// token is stored or the refresh endpoint rejects.
+export const refreshAndStoreAccessToken = async () => {
+  const refreshToken = getRefreshTokenFromStore();
+  if (!refreshToken) {
+    logError('could not refresh access token, refresh token not found');
+    throw new Error('could not refresh access token');
+  }
+  const {
+    data: { access_token: accessToken },
+  } = await refreshAccessToken(refreshToken);
+  storeAccessToken(accessToken);
 };
