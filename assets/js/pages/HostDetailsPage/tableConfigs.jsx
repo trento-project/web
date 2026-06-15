@@ -5,8 +5,7 @@ import React from 'react';
 import { capitalize } from 'lodash';
 
 import SapSystemLink from '@common/SapSystemLink';
-import HealthIcon from '@common/HealthIcon';
-import { Features } from '@pages/SapSystemDetails';
+import { Features, InstanceStatus } from '@pages/SapSystemDetails';
 
 import { getInstanceID } from '@state/instances';
 
@@ -53,12 +52,10 @@ export const sapInstancesTableConfiguration = {
   usePadding: false,
   columns: [
     {
-      title: 'Health',
-      key: 'health',
-      render: (content) => (
-        <div className="ml-3">
-          <HealthIcon health={content} />
-        </div>
+      title: 'Status',
+      key: 'status',
+      render: (content, item) => (
+        <InstanceStatus status={content} absent={!!item.absent_at} />
       ),
     },
     {

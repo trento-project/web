@@ -21,7 +21,7 @@ function ApplicationInstance({ instance, userAbilities, onCleanUpClick }) {
 }
 
 const applicationInstanceColumns = [
-  { key: 'health', name: 'Health', cssClass: 'w-20' },
+  { key: 'status', name: 'Status', cssClass: 'w-20' },
   { key: 'instanceNr', name: 'Instance Nr', cssClass: 'w-24' },
   { key: 'features', name: 'Features' },
   { key: 'cluster', name: 'Cluster' },

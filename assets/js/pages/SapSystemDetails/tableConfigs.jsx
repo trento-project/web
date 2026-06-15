@@ -11,8 +11,6 @@ import { isHeartbeatPassing } from '@lib/model/hosts';
 import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
-import Tooltip from '@common/Tooltip';
-import HealthIcon from '@common/HealthIcon';
 import OperationsButton from '@common/OperationsButton';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
@@ -40,11 +38,6 @@ export const getSystemInstancesTableConfiguration = ({
       key: 'instance_hostname',
       render: (content, item) => (
         <span className="flex items-center">
-          {item.absent_at && (
-            <Tooltip content="Registered instance not found." place="bottom">
-              <HealthIcon health="absent" />
-            </Tooltip>
-          )}
           <span
             className={classNames({ 'text-gray-600': item.absent_at }, 'ml-1')}
           >
@@ -80,8 +73,10 @@ export const getSystemInstancesTableConfiguration = ({
     },
     {
       title: 'Status',
-      key: 'health',
-      render: (content) => <InstanceStatus health={content} />,
+      key: 'status',
+      render: (content, item) => (
+        <InstanceStatus status={content} absent={!!item.absent_at} />
+      ),
     },
     {
       title: '',
