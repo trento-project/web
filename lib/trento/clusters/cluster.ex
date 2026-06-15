@@ -319,10 +319,6 @@ defmodule Trento.Clusters.Cluster do
         cluster_host_status: ClusterHostStatus.online()
       }
     end)
-    |> Multi.execute(fn cluster ->
-      # TODO: Isn't this duplicate?
-      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
-    end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
     |> handle_cluster_health_events(command)
   end
@@ -812,18 +808,10 @@ defmodule Trento.Clusters.Cluster do
     end
   end
 
-  defp accumulate_cluster_health_events(cluster, health_details) do
-    health_details_emitters = [
-      &maybe_emit_cluster_replication_health_changed_event/2,
-      &maybe_emit_cluster_distributed_health_changed_event/2
-      # &maybe_emit_cluster_sbd_health_changed_event/2
-    ]
-
-    health_details_emitters
-    |> Enum.reduce([], fn health_emitter, acc ->
-      [health_emitter.(cluster, health_details) | acc]
-    end)
-    |> Enum.reject(&is_nil/1)
+  defp handle_cluster_health_events(multi, command) do
+    multi
+    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_details_events(cluster, command) end)
+    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
   end
 
   defp maybe_emit_cluster_health_details_events(
@@ -834,28 +822,28 @@ defmodule Trento.Clusters.Cluster do
        do: nil
 
   defp maybe_emit_cluster_health_details_events(
-         %Cluster{state: state, type: cluster_type} = cluster,
+         %Cluster{state: ClusterState.stopped(), type: ClusterType.ascs_ers()} = cluster,
+         %RegisterOfflineClusterHost{}
+       ) do
+    health_details =
+      %AscsErsClusterHealthDetails{
+        sbd_health: Health.unknown(),
+        distributed_health: Health.unknown()
+      }
+
+    accumulate_cluster_health_events(cluster, health_details)
+  end
+
+  defp maybe_emit_cluster_health_details_events(
+         %Cluster{state: ClusterState.stopped(), type: cluster_type} = cluster,
          %RegisterOfflineClusterHost{}
        )
-       when state == ClusterState.stopped() do
+       when cluster_type in [ClusterType.hana_scale_out(), ClusterType.hana_scale_up()] do
     health_details =
-      case cluster_type do
-        ClusterType.ascs_ers() ->
-          %AscsErsClusterHealthDetails{
-            sbd_health: Health.unknown(),
-            distributed_health: Health.unknown()
-          }
-
-        cluster_type
-        when cluster_type in [ClusterType.hana_scale_out(), ClusterType.hana_scale_up()] ->
-          %HanaClusterHealthDetails{
-            sbd_health: Health.unknown(),
-            replication_health: Health.unknown()
-          }
-
-        _ ->
-          nil
-      end
+      %HanaClusterHealthDetails{
+        sbd_health: Health.unknown(),
+        replication_health: Health.unknown()
+      }
 
     accumulate_cluster_health_events(cluster, health_details)
   end
@@ -871,10 +859,18 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_health_details_events(_, _), do: nil
 
-  defp handle_cluster_health_events(multi, command) do
-    multi
-    |> Multi.execute(fn cluster -> maybe_emit_cluster_health_details_events(cluster, command) end)
-    |> Multi.execute(&maybe_emit_cluster_health_changed_event/1)
+  defp accumulate_cluster_health_events(cluster, health_details) do
+    health_details_emitters = [
+      &maybe_emit_cluster_replication_health_changed_event/2,
+      &maybe_emit_cluster_distributed_health_changed_event/2
+      # &maybe_emit_cluster_sbd_health_changed_event/2
+    ]
+
+    health_details_emitters
+    |> Enum.reduce([], fn health_emitter, acc ->
+      [health_emitter.(cluster, health_details) | acc]
+    end)
+    |> Enum.reject(&is_nil/1)
   end
 
   defp maybe_emit_cluster_details_updated_event(
