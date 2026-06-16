@@ -108,6 +108,7 @@ defmodule Trento.Clusters.Cluster do
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterDistributedHealthChanged,
+    ClusterSbdHealthChanged,
     ClusterHealthChanged,
     ClusterHostStatusChanged,
     ClusterRegistered,
@@ -515,6 +516,21 @@ defmodule Trento.Clusters.Cluster do
     }
   end
 
+  def apply(
+        %Cluster{
+          health_details: health_details
+        } = cluster,
+        %ClusterSbdHealthChanged{
+          sbd_health: sbd_health
+        }
+      ) do
+    # Don't need to handle `nil` case for health_details because this
+    # event could come only after the cluster type-specific health
+    # event is handled first.
+    new_health_details = struct!(health_details, sbd_health: sbd_health)
+    put_in(cluster.health_details, new_health_details)
+  end
+
   # Handle old ClusterDiscoveredHealthChanged event.
   # Cannot be superseded by other events as it has different meanings for each cluster type.
   def apply(
@@ -861,8 +877,8 @@ defmodule Trento.Clusters.Cluster do
   defp accumulate_cluster_health_events(cluster, health_details) do
     events = [
       maybe_emit_cluster_replication_health_changed_event(cluster, health_details),
-      maybe_emit_cluster_distributed_health_changed_event(cluster, health_details)
-      # maybe_emit_cluster_sbd_health_changed_event(cluster, health_details)
+      maybe_emit_cluster_distributed_health_changed_event(cluster, health_details),
+      maybe_emit_cluster_sbd_health_changed_event(cluster, health_details)
     ]
 
     Enum.reject(events, &is_nil/1)
@@ -1012,6 +1028,24 @@ defmodule Trento.Clusters.Cluster do
 
   defp maybe_emit_cluster_distributed_health_changed_event(_, _), do: nil
 
+  defp maybe_emit_cluster_sbd_health_changed_event(
+         %Cluster{health_details: %{sbd_health: sbd_health}},
+         %{sbd_health: sbd_health}
+       ),
+       do: nil
+
+  defp maybe_emit_cluster_sbd_health_changed_event(
+         %Cluster{cluster_id: cluster_id},
+         %{sbd_health: sbd_health}
+       ) do
+    %ClusterSbdHealthChanged{
+      cluster_id: cluster_id,
+      sbd_health: sbd_health
+    }
+  end
+
+  defp maybe_emit_cluster_sbd_health_changed_event(_, _), do: nil
+
   defp maybe_emit_cluster_checks_health_changed_event(
          %Cluster{health_details: %{checks_health: checks_health}},
          %CompleteChecksExecution{health: checks_health}
@@ -1027,21 +1061,6 @@ defmodule Trento.Clusters.Cluster do
       checks_health: checks_health
     }
   end
-
-  defp maybe_emit_cluster_deregistered_event(
-         %Cluster{cluster_id: cluster_id, hosts: []},
-         %DeregisterClusterHost{
-           cluster_id: cluster_id,
-           deregistered_at: deregistered_at
-         }
-       ) do
-    [
-      %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at},
-      %ClusterTombstoned{cluster_id: cluster_id}
-    ]
-  end
-
-  defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 
   defp maybe_emit_cluster_health_changed_event(%Cluster{
          cluster_id: cluster_id,
@@ -1062,4 +1081,19 @@ defmodule Trento.Clusters.Cluster do
       key in [:checks_health, :sbd_health] and value == Health.unknown()
     end)
   end
+
+  defp maybe_emit_cluster_deregistered_event(
+         %Cluster{cluster_id: cluster_id, hosts: []},
+         %DeregisterClusterHost{
+           cluster_id: cluster_id,
+           deregistered_at: deregistered_at
+         }
+       ) do
+    [
+      %ClusterDeregistered{cluster_id: cluster_id, deregistered_at: deregistered_at},
+      %ClusterTombstoned{cluster_id: cluster_id}
+    ]
+  end
+
+  defp maybe_emit_cluster_deregistered_event(_, _), do: nil
 end
