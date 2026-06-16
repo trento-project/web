@@ -50,7 +50,7 @@ export const selectedHost = {
     provider: 'VMware',
   },
   sapInstance: {
-    health: '',
+    status: '',
     sid: 'HDP',
     type: 'Database',
     features: ['HDB', 'HDB_WORKER'],

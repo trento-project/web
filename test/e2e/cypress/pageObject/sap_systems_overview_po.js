@@ -221,7 +221,7 @@ const validateInstanceRowData = (instance, rowIndex) => {
 
   const columnIndexOffset = isHana ? 1 : 0;
 
-  const healthBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
+  const statusBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
   const instanceNumberSelector = `${currentRow} div[class*="cell"]:eq(1)`;
   const featuresSelector = `${currentRow} div[class*="cell"]:eq(2)`;
   const hanaInstanceSelector = `${currentRow} div[class*="cell"]:eq(3)`;
@@ -232,8 +232,8 @@ const validateInstanceRowData = (instance, rowIndex) => {
     4 + columnIndexOffset
   })`;
 
-  const healthBadgeExpectedClass = healthMap[instance.health];
-  cy.get(healthBadgeSelector).should('have.class', healthBadgeExpectedClass);
+  const statusBadgeExpectedClass = healthMap[instance.status];
+  cy.get(statusBadgeSelector).should('have.class', statusBadgeExpectedClass);
 
   const expectedInstanceNumber = instance.instanceNumber;
   cy.get(instanceNumberSelector).should('have.text', expectedInstanceNumber);
@@ -301,7 +301,7 @@ export const javaSystemIsDiscoveredCorrectly = () => {
 export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
   cy.get(sapSystemsTableRows).should('have.length', systemsAmount);
 
-export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
+export const eachInstanceHasItsStatusCorrectlyUpdated = () => {
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
   const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
@@ -309,8 +309,8 @@ export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
   return cy.wrap(Object.entries(healthMap)).each(([state, health], index) => {
     basePage.loadScenario(`sap-systems-overview-${state}`);
 
-    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-    cy.get(sapSystemInstanceHealthBadge).should('have.class', health);
+    const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
+    cy.get(sapSystemInstanceStatusBadge).should('have.class', health);
 
     const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
       index + 1
@@ -328,8 +328,8 @@ export const sapSystemHealthChangesToRedAsExpected = () => {
   const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
   cy.get(collapsibleCell).click();
 
-  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-  cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
+  const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
+  cy.get(sapSystemInstanceStatusBadge).should('have.class', healthClass);
 
   const appLayerInstanceHealthBadge =
     'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(4)';

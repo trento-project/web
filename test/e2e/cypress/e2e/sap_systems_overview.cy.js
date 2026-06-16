@@ -79,14 +79,14 @@ context('SAP Systems Overview', () => {
     });
   });
 
-  describe('Health states are updated', () => {
+  describe('Health and statuses are updated', () => {
     beforeEach(() => sapSystemsOverviewPage.restoreNwdHost());
 
-    it('should have expected health in SAP system and instance when a different state is received', () => {
-      sapSystemsOverviewPage.eachInstanceHasItsHealthStatusCorrectlyUpdated();
+    it('should have expected health in SAP system and instance when a different status is received', () => {
+      sapSystemsOverviewPage.eachInstanceHasItsStatusCorrectlyUpdated();
     });
 
-    it('should have RED health in SAP system when HANA instance with SAPControl-RED state is received', () => {
+    it('should have RED health in SAP system when HANA instance with RED status is received', () => {
       sapSystemsOverviewPage.sapSystemHealthChangesToRedAsExpected();
     });
   });

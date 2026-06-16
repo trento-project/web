@@ -153,19 +153,16 @@ const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   return cy
     .get(hostNameCellSelector)
-    .nextAll()
-    .eq(5)
+    .prev()
     .find('svg')
     .should('have.class', healthMap[status]);
 };
 
 const validateHostStatus = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy
-    .get(hostNameCellSelector)
-    .nextAll()
-    .eq(5)
-    .should('have.text', `SAPControl: ${status}`);
+  cy.get(hostNameCellSelector).prev().find('svg').trigger('mouseover');
+
+  return cy.get(`span:contains("${status}")`).should('exist');
 };
 
 const hostHasExpectedStatus = (hostName) => {
@@ -182,13 +179,13 @@ export const hostHasClass = (status) =>
 export const eachHostNameHasExpectedValues = () =>
   cy.wrap(selectedDatabase.Hosts).each((host) => {
     const hostName = host.Hostname;
+    hostHasExpectedStatus(hostName);
+    hostStatusHasExpectedClass(hostName);
     hostNameHasExpectedInstanceNumber(hostName);
     hostNameHasExpectedFeatures(hostName);
     hostHasExpectedHttpPort(hostName);
     hostHasExpectedHttpsPort(hostName);
-    hostHasExpectedStartPriority(hostName);
-    hostHasExpectedStatus(hostName);
-    return hostStatusHasExpectedClass(hostName);
+    return hostHasExpectedStartPriority(hostName);
   });
 
 export const eachSiteHasExpectedValues = (sites) =>
