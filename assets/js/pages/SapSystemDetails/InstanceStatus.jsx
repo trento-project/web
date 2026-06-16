@@ -25,17 +25,19 @@ function InstanceStatus({ status, absent = false }) {
   }
 
   return (
-    <Tooltip
-      content={absent ? 'Registered instance not found.' : capitalize(status)}
-      place="top"
-      isEnabled={true}
-    >
-      {absent ? (
-        <EOS_INFO_OUTLINED size="20" className="fill-black mx-1" />
-      ) : (
-        <EOS_LENS_FILLED size="20" className={`${cssClass} mx-1`} />
-      )}
-    </Tooltip>
+    <span className="flex items-center mx-1">
+      <Tooltip
+        content={absent ? 'Registered instance not found.' : capitalize(status)}
+        place="top"
+        isEnabled={true}
+      >
+        {absent ? (
+          <EOS_INFO_OUTLINED size="20" className="fill-black" />
+        ) : (
+          <EOS_LENS_FILLED size="20" className={cssClass} />
+        )}
+      </Tooltip>
+    </span>
   );
 }
 
