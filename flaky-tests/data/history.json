@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-05-03T04:47:49Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25269875694",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.5
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.02501
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-03T06:57:20Z",
     "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
     "run_id": "25270215510",
@@ -6135,6 +6107,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request saptune discovery request when 'pacemaker_disable' operation is completed",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-16T20:49:26Z",
+    "commit": "5ae823225c85847360779a670a13472a26487e88",
+    "run_id": "27646122926",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "ClustersList component › filtering::should filter the table content by SID filter",
+        "score": 0.05001
       }
     ]
   }
