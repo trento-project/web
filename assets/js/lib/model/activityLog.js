@@ -80,6 +80,7 @@ export const CLUSTER_REPLICATION_HEALTH_CHANGED =
   'cluster_replication_health_changed';
 export const CLUSTER_DISTRIBUTED_HEALTH_CHANGED =
   'cluster_distributed_health_changed';
+export const CLUSTER_SBD_HEALTH_CHANGED = "cluster_sbd_health_changed";
 export const CLUSTER_HEALTH_CHANGED = 'cluster_health_changed';
 export const CLUSTER_REGISTERED = 'cluster_registered';
 export const CLUSTER_RESTORED = 'cluster_restored';
@@ -476,6 +477,11 @@ export const ACTIVITY_TYPES_CONFIG = {
   [CLUSTER_DISTRIBUTED_HEALTH_CHANGED]: {
     label: 'Cluster Distributed Health Changed',
     message: (_entry) => `Cluster's ASCS/ERS nodes distribution health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_SBD_HEALTH_CHANGED]: {
+    label: 'Cluster SBD Health Changed',
+    message: (_entry) => `Cluster's SBD fencing health changed`,
     resource: clusterResourceType,
   },
   [CLUSTER_HEALTH_CHANGED]: {
