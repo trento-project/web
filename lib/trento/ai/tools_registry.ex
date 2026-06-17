@@ -21,9 +21,13 @@ defmodule Trento.AI.ToolsRegistry do
 
   alias Trento.AI.ApplicationConfigLoader
 
-  @spec tools() :: [LangChain.Function.t()]
-  def tools do
-    Enum.flat_map(configured_sources(), fn {module, opts} -> module.tools(opts) end)
+  @spec tools(tool_context :: map()) :: [LangChain.Function.t()]
+  def tools(tool_context \\ %{}) do
+    Enum.flat_map(configured_sources(), fn {module, opts} ->
+      opts
+      |> Keyword.put(:tool_context, tool_context)
+      |> module.tools()
+    end)
   end
 
   defp configured_sources do

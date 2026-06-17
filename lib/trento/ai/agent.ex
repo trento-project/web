@@ -36,14 +36,16 @@ defmodule Trento.AI.Agent do
   """
   @spec new!(keyword()) :: Sagents.Agent.t()
   def new!(opts) do
+    tool_context = Keyword.get(opts, :tool_context, %{})
+
     Sagents.Agent.new!(
       %{
         agent_id: Keyword.fetch!(opts, :agent_id),
         model: Keyword.fetch!(opts, :model),
         scope: Keyword.fetch!(opts, :scope),
-        tool_context: Keyword.get(opts, :tool_context, %{}),
+        tool_context: tool_context,
         base_system_prompt: load_base_system_prompt(),
-        tools: ToolsRegistry.tools(),
+        tools: ToolsRegistry.tools(tool_context),
         # see https://github.com/sagents-ai/sagents#provided-middleware
         middleware: [
           # Task management with write_todos tool for tracking multi-step work

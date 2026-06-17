@@ -82,7 +82,8 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
     Keyword.merge(
       [
         name: :wanda_test,
-        spec_url: "http://wanda/api/all/openapi"
+        spec_url: "http://wanda/api/all/openapi",
+        tool_context: %{request_origin: Faker.Internet.url()}
       ],
       extra
     )
@@ -220,6 +221,34 @@ defmodule Trento.AI.RemoteOpenApiToolSourceTest do
 
       ctx = %{tool_context: %{access_token: "JWT", request_origin: nil}}
       assert {:ok, _} = Function.execute(tool, %{"group_id" => "g1"}, ctx)
+    end
+  end
+
+  describe "tools/1 — spec_url resolution via tool_context.request_origin" do
+    test "relative spec_url is resolved against request_origin" do
+      expect(HttpClient.Mock, :get, fn url, _headers, _opts ->
+        assert url == "http://trento.example.com/api/all/openapi"
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(synthetic_spec())}}
+      end)
+
+      opts =
+        source_opts(
+          spec_url: "/api/all/openapi",
+          tool_context: %{request_origin: "http://trento.example.com"}
+        )
+
+      assert [_ | _] = RemoteOpenApiToolSource.tools(opts)
+    end
+
+    test "absolute spec_url ignores request_origin" do
+      expect(HttpClient.Mock, :get, fn url, _headers, _opts ->
+        assert url == "http://wanda/api/all/openapi"
+        {:ok, %HTTPoison.Response{status_code: 200, body: Jason.encode!(synthetic_spec())}}
+      end)
+
+      opts = source_opts(tool_context: %{request_origin: "http://something-else.example.com"})
+
+      assert [_ | _] = RemoteOpenApiToolSource.tools(opts)
     end
   end
 end

@@ -48,6 +48,8 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
 
   require Logger
 
+  alias Trento.Support.HttpUtils
+
   alias Trento.AI.ApplicationConfigLoader
   alias Trento.AI.{OperationEntry, RemoteHttpTool}
 
@@ -60,7 +62,12 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
     name = Keyword.fetch!(opts, :name)
     spec_url = Keyword.fetch!(opts, :spec_url)
 
-    case fetch_and_decode(spec_url) do
+    request_origin =
+      opts
+      |> Keyword.fetch!(:tool_context)
+      |> Map.get(:request_origin)
+
+    case fetch_and_decode(spec_url, request_origin) do
       {:ok, spec} ->
         build_tools(spec, name)
 
@@ -96,12 +103,13 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   defp extract_base_url(_),
     do: {:error, "spec missing servers[0].url; this source contributes no tools for this call."}
 
-  defp fetch_and_decode(spec_url) do
+  defp fetch_and_decode(spec_url, request_origin) do
+    url = HttpUtils.resolve_url(spec_url, "", request_origin)
     headers = [{"accept", "application/json"}]
     options = [recv_timeout: @default_recv_timeout]
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
-           http_client().get(spec_url, headers, options),
+           http_client().get(url, headers, options),
          {:ok, json} <- Jason.decode(body) do
       {:ok, OpenApiSpex.OpenApi.from_map(json)}
     else
