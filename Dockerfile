@@ -9,11 +9,13 @@ ENV LANGUAGE=en_US:en
 ENV LC_ALL=en_US.UTF-8
 RUN zypper ar https://download.opensuse.org/repositories/devel:sap:trento:builddeps/${OS_VER} builddeps
 RUN zypper -n --gpg-auto-import-keys ref
-RUN zypper -n in make gcc git-core elixir==1.15 elixir-hex erlang==26 erlang-rebar3
+RUN zypper -n in make gcc git-core elixir119 elixir-hex erlang27 erlang-rebar3
 COPY . /build
 WORKDIR /build
 ARG MIX_ENV=prod
 ENV MIX_ENV=$MIX_ENV
+ENV MIX_REBAR3=/usr/bin/rebar3
+ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 RUN mix deps.get
 
 FROM registry.suse.com/bci/nodejs:22 AS assets-build
