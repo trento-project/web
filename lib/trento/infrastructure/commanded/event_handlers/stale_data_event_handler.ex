@@ -4,6 +4,14 @@
 defmodule Trento.Infrastructure.Commanded.EventHandlers.StaleDataEventHandler do
   @moduledoc """
   Event handler responsible to mark resources data as stale.
+
+  The feature is implemented in an event handler to make it simpler, compared with
+  the usage of a process manager (which would be more optimal, but more complex).
+
+  When a host stops sending data and the system emits the `HeartbeatFailed` event,
+  the resources in that host (application instances, database instances and clusters)
+  have not been updated since the agent stopped reporting, so the data should be
+  up to date.
   """
 
   use Commanded.Event.Handler,
