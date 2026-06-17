@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-04T07:00:54Z",
-    "commit": "aed802d8ce1e30739e2fdb764731615bef86b31c",
-    "run_id": "25301643484",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 24
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
-        "score": 0.1029
-      },
-      {
-        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
-        "score": 0.1011
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.09426
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.07604
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.07275
-      },
-      {
-        "name": "should allow database instance clean up::Databases Overview Forbidden actions Database instance clean up should allow database instance clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid database instance cleanup::Databases Overview Forbidden actions Database instance clean up should forbid database instance cleanup",
-        "score": 0.05001
-      },
-      {
-        "name": "should preserve per_page when coming back from another page::Hosts Overview Pagination and browser navigation should preserve per_page when coming back from another page",
-        "score": 0.05001
-      },
-      {
-        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-05T04:02:56Z",
     "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
     "run_id": "25356751112",
@@ -6099,6 +6051,17 @@
     "commit": "930a016bb009d6ea0c5bd99113e4d305b5582a76",
     "run_id": "27715377775",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-06-17T20:13:19Z",
+    "commit": "930a016bb009d6ea0c5bd99113e4d305b5582a76",
+    "run_id": "27715377775",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
