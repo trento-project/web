@@ -852,7 +852,8 @@ defmodule Trento.Factory do
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
       status: Status.gray(),
-      absent_at: nil
+      absent_at: nil,
+      stale: false
     }
   end
 
@@ -862,7 +863,8 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      status: Status.green()
+      status: Status.green(),
+      stale: false
     }
   end
 

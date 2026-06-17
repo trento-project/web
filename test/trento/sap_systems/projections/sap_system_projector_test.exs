@@ -20,6 +20,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   }
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
@@ -442,6 +444,82 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       %{
         id: ^id,
         ensa_version: ^ensa_version
+      },
+      1000
+    )
+  end
+
+  test "should mark application instance data as stale when ApplicationInstanceDataMarkedStale event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:application_instance, stale: false)
+
+    event = %ApplicationInstanceDataMarkedStale{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    application_instance =
+      Repo.get_by(ApplicationInstanceReadModel,
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert application_instance.stale == true
+
+    assert_broadcast(
+      "application_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        stale: true
+      },
+      1000
+    )
+  end
+
+  test "should mark application instance data as fresh when ApplicationInstanceDataMarkedInSync event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      sid: sid
+    } = insert(:application_instance, stale: true)
+
+    event = %ApplicationInstanceDataMarkedInSync{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    application_instance =
+      Repo.get_by(ApplicationInstanceReadModel,
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert application_instance.stale == false
+
+    assert_broadcast(
+      "application_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        sid: ^sid,
+        stale: false
       },
       1000
     )

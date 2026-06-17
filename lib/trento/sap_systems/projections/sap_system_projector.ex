@@ -12,6 +12,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     name: "sap_system_projector"
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
@@ -100,7 +102,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           https_port: https_port,
           start_priority: start_priority,
           host_id: host_id,
-          status: status
+          status: status,
+          stale: false
         })
 
       Ecto.Multi.insert(multi, :application_instance, changeset)
@@ -188,6 +191,50 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         )
         |> ApplicationInstanceReadModel.changeset(%{
           absent_at: nil
+        })
+
+      Ecto.Multi.update(multi, :application_instance, changeset)
+    end
+  )
+
+  project(
+    %ApplicationInstanceDataMarkedStale{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    },
+    fn multi ->
+      changeset =
+        ApplicationInstanceReadModel
+        |> Repo.get_by(
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> ApplicationInstanceReadModel.changeset(%{
+          stale: true
+        })
+
+      Ecto.Multi.update(multi, :application_instance, changeset)
+    end
+  )
+
+  project(
+    %ApplicationInstanceDataMarkedInSync{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    },
+    fn multi ->
+      changeset =
+        ApplicationInstanceReadModel
+        |> Repo.get_by(
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+        |> ApplicationInstanceReadModel.changeset(%{
+          stale: false
         })
 
       Ecto.Multi.update(multi, :application_instance, changeset)
@@ -449,6 +496,56 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           sap_system_id: sap_system_id,
           sid: sid,
           absent_at: nil
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %ApplicationInstanceDataMarkedStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id
+        },
+        _,
+        %{application_instance: %ApplicationInstanceReadModel{sid: sid}}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "application_instance_stale_changed",
+      SapSystemJSON.application_instance_stale_changed(%{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          stale: true
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %ApplicationInstanceDataMarkedInSync{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id
+        },
+        _,
+        %{application_instance: %ApplicationInstanceReadModel{sid: sid}}
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "application_instance_stale_changed",
+      SapSystemJSON.application_instance_stale_changed(%{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          stale: false
         }
       })
     )

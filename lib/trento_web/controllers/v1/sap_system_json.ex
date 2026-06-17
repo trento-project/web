@@ -104,4 +104,21 @@ defmodule TrentoWeb.V1.SapSystemJSON do
         sid: sid,
         absent_at: absent_at
       }
+
+  def application_instance_stale_changed(%{
+        instance: %{
+          instance_number: instance_number,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          stale: stale
+        }
+      }),
+      do: %{
+        instance_number: instance_number,
+        host_id: host_id,
+        sap_system_id: sap_system_id,
+        sid: sid,
+        stale: stale
+      }
 end
