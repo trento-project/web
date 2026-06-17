@@ -53,6 +53,7 @@ defmodule Trento.SapSystems.SapSystem do
     DeregisterApplicationInstance,
     DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
+    MarkApplicationInstanceDataStale,
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
@@ -60,6 +61,8 @@ defmodule Trento.SapSystems.SapSystem do
   }
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
@@ -119,6 +122,9 @@ defmodule Trento.SapSystems.SapSystem do
       maybe_emit_application_instance_marked_present_event(sap_system, instance)
     end)
     |> Multi.execute(fn sap_system ->
+      maybe_emit_application_instance_data_marked_in_sync_event(sap_system, instance)
+    end)
+    |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_restored_event(sap_system, instance)
     end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
@@ -146,6 +152,9 @@ defmodule Trento.SapSystems.SapSystem do
     end)
     |> Multi.execute(fn _ ->
       maybe_emit_application_instance_marked_present_event(sap_system, instance)
+    end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_application_instance_data_marked_in_sync_event(sap_system, instance)
     end)
     |> Multi.execute(fn sap_system ->
       maybe_emit_application_instance_status_changed_event(
@@ -181,6 +190,26 @@ defmodule Trento.SapSystems.SapSystem do
           host_id: host_id,
           sap_system_id: sap_system_id,
           absent_at: absent_at
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id, instances: instances},
+        %MarkApplicationInstanceDataStale{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{stale: false} ->
+        %ApplicationInstanceDataMarkedStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
         }
 
       _ ->
@@ -299,7 +328,8 @@ defmodule Trento.SapSystems.SapSystem do
             features: features,
             host_id: host_id,
             status: status,
-            absent_at: nil
+            absent_at: nil,
+            stale: false
           }
         ]
     }
@@ -322,7 +352,8 @@ defmodule Trento.SapSystems.SapSystem do
         features: features,
         host_id: host_id,
         status: status,
-        absent_at: nil
+        absent_at: nil,
+        stale: false
       }
       | instances
     ]
@@ -451,6 +482,30 @@ defmodule Trento.SapSystems.SapSystem do
         }
       ) do
     instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
+
+    %SapSystem{sap_system | instances: instances}
+  end
+
+  def apply(
+        %SapSystem{instances: instances} = sap_system,
+        %ApplicationInstanceDataMarkedInSync{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale: false})
+
+    %SapSystem{sap_system | instances: instances}
+  end
+
+  def apply(
+        %SapSystem{instances: instances} = sap_system,
+        %ApplicationInstanceDataMarkedStale{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale: true})
 
     %SapSystem{sap_system | instances: instances}
   end
@@ -609,6 +664,31 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   defp maybe_emit_application_instance_marked_present_event(_, _), do: nil
+
+  defp maybe_emit_application_instance_data_marked_in_sync_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           instances: instances
+         },
+         %RegisterApplicationInstance{
+           instance_number: instance_number,
+           host_id: host_id
+         }
+       ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{stale: true} ->
+        %ApplicationInstanceDataMarkedInSync{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  defp maybe_emit_application_instance_data_marked_in_sync_event(_, _), do: nil
 
   defp maybe_emit_application_instance_status_changed_event(
          %SapSystem{instances: instances},

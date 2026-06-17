@@ -27,5 +27,6 @@ defmodule Trento.SapSystems.Instance do
     field :system_replication_source_site, :string
     field :system_replication_tier, :integer
     field :absent_at, :utc_datetime_usec
+    field :stale, :boolean
   end
 end

@@ -80,6 +80,8 @@ defmodule Trento.Factory do
   alias Trento.Databases.ValueObjects.Tenant
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
@@ -591,6 +593,22 @@ defmodule Trento.Factory do
     ApplicationInstanceDeregistered.new!(%{
       sap_system_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def application_instance_data_marked_stale_event_factory do
+    ApplicationInstanceDataMarkedStale.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def application_instance_data_marked_in_sync_event_factory do
+    ApplicationInstanceDataMarkedInSync.new!(%{
+      sap_system_id: Faker.UUID.v4(),
       instance_number: "00",
       host_id: Faker.UUID.v4()
     })

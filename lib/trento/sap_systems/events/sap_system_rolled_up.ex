@@ -20,7 +20,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
     DatabaseRolledUp
   end
 
-  defevent resource: "sap_system", version: 3 do
+  defevent resource: "sap_system", version: 4 do
     field :sap_system_id, Ecto.UUID
     embeds_one :snapshot, Trento.SapSystems.SapSystem
   end
@@ -44,4 +44,20 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUp do
   end
 
   def upcast(params, _, 3), do: params
+
+  def upcast(
+        %{
+          "snapshot" => %{
+            "instances" => _instances
+          }
+        } = params,
+        _,
+        4
+      ) do
+    update_in(params, ["snapshot", "instances", Access.all()], fn instance ->
+      Map.put_new(instance, "stale", false)
+    end)
+  end
+
+  def upcast(params, _, 4), do: params
 end

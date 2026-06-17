@@ -13,6 +13,7 @@ defmodule Trento.SapSystems.SapSystemTest do
     DeregisterApplicationInstance,
     DeregisterSapSystem,
     MarkApplicationInstanceAbsent,
+    MarkApplicationInstanceDataStale,
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
@@ -20,6 +21,8 @@ defmodule Trento.SapSystems.SapSystemTest do
   }
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
@@ -1258,7 +1261,8 @@ defmodule Trento.SapSystems.SapSystemTest do
                 features: application_instance_registered_event.features,
                 host_id: application_instance_registered_event.host_id,
                 system_replication: nil,
-                system_replication_status: nil
+                system_replication_status: nil,
+                stale: false
               }
             ],
             rolling_up: false
@@ -2570,6 +2574,204 @@ defmodule Trento.SapSystems.SapSystemTest do
                      },
                      %Instance{
                        absent_at: nil
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+  end
+
+  describe "instance marked stale/in sync" do
+    test "should mark application instance data as stale" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %MarkApplicationInstanceDataStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        },
+        [
+          %ApplicationInstanceDataMarkedStale{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number,
+            host_id: host_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale: true
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark application instance data as stale if already stale" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %MarkApplicationInstanceDataStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        },
+        [],
+        fn state ->
+          assert %SapSystem{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale: true
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should mark application instance data as in sync when registering a stale instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+      ]
+
+      command =
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %ApplicationInstanceDataMarkedInSync{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number,
+            host_id: host_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale: false
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark application instance data as in sync if already in sync" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        )
+      ]
+
+      command =
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [],
+        fn state ->
+          assert %SapSystem{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale: false
                      }
                    ]
                  } = state
