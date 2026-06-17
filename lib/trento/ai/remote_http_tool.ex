@@ -105,7 +105,7 @@ defmodule Trento.AI.RemoteHttpTool do
     url = HttpUtils.resolve_url(base_url, resolved_path, request_origin)
     body = encode_body(verb, body_args)
     headers = build_headers(jwt, body)
-    options = [recv_timeout: @default_recv_timeout]
+    options = [recv_timeout: @default_recv_timeout, follow_redirect: true]
 
     verb
     |> http_client().request(url, body, headers, options)

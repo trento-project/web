@@ -106,7 +106,7 @@ defmodule Trento.AI.RemoteOpenApiToolSource do
   defp fetch_and_decode(spec_url, request_origin) do
     url = HttpUtils.resolve_url(spec_url, "", request_origin)
     headers = [{"accept", "application/json"}]
-    options = [recv_timeout: @default_recv_timeout]
+    options = [recv_timeout: @default_recv_timeout, follow_redirect: true]
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-
            http_client().get(url, headers, options),
