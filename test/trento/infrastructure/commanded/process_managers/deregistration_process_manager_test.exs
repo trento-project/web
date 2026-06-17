@@ -13,6 +13,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   }
 
   alias Trento.Hosts.Events.{
+    HeartbeatFailed,
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
@@ -46,7 +47,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.Hosts.Commands.DeregisterHost
 
   alias Trento.Databases.Commands.DeregisterDatabaseInstance
-  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
+
+  alias Trento.SapSystems.Commands.{
+    DeregisterApplicationInstance,
+    MarkApplicationInstanceDataStale
+  }
 
   describe "events interested" do
     test "should start the process manager when HostRegistered event arrives" do
@@ -151,6 +156,15 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
       assert {:continue, ^host_id} =
                DeregistrationProcessManager.interested?(%ApplicationInstanceDeregistered{
+                 host_id: host_id
+               })
+    end
+
+    test "should continue the process manager when HeartbeatFailed arrives" do
+      host_id = UUID.uuid4()
+
+      assert {:continue, ^host_id} =
+               DeregistrationProcessManager.interested?(%HeartbeatFailed{
                  host_id: host_id
                })
     end
@@ -662,6 +676,52 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                database_instances: [],
                application_instances: []
              } = state
+    end
+  end
+
+  describe "stale data procedure" do
+    test "should not dispatch any command when the host doesn't have any other resource running" do
+      host_id = UUID.uuid4()
+      initial_state = %DeregistrationProcessManager{}
+
+      events = [%HeartbeatFailed{host_id: host_id}]
+
+      {nil, ^initial_state} = reduce_events(events, initial_state)
+    end
+
+    test "should dispatch commands when HeartbeatFailed is emitted and the host has instances associated" do
+      host_id = UUID.uuid4()
+      sap_system_id = UUID.uuid4()
+      app_instance_number_01 = "01"
+      app_instance_number_02 = "02"
+
+      initial_state = %DeregistrationProcessManager{
+        cluster_id: nil,
+        database_instances: [],
+        application_instances: [
+          %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number_01},
+          %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number_02}
+        ]
+      }
+
+      events = [%HeartbeatFailed{host_id: host_id}]
+
+      {commands, state} = reduce_events(events, initial_state)
+
+      assert ^initial_state = state
+
+      assert [
+               %MarkApplicationInstanceDataStale{
+                 sap_system_id: ^sap_system_id,
+                 instance_number: ^app_instance_number_01,
+                 host_id: ^host_id
+               },
+               %MarkApplicationInstanceDataStale{
+                 sap_system_id: ^sap_system_id,
+                 instance_number: ^app_instance_number_02,
+                 host_id: ^host_id
+               }
+             ] = commands
     end
   end
 
