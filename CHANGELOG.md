@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.1.1](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.0...3.1.1) - 2026-06-17
+
+### What's Changed
+
+* Update analytics docs link profile form (#4376) @balanza
+* Flip activity log `from_date` and `to_date` logic (#4378) @balanza
+* Fix cluster registered broadcast (#4379) @balanza
+* Updated License in spec file (#4380) @balanza
+* Export version in rpm packages to use same value during compilation (#4381) @balanza
+* Normalize query string to list (#4383) @balanza
+
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.0...3.1.1
+
 ## [3.1.0](https://github.com/trento-project/web/tree/2.4.0/compare/3.0.0...3.1.0) - 2026-05-20
 
 ### What's Changed
@@ -342,10 +355,8 @@
 * Bump posthog-js from 1.297.0 to 1.298.0 in /assets (#3926) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump @eslint/compat from 1.4.1 to 2.0.0 in /assets (#3922) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump chromatic from 13.3.3 to 13.3.4 in /assets (#3921) @[dependabot[bot]](https://github.com/apps/dependabot)
-
 </details>
 **Full Changelog**: https://github.com/trento-project/web/compare/3.0.0...3.1.0
-
 ## [3.0.0](https://github.com/trento-project/web/tree/2.4.0/compare/2.5.0...3.0.0) - 2025-11-27
 
 ### What's Changed
@@ -693,7 +704,6 @@
 </details>
 **Full Changelog**: https://github.com/trento-project/web/compare/2.5.0...3.0.0
 ## [2.5.0](https://github.com/trento-project/web/tree/2.4.0/compare/2.4.0...2.5.0) - 2025-05-20
-
 ### What's Changed
 
 * Test flakiness analysis for backend. (#3483) @vicenteqa
@@ -926,7 +936,6 @@
 **Full Changelog**: https://github.com/trento-project/web/compare/2.4.0...2.5.0
 ## [2.4.0](https://github.com/trento-project/web/tree/2.4.0) (2024-11-12)
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.2...2.4.0)
-
 **Merged pull requests:**
 
 - Add SUMA credentials e2e [#2637](https://github.com/trento-project/web/pull/2637) ([nelsonkopliku](https://github.com/nelsonkopliku))
