@@ -103,7 +103,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           start_priority: start_priority,
           host_id: host_id,
           status: status,
-          stale: false
+          stale_at: nil
         })
 
       Ecto.Multi.insert(multi, :application_instance, changeset)
@@ -201,7 +201,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     %ApplicationInstanceDataMarkedStale{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
-      host_id: host_id
+      host_id: host_id,
+      stale_at: stale_at
     },
     fn multi ->
       changeset =
@@ -212,7 +213,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           host_id: host_id
         )
         |> ApplicationInstanceReadModel.changeset(%{
-          stale: true
+          stale_at: stale_at
         })
 
       Ecto.Multi.update(multi, :application_instance, changeset)
@@ -234,7 +235,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           host_id: host_id
         )
         |> ApplicationInstanceReadModel.changeset(%{
-          stale: false
+          stale_at: nil
         })
 
       Ecto.Multi.update(multi, :application_instance, changeset)
@@ -506,7 +507,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         %ApplicationInstanceDataMarkedStale{
           instance_number: instance_number,
           host_id: host_id,
-          sap_system_id: sap_system_id
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
         },
         _,
         %{application_instance: %ApplicationInstanceReadModel{sid: sid}}
@@ -520,7 +522,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           host_id: host_id,
           sap_system_id: sap_system_id,
           sid: sid,
-          stale: true
+          stale_at: stale_at
         }
       })
     )
@@ -545,7 +547,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           host_id: host_id,
           sap_system_id: sap_system_id,
           sid: sid,
-          stale: false
+          stale_at: nil
         }
       })
     )

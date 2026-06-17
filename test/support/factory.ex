@@ -602,7 +602,8 @@ defmodule Trento.Factory do
     ApplicationInstanceDataMarkedStale.new!(%{
       sap_system_id: Faker.UUID.v4(),
       instance_number: "00",
-      host_id: Faker.UUID.v4()
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
     })
   end
 
@@ -853,7 +854,7 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       status: Status.gray(),
       absent_at: nil,
-      stale: false
+      stale_at: nil
     }
   end
 
@@ -864,7 +865,7 @@ defmodule Trento.Factory do
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
       status: Status.green(),
-      stale: false
+      stale_at: nil
     }
   end
 

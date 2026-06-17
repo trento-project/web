@@ -35,7 +35,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
       sap_system_id = Faker.UUID.v4()
       sid = "PRD"
       health = :passing
-      instances = build_list(2, :sap_system_instance, status: Status.green(), stale: false)
+      instances = build_list(2, :sap_system_instance, status: Status.green(), stale_at: nil)
       deregistered_at = DateTime.utc_now()
 
       old_instances =
@@ -43,11 +43,11 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
           instance
           |> StructHelper.to_map()
           |> Map.put("health", "passing")
-          |> Map.delete("stale")
+          |> Map.delete("stale_at")
         end)
 
       assert %SapSystemRolledUp{
-               version: 4,
+               version: 3,
                sap_system_id: sap_system_id,
                snapshot: %SapSystem{
                  sap_system_id: sap_system_id,
@@ -70,26 +70,6 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
                }
                |> SapSystemRolledUp.upcast(%{})
                |> SapSystemRolledUp.new!()
-    end
-
-    test "should preserve existing stale values during upcast" do
-      params = %{
-        "snapshot" => %{
-          "instances" => [
-            %{"stale" => true},
-            %{}
-          ]
-        }
-      }
-
-      assert %{
-               "snapshot" => %{
-                 "instances" => [
-                   %{"stale" => true},
-                   %{"stale" => false}
-                 ]
-               }
-             } = SapSystemRolledUp.upcast(params, %{}, 4)
     end
   end
 end

@@ -694,6 +694,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       sap_system_id = UUID.uuid4()
       app_instance_number_01 = "01"
       app_instance_number_02 = "02"
+      created_at = DateTime.utc_now()
 
       initial_state = %DeregistrationProcessManager{
         cluster_id: nil,
@@ -704,22 +705,23 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
         ]
       }
 
-      events = [%HeartbeatFailed{host_id: host_id}]
+      event = %HeartbeatFailed{host_id: host_id}
+      metadata = %{created_at: created_at}
 
-      {commands, state} = reduce_events(events, initial_state)
-
-      assert ^initial_state = state
+      commands = DeregistrationProcessManager.handle(initial_state, event, metadata)
 
       assert [
                %MarkApplicationInstanceDataStale{
                  sap_system_id: ^sap_system_id,
                  instance_number: ^app_instance_number_01,
-                 host_id: ^host_id
+                 host_id: ^host_id,
+                 stale_at: ^created_at
                },
                %MarkApplicationInstanceDataStale{
                  sap_system_id: ^sap_system_id,
                  instance_number: ^app_instance_number_02,
-                 host_id: ^host_id
+                 host_id: ^host_id,
+                 stale_at: ^created_at
                }
              ] = commands
     end

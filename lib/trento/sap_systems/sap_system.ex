@@ -201,15 +201,17 @@ defmodule Trento.SapSystems.SapSystem do
         %SapSystem{sap_system_id: sap_system_id, instances: instances},
         %MarkApplicationInstanceDataStale{
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: stale_at
         }
       ) do
     case get_instance(instances, host_id, instance_number) do
-      %Instance{stale: false} ->
+      %Instance{stale_at: nil} ->
         %ApplicationInstanceDataMarkedStale{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: stale_at
         }
 
       _ ->
@@ -329,7 +331,7 @@ defmodule Trento.SapSystems.SapSystem do
             host_id: host_id,
             status: status,
             absent_at: nil,
-            stale: false
+            stale_at: nil
           }
         ]
     }
@@ -353,7 +355,7 @@ defmodule Trento.SapSystems.SapSystem do
         host_id: host_id,
         status: status,
         absent_at: nil,
-        stale: false
+        stale_at: nil
       }
       | instances
     ]
@@ -493,7 +495,7 @@ defmodule Trento.SapSystems.SapSystem do
           host_id: host_id
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, %{stale: false})
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: nil})
 
     %SapSystem{sap_system | instances: instances}
   end
@@ -502,10 +504,11 @@ defmodule Trento.SapSystems.SapSystem do
         %SapSystem{instances: instances} = sap_system,
         %ApplicationInstanceDataMarkedStale{
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: stale_at
         }
       ) do
-    instances = update_instance(instances, instance_number, host_id, %{stale: true})
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: stale_at})
 
     %SapSystem{sap_system | instances: instances}
   end
@@ -676,7 +679,7 @@ defmodule Trento.SapSystems.SapSystem do
          }
        ) do
     case get_instance(instances, host_id, instance_number) do
-      %Instance{stale: true} ->
+      %Instance{stale_at: stale_at} when not is_nil(stale_at) ->
         %ApplicationInstanceDataMarkedInSync{
           sap_system_id: sap_system_id,
           instance_number: instance_number,

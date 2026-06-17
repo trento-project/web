@@ -450,17 +450,20 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should mark application instance data as stale when ApplicationInstanceDataMarkedStale event is received" do
+    stale_at = DateTime.utc_now()
+
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:application_instance, stale: false)
+    } = insert(:application_instance, stale_at: nil)
 
     event = %ApplicationInstanceDataMarkedStale{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
-      host_id: host_id
+      host_id: host_id,
+      stale_at: stale_at
     }
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -472,7 +475,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: host_id
       )
 
-    assert application_instance.stale == true
+    assert application_instance.stale_at == stale_at
 
     assert_broadcast(
       "application_instance_stale_changed",
@@ -481,7 +484,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: ^host_id,
         sap_system_id: ^sap_system_id,
         sid: ^sid,
-        stale: true
+        stale_at: ^stale_at
       },
       1000
     )
@@ -493,7 +496,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       instance_number: instance_number,
       host_id: host_id,
       sid: sid
-    } = insert(:application_instance, stale: true)
+    } = insert(:application_instance, stale_at: DateTime.utc_now())
 
     event = %ApplicationInstanceDataMarkedInSync{
       sap_system_id: sap_system_id,
@@ -510,7 +513,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: host_id
       )
 
-    assert application_instance.stale == false
+    assert application_instance.stale_at == nil
 
     assert_broadcast(
       "application_instance_stale_changed",
@@ -519,7 +522,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: ^host_id,
         sap_system_id: ^sap_system_id,
         sid: ^sid,
-        stale: false
+        stale_at: nil
       },
       1000
     )

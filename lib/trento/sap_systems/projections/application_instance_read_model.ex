@@ -32,7 +32,7 @@ defmodule Trento.SapSystems.Projections.ApplicationInstanceReadModel do
     field :start_priority, :string
     field :status, Ecto.Enum, values: Status.values()
     field :absent_at, :utc_datetime_usec
-    field :stale, :boolean
+    field :stale_at, :utc_datetime_usec
 
     belongs_to :host, HostReadModel,
       references: :id,

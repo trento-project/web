@@ -223,7 +223,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
         },
         %HeartbeatFailed{
           host_id: host_id
-        }
+        },
+        %{created_at: created_at}
       ) do
     Enum.map(application_instances, fn %Instance{
                                          sap_system_id: sap_system_id,
@@ -232,7 +233,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       %MarkApplicationInstanceDataStale{
         sap_system_id: sap_system_id,
         instance_number: instance_number,
-        host_id: host_id
+        host_id: host_id,
+        stale_at: created_at
       }
     end)
   end

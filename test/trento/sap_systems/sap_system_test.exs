@@ -1262,7 +1262,7 @@ defmodule Trento.SapSystems.SapSystemTest do
                 host_id: application_instance_registered_event.host_id,
                 system_replication: nil,
                 system_replication_status: nil,
-                stale: false
+                stale_at: nil
               }
             ],
             rolling_up: false
@@ -2588,6 +2588,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       sid = fake_sid()
       host_id = Faker.UUID.v4()
       instance_number = "00"
+      stale_at = DateTime.utc_now()
 
       initial_events = [
         build(:application_instance_registered_event,
@@ -2608,13 +2609,15 @@ defmodule Trento.SapSystems.SapSystemTest do
         %MarkApplicationInstanceDataStale{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: stale_at
         },
         [
           %ApplicationInstanceDataMarkedStale{
             sap_system_id: sap_system_id,
             instance_number: instance_number,
-            host_id: host_id
+            host_id: host_id,
+            stale_at: stale_at
           }
         ],
         fn state ->
@@ -2622,7 +2625,7 @@ defmodule Trento.SapSystems.SapSystemTest do
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
-                       stale: true
+                       stale_at: ^stale_at
                      }
                    ]
                  } = state
@@ -2635,6 +2638,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       sid = fake_sid()
       host_id = Faker.UUID.v4()
       instance_number = "00"
+      stale_at = DateTime.utc_now()
 
       initial_events = [
         build(:application_instance_registered_event,
@@ -2651,7 +2655,8 @@ defmodule Trento.SapSystems.SapSystemTest do
         build(:application_instance_data_marked_stale_event,
           sap_system_id: sap_system_id,
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: stale_at
         )
       ]
 
@@ -2660,7 +2665,8 @@ defmodule Trento.SapSystems.SapSystemTest do
         %MarkApplicationInstanceDataStale{
           sap_system_id: sap_system_id,
           instance_number: instance_number,
-          host_id: host_id
+          host_id: host_id,
+          stale_at: DateTime.utc_now()
         },
         [],
         fn state ->
@@ -2668,7 +2674,7 @@ defmodule Trento.SapSystems.SapSystemTest do
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
-                       stale: true
+                       stale_at: ^stale_at
                      }
                    ]
                  } = state
@@ -2725,7 +2731,7 @@ defmodule Trento.SapSystems.SapSystemTest do
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
-                       stale: false
+                       stale_at: nil
                      }
                    ]
                  } = state
@@ -2771,7 +2777,7 @@ defmodule Trento.SapSystems.SapSystemTest do
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
-                       stale: false
+                       stale_at: nil
                      }
                    ]
                  } = state

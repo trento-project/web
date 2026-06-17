@@ -111,7 +111,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
           host_id: host_id,
           sap_system_id: sap_system_id,
           sid: sid,
-          stale: stale
+          stale_at: stale_at
         }
       }),
       do: %{
@@ -119,6 +119,6 @@ defmodule TrentoWeb.V1.SapSystemJSON do
         host_id: host_id,
         sap_system_id: sap_system_id,
         sid: sid,
-        stale: stale
+        stale_at: stale_at
       }
 end
