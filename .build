@@ -51,6 +51,7 @@ Trento.Clusters.Enums.FilesystemType.html
 Trento.Clusters.Enums.HanaArchitectureType.html
 Trento.Clusters.Enums.HanaScenario.html
 Trento.Clusters.Enums.SapInstanceResourceType.html
+Trento.Clusters.Enums.SbdDeviceStatus.html
 Trento.Clusters.Events.ChecksSelected.html
 Trento.Clusters.Events.ClusterChecksHealthChanged.html
 Trento.Clusters.Events.ClusterDeregistered.html
@@ -64,6 +65,7 @@ Trento.Clusters.Events.ClusterReplicationHealthChanged.html
 Trento.Clusters.Events.ClusterRestored.html
 Trento.Clusters.Events.ClusterRollUpRequested.html
 Trento.Clusters.Events.ClusterRolledUp.html
+Trento.Clusters.Events.ClusterSbdHealthChanged.html
 Trento.Clusters.Events.ClusterTombstoned.html
 Trento.Clusters.Events.HostAddedToCluster.html
 Trento.Clusters.Events.HostRemovedFromCluster.html
@@ -563,7 +565,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-9AFF0D9C.js
-dist/sidebar_items-D7D18019.js
+dist/search_data-77C8BEC9.js
+dist/sidebar_items-F611C42A.js
 index.html
 search.html

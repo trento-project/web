@@ -29,11 +29,12 @@ The cluster aggregate stores and updates information coming in the cluster disco
 
 The cluster health is one of the most relevant concepts of this domain.
 It shows if the cluster is working as expected or not, and in the second case,
-what is the roout cause of the issue and if there is some possible remediation.
+what is the root cause of the issue and if there is some possible remediation.
 It is composed by sub-health elements:
 
 - Replication health (only applicable for HANA clusters)
 - Distributed health (only applicable for ASCS/ERS clusters)
+- SBD health
 - Checks health
 
 The main cluster health is computed using the values from all of them. This means that the cluster health is a
@@ -49,6 +50,12 @@ unknown (when the data is not available) otherwise.
 
 The discovered distributed health. It checks if ASCS and ERS workloads are distributed among 2 nodes and not running
 in a single one. It is passing if all handled SAP systems are distributed and critical otherwise.
+
+### SBD health
+
+SBD is a form of cluster fencing mechanism. SBD health represents a health value computed over the statuses of the SBD
+devices connected to the cluster nodes. If there are no SBD devices present, then SBD health is stripped away from the
+calculation of the aggregated cluster health.
 
 ### Checks health
 

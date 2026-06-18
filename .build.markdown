@@ -50,6 +50,7 @@ Trento.Clusters.Enums.FilesystemType.md
 Trento.Clusters.Enums.HanaArchitectureType.md
 Trento.Clusters.Enums.HanaScenario.md
 Trento.Clusters.Enums.SapInstanceResourceType.md
+Trento.Clusters.Enums.SbdDeviceStatus.md
 Trento.Clusters.Events.ChecksSelected.md
 Trento.Clusters.Events.ClusterChecksHealthChanged.md
 Trento.Clusters.Events.ClusterDeregistered.md
@@ -63,6 +64,7 @@ Trento.Clusters.Events.ClusterReplicationHealthChanged.md
 Trento.Clusters.Events.ClusterRestored.md
 Trento.Clusters.Events.ClusterRollUpRequested.md
 Trento.Clusters.Events.ClusterRolledUp.md
+Trento.Clusters.Events.ClusterSbdHealthChanged.md
 Trento.Clusters.Events.ClusterTombstoned.md
 Trento.Clusters.Events.HostAddedToCluster.md
 Trento.Clusters.Events.HostRemovedFromCluster.md

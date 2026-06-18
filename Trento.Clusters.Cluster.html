@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-D7D18019.js"></script>
+    <script defer src="dist/sidebar_items-F611C42A.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -127,12 +127,14 @@ to the same cluster are part of the same stream.</p><p>A new cluster is register
 Otherwise the cluster details are left as unknown, and filled once a message from the <strong>designated controller</strong> is received.
 Once a cluster is registered, other hosts will be added when cluster discovery messages from them are received.</p><p>All the hosts are listed in the <code class="inline">hosts</code> field.</p><p>The cluster aggregate stores and updates information coming in the cluster discovery messages such as:</p><ul><li>Cluster name</li><li>Number of hosts and cluster resources</li><li>Platform where the host is running (the cloud provider for instance)</li><li>Managed SAP workload SID</li></ul><h2 id="module-cluster-health" class="section-heading"><a href="#module-cluster-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Cluster health</span></h2><p>The cluster health is one of the most relevant concepts of this domain.
 It shows if the cluster is working as expected or not, and in the second case,
-what is the roout cause of the issue and if there is some possible remediation.
-It is composed by sub-health elements:</p><ul><li>Replication health (only applicable for HANA clusters)</li><li>Distributed health (only applicable for ASCS/ERS clusters)</li><li>Checks health</li></ul><p>The main cluster health is computed using the values from all of them. This means that the cluster health is a
+what is the root cause of the issue and if there is some possible remediation.
+It is composed by sub-health elements:</p><ul><li>Replication health (only applicable for HANA clusters)</li><li>Distributed health (only applicable for ASCS/ERS clusters)</li><li>SBD health</li><li>Checks health</li></ul><p>The main cluster health is computed using the values from all of them. This means that the cluster health is a
 computation of them.</p><h3 id="module-replication-health" class="section-heading"><a href="#module-replication-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Replication health</span></h3><p>The discovered replication health. It is based in the cluster replication values coming from cluster attributes.
 The health is passing if the SR health is 4 and the secondary sync state &quot;SOK&quot;. It is critical or
 unknown (when the data is not available) otherwise.</p><h1>Distributed health</h1><p>The discovered distributed health. It checks if ASCS and ERS workloads are distributed among 2 nodes and not running
-in a single one. It is passing if all handled SAP systems are distributed and critical otherwise.</p><h3 id="module-checks-health" class="section-heading"><a href="#module-checks-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Checks health</span></h3><p>The checks health is obtained from the <a rel="nofollow" href="https://github.com/trento-project/wanda/">Checks Engine executions</a>.
+in a single one. It is passing if all handled SAP systems are distributed and critical otherwise.</p><h3 id="module-sbd-health" class="section-heading"><a href="#module-sbd-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">SBD health</span></h3><p>SBD is a form of cluster fencing mechanism. SBD health represents a health value computed over the statuses of the SBD
+devices connected to the cluster nodes. If there are no SBD devices present, then SBD health is stripped away from the
+calculation of the aggregated cluster health.</p><h3 id="module-checks-health" class="section-heading"><a href="#module-checks-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Checks health</span></h3><p>The checks health is obtained from the <a rel="nofollow" href="https://github.com/trento-project/wanda/">Checks Engine executions</a>.
 Every time a checks execution is started, the selected checks for this cluster are executed, and based on the result
 the health value is updated. The checks are started from a user request or periodically following the
 project scheduler configuration.</p><p>This domain only knows about the health, the details about the execution are stored in the
@@ -263,7 +265,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -321,7 +323,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">apply(cluster, arg2)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L461" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L458" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -343,7 +345,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -365,7 +367,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -387,7 +389,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -410,7 +412,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">execute(cluster, command)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L172" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L181" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -432,7 +434,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">new(structs)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -461,7 +463,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">new!(params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -489,7 +491,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L130" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/clusters/cluster.ex#L139" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

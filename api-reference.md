@@ -263,6 +263,8 @@ https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa
 
   - [Trento.Clusters.Enums.SapInstanceResourceType](Trento.Clusters.Enums.SapInstanceResourceType.md): Type that represents the discovered type of a clustered SAP instance.
 
+  - [Trento.Clusters.Enums.SbdDeviceStatus](Trento.Clusters.Enums.SbdDeviceStatus.md): Type that represents the SBD device status.
+
   - [Trento.Clusters.Events.ChecksSelected](Trento.Clusters.Events.ChecksSelected.md): Event of the checks selected in a cluster.
 
   - [Trento.Clusters.Events.ClusterChecksHealthChanged](Trento.Clusters.Events.ClusterChecksHealthChanged.md): This event is emitted when the checks health of a cluster changes.
@@ -292,6 +294,7 @@ It is used to trigger the stream archiving process and it contains the snapshot 
   - [Trento.Clusters.Events.ClusterRolledUp](Trento.Clusters.Events.ClusterRolledUp.md): This event is emitted when a cluster is rolled up and its stream is archived.
 It contains the snapshot of the cluster aggregate that will be used to restore the aggregate state.
 
+  - [Trento.Clusters.Events.ClusterSbdHealthChanged](Trento.Clusters.Events.ClusterSbdHealthChanged.md): This event is emitted when the health of the SBD fencing in a cluster changes.
   - [Trento.Clusters.Events.ClusterTombstoned](Trento.Clusters.Events.ClusterTombstoned.md):   This event is emitted after a successful cluster deregistration, to tombstone and stop the cluster aggregate
 
   - [Trento.Clusters.Events.HostAddedToCluster](Trento.Clusters.Events.HostAddedToCluster.md): This event is emitted when a host is added to a cluster

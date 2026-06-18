@@ -11,7 +11,8 @@ aggregate docstring.
 ```elixir
 @type t() :: %Trento.Clusters.ValueObjects.HanaClusterHealthDetails{
   checks_health: term(),
-  replication_health: term()
+  replication_health: term(),
+  sbd_health: term()
 }
 ```
 
