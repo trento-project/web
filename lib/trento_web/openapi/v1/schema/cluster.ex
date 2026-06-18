@@ -10,6 +10,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
 
   alias TrentoWeb.OpenApi.V1.Schema.{Provider, ResourceHealth, Tags}
 
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
+
   defmodule ClusterResource do
     @moduledoc false
 
@@ -107,7 +109,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: :object,
         properties: %{
           device: %Schema{type: :string},
-          status: %Schema{type: :string}
+          status: %Schema{type: :string, enum: SbdDeviceStatus.values()}
         },
         example: %{
           device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",

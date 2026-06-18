@@ -244,12 +244,7 @@ export const availableHanaCluster = {
     {
       deviceName:
         '/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b912345',
-      status: 'Unhealthy',
-    },
-    {
-      deviceName:
-        '/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b954321',
-      status: 'Unhealthy',
+      status: 'Healthy',
     },
   ],
 };

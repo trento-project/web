@@ -6,6 +6,8 @@ defmodule Trento.ClusterTest do
 
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.ClusterState, as: ClusterState
+  require Trento.Clusters.Enums.ClusterType, as: ClusterType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
   require Trento.Enums.Health, as: Health
 
   import Trento.Factory
@@ -42,6 +44,7 @@ defmodule Trento.ClusterTest do
     ClusterRestored,
     ClusterRolledUp,
     ClusterRollUpRequested,
+    ClusterSbdHealthChanged,
     ClusterTombstoned,
     HostAddedToCluster,
     HostRemovedFromCluster
@@ -53,8 +56,6 @@ defmodule Trento.ClusterTest do
   }
 
   alias Trento.Clusters.Cluster
-
-  require Trento.Enums.Health, as: Health
 
   describe "cluster registration" do
     test "should register a cluster with full details and add the node host to the cluster if the node is a DC" do
@@ -110,44 +111,44 @@ defmodule Trento.ClusterTest do
       )
     end
 
-    test "should register a cluster with correct health for HANA type clusters" do
-      scenarios = [
-        %{
-          sr_health_state: "4",
-          secondary_sync_state: "SOK",
-          expected_health: Health.passing()
-        },
-        %{
-          sr_health_state: "1",
-          secondary_sync_state: "SFAIL",
-          expected_health: Health.critical()
-        },
-        %{
-          sr_health_state: "1",
-          secondary_sync_state: "SOK",
-          expected_health: Health.critical()
-        },
-        %{
-          sr_health_state: "4",
-          secondary_sync_state: "SFAIL",
-          expected_health: Health.critical()
-        }
-      ]
+    @scenarios [
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SOK",
+        expected_health: Health.passing()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "1",
+        secondary_sync_state: "SOK",
+        expected_health: Health.critical()
+      },
+      %{
+        sr_health_state: "4",
+        secondary_sync_state: "SFAIL",
+        expected_health: Health.critical()
+      }
+    ]
+    for %{
+          sr_health_state: sr_health_state,
+          secondary_sync_state: secondary_sync_state,
+          expected_health: expected_health
+        } <- @scenarios do
+      test "should register a cluster with #{expected_health} health for HANA type clusters (sr_health: #{sr_health_state}, sync: #{secondary_sync_state}), no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
 
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      sap_instances = build_list(2, :clustered_sap_instance)
-
-      for %{
-            sr_health_state: sr_health_state,
-            secondary_sync_state: secondary_sync_state,
-            expected_health: expected_health
-          } <- scenarios do
         details =
           build(:hana_cluster_details,
-            sr_health_state: sr_health_state,
-            secondary_sync_state: secondary_sync_state
+            sr_health_state: unquote(sr_health_state),
+            secondary_sync_state: unquote(secondary_sync_state),
+            sbd_devices: []
           )
 
         assert_events_and_state(
@@ -171,10 +172,11 @@ defmodule Trento.ClusterTest do
               provider: :azure,
               type: :hana_scale_up,
               details: details,
-              health: expected_health,
-              health_details: %HanaClusterHealthDetails{
-                replication_health: expected_health
-              },
+              health: unquote(expected_health),
+              health_details:
+                HanaClusterHealthDetails.new!(%{
+                  replication_health: unquote(expected_health)
+                }),
               state: :S_IDLE
             },
             %HostAddedToCluster{
@@ -191,40 +193,41 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             hosts: [host_id],
             details: details,
-            health: expected_health,
-            health_details: %HanaClusterHealthDetails{
-              replication_health: expected_health
-            },
+            health: unquote(expected_health),
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                replication_health: unquote(expected_health)
+              }),
             state: :S_IDLE
           }
         )
       end
     end
 
-    test "should register a cluster with correct health for ASCS/ERS type clusters" do
-      scenarios = [
-        %{
-          distributed: true,
-          expected_health: Health.passing()
-        },
-        %{
-          distributed: false,
-          expected_health: Health.critical()
-        }
-      ]
+    @scenarios [
+      %{
+        distributed: true,
+        expected_health: Health.passing()
+      },
+      %{
+        distributed: false,
+        expected_health: Health.critical()
+      }
+    ]
+    for scenario <- @scenarios do
+      test "should register a cluster with #{scenario.expected_health} health for ASCS/ERS type clusters, no optional healths" do
+        cluster_id = Faker.UUID.v4()
+        host_id = Faker.UUID.v4()
+        name = Faker.StarWars.character()
+        sap_instances = build_list(2, :clustered_sap_instance)
 
-      cluster_id = Faker.UUID.v4()
-      host_id = Faker.UUID.v4()
-      name = Faker.StarWars.character()
-      sap_instances = build_list(2, :clustered_sap_instance)
-
-      for %{
-            distributed: distributed,
-            expected_health: expected_health
-          } <- scenarios do
         details =
           build(:ascs_ers_cluster_details,
-            sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: distributed)
+            sap_systems:
+              build_list(2, :ascs_ers_cluster_sap_system,
+                distributed: unquote(scenario.distributed)
+              ),
+            sbd_devices: []
           )
 
         assert_events_and_state(
@@ -248,10 +251,11 @@ defmodule Trento.ClusterTest do
               provider: :azure,
               type: :ascs_ers,
               details: details,
-              health: expected_health,
-              health_details: %AscsErsClusterHealthDetails{
-                distributed_health: expected_health
-              },
+              health: unquote(scenario.expected_health),
+              health_details:
+                AscsErsClusterHealthDetails.new!(%{
+                  distributed_health: unquote(scenario.expected_health)
+                }),
               state: :S_IDLE
             },
             %HostAddedToCluster{
@@ -268,12 +272,110 @@ defmodule Trento.ClusterTest do
             provider: :azure,
             hosts: [host_id],
             details: details,
-            health: expected_health,
-            health_details: %AscsErsClusterHealthDetails{
-              distributed_health: expected_health
-            },
+            health: unquote(scenario.expected_health),
+            health_details:
+              AscsErsClusterHealthDetails.new!(%{
+                distributed_health: unquote(scenario.expected_health)
+              }),
             state: :S_IDLE
           }
+        )
+      end
+    end
+
+    @cluster_confs [
+      %{
+        type: ClusterType.ascs_ers(),
+        details_factory: :ascs_ers_cluster_details,
+        health_details_key: :distributed_health
+      },
+      %{
+        type: ClusterType.hana_scale_up(),
+        details_factory: :hana_cluster_details,
+        health_details_key: :replication_health
+      }
+    ]
+    @health_confs [
+      %{
+        sbd_status: SbdDeviceStatus.healthy(),
+        expected_health: Health.passing()
+      },
+      %{
+        sbd_status: SbdDeviceStatus.unhealthy(),
+        expected_health: Health.critical()
+      }
+    ]
+    for cluster_conf <- @cluster_confs,
+        health_conf <- @health_confs do
+      test "should register a cluster of type #{cluster_conf.type} with #{health_conf.expected_health} health when SBD if #{health_conf.sbd_status}" do
+        cluster_details =
+          params_for(unquote(cluster_conf.details_factory),
+            sbd_devices: [
+              build(:sbd_device),
+              build(:sbd_device, status: unquote(health_conf.sbd_status))
+            ]
+          )
+
+        %RegisterOnlineClusterHost{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          name: name,
+          sap_instances: sap_instances,
+          provider: provider,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          type: cluster_type,
+          state: state
+        } =
+          register_command =
+          build(:register_online_cluster_host,
+            type: unquote(cluster_conf.type),
+            details: cluster_details
+          )
+
+        assert_events_and_state(
+          [],
+          register_command,
+          [
+            ClusterRegistered.new!(%{
+              cluster_id: cluster_id,
+              name: name,
+              sap_instances: StructHelper.to_map(sap_instances),
+              provider: provider,
+              resources_number: resources_number,
+              hosts_number: hosts_number,
+              type: cluster_type,
+              details: cluster_details,
+              health: unquote(health_conf.expected_health),
+              health_details: %{
+                :sbd_health => unquote(health_conf.expected_health),
+                unquote(cluster_conf.health_details_key) => Health.passing()
+              },
+              state: state
+            }),
+            HostAddedToCluster.new!(%{
+              cluster_id: cluster_id,
+              host_id: host_id,
+              cluster_host_status: ClusterHostStatus.online()
+            })
+          ],
+          Cluster.new!(%{
+            cluster_id: cluster_id,
+            name: name,
+            sap_instances: StructHelper.to_map(sap_instances),
+            type: cluster_type,
+            provider: provider,
+            resources_number: resources_number,
+            hosts: [host_id],
+            hosts_number: hosts_number,
+            details: cluster_details,
+            health: unquote(health_conf.expected_health),
+            health_details: %{
+              :sbd_health => unquote(health_conf.expected_health),
+              unquote(cluster_conf.health_details_key) => Health.passing()
+            },
+            state: state
+          })
         )
       end
     end
@@ -888,7 +990,7 @@ defmodule Trento.ClusterTest do
         }
       ]
 
-      details = build(:hana_cluster_details)
+      details = build(:hana_cluster_details, sbd_devices: [])
 
       assert_events_and_state(
         initial_events,
@@ -1298,7 +1400,7 @@ defmodule Trento.ClusterTest do
             replication_health: Health.passing()
           },
           details: build(:hana_cluster_details),
-          updated_details: build(:hana_cluster_details, sr_health_state: "1"),
+          updated_details: build(:hana_cluster_details, sr_health_state: "1", sbd_devices: []),
           expected_event: %ClusterReplicationHealthChanged{
             cluster_id: cluster_id,
             replication_health: Health.critical()
@@ -1315,7 +1417,7 @@ defmodule Trento.ClusterTest do
             replication_health: Health.passing()
           },
           details: build(:hana_cluster_details),
-          updated_details: build(:hana_cluster_details, sr_health_state: "1"),
+          updated_details: build(:hana_cluster_details, sr_health_state: "1", sbd_devices: []),
           expected_event: %ClusterReplicationHealthChanged{
             cluster_id: cluster_id,
             replication_health: Health.critical()
@@ -1337,7 +1439,8 @@ defmodule Trento.ClusterTest do
             ),
           updated_details:
             build(:ascs_ers_cluster_details,
-              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: false)
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: false),
+              sbd_devices: []
             ),
           expected_event: %ClusterDistributedHealthChanged{
             cluster_id: cluster_id,
@@ -1346,6 +1449,53 @@ defmodule Trento.ClusterTest do
           expected_health_details: %AscsErsClusterHealthDetails{
             checks_health: Health.unknown(),
             distributed_health: Health.critical()
+          }
+        },
+        %{
+          type: ClusterType.hana_scale_up(),
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(
+              :hana_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+            ),
+          updated_details:
+            build(:hana_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.unhealthy())]
+            ),
+          expected_event: %ClusterSbdHealthChanged{
+            cluster_id: cluster_id,
+            sbd_health: Health.critical()
+          },
+          expected_health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.critical()
+          }
+        },
+        %{
+          type: ClusterType.ascs_ers(),
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.healthy())]
+            ),
+          updated_details:
+            build(:ascs_ers_cluster_details,
+              sbd_devices: [build(:sbd_device, status: SbdDeviceStatus.unhealthy())]
+            ),
+          expected_event: %ClusterSbdHealthChanged{
+            cluster_id: cluster_id,
+            sbd_health: Health.critical()
+          },
+          expected_health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.critical()
           }
         }
       ]
@@ -1425,6 +1575,14 @@ defmodule Trento.ClusterTest do
           health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           },
+          details: build(:hana_cluster_details, sbd_devices: [])
+        },
+        %{
+          type: :hana_scale_up,
+          health_details: %HanaClusterHealthDetails{
+            replication_health: Health.passing(),
+            sbd_health: Health.passing()
+          },
           details: build(:hana_cluster_details)
         },
         %{
@@ -1432,12 +1590,24 @@ defmodule Trento.ClusterTest do
           health_details: %HanaClusterHealthDetails{
             replication_health: Health.passing()
           },
-          details: build(:hana_cluster_details)
+          details: build(:hana_cluster_details, sbd_devices: [])
         },
         %{
           type: :ascs_ers,
           health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing()
+          },
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems: build_list(2, :ascs_ers_cluster_sap_system, distributed: true),
+              sbd_devices: []
+            )
+        },
+        %{
+          type: :ascs_ers,
+          health_details: %AscsErsClusterHealthDetails{
+            distributed_health: Health.passing(),
+            sbd_health: Health.passing()
           },
           details:
             build(:ascs_ers_cluster_details,
@@ -1502,10 +1672,10 @@ defmodule Trento.ClusterTest do
             checks_health: Health.critical(),
             replication_health: Health.passing()
           },
-          details: build(:hana_cluster_details)
+          details: build(:hana_cluster_details, sbd_devices: [])
         )
 
-      command_details = build(:hana_cluster_details, sr_health_state: "1")
+      command_details = build(:hana_cluster_details, sr_health_state: "1", sbd_devices: [])
 
       host_added_to_cluster_event =
         build(:host_added_to_cluster_event, cluster_id: cluster_registered_event.cluster_id)
@@ -1589,10 +1759,12 @@ defmodule Trento.ClusterTest do
             hosts_number: cluster_registered_event.hosts_number,
             details: cluster_registered_event.details,
             health: cluster_registered_event.health,
-            health_details: %HanaClusterHealthDetails{
-              checks_health: Health.unknown(),
-              replication_health: Health.passing()
-            },
+            health_details:
+              HanaClusterHealthDetails.new!(%{
+                checks_health: Health.unknown(),
+                sbd_health: Health.passing(),
+                replication_health: Health.passing()
+              }),
             state: cluster_registered_event.state,
             hosts: [],
             selected_checks: []
@@ -1814,7 +1986,7 @@ defmodule Trento.ClusterTest do
           :register_online_cluster_host,
           cluster_id: cluster_id,
           host_id: new_host_id,
-          details: build(:hana_cluster_details, sr_health_state: "1"),
+          details: params_for(:hana_cluster_details, sr_health_state: "1"),
           designated_controller: true
         )
 

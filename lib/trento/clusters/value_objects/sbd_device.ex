@@ -10,8 +10,10 @@ defmodule Trento.Clusters.ValueObjects.SbdDevice do
 
   use Trento.Support.Type
 
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
+
   deftype do
     field :device, :string
-    field :status, :string
+    field :status, Ecto.Enum, values: SbdDeviceStatus.values()
   end
 end

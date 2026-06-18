@@ -17,7 +17,7 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
   describe "ClusterRegistered event upcasting" do
     test "should upcast ClusterRegistered event properly from version 1" do
       assert %ClusterRegistered{
-               version: 3,
+               version: 4,
                state: ClusterState.unknown()
              } =
                %{}
@@ -28,9 +28,10 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
     test "should upcast ClusterRegistered event with HANA type properly from version 1" do
       for cluster_type <- ["hana_scale_up", "hana_scale_out"] do
         assert %ClusterRegistered{
-                 version: 3,
+                 version: 4,
                  health_details: %HanaClusterHealthDetails{
                    checks_health: Health.unknown(),
+                   sbd_health: Health.unknown(),
                    replication_health: Health.passing()
                  }
                } =
@@ -42,9 +43,10 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
 
     test "should upcast ClusterRegistered event with ASCS/ERS type properly from version 1" do
       assert %ClusterRegistered{
-               version: 3,
+               version: 4,
                health_details: %AscsErsClusterHealthDetails{
                  checks_health: Health.unknown(),
+                 sbd_health: Health.unknown(),
                  distributed_health: Health.passing()
                }
              } =
@@ -55,7 +57,7 @@ defmodule Trento.Cluster.Events.ClusterRegisteredTest do
 
     test "should upcast ClusterRegistered event with unknown type properly from version 1" do
       assert %ClusterRegistered{
-               version: 3,
+               version: 4,
                health_details: nil
              } =
                %{"type" => "unknown", "health" => Health.unknown()}

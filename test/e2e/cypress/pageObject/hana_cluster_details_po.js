@@ -213,6 +213,9 @@ export const expectedClusterNameIsDisplayedInHeader = () =>
 export const expectedClusterHealthIsDisplayedInHeader = () =>
   basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
 
+export const criticalClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
+
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
   return cy.get(providerLabel).should('have.text', provider);
@@ -436,16 +439,19 @@ export const expectedClusterStateIsDisplayed = (state) => {
     });
 };
 
-export const sbdClusterHasExpectedNameAndStatus = () =>
-  cy
-    .wrap(availableHanaCluster.sbd)
-    .each((item) =>
-      cy
-        .get('.tn-sbd-details')
-        .contains(item.deviceName)
-        .children()
-        .contains(item.status)
-    );
+export const sbdClusterHasExpectedNameAndStatus = (overrides = []) => {
+  const sbd = availableHanaCluster.sbd.map((sbd_item, i) => ({
+    ...sbd_item,
+    ...overrides[i],
+  }));
+  cy.wrap(sbd).each((item) =>
+    cy
+      .get('.tn-sbd-details')
+      .contains(item.deviceName)
+      .children()
+      .contains(item.status)
+  );
+};
 
 export const passingChecksUrlIsTheExpected = () =>
   validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);
