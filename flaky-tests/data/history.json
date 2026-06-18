@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-05T04:04:01Z",
-    "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
-    "run_id": "25356751112",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-05T04:18:53Z",
     "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
     "run_id": "25357040669",
@@ -6073,6 +6049,26 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.04070
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-18T19:49:19Z",
+    "commit": "77ad8a953644889dfe9fe542947d1506921ec5d4",
+    "run_id": "27784438869",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users delete_user/1 deletes user abilities",
+        "score": 0.05001
       }
     ]
   }
