@@ -109,7 +109,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         type: :object,
         properties: %{
           device: %Schema{type: :string},
-          status: %Schema{type: :string, enum: SbdDeviceStatus.values()}
+          status: %Schema{
+            anyOf: [
+              %Schema{type: :string, enum: SbdDeviceStatus.values()},
+              %Schema{type: :string, deprecated: true}
+            ]
+          }
         },
         example: %{
           device: "/dev/disk/by-id/scsi-SLIO-ORG_disk_01",
