@@ -157,6 +157,11 @@ context('HANA cluster details', () => {
     it('should have SBD expected device name & status', () => {
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
     });
+
+    it('should have SBD with unhealthy status after change', () => {
+      hanaClusterDetailsPage.loadScenario('cluster-sbd-unhealthy');
+      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([{}, { status: 'Unhealthy' }]);
+    });
   });
 
   describe('HANA cluster details in a cost optimized scenario should be consistent with the state of the cluster', () => {
@@ -308,7 +313,7 @@ context('HANA cluster details', () => {
     const CHECK_PACEMAKER = 'Pacemaker';
     const CHECK_SBD = 'SBD';
 
-    before(function () {
+    before(function() {
       if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 

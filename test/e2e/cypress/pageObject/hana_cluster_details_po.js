@@ -436,16 +436,20 @@ export const expectedClusterStateIsDisplayed = (state) => {
     });
 };
 
-export const sbdClusterHasExpectedNameAndStatus = () =>
+export const sbdClusterHasExpectedNameAndStatus = (overrides = []) => {
+  const sbd = availableHanaCluster.sbd.map(
+    (sbd_item, i) => ({ ...sbd_item, ...overrides[i] })
+  );
   cy
-    .wrap(availableHanaCluster.sbd)
+    .wrap(sbd)
     .each((item) =>
       cy
         .get('.tn-sbd-details')
         .contains(item.deviceName)
         .children()
         .contains(item.status)
-    );
+    )
+};
 
 export const passingChecksUrlIsTheExpected = () =>
   validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);

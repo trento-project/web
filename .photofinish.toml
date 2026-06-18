@@ -265,6 +265,12 @@ files = [
     "./test/fixtures/scenarios/hana-cluster-details/4b67842f-ccf7-46a4-a344-9e918648b117_ha_cluster_discovery_angi_failover.json",
 ]
 
+[cluster-sbd-unhealthy]
+
+files = [
+    "./test/fixtures/scenarios/hana-cluster-details/9cd46919-5f19-59aa-993e-cf3736c71053_ha_cluster_discovery_sbd_unhealthy.json",
+]
+
 [cluster-state-idle]
 
 files = [
