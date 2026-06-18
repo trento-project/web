@@ -213,6 +213,9 @@ export const expectedClusterNameIsDisplayedInHeader = () =>
 export const expectedClusterHealthIsDisplayedInHeader = () =>
   basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
 
+export const criticalClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
+
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
   return cy.get(providerLabel).should('have.text', provider);

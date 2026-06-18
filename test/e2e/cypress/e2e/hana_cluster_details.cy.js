@@ -154,12 +154,15 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
 
+    after(() => hanaClusterDetailsPage.loadScenario('cluster-sbd-healthy'));
+
     it('should have SBD expected device name & status', () => {
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
     });
 
     it('should have SBD with unhealthy status after change', () => {
       hanaClusterDetailsPage.loadScenario('cluster-sbd-unhealthy');
+      hanaClusterDetailsPage.criticalClusterHealthIsDisplayedInHeader();
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([{}, { status: 'Unhealthy' }]);
     });
   });
