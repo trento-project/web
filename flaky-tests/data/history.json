@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-05T04:20:02Z",
-    "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
-    "run_id": "25357040669",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 14
-    },
-    "top_flaky_tests": [
-      {
-        "name": "UserForm::should save the user",
-        "score": 0.1901
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.04526
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-05T06:46:09Z",
     "commit": "647fea1a7ce07030327a11a64c7e83eebafbd620",
     "run_id": "25357857173",
@@ -6039,5 +6015,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-18T20:12:53Z",
+    "commit": "77ad8a953644889dfe9fe542947d1506921ec5d4",
+    "run_id": "27785441402",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
