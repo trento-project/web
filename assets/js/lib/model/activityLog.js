@@ -80,7 +80,7 @@ export const CLUSTER_REPLICATION_HEALTH_CHANGED =
   'cluster_replication_health_changed';
 export const CLUSTER_DISTRIBUTED_HEALTH_CHANGED =
   'cluster_distributed_health_changed';
-export const CLUSTER_SBD_HEALTH_CHANGED = "cluster_sbd_health_changed";
+export const CLUSTER_SBD_HEALTH_CHANGED = 'cluster_sbd_health_changed';
 export const CLUSTER_HEALTH_CHANGED = 'cluster_health_changed';
 export const CLUSTER_REGISTERED = 'cluster_registered';
 export const CLUSTER_RESTORED = 'cluster_restored';
