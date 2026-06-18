@@ -6555,7 +6555,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                          virtual_ip: nil
                        }
                      ],
-                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})],
+                     sbd_devices: [
+                       SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})
+                     ],
                      secondary_sync_state: "SOK",
                      sites: [
                        %HanaClusterSite{name: "WDF", sr_health_state: "4", state: "Primary"},
@@ -6787,7 +6789,9 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                          virtual_ip: "10.70.1.13"
                        }
                      ],
-                     sbd_devices: [SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})],
+                     sbd_devices: [
+                       SbdDevice.new!(%{device: "/dev/vdb", status: SbdDeviceStatus.healthy()})
+                     ],
                      secondary_sync_state: "SFAIL",
                      sites: [
                        %HanaClusterSite{name: "ROT", sr_health_state: "4", state: "Primary"},

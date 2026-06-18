@@ -1607,7 +1607,7 @@ defmodule Trento.ClusterTest do
           type: :ascs_ers,
           health_details: %AscsErsClusterHealthDetails{
             distributed_health: Health.passing(),
-            sbd_health: Health.passing(),
+            sbd_health: Health.passing()
           },
           details:
             build(:ascs_ers_cluster_details,
