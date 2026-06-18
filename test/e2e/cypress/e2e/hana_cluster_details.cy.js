@@ -163,7 +163,10 @@ context('HANA cluster details', () => {
     it('should have SBD with unhealthy status after change', () => {
       hanaClusterDetailsPage.loadScenario('cluster-sbd-unhealthy');
       hanaClusterDetailsPage.criticalClusterHealthIsDisplayedInHeader();
-      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([{}, { status: 'Unhealthy' }]);
+      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([
+        {},
+        { status: 'Unhealthy' },
+      ]);
     });
   });
 
@@ -316,7 +319,7 @@ context('HANA cluster details', () => {
     const CHECK_PACEMAKER = 'Pacemaker';
     const CHECK_SBD = 'SBD';
 
-    before(function() {
+    before(function () {
       if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 

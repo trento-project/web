@@ -440,18 +440,17 @@ export const expectedClusterStateIsDisplayed = (state) => {
 };
 
 export const sbdClusterHasExpectedNameAndStatus = (overrides = []) => {
-  const sbd = availableHanaCluster.sbd.map(
-    (sbd_item, i) => ({ ...sbd_item, ...overrides[i] })
+  const sbd = availableHanaCluster.sbd.map((sbd_item, i) => ({
+    ...sbd_item,
+    ...overrides[i],
+  }));
+  cy.wrap(sbd).each((item) =>
+    cy
+      .get('.tn-sbd-details')
+      .contains(item.deviceName)
+      .children()
+      .contains(item.status)
   );
-  cy
-    .wrap(sbd)
-    .each((item) =>
-      cy
-        .get('.tn-sbd-details')
-        .contains(item.deviceName)
-        .children()
-        .contains(item.status)
-    )
 };
 
 export const passingChecksUrlIsTheExpected = () =>
