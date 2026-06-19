@@ -107,13 +107,13 @@
 * Add basic AI provider/models configuration (#4127) @nelsonkopliku
 * Multi tier database start/stop operations (#4081) @arbulu89
 * Save system replication tier when the instance is stopped (#4103) @arbulu89
-* Improve database operation forbidden usage whe heartbeat is not passing (#4094) @arbulu89
+* Improve database operation forbidden usage when heartbeat is not passing (#4094) @arbulu89
 * Filesystem chart UI (#4095) @nelsonkopliku
 * Operations forbidden button based on heartbeat (#4085) @arbulu89
 * Operations heartbeat passing required (#4080) @arbulu89
 * Force to send cluster operation to host with passing heartbeat (#4078) @arbulu89
 * Expose filesystem usage metrics (#4079) @nelsonkopliku
-* Set default Unknown value to system replicaiton in cluster discovery (#4070) @arbulu89
+* Set default Unknown value to system replication in cluster discovery (#4070) @arbulu89
 * Prom query filesystem metrics (#4072) @nelsonkopliku
 * Consolidate http client usage in Prometheus API (#4064) @nelsonkopliku
 * Update prometheus references in local docker compose (#4054) @nelsonkopliku
@@ -153,7 +153,7 @@
 * Set late in the day scheduled execution and specify timezone for flaky tests jobs (#4308) @vicenteqa
 * [TRNT-4376] Align DB dependencies (#4290) @antgamdia
 * Turn off AI features (#4277) @nelsonkopliku
-* Addded a short version tag for OBS container image packaging (#4288) @skrech
+* Added a short version tag for OBS container image packaging (#4288) @skrech
 * [TRNT-4358] Add license headers linter (#4236) @antgamdia
 * [TRNT-4358] Update LICENSE to match Apache-2.0 verbatim text (#4240) @antgamdia
 * Fix storybook PLACES not found warning (#4268) @arbulu89
@@ -295,7 +295,7 @@
 * Bump minimatch from 3.1.2 to 3.1.5 in /assets (#4049) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Make prettier npm dev dependency explicit (#4053) @arbulu89
 * Remove unused eslint-prettier-cli (#4052) @arbulu89
-* Fix npm yaml dependency missmatch (#4051) @arbulu89
+* Fix npm yaml dependency mismatch (#4051) @arbulu89
 * Bump ajv from 6.12.6 to 6.14.0 in /test/e2e (#4038) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump chromaui/action from 15.0.0 to 15.2.0 (#4041) @[dependabot[bot]](https://github.com/apps/dependabot)
 * Bump qs from 6.14.1 to 6.14.2 in /test/e2e (#4033) @[dependabot[bot]](https://github.com/apps/dependabot)
