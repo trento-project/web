@@ -33,7 +33,7 @@ Accepted `opts`:
 # `run`
 
 ```elixir
-@spec run(Sagents.Agent.t(), String.t()) :: :ok | {:error, term()}
+@spec run(Sagents.Agent.t(), String.t(), keyword()) :: :ok | {:error, term()}
 ```
 
 Ensure the agent for `:agent_id` is running, subscribe the calling

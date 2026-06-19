@@ -15,15 +15,40 @@ a Mox mock without booting the real sagents stack.
 @callback add_message(String.t(), LangChain.Message.t()) :: :ok | {:error, term()}
 ```
 
+# `get_agent`
+
+```elixir
+@callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
+```
+
+# `get_info`
+
+```elixir
+@callback get_info(String.t()) :: %{state: Sagents.State.t()}
+```
+
 # `subscribe`
 
 ```elixir
 @callback subscribe(String.t()) :: :ok | {:error, term()}
 ```
 
+# `update_agent_and_state`
+
+```elixir
+@callback update_agent_and_state(String.t(), Sagents.Agent.t(), Sagents.State.t()) ::
+  :ok | {:error, term()}
+```
+
 # `add_message`
 
+# `get_agent`
+
+# `get_info`
+
 # `subscribe`
+
+# `update_agent_and_state`
 
 ---
 
