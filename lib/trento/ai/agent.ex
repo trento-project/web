@@ -24,6 +24,15 @@ defmodule Trento.AI.Agent do
 
   @doc """
   Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
+
+  Accepted `opts`:
+
+  - `:agent_id`, `:model`, `:scope` — required (see Sagents docs).
+  - `:tool_context` — optional map set verbatim on the Sagents agent's
+    `tool_context` field. Sagents propagates this into the per-call
+    `context.tool_context` map that tool function closures receive.
+    Used to forward request-scoped data (e.g. the websocket user's JWT)
+    to tools that need it, without polluting `:scope`.
   """
   @spec new!(keyword()) :: Sagents.Agent.t()
   def new!(opts) do
@@ -32,6 +41,7 @@ defmodule Trento.AI.Agent do
         agent_id: Keyword.fetch!(opts, :agent_id),
         model: Keyword.fetch!(opts, :model),
         scope: Keyword.fetch!(opts, :scope),
+        tool_context: Keyword.get(opts, :tool_context, %{}),
         base_system_prompt: load_base_system_prompt(),
         tools: ToolsRegistry.tools(),
         # see https://github.com/sagents-ai/sagents#provided-middleware

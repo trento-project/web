@@ -13,5 +13,5 @@ defmodule TrentoWeb.AI.ControllerToolSource do
   alias TrentoWeb.AI.{ControllerTool, McpRouteIndex}
 
   @impl true
-  def tools, do: Enum.map(McpRouteIndex.entries(), &ControllerTool.build/1)
+  def tools(_opts), do: Enum.map(McpRouteIndex.entries(), &ControllerTool.build/1)
 end
