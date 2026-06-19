@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-E8AB2D8D.js"></script>
+    <script defer src="dist/sidebar_items-D49C5C1E.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -188,6 +188,16 @@ Trento Web
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="Trento.AI.ControllerSpecs.html" translate="no">Trento.<wbr />AI.<wbr />ControllerSpecs</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Per-action AI-tool metadata macro. Sits next to <a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.ControllerSpecs.html#operation/2"><code class="inline">OpenApiSpex.ControllerSpecs.operation/2</code></a>
+in controllers and labels the immediately following public function as an AI tool.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="Trento.AI.LLMBuilder.html" translate="no">Trento.<wbr />AI.<wbr />LLMBuilder</a>
 
   </div>
@@ -202,6 +212,26 @@ Trento Web
   </div>
 
     <div class="summary-synopsis"><p>This module is responsible for managing the registry of available LLM providers and their models.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.AI.ToolSource.html" translate="no">Trento.<wbr />AI.<wbr />ToolSource</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Behaviour for modules that contribute AI assistant tools to
+<a href="Trento.AI.ToolsRegistry.html"><code class="inline">Trento.AI.ToolsRegistry</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.AI.ToolsRegistry.html" translate="no">Trento.<wbr />AI.<wbr />ToolsRegistry</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Aggregates AI assistant tools from every configured
+<a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a>.</p></div>
 
 </div>
 <div class="summary-row">
@@ -4257,6 +4287,47 @@ as controllers, views, channels and so on.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="TrentoWeb.AI.ControllerTool.html" translate="no">TrentoWeb.<wbr />AI.<wbr />ControllerTool</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Translates a <a href="TrentoWeb.AI.McpRouteIndex.Entry.html"><code class="inline">TrentoWeb.AI.McpRouteIndex.Entry</code></a> into a
+<code class="inline">%LangChain.Function{}</code> whose execution dispatches into the controller's
+real action by re-entering <a href="TrentoWeb.Endpoint.html#call/2"><code class="inline">TrentoWeb.Endpoint.call/2</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.AI.ControllerToolSource.html" translate="no">TrentoWeb.<wbr />AI.<wbr />ControllerToolSource</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> implementation that materialises a
+<a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html"><code class="inline">LangChain.Function</code></a> for every MCP-tagged controller route discovered
+by <a href="TrentoWeb.AI.McpRouteIndex.html"><code class="inline">TrentoWeb.AI.McpRouteIndex</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.AI.McpRouteIndex.html" translate="no">TrentoWeb.<wbr />AI.<wbr />McpRouteIndex</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Index of MCP-tagged controller routes, built on demand from the
+Phoenix router + OpenApiSpex operations.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="TrentoWeb.AI.McpRouteIndex.Entry.html" translate="no">TrentoWeb.<wbr />AI.<wbr />McpRouteIndex.<wbr />Entry</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>One catalog entry for <a href="TrentoWeb.AI.McpRouteIndex.html"><code class="inline">TrentoWeb.AI.McpRouteIndex</code></a>.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="TrentoWeb.AIAssistant.AgUi.html" translate="no">TrentoWeb.<wbr />AIAssistant.<wbr />AgUi</a>
 
   </div>
@@ -4271,15 +4342,6 @@ as controllers, views, channels and so on.</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Phoenix Channel for the AI Assistant.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="TrentoWeb.AIAssistantTools.html" translate="no">TrentoWeb.<wbr />AIAssistantTools</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>AI Assistant tools for querying Trento infrastructure resources.</p></div>
 
 </div>
 <div class="summary-row">

@@ -9,8 +9,11 @@ Trento.AI.Agent.Supervisor.md
 Trento.AI.Agent.md
 Trento.AI.ApplicationConfigLoader.md
 Trento.AI.Configurations.md
+Trento.AI.ControllerSpecs.md
 Trento.AI.LLMBuilder.md
 Trento.AI.LLMRegistry.md
+Trento.AI.ToolSource.md
+Trento.AI.ToolsRegistry.md
 Trento.AI.md
 Trento.Abilities.UsersAbilities.md
 Trento.Abilities.md
@@ -463,9 +466,12 @@ Trento.UserIdentities.md
 Trento.Users.Policy.md
 Trento.Users.md
 Trento.Vault.md
+TrentoWeb.AI.ControllerTool.md
+TrentoWeb.AI.ControllerToolSource.md
+TrentoWeb.AI.McpRouteIndex.Entry.md
+TrentoWeb.AI.McpRouteIndex.md
 TrentoWeb.AIAssistant.AgUi.md
 TrentoWeb.AIAssistantChannel.md
-TrentoWeb.AIAssistantTools.md
 TrentoWeb.ActivityLogChannel.md
 TrentoWeb.Auth.AccessToken.md
 TrentoWeb.Auth.ApiKey.md

@@ -10,8 +10,11 @@ Trento.AI.Agent.Supervisor.html
 Trento.AI.Agent.html
 Trento.AI.ApplicationConfigLoader.html
 Trento.AI.Configurations.html
+Trento.AI.ControllerSpecs.html
 Trento.AI.LLMBuilder.html
 Trento.AI.LLMRegistry.html
+Trento.AI.ToolSource.html
+Trento.AI.ToolsRegistry.html
 Trento.AI.html
 Trento.Abilities.UsersAbilities.html
 Trento.Abilities.html
@@ -464,9 +467,12 @@ Trento.UserIdentities.html
 Trento.Users.Policy.html
 Trento.Users.html
 Trento.Vault.html
+TrentoWeb.AI.ControllerTool.html
+TrentoWeb.AI.ControllerToolSource.html
+TrentoWeb.AI.McpRouteIndex.Entry.html
+TrentoWeb.AI.McpRouteIndex.html
 TrentoWeb.AIAssistant.AgUi.html
 TrentoWeb.AIAssistantChannel.html
-TrentoWeb.AIAssistantTools.html
 TrentoWeb.ActivityLogChannel.html
 TrentoWeb.Auth.AccessToken.html
 TrentoWeb.Auth.ApiKey.html
@@ -574,7 +580,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-F6316859.js
-dist/sidebar_items-E8AB2D8D.js
+dist/search_data-3C0413BC.js
+dist/sidebar_items-D49C5C1E.js
 index.html
 search.html

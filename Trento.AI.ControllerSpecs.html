@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Trento Web v3.1.1">
+
+
+    <title>Trento.AI.ControllerSpecs — Trento Web v3.1.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-D49C5C1E.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="api-reference.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
+
+      <div>
+        <a href="api-reference.html" class="sidebar-projectName" translate="no">
+Trento Web
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v3.1.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Trento.<wbr />AI.<wbr />ControllerSpecs</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.1)</small>
+
+    </h1>
+
+<a href="Trento.AI.ControllerSpecs.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/controller_specs.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Per-action AI-tool metadata macro. Sits next to <a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.ControllerSpecs.html#operation/2"><code class="inline">OpenApiSpex.ControllerSpecs.operation/2</code></a>
+in controllers and labels the immediately following public function as an AI tool.</p><pre><code class="makeup elixir" translate="no"><span class="n">operation</span><span class="w"> </span><span class="ss">:index</span><span class="p">,</span><span class="w">
+  </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3570382009-1">[</span><span class="s">&quot;User Management&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MCP&quot;</span><span class="p" data-group-id="3570382009-1">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the list of users in the system.&quot;</span><span class="w">
+
+</span><span class="n">ai_tool</span><span class="w"> </span><span class="ss">:users_list</span><span class="p">,</span><span class="w"> </span><span class="ss">display_text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;List users&quot;</span><span class="w">
+
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="3570382009-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="3570382009-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="n">...</span></code></pre><p>The first positional argument is the <strong>tool name</strong> as an atom; it becomes
+the LLM-facing identifier verbatim via <a href="https://hexdocs.pm/elixir/Atom.html#to_string/1"><code class="inline">Atom.to_string/1</code></a> (no casing
+transform). The controller action the override applies to is inferred
+from the immediately following public <code class="inline">def</code> via <code class="inline">@on_definition</code>.</p><p>Supported options:</p><ul><li><code class="inline">:display_text</code> — string. Overrides <code class="inline">operation.summary</code> as the human-friendly label
+rendered in the AG-UI tool-call card.</li></ul>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#ai_tool/2" data-no-tooltip="" translate="no">ai_tool(tool_name, opts \\ [])</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Label the next public <code class="inline">def</code> as an AI tool.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="ai_tool/2">
+
+    <span id="ai_tool/1"></span>
+
+  <div class="detail-header">
+    <a href="#ai_tool/2" class="detail-link" data-no-tooltip="" aria-label="Link to this macro">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">ai_tool(tool_name, opts \\ [])</h1>
+
+        <span class="note">(macro)</span>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/controller_specs.ex#L43" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+<p>Label the next public <code class="inline">def</code> as an AI tool.</p><p>The first argument is the tool name as an atom. Options:</p><ul><li><code class="inline">:display_text</code> — human-friendly label (defaults to <code class="inline">operation.summary</code>).</li></ul>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

@@ -16,10 +16,16 @@
 
 - [Trento.AI.Configurations](Trento.AI.Configurations.md): This module is responsible for managing user AI configurations.
 
+- [Trento.AI.ControllerSpecs](Trento.AI.ControllerSpecs.md): Per-action AI-tool metadata macro. Sits next to `OpenApiSpex.ControllerSpecs.operation/2`
+in controllers and labels the immediately following public function as an AI tool.
 - [Trento.AI.LLMBuilder](Trento.AI.LLMBuilder.md): Builds a LangChain chat-model struct for a given User.
 
 - [Trento.AI.LLMRegistry](Trento.AI.LLMRegistry.md): This module is responsible for managing the registry of available LLM providers and their models.
 
+- [Trento.AI.ToolSource](Trento.AI.ToolSource.md): Behaviour for modules that contribute AI assistant tools to
+`Trento.AI.ToolsRegistry`.
+- [Trento.AI.ToolsRegistry](Trento.AI.ToolsRegistry.md): Aggregates AI assistant tools from every configured
+`Trento.AI.ToolSource`.
 - [Trento.Abilities](Trento.Abilities.md): The Abilities context.
 
 - [Trento.Abilities.UsersAbilities](Trento.Abilities.UsersAbilities.md): Many to many table schema used to connect users and abilities.
@@ -790,10 +796,18 @@ for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.
 - Web
   - [TrentoWeb](TrentoWeb.md): The entrypoint for defining your web interface, such
 as controllers, views, channels and so on.
+  - [TrentoWeb.AI.ControllerTool](TrentoWeb.AI.ControllerTool.md): Translates a `TrentoWeb.AI.McpRouteIndex.Entry` into a
+`%LangChain.Function{}` whose execution dispatches into the controller's
+real action by re-entering `TrentoWeb.Endpoint.call/2`.
+  - [TrentoWeb.AI.ControllerToolSource](TrentoWeb.AI.ControllerToolSource.md): `Trento.AI.ToolSource` implementation that materialises a
+`LangChain.Function` for every MCP-tagged controller route discovered
+by `TrentoWeb.AI.McpRouteIndex`.
+
+  - [TrentoWeb.AI.McpRouteIndex](TrentoWeb.AI.McpRouteIndex.md): Index of MCP-tagged controller routes, built on demand from the
+Phoenix router + OpenApiSpex operations.
+  - [TrentoWeb.AI.McpRouteIndex.Entry](TrentoWeb.AI.McpRouteIndex.Entry.md): One catalog entry for `TrentoWeb.AI.McpRouteIndex`.
   - [TrentoWeb.AIAssistant.AgUi](TrentoWeb.AIAssistant.AgUi.md): AG-UI protocol emission helpers for `TrentoWeb.AIAssistantChannel`.
   - [TrentoWeb.AIAssistantChannel](TrentoWeb.AIAssistantChannel.md): Phoenix Channel for the AI Assistant.
-  - [TrentoWeb.AIAssistantTools](TrentoWeb.AIAssistantTools.md): AI Assistant tools for querying Trento infrastructure resources.
-
   - [TrentoWeb.ActivityLogChannel](TrentoWeb.ActivityLogChannel.md): Activity Log channel, each user is subscribed to this channel,
   - [TrentoWeb.Auth.AccessToken](TrentoWeb.Auth.AccessToken.md):   Jwt Token is the module responsible for creating a proper jwt access token.
   - [TrentoWeb.Auth.ApiKey](TrentoWeb.Auth.ApiKey.md): ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.
