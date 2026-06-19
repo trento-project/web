@@ -167,20 +167,16 @@ context('Activity Log page', () => {
     it('should select correct date filter when changing page', () => {
       const fromDate = '2024-08-14T10%3A21%3A00.000Z';
       const queryString = `?from_date=custom&from_date=${fromDate}`;
-      cy.intercept('GET', '/api/v1/activity_log*', (req) => {
-        if (req.query.from_date) req.alias = 'getActivityLogFrom';
-      });
+      activityLogPage.interceptActivityLogFromDateEndpoint();
       activityLogPage.visit(queryString);
       activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-      activityLogPage
-        .waitForRequest('getActivityLogFrom')
-        .then(({ response }) => {
-          activityLogPage.clickNextPageButton();
-          activityLogPage.waitForRequest('getActivityLogFrom');
-          activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-          const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
-          activityLogPage.validateUrl(expectedUrl);
-        });
+      activityLogPage.waitForActivityLogFromDateRequest().then(({ response }) => {
+        activityLogPage.clickNextPageButton();
+        activityLogPage.waitForActivityLogFromDateRequest();
+        activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
+        activityLogPage.validateUrl(expectedUrl);
+      });
     });
 
     it('should change items per page', () => {

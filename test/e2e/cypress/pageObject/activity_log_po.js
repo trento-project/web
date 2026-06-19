@@ -5,6 +5,7 @@ export * from './base_po';
 import * as basePage from './base_po';
 
 const activityLogEndpointAlias = 'activityLogRequest';
+const activityLogEndpointFromAlias = 'activityLogFromRequest';
 const activityLogEndpoint = '/api/v1/activity_log*';
 
 //Selectors
@@ -50,6 +51,11 @@ export const interceptActivityLogEndpoint = () =>
     })
     .as(activityLogEndpointAlias);
 
+export const interceptActivityLogFromDateEndpoint = () =>
+  cy.intercept('GET', activityLogEndpoint, (req) => {
+    if (req.query.from_date) req.alias = activityLogEndpointFromAlias;
+  });
+
 export const spyActivityLogRequest = () => {
   cy.clock();
   return cy.intercept(
@@ -60,6 +66,9 @@ export const spyActivityLogRequest = () => {
 
 export const waitForActivityLogRequest = () =>
   basePage.waitForRequest(activityLogEndpointAlias);
+
+export const waitForActivityLogFromDateRequest = () =>
+  basePage.waitForRequest(activityLogEndpointFromAlias);
 
 // UI Interactions
 export const clickFilterTypeButton = () =>
