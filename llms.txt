@@ -720,8 +720,6 @@ delegates to `Sagents.AgentsDynamicSupervisor`.
 
   - [Trento.Infrastructure.Prometheus](Trento.Infrastructure.Prometheus.md): Prometheus integration service
 
-  - [Trento.Infrastructure.Prometheus.Adapter.HttpClient](Trento.Infrastructure.Prometheus.Adapter.HttpClient.md): HTTP client behaviour for Prometheus API calls.
-
   - [Trento.Infrastructure.Prometheus.ChartIntegration](Trento.Infrastructure.Prometheus.ChartIntegration.md): ChartIntegration provides a mechanism for mapping prometheus query information to domain
 Chart time series objects
 
@@ -785,6 +783,13 @@ check supported values and validate possible values
   - [Trento.Support.Helpers.AbilitiesTestHelper](Trento.Support.Helpers.AbilitiesTestHelper.md): Helper functions to setup abilities.
   - [Trento.Support.Helpers.AlertingSettingsHelper](Trento.Support.Helpers.AlertingSettingsHelper.md): Test helper functions for alerting settings.
 
+  - [Trento.Support.HttpClient](Trento.Support.HttpClient.md): Shared HTTP client behaviour wrapping `HTTPoison`. The default implementation
+forwards to HTTPoison and injects secure SSL defaults (`verify_peer` with the
+system CA bundle); callers can override individual SSL keys by passing their
+own `:ssl` keyword. Tests substitute a Mox mock via config.
+
+  - [Trento.Support.HttpUtils](Trento.Support.HttpUtils.md): HTTP-related utilities shared across infrastructure adapters and the
+AI tool dispatchers.
   - [Trento.Support.IntermediateEvent](Trento.Support.IntermediateEvent.md): Represents an event that has been deserialized from the database, but not yet casted to its final type.
   - [Trento.Support.JsonbSerializer](Trento.Support.JsonbSerializer.md): Serialize to/from PostgreSQL's native `jsonb` format.
 Requires events to be defined by the `defevent` macro.

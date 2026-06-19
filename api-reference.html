@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-D49C5C1E.js"></script>
+    <script defer src="dist/sidebar_items-5191ECDA.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -3152,15 +3152,6 @@ Here is where the actual integration with the external system happens and releva
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="Trento.Infrastructure.Prometheus.Adapter.HttpClient.html" translate="no">Trento.<wbr />Infrastructure.<wbr />Prometheus.<wbr />Adapter.<wbr />HttpClient</a>
-
-  </div>
-
-    <div class="summary-synopsis"><p>HTTP client behaviour for Prometheus API calls.</p></div>
-
-</div>
-<div class="summary-row">
-  <div class="summary-signature">
     <a href="Trento.Infrastructure.Prometheus.ChartIntegration.html" translate="no">Trento.<wbr />Infrastructure.<wbr />Prometheus.<wbr />ChartIntegration</a>
 
   </div>
@@ -4136,6 +4127,28 @@ check supported values and validate possible values</p></div>
   </div>
 
     <div class="summary-synopsis"><p>Test helper functions for alerting settings.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Support.HttpClient.html" translate="no">Trento.<wbr />Support.<wbr />HttpClient</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Shared HTTP client behaviour wrapping <a href="https://hexdocs.pm/httpoison/2.2.3/HTTPoison.html"><code class="inline">HTTPoison</code></a>. The default implementation
+forwards to HTTPoison and injects secure SSL defaults (<code class="inline">verify_peer</code> with the
+system CA bundle); callers can override individual SSL keys by passing their
+own <code class="inline">:ssl</code> keyword. Tests substitute a Mox mock via config.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.Support.HttpUtils.html" translate="no">Trento.<wbr />Support.<wbr />HttpUtils</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>HTTP-related utilities shared across infrastructure adapters and the
+AI tool dispatchers.</p></div>
 
 </div>
 <div class="summary-row">

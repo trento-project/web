@@ -340,7 +340,6 @@ Trento.Infrastructure.Operations.AMQP.Consumer.md
 Trento.Infrastructure.Operations.AMQP.Processor.md
 Trento.Infrastructure.Operations.AMQP.Publisher.md
 Trento.Infrastructure.Operations.md
-Trento.Infrastructure.Prometheus.Adapter.HttpClient.md
 Trento.Infrastructure.Prometheus.ChartIntegration.md
 Trento.Infrastructure.Prometheus.Gen.md
 Trento.Infrastructure.Prometheus.MockPrometheusApi.md
@@ -451,6 +450,8 @@ Trento.Support.Event.md
 Trento.Support.EventHandlerFailureContext.md
 Trento.Support.Helpers.AbilitiesTestHelper.md
 Trento.Support.Helpers.AlertingSettingsHelper.md
+Trento.Support.HttpClient.md
+Trento.Support.HttpUtils.md
 Trento.Support.IntermediateEvent.md
 Trento.Support.JsonbSerializer.md
 Trento.Support.ListHelper.md
