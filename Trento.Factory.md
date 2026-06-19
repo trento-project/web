@@ -225,6 +225,8 @@ Raises a helpful error if no factory is defined.
 
 # `random_ai_provider_factory`
 
+# `random_langchain_model_factory`
+
 # `register_application_instance_command_factory`
 
 # `register_database_instance_command_factory`

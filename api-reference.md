@@ -8,9 +8,15 @@
 
 - [Trento.AI](Trento.AI.md): The `Trento.AI` module provides functions to interact with the AI features of the Trento application.
 
+- [Trento.AI.Agent](Trento.AI.Agent.md): Factory + lifecycle entrypoint for the Trento AI Assistant agent.
+- [Trento.AI.Agent.Server](Trento.AI.Agent.Server.md): Behaviour wrapping the subset of `Sagents.AgentServer` that
+`Trento.AI.Agent.run/2` calls into.
+- [Trento.AI.Agent.Supervisor](Trento.AI.Agent.Supervisor.md): Behaviour wrapping `Sagents.AgentsDynamicSupervisor.start_agent_sync/1`.
 - [Trento.AI.ApplicationConfigLoader](Trento.AI.ApplicationConfigLoader.md): This module is responsible for loading the AI application configuration and providing access to it.
 
 - [Trento.AI.Configurations](Trento.AI.Configurations.md): This module is responsible for managing user AI configurations.
+
+- [Trento.AI.LLMBuilder](Trento.AI.LLMBuilder.md): Builds a LangChain chat-model struct for a given User.
 
 - [Trento.AI.LLMRegistry](Trento.AI.LLMRegistry.md): This module is responsible for managing the registry of available LLM providers and their models.
 
@@ -654,6 +660,12 @@ Here is where the actual integration with the external system happens and releva
   - [Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler](Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.md): This module is responsible for triggering the roll-up of an aggregate.
 
 - Infrastructure
+  - [Trento.Infrastructure.AI.SagentsAgentServer](Trento.Infrastructure.AI.SagentsAgentServer.md): Production implementation of `Trento.AI.Agent.Server` —
+delegates to `Sagents.AgentServer`.
+
+  - [Trento.Infrastructure.AI.SagentsDynamicSupervisor](Trento.Infrastructure.AI.SagentsDynamicSupervisor.md): Production implementation of `Trento.AI.Agent.Supervisor` —
+delegates to `Sagents.AgentsDynamicSupervisor`.
+
   - [Trento.Infrastructure.Alerting.Alerting](Trento.Infrastructure.Alerting.Alerting.md): Provides a set of functions of Alerting related usecases.
 
   - [Trento.Infrastructure.Catalog.AMQP.Consumer](Trento.Infrastructure.Catalog.AMQP.Consumer.md): AMQP catalog consumer.
@@ -778,6 +790,10 @@ for data mapping and validation by wrapping Ecto.Schema and Ecto.Changeset.
 - Web
   - [TrentoWeb](TrentoWeb.md): The entrypoint for defining your web interface, such
 as controllers, views, channels and so on.
+  - [TrentoWeb.AIAssistant.AgUi](TrentoWeb.AIAssistant.AgUi.md): AG-UI protocol emission helpers for `TrentoWeb.AIAssistantChannel`.
+  - [TrentoWeb.AIAssistantChannel](TrentoWeb.AIAssistantChannel.md): Phoenix Channel for the AI Assistant.
+  - [TrentoWeb.AIAssistantTools](TrentoWeb.AIAssistantTools.md): AI Assistant tools for querying Trento infrastructure resources.
+
   - [TrentoWeb.ActivityLogChannel](TrentoWeb.ActivityLogChannel.md): Activity Log channel, each user is subscribed to this channel,
   - [TrentoWeb.Auth.AccessToken](TrentoWeb.Auth.AccessToken.md):   Jwt Token is the module responsible for creating a proper jwt access token.
   - [TrentoWeb.Auth.ApiKey](TrentoWeb.Auth.ApiKey.md): ApiKey is the module responsible for creating a proper jwt api token used for accessing the api token protected resource.

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Trento Web v3.1.1">
+
+
+    <title>TrentoWeb.AIAssistantChannel — Trento Web v3.1.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-E8AB2D8D.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="api-reference.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
+
+      <div>
+        <a href="api-reference.html" class="sidebar-projectName" translate="no">
+Trento Web
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v3.1.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">TrentoWeb.<wbr />AIAssistantChannel</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.1)</small>
+
+    </h1>
+
+<a href="TrentoWeb.AIAssistantChannel.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/channels/ai_assistant_channel.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Phoenix Channel for the AI Assistant.</p><p>Bridges the React assistant-ui client (AG-UI protocol over WebSocket) to a
+<a href="https://hexdocs.pm/sagents/0.7.0/Sagents.AgentServer.html"><code class="inline">Sagents.AgentServer</code></a> keyed on the JS-supplied <code class="inline">thread_id</code>. State lives in
+the AgentServer until inactivity timeout.</p><p>AG-UI wire emission lives in <a href="TrentoWeb.AIAssistant.AgUi.html"><code class="inline">TrentoWeb.AIAssistant.AgUi</code></a>.</p><h2 id="module-socket-assigns" class="section-heading"><a href="#module-socket-assigns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Socket assigns</span></h2><p>The channel keeps a small set of process-local assigns to track the
+current run. All are scoped to one channel process — no DB persistence.</p><table><thead><tr><th style="text-align: left;">Assign</th><th style="text-align: left;">Type</th><th style="text-align: left;">Lifetime</th><th style="text-align: left;">Why</th></tr></thead><tbody><tr><td style="text-align: left;"><code class="inline">:current_user_id</code></td><td style="text-align: left;">integer</td><td style="text-align: left;">from <code class="inline">UserSocket.connect</code></td><td style="text-align: left;">auth + identifies the authenticated user</td></tr><tr><td style="text-align: left;"><code class="inline">:current_scope</code></td><td style="text-align: left;"><code class="inline">%Trento.Users.User{id: id}</code></td><td style="text-align: left;">from <code class="inline">join/3</code></td><td style="text-align: left;">passed to <code class="inline">Sagents.Agent.new!</code> as <code class="inline">:scope</code> so tool callbacks see <code class="inline">context.scope.id</code></td></tr><tr><td style="text-align: left;"><code class="inline">:loading</code></td><td style="text-align: left;">boolean</td><td style="text-align: left;">toggled per run</td><td style="text-align: left;">double-send guard — prevents race conditions</td></tr><tr><td style="text-align: left;"><code class="inline">:current_run_id</code></td><td style="text-align: left;">UUID string</td><td style="text-align: left;">set at each <code class="inline">send_message</code></td><td style="text-align: left;">echoed in <code class="inline">RUN_STARTED</code> + <code class="inline">RUN_FINISHED</code> AG-UI events for client-side correlation</td></tr><tr><td style="text-align: left;"><code class="inline">:current_thread_id</code></td><td style="text-align: left;">UUID string</td><td style="text-align: left;">set at each <code class="inline">send_message</code></td><td style="text-align: left;">used as the sagents <code class="inline">agent_id</code> + echoed in run events</td></tr><tr><td style="text-align: left;"><code class="inline">:message_id</code></td><td style="text-align: left;">UUID string</td><td style="text-align: left;">set per run</td><td style="text-align: left;">identifies the assistant text-message lifecycle (<code class="inline">TEXT_MESSAGE_*</code>); also used as <code class="inline">parent_message_id</code> for <code class="inline">TOOL_CALL_START</code>. Currently equals <code class="inline">:current_run_id</code> but kept separate so future multi-message-per-run flows</td></tr><tr><td style="text-align: left;"><code class="inline">:message_started</code></td><td style="text-align: left;">boolean</td><td style="text-align: left;">per run</td><td style="text-align: left;">tracks whether <code class="inline">TEXT_MESSAGE_START</code> has been emitted — drives &quot;skip duplicate START on subsequent deltas&quot; + &quot;skip orphan END at :idle when no text streamed&quot;</td></tr><tr><td style="text-align: left;"><code class="inline">:run_has_started</code></td><td style="text-align: left;">boolean</td><td style="text-align: left;">per run</td><td style="text-align: left;">stale-<code class="inline">:idle</code> guard. <code class="inline">Sagents.AgentServer.init/1</code> broadcasts <code class="inline">{:status_changed, :idle, nil}</code> at boot and on Horde <code class="inline">node_transferred</code>; this flag is only set on the <code class="inline">:running</code> event for THIS run, so we ignore stray initial idles</td></tr></tbody></table><h3 id="module-mutation-surfaces" class="section-heading"><a href="#module-mutation-surfaces" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Mutation surfaces</span></h3><p>All run-state mutations go through three private helpers:</p><ul><li><code class="inline">stash_run_ids/3</code> — at the head of <code class="inline">handle_in(&quot;send_message&quot;, ...)</code>, before validation.</li><li><code class="inline">activate_run/2</code> — once the agent is alive + subscribed + first message added; marks <code class="inline">:loading: true</code> and zeros per-run booleans.</li><li><code class="inline">reset_run/1</code> — on <code class="inline">:idle</code> (success), <code class="inline">:error</code>, and <code class="inline">run_agent</code> failure; clears per-run booleans and <code class="inline">:loading</code>. Leaves the IDs alone — next <code class="inline">send_message</code> overwrites them.</li></ul><p><code class="inline">:running</code> and <code class="inline">:llm_deltas</code> perform single-flag flips inline
+(<code class="inline">run_has_started</code>, <code class="inline">message_started</code>).</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#child_spec/1" data-no-tooltip="" translate="no">child_spec(init_arg)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#start_link/1" data-no-tooltip="" translate="no">start_link(triplet)</a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="child_spec/1">
+
+  <div class="detail-header">
+    <a href="#child_spec/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">child_spec(init_arg)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/channels/ai_assistant_channel.ex#L42" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="start_link/1">
+
+  <div class="detail-header">
+    <a href="#start_link/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">start_link(triplet)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/channels/ai_assistant_channel.ex#L42" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>
