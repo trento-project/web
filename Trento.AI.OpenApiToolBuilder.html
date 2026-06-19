@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="project" content="Trento Web v3.1.1">
+
+
+    <title>Trento.AI.OpenApiToolBuilder — Trento Web v3.1.1</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+
+    <script defer src="dist/sidebar_items-C66E57AE.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-Y2MUTVIN.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+        <a href="api-reference.html" class="sidebar-projectImage">
+          <img src="assets/logo.svg" alt="Trento Web" />
+        </a>
+
+      <div>
+        <a href="api-reference.html" class="sidebar-projectName" translate="no">
+Trento Web
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v3.1.1
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras="Info"></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-module" id="main" data-type="modules">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Trento Web</span>
+            <div class="search-input-wrapper">
+              <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+              <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+                <i class="ri-close-line ri-lg" title="Cancel search"></i>
+              </button>
+            </div>
+          </label>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <div class="engine-selector" data-multiple="false">
+          <button type="button" class="engine-button" aria-label="Select search engine" aria-haspopup="true" aria-expanded="false">
+            <i class="ri-search-2-line" aria-hidden="true"></i>
+            <span class="engine-name">Default</span>
+            <i class="ri-arrow-down-s-line" aria-hidden="true"></i>
+          </button>
+          <div class="engine-dropdown" hidden role="menu">
+
+              <button type="button"
+                      class="engine-option"
+                      data-engine-url="search.html?q="
+                      role="menuitemradio"
+                      aria-checked="true">
+                <span class="name">Default</span>
+                <span class="help">In-browser search</span>
+              </button>
+
+          </div>
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>
+      <span translate="no">Trento.<wbr />AI.<wbr />OpenApiToolBuilder</span> 
+      <small class="app-vsn" translate="no">(Trento Web v3.1.1)</small>
+
+    </h1>
+
+<a href="Trento.AI.OpenApiToolBuilder.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
+  <i class="ri-markdown-line" aria-hidden="true"></i>
+  <span class="sr-only">Copy Markdown</span>
+</a>
+
+
+
+      <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L4" title="View Source" class="icon-action" rel="help nofollow">
+        <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        <span class="sr-only">View Source</span>
+      </a>
+
+  </div>
+
+
+    <section id="moduledoc">
+<p>Transport-agnostic helpers shared by every <a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> that
+derives <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html"><code class="inline">LangChain.Function</code></a>s from <code class="inline">%OpenApiSpex.Operation{}</code> structs.</p><p>Two distinct concerns live here:</p><ol><li><p><strong>Schema synthesis</strong> — <a href="#description/1"><code class="inline">description/1</code></a> and <a href="#parameters_schema/1"><code class="inline">parameters_schema/1</code></a>
+produce the metadata <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a> consumes. The
+resulting <code class="inline">parameters_schema</code> is the JSON-Schema map a provider
+adapter (Anthropic, Google AI, OpenAI) eventually forwards to the
+model.</p></li><li><p><strong>Arg routing</strong> — <a href="#param_locations/1"><code class="inline">param_locations/1</code></a>, <a href="#split_args/2"><code class="inline">split_args/2</code></a>,
+<a href="#substitute_path/2"><code class="inline">substitute_path/2</code></a>, <a href="#append_query/2"><code class="inline">append_query/2</code></a> turn the LLM-supplied
+argument map into a <code class="inline">{path, body}</code> pair, respecting each parameter's
+declared <code class="inline">in:</code> location.</p></li></ol><p>Both <a href="TrentoWeb.AI.ControllerTool.html"><code class="inline">TrentoWeb.AI.ControllerTool</code></a> (local Plug.Test dispatch) and
+<code class="inline">Trento.AI.RemoteHttpTool</code> (remote HTTP dispatch) consume these helpers,
+so the OpenAPI surface drives both transports identically. The only
+thing that differs is how the resolved request is actually executed.</p>
+    </section>
+
+</div>
+
+  <section id="summary" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#summary">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Summary</span>
+    </h2>
+<div class="summary-functions summary">
+  <h3>
+    <a href="#functions">Functions</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#append_query/2" data-no-tooltip="" translate="no">append_query(path, query)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Appends a <code class="inline">?k=v&amp;...</code> query string to <code class="inline">path</code>. Array values explode into
+repeated keys, matching OpenAPI 3 <code class="inline">style: form, explode: true</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#description/1" data-no-tooltip="" translate="no">description(arg1)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Concatenates <code class="inline">summary</code> + <code class="inline">description</code> of an <code class="inline">%Operation{}</code> into the
+human-readable tool description shown to the LLM.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#param_locations/1" data-no-tooltip="" translate="no">param_locations(arg1)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Map of parameter name (string) → declared <code class="inline">:in</code> location atom
+(<code class="inline">:path | :query | :header | :cookie</code>) for an <code class="inline">%Operation{}</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#parameters_schema/1" data-no-tooltip="" translate="no">parameters_schema(operation)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#split_args/2" data-no-tooltip="" translate="no">split_args(locations, tool_args)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Splits the LLM-supplied <code class="inline">tool_args</code> map into <code class="inline">{path, query, body}</code>
+according to each key's declared <code class="inline">:in</code> location. Unknown keys (and any
+non-<code class="inline">:path</code>/<code class="inline">:query</code> locations like <code class="inline">:header</code> or <code class="inline">:cookie</code>) land in the
+body bucket.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#substitute_path/2" data-no-tooltip="" translate="no">substitute_path(path_template, path_args)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Substitutes <code class="inline">:placeholder</code> (Phoenix-style) and <code class="inline">{placeholder}</code>
+(OpenAPI-style) segments in the path template with URI-encoded values
+from <code class="inline">path_args</code>.</p></div>
+
+    </div>
+
+</div>
+
+  </section>
+
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="append_query/2">
+
+  <div class="detail-header">
+    <a href="#append_query/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">append_query(path, query)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L128" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> append_query(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Appends a <code class="inline">?k=v&amp;...</code> query string to <code class="inline">path</code>. Array values explode into
+repeated keys, matching OpenAPI 3 <code class="inline">style: form, explode: true</code>.</p>
+  </section>
+</section>
+<section class="detail" id="description/1">
+
+  <div class="detail-header">
+    <a href="#description/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">description(arg1)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L35" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> description(<a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.Operation.html#t:t/0">OpenApiSpex.Operation.t</a>() | nil) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Concatenates <code class="inline">summary</code> + <code class="inline">description</code> of an <code class="inline">%Operation{}</code> into the
+human-readable tool description shown to the LLM.</p>
+  </section>
+</section>
+<section class="detail" id="param_locations/1">
+
+  <div class="detail-header">
+    <a href="#param_locations/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">param_locations(arg1)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L76" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> param_locations(<a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.Operation.html#t:t/0">OpenApiSpex.Operation.t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: %{
+  required(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()
+}</pre>
+
+      </div>
+
+<p>Map of parameter name (string) → declared <code class="inline">:in</code> location atom
+(<code class="inline">:path | :query | :header | :cookie</code>) for an <code class="inline">%Operation{}</code>.</p>
+  </section>
+</section>
+<section class="detail" id="parameters_schema/1">
+
+  <div class="detail-header">
+    <a href="#parameters_schema/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">parameters_schema(operation)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L53" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> parameters_schema(<a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.Operation.html#t:t/0">OpenApiSpex.Operation.t</a>() | <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()</pre>
+
+      </div>
+
+<p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p><p>String-keyed throughout to match LangChain convention and the
+<code class="inline">Map.put_new(schema, &quot;additionalProperties&quot;, false)</code> behaviour of
+<code class="inline">ChatAnthropic.get_parameters/1</code>. The <code class="inline">&quot;required&quot;</code> key is omitted when
+empty so parameterless tools pass <code class="inline">ChatGoogleAI.for_api/1</code>'s exact-match
+deletion check.</p>
+  </section>
+</section>
+<section class="detail" id="split_args/2">
+
+  <div class="detail-header">
+    <a href="#split_args/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">split_args(locations, tool_args)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L91" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> split_args(%{required(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) =&gt; <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">atom</a>()}, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: {<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}</pre>
+
+      </div>
+
+<p>Splits the LLM-supplied <code class="inline">tool_args</code> map into <code class="inline">{path, query, body}</code>
+according to each key's declared <code class="inline">:in</code> location. Unknown keys (and any
+non-<code class="inline">:path</code>/<code class="inline">:query</code> locations like <code class="inline">:header</code> or <code class="inline">:cookie</code>) land in the
+body bucket.</p>
+  </section>
+</section>
+<section class="detail" id="substitute_path/2">
+
+  <div class="detail-header">
+    <a href="#substitute_path/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">substitute_path(path_template, path_args)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/open_api_tool_builder.ex#L113" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> substitute_path(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+
+      </div>
+
+<p>Substitutes <code class="inline">:placeholder</code> (Phoenix-style) and <code class="inline">{placeholder}</code>
+(OpenAPI-style) segments in the path template with URI-encoded values
+from <code class="inline">path_args</code>.</p><p>Phoenix routes carry <code class="inline">:id</code>-style templates; OpenAPI specs carry
+<code class="inline">{id}</code>-style templates. Supporting both lets the same helper drive both
+local controller routes and remote OpenAPI-described endpoints.</p>
+  </section>
+</section>
+
+    </div>
+  </section>
+
+    <footer class="footer">
+
+        <p>
+
+          <span class="line">
+            <button class="a-main footer-button display-quick-switch" title="Go to package docs">
+              Go to package docs
+            </button>
+
+              <a href="llms.txt" target="_blank">
+                View llms.txt
+              </a>
+
+
+              <a href="Trento Web.epub">
+                Download ePub version
+              </a>
+
+          </span>
+        </p>
+
+        <p class="built-using">
+          Built using
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+
+            <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+        </p>
+
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>

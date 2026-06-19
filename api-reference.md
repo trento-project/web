@@ -22,6 +22,8 @@ in controllers and labels the immediately following public function as an AI too
 
 - [Trento.AI.LLMRegistry](Trento.AI.LLMRegistry.md): This module is responsible for managing the registry of available LLM providers and their models.
 
+- [Trento.AI.OpenApiToolBuilder](Trento.AI.OpenApiToolBuilder.md): Transport-agnostic helpers shared by every `Trento.AI.ToolSource` that
+derives `LangChain.Function`s from `%OpenApiSpex.Operation{}` structs.
 - [Trento.AI.ToolSource](Trento.AI.ToolSource.md): Behaviour for modules that contribute AI assistant tools to
 `Trento.AI.ToolsRegistry`.
 - [Trento.AI.ToolsRegistry](Trento.AI.ToolsRegistry.md): Aggregates AI assistant tools from every configured

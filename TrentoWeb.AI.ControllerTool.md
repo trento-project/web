@@ -25,16 +25,13 @@ hydrates the credentials map into a `%Trento.Users.User{}`, then
 against the loaded user. ControllerTool itself owns no auth logic.
 
 Args are routed by the operation's declared `:in` field
-(`:path` / `:query` / body) via `param_locations/1` + `split_args/2`.
+(`:path` / `:query` / body) via `Trento.AI.OpenApiToolBuilder`.
 Query-tagged args are appended to the request URL, not passed via
 `Plug.Test.conn/3`'s `params_or_body` argument — that argument is a
 single bucket routed by verb (GET → `query_string`, non-GET →
 `body_params`) and cannot carry both query and body simultaneously.
 Appending the query string to the URL is the only mechanism that
-supports a non-GET endpoint with `:in => :query` parameters. The
-current Trento MCP catalog is GET-only for query-tagged parameters,
-but the routing supports any verb per the OpenAPI 3.x spec
-(`PathItem` allows query parameters on any operation method).
+supports a non-GET endpoint with `:in => :query` parameters.
 
 # `build`
 

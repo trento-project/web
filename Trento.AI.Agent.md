@@ -21,6 +21,15 @@ want to inspect the configured agent.
 
 Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
 
+Accepted `opts`:
+
+- `:agent_id`, `:model`, `:scope` — required (see Sagents docs).
+- `:tool_context` — optional map set verbatim on the Sagents agent's
+  `tool_context` field. Sagents propagates this into the per-call
+  `context.tool_context` map that tool function closures receive.
+  Used to forward request-scoped data (e.g. the websocket user's JWT)
+  to tools that need it, without polluting `:scope`.
+
 # `run`
 
 ```elixir

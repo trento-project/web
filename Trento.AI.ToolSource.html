@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-5191ECDA.js"></script>
+    <script defer src="dist/sidebar_items-C66E57AE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -121,8 +121,11 @@ Trento Web
 <p>Behaviour for modules that contribute AI assistant tools to
 <a href="Trento.AI.ToolsRegistry.html"><code class="inline">Trento.AI.ToolsRegistry</code></a>.</p><p>A source returns a list of ready-to-use <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html"><code class="inline">LangChain.Function</code></a> structs.
 How those functions are produced is entirely up to the implementation
-(controller-derived, native, MCP remote, ...).</p><p>Sources are wired in via the <code class="inline">:tool_sources</code> key under
-<code class="inline">config :trento, :ai, ...</code> and aggregated at call time.</p>
+(controller-derived, remote-OpenAPI, MCP remote, ...).</p><p>Sources are wired in via the <code class="inline">:tool_sources</code> key under
+<code class="inline">config :trento, :ai, ...</code>. Each entry is either a bare module
+<code class="inline">MyToolSource</code> (normalised to <code class="inline">{MyToolSource, []}</code>) or a <code class="inline">{module, opts}</code>
+tuple</p><p>Implementations must export <code class="inline">tools/1</code>. Sources that don't need
+configuration match the argument with <code class="inline">_opts</code>.</p>
     </section>
 
 </div>
@@ -141,7 +144,7 @@ How those functions are produced is entirely up to the implementation
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#c:tools/0" data-no-tooltip="" translate="no">tools()</a>
+        <a href="#c:tools/1" data-no-tooltip="" translate="no">tools(opts)</a>
 
       </div>
 
@@ -161,17 +164,17 @@ How those functions are produced is entirely up to the implementation
     </h2>
 
     <div class="callbacks-list">
-<section class="detail" id="c:tools/0">
+<section class="detail" id="c:tools/1">
 
   <div class="detail-header">
-    <a href="#c:tools/0" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+    <a href="#c:tools/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">tools()</h1>
+      <h1 class="signature" translate="no">tools(opts)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/tool_source.ex#L17" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/tool_source.ex#L22" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -182,7 +185,7 @@ How those functions are produced is entirely up to the implementation
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> tools() :: [<a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()]</pre>
+          <pre translate="no"><span class="attribute">@callback</span> tools(opts :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">keyword</a>()) :: [<a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()]</pre>
 
       </div>
 

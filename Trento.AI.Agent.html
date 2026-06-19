@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-5191ECDA.js"></script>
+    <script defer src="dist/sidebar_items-C66E57AE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -187,7 +187,7 @@ or the first <code class="inline">{:error, reason}</code> from the start/subscri
       <h1 class="signature" translate="no">new!(opts)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L29" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L38" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -202,7 +202,11 @@ or the first <code class="inline">{:error, reason}</code> from the start/subscri
 
       </div>
 
-<p>Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.</p>
+<p>Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.</p><p>Accepted <code class="inline">opts</code>:</p><ul><li><code class="inline">:agent_id</code>, <code class="inline">:model</code>, <code class="inline">:scope</code> — required (see Sagents docs).</li><li><code class="inline">:tool_context</code> — optional map set verbatim on the Sagents agent's
+<code class="inline">tool_context</code> field. Sagents propagates this into the per-call
+<code class="inline">context.tool_context</code> map that tool function closures receive.
+Used to forward request-scoped data (e.g. the websocket user's JWT)
+to tools that need it, without polluting <code class="inline">:scope</code>.</li></ul>
   </section>
 </section>
 <section class="detail" id="run/2">
@@ -215,7 +219,7 @@ or the first <code class="inline">{:error, reason}</code> from the start/subscri
       <h1 class="signature" translate="no">run(agent, prompt)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L57" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L67" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

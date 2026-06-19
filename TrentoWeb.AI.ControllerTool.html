@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-5191ECDA.js"></script>
+    <script defer src="dist/sidebar_items-C66E57AE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -136,16 +136,13 @@ chain runs exactly as for a real HTTP request:
 hydrates the credentials map into a <code class="inline">%Trento.Users.User{}</code>, then
 <a href="https://hexdocs.pm/bodyguard/2.4.3/Bodyguard.Plug.Authorize.html"><code class="inline">Bodyguard.Plug.Authorize</code></a> / <code class="inline">OperationsPolicyPlug</code> authorise
 against the loaded user. ControllerTool itself owns no auth logic.</p><p>Args are routed by the operation's declared <code class="inline">:in</code> field
-(<code class="inline">:path</code> / <code class="inline">:query</code> / body) via <code class="inline">param_locations/1</code> + <code class="inline">split_args/2</code>.
+(<code class="inline">:path</code> / <code class="inline">:query</code> / body) via <a href="Trento.AI.OpenApiToolBuilder.html"><code class="inline">Trento.AI.OpenApiToolBuilder</code></a>.
 Query-tagged args are appended to the request URL, not passed via
 <a href="https://hexdocs.pm/plug/1.19.2/Plug.Test.html#conn/3"><code class="inline">Plug.Test.conn/3</code></a>'s <code class="inline">params_or_body</code> argument — that argument is a
 single bucket routed by verb (GET → <code class="inline">query_string</code>, non-GET →
 <code class="inline">body_params</code>) and cannot carry both query and body simultaneously.
 Appending the query string to the URL is the only mechanism that
-supports a non-GET endpoint with <code class="inline">:in =&gt; :query</code> parameters. The
-current Trento MCP catalog is GET-only for query-tagged parameters,
-but the routing supports any verb per the OpenAPI 3.x spec
-(<code class="inline">PathItem</code> allows query parameters on any operation method).</p>
+supports a non-GET endpoint with <code class="inline">:in =&gt; :query</code> parameters.</p>
     </section>
 
 </div>
@@ -196,7 +193,7 @@ but the routing supports any verb per the OpenAPI 3.x spec
       <h1 class="signature" translate="no">build(entry)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/ai/controller_tool.ex#L53" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento_web/ai/controller_tool.ex#L50" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
