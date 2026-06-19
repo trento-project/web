@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-06T04:42:32Z",
-    "commit": "7832496cee58abd9dda40526511c3fca6297c14e",
-    "run_id": "25416335393",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1160
-      },
-      {
-        "name": "ClustersList component › filtering::should put the filters values in the query string when filters are selected",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-06T07:22:56Z",
     "commit": "7832496cee58abd9dda40526511c3fca6297c14e",
     "run_id": "25416958682",
@@ -6006,6 +5982,22 @@
       },
       {
         "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-19T19:36:04Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27844239559",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
         "score": 0.05001
       }
     ]
