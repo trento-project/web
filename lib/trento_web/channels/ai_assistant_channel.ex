@@ -49,29 +49,71 @@ defmodule TrentoWeb.AIAssistantChannel do
   alias Trento.AI.LLMBuilder
   alias Trento.Users.User
   alias TrentoWeb.AIAssistant.AgUi
+  alias TrentoWeb.Auth.AccessToken
 
   @impl true
   def join(
         "ai_assistant:" <> user_id,
-        _session,
+        %{"access_token" => token},
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
-    case {AI.enabled?(), allowed?(user_id, current_user_id)} do
-      {false, _} ->
-        {:error, :ai_assistant_disabled}
-
-      {_, false} ->
-        {:error, :unauthorized}
-
-      {true, true} ->
-        {:ok,
-         socket
-         |> assign(:current_scope, %User{id: current_user_id})
-         |> assign(:loading, false)}
+    with :ok <- check_ai_enabled(),
+         :ok <- check_socket_and_channel_user_match(user_id, current_user_id),
+         :ok <- validate_access_token(token, current_user_id) do
+      {:ok,
+       socket
+       |> assign(:access_token, token)
+       |> assign(:current_scope, %User{id: current_user_id})
+       |> assign(:loading, false)}
     end
   end
 
   def join("ai_assistant:" <> _user_id, _payload, _socket), do: {:error, :user_not_logged}
+
+  @impl true
+  def handle_in(
+        "send_message",
+        %{
+          "message" => prompt,
+          "run_id" => run_id,
+          "thread_id" => thread_id,
+          "access_token" => token
+        },
+        %{assigns: %{current_user_id: current_user_id}} = socket
+      )
+      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id) do
+    case validate_access_token(token, current_user_id) do
+      :ok ->
+        socket
+        |> assign(:access_token, token)
+        |> handle_incoming_prompt(String.trim(prompt), run_id, thread_id)
+
+      {:error, _} = error ->
+        {:reply, error, socket}
+    end
+  end
+
+  def handle_in("send_message", payload, socket) do
+    payload
+    |> redact_payload()
+    |> then(&Logger.warning("Received invalid send_message payload: #{inspect(&1)}"))
+
+    {:reply, {:error, :invalid_payload}, socket}
+  end
+
+  defp check_ai_enabled do
+    case AI.enabled?() do
+      true -> :ok
+      false -> {:error, :ai_assistant_disabled}
+    end
+  end
+
+  defp check_socket_and_channel_user_match(user_id, current_user_id) do
+    case allowed?(user_id, current_user_id) do
+      true -> :ok
+      false -> {:error, :unauthorized}
+    end
+  end
 
   defp allowed?(user_id, current_user_id) do
     case Integer.parse(user_id) do
@@ -79,23 +121,16 @@ defmodule TrentoWeb.AIAssistantChannel do
         id == current_user_id
 
       _ ->
-        Logger.warning("Invalid user_id in topic: #{user_id}")
+        Logger.warning("Invalid user_id in AI Assistant Channel topic: #{user_id}")
         false
     end
   end
 
-  @impl true
-  def handle_in(
-        "send_message",
-        %{"message" => prompt, "run_id" => run_id, "thread_id" => thread_id},
-        socket
-      )
-      when is_binary(prompt) and is_binary(run_id) and is_binary(thread_id),
-      do: handle_incoming_prompt(socket, String.trim(prompt), run_id, thread_id)
-
-  def handle_in("send_message", payload, socket) do
-    Logger.warning("Invalid send_message payload: #{inspect(payload)}")
-    {:reply, {:error, :invalid_payload}, socket}
+  defp validate_access_token(token, current_user_id) do
+    case AccessToken.verify_and_validate(token) do
+      {:ok, %{"sub" => ^current_user_id}} -> :ok
+      _ -> {:error, :unauthorized}
+    end
   end
 
   defp handle_incoming_prompt(
@@ -133,12 +168,13 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp run_agent(
          %{
-           assigns:
-             %{
-               current_run_id: run_id,
-               current_thread_id: thread_id,
-               current_scope: scope
-             } = assigns
+           assigns: %{
+             current_run_id: run_id,
+             current_thread_id: thread_id,
+             current_scope: scope,
+             access_token: access_token,
+             request_origin: request_origin
+           }
          } = socket,
          model_config,
          prompt
@@ -148,12 +184,15 @@ defmodule TrentoWeb.AIAssistantChannel do
       model: model_config,
       scope: scope,
       tool_context: %{
-        access_token: Map.get(assigns, :access_token),
-        request_origin: Map.get(assigns, :request_origin)
+        access_token: access_token,
+        request_origin: request_origin
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(prompt)
+    |> TrentoAIAgent.run(
+      prompt,
+      refresh_when: &access_token_changed/2
+    )
     |> case do
       :ok ->
         socket
@@ -169,6 +208,19 @@ defmodule TrentoWeb.AIAssistantChannel do
         |> AgUi.run_error(error_msg)
     end
     |> then(&{:noreply, &1})
+  end
+
+  defp access_token_changed(
+         %{tool_context: %{access_token: token}} = _current_agent,
+         %{tool_context: %{access_token: token}} = _new_agent
+       ) do
+    # IO.inspect("access token unchanged - no agent update needed")
+    :noop
+  end
+
+  defp access_token_changed(_current_agent, new_agent) do
+    # IO.inspect("access token changed - refreshing agent with new token")
+    {:ok, new_agent}
   end
 
   @impl true
@@ -271,4 +323,9 @@ defmodule TrentoWeb.AIAssistantChannel do
       |> assign(:loading, false)
       |> assign(:message_started, false)
       |> assign(:run_has_started, false)
+
+  defp redact_payload(payload) when is_map(payload),
+    do: Map.replace(payload, "access_token", "<REDACTED>")
+
+  defp redact_payload(payload), do: payload
 end

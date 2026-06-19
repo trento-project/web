@@ -95,6 +95,7 @@ defmodule Trento.AI.AgentTest do
         {:ok, self()}
       end)
 
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
       expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
 
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id,
@@ -124,6 +125,7 @@ defmodule Trento.AI.AgentTest do
     test "short-circuits when subscribe fails (add_message NOT called)",
          %{agent: agent, prompt: prompt} do
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
       expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
 
       assert {:error, :no_pubsub} = TrentoAIAgent.run(agent, prompt)
@@ -131,10 +133,93 @@ defmodule Trento.AI.AgentTest do
 
     test "surfaces an add_message failure", %{agent: agent, prompt: prompt} do
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
       expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
 
       assert {:error, :timeout} = TrentoAIAgent.run(agent, prompt)
+    end
+  end
+
+  describe "run/3 — refresh_when callback" do
+    setup :run_opts
+
+    test "invokes update_agent_and_state with the updated agent + current state when refresh_when returns {:ok, updated}",
+         %{agent: %Sagents.Agent{} = agent, agent_id: agent_id, prompt: prompt} do
+      current_agent = %Sagents.Agent{agent_id: agent_id, tool_context: %{flag: :current}}
+      updated_agent = %{agent | tool_context: %{flag: :updated}}
+      state = %Sagents.State{agent_id: agent_id}
+      test_pid = self()
+
+      refresh_when = fn current, new_agent ->
+        send(test_pid, {:refresh_when, current, new_agent})
+        {:ok, updated_agent}
+      end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id -> {:ok, current_agent} end)
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn ^agent_id -> %{state: state} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn ^agent_id,
+                                                                      ^updated_agent,
+                                                                      ^state ->
+        :ok
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+
+      assert_received {:refresh_when, ^current_agent, ^agent}
+    end
+
+    test "skips update_agent_and_state when refresh_when returns :noop",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      refresh_when = fn _current, _new_agent -> :noop end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id}}
+      end)
+
+      # No get_info / update_agent_and_state expectations —
+      # verify_on_exit! catches strays.
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+    end
+
+    test "does not invoke refresh_when when AgentServer is not yet running",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      refresh_when = fn _, _ ->
+        raise "refresh_when must not be called when no current agent exists"
+      end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id -> {:error, :not_found} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+    end
+
+    test "default refresh_when (no opt) never triggers update_agent_and_state",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id}}
+      end)
+
+      # default_refresh_when/2 returns :noop unconditionally;
+      # no get_info / update_agent_and_state expectations.
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
+
+      assert :ok = TrentoAIAgent.run(agent, prompt)
     end
   end
 
