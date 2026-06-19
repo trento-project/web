@@ -100,8 +100,9 @@ describe('AssistantChatProvider', () => {
     });
     const [agent] = agentModule.__getInstances();
     expect(agent.opts.userID).toBe(7);
-    // Provider translates threadID prop to AG-UI's `threadId` constructor option.
-    expect(agent.opts.threadId).toBe('thread-x');
+    // threadID is NOT passed at construction — it's a per-message field
+    // forwarded inside run({messages, threadId}) at call time.
+    expect(agent.opts.threadId).toBeUndefined();
     expect(agent.opts.socket).toBe(fakeSocket);
     expect(lastRuntimeOptions().agent).toBe(agent);
   });
@@ -139,15 +140,15 @@ describe('AssistantChatProvider', () => {
     expect(onConnectionChange).toHaveBeenCalledWith('connected');
   });
 
-  it('rebuilds the agent and disconnects the old one when threadID changes', async () => {
+  it('updates agent.threadId when threadID changes without rebuilding the agent', async () => {
     const { rerender } = render(
       <AssistantChatProvider userID={42} threadID="thread-1">
         <div />
       </AssistantChatProvider>
     );
     await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(1));
-    const [first] = agentModule.__getInstances();
-    expect(first.opts.threadId).toBe('thread-1');
+    const [agent] = agentModule.__getInstances();
+    await waitFor(() => expect(agent.threadId).toBe('thread-1'));
 
     rerender(
       <AssistantChatProvider userID={42} threadID="thread-2">
@@ -155,10 +156,9 @@ describe('AssistantChatProvider', () => {
       </AssistantChatProvider>
     );
 
-    await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(2));
-    const [, second] = agentModule.__getInstances();
-    expect(second.opts.threadId).toBe('thread-2');
-    expect(first.disconnect).toHaveBeenCalled();
+    await waitFor(() => expect(agent.threadId).toBe('thread-2'));
+    expect(agentModule.__getInstances()).toHaveLength(1);
+    expect(agent.disconnect).not.toHaveBeenCalled();
   });
 
   it('does not reset the runtime on the first mount', () => {

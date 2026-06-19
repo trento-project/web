@@ -47,11 +47,22 @@ defmodule Trento.AI.ToolsRegistryTest do
     end
   end
 
+  defmodule ToolContextSource do
+    @behaviour Trento.AI.ToolSource
+
+    @impl true
+    def tools(opts) do
+      ctx = Keyword.fetch!(opts, :tool_context)
+      name = ctx |> Map.fetch!(:user_id) |> to_string()
+      [Function.new!(%{name: "ctx_#{name}", function: fn _, _ -> name end})]
+    end
+  end
+
   defp stub_config(config) do
     stub(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> config end)
   end
 
-  describe "tools/0" do
+  describe "tools generation" do
     test "flat-concats tools from every configured source in declaration order" do
       stub_config(tool_sources: [SourceA, SourceB])
 
@@ -94,7 +105,13 @@ defmodule Trento.AI.ToolsRegistryTest do
     test "supports mixed bare-module + tuple entries" do
       stub_config(tool_sources: [SourceA, {OptsSource, name: :beta}])
 
-      assert ["a", "beta_tool"] = Enum.map(ToolsRegistry.tools(), & &1.name)
+      assert ["a", "beta_tool"] = Enum.map(ToolsRegistry.tools(%{}), & &1.name)
+    end
+
+    test "injects tool_context into source opts" do
+      stub_config(tool_sources: [ToolContextSource])
+
+      assert [%Function{name: "ctx_42"}] = ToolsRegistry.tools(%{user_id: 42})
     end
   end
 end

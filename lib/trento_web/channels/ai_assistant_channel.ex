@@ -189,10 +189,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(
-      prompt,
-      refresh_when: &access_token_changed/2
-    )
+    |> TrentoAIAgent.run(prompt, refresh_when: &access_token_changed/2)
     |> case do
       :ok ->
         socket

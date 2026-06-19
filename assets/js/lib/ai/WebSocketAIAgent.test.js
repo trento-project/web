@@ -2,7 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
+import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
+import { handleUnrecoverableAuthError } from '@lib/network';
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
+
+jest.mock('@lib/auth', () => ({
+  getAccessTokenFromStore: jest.fn(() => 'TEST_TOKEN'),
+  refreshAndStoreAccessToken: jest.fn(() => Promise.resolve()),
+}));
+
+jest.mock('@lib/network', () => ({
+  handleUnrecoverableAuthError: jest.fn(),
+}));
+
+beforeEach(() => {
+  getAccessTokenFromStore.mockReset();
+  getAccessTokenFromStore.mockReturnValue('TEST_TOKEN');
+  refreshAndStoreAccessToken.mockReset();
+  // Mirror real behavior: refreshAndStoreAccessToken stores the new token
+  // in localStorage, so subsequent getAccessTokenFromStore() reads it back.
+  refreshAndStoreAccessToken.mockImplementation(async () => {
+    getAccessTokenFromStore.mockReturnValue('NEW_TOKEN');
+  });
+  handleUnrecoverableAuthError.mockClear();
+});
 
 // Wrap socket.channel + each channel.leave with jest.fn so the existing
 // `toHaveBeenCalled` / `mockClear` assertions still apply. The shared
@@ -70,7 +93,12 @@ describe('WebSocketAIAgent', () => {
 
       const initPromise = agent.initialize();
 
-      expect(socket.channel).toHaveBeenCalledWith('ai_assistant:u42', {});
+      expect(socket.channel).toHaveBeenCalledWith(
+        'ai_assistant:u42',
+        expect.any(Function)
+      );
+      const [, paramsFn] = socket.channel.mock.calls[0];
+      expect(paramsFn()).toEqual({ access_token: 'TEST_TOKEN' });
       expect(onConnectionChange).toHaveBeenNthCalledWith(1, 'connecting');
 
       getChannel().joinPush.fire('ok');
@@ -79,30 +107,23 @@ describe('WebSocketAIAgent', () => {
       expect(onConnectionChange).toHaveBeenNthCalledWith(2, 'connected');
     });
 
-    it.each([
-      {
-        scenario: 'join error',
-        receive: 'error',
-        payload: { reason: 'boom' },
-        rejectsWith: /Failed to join channel/,
-      },
-      {
-        scenario: 'join timeout',
-        receive: 'timeout',
-        payload: undefined,
-        rejectsWith: /Channel join timeout/,
-      },
-    ])(
-      'rejects on $scenario and reports disconnected',
-      async ({ receive, payload, rejectsWith }) => {
-        const { agent, onConnectionChange, getChannel } = makeAgent();
-        const initPromise = agent.initialize();
-        getChannel().joinPush.fire(receive, payload);
+    it('rejects on join error and reports disconnected', async () => {
+      const { agent, onConnectionChange, getChannel } = makeAgent();
+      const initPromise = agent.initialize();
+      getChannel().joinPush.fire('error', { reason: 'boom' });
 
-        await expect(initPromise).rejects.toThrow(rejectsWith);
-        expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
-      }
-    );
+      await expect(initPromise).rejects.toEqual({ reason: 'boom' });
+      expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
+    });
+
+    it('rejects on join timeout and reports disconnected', async () => {
+      const { agent, onConnectionChange, getChannel } = makeAgent();
+      const initPromise = agent.initialize();
+      getChannel().joinPush.fire('timeout');
+
+      await expect(initPromise).rejects.toThrow(/Channel join timeout/);
+      expect(onConnectionChange).toHaveBeenLastCalledWith('disconnected');
+    });
 
     it.each([
       {
@@ -131,6 +152,46 @@ describe('WebSocketAIAgent', () => {
       await agent.initialize();
 
       expect(socket.channel).not.toHaveBeenCalled();
+    });
+
+    it('refreshes and rejoins on join error with reason "unauthorized"', async () => {
+      const { agent, socket, getChannel } = makeAgent({ userID: 'u9' });
+
+      const initPromise = agent.initialize();
+      const firstChannel = getChannel();
+
+      // First join attempt fails with unauthorized.
+      firstChannel.joinPush.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // The agent should have requested a refresh and asked for a fresh channel.
+      expect(refreshAndStoreAccessToken).toHaveBeenCalledTimes(1);
+      // Second channel created (initialize re-entered after channel was nulled).
+      expect(socket.channel).toHaveBeenCalledTimes(2);
+
+      // Second join succeeds — initPromise resolves.
+      const secondChannel = getChannel();
+      secondChannel.joinPush.fire('ok');
+      await initPromise;
+
+      expect(agent._connectionStatus).toBe('connected');
+    });
+
+    it('fails initialize when unauthorized refresh itself errors', async () => {
+      refreshAndStoreAccessToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+
+      const { agent, getChannel } = makeAgent({ userID: 'u10' });
+      const initPromise = agent.initialize();
+
+      getChannel().joinPush.fire('error', 'unauthorized');
+
+      await expect(initPromise).rejects.toThrow(
+        'Session expired — please log in again'
+      );
+      expect(agent._connectionStatus).toBe('disconnected');
+      expect(handleUnrecoverableAuthError).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -167,6 +228,7 @@ describe('WebSocketAIAgent', () => {
         messages: [userMessage('hello there')],
       });
 
+      await flushMicrotasks();
       expect(channel.pushed).toHaveLength(1);
       expect(channel.pushed[0]).toMatchObject({
         event: 'send_message',
@@ -174,9 +236,76 @@ describe('WebSocketAIAgent', () => {
           message: 'hello there',
           thread_id: 'thread-1',
           run_id: agent._activeRunId,
+          access_token: 'TEST_TOKEN',
         },
       });
       expect(typeof agent._activeRunId).toBe('string');
+    });
+
+    it('refreshes the token and retries send_message once on unauthorized error', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error, next } = runAgent(agent);
+
+      await flushMicrotasks();
+      // First push fails with unauthorized.
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // The agent refreshed and re-pushed with the new token.
+      expect(refreshAndStoreAccessToken).toHaveBeenCalledTimes(1);
+      expect(channel.pushed).toHaveLength(2);
+      expect(channel.pushed[1].payload.access_token).toBe('NEW_TOKEN');
+
+      // The retried push then succeeds (no error fired on it). Simulate an
+      // upstream event to confirm the subscriber is still alive.
+      channel.emit('ag_ui_event', {
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+
+      expect(error).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith({
+        type: 'TEXT_MESSAGE_CONTENT',
+        delta: 'ok',
+      });
+    });
+
+    it('errors the subscriber when the refresh itself fails', async () => {
+      refreshAndStoreAccessToken.mockRejectedValueOnce(
+        new Error('no refresh token available')
+      );
+
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      await flushMicrotasks();
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+      await flushMicrotasks();
+
+      expect(error).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Session expired — please log in again',
+        })
+      );
+      expect(agent._activeSubscriber).toBeNull();
+      expect(handleUnrecoverableAuthError).toHaveBeenCalledTimes(1);
+    });
+
+    it('errors the subscriber when the retried push also fails', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { error } = runAgent(agent);
+
+      await flushMicrotasks();
+      channel.pushed[0].push.fire('error', 'unauthorized');
+      await flushMicrotasks();
+
+      // Retried push fails for some other reason.
+      channel.pushed[1].push.fire('error', { reason: 'still broken' });
+      await flushMicrotasks();
+
+      expect(error).toHaveBeenCalledWith({ reason: 'still broken' });
+      expect(agent._activeSubscriber).toBeNull();
     });
 
     it('forwards ag_ui_event payloads to the active subscriber', async () => {
@@ -244,7 +373,10 @@ describe('WebSocketAIAgent', () => {
       const { agent, channel } = await connectedAgent();
       const { error } = runAgent(agent);
 
+      await flushMicrotasks();
       channel.pushed[0].push.fire('error', { reason: 'rejected' });
+      await flushMicrotasks();
+      await flushMicrotasks();
 
       expect(error).toHaveBeenCalledWith({ reason: 'rejected' });
       expect(agent._activeSubscriber).toBeNull();
@@ -307,6 +439,7 @@ describe('WebSocketAIAgent', () => {
       expect(agent._connectionStatus).toBe('connected');
 
       runAgent(agent);
+      await flushMicrotasks();
       expect(channel.pushed).toContainEqual(
         expect.objectContaining({ event: 'send_message' })
       );

@@ -6,6 +6,7 @@ import {
   networkClient,
   unrecoverableAuthError,
   withWindowReference,
+  handleUnrecoverableAuthError,
 } from '@lib/network';
 import {
   clearCredentialsFromStore,
@@ -190,5 +191,27 @@ describe('networkClient', () => {
         });
       }
     });
+  });
+});
+
+describe('handleUnrecoverableAuthError', () => {
+  let mockAssign;
+
+  beforeEach(() => {
+    mockAssign = jest.fn();
+    withWindowReference({ location: { pathname: '/foo', assign: mockAssign } });
+    jest.spyOn(console, 'warn').mockImplementation(() => null);
+  });
+
+  afterEach(() => {
+    withWindowReference(window);
+    /* eslint-disable-next-line */
+    console.warn.mockRestore();
+  });
+
+  it('redirects to /session/new with the current pathname as query parameter', () => {
+    handleUnrecoverableAuthError();
+
+    expect(mockAssign).toHaveBeenCalledWith('/session/new?request_path=%2Ffoo');
   });
 });
