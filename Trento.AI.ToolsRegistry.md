@@ -19,7 +19,7 @@ loudly via LangChain.
 # `tools`
 
 ```elixir
-@spec tools() :: [LangChain.Function.t()]
+@spec tools(tool_context :: map()) :: [LangChain.Function.t()]
 ```
 
 ---

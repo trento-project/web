@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-5F2E11C8.js"></script>
+    <script defer src="dist/sidebar_items-CFACA995.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -121,7 +121,7 @@ Trento Web
 <p>Aggregates AI assistant tools from every configured
 <a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a>.</p><p>The list of source modules is read from
 <code class="inline">config :trento, :ai, tool_sources: [...]</code> via
-<a href="Trento.AI.ApplicationConfigLoader.html"><code class="inline">Trento.AI.ApplicationConfigLoader</code></a>. Each entry is either:</p><ul><li>a bare module <code class="inline">MyToolSource</code> — normalised to <code class="inline">{MyToolSource, []}</code>, or</li><li>a <code class="inline">{module, opts}</code> tuple — passed through as-is.</li></ul><p>Every source's <code class="inline">tools/1</code> callback is invoked with its opts list (empty
+<a href="Trento.AI.ApplicationConfigLoader.html"><code class="inline">Trento.AI.ApplicationConfigLoader</code></a>. Each entry is either:</p><ul><li>a bare module <code class="inline">MyToolSource</code> — normalised to <code class="inline">{MyToolSource, []}</code>, or</li><li>a <code class="inline">{module, opts}</code> tuple — passed through as-is.</li></ul><p>Every source's <a href="#tools/1"><code class="inline">tools/1</code></a> callback is invoked with its opts list (empty
 for bare-module entries). Sources are flat-concatenated in declaration
 order; name collisions are configuration errors and should surface
 loudly via LangChain.</p>
@@ -143,7 +143,7 @@ loudly via LangChain.</p>
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#tools/0" data-no-tooltip="" translate="no">tools()</a>
+        <a href="#tools/1" data-no-tooltip="" translate="no">tools(tool_context \\ %{})</a>
 
       </div>
 
@@ -163,14 +163,16 @@ loudly via LangChain.</p>
     </h2>
 
     <div class="functions-list">
-<section class="detail" id="tools/0">
+<section class="detail" id="tools/1">
+
+    <span id="tools/0"></span>
 
   <div class="detail-header">
-    <a href="#tools/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#tools/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">tools()</h1>
+      <h1 class="signature" translate="no">tools(tool_context \\ %{})</h1>
 
 
         <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/tools_registry.ex#L25" class="icon-action" rel="help nofollow" aria-label="View Source">
@@ -184,7 +186,7 @@ loudly via LangChain.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> tools() :: [<a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()]</pre>
+          <pre translate="no"><span class="attribute">@spec</span> tools(tool_context :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: [<a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()]</pre>
 
       </div>
 
