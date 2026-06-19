@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.SapSystemController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Repo
 
@@ -73,6 +74,8 @@ defmodule TrentoWeb.V1.SapSystemController do
         {"Comprehensive list of all SAP Systems discovered on the target infrastructure for monitoring and management.",
          "application/json", Schema.SAPSystem.SAPSystemsCollection}
     ]
+
+  ai_tool :sap_system_list, display_text: "List SAP systems"
 
   def list(conn, _) do
     sap_systems = SapSystems.get_all_sap_systems()

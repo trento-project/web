@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V1.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Clusters
 
@@ -55,7 +56,7 @@ defmodule TrentoWeb.V1.ClusterController do
   operation :list,
     summary: "List Pacemaker Clusters.",
     deprecated: true,
-    tags: ["Target Infrastructure", "MCP"],
+    tags: ["Target Infrastructure"],
     description:
       "Retrieves a comprehensive list of all Pacemaker Clusters discovered on the target infrastructure, supporting monitoring and management tasks for administrators.",
     responses: [
@@ -95,6 +96,9 @@ defmodule TrentoWeb.V1.ClusterController do
       bad_request: BadRequest.response(),
       unprocessable_entity: UnprocessableEntity.response()
     ]
+
+  ai_tool :request_cluster_checks_execution,
+    display_text: "Request checks execution for a cluster"
 
   def request_checks_execution(conn, %{cluster_id: cluster_id}) do
     with :ok <- Clusters.request_checks_execution(cluster_id) do
