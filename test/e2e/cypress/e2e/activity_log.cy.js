@@ -170,13 +170,15 @@ context('Activity Log page', () => {
       activityLogPage.interceptActivityLogFromDateEndpoint();
       activityLogPage.visit(queryString);
       activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-      activityLogPage.waitForActivityLogFromDateRequest().then(({ response }) => {
-        activityLogPage.clickNextPageButton();
-        activityLogPage.waitForActivityLogFromDateRequest();
-        activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
-        activityLogPage.validateUrl(expectedUrl);
-      });
+      activityLogPage
+        .waitForActivityLogFromDateRequest()
+        .then(({ response }) => {
+          activityLogPage.clickNextPageButton();
+          activityLogPage.waitForActivityLogFromDateRequest();
+          activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
+          const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
+          activityLogPage.validateUrl(expectedUrl);
+        });
     });
 
     it('should change items per page', () => {
