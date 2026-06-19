@@ -1,4 +1,4 @@
-# Trento Web v3.1.1 - API Reference
+# Trento Web v3.1.2 - API Reference
 
 ## Modules
 
@@ -24,6 +24,13 @@ in controllers and labels the immediately following public function as an AI too
 
 - [Trento.AI.OpenApiToolBuilder](Trento.AI.OpenApiToolBuilder.md): Transport-agnostic helpers shared by every `Trento.AI.ToolSource` that
 derives `LangChain.Function`s from `%OpenApiSpex.Operation{}` structs.
+- [Trento.AI.OperationEntry](Trento.AI.OperationEntry.md): Transport-agnostic catalog entry shared by every `Trento.AI.ToolSource`
+that derives AI tools from `%OpenApiSpex.Operation{}` structs.
+- [Trento.AI.RemoteHttpTool](Trento.AI.RemoteHttpTool.md): Translates a `Trento.AI.OperationEntry` into a `%LangChain.Function{}`
+whose execution dispatches an authenticated HTTP request against a
+remote service described by its OpenAPI document.
+- [Trento.AI.RemoteOpenApiToolSource](Trento.AI.RemoteOpenApiToolSource.md): `Trento.AI.ToolSource` implementation that derives AI assistant tools
+from a remote service's OpenAPI document.
 - [Trento.AI.ToolSource](Trento.AI.ToolSource.md): Behaviour for modules that contribute AI assistant tools to
 `Trento.AI.ToolsRegistry`.
 - [Trento.AI.ToolsRegistry](Trento.AI.ToolsRegistry.md): Aggregates AI assistant tools from every configured

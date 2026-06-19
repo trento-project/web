@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.40.3">
-    <meta name="project" content="Trento Web v3.1.1">
+    <meta name="project" content="Trento Web v3.1.2">
 
 
-    <title>API Reference — Trento Web v3.1.1</title>
+    <title>API Reference — Trento Web v3.1.2</title>
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-C66E57AE.js"></script>
+    <script defer src="dist/sidebar_items-A264D965.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -41,7 +41,7 @@
 Trento Web
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v3.1.1
+          v3.1.2
         </div>
       </div>
     </div>
@@ -96,7 +96,7 @@ Trento Web
 
 <div id="top-content">
   <div class="heading-with-actions top-heading">
-    <h1>API Reference <small class="app-vsn">Trento Web v#3.1.1</small></h1>
+    <h1>API Reference <small class="app-vsn">Trento Web v#3.1.2</small></h1>
 <a href="api-reference.md" title="Copy Markdown (hold Ctrl/Cmd and click it to open as Markdown)" class="copy-markdown icon-action" rel="help">
   <i class="ri-markdown-line" aria-hidden="true"></i>
   <span class="sr-only">Copy Markdown</span>
@@ -222,6 +222,37 @@ in controllers and labels the immediately following public function as an AI too
 
     <div class="summary-synopsis"><p>Transport-agnostic helpers shared by every <a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> that
 derives <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html"><code class="inline">LangChain.Function</code></a>s from <code class="inline">%OpenApiSpex.Operation{}</code> structs.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.AI.OperationEntry.html" translate="no">Trento.<wbr />AI.<wbr />OperationEntry</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Transport-agnostic catalog entry shared by every <a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a>
+that derives AI tools from <code class="inline">%OpenApiSpex.Operation{}</code> structs.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.AI.RemoteHttpTool.html" translate="no">Trento.<wbr />AI.<wbr />RemoteHttpTool</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Translates a <a href="Trento.AI.OperationEntry.html"><code class="inline">Trento.AI.OperationEntry</code></a> into a <code class="inline">%LangChain.Function{}</code>
+whose execution dispatches an authenticated HTTP request against a
+remote service described by its OpenAPI document.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="Trento.AI.RemoteOpenApiToolSource.html" translate="no">Trento.<wbr />AI.<wbr />RemoteOpenApiToolSource</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p><a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> implementation that derives AI assistant tools
+from a remote service's OpenAPI document.</p></div>
 
 </div>
 <div class="summary-row">

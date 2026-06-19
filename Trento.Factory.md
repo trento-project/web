@@ -213,6 +213,8 @@ Raises a helpful error if no factory is defined.
 
 # `operation_completed_with_failed_request_v1_factory`
 
+# `operation_entry_factory`
+
 # `params_for`
 
 # `params_with_assocs`

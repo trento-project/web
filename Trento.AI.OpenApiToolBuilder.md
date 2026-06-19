@@ -12,24 +12,23 @@ Two distinct concerns live here:
    adapter (Anthropic, Google AI, OpenAI) eventually forwards to the
    model.
 
-2. **Arg routing** — `param_locations/1`, `split_args/2`,
-   `substitute_path/2`, `append_query/2` turn the LLM-supplied
-   argument map into a `{path, body}` pair, respecting each parameter's
-   declared `in:` location.
+2. **Arg routing** — `resolve_path_and_body/3` turns the LLM-supplied
+   argument map into a `{resolved_path, body_args}` pair, respecting
+   each parameter's declared `in:` location.
 
 Both `TrentoWeb.AI.ControllerTool` (local Plug.Test dispatch) and
 `Trento.AI.RemoteHttpTool` (remote HTTP dispatch) consume these helpers,
 so the OpenAPI surface drives both transports identically. The only
 thing that differs is how the resolved request is actually executed.
 
-# `append_query`
+# `body_to_string`
 
 ```elixir
-@spec append_query(String.t(), map()) :: String.t()
+@spec body_to_string(String.t() | nil | any()) :: String.t()
 ```
 
-Appends a `?k=v&...` query string to `path`. Array values explode into
-repeated keys, matching OpenAPI 3 `style: form, explode: true`.
+Coerces a response body to `String.t()`. `nil` → `""`, binaries pass through,
+anything else is `inspect`-ed.
 
 # `description`
 
@@ -39,17 +38,6 @@ repeated keys, matching OpenAPI 3 `style: form, explode: true`.
 
 Concatenates `summary` + `description` of an `%Operation{}` into the
 human-readable tool description shown to the LLM.
-
-# `param_locations`
-
-```elixir
-@spec param_locations(OpenApiSpex.Operation.t() | any()) :: %{
-  required(String.t()) =&gt; atom()
-}
-```
-
-Map of parameter name (string) → declared `:in` location atom
-(`:path | :query | :header | :cookie`) for an `%Operation{}`.
 
 # `parameters_schema`
 
@@ -65,30 +53,15 @@ String-keyed throughout to match LangChain convention and the
 empty so parameterless tools pass `ChatGoogleAI.for_api/1`'s exact-match
 deletion check.
 
-# `split_args`
+# `resolve_path_and_body`
 
 ```elixir
-@spec split_args(%{required(String.t()) =&gt; atom()}, map()) :: {map(), map(), map()}
+@spec resolve_path_and_body(String.t(), OpenApiSpex.Operation.t() | nil, map()) ::
+  {String.t(), map()}
 ```
 
-Splits the LLM-supplied `tool_args` map into `{path, query, body}`
-according to each key's declared `:in` location. Unknown keys (and any
-non-`:path`/`:query` locations like `:header` or `:cookie`) land in the
-body bucket.
-
-# `substitute_path`
-
-```elixir
-@spec substitute_path(String.t(), map()) :: String.t()
-```
-
-Substitutes `:placeholder` (Phoenix-style) and `{placeholder}`
-(OpenAPI-style) segments in the path template with URI-encoded values
-from `path_args`.
-
-Phoenix routes carry `:id`-style templates; OpenAPI specs carry
-`{id}`-style templates. Supporting both lets the same helper drive both
-local controller routes and remote OpenAPI-described endpoints.
+Resolves a path template and splits `tool_args` into `{resolved_path, body_args}`.
+Combines `param_locations/1`, `split_args/2`, `substitute_path/2`, and `append_query/2`.
 
 ---
 
