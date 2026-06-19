@@ -290,6 +290,7 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 
 config :trento, :ai,
   enabled: true,
+  base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
   providers: [
     googleai: [
       models: [
@@ -318,7 +319,9 @@ config :trento, :ai,
         "claude-haiku-4-5"
       ]
     ]
-  ]
+  ],
+  agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
+  agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
