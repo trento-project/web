@@ -188,7 +188,8 @@ defmodule Trento.Factory do
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
-  alias Trento.AI.{LLMRegistry, UserConfiguration}
+  alias OpenApiSpex.Operation
+  alias Trento.AI.{LLMRegistry, OperationEntry, UserConfiguration}
 
   alias Trento.AI.AICase
 
@@ -1482,6 +1483,21 @@ defmodule Trento.Factory do
       check_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"])
+    }
+  end
+
+  def operation_entry_factory do
+    %OperationEntry{
+      tool_name: Faker.Internet.slug(),
+      display_text: Faker.Lorem.sentence(),
+      operation: %Operation{
+        summary: Faker.Lorem.sentence(),
+        description: Faker.Lorem.paragraph(),
+        parameters: [],
+        responses: %{}
+      },
+      verb: :get,
+      path: "/#{Faker.Internet.slug()}"
     }
   end
 
