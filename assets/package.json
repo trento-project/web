@@ -20,7 +20,7 @@
     "babel-jest": "^30.3.0",
     "babel-loader": "^10.1.1",
     "chromatic": "^16.0.0",
-    "esbuild": "^0.28.0",
+    "esbuild": "^0.28.1",
     "esbuild-plugin-path-alias": "^1.0.7",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
@@ -42,7 +42,7 @@
     "postcss-import": "^16.1.1",
     "prettier": "^3.8.3",
     "redux-mock-store": "^1.5.5",
-    "storybook": "^10.2.10",
+    "storybook": "^10.4.6",
     "tailwindcss": "^3.4.19"
   },
   "dependencies": {
