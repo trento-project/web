@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-05-07T04:42:28Z",
-    "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
-    "run_id": "25475976804",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.5
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Host reboot operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-07T04:43:53Z",
     "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
     "run_id": "25475976804",
@@ -5991,6 +5955,30 @@
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-20T18:38:06Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27879873912",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
       }
     ]
   }
