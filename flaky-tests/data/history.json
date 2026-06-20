@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-07T04:43:53Z",
-    "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
-    "run_id": "25475976804",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.5
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.06551
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-07T07:21:30Z",
     "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
     "run_id": "25476555378",
@@ -5978,6 +5954,26 @@
       },
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-20T19:17:06Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27880777749",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
         "score": 0.05001
       }
     ]
