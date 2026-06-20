@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-07T04:15:18Z",
-    "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
-    "run_id": "25475337969",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.04141
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-07T04:42:28Z",
     "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
     "run_id": "25475976804",
@@ -5982,6 +5962,34 @@
       },
       {
         "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-20T18:37:14Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27879873912",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
         "score": 0.02501
       }
     ]
