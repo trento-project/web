@@ -1,57 +1,5 @@
 [
   {
-    "timestamp": "2026-05-07T07:21:30Z",
-    "commit": "279c34655d05ec9b9b78dceb094adbb951d5583a",
-    "run_id": "25476555378",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 22
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.1334
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.09501
-      },
-      {
-        "name": "should preserve filters when coming back::Hosts Overview Filter and browser navigation should preserve filters when coming back",
-        "score": 0.08384
-      },
-      {
-        "name": "should not display eula once it is rejected with the no show again option::Users Analytics eula should not display eula once it is rejected with the no show again option",
-        "score": 0.07153
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      },
-      {
-        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
-        "score": 0.05001
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.04653
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.02501
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.02501
-      },
-      {
-        "name": "should preserve filters when going forward::Hosts Overview Filter and browser navigation should preserve filters when going forward",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-08T04:05:26Z",
     "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
     "run_id": "25535640753",
@@ -5975,6 +5923,26 @@
       {
         "name": "search::should not match not included words",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-20T19:17:55Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27880777749",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
       }
     ]
   }
