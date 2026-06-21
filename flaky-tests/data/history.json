@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-08T04:06:34Z",
-    "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
-    "run_id": "25535640753",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-08T04:21:10Z",
     "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
     "run_id": "25535897343",
@@ -5959,6 +5939,30 @@
       {
         "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
         "score": 0.03644
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-21T18:39:54Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27913432015",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.08281
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users delete_user/1 deletes user abilities",
+        "score": 0.05001
       }
     ]
   }
