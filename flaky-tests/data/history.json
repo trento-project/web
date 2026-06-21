@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-08T04:21:10Z",
-    "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
-    "run_id": "25535897343",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "AboutPage component::should render the about page with content from the api",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable systems operations if an instance operation is running",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune apply solution operation button based on user abilities",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      },
-      {
-        "name": "checksUtils::should get host expectation statements results",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-08T04:22:24Z",
     "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
     "run_id": "25535897343",
@@ -5962,6 +5914,30 @@
       },
       {
         "name": "Elixir.Trento.UsersTest::test users delete_user/1 deletes user abilities",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-21T18:41:05Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27913432015",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request saptune discovery request when 'pacemaker_enable' operation is completed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
         "score": 0.05001
       }
     ]
