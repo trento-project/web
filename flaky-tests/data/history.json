@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-08T04:22:24Z",
-    "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
-    "run_id": "25535897343",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.3781
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-08T07:07:14Z",
     "commit": "17d6113a9cf5bc4e6a50d78db1b2e0288d062407",
     "run_id": "25536647303",
@@ -5939,6 +5919,26 @@
       {
         "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-21T19:24:41Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27914449245",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.02501
       }
     ]
   }
