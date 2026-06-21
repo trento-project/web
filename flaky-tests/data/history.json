@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-09T04:06:28Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25590973983",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-09T04:08:54Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25590973983",
@@ -5907,6 +5887,30 @@
       {
         "name": "GenericSystemDetails::should show instance operations",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-21T22:31:18Z",
+    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
+    "run_id": "27915892692",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1643
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1280
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.05225
       }
     ]
   }
