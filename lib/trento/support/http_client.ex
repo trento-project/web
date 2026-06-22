@@ -34,15 +34,7 @@ defmodule Trento.Support.HttpClient do
     do: HTTPoison.request(verb, url, body, headers, inject_ssl(options))
 
   defp inject_ssl(options) do
-    default_ssl = [verify: :verify_peer, cacerts: resolve_ca_certs()]
+    default_ssl = [verify: :verify_peer, cacerts: :public_key.cacerts_get()]
     Keyword.update(options, :ssl, default_ssl, &Keyword.merge(default_ssl, &1))
-  end
-
-  defp resolve_ca_certs do
-    :public_key.cacerts_get()
-  rescue
-    e ->
-      Logger.error("Failed to load system CA certificates: #{inspect(e)}")
-      []
   end
 end
