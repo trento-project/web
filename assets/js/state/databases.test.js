@@ -5,7 +5,7 @@ import databaseReducer, {
   removeDatabase,
   removeDatabaseInstance,
   upsertDatabaseInstances,
-  updateDatabaseInstanceHealth,
+  updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
   setDatabaseInstanceDeregistering,
@@ -82,7 +82,7 @@ describe('Databases reducer', () => {
 
   it('should update the health of a database instance', () => {
     const instance = databaseInstanceFactory.build();
-    const newHealth = 'newHealth';
+    const newStatus = 'newStatus';
 
     const initialState = {
       databaseInstances: [instance],
@@ -92,12 +92,12 @@ describe('Databases reducer', () => {
       database_id: instance.database_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
-      health: newHealth,
+      status: newStatus,
     };
-    const action = updateDatabaseInstanceHealth(instanceToUpdate);
+    const action = updateDatabaseInstanceStatus(instanceToUpdate);
 
     const expectedState = {
-      databaseInstances: [{ ...instance, health: newHealth }],
+      databaseInstances: [{ ...instance, status: newStatus }],
     };
 
     expect(databaseReducer(initialState, action)).toEqual(expectedState);

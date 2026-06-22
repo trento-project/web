@@ -96,7 +96,9 @@ export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'application_instance_deregistered';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
-  'application_instance_health_changed';
+  'application_instance_health_changed'; // deprecated
+export const APPLICATION_INSTANCE_STATUS_CHANGED =
+  'application_instance_status_changed';
 export const APPLICATION_INSTANCE_MARKED_ABSENT =
   'application_instance_marked_absent';
 export const APPLICATION_INSTANCE_MARKED_PRESENT =
@@ -120,7 +122,9 @@ export const DATABASE_DEREGISTERED = 'database_deregistered';
 export const DATABASE_HEALTH_CHANGED = 'database_health_changed';
 export const DATABASE_INSTANCE_DEREGISTERED = 'database_instance_deregistered';
 export const DATABASE_INSTANCE_HEALTH_CHANGED =
-  'database_instance_health_changed';
+  'database_instance_health_changed'; // deprecated
+export const DATABASE_INSTANCE_STATUS_CHANGED =
+  'database_instance_status_changed';
 export const DATABASE_INSTANCE_MARKED_ABSENT =
   'database_instance_marked_absent';
 export const DATABASE_INSTANCE_MARKED_PRESENT =
@@ -541,6 +545,11 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Application instance health changed`,
     resource: sapSystemResourceType,
   },
+  [APPLICATION_INSTANCE_STATUS_CHANGED]: {
+    label: 'Application Instance Status Changed',
+    message: (_entry) => `Application instance status changed`,
+    resource: sapSystemResourceType,
+  },
   [APPLICATION_INSTANCE_MARKED_ABSENT]: {
     label: 'Application Instance Marked Absent',
     message: (_entry) => `Application instance was marked absent`,
@@ -625,6 +634,11 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_INSTANCE_HEALTH_CHANGED]: {
     label: 'Database Instance Health Changed',
     message: (_entry) => `Database instance health changed`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_STATUS_CHANGED]: {
+    label: 'Database Instance Status Changed',
+    message: (_entry) => `Database instance status changed`,
     resource: databaseResourceType,
   },
   [DATABASE_INSTANCE_MARKED_ABSENT]: {

@@ -34,8 +34,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   alias Trento.Repo
 
-  alias Trento.SapSystems.Services.HealthService
-
   project(
     %SapSystemRegistered{
       sap_system_id: sap_system_id,
@@ -361,18 +359,15 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
-      "application_instance_health_changed",
-      # TODO: to remove `add_deprecated_health` once frontend is aligned
-      HealthService.add_deprecated_health(
-        SapSystemJSON.application_instance_status_changed(%{
-          instance: %{
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            instance_number: instance_number,
-            status: status
-          }
-        })
-      )
+      "application_instance_status_changed",
+      SapSystemJSON.application_instance_status_changed(%{
+        instance: %{
+          sap_system_id: sap_system_id,
+          host_id: host_id,
+          instance_number: instance_number,
+          status: status
+        }
+      })
     )
   end
 

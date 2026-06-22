@@ -5,7 +5,7 @@ import sapSystemsReducer, {
   removeSAPSystem,
   upsertApplicationInstances,
   updateApplicationInstanceHost,
-  updateApplicationInstanceHealth,
+  updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
   removeApplicationInstance,
   updateSAPSystem,
@@ -105,9 +105,9 @@ describe('SAP Systems reducer', () => {
     expect(state.applicationInstances[0].host_id).toEqual(newHostId);
   });
 
-  it('should update the health of an application instance', () => {
+  it('should update the status of an application instance', () => {
     const instance = sapSystemApplicationInstanceFactory.build();
-    const newHealth = 'newHealth';
+    const newStatus = 'newStatus';
 
     const initialState = {
       applicationInstances: [instance],
@@ -117,12 +117,12 @@ describe('SAP Systems reducer', () => {
       sap_system_id: instance.sap_system_id,
       instance_number: instance.instance_number,
       host_id: instance.host_id,
-      health: newHealth,
+      status: newStatus,
     };
-    const action = updateApplicationInstanceHealth(instanceToUpdate);
+    const action = updateApplicationInstanceStatus(instanceToUpdate);
 
     const expectedState = {
-      applicationInstances: [{ ...instance, health: newHealth }],
+      applicationInstances: [{ ...instance, status: newStatus }],
     };
 
     expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);

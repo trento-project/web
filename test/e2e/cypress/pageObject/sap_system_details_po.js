@@ -31,7 +31,7 @@ const sapSystemDatabaseTenant =
   'div[class="font-bold"]:contains("Tenant") + div';
 const notFoundLabel = 'div:contains("Not Found")';
 const thirdRowStatusCellSelector =
-  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(6)';
+  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(0)';
 const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 const cleanUpButton = 'button:contains("Clean up")';
@@ -90,29 +90,28 @@ export const layoutTableShowsExpectedData = () =>
       cy.get(tableCellSelector).should('have.text', expectedValue);
 
       if (key === 'Status') {
-        return cy
-          .get(`${tableCellSelector} svg`)
-          .should('have.class', healthMap[instance.Status]);
+        cy.get(`${tableCellSelector} svg`)
+          .should('have.class', healthMap[instance.Status])
+          .trigger('mouseover');
+        return cy.get(`span:contains("${instance.Status}")`).should('exist');
       }
     });
   });
 
 const _getFormattedExpectedValue = (key, value) => {
   if (key === 'Features') return value.replaceAll('|', '');
-  else if (key === 'Status') return `SAPControl: ${value}`;
+  else if (key === 'Status') return '';
   else return value;
 };
 
-export const shouldDisplayExpectedHealthStatusChanges = () =>
+export const shouldDisplayExpectedStatusChanges = () =>
   cy.wrap(Object.entries(healthMap)).each(([state, health]) => {
     basePage.loadScenario(`sap-system-detail-${state.toUpperCase()}`);
-    cy.get(thirdRowStatusCellSelector).should(
-      'have.text',
-      `SAPControl: ${state}`
-    );
-    return cy
-      .get(`${thirdRowStatusCellSelector} svg`)
-      .should('have.class', health);
+
+    cy.get(`${thirdRowStatusCellSelector} svg`)
+      .should('have.class', health)
+      .trigger('mouseover');
+    return cy.get(`span:contains("${state}")`).should('exist');
   });
 
 export const eachHostHasTheExpectedLink = () =>

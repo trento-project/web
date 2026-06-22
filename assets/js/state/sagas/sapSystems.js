@@ -9,7 +9,7 @@ import {
   SAP_SYSTEM_HEALTH_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_MOVED,
-  APPLICATION_INSTANCE_HEALTH_CHANGED,
+  APPLICATION_INSTANCE_STATUS_CHANGED,
   APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
@@ -21,7 +21,7 @@ import {
   upsertApplicationInstances,
   removeApplicationInstance,
   updateApplicationInstanceHost,
-  updateApplicationInstanceHealth,
+  updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
   removeSAPSystem,
   updateSAPSystem,
@@ -79,8 +79,8 @@ export function* applicationInstanceDeregistered({ payload }) {
   );
 }
 
-function* applicationInstanceHealthChanged({ payload }) {
-  yield put(updateApplicationInstanceHealth(payload));
+function* applicationInstanceStatusChanged({ payload }) {
+  yield put(updateApplicationInstanceStatus(payload));
 }
 
 export function* applicationInstanceAbsentAtChanged({ payload }) {
@@ -169,8 +169,8 @@ export function* watchSapSystemEvents() {
     applicationInstanceDeregistered
   );
   yield takeEvery(
-    APPLICATION_INSTANCE_HEALTH_CHANGED,
-    applicationInstanceHealthChanged
+    APPLICATION_INSTANCE_STATUS_CHANGED,
+    applicationInstanceStatusChanged
   );
   yield takeEvery(SAP_SYSTEM_DEREGISTERED, sapSystemDeregistered);
   yield takeEvery(SAP_SYSTEM_RESTORED, sapSystemRestored);

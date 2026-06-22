@@ -53,7 +53,7 @@ context('SAP system details', () => {
     });
 
     it('should show expected status badge in instance when a new state is received', () => {
-      sapSystemDetailsPage.shouldDisplayExpectedHealthStatusChanges();
+      sapSystemDetailsPage.shouldDisplayExpectedStatusChanges();
     });
 
     /* This test is skipped because there is not any option to remove added SAP instances or
