@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-05-09T07:38:33Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25591818758",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 16
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should discover a Angi cluster with failover::HANA cluster details Angi architecture should discover a Angi cluster with failover",
-        "score": 0.3158
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1246
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.1038
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.09503
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.03469
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-10T04:24:05Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25619484296",
@@ -5876,5 +5844,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-06-22T20:45:32Z",
+    "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
+    "run_id": "27981411484",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
+      }
+    ]
   }
 ]
