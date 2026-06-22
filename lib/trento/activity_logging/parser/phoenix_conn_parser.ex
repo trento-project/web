@@ -267,6 +267,16 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
     |> maybe_add_additional_fields(activity, conn)
   end
 
+  def get_activity_metadata(
+        action,
+        %Plug.Conn{
+          body_params: request_body
+        }
+      )
+      when action in [:ai_configuration_creation, :ai_configuration_modification] do
+    redact(request_body, :api_key)
+  end
+
   def get_activity_metadata(_, _), do: %{}
 
   defp redact(request_body, key) do
