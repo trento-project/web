@@ -44,6 +44,9 @@ export const SAP_SYSTEM_CLEANUP_REQUESTED = 'sap_system_cleanup_requested';
 export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
+export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
+export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
+
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
 export const HEARTBEAT_SUCCEEDED = 'heartbeat_succeeded';
@@ -167,6 +170,7 @@ export const availableResourceNameKeys = pipe(
 const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
+const profileResourceType = (_entry) => 'Profile';
 const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
@@ -290,19 +294,31 @@ export const ACTIVITY_TYPES_CONFIG = {
   [PROFILE_UPDATE]: {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_CREATION]: {
     label: 'Personal Access Token Created',
     message: (_entry) => `Personal access token was created`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_DELETION]: {
     label: 'Personal Access Token Deleted',
     message: (_entry) => `Personal access token was deleted`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_CREATION]: {
+    label: 'AI Configuration Created',
+    message: (_entry) => `AI configuration was created`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_MODIFICATION]: {
+    label: 'AI Configuration Updated',
+    message: (_entry) => `AI configuration was updated`,
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_ADMIN_DELETION]: {
