@@ -82,17 +82,27 @@ context('SAP Systems Overview', () => {
   describe('Health and statuses are updated', () => {
     beforeEach(() => sapSystemsOverviewPage.restoreNwdHost());
 
-    it('should have expected health in SAP system and instance when a different status is received', () => {
-      sapSystemsOverviewPage.eachInstanceHasItsStatusCorrectlyUpdated();
+    ['GREEN', 'YELLOW', 'RED', 'GRAY'].forEach((status, index) => {
+      it(`should have expected health in SAP system and instance when a ${status} status is received`, () => {
+        sapSystemsOverviewPage.expandNwdSapSystem();
+        sapSystemsOverviewPage.loadScenario(`sap-systems-overview-${status}`);
+        sapSystemsOverviewPage.instanceHasItsStatusCorrectlyUpdated(
+          status,
+          index
+        );
+      });
     });
 
     it('should have RED health in SAP system when HANA instance with RED status is received', () => {
+      sapSystemsOverviewPage.expandNwdSapSystem();
+      sapSystemsOverviewPage.loadScenario('sap-systems-overview-hana-RED');
       sapSystemsOverviewPage.sapSystemHealthChangesToRedAsExpected();
     });
   });
 
   describe('SAP diagnostics agent', () => {
     it('should skip SAP diagnostics agent discovery visualization', () => {
+      sapSystemsOverviewPage.loadScenario('sap-systems-overview-DAA');
       sapSystemsOverviewPage.sapDiagnosticsAgentDiscoveryVisualizationIsSkipped();
     });
   });
