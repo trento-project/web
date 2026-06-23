@@ -28,7 +28,7 @@ function CollapsibleTableRow({
         {collapsibleDetailRenderer && (
           <td
             className={classNames(
-              'border-b border-gray-200 bg-white',
+              'border-b border-gray-200',
               { 'pl-2': !isCollapsible },
               { 'pl-4': isCollapsible }
             )}

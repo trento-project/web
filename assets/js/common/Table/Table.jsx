@@ -29,7 +29,7 @@ const renderCells = (columns, item) => (
           <td
             key={idx}
             className={classNames(
-              'px-5 py-5 border-b border-gray-200 bg-white',
+              'px-5 py-5 border-b border-gray-200',
               className,
               fontSize
             )}
@@ -236,7 +236,10 @@ function Table({
                     <th
                       key="collapsible"
                       scope="col"
-                      className={classNames('w-6 bg-gray-100', headerClassName)}
+                      className={classNames(
+                        'w-6 border-b bg-gray-100',
+                        headerClassName
+                      )}
                       aria-label="collapsible"
                     />
                   )}
@@ -256,7 +259,7 @@ function Table({
                             sortable
                               ? 'cursor-pointer hover:text-gray-700 '
                               : ''
-                          }px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-100`,
+                          }px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b bg-gray-100`,
                           headerClassName,
                           columnClassName
                         )}
@@ -272,7 +275,7 @@ function Table({
                   )}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="bg-white">
                 {renderedData.length === 0 ? (
                   <EmptyState
                     colSpan={
