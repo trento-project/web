@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-05-10T04:53:02Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25619877756",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.09501
-      },
-      {
-        "name": "GenericSystemDetails::should disable systems operations if an instance operation is running",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune change operation running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-10T04:53:45Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25619877756",
@@ -5909,5 +5869,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-23T19:30:12Z",
+    "commit": "25cbc1d1fcc84f0aa663a5ac3f39590548d08eb4",
+    "run_id": "28050613669",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
