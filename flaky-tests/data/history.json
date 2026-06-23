@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-05-10T07:30:59Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25620214075",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 17
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.2981
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.2981
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.2817
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.1495
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.08419
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.05001
-      },
-      {
-        "name": "should render without selected filters::Activity Log page Filtering should render without selected filters",
-        "score": 0.05001
-      },
-      {
-        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
-        "score": 0.05001
-      },
-      {
-        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
-        "score": 0.05001
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-11T04:34:44Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25650104584",
@@ -5870,6 +5814,22 @@
       {
         "name": "UpgradablePackagesPage::should render correctly",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-23T19:51:06Z",
+    "commit": "25cbc1d1fcc84f0aa663a5ac3f39590548d08eb4",
+    "run_id": "28051561984",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.07501
       }
     ]
   }
