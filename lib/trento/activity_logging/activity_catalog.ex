@@ -221,7 +221,11 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.SapSystemController, :delete_application_instance} =>
           {:sap_system_cleanup_requested, 204},
         {TrentoWeb.V1.DatabaseController, :delete_database_instance} =>
-          {:database_cleanup_requested, 204}
+          {:database_cleanup_requested, 204},
+        {TrentoWeb.V1.AIConfigurationController, :create_ai_configuration} =>
+          {:ai_configuration_creation, 201},
+        {TrentoWeb.V1.AIConfigurationController, :update_ai_configuration} =>
+          {:ai_configuration_modification, 200}
       },
       get_connection_operation_activities()
     )

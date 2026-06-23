@@ -25,7 +25,9 @@ defmodule Trento.ActivityLog do
     "profile_update",
     "personal_access_token_creation",
     "personal_access_token_deletion",
-    "personal_access_token_admin_deletion"
+    "personal_access_token_admin_deletion",
+    "ai_configuration_creation",
+    "ai_configuration_modification"
   ]
 
   @spec list_activity_log(map()) ::
