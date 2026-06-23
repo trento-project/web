@@ -62,6 +62,9 @@ const getFilterFunction = (column, value) =>
     ? column.filter(value, column.key)
     : getDefaultFilterFunction(value, column.key);
 
+const getRowClassName = (rowClassName, item) =>
+  typeof rowClassName === 'function' ? rowClassName(item) : rowClassName;
+
 const itemsPerPageOptions = [10, 20, 50, 75, 100];
 
 function Table({
@@ -292,7 +295,7 @@ function Table({
                         renderCells={renderCells}
                         columns={columns}
                         colSpan={columns.length}
-                        className={rowClassName}
+                        className={getRowClassName(rowClassName, item)}
                         collapsedRowClassName={collapsedRowClassName}
                       />
                     );
