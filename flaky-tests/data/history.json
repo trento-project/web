@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-05-11T05:05:10Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25650804239",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 7
-    },
-    "top_flaky_tests": [
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.07001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation database_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show system/database operation database_stop in running state",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-11T05:06:09Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25650804239",
@@ -5805,6 +5769,22 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-24T19:13:17Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28122305712",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
         "score": 0.05001
       }
     ]
