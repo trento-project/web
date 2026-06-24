@@ -8,7 +8,7 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
-    "cypress": "^15.15.0",
+    "cypress": "^15.17.0",
     "cypress-split": "^1.24.31",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.1",
@@ -19,7 +19,7 @@
     "prettier": "3.8.3"
   },
   "dependencies": {
-    "@cypress/webpack-preprocessor": "^7.1.0",
+    "@cypress/webpack-preprocessor": "^7.1.1",
     "date-fns": "^4.4.0",
     "lodash": "^4.18.1",
     "npm": "^11.17.0",
