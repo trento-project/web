@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-05-11T05:06:09Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25650804239",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1238
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.1065
-      },
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.02501
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.02501
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-11T08:02:34Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25651465292",
@@ -5785,6 +5753,30 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-24T19:35:05Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28123447017",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.5
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
       }
     ]
