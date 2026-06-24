@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-05-11T04:35:35Z",
-    "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
-    "run_id": "25650104584",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
-        "score": 0.5
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is MESSAGESERVER without completing a SAP system registration",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.03977
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-11T05:05:10Z",
     "commit": "ed080da4b45c0a477a9cb84d82aa87a7a9cf7a97",
     "run_id": "25650804239",
@@ -5818,6 +5790,22 @@
       {
         "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
         "score": 0.08646
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-24T19:12:03Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28122305712",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
       }
     ]
   }
