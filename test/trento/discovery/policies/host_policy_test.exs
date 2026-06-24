@@ -281,7 +281,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
-  test "should return the expected commands when a cloud_discovery payload with an gcp provider is handled with missing metadata" do
+  test "should return the expected commands when a gcp cloud_discovery is handled with missing metadata" do
     assert {
              :ok,
              %UpdateProvider{
@@ -296,7 +296,7 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
-  test "should return the expected commands when a cloud_discovery payload with an gcp provider is handled with partially missing metadata" do
+  test "should return the expected commands when a gcp cloud_discovery is handled with partially missing metadata" do
     base_fixture = load_discovery_event_fixture("cloud_discovery_gcp")
 
     scenarios = [
