@@ -281,6 +281,53 @@ defmodule Trento.Discovery.Policies.HostPolicyTest do
              |> HostPolicy.handle()
   end
 
+  test "should return the expected commands when a cloud_discovery payload with an gcp provider is handled with missing metadata" do
+    assert {
+             :ok,
+             %UpdateProvider{
+               host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+               provider: Provider.gcp(),
+               provider_data: nil
+             }
+           } ==
+             "cloud_discovery_gcp"
+             |> load_discovery_event_fixture()
+             |> put_in(["payload", "Metadata"], nil)
+             |> HostPolicy.handle()
+  end
+
+  test "should return the expected commands when a cloud_discovery payload with an gcp provider is handled with partially missing metadata" do
+    base_fixture = load_discovery_event_fixture("cloud_discovery_gcp")
+
+    scenarios = [
+      put_in(base_fixture, ["payload", "Metadata", "image"], nil),
+      put_in(base_fixture, ["payload", "Metadata", "image"], ""),
+      put_in(base_fixture, ["payload", "Metadata", "image"], "   "),
+      base_fixture
+      |> pop_in(["payload", "Metadata", "image"])
+      |> elem(1)
+    ]
+
+    for scenario_fixture <- scenarios do
+      assert {
+               :ok,
+               %UpdateProvider{
+                 host_id: "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+                 provider: Provider.gcp(),
+                 provider_data: %GcpProvider{
+                   disk_number: 4,
+                   image: nil,
+                   instance_name: "vmhana01",
+                   machine_type: "n1-highmem-8",
+                   network: "network",
+                   project_id: "123456",
+                   zone: "europe-west1-b"
+                 }
+               }
+             } == HostPolicy.handle(scenario_fixture)
+    end
+  end
+
   test "should return the expected commands when a cloud_discovery payload with an kvm provider is handled" do
     assert {
              :ok,
