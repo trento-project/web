@@ -1,28 +1,26 @@
 {
-  "agent_id": "7269ee51-5007-5849-aaa7-7c4a98b0c9ce",
+  "agent_id": "f7012ac4-6f6b-45e6-b6c1-e154d43d0e42",
   "discovery_type": "host_discovery",
   "payload": {
-    "hostname": "vmnwdev01",
-    "cpu_count": 2,
+    "hostname": "vmhdbdev02",
+    "cpu_count": 4,
     "os_version": "15-SP3",
     "ip_addresses": [
       "127.0.0.1",
       "::1",
-      "10.100.1.21",
-      "10.100.1.25",
-      "fe80::6245:bdff:fe8a:5ce7"
+      "10.100.2.12",
+      "fe80::6245:bdff:fe8a:5f6b"
     ],
     "netmasks": [
       "8",
       "128",
       "24",
-      "24",
       "64"
     ],
     "socket_count": 1,
     "agent_version": "2.1.0",
-    "total_memory_mb": 7951,
-    "fully_qualified_domain_name": "vmnwdev01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
+    "total_memory_mb": 32107,
+    "fully_qualified_domain_name": "vmhdbdev02.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net",
     "arch": "x86_64",
     "systemd_units": [
       {

@@ -1,8 +1,8 @@
 {
-  "agent_id": "fb2c6b8a-9915-5969-a6b7-8b5a42de1971",
+  "agent_id": "653fa371-b322-4029-bfa0-a82b81c08c34",
   "discovery_type": "ha_cluster_discovery",
   "payload": {
-    "DC": false,
+    "DC": true,
     "Provider": "gcp",
     "Id": "057f083c3be591f4398eed816d4c8cd7",
     "State": "S_IDLE",
@@ -84,7 +84,7 @@
                     {
                       "Id": "rsc_ip_NWD_ASCS00-instance_attributes-ip",
                       "Name": "ip",
-                      "Value": "10.100.1.25"
+                      "Value": "10.100.2.25"
                     }
                   ]
                 },
@@ -121,7 +121,7 @@
                     {
                       "Id": "rsc_fs_NWD_ASCS00-instance_attributes-device",
                       "Name": "device",
-                      "Value": "10.100.1.33:/NWD/ASCS"
+                      "Value": "10.100.2.33:/NWD/ASCS"
                     },
                     {
                       "Id": "rsc_fs_NWD_ASCS00-instance_attributes-directory",
@@ -236,7 +236,7 @@
                     {
                       "Id": "rsc_ip_NWD_ERS10-instance_attributes-ip",
                       "Name": "ip",
-                      "Value": "10.100.1.26"
+                      "Value": "10.100.2.26"
                     }
                   ]
                 },
@@ -273,7 +273,7 @@
                     {
                       "Id": "rsc_fs_NWD_ERS10-instance_attributes-device",
                       "Name": "device",
-                      "Value": "10.100.1.33:/NWD/ERS"
+                      "Value": "10.100.2.33:/NWD/ERS"
                     },
                     {
                       "Id": "rsc_fs_NWD_ERS10-instance_attributes-directory",

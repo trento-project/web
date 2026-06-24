@@ -1,0 +1,16 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "653fa371-b322-4029-bfa0-a82b81c08c34",
+  "payload": {
+    "Provider": "gcp",
+    "Metadata": {
+      "disk_number": 4,
+      "image": "",
+      "instance_name": "vmhana01",
+      "machine_type": "n1-highmem-8",
+      "network": "network",
+      "project_id": "123456",
+      "zone": "europe-west1-b"
+    }
+  }
+}

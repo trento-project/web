@@ -1,6 +1,6 @@
 {
   "discovery_type": "cloud_discovery",
-  "agent_id": "0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4",
+  "agent_id": "f7012ac4-6f6b-45e6-b6c1-e154d43d0e42",
   "payload": {
     "Provider": "gcp",
     "Metadata": null
