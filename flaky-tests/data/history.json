@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-05-12T04:44:48Z",
-    "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
-    "run_id": "25713277735",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a system operation is running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as false",
-        "score": 0.05001
-      },
-      {
-        "name": "PatchList::renders the content correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-12T04:45:37Z",
     "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
     "run_id": "25713277735",
@@ -5695,5 +5659,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-06-25T19:26:31Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28194160477",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.07501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      }
+    ]
   }
 ]
