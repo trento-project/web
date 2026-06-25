@@ -14,6 +14,7 @@ defmodule TrentoWeb.V1.HostControllerTest do
 
   alias Trento.ActivityLog
   alias Trento.Hosts.Commands.RequestHostDeregistration
+  alias Trento.Hosts.ValueObjects.GcpProvider
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
   alias Trento.Infrastructure.Operations.AMQP.Publisher, as: OperationsPublisher
@@ -34,6 +35,40 @@ defmodule TrentoWeb.V1.HostControllerTest do
       get(conn, "/api/v1/hosts")
       |> json_response(200)
       |> assert_schema("HostsCollectionV1", api_spec)
+    end
+
+    test "should list gcp hosts with relevant metadata", %{conn: conn, api_spec: api_spec} do
+      gcp_metadata = %GcpProvider{
+        disk_number: 4,
+        image: "sles-15-sp1-sap-byos-v20220126",
+        instance_name: "vmhana01",
+        machine_type: "n1-highmem-8",
+        network: "network",
+        project_id: "123456",
+        zone: "europe-west1-b"
+      }
+
+      insert(:host,
+        provider: :gcp,
+        provider_data: gcp_metadata
+      )
+
+      insert(:host,
+        provider: :gcp,
+        provider_data: nil
+      )
+
+      insert(:host,
+        provider: :gcp,
+        provider_data: Map.put(gcp_metadata, :image, nil)
+      )
+
+      hosts =
+        get(conn, "/api/v1/hosts")
+        |> json_response(200)
+        |> assert_schema("HostsCollectionV1", api_spec)
+
+      assert length(hosts) == 3
     end
 
     test "should handle null cluster_id", %{conn: conn, api_spec: api_spec} do
