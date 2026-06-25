@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-05-12T04:17:16Z",
-    "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
-    "run_id": "25712562805",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
-        "score": 0.06196
-      },
-      {
-        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-12T04:44:48Z",
     "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
     "run_id": "25713277735",
@@ -5712,5 +5684,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-25T19:25:33Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28194160477",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
