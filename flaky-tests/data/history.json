@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-12T04:45:37Z",
-    "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
-    "run_id": "25713277735",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.09051
-      },
-      {
-        "name": "ClustersList component › filtering::should filter the table content by SID filter",
-        "score": 0.05001
-      },
-      {
-        "name": "PersonalAccessTokens::should show personal access tokens",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-12T07:35:48Z",
     "commit": "2cdec8baa70752e99bb973e0aef129a1ff26f4e8",
     "run_id": "25714042613",
@@ -5677,6 +5653,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-25T19:48:09Z",
+    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
+    "run_id": "28195195139",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
       }
     ]
   }
