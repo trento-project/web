@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-05-13T04:24:28Z",
-    "commit": "f99c2b532e0aa8714fac26fd7b9f2d71b3902357",
-    "run_id": "25777718687",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-05-13T04:50:27Z",
     "commit": "f99c2b532e0aa8714fac26fd7b9f2d71b3902357",
     "run_id": "25778405752",
@@ -5609,6 +5598,38 @@
       {
         "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
         "score": 0.03991
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-26T19:13:25Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28259027220",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.02501
       }
     ]
   }
