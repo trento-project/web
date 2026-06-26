@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-13T04:51:10Z",
-    "commit": "f99c2b532e0aa8714fac26fd7b9f2d71b3902357",
-    "run_id": "25778405752",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.06551
-      },
-      {
-        "name": "ClustersList component › filtering::should filter the table content by SID filter",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-13T07:46:52Z",
     "commit": "f99c2b532e0aa8714fac26fd7b9f2d71b3902357",
     "run_id": "25779294078",
@@ -5574,6 +5554,22 @@
       {
         "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-26T19:40:56Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28260202559",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
       }
     ]
   }
