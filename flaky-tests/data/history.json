@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-05-14T04:49:25Z",
-    "commit": "3f7514a394eb1f0e6197b79e5b5cc1b57935b365",
-    "run_id": "25841751766",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.07026
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-14T04:50:36Z",
     "commit": "3f7514a394eb1f0e6197b79e5b5cc1b57935b365",
     "run_id": "25841751766",
@@ -5543,6 +5511,22 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-27T19:08:08Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28298471371",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
+        "score": 0.05001
       }
     ]
   }
