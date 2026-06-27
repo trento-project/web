@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-14T04:50:36Z",
-    "commit": "3f7514a394eb1f0e6197b79e5b5cc1b57935b365",
-    "run_id": "25841751766",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.06329
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-14T08:09:40Z",
     "commit": "3f7514a394eb1f0e6197b79e5b5cc1b57935b365",
     "run_id": "25842593550",
@@ -5527,6 +5503,22 @@
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-27T19:09:04Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28298471371",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.1061
       }
     ]
   }
