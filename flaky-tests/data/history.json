@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T08:53:51Z",
-    "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
-    "run_id": "25901227275",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 28
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.2866
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.1476
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.09922
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.05981
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.05001
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.05001
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T19:00:14Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25935361600",
@@ -5448,5 +5392,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-06-28T22:14:14Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28333879473",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1030
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.08334
+      }
+    ]
   }
 ]
