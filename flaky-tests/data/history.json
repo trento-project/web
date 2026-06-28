@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T04:56:19Z",
-    "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
-    "run_id": "25900494446",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.09051
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T08:53:51Z",
     "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
     "run_id": "25901227275",
@@ -5453,5 +5437,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-06-28T19:07:50Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28332354810",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
