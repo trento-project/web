@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T04:29:02Z",
-    "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
-    "run_id": "25899865260",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.07953
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T04:55:32Z",
     "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
     "run_id": "25900494446",
@@ -5478,6 +5458,26 @@
       },
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-28T18:29:47Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28331435291",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.08281
+      },
+      {
+        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
         "score": 0.05001
       }
     ]
