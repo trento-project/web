@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T04:55:32Z",
-    "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
-    "run_id": "25900494446",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.07251
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show system/database operation sap_system_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T04:56:19Z",
     "commit": "5b796553f2ec1430e11f56599e3c01cca2b3e468",
     "run_id": "25900494446",
@@ -5479,6 +5435,22 @@
       {
         "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-28T19:07:03Z",
+    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
+    "run_id": "28332354810",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
       }
     ]
   }
