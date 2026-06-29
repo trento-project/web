@@ -536,7 +536,51 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                    sap_system |> pop_in(["Profile", "dbs/hdb/dbname"]) |> elem(1)
                  end)
                )
-               |> SapSystemPolicy.handle([], nil)
+               |> SapSystemPolicy.handle([], [])
+    end
+
+    test "should accept payload when a non-required property has a blank value" do
+      assert {:ok, [%RegisterApplicationInstance{}]} =
+               "sap_system_discovery_application"
+               |> load_discovery_event_fixture()
+               |> update_in(
+                 ["payload", Access.at(0), "Instances", Access.at(0), "SAPControl", "Properties"],
+                 fn properties ->
+                   Enum.map(properties, fn
+                     %{"property" => "Protected Webmethods"} = prop -> %{prop | "value" => ""}
+                     prop -> prop
+                   end)
+                 end
+               )
+               |> SapSystemPolicy.handle([], [])
+    end
+
+    for {property_name, property_index} <- [{"SAPSYSTEM", 4}, {"SAPLOCALHOST", 9}] do
+      test "should fail when #{property_name} property has a blank value" do
+        property_name = unquote(property_name)
+        property_index = unquote(property_index)
+
+        assert {:error, {:validation, [%{Instances: [%{SAPControl: %{Properties: properties}}]}]}} =
+                 "sap_system_discovery_application"
+                 |> load_discovery_event_fixture()
+                 |> put_in(
+                   [
+                     "payload",
+                     Access.at(0),
+                     "Instances",
+                     Access.at(0),
+                     "SAPControl",
+                     "Properties",
+                     Access.at(property_index),
+                     "value"
+                   ],
+                   ""
+                 )
+                 |> SapSystemPolicy.handle([], [])
+
+        assert %{value: [error_message]} = Enum.at(properties, property_index)
+        assert error_message == "can't be blank for property #{property_name}"
+      end
     end
   end
 end

@@ -175,17 +175,20 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     end
 
     def changeset(sap_control, attrs) do
-      hostname = find_property("SAPLOCALHOST", attrs)
+      changeset =
+        sap_control
+        |> cast(attrs, fields())
+        |> cast_embed(:Properties, required: true)
+
+      hostname = extract_property(changeset, "SAPLOCALHOST")
 
       instance_number =
-        case find_property("SAPSYSTEM", attrs) do
-          instance_number when is_binary(instance_number) -> String.to_integer(instance_number)
+        case extract_property(changeset, "SAPSYSTEM") do
+          value when is_binary(value) -> String.to_integer(value)
           _ -> nil
         end
 
-      sap_control
-      |> cast(attrs, fields())
-      |> cast_embed(:Properties, required: true)
+      changeset
       |> cast_embed(:Instances,
         with: fn instances, attrs ->
           SapControlInstance.changeset(instances, attrs, hostname, instance_number)
@@ -196,14 +199,14 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       |> validate_required_fields(@required_fields)
     end
 
-    defp find_property(property, %{"Properties" => properties}) do
-      Enum.find_value(properties, fn
-        %{"property" => ^property, "value" => value} -> value
+    defp extract_property(changeset, property_name) do
+      changeset
+      |> get_field(:Properties)
+      |> Enum.find_value(fn
+        %{property: ^property_name, value: value} -> value
         _ -> nil
       end)
     end
-
-    defp find_property(_, _), do: nil
   end
 
   defmodule SapControlProperty do
@@ -211,7 +214,8 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
     SAP control property field payload
     """
 
-    @required_fields [:value, :property]
+    @required_fields [:property]
+    @properties_requiring_value ["SAPSYSTEM", "SAPLOCALHOST"]
 
     use Trento.Support.Type
 
@@ -225,7 +229,15 @@ defmodule Trento.Discovery.Payloads.SapSystemDiscoveryPayload do
       property
       |> cast(attrs, fields())
       |> validate_required_fields(@required_fields)
+      |> validate_property_value()
     end
+
+    defp validate_property_value(%{changes: %{property: prop}} = changeset)
+         when prop in @properties_requiring_value do
+      validate_required(changeset, [:value], message: "can't be blank for property #{prop}")
+    end
+
+    defp validate_property_value(changeset), do: changeset
   end
 
   defmodule SapControlInstance do
