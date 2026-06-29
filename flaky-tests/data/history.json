@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T19:01:01Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "25935361600",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T19:26:53Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25936305473",
@@ -5402,6 +5374,26 @@
       {
         "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-29T19:27:27Z",
+    "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
+    "run_id": "28396203958",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.02501
       }
     ]
   }
