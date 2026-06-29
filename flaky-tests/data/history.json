@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T19:26:53Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "25936305473",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 13
-    },
-    "top_flaky_tests": [
-      {
-        "name": "SuseManagerSettingsModal component::should attempt saving only what changed",
-        "score": 0.09051
-      },
-      {
-        "name": "SuseManagerSettingsModal component::should try to save all the fields",
-        "score": 0.09051
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.07001
-      },
-      {
-        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show system/database operation sap_system_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune apply solution operation button based on user abilities",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T19:27:59Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25936305473",
@@ -5394,6 +5334,30 @@
       {
         "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-29T19:43:07Z",
+    "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
+    "run_id": "28397002224",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "search::should not match not included words",
+        "score": 0.09051
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.07658
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
       }
     ]
   }
