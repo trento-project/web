@@ -1,5 +1,5 @@
 {
-  "agent_id": "1b0e9297-97dd-55d6-9874-8efde4d84c90",
+  "agent_id": "a1af7f7b-03bd-47ad-be1c-7995991e8c55",
   "discovery_type": "host_discovery",
   "payload": {
     "hostname": "vmnwdev04",
@@ -8,8 +8,8 @@
     "ip_addresses": [
       "127.0.0.1",
       "::1",
-      "10.100.1.24",
-      "10.100.1.28",
+      "10.100.2.24",
+      "10.100.2.28",
       "fe80::6245:bdff:fe8d:9a74"
     ],
     "netmasks": [
