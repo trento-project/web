@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-15T19:27:59Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "25936305473",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-15T22:41:59Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25938366093",
@@ -5357,6 +5341,26 @@
       },
       {
         "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-29T19:43:59Z",
+    "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
+    "run_id": "28397002224",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.07026
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
         "score": 0.05001
       }
     ]
