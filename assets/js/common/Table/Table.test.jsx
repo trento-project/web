@@ -65,6 +65,35 @@ describe('Table component', () => {
       .forEach((tableRow) => expect(tableRow).toHaveClass(customRowClassName));
   });
 
+  it('should allow dynamic row classes based on row content', () => {
+    const activeClass = 'bg-green-50';
+    const inactiveClass = 'bg-gray-50';
+    const data = tableDataFactory.buildList(10).map((item, index) => ({
+      ...item,
+      isActive: index % 2 === 0,
+    }));
+
+    render(
+      <Table
+        config={{
+          rowClassName: (item) => (item.isActive ? activeClass : inactiveClass),
+          ...tableConfig,
+        }}
+        data={data}
+        setSearchParams={() => {}}
+      />
+    );
+
+    const tableRows = screen.getByRole('table').querySelectorAll('tbody > tr');
+    tableRows.forEach((tableRow, index) => {
+      if (data[index].isActive) {
+        expect(tableRow).toHaveClass(activeClass);
+      } else {
+        expect(tableRow).toHaveClass(inactiveClass);
+      }
+    });
+  });
+
   it('should display the header', () => {
     const data = tableDataFactory.buildList(10);
     const headerText = faker.person.firstName();

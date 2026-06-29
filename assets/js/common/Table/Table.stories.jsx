@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
+import classNames from 'classnames';
+
+import Pill from '@common/Pill';
 
 import Table from '.';
 
@@ -15,6 +18,19 @@ export default {
   title: 'Components/Table',
   component: Table,
 };
+
+function StatusPill({ children }) {
+  return (
+    <Pill
+      className={classNames({
+        'bg-green-100 text-green-800': children === 'active',
+        'bg-gray-200 text-gray-800': children !== 'active',
+      })}
+    >
+      {children}
+    </Pill>
+  );
+}
 
 const config = {
   columns: [
@@ -33,15 +49,7 @@ const config = {
     {
       title: 'Status',
       key: 'status',
-      render: (content) => (
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-          />
-          <span className="relative">{content}</span>
-        </span>
-      ),
+      render: (status) => <StatusPill>{status}</StatusPill>,
     },
   ],
 };
@@ -66,15 +74,7 @@ const filteredConfig = {
     {
       title: 'Status',
       key: 'status',
-      render: (content) => (
-        <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-          />
-          <span className="relative">{content}</span>
-        </span>
-      ),
+      render: (status) => <StatusPill>{status}</StatusPill>,
     },
   ],
 };
@@ -98,7 +98,7 @@ const data = [
   {
     user: 'Chad Carbonara',
     role: 'Employee',
-    status: 'active',
+    status: 'inactive',
     created_at: '2022-02-30',
   },
   {
@@ -162,15 +162,7 @@ export const Sorted = {
         {
           title: 'Status',
           key: 'status',
-          render: (content) => (
-            <span className="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 bg-green-200 opacity-50 rounded-full"
-              />
-              <span className="relative">{content}</span>
-            </span>
-          ),
+          render: (status) => <StatusPill>{status}</StatusPill>,
         },
       ],
     };
@@ -215,6 +207,15 @@ export function WithHeader(args) {
 
 export function WithCollapsibleRow(args) {
   return <Table config={collapsibleConfig} data={data} {...args} />;
+}
+
+export function WithStyledRows() {
+  const configWithRowClass = {
+    ...config,
+    rowClassName: ({ status }) =>
+      classNames({ 'bg-gray-100': status === 'inactive' }),
+  };
+  return <Table config={configWithRowClass} data={data} />;
 }
 
 export function Empty() {
