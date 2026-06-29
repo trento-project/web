@@ -1,14 +1,14 @@
 {
-  "agent_id": "1b0e9297-97dd-55d6-9874-8efde4d84c90",
+  "agent_id": "a1af7f7b-03bd-47ad-be1c-7995991e8c55",
   "discovery_type": "sap_system_discovery",
   "payload": [
     {
       "Id": "a1e80e3e152a903662f7882fb3f8a851",
       "SID": "NWD",
       "Type": 2,
-      "DBAddress": "10.100.1.13",
+      "DBAddress": "10.100.2.13",
       "Profile": {
-        "SAPDBHOST": "10.100.1.13",
+        "SAPDBHOST": "10.100.2.13",
         "dbms/name": "HDD",
         "dbms/type": "hdb",
         "gw/acl_mode": "1",
