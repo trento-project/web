@@ -23,6 +23,8 @@ const footnote = (
     <a
       href="https://documentation.suse.com/sles-sap/trento/html/SLES-SAP-trento/index.html"
       className="underline hover:text-gray-500"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       Learn more
     </a>

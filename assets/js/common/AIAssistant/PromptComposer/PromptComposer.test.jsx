@@ -58,9 +58,13 @@ describe('PromptComposer', () => {
   it('renders the footnote with the documentation link', () => {
     render(<PromptComposer connectionStatus="connected" />);
     expect(screen.getByText(/AI assistants can make mistakes/)).toBeVisible();
-    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
+
+    const learnMoreLink = screen.getByRole('link', { name: 'Learn more' });
+
+    expect(learnMoreLink).toHaveAttribute(
       'href',
       expect.stringContaining('documentation.suse.com')
     );
+    expect(learnMoreLink).toHaveAttribute('target', '_blank');
   });
 });
