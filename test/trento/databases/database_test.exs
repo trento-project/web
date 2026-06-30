@@ -11,6 +11,7 @@ defmodule Trento.Databases.DatabaseTest do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
+    MarkDatabaseInstanceDataStale,
     RegisterDatabaseInstance,
     RollUpDatabase
   }
@@ -18,6 +19,8 @@ defmodule Trento.Databases.DatabaseTest do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
@@ -130,7 +133,8 @@ defmodule Trento.Databases.DatabaseTest do
               features: features,
               host_id: host_id,
               status: Status.green(),
-              absent_at: nil
+              absent_at: nil,
+              stale_at: nil
             }
           ]
         }
@@ -223,7 +227,8 @@ defmodule Trento.Databases.DatabaseTest do
               instance_number: instance_number,
               features: features,
               host_id: host_id,
-              status: Status.green()
+              status: Status.green(),
+              stale_at: nil
             }
           ]
         }
@@ -918,7 +923,8 @@ defmodule Trento.Databases.DatabaseTest do
               features: features,
               host_id: host_id,
               status: Status.green(),
-              absent_at: nil
+              absent_at: nil,
+              stale_at: nil
             }
           ]
         }
@@ -2533,6 +2539,222 @@ defmodule Trento.Databases.DatabaseTest do
                      },
                      %Instance{
                        absent_at: nil
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+  end
+
+  describe "instance marked stale/in sync" do
+    test "should mark database instance data as stale" do
+      database_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:database_registered_event,
+          database_id: database_id,
+          sid: sid
+        ),
+        build(:database_instance_registered_event,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER"
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %MarkDatabaseInstanceDataStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        },
+        [
+          %DatabaseInstanceDataMarkedStale{
+            database_id: database_id,
+            instance_number: instance_number,
+            host_id: host_id,
+            stale_at: stale_at
+          }
+        ],
+        fn state ->
+          assert %Database{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: ^stale_at
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark database instance data as stale if already stale" do
+      database_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:database_registered_event,
+          database_id: database_id,
+          sid: sid
+        ),
+        build(:database_instance_registered_event,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER"
+        ),
+        build(:database_instance_data_marked_stale_event,
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %MarkDatabaseInstanceDataStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        },
+        [],
+        fn state ->
+          assert %Database{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: ^stale_at
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should mark database instance data as in sync when registering a stale instance" do
+      database_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      tenants = build_list(1, :tenant)
+
+      initial_events = [
+        build(:database_registered_event,
+          database_id: database_id,
+          sid: sid
+        ),
+        build(:database_instance_registered_event,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER"
+        ),
+        build(:database_tenants_updated_event,
+          database_id: database_id,
+          tenants: tenants
+        ),
+        build(:database_instance_data_marked_stale_event,
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id
+        )
+      ]
+
+      command =
+        build(:register_database_instance_command,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER",
+          tenants: tenants
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %DatabaseInstanceDataMarkedInSync{
+            database_id: database_id,
+            instance_number: instance_number,
+            host_id: host_id
+          }
+        ],
+        fn state ->
+          assert %Database{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: nil
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark database instance data as in sync if already in sync" do
+      database_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      tenants = build_list(1, :tenant)
+
+      initial_events = [
+        build(:database_registered_event,
+          database_id: database_id,
+          sid: sid
+        ),
+        build(:database_instance_registered_event,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER"
+        ),
+        build(:database_tenants_updated_event,
+          database_id: database_id,
+          tenants: tenants
+        )
+      ]
+
+      command =
+        build(:register_database_instance_command,
+          database_id: database_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "HDB|HDB_WORKER",
+          tenants: tenants
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [],
+        fn state ->
+          assert %Database{
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: nil
                      }
                    ]
                  } = state

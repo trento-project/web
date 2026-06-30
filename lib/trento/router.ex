@@ -33,6 +33,7 @@ defmodule Trento.Router do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
+    MarkDatabaseInstanceDataStale,
     RegisterDatabaseInstance,
     RollUpDatabase
   }
@@ -108,6 +109,7 @@ defmodule Trento.Router do
   dispatch [
              DeregisterDatabaseInstance,
              MarkDatabaseInstanceAbsent,
+             MarkDatabaseInstanceDataStale,
              RegisterDatabaseInstance,
              RollUpDatabase
            ],

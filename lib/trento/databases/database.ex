@@ -25,6 +25,7 @@ defmodule Trento.Databases.Database do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
+    MarkDatabaseInstanceDataStale,
     RegisterDatabaseInstance,
     RollUpDatabase
   }
@@ -32,6 +33,8 @@ defmodule Trento.Databases.Database do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
@@ -255,6 +258,9 @@ defmodule Trento.Databases.Database do
     |> Multi.execute(fn _ ->
       maybe_emit_database_instance_marked_present_event(instance, command)
     end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_database_instance_data_marked_in_sync_event(instance, command)
+    end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(fn database ->
       maybe_emit_database_tenants_updated_event(database, tenants)
@@ -283,6 +289,28 @@ defmodule Trento.Databases.Database do
           host_id: host_id,
           database_id: database_id,
           absent_at: absent_at
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  def execute(
+        %Database{database_id: database_id, instances: instances},
+        %MarkDatabaseInstanceDataStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        }
+      ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{stale_at: nil} ->
+        %DatabaseInstanceDataMarkedStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
         }
 
       _ ->
@@ -376,7 +404,8 @@ defmodule Trento.Databases.Database do
         features: features,
         host_id: host_id,
         status: status,
-        absent_at: nil
+        absent_at: nil,
+        stale_at: nil
       }
       | instances
     ]
@@ -478,6 +507,31 @@ defmodule Trento.Databases.Database do
         }
       ) do
     instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
+
+    %Database{database | instances: instances}
+  end
+
+  def apply(
+        %Database{instances: instances} = database,
+        %DatabaseInstanceDataMarkedInSync{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: nil})
+
+    %Database{database | instances: instances}
+  end
+
+  def apply(
+        %Database{instances: instances} = database,
+        %DatabaseInstanceDataMarkedStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: stale_at})
 
     %Database{database | instances: instances}
   end
@@ -622,6 +676,24 @@ defmodule Trento.Databases.Database do
   end
 
   defp maybe_emit_database_instance_marked_present_event(_, _), do: nil
+
+  defp maybe_emit_database_instance_data_marked_in_sync_event(
+         %Instance{stale_at: stale_at},
+         %RegisterDatabaseInstance{
+           database_id: database_id,
+           instance_number: instance_number,
+           host_id: host_id
+         }
+       )
+       when not is_nil(stale_at) do
+    %DatabaseInstanceDataMarkedInSync{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+  end
+
+  defp maybe_emit_database_instance_data_marked_in_sync_event(_, _), do: nil
 
   defp maybe_emit_database_instance_system_replication_changed_event(nil, _), do: nil
 
