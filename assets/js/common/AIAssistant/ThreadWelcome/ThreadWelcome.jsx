@@ -16,11 +16,11 @@ const defaultGreeting = (
  *
  * @example
  * <ThreadWelcome>
- *   <ThreadPrimitive.Suggestion prompt="What is the API key for adding agents?">
- *        What is the API key for adding agents?
+ *   <ThreadPrimitive.Suggestion prompt="How do I add agents via the API?">
+ *        How do I add agents via the API?
  *   </ThreadPrimitive.Suggestion>
- *   <ThreadPrimitive.Suggestion prompt="What is the check results that was run recently?">
- *        What is the check results that was run recently?
+ *   <ThreadPrimitive.Suggestion prompt="What are the most recent check results?">
+ *        What are the most recent check results?
  *   </ThreadPrimitive.Suggestion>
  * </ThreadWelcome>
  *
@@ -29,8 +29,6 @@ const defaultGreeting = (
  * @param {React.ReactNode} props.children - Additional content to render below the greeting.
  * @returns {JSX.Element}
  */
-// `children` renders below the greeting and is the slot for prompt
-// suggestions (e.g. `<ThreadPrimitive.Suggestion>` from `@assistant-ui/react`).
 function ThreadWelcome({ greeting = defaultGreeting, children }) {
   return (
     <div className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-6 pt-32 pb-2">
