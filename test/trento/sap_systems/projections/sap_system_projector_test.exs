@@ -455,8 +455,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
-      host_id: host_id,
-      sid: sid
+      host_id: host_id
     } = insert(:application_instance, stale_at: nil)
 
     event = %ApplicationInstanceDataMarkedStale{
@@ -483,7 +482,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         instance_number: ^instance_number,
         host_id: ^host_id,
         sap_system_id: ^sap_system_id,
-        sid: ^sid,
         stale_at: ^stale_at
       },
       1000
@@ -494,8 +492,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     %{
       sap_system_id: sap_system_id,
       instance_number: instance_number,
-      host_id: host_id,
-      sid: sid
+      host_id: host_id
     } = insert(:application_instance, stale_at: DateTime.utc_now())
 
     event = %ApplicationInstanceDataMarkedInSync{
@@ -521,7 +518,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         instance_number: ^instance_number,
         host_id: ^host_id,
         sap_system_id: ^sap_system_id,
-        sid: ^sid,
         stale_at: nil
       },
       1000

@@ -511,7 +511,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           stale_at: stale_at
         },
         _,
-        %{application_instance: %ApplicationInstanceReadModel{sid: sid}}
+        _
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -521,7 +521,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           instance_number: instance_number,
           host_id: host_id,
           sap_system_id: sap_system_id,
-          sid: sid,
           stale_at: stale_at
         }
       })
@@ -536,7 +535,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           sap_system_id: sap_system_id
         },
         _,
-        %{application_instance: %ApplicationInstanceReadModel{sid: sid}}
+        _
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
@@ -546,7 +545,6 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
           instance_number: instance_number,
           host_id: host_id,
           sap_system_id: sap_system_id,
-          sid: sid,
           stale_at: nil
         }
       })

@@ -110,7 +110,6 @@ defmodule TrentoWeb.V1.SapSystemJSON do
           instance_number: instance_number,
           host_id: host_id,
           sap_system_id: sap_system_id,
-          sid: sid,
           stale_at: stale_at
         }
       }),
@@ -118,7 +117,6 @@ defmodule TrentoWeb.V1.SapSystemJSON do
         instance_number: instance_number,
         host_id: host_id,
         sap_system_id: sap_system_id,
-        sid: sid,
         stale_at: stale_at
       }
 end
