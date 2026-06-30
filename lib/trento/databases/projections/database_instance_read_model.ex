@@ -40,6 +40,7 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
     field :system_replication_tier, :integer
     field :status, Ecto.Enum, values: Status.values()
     field :absent_at, :utc_datetime_usec
+    field :stale_at, :utc_datetime_usec
 
     belongs_to :host, HostReadModel,
       references: :id,
