@@ -12,7 +12,6 @@ directories = [
     "./test/fixtures/scenarios/sap-system-java",
     "./test/fixtures/scenarios/hana-scale-up-cost-opt",
     "./test/fixtures/scenarios/hana-scale-up-multi-tier",
-    "./test/fixtures/scenarios/gcp-landscape",
 ]
 
 [healthy-27-node-SAP-cluster]
