@@ -105,6 +105,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             enum: Status.values(),
             example: "green"
           },
+          stale_at: %Schema{
+            type: :string,
+            format: :datetime,
+            description: "Timestamp when the application instance data was marked as stale.",
+            nullable: true,
+            example: "2026-01-16T08:00:00Z"
+          },
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
           updated_at: %Schema{
             type: :string,
@@ -126,6 +133,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           host_id: "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
           health: "passing",
           status: "green",
+          stale_at: "2026-01-16T08:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:30:00Z"
         }

@@ -35,7 +35,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
       sap_system_id = Faker.UUID.v4()
       sid = "PRD"
       health = :passing
-      instances = build_list(2, :sap_system_instance, status: Status.green())
+      instances = build_list(2, :sap_system_instance, status: Status.green(), stale_at: nil)
       deregistered_at = DateTime.utc_now()
 
       old_instances =
@@ -43,6 +43,7 @@ defmodule Trento.SapSystems.Events.SapSystemRolledUpTest do
           instance
           |> StructHelper.to_map()
           |> Map.put("health", "passing")
+          |> Map.delete("stale_at")
         end)
 
       assert %SapSystemRolledUp{

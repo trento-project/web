@@ -80,6 +80,8 @@ defmodule Trento.Factory do
   alias Trento.Databases.ValueObjects.Tenant
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
@@ -596,6 +598,23 @@ defmodule Trento.Factory do
     })
   end
 
+  def application_instance_data_marked_stale_event_factory do
+    ApplicationInstanceDataMarkedStale.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    })
+  end
+
+  def application_instance_data_marked_in_sync_event_factory do
+    ApplicationInstanceDataMarkedInSync.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
+  end
+
   def deregister_application_instance_command_factory do
     DeregisterApplicationInstance.new!(%{
       sap_system_id: Faker.UUID.v4(),
@@ -834,7 +853,8 @@ defmodule Trento.Factory do
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
       status: Status.gray(),
-      absent_at: nil
+      absent_at: nil,
+      stale_at: nil
     }
   end
 
@@ -844,7 +864,8 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      status: Status.green()
+      status: Status.green(),
+      stale_at: nil
     }
   end
 
