@@ -7,6 +7,9 @@
   This represents a transaction to ensure that the procedure of deregistering domain aggregates
   follows a certain path and satisfies some requisites.
 
+  Additionally, it handles the stale data of the different aggregates when a host
+  heartbeat fails.
+
   For more information see https://hexdocs.pm/commanded/process-managers.html
 
 # `t`

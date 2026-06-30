@@ -479,6 +479,8 @@ deployed SAP systems, which is composed by the application layer.
 
   - [Trento.SapSystems.Commands.MarkApplicationInstanceAbsent](Trento.SapSystems.Commands.MarkApplicationInstanceAbsent.md): Mark an application instance as absent
 
+  - [Trento.SapSystems.Commands.MarkApplicationInstanceDataStale](Trento.SapSystems.Commands.MarkApplicationInstanceDataStale.md): Mark an application instance data as stale.
+
   - [Trento.SapSystems.Commands.RegisterApplicationInstance](Trento.SapSystems.Commands.RegisterApplicationInstance.md): Register an application instance to the monitoring system.
   - [Trento.SapSystems.Commands.RestoreSapSystem](Trento.SapSystems.Commands.RestoreSapSystem.md): Restore a previously deregistered SapSystem.
 
@@ -489,6 +491,11 @@ deployed SAP systems, which is composed by the application layer.
   - [Trento.SapSystems.Enums.EnsaVersion](Trento.SapSystems.Enums.EnsaVersion.md): Type that represents the supported ENSA versions.
 
   - [Trento.SapSystems.Enums.Status](Trento.SapSystems.Enums.Status.md): Type that represents SAP and HANA instances status.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceDataMarkedInSync](Trento.SapSystems.Events.ApplicationInstanceDataMarkedInSync.md): This event is emitted when an application instance data is marked as
+synchronized and valid.
+
+  - [Trento.SapSystems.Events.ApplicationInstanceDataMarkedStale](Trento.SapSystems.Events.ApplicationInstanceDataMarkedStale.md): This event is emitted when an application instance data is marked as stale.
 
   - [Trento.SapSystems.Events.ApplicationInstanceDeregistered](Trento.SapSystems.Events.ApplicationInstanceDeregistered.md): This event is emitted when a database application is deregistered (decommissioned) from the SAP system.
 

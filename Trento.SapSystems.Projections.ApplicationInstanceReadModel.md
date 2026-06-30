@@ -20,6 +20,7 @@ Application instance read model
   sap_system: term(),
   sap_system_id: term(),
   sid: term(),
+  stale_at: term(),
   start_priority: term(),
   status: term(),
   updated_at: term()

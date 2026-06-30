@@ -12,6 +12,7 @@ This module represents a SAP System instance.
   host_id: term(),
   instance_number: term(),
   sid: term(),
+  stale_at: term(),
   status: term(),
   system_replication: term(),
   system_replication_mode: term(),

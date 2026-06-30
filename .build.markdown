@@ -383,12 +383,15 @@ Trento.Router.md
 Trento.SapSystems.Commands.DeregisterApplicationInstance.md
 Trento.SapSystems.Commands.DeregisterSapSystem.md
 Trento.SapSystems.Commands.MarkApplicationInstanceAbsent.md
+Trento.SapSystems.Commands.MarkApplicationInstanceDataStale.md
 Trento.SapSystems.Commands.RegisterApplicationInstance.md
 Trento.SapSystems.Commands.RestoreSapSystem.md
 Trento.SapSystems.Commands.RollUpSapSystem.md
 Trento.SapSystems.Commands.UpdateDatabaseHealth.md
 Trento.SapSystems.Enums.EnsaVersion.md
 Trento.SapSystems.Enums.Status.md
+Trento.SapSystems.Events.ApplicationInstanceDataMarkedInSync.md
+Trento.SapSystems.Events.ApplicationInstanceDataMarkedStale.md
 Trento.SapSystems.Events.ApplicationInstanceDeregistered.md
 Trento.SapSystems.Events.ApplicationInstanceHealthChanged.md
 Trento.SapSystems.Events.ApplicationInstanceMarkedAbsent.md

@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-CFACA995.js"></script>
+    <script defer src="dist/sidebar_items-C60BDDEE.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -120,7 +120,8 @@ Trento Web
     <section id="moduledoc">
 <p>  DeregistrationProcessManager is a Commanded ProcessManager, it's the responsible
   for the deregistration procedure for the aggregates</p><p>  This represents a transaction to ensure that the procedure of deregistering domain aggregates
-  follows a certain path and satisfies some requisites.</p><p>  For more information see <a href="https://hexdocs.pm/commanded/process-managers.html">https://hexdocs.pm/commanded/process-managers.html</a></p>
+  follows a certain path and satisfies some requisites.</p><p>  Additionally, it handles the stale data of the different aggregates when a host
+  heartbeat fails.</p><p>  For more information see <a href="https://hexdocs.pm/commanded/process-managers.html">https://hexdocs.pm/commanded/process-managers.html</a></p>
     </section>
 
 </div>
@@ -260,7 +261,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -306,7 +307,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -328,7 +329,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -350,7 +351,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -373,7 +374,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">child_spec(opts)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L28" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L31" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -383,9 +384,9 @@ validates the required ones and returns a changeset.</p>
   <section class="docstring">
 
 <p>Provides a child specification to allow the event handler to be easily
-supervised.</p><h2 id="child_spec/1-example" class="section-heading"><a href="#child_spec/1-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h2><pre><code class="makeup elixir" translate="no"><span class="nc">Supervisor</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="7876444495-1">(</span><span class="p" data-group-id="7876444495-2">[</span><span class="w">
-  </span><span class="p" data-group-id="7876444495-3">{</span><span class="nc">ExampleProcessManager</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="7876444495-4">[</span><span class="p" data-group-id="7876444495-4">]</span><span class="p" data-group-id="7876444495-3">}</span><span class="w">
-</span><span class="p" data-group-id="7876444495-2">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="7876444495-1">)</span></code></pre>
+supervised.</p><h2 id="child_spec/1-example" class="section-heading"><a href="#child_spec/1-example" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Example</span></h2><pre><code class="makeup elixir" translate="no"><span class="nc">Supervisor</span><span class="o">.</span><span class="n">start_link</span><span class="p" data-group-id="4846532464-1">(</span><span class="p" data-group-id="4846532464-2">[</span><span class="w">
+  </span><span class="p" data-group-id="4846532464-3">{</span><span class="nc">ExampleProcessManager</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="4846532464-4">[</span><span class="p" data-group-id="4846532464-4">]</span><span class="p" data-group-id="4846532464-3">}</span><span class="w">
+</span><span class="p" data-group-id="4846532464-2">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strategy</span><span class="p">:</span><span class="w"> </span><span class="ss">:one_for_one</span><span class="p" data-group-id="4846532464-1">)</span></code></pre>
   </section>
 </section>
 <section class="detail" id="interested?/2">
@@ -420,7 +421,7 @@ supervised.</p><h2 id="child_spec/1-example" class="section-heading"><a href="#c
       <h1 class="signature" translate="no">new(structs)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -449,7 +450,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">new!(params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -479,7 +480,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">start_link(opts \\ [])</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L28" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L31" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -501,7 +502,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L36" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

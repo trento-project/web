@@ -1,5 +1,5 @@
 # `Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager.Instance`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L15)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/infrastructure/commanded/process_managers/deregistration_process_manager.ex#L18)
 
 An application or database instance and which SAP System/Database it belongs to.
 
