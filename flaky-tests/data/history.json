@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-05-16T22:14:51Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "25970953438",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 18
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1140
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1104
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.08296
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.07501
-      },
-      {
-        "name": "should not deregister database instances if the SAP system using the database is deregistered::Databases Overview Deregistration should not deregister database instances if the SAP system using the database is deregistered",
-        "score": 0.05001
-      },
-      {
-        "name": "should deregister an application instance::SAP Systems Overview Instance deregistration should deregister an application instance",
-        "score": 0.02501
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.02501
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-17T18:17:36Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25998562741",
@@ -5297,6 +5253,26 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-06-30T22:44:59Z",
+    "commit": "cd78f75f64e12065bf07107d88962417443884cf",
+    "run_id": "28473222546",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 12
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
+        "score": 0.1332
+      },
+      {
+        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
+        "score": 0.07251
       }
     ]
   }
