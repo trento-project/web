@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-17T22:18:55Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "26000679408",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 17
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2004
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1977
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.06146
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05878
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05878
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05878
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark an instance as absent and restore it as present on received respective discovery messages::SAP Systems Overview Instance deregistration should mark an instance as absent and restore it as present on received respective discovery messages",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-18T19:12:04Z",
     "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
     "run_id": "26054035698",
@@ -5247,6 +5199,26 @@
     "top_flaky_tests": [
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-01T22:44:16Z",
+    "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
+    "run_id": "28544969929",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.05001
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
         "score": 0.05001
       }
     ]
