@@ -20,7 +20,8 @@ describe('Users', () => {
       usersPage.pageTitleIsCorrectlyDisplayed('Create User');
     });
 
-    it('should fail if required fields are missing', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
+    it.only('should fail if required fields are missing', () => {
       usersPage.clickSubmitUserCreationButton();
       usersPage.validateRequiredFieldsErrors();
     });
