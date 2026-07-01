@@ -377,8 +377,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
         additionalProperties: false,
         properties: %{
           id: %Schema{
-            type: :number,
-            format: :int,
+            type: :integer,
             description: "Unique identifier for the advisory, used for reference and management."
           },
           issue_date: %Schema{
@@ -404,8 +403,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AvailableSoftwareUpdates do
             description: "A brief summary of the advisory, outlining its main points and impact."
           },
           release: %Schema{
-            type: :number,
-            format: :int,
+            type: :integer,
             description:
               "Indicates the release number associated with the advisory, supporting version tracking."
           },

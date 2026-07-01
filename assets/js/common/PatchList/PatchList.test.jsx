@@ -14,12 +14,18 @@ describe('PatchList', () => {
     const patches = [
       relevantPatchFactory.build({
         advisory_type: 'security_advisory',
+        advisory_synopsis: 'Synopsis security advisory patch',
+        update_date: '2024-01-10T00:00:00.000Z',
       }),
       relevantPatchFactory.build({
         advisory_type: 'bugfix',
+        advisory_synopsis: 'Synopsis bugfix patch',
+        update_date: '2024-02-11T00:00:00.000Z',
       }),
       relevantPatchFactory.build({
         advisory_type: 'enhancement',
+        advisory_synopsis: 'Synopsis enhancement patch',
+        update_date: '2024-03-12T00:00:00.000Z',
       }),
     ];
 

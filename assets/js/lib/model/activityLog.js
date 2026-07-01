@@ -44,6 +44,9 @@ export const SAP_SYSTEM_CLEANUP_REQUESTED = 'sap_system_cleanup_requested';
 export const DATABASE_CLEANUP_REQUESTED = 'database_cleanup_requested';
 export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
+export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
+export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
+
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
 export const HEARTBEAT_SUCCEEDED = 'heartbeat_succeeded';
@@ -75,7 +78,12 @@ export const CLUSTER_CHECKS_HEALTH_CHANGED = 'cluster_checks_health_changed';
 export const CLUSTER_DEREGISTERED = 'cluster_deregistered';
 export const CLUSTER_DETAILS_UPDATED = 'cluster_details_updated';
 export const CLUSTER_DISCOVERED_HEALTH_CHANGED =
-  'cluster_discovered_health_changed';
+  'cluster_discovered_health_changed'; // deprecated
+export const CLUSTER_REPLICATION_HEALTH_CHANGED =
+  'cluster_replication_health_changed';
+export const CLUSTER_DISTRIBUTED_HEALTH_CHANGED =
+  'cluster_distributed_health_changed';
+export const CLUSTER_SBD_HEALTH_CHANGED = 'cluster_sbd_health_changed';
 export const CLUSTER_HEALTH_CHANGED = 'cluster_health_changed';
 export const CLUSTER_REGISTERED = 'cluster_registered';
 export const CLUSTER_RESTORED = 'cluster_restored';
@@ -91,7 +99,9 @@ export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'application_instance_deregistered';
 export const APPLICATION_INSTANCE_HEALTH_CHANGED =
-  'application_instance_health_changed';
+  'application_instance_health_changed'; // deprecated
+export const APPLICATION_INSTANCE_STATUS_CHANGED =
+  'application_instance_status_changed';
 export const APPLICATION_INSTANCE_MARKED_ABSENT =
   'application_instance_marked_absent';
 export const APPLICATION_INSTANCE_MARKED_PRESENT =
@@ -115,7 +125,9 @@ export const DATABASE_DEREGISTERED = 'database_deregistered';
 export const DATABASE_HEALTH_CHANGED = 'database_health_changed';
 export const DATABASE_INSTANCE_DEREGISTERED = 'database_instance_deregistered';
 export const DATABASE_INSTANCE_HEALTH_CHANGED =
-  'database_instance_health_changed';
+  'database_instance_health_changed'; // deprecated
+export const DATABASE_INSTANCE_STATUS_CHANGED =
+  'database_instance_status_changed';
 export const DATABASE_INSTANCE_MARKED_ABSENT =
   'database_instance_marked_absent';
 export const DATABASE_INSTANCE_MARKED_PRESENT =
@@ -162,6 +174,7 @@ export const availableResourceNameKeys = pipe(
 const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
+const profileResourceType = (_entry) => 'Profile';
 const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
@@ -285,19 +298,31 @@ export const ACTIVITY_TYPES_CONFIG = {
   [PROFILE_UPDATE]: {
     label: 'Profile Updated',
     message: (_entry) => `User modified profile`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_CREATION]: {
     label: 'Personal Access Token Created',
     message: (_entry) => `Personal access token was created`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_DELETION]: {
     label: 'Personal Access Token Deleted',
     message: (_entry) => `Personal access token was deleted`,
-    resource: (_entry) => 'Profile',
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_CREATION]: {
+    label: 'AI Configuration Created',
+    message: (_entry) => `AI configuration was created`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_MODIFICATION]: {
+    label: 'AI Configuration Updated',
+    message: (_entry) => `AI configuration was updated`,
+    resource: profileResourceType,
     allowedTo: userManagement,
   },
   [PERSONAL_ACCESS_TOKEN_ADMIN_DELETION]: {
@@ -464,6 +489,21 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Cluster's discovered health changed`,
     resource: clusterResourceType,
   },
+  [CLUSTER_REPLICATION_HEALTH_CHANGED]: {
+    label: 'Cluster Replication Health Changed',
+    message: (_entry) => `Cluster's replication health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DISTRIBUTED_HEALTH_CHANGED]: {
+    label: 'Cluster Distributed Health Changed',
+    message: (_entry) => `Cluster's ASCS/ERS nodes distribution health changed`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_SBD_HEALTH_CHANGED]: {
+    label: 'Cluster SBD Health Changed',
+    message: (_entry) => `Cluster's SBD fencing health changed`,
+    resource: clusterResourceType,
+  },
   [CLUSTER_HEALTH_CHANGED]: {
     label: 'Cluster Health Changed',
     message: (_entry) => `Cluster health changed`,
@@ -519,6 +559,11 @@ export const ACTIVITY_TYPES_CONFIG = {
   [APPLICATION_INSTANCE_HEALTH_CHANGED]: {
     label: 'Application Instance Health Changed',
     message: (_entry) => `Application instance health changed`,
+    resource: sapSystemResourceType,
+  },
+  [APPLICATION_INSTANCE_STATUS_CHANGED]: {
+    label: 'Application Instance Status Changed',
+    message: (_entry) => `Application instance status changed`,
     resource: sapSystemResourceType,
   },
   [APPLICATION_INSTANCE_MARKED_ABSENT]: {
@@ -605,6 +650,11 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_INSTANCE_HEALTH_CHANGED]: {
     label: 'Database Instance Health Changed',
     message: (_entry) => `Database instance health changed`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_STATUS_CHANGED]: {
+    label: 'Database Instance Status Changed',
+    message: (_entry) => `Database instance status changed`,
     resource: databaseResourceType,
   },
   [DATABASE_INSTANCE_MARKED_ABSENT]: {

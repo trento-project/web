@@ -34,7 +34,7 @@ export const availableSAPSystems = [
     instances: [
       {
         sid: 'NWD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'MESSAGESERVER|ENQUE',
         instanceNumber: '00',
         systemReplication: '',
@@ -46,7 +46,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '01',
         systemReplication: '',
@@ -58,7 +58,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '02',
         systemReplication: '',
@@ -70,7 +70,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ENQREP',
         instanceNumber: '10',
         systemReplication: '',
@@ -82,7 +82,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Primary,
@@ -94,7 +94,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDD',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Secondary,
@@ -121,7 +121,7 @@ export const availableSAPSystems = [
     instances: [
       {
         sid: 'NWP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'MESSAGESERVER|ENQUE',
         instanceNumber: '00',
         systemReplication: '',
@@ -133,7 +133,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '01',
         systemReplication: '',
@@ -145,7 +145,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '02',
         systemReplication: '',
@@ -157,7 +157,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ENQREP',
         instanceNumber: '10',
         systemReplication: '',
@@ -169,7 +169,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Primary,
@@ -181,7 +181,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDP',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Secondary,
@@ -208,7 +208,7 @@ export const availableSAPSystems = [
     instances: [
       {
         sid: 'NWQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'MESSAGESERVER|ENQUE',
         instanceNumber: '00',
         systemReplication: '',
@@ -220,7 +220,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '01',
         systemReplication: '',
@@ -232,7 +232,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ABAP|GATEWAY|ICMAN|IGS',
         instanceNumber: '02',
         systemReplication: '',
@@ -244,7 +244,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'NWQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'ENQREP',
         instanceNumber: '10',
         systemReplication: '',
@@ -256,7 +256,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Primary,
@@ -268,7 +268,7 @@ export const availableSAPSystems = [
       },
       {
         sid: 'HDQ',
-        health: 'GREEN',
+        status: 'GREEN',
         features: 'HDB|HDB_WORKER',
         instanceNumber: '10',
         systemReplication: HANASystemReplicationModes.Secondary,

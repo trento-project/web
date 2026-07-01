@@ -220,13 +220,14 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
   ]
 
 config :trento, :component_versions, adapter: Trento.Infrastructure.ComponentVersions
+config :trento, Trento.Infrastructure.ComponentVersions, http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.PrometheusApi
 
 config :trento, Trento.Infrastructure.Prometheus.PrometheusApi,
   url: "http://localhost:9090",
-  http_client: Trento.Infrastructure.Prometheus.Adapter.HttpClient
+  http_client: Trento.Support.HttpClient
 
 config :trento, Trento.Charts,
   enabled: true,
@@ -290,6 +291,7 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 
 config :trento, :ai,
   enabled: true,
+  base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
   providers: [
     googleai: [
       models: [
@@ -318,7 +320,15 @@ config :trento, :ai,
         "claude-haiku-4-5"
       ]
     ]
-  ]
+  ],
+  agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
+  agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
+  tool_sources: [
+    TrentoWeb.AI.ControllerToolSource,
+    {Trento.AI.RemoteOpenApiToolSource,
+     name: :wanda, spec_url: "http://localhost:4001/api/all/openapi"}
+  ],
+  http_client: Trento.Support.HttpClient
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

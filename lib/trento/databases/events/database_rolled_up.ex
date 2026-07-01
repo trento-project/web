@@ -9,7 +9,9 @@ defmodule Trento.Databases.Events.DatabaseRolledUp do
 
   use Trento.Support.Event
 
-  defevent resource: "database", version: 2 do
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
+
+  defevent resource: "database", version: 3 do
     field :database_id, Ecto.UUID
     embeds_one :snapshot, Trento.Databases.Database
   end
@@ -44,4 +46,22 @@ defmodule Trento.Databases.Events.DatabaseRolledUp do
   end
 
   def upcast(params, _, 2), do: params
+
+  def upcast(
+        %{
+          "snapshot" => %{
+            "instances" => _instances
+          }
+        } = params,
+        _,
+        3
+      ) do
+    update_in(
+      params,
+      ["snapshot", "instances", Access.all()],
+      &UpcastHelper.upcast_health_to_status/1
+    )
+  end
+
+  def upcast(params, _, 3), do: params
 end

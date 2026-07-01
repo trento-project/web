@@ -9,10 +9,88 @@ defmodule Trento.Clusters.Events.ClusterRolledUp do
 
   use Trento.Support.Event
 
+  require Trento.Enums.Health, as: Health
+
   alias Trento.Clusters.Cluster
 
-  defevent do
+  defevent resource: "cluster", version: 3 do
     field :cluster_id, Ecto.UUID
     embeds_one :snapshot, Cluster
   end
+
+  # Handle old ClusterRolledUp, inherited from the previous aggregate when
+  # discovered_health field existed.
+  # - discovered_health is moved to replication_health for HANA clusters
+  # - discovered_health is moved to distributed_health for ASCS/ERS clusters
+  def upcast(
+        %{
+          "snapshot" =>
+            %{
+              "type" => type,
+              "discovered_health" => discovered_health,
+              "checks_health" => checks_health
+            } = snapshot
+        } = params,
+        _,
+        2
+      )
+      when type in ["hana_scale_up", "hana_scale_out"] do
+    new_snapshot =
+      snapshot
+      |> Map.put("health_details", %{
+        "replication_health" => discovered_health,
+        "checks_health" => checks_health
+      })
+      |> Map.delete("discovered_health")
+
+    Map.put(params, "snapshot", new_snapshot)
+  end
+
+  def upcast(
+        %{
+          "snapshot" =>
+            %{
+              "type" => "ascs_ers",
+              "discovered_health" => discovered_health,
+              "checks_health" => checks_health
+            } = snapshot
+        } = params,
+        _,
+        2
+      ) do
+    new_snapshot =
+      snapshot
+      |> Map.put("health_details", %{
+        "distributed_health" => discovered_health,
+        "checks_health" => checks_health
+      })
+      |> Map.delete("discovered_health")
+
+    Map.put(params, "snapshot", new_snapshot)
+  end
+
+  def upcast(params, _, 2),
+    do:
+      params
+      |> Map.put("health_details", %{})
+      |> Map.delete("discovered_health")
+
+  # Version 3 -- Add "sbd_health" to "health_details" if that exists
+  def upcast(
+        %{
+          "snapshot" => %{
+            "health_details" => %{}
+          }
+        } = params,
+        _,
+        3
+      ) do
+    put_in(
+      params,
+      ["snapshot", "health_details", "sbd_health"],
+      Health.unknown()
+    )
+  end
+
+  def upcast(params, _, 3), do: params
 end

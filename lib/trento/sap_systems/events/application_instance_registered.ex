@@ -8,9 +8,11 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
 
   use Trento.Support.Event
 
-  require Trento.Enums.Health, as: Health
+  require Trento.SapSystems.Enums.Status, as: Status
 
-  defevent do
+  alias Trento.Databases.Events.Upcaster.UpcastHelper
+
+  defevent version: 2 do
     field :sap_system_id, Ecto.UUID
     field :sid, :string
     field :host_id, Ecto.UUID
@@ -20,6 +22,9 @@ defmodule Trento.SapSystems.Events.ApplicationInstanceRegistered do
     field :http_port, :integer
     field :https_port, :integer
     field :start_priority, :string
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
   end
+
+  def upcast(params, _, 2),
+    do: UpcastHelper.upcast_health_to_status(params)
 end

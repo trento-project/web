@@ -26,7 +26,6 @@ import {
 } from '@lib/test-utils/factories';
 
 import '@testing-library/jest-dom';
-import { faker } from '@faker-js/faker';
 import CheckResultDetail from './CheckResultDetail';
 
 describe('CheckResultDetail Component', () => {
@@ -99,17 +98,9 @@ describe('CheckResultDetail Component', () => {
     const [{ id: target1 }, { id: target2 }] = clusterHosts;
     const targetType = 'cluster';
 
-    const expectationName = faker.lorem.word();
-    const anotherExpectationName = faker.color.human();
-
-    const expectations = [
-      catalogExpectSameExpectationFactory.build({
-        name: expectationName,
-      }),
-      catalogExpectSameExpectationFactory.build({
-        name: anotherExpectationName,
-      }),
-    ];
+    const expectations = catalogExpectSameExpectationFactory.buildList(2);
+    const [{ name: expectationName }, { name: anotherExpectationName }] =
+      expectations;
 
     const agent1CheckResult = agentCheckResultFactory.build({
       agent_id: target1,

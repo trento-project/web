@@ -47,6 +47,9 @@ export const validatePageUrl = () =>
 export const validateNonExistentDatabaseUrl = () =>
   basePage.validateUrl(`${url}/other`);
 
+export const pageTitleHealthIsCorrectlyDisplayed = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedDatabase.Health);
+
 export const databaseHasExpectedName = () =>
   cy.get(databaseNameLabel).should('have.text', selectedDatabase.Sid);
 
@@ -150,19 +153,16 @@ const validateHostClass = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
   return cy
     .get(hostNameCellSelector)
-    .nextAll()
-    .eq(5)
+    .prev()
     .find('svg')
     .should('have.class', healthMap[status]);
 };
 
 const validateHostStatus = (hostName, status) => {
   const hostNameCellSelector = layoutTableHostNameCell(hostName);
-  return cy
-    .get(hostNameCellSelector)
-    .nextAll()
-    .eq(5)
-    .should('have.text', `SAPControl: ${status}`);
+  cy.get(hostNameCellSelector).prev().find('svg').trigger('mouseover');
+
+  return cy.get(`span:contains("${status}")`).should('exist');
 };
 
 const hostHasExpectedStatus = (hostName) => {
@@ -179,13 +179,13 @@ export const hostHasClass = (status) =>
 export const eachHostNameHasExpectedValues = () =>
   cy.wrap(selectedDatabase.Hosts).each((host) => {
     const hostName = host.Hostname;
+    hostHasExpectedStatus(hostName);
+    hostStatusHasExpectedClass(hostName);
     hostNameHasExpectedInstanceNumber(hostName);
     hostNameHasExpectedFeatures(hostName);
     hostHasExpectedHttpPort(hostName);
     hostHasExpectedHttpsPort(hostName);
-    hostHasExpectedStartPriority(hostName);
-    hostHasExpectedStatus(hostName);
-    return hostStatusHasExpectedClass(hostName);
+    return hostHasExpectedStartPriority(hostName);
   });
 
 export const eachSiteHasExpectedValues = (sites) =>
@@ -269,7 +269,7 @@ const hostHasExpectedWorkingLink = (host) => {
   cy.get(hostNameSelector).should('have.attr', 'href', expectedHref);
   cy.get(hostNameSelector).click();
   basePage.validateUrl(expectedHref);
-  return cy.go('back');
+  return basePage.goBack();
 };
 
 export const eachAttachedHostHasExpectedValues = () =>
@@ -296,7 +296,7 @@ export const deregisteredHostIsNotDisplayed = () =>
   cy.get(newRegisteredHost).should('not.exist');
 
 export const deregisteredHostIsDisplayed = () =>
-  cy.get(newRegisteredHost).should('be.visible');
+  cy.get(newRegisteredHost, { timeout: 20000 }).should('be.visible');
 
 // API
 

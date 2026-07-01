@@ -21,7 +21,7 @@ export function DatabaseInstance({ instance, userAbilities, onCleanUpClick }) {
 }
 
 const databaseInstanceColumns = [
-  { key: 'health', name: 'Health', cssClass: 'w-20' },
+  { key: 'status', name: 'Status', cssClass: 'w-20' },
   { key: 'instanceNr', name: 'Instance Nr', cssClass: 'w-24' },
   { key: 'features', name: 'Features' },
   { key: 'systemReplication', name: 'System Replication' },

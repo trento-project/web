@@ -191,6 +191,27 @@ describe('CheckResultDetailPage Component', () => {
     );
   });
 
+  it('shows the loading box while the catalog is still loading', () => {
+    const reduxStore = initialStore();
+    const { validClusterID, validCheckID, validTargetType, validTargetName } =
+      getValidStoreData(reduxStore);
+
+    // Simulate the catalog still in-flight: data hasn't arrived yet but
+    // execution data is already in store
+    reduxStore.catalog = { loading: true, data: [], error: null };
+
+    const [StatefulCheckResultDetailPage] = withState(
+      <CheckResultDetailPage targetType="cluster" />,
+      reduxStore
+    );
+    renderWithRouterMatch(StatefulCheckResultDetailPage, {
+      path: 'clusters/:targetID/executions/last/:checkID/:resultTargetType/:resultTargetName',
+      route: `/clusters/${validClusterID}/executions/last/${validCheckID}/${validTargetType}/${validTargetName}`,
+    });
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
   it('should render CheckResultDetailPage when the parts of url [ClusterID, CheckID, TargetType, TargetName] are valid', () => {
     const reduxStore = initialStore();
     const { validClusterID, validCheckID, validTargetType, validTargetName } =

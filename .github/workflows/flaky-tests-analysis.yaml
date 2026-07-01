@@ -17,6 +17,11 @@ on:
         description: "Download pattern for JUnit reports"
         type: string
         required: true
+      screenshot-artifact-pattern:
+        description: "Download pattern for screenshot artifacts"
+        type: string
+        required: false
+        default: ""
       total-runs:
         description: "Expected number of test runs"
         type: string
@@ -35,7 +40,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - name: Download JUnit reports artifacts
         id: download-reports
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -61,8 +66,11 @@ jobs:
                 TOTAL_COMPLETED=$((TOTAL_COMPLETED + 1))
                 # A run is considered failed if any of its XML files reports failures
                 if grep -ql 'failures="[1-9]' "$dir"/*.xml 2>/dev/null; then
+                  local run_name
                   FAILED_RUNS=$((FAILED_RUNS + 1))
-                  cp "$dir"/*.xml "$failed_dir/"
+                  run_name="$(basename "$dir")"
+                  mkdir -p "$failed_dir/$run_name"
+                  cp "$dir"/*.xml "$failed_dir/$run_name/"
                 fi
               fi
             done
@@ -210,25 +218,80 @@ jobs:
           payload: |
             text: ":warning: *Flaky tests failure rate threshold exceeded*\n*Suite:* ${{ inputs.suite-name }}\n*Failure rate:* ${{ steps.analyze.outputs.failure-percentage }}%"
 
-      - name: Delete artifacts
+      - name: Download screenshot artifacts
+        id: download-screenshots
+        if: inputs.screenshot-artifact-pattern != '' && fromJson(steps.analyze.outputs.has-failed-reports)
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: screenshot-artifacts
+          pattern: ${{ inputs.screenshot-artifact-pattern }}
+      - name: Build aggregated evidence artifact
+        id: build-evidence
+        if: fromJson(steps.analyze.outputs.has-failed-reports)
+        run: |
+          set -euo pipefail
+
+          copy_artifacts() {
+            local source_dir="$1"
+            local pattern="$2"
+            local target_name="$3"
+
+            [ -n "$pattern" ] || return 0
+            [ -d "$source_dir" ] || return 0
+
+            local prefix="${pattern%\*}"
+
+            shopt -s nullglob
+            for artifact_dir in "$source_dir"/*; do
+              [ -d "$artifact_dir" ] || continue
+
+              local artifact_name run_dir
+              artifact_name="$(basename "$artifact_dir")"
+              run_dir="${artifact_name#"$prefix"}"
+
+              mkdir -p "$BUNDLE_DIR/$run_dir/$target_name"
+              cp -R "$artifact_dir"/. "$BUNDLE_DIR/$run_dir/$target_name/"
+            done
+            shopt -u nullglob
+          }
+
+          WORKFLOW_SLUG="$(echo '${{ github.workflow }}' | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
+          SUITE_SLUG="$(echo '${{ inputs.suite-name }}' | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g')"
+          BUNDLE_DIR="$RUNNER_TEMP/evidence"
+          rm -rf "$BUNDLE_DIR"
+          mkdir -p "$BUNDLE_DIR"
+
+          copy_artifacts "${{ steps.analyze.outputs.failed-reports-dir }}" "${{ inputs.junit-artifact-pattern }}" "junit"
+          copy_artifacts "${{ steps.download-screenshots.outputs.download-path }}" "${{ inputs.screenshot-artifact-pattern }}" "screenshots"
+
+          if [ -n "$(find "$BUNDLE_DIR" -mindepth 2 -type f -print -quit)" ]; then
+            echo "bundle-dir=$BUNDLE_DIR" >> "$GITHUB_OUTPUT"
+            echo "artifact-name=evidence-${WORKFLOW_SLUG}-${SUITE_SLUG}-${{ github.run_id }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "No evidence files were collected for the aggregated artifact."
+          fi
+      - name: Upload aggregated evidence artifact
+        if: steps.build-evidence.outputs.bundle-dir != ''
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ steps.build-evidence.outputs.artifact-name }}
+          path: ${{ steps.build-evidence.outputs.bundle-dir }}
+          retention-days: 15
+      - name: Delete JUnit artifacts
         uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
           name: ${{ inputs.junit-artifact-pattern }}
           failOnError: false
-      - name: Compute artifact name
-        id: artifact-name
-        run: echo "value=failed-$(echo '${{ inputs.junit-artifact-pattern }}' | sed 's/-\*$//')" >> $GITHUB_OUTPUT
-      - name: Upload failed JUnit reports
-        if: fromJson(steps.analyze.outputs.has-failed-reports)
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      - name: Delete screenshot artifacts
+        if: inputs.screenshot-artifact-pattern != '' && steps.build-evidence.outputs.bundle-dir != ''
+        uses: geekyeggo/delete-artifact@176a747ab7e287e3ff4787bf8a148716375ca118 # v6
         with:
-          name: ${{ steps.artifact-name.outputs.value }}
-          path: ${{ steps.analyze.outputs.failed-reports-dir }}
-          retention-days: 7
+          name: ${{ inputs.screenshot-artifact-pattern }}
+          failOnError: false
 
       - name: Checkout gh-pages for update
         if: github.event_name == 'schedule'
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           ref: gh-pages
           path: dashboard-site

@@ -18,6 +18,10 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.expectedClusterNameIsDisplayedInHeader();
     });
 
+    it('should have expected cluster health in header', () => {
+      hanaClusterDetailsPage.expectedClusterHealthIsDisplayedInHeader();
+    });
+
     it('should have expected provider', () => {
       hanaClusterDetailsPage.expectedProviderIsDisplayed('hana');
     });
@@ -150,8 +154,19 @@ context('HANA cluster details', () => {
       hanaClusterDetailsPage.waitForInitialEndpoints();
     });
 
+    after(() => hanaClusterDetailsPage.loadScenario('cluster-sbd-healthy'));
+
     it('should have SBD expected device name & status', () => {
       hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus();
+    });
+
+    it('should have SBD with unhealthy status after change', () => {
+      hanaClusterDetailsPage.loadScenario('cluster-sbd-unhealthy');
+      hanaClusterDetailsPage.criticalClusterHealthIsDisplayedInHeader();
+      hanaClusterDetailsPage.sbdClusterHasExpectedNameAndStatus([
+        {},
+        { status: 'Unhealthy' },
+      ]);
     });
   });
 
@@ -305,13 +320,15 @@ context('HANA cluster details', () => {
     const CHECK_SBD = 'SBD';
 
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
     beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
 
     it('should include the checks catalog in the checks results once enabled', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_COROSYNC);
       hanaClusterDetailsPage.expectedCheckIsDisplayed(CHECK_MISCELLANEOUS);
       hanaClusterDetailsPage.expectedCheckIsDisplayed(
@@ -362,7 +379,9 @@ context('HANA cluster details', () => {
     });
 
     it('should show the default check catalog with corosync token timeout default value', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
       hanaClusterDetailsPage.checkInputValueIsTheExpected(5000);
@@ -388,7 +407,9 @@ context('HANA cluster details', () => {
     });
 
     it('should show the default check catalog with corosync token timeout default value', () => {
+      hanaClusterDetailsPage.interceptGetChecks();
       hanaClusterDetailsPage.clickCheckSelectionButton();
+      hanaClusterDetailsPage.waitForGetChecksEndpoint();
       hanaClusterDetailsPage.clickCorosyncCheckCategory();
       hanaClusterDetailsPage.clickCorosyncTokenTimeoutCheckSettings();
       hanaClusterDetailsPage.checkInputValueIsTheExpected(5000);

@@ -19,6 +19,8 @@ defmodule Trento.Factory do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
+  require Trento.Clusters.Enums.SbdDeviceStatus, as: SbdDeviceStatus
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Faker.Random.Elixir, as: RandomElixir
 
@@ -29,6 +31,7 @@ defmodule Trento.Factory do
     ClusterResource,
     ClusterResourceParent,
     HanaClusterDetails,
+    HanaClusterHealthDetails,
     HanaClusterNode,
     HanaClusterSite,
     SapInstance,
@@ -65,6 +68,8 @@ defmodule Trento.Factory do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
@@ -77,6 +82,8 @@ defmodule Trento.Factory do
   alias Trento.Databases.ValueObjects.Tenant
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
@@ -181,13 +188,16 @@ defmodule Trento.Factory do
     OperationRequestFailedDetails
   }
 
-  alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset}
+  alias Trento.Checks.V1.{CheckCustomizationApplied, CheckCustomizationReset, CheckCustomValue}
 
   alias TrentoWeb.Auth.PersonalAccessToken, as: PAT
 
-  alias Trento.AI.{LLMRegistry, UserConfiguration}
+  alias OpenApiSpex.Operation
+  alias Trento.AI.{LLMRegistry, OperationEntry, UserConfiguration}
 
   alias Trento.AI.AICase
+
+  alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
   use ExMachina.Ecto, repo: Trento.Repo
 
@@ -264,22 +274,26 @@ defmodule Trento.Factory do
     }
   end
 
-  def register_online_cluster_host_factory do
-    %RegisterOnlineClusterHost{
+  def register_online_cluster_host_factory(attrs) do
+    command = %{
       cluster_id: Faker.UUID.v4(),
       host_id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
-      sap_instances: build_list(1, :clustered_sap_instance),
+      sap_instances: [params_for(:clustered_sap_instance)],
       provider: Enum.random(Provider.values()),
       resources_number: 8,
       hosts_number: 2,
-      details: build(:hana_cluster_details),
+      details: params_for(:hana_cluster_details),
       type: ClusterType.hana_scale_up(),
-      discovered_health: Health.passing(),
       designated_controller: true,
       cib_last_written: Date.to_string(Faker.Date.forward(0)),
       state: :S_IDLE
     }
+
+    command
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> RegisterOnlineClusterHost.new!()
   end
 
   def register_offline_cluster_host_factory do
@@ -329,6 +343,11 @@ defmodule Trento.Factory do
       hosts_number: 2,
       details: build(:hana_cluster_details),
       health: Health.passing(),
+      health_details:
+        HanaClusterHealthDetails.new!(%{
+          sbd_health: Health.passing(),
+          replication_health: Health.passing()
+        }),
       type: ClusterType.hana_scale_up(),
       state: :S_IDLE
     }
@@ -499,7 +518,7 @@ defmodule Trento.Factory do
       system_replication_operation_mode: nil,
       system_replication_source_site: nil,
       system_replication_tier: nil,
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -518,6 +537,23 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       database_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now()
+    })
+  end
+
+  def database_instance_data_marked_stale_event_factory do
+    DatabaseInstanceDataMarkedStale.new!(%{
+      database_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    })
+  end
+
+  def database_instance_data_marked_in_sync_event_factory do
+    DatabaseInstanceDataMarkedInSync.new!(%{
+      database_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
     })
   end
 
@@ -559,7 +595,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -576,6 +612,23 @@ defmodule Trento.Factory do
     ApplicationInstanceDeregistered.new!(%{
       sap_system_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
+  end
+
+  def application_instance_data_marked_stale_event_factory do
+    ApplicationInstanceDataMarkedStale.new!(%{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    })
+  end
+
+  def application_instance_data_marked_in_sync_event_factory do
+    ApplicationInstanceDataMarkedInSync.new!(%{
+      sap_system_id: Faker.UUID.v4(),
       instance_number: "00",
       host_id: Faker.UUID.v4()
     })
@@ -672,10 +725,7 @@ defmodule Trento.Factory do
         }
       ],
       sbd_devices: [
-        %SbdDevice{
-          device: "/dev/vdc",
-          status: "healthy"
-        }
+        build(:sbd_device, device: "/dev/vdc")
       ],
       secondary_sync_state: "SOK",
       sr_health_state: "4",
@@ -714,7 +764,7 @@ defmodule Trento.Factory do
   def ascs_ers_cluster_node_factory do
     %AscsErsClusterNode{
       name: Faker.Pokemon.name(),
-      roles: [Enum.random(["ascs", "ers"])],
+      roles: [Enum.random([:ascs, :ers])],
       virtual_ips: [Faker.Internet.ip_v4_address()],
       filesystems: [Faker.File.file_name()],
       status: "Online",
@@ -729,16 +779,21 @@ defmodule Trento.Factory do
     %AscsErsClusterSapSystem{
       sid: sequence(:sid, &"PR#{&1}"),
       filesystem_resource_based: Enum.random([false, true]),
-      distributed: Enum.random([false, true]),
+      distributed: true,
       nodes: build_list(2, :ascs_ers_cluster_node)
     }
   end
 
-  def sbd_device_factory do
-    %SbdDevice{
+  def sbd_device_factory(attrs) do
+    sbd_device = %{
       device: Faker.File.file_name(),
-      status: Enum.random(["healthy", "unhealthy"])
+      status: SbdDeviceStatus.healthy()
     }
+
+    sbd_device
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SbdDevice.new!()
   end
 
   def cluster_resource_factory do
@@ -804,8 +859,9 @@ defmodule Trento.Factory do
       host_id: Faker.UUID.v4(),
       system_replication: "",
       system_replication_status: "",
-      health: Health.unknown(),
-      absent_at: nil
+      status: Status.gray(),
+      absent_at: nil,
+      stale_at: nil
     }
   end
 
@@ -816,8 +872,9 @@ defmodule Trento.Factory do
       instance_number: "00",
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: Health.unknown(),
-      absent_at: nil
+      status: Status.gray(),
+      absent_at: nil,
+      stale_at: nil
     }
   end
 
@@ -827,7 +884,8 @@ defmodule Trento.Factory do
       instance_number: String.pad_leading(sequence(:instance_number, &"#{&1}"), 2, "0"),
       features: Faker.Pokemon.name(),
       host_id: Faker.UUID.v4(),
-      health: Health.passing()
+      status: Status.green(),
+      stale_at: nil
     }
   end
 
@@ -869,7 +927,7 @@ defmodule Trento.Factory do
       https_port: 8443,
       start_priority: "0.3",
       host_id: Faker.UUID.v4(),
-      health: Health.passing(),
+      status: Status.green(),
       ensa_version: EnsaVersion.ensa1(),
       database_id: Faker.UUID.v4(),
       database_health: Health.passing(),
@@ -899,7 +957,7 @@ defmodule Trento.Factory do
       system_replication_operation_mode: nil,
       system_replication_source_site: nil,
       system_replication_tier: nil,
-      health: Health.passing()
+      status: Status.green()
     }
   end
 
@@ -1148,7 +1206,7 @@ defmodule Trento.Factory do
       advisory_name: String.downcase(Faker.Pokemon.name()),
       advisory_type: Faker.Util.pick(AdvisoryType.values()),
       advisory_status: "stable",
-      id: RandomElixir.random_between(2000, 5000),
+      id: sequence(:patch_id, & &1),
       advisory_synopsis: Faker.Lorem.sentence(),
       update_date: Faker.Date.backward(30)
     }
@@ -1348,7 +1406,7 @@ defmodule Trento.Factory do
   end
 
   def user_with_abilities_factory do
-    user = build(:user)
+    %User{} = user = build(:user)
     ability = build(:ability)
     build(:users_abilities, user_id: user.id, ability_id: ability.id)
 
@@ -1396,7 +1454,8 @@ defmodule Trento.Factory do
   end
 
   def operation_completed_with_errors_v1_factory(attrs) do
-    operation_completed =
+    %OperationCompleted{} =
+      operation_completed =
       build(
         :operation_completed_v1,
         Map.drop(attrs, [:step, :target_errors])
@@ -1421,7 +1480,8 @@ defmodule Trento.Factory do
   end
 
   def operation_completed_with_failed_request_v1_factory(attrs) do
-    operation_completed =
+    %OperationCompleted{} =
+      operation_completed =
       build(
         :operation_completed_v1,
         Map.drop(attrs, [:error])
@@ -1451,7 +1511,7 @@ defmodule Trento.Factory do
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"]),
       custom_values: [
-        %{
+        %CheckCustomValue{
           name: Faker.Pokemon.name(),
           value: {:string_value, Faker.Pokemon.name()}
         }
@@ -1464,6 +1524,21 @@ defmodule Trento.Factory do
       check_id: Faker.UUID.v4(),
       group_id: Faker.UUID.v4(),
       target_type: Enum.random(["host", "cluster"])
+    }
+  end
+
+  def operation_entry_factory do
+    %OperationEntry{
+      tool_name: Faker.Internet.slug(),
+      display_text: Faker.Lorem.sentence(),
+      operation: %Operation{
+        summary: Faker.Lorem.sentence(),
+        description: Faker.Lorem.paragraph(),
+        parameters: [],
+        responses: %{}
+      },
+      verb: :get,
+      path: "/#{Faker.Internet.slug()}"
     }
   end
 
@@ -1505,5 +1580,27 @@ defmodule Trento.Factory do
       model: model,
       api_key: api_key
     }
+  end
+
+  def random_langchain_model_factory(attrs) do
+    provider = Map.get(attrs, :provider, build(:random_ai_provider))
+    model = Map.get(attrs, :model, build(:random_ai_model, provider: provider))
+    api_key = Map.get(attrs, :api_key, Faker.String.base64(32))
+
+    case provider do
+      :openai ->
+        ChatOpenAI.new!(%{model: model, api_key: api_key, stream: true})
+
+      :anthropic ->
+        ChatAnthropic.new!(%{
+          model: model,
+          api_key: api_key,
+          stream: true,
+          thinking: %{type: "enabled"}
+        })
+
+      _ ->
+        ChatGoogleAI.new!(%{model: model, api_key: api_key, stream: true})
+    end
   end
 end

@@ -4,6 +4,7 @@
 export const availableHanaCluster = {
   id: '469e7be5-4e20-5007-b044-c6f540a87493',
   name: 'hana_cluster_3',
+  health: 'fill-jungle-green-500',
   sid: 'HDP',
   systemID: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
   clusterType: 'HANA Scale Up',
@@ -243,12 +244,7 @@ export const availableHanaCluster = {
     {
       deviceName:
         '/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b912345',
-      status: 'Unhealthy',
-    },
-    {
-      deviceName:
-        '/dev/disk/by-id/scsi-SLIO-ORG_IBLOCK_8d286026-c3a6-4404-90ac-f2549b954321',
-      status: 'Unhealthy',
+      status: 'Healthy',
     },
   ],
 };

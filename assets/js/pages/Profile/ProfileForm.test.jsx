@@ -159,6 +159,7 @@ describe('ProfileForm', () => {
   });
 
   it('should set analytics switch when analyticsEnabled is true', async () => {
+    const user = userEvent.setup();
     const { username, fullname, email, abilities } = profileFactory.build();
 
     render(
@@ -176,6 +177,16 @@ describe('ProfileForm', () => {
 
     expect(analyticsSwitch).toBeVisible();
     expect(analyticsSwitch).toBeChecked();
+
+    await user.hover(
+      screen.getByText(/Analytics Opt-in/i).querySelector('span svg')
+    );
+    const linkElement = screen.getByRole('link', { name: 'anonymous metrics' });
+    expect(linkElement).toHaveProperty('target', '_blank');
+    expect(linkElement).toHaveProperty(
+      'href',
+      'https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics'
+    );
   });
 
   it.each([

@@ -8,13 +8,11 @@ import { get, some } from 'lodash';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 
 import CleanUpButton from '@common/CleanUpButton';
-import HealthIcon from '@common/HealthIcon';
 import HostLink from '@common/HostLink';
 import Pill from '@common/Pill';
-import Tooltip from '@common/Tooltip';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
-import { Features } from '@pages/SapSystemDetails';
+import { Features, InstanceStatus } from '@pages/SapSystemDetails';
 
 export const getReplicationStatusClasses = (status) => {
   switch (status) {
@@ -32,7 +30,7 @@ function InstanceOverview({
   instance,
   instance: {
     sid,
-    health,
+    status,
     system_replication: systemReplication,
     system_replication_status: systemReplicationStatus,
     instance_number: instanceNumber,
@@ -59,14 +57,8 @@ function InstanceOverview({
   const textColor = classNames({ 'text-gray-500': absentAt });
   return (
     <div className={rowClasses}>
-      <div className="table-cell p-2 px-5 align-center">
-        <Tooltip
-          content="Registered instance not found."
-          place="bottom"
-          isEnabled={!!absentAt}
-        >
-          <HealthIcon health={absentAt ? 'absent' : health} />
-        </Tooltip>
+      <div className="table-cell p-2 pl-3 align-middle">
+        <InstanceStatus status={status} absent={!!absentAt} />
       </div>
       <div className={classNames(textColor, 'table-cell p-2 text-center')}>
         {instanceNumber}

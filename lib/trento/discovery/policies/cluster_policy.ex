@@ -10,7 +10,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   require Trento.Clusters.Enums.ClusterType, as: ClusterType
   require Trento.Clusters.Enums.ClusterHostStatus, as: ClusterHostStatus
   require Trento.Clusters.Enums.HanaArchitectureType, as: HanaArchitectureType
-  require Trento.Enums.Health, as: Health
   require Trento.Clusters.Enums.AscsErsClusterRole, as: AscsErsClusterRole
   require Trento.Clusters.Enums.HanaScenario, as: HanaScenario
   require Trento.Clusters.Enums.SapInstanceResourceType, as: SapInstanceResourceType
@@ -123,7 +122,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
       resources_number: parse_resources_number(payload),
       hosts_number: parse_hosts_number(payload),
       details: cluster_details,
-      discovered_health: parse_cluster_health(cluster_details, cluster_type),
       cib_last_written: parse_cib_last_written(payload),
       provider: provider,
       state: state
@@ -1150,29 +1148,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
 
   defp generate_cluster_id(nil), do: nil
   defp generate_cluster_id(id), do: UUID.uuid5(@uuid_namespace, id)
-
-  defp parse_cluster_health(details, cluster_type)
-       when cluster_type in [ClusterType.hana_scale_up(), ClusterType.hana_scale_out()],
-       do: parse_hana_cluster_health(details)
-
-  defp parse_cluster_health(%{sap_systems: sap_systems}, ClusterType.ascs_ers()) do
-    Enum.find_value(sap_systems, Health.passing(), fn %{distributed: distributed} ->
-      if not distributed, do: Health.critical()
-    end)
-  end
-
-  defp parse_cluster_health(_, _), do: Health.unknown()
-
-  # Passing state if SR Health state is 4 and Sync state is SOK, everything else is critical
-  # If data is not present for some reason the state goes to unknown
-  defp parse_hana_cluster_health(%{sr_health_state: "4", secondary_sync_state: "SOK"}),
-    do: Health.passing()
-
-  defp parse_hana_cluster_health(%{sr_health_state: "", secondary_sync_state: ""}),
-    do: Health.unknown()
-
-  defp parse_hana_cluster_health(%{sr_health_state: _, secondary_sync_state: _}),
-    do: Health.critical()
 
   defp parse_hana_scenario([]), do: HanaScenario.performance_optimized()
 

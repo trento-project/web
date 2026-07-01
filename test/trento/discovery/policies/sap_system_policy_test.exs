@@ -8,6 +8,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
   import Trento.Factory
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   import Trento.DiscoveryFixturesHelper
 
@@ -38,7 +39,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication: nil,
                 system_replication_status: nil,
                 system_replication_site_id: nil,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_multi_tenant"
@@ -65,7 +66,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "primary",
                 system_replication_tier: 1,
                 system_replication_active_primary_site: nil,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database"
@@ -92,7 +93,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
                 system_replication_active_primary_site: 1,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_secondary"
@@ -119,7 +120,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_operation_mode: "logreplay",
                 system_replication_tier: 2,
                 system_replication_active_primary_site: 1,
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_database_secondary"
@@ -153,7 +154,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 system_replication_site_id: 1,
                 system_replication_tier: 1,
                 system_replication_active_primary_site: nil,
-                health: :unknown
+                status: Status.gray()
               }
             ]} =
              "sap_system_discovery_database_stopped_instance"
@@ -179,7 +180,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: true,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -208,7 +209,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: false,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -242,7 +243,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: false,
                 ensa_version: EnsaVersion.no_ensa()
               }
@@ -264,7 +265,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 ensa_version: EnsaVersion.no_ensa()
               }
             ]} =
@@ -284,7 +285,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing
+                status: Status.green()
               }
             ]} =
              "sap_system_discovery_application_diagnostics"
@@ -310,7 +311,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                 sap_system_id: nil,
                 sid: "HA1",
                 tenant: "PRD",
-                health: :passing,
+                status: Status.green(),
                 clustered: true
               }
             ]} =
@@ -466,7 +467,7 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                   sap_system_id: nil,
                   sid: "HA1",
                   tenant: "PRD",
-                  health: :passing
+                  status: Status.green()
                 }
               ]} =
                "sap_system_discovery_application"
@@ -536,7 +537,51 @@ defmodule Trento.Discovery.Policies.SapSystemPolicyTest do
                    sap_system |> pop_in(["Profile", "dbs/hdb/dbname"]) |> elem(1)
                  end)
                )
-               |> SapSystemPolicy.handle([], nil)
+               |> SapSystemPolicy.handle([], [])
+    end
+
+    test "should accept payload when a non-required property has a blank value" do
+      assert {:ok, [%RegisterApplicationInstance{}]} =
+               "sap_system_discovery_application"
+               |> load_discovery_event_fixture()
+               |> update_in(
+                 ["payload", Access.at(0), "Instances", Access.at(0), "SAPControl", "Properties"],
+                 fn properties ->
+                   Enum.map(properties, fn
+                     %{"property" => "Protected Webmethods"} = prop -> %{prop | "value" => ""}
+                     prop -> prop
+                   end)
+                 end
+               )
+               |> SapSystemPolicy.handle([], [])
+    end
+
+    for {property_name, property_index} <- [{"SAPSYSTEM", 4}, {"SAPLOCALHOST", 9}] do
+      test "should fail when #{property_name} property has a blank value" do
+        property_name = unquote(property_name)
+        property_index = unquote(property_index)
+
+        assert {:error, {:validation, [%{Instances: [%{SAPControl: %{Properties: properties}}]}]}} =
+                 "sap_system_discovery_application"
+                 |> load_discovery_event_fixture()
+                 |> put_in(
+                   [
+                     "payload",
+                     Access.at(0),
+                     "Instances",
+                     Access.at(0),
+                     "SAPControl",
+                     "Properties",
+                     Access.at(property_index),
+                     "value"
+                   ],
+                   ""
+                 )
+                 |> SapSystemPolicy.handle([], [])
+
+        assert %{value: [error_message]} = Enum.at(properties, property_index)
+        assert error_message == "can't be blank for property #{property_name}"
+      end
     end
   end
 end

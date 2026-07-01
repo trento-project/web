@@ -43,7 +43,7 @@ const clusterStates = {
 //Attributes
 
 const url = '/clusters';
-const wandaUrl = Cypress.env('wandaUrl');
+const wandaUrl = Cypress.expose('wandaUrl');
 const catalogEndpointAlias = 'catalog';
 const lastExecutionEndpointAlias = 'lastExecution';
 const getChecksEndpointAlias = 'getChecks';
@@ -209,6 +209,12 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
 
 export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
+
+export const expectedClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
+
+export const criticalClusterHealthIsDisplayedInHeader = () =>
+  basePage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
@@ -433,16 +439,19 @@ export const expectedClusterStateIsDisplayed = (state) => {
     });
 };
 
-export const sbdClusterHasExpectedNameAndStatus = () =>
-  cy
-    .wrap(availableHanaCluster.sbd)
-    .each((item) =>
-      cy
-        .get('.tn-sbd-details')
-        .contains(item.deviceName)
-        .children()
-        .contains(item.status)
-    );
+export const sbdClusterHasExpectedNameAndStatus = (overrides = []) => {
+  const sbd = availableHanaCluster.sbd.map((sbd_item, i) => ({
+    ...sbd_item,
+    ...overrides[i],
+  }));
+  cy.wrap(sbd).each((item) =>
+    cy
+      .get('.tn-sbd-details')
+      .contains(item.deviceName)
+      .children()
+      .contains(item.status)
+  );
+};
 
 export const passingChecksUrlIsTheExpected = () =>
   validateUrl(`/${availableHanaCluster.id}/executions/last?health=passing`);

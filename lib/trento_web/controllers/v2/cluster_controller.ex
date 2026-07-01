@@ -4,6 +4,7 @@
 defmodule TrentoWeb.V2.ClusterController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Clusters
 
@@ -22,6 +23,8 @@ defmodule TrentoWeb.V2.ClusterController do
         {"Comprehensive list of all Pacemaker Clusters discovered on the target infrastructure for monitoring and management.",
          "application/json", Schema.Cluster.PacemakerClustersCollection}
     ]
+
+  ai_tool :cluster_list, display_text: "List Pacemaker clusters"
 
   def list(conn, _) do
     clusters = Clusters.get_all_clusters()

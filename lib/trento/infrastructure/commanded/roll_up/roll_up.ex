@@ -16,12 +16,7 @@ defmodule Trento.Infrastructure.Commanded.RollUp.RollUp do
   def roll_up_aggregate(stream_id, roll_up_event, stream_archive_id) do
     {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
 
-    case Postgrex.transaction(pid, fn conn ->
-           with :ok <- Trento.EventStore.delete_snapshot(stream_id, conn: conn),
-                :ok <- archive_stream(conn, stream_id, stream_archive_id) do
-             append_roll_up_event(conn, roll_up_event, stream_id)
-           end
-         end) do
+    case Postgrex.transaction(pid, &do_rollup(stream_id, roll_up_event, stream_archive_id, &1)) do
       {:ok, :ok} ->
         Logger.info("Aggregate rolled-up: #{stream_id} -> #{stream_archive_id}")
 
@@ -34,6 +29,13 @@ defmodule Trento.Infrastructure.Commanded.RollUp.RollUp do
         )
 
         error
+    end
+  end
+
+  defp do_rollup(stream_id, roll_up_event, stream_archive_id, conn) do
+    with :ok <- Trento.EventStore.delete_snapshot(stream_id, conn: conn),
+         :ok <- archive_stream(conn, stream_id, stream_archive_id) do
+      append_roll_up_event(conn, roll_up_event, stream_id)
     end
   end
 

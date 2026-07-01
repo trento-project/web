@@ -11,6 +11,7 @@ const randomSummary = healthSummaryFactory.buildList(3);
 const healthySummary = healthSummaryFactory.buildList(3, {
   application_cluster_health: 'passing',
   database_cluster_health: 'passing',
+  application_health: 'passing',
   database_health: 'passing',
   hosts_health: 'passing',
   sapsystem_health: 'passing',
@@ -20,6 +21,7 @@ const unClusteredSummary = healthSummaryFactory.buildList(3, {
   database_cluster_id: null,
   application_cluster_health: 'unknown',
   database_cluster_health: 'unknown',
+  application_health: 'passing',
   database_health: 'passing',
   hosts_health: 'passing',
   sapsystem_health: 'passing',

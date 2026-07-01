@@ -8,8 +8,6 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
 
   import Ecto.Query
 
-  require Trento.Enums.Health, as: HealthEnum
-
   alias Trento.Databases.Projections.DatabaseInstanceReadModel
 
   alias Trento.SapSystems.Projections.{
@@ -20,6 +18,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   alias Trento.Clusters.Projections.ClusterReadModel
 
   alias Trento.Enums.Health
+  alias Trento.SapSystems.Services.HealthService, as: SapSystemsHealthService
   alias Trento.Services.HealthService
 
   alias Trento.Repo
@@ -52,6 +51,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       id: id,
       sid: sid,
       sapsystem_health: health,
+      application_health: compute_application_health(application_instances),
       database_id: database_id,
       database_health: database_health,
       application_cluster_health: compute_cluster_health(application_instances),
@@ -66,7 +66,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
   @spec compute_cluster_health(
           [DatabaseInstanceReadModel.t()]
           | [ApplicationInstanceReadModel.t()]
-        ) :: Health.t()
+        ) :: Health.t() | nil
   defp compute_cluster_health(instances) do
     cluster_id =
       Enum.find_value(instances, nil, fn
@@ -76,7 +76,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
       end)
 
     case cluster_id do
-      nil -> HealthEnum.unknown()
+      nil -> nil
       cluster_id -> ClusterReadModel |> Repo.get!(cluster_id) |> Map.get(:health)
     end
   end
@@ -90,4 +90,12 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> Enum.filter(& &1)
     |> HealthService.compute_aggregated_health()
   end
+
+  defp compute_application_health(application_instances),
+    do:
+      application_instances
+      |> Enum.map(fn %{status: status} ->
+        SapSystemsHealthService.derive_health_from_status(status)
+      end)
+      |> HealthService.compute_aggregated_health()
 end

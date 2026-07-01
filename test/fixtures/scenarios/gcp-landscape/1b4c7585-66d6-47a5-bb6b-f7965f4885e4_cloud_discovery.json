@@ -1,0 +1,16 @@
+{
+  "discovery_type": "cloud_discovery",
+  "agent_id": "1b4c7585-66d6-47a5-bb6b-f7965f4885e4",
+  "payload": {
+    "Provider": "gcp",
+    "Metadata": {
+      "disk_number": 4,
+      "image": "sles-15-sp1-sap-byos-v20220126",
+      "instance_name": "vmhana01",
+      "machine_type": "n1-highmem-8",
+      "network": "network",
+      "project_id": "123456",
+      "zone": "europe-west1-b"
+    }
+  }
+}

@@ -104,11 +104,11 @@ export const sapSystemsListSlice = createSlice({
         { host_id: new_host_id }
       );
     },
-    updateApplicationInstanceHealth: (state, { payload: instance }) => {
+    updateApplicationInstanceStatus: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
         instance,
-        { health: instance.health }
+        { status: instance.status }
       );
     },
     updateApplicationInstanceAbsentAt: (state, { payload: instance }) => {
@@ -144,8 +144,8 @@ export const APPLICATION_INSTANCE_ABSENT_AT_CHANGED =
   'APPLICATION_INSTANCE_ABSENT_AT_CHANGED';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'APPLICATION_INSTANCE_DEREGISTERED';
-export const APPLICATION_INSTANCE_HEALTH_CHANGED =
-  'APPLICATION_INSTANCE_HEALTH_CHANGED';
+export const APPLICATION_INSTANCE_STATUS_CHANGED =
+  'APPLICATION_INSTANCE_STATUS_CHANGED';
 export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
 export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
 export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
@@ -166,8 +166,8 @@ export const applicationInstanceAbsentAtChanged = createAction(
 export const applicationInstanceDeregistered = createAction(
   APPLICATION_INSTANCE_DEREGISTERED
 );
-export const applicationInstanceHealthChanged = createAction(
-  APPLICATION_INSTANCE_HEALTH_CHANGED
+export const applicationInstanceStatusChanged = createAction(
+  APPLICATION_INSTANCE_STATUS_CHANGED
 );
 export const sapSystemDeregistered = createAction(SAP_SYSTEM_DEREGISTERED);
 export const sapSystemRestored = createAction(SAP_SYSTEM_RESTORED);
@@ -185,7 +185,7 @@ export const {
   removeApplicationInstance,
   updateSapSystemHealth,
   updateApplicationInstanceHost,
-  updateApplicationInstanceHealth,
+  updateApplicationInstanceStatus,
   addTagToSAPSystem,
   removeTagFromSAPSystem,
   removeSAPSystem,

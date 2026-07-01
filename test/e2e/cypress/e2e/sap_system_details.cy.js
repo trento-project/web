@@ -9,20 +9,37 @@ context('SAP system details', () => {
   describe('SAP system details page is available', () => {
     beforeEach(() => sapSystemDetailsPage.visit());
 
+    after(() => {
+      sapSystemDetailsPage.restoreDatabaseInstanceHealth();
+    });
+
     it('should have expected url', () => {
       sapSystemDetailsPage.validatePageUrl();
     });
 
     it('should display the selected system details page', () => {
       sapSystemDetailsPage.pageTitleIsCorrectlyDisplayed('SAP System Details');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       sapSystemDetailsPage.sapSystemHasExpectedName();
       sapSystemDetailsPage.sapSystemHasExpectedType();
+      sapSystemDetailsPage.sapSystemHasExpectedEnsaVersion();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabase();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseTenant();
     });
 
     it(`should display "Not found" page when SAP system doesn't exist`, () => {
       sapSystemDetailsPage.visitNonExistentSapSystem();
       sapSystemDetailsPage.validatePageUrl('other');
       sapSystemDetailsPage.notFoundLabelIsDisplayed();
+    });
+
+    it('should update system and database health icons when database health is changed', () => {
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
+      sapSystemDetailsPage.loadScenario('hana-database-detail-RED');
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth('fill-red-500');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
     });
   });
 
@@ -36,7 +53,7 @@ context('SAP system details', () => {
     });
 
     it('should show expected status badge in instance when a new state is received', () => {
-      sapSystemDetailsPage.shouldDisplayExpectedHealthStatusChanges();
+      sapSystemDetailsPage.shouldDisplayExpectedStatusChanges();
     });
 
     /* This test is skipped because there is not any option to remove added SAP instances or

@@ -7,6 +7,8 @@ defmodule TrentoWeb.UserSocket do
   require Logger
   alias TrentoWeb.Auth.AccessToken
 
+  alias Trento.Support.HttpUtils
+
   # A Socket handler
   #
   # It's possible to control the websocket connection and
@@ -17,6 +19,7 @@ defmodule TrentoWeb.UserSocket do
   channel "monitoring:*", TrentoWeb.MonitoringChannel
   channel "users:*", TrentoWeb.UserChannel
   channel "activity_log:*", TrentoWeb.ActivityLogChannel
+  channel "ai_assistant:*", TrentoWeb.AIAssistantChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -30,10 +33,14 @@ defmodule TrentoWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(%{"access_token" => access_token}, socket, _connect_info) do
+  def connect(%{"access_token" => access_token}, socket, connect_info) do
     case AccessToken.verify_and_validate(access_token) do
       {:ok, %{"sub" => user_id}} ->
-        {:ok, assign(socket, :current_user_id, user_id)}
+        {:ok,
+         socket
+         |> assign(:current_user_id, user_id)
+         |> assign(:access_token, access_token)
+         |> assign(:request_origin, detect_request_origin(connect_info))}
 
       {:error, reason} ->
         Logger.error("Could not authenticate user socket: #{inspect(reason)}")
@@ -58,4 +65,7 @@ defmodule TrentoWeb.UserSocket do
   # Returning `nil` makes this socket anonymous.
   @impl true
   def id(socket), do: "user_socket:#{socket.assigns.current_user_id}"
+
+  defp detect_request_origin(%{uri: uri}), do: HttpUtils.request_origin(uri)
+  defp detect_request_origin(_), do: nil
 end

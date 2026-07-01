@@ -32,6 +32,10 @@ context('Host Details', () => {
       hostDetailsPage.hostNavigationItemIsHighlighted();
     });
 
+    it('should show the correct host health', () => {
+      hostDetailsPage.healthHasExpectedValue();
+    });
+
     it('should show the correct cluster', () => {
       hostDetailsPage.clusterNameHasExpectedValue();
     });

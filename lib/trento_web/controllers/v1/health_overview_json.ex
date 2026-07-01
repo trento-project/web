@@ -13,6 +13,7 @@ defmodule TrentoWeb.V1.HealthOverviewJSON do
         id: id,
         sid: sid,
         sapsystem_health: sapsystem_health,
+        application_health: application_health,
         application_instances: application_instances,
         database_id: database_id,
         database_instances: database_instances,
@@ -26,6 +27,7 @@ defmodule TrentoWeb.V1.HealthOverviewJSON do
       id: id,
       sid: sid,
       sapsystem_health: sapsystem_health,
+      application_health: application_health,
       database_id: database_id,
       database_health: database_health,
       # deprecated field

@@ -5,7 +5,8 @@ name: E2E Flaky Tests Analysis
 
 on:
   schedule:
-    - cron: "19 1 * * *" # Runs every day at 01:19 AM UTC
+    - cron: "19 20 * * *" # Runs every day at 20:19 Europe/Madrid
+      timezone: "Europe/Madrid"
   workflow_dispatch:
     inputs:
       num_runs:
@@ -25,29 +26,47 @@ env:
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
 
 jobs:
+  setup-matrix-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
+      ERLANG_DEV: ${{ env.ERLANG_VERSION }}
+      NODEJS_DEV: ${{ env.NODEJS_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: gather versions
+        uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
+      - name: Compute matrix
+        run: |
+          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+          echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
+
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
         with:
           path: |
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
@@ -60,52 +79,48 @@ jobs:
 
   npm-deps:
     name: Npm dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install NPM dependencies
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm ci
 
   npm-e2e-deps:
     name: Npm E2E dependencies
+    needs: [setup-matrix-env]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm ci
@@ -128,7 +143,7 @@ jobs:
 
   test-e2e:
     name: Cypress Run
-    needs: [elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
+    needs: [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, generate-matrix]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -137,47 +152,44 @@ jobs:
     timeout-minutes: 40
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
         uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
         with:
-          version-file: .tool-versions
-          version-type: strict
-      - name: Read .tool-versions
-        uses: endorama/asdf-parse-tool-versions@23a7edd74b0f97626c857c48e32ebbe4ba596a23 # v1.5.1
-        id: tool-versions
+          otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
-        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
-          node-version: ${{ env.NODEJS_VERSION }}
+          node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: mix-cache
         with:
           path: |
             deps
             _build/${{ env.MIX_ENV }}
             priv/plts
-          key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+          key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('assets/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
-          key: nodejs-${{ env.NODEJS_VERSION }}-${{ hashFiles('test/e2e/package-lock.json') }}
+          key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@4894d2492015c1774ee5a13a95b1072093087ec3 # v2.5.0
+        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -194,21 +206,25 @@ jobs:
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Give executable permissions to photofinish
-        run: chmod +x $(whereis photofinish | cut -d" " -f2)
+      - name: Get photofinish path
+        id: photofinish-path
+        run: |
+          set -euo pipefail
+          photofinish_path="$(command -v photofinish)"
+          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
-        uses: cypress-io/github-action@783cb3f07983868532cabaedaa1e6c00ff4786a8 # v7.1.9
+        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
         env:
           cypress_video: false
           cypress_db_host: postgres
           cypress_db_port: 5432
-          cypress_photofinish_binary: $(whereis photofinish | cut -d" " -f2)
         with:
           command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           working-directory: test/e2e
           wait-on-timeout: 30
+          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test junit reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -231,6 +247,7 @@ jobs:
     with:
       suite-name: E2E
       junit-artifact-pattern: e2e-junit-reports-*
+      screenshot-artifact-pattern: e2e-screenshots-*
       total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
     secrets:
       SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}

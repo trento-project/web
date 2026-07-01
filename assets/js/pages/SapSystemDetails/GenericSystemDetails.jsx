@@ -42,18 +42,21 @@ import {
   APPLICATION_TYPE,
   DATABASE_TYPE,
   getEnsaVersionLabel,
+  getSapSystemType,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
-import PageHeader from '@common/PageHeader';
+import { DetailsViewHeader } from '@common/PageHeader';
 import {
   OperationForbiddenModal,
   SimpleAcceptanceOperationModal,
   SapStartStopOperationModal,
 } from '@common/OperationModals';
 import OperationsButton from '@common/OperationsButton';
+import HealthIcon from '@common/HealthIcon';
+import SapSystemLink from '@common/SapSystemLink';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 
@@ -66,9 +69,6 @@ import {
 } from './tableConfigs';
 
 const SR_INACTIVE = 'INACTIVE';
-
-const renderType = (t) =>
-  t === APPLICATION_TYPE ? 'Application server' : 'HANA Database';
 
 const getUniqueHosts = (hosts) =>
   Array.from(
@@ -285,7 +285,9 @@ export function GenericSystemDetails({
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <PageHeader className="font-bold">{title}</PageHeader>
+          <DetailsViewHeader className="font-bold" health={system.health}>
+            {title}
+          </DetailsViewHeader>
         </div>
         {operationsEnabled && (
           <div className="flex w-1/2 justify-end">
@@ -302,55 +304,97 @@ export function GenericSystemDetails({
         )}
       </div>
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
-        <ListView
-          orientation="vertical"
-          data={[
-            { title: 'Name', content: system.sid },
-            {
-              title: 'Type',
-              content: renderType(type),
-            },
-            ...(type === APPLICATION_TYPE
-              ? [
-                  {
-                    title: 'ENSA version',
-                    content: system.ensa_version || '-',
-                    render: (content) => getEnsaVersionLabel(content),
-                  },
-                ]
-              : []),
-            ...(type === DATABASE_TYPE
-              ? [
-                  {
-                    title: 'System Replication',
-                    content: hasSystemReplication,
-                    render: (content) => capitalize(content),
-                  },
-                ]
-              : []),
-            {
-              title: '',
-              content: type,
-              render: (content) => (
-                <div className="justify-end float-right">
-                  {content === APPLICATION_TYPE ? (
+        {type === APPLICATION_TYPE ? (
+          <ListView
+            orientation="vertical"
+            className="grid-rows-2"
+            data={[
+              { title: 'Name', content: system.sid },
+              {
+                title: 'Database',
+                content: system.database_sid,
+                render: (content) => (
+                  <SapSystemLink
+                    systemType={DATABASE_TYPE}
+                    sapSystemId={system.database_id}
+                  >
+                    {content}
+                  </SapSystemLink>
+                ),
+              },
+              {
+                title: 'Type',
+                content: system.instances,
+                render: (content) => getSapSystemType(content),
+              },
+              {
+                title: 'Database health',
+                content: system.database_health,
+                render: (content) => <HealthIcon health={content} size="l" />,
+              },
+              {
+                title: 'ENSA version',
+                content: system.ensa_version || '-',
+                render: (content) => getEnsaVersionLabel(content),
+              },
+              {
+                title: 'Tenant',
+                content: system.tenant,
+                render: (content) => content,
+              },
+              {
+                key: 'application_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
                     <EOS_APPLICATION_OUTLINED
                       size={25}
                       className="fill-blue-500"
                     />
-                  ) : (
+                  </div>
+                ),
+              },
+              {
+                key: 'database_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
                     <EOS_DATABASE_OUTLINED
                       size={25}
                       className="fill-blue-500"
                     />
-                  )}
-                </div>
-              ),
-            },
-          ]}
-        />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        ) : (
+          <ListView
+            orientation="vertical"
+            data={[
+              { title: 'Name', content: system.sid },
+              {
+                title: 'Type',
+                content: 'HANA Database',
+              },
+              {
+                title: 'System Replication',
+                content: hasSystemReplication,
+                render: (content) => capitalize(content),
+              },
+              {
+                key: 'database_icon',
+                render: (_) => (
+                  <div className="justify-end float-right">
+                    <EOS_DATABASE_OUTLINED
+                      size={25}
+                      className="fill-blue-500"
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
+        )}
       </div>
-
       <div className="mt-16">
         <div className="flex flex-direction-row">
           <h2 className="text-2xl font-bold self-center">Layout</h2>

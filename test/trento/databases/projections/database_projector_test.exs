@@ -10,6 +10,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
 
   import Trento.Factory
 
+  require Trento.SapSystems.Enums.Status, as: Status
+
   alias Trento.Databases.Projections.{
     DatabaseInstanceReadModel,
     DatabaseProjector,
@@ -19,10 +21,12 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRestored,
     DatabaseTenantsUpdated
@@ -91,7 +95,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
     %{
-      health: health,
+      status: status,
       sid: sid,
       features: features,
       host_id: host_id
@@ -108,11 +112,11 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert event.instance_number == database_instance_projection.instance_number
     assert event.features == database_instance_projection.features
     assert event.host_id == database_instance_projection.host_id
-    assert event.health == database_instance_projection.health
+    assert event.status == database_instance_projection.status
 
     assert_broadcast "database_instance_registered",
                      %{
-                       health: ^health,
+                       status: ^status,
                        sid: ^sid,
                        features: ^features,
                        host_id: ^host_id,
@@ -303,7 +307,7 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
                      1000
   end
 
-  test "should broadcast database_instance_health_changed when DatabaseInstanceHealthChanged is received" do
+  test "should broadcast database_instance_status_changed when DatabaseInstanceStatusChanged is received" do
     %{
       database_id: database_id,
       instance_number: instance_number,
@@ -315,21 +319,21 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         system_replication_status: ""
       )
 
-    event = %DatabaseInstanceHealthChanged{
+    event = %DatabaseInstanceStatusChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: :critical
+      status: Status.red()
     }
 
     ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
 
-    assert_broadcast "database_instance_health_changed",
+    assert_broadcast "database_instance_status_changed",
                      %{
                        database_id: ^database_id,
                        host_id: ^host_id,
                        instance_number: ^instance_number,
-                       health: :critical
+                       status: Status.red()
                      },
                      1000
   end
@@ -492,7 +496,9 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert :passing == projection.health
 
     adapted_database_instances =
-      Map.put(database_instances, :sap_system_id, database_id)
+      database_instances
+      |> Map.put(:sap_system_id, database_id)
+      |> Map.put(:health, :unknown)
 
     assert_broadcast "database_restored",
                      %{
@@ -534,5 +540,80 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert_broadcast "database_tenants_updated",
                      %{database_id: ^database_id, tenants: ^broadcasted_tenants},
                      1000
+  end
+
+  test "should mark database instance data as stale when DatabaseInstanceDataMarkedStale event is received" do
+    %{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:database_instance)
+
+    stale_at = DateTime.utc_now()
+
+    event = %DatabaseInstanceDataMarkedStale{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database_instance =
+      Repo.get_by(DatabaseInstanceReadModel,
+        database_id: database_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert database_instance.stale_at == stale_at
+
+    assert_broadcast(
+      "database_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        database_id: ^database_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark database instance data as fresh when DatabaseInstanceDataMarkedInSync event is received" do
+    %{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:database_instance, stale_at: DateTime.utc_now())
+
+    event = %DatabaseInstanceDataMarkedInSync{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database_instance =
+      Repo.get_by(DatabaseInstanceReadModel,
+        database_id: database_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert database_instance.stale_at == nil
+
+    assert_broadcast(
+      "database_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        database_id: ^database_id,
+        stale_at: nil
+      },
+      1000
+    )
   end
 end

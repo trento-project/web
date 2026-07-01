@@ -4,10 +4,13 @@
 defmodule TrentoWeb.V1.AboutController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
+  use Trento.AI.ControllerSpecs
 
   alias Trento.Hosts
 
   alias TrentoWeb.OpenApi.V1.Schema
+
+  alias Trento.Support.HttpUtils
 
   @version Mix.Project.config()[:version]
 
@@ -22,9 +25,14 @@ defmodule TrentoWeb.V1.AboutController do
          "application/json", Schema.Platform.GeneralInformation}
     ]
 
+  ai_tool :about_info, display_text: "Get platform info"
+
   @spec info(Plug.Conn.t(), map) :: Plug.Conn.t()
   def info(conn, _) do
-    versions = component_versions().get_versions()
+    versions =
+      conn
+      |> HttpUtils.request_origin()
+      |> component_versions().get_versions()
 
     render(conn, :about,
       about_info:

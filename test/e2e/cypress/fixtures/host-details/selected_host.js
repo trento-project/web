@@ -5,6 +5,7 @@ export const selectedHost = {
   agentId: '9cd46919-5f19-59aa-993e-cf3736c71053',
   agentVersion: '2.1.0',
   hostName: 'vmhdbprd01',
+  health: 'fill-jungle-green-500',
   clusterName: 'hana_cluster_3',
   clusterId: '469e7be5-4e20-5007-b044-c6f540a87493',
   ipAddresses: '10.80.1.11/24, 10.80.1.13/24',
@@ -49,7 +50,7 @@ export const selectedHost = {
     provider: 'VMware',
   },
   sapInstance: {
-    health: '',
+    status: '',
     sid: 'HDP',
     type: 'Database',
     features: ['HDB', 'HDB_WORKER'],

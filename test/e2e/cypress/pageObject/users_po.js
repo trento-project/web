@@ -40,7 +40,8 @@ const passwordConfirmationInputField =
   'input[aria-label^="password"][aria-label*="confirmation"]';
 const saveNewPasswordButton = 'div[id*="panel"] button:contains("Save")';
 const generatePasswordButton = 'div[class*="grid"] button[class*="green"]';
-const submitUserCreationButton = 'button:contains("Create")';
+const submitUserCreationButton =
+  'div[class*="container"] button:contains("Create")';
 const cancelUserCreationButton = 'button:contains("Cancel")';
 const saveChangesButton = 'button:contains("Save")';
 const authenticatorAppSwitch =

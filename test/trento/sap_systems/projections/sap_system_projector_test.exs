@@ -11,6 +11,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   import Trento.Factory
 
   require Trento.SapSystems.Enums.EnsaVersion, as: EnsaVersion
+  require Trento.SapSystems.Enums.Status, as: Status
 
   alias Trento.SapSystems.Projections.{
     ApplicationInstanceReadModel,
@@ -19,11 +20,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   }
 
   alias Trento.SapSystems.Events.{
+    ApplicationInstanceDataMarkedInSync,
+    ApplicationInstanceDataMarkedStale,
     ApplicationInstanceDeregistered,
-    ApplicationInstanceHealthChanged,
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
+    ApplicationInstanceStatusChanged,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRestored,
@@ -47,7 +50,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
   end
 
   test "should project a new SAP System when a SapSystemRegistered event is received" do
-    %{id: database_id, sid: database_sid} = insert(:database)
+    %{id: database_id, sid: database_sid, health: database_health} = insert(:database)
     event = build(:sap_system_registered_event, database_id: database_id)
 
     ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
@@ -78,7 +81,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         tenant: ^tenant,
         ensa_version: ^ensa_version,
         database_id: ^database_id,
-        database_sid: ^database_sid
+        database_sid: ^database_sid,
+        database_health: ^database_health
       },
       1000
     )
@@ -114,7 +118,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       host_id: host_id,
       instance_number: instance_number,
       instance_hostname: instance_hostname,
-      health: health,
+      status: status,
       features: features,
       start_priority: start_priority
     } =
@@ -129,13 +133,13 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     assert event.instance_number == projection.instance_number
     assert event.features == projection.features
     assert event.host_id == projection.host_id
-    assert event.health == projection.health
+    assert event.status == projection.status
 
     assert_broadcast(
       "application_instance_registered",
       %{
         features: ^features,
-        health: ^health,
+        status: ^status,
         host_id: ^host_id,
         http_port: 8080,
         https_port: 8443,
@@ -185,7 +189,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     )
   end
 
-  test "should broadcast application_instance_health_changed when ApplicationInstanceHealthChanged event is received" do
+  test "should broadcast application_instance_status_changed when ApplicationInstanceStatusChanged event is received" do
     %{id: sap_system_id} = insert(:sap_system)
     event = build(:application_instance_registered_event, sap_system_id: sap_system_id)
 
@@ -201,9 +205,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         host_id: event.host_id
       )
 
-    health_event = %ApplicationInstanceHealthChanged{
+    health_event = %ApplicationInstanceStatusChanged{
       sap_system_id: sap_system_id,
-      health: :critical,
+      status: Status.red(),
       instance_number: instance_number,
       host_id: host_id
     }
@@ -211,9 +215,9 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     ProjectorTestHelper.project(SapSystemProjector, health_event, "sap_system_projector")
 
     assert_broadcast(
-      "application_instance_health_changed",
+      "application_instance_status_changed",
       %{
-        health: :critical,
+        status: Status.red(),
         host_id: ^host_id,
         instance_number: ^instance_number,
         sap_system_id: ^sap_system_id
@@ -347,7 +351,11 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       |> Repo.preload([:tags, :database])
 
     adapted_database_instance =
-      Map.put(database_instance, :sap_system_id, database_id)
+      database_instance
+      |> Map.put(:sap_system_id, database_id)
+      |> Map.put(:health, :unknown)
+
+    adapted_application_instance = Map.put(application_instance, :health, :unknown)
 
     assert_broadcast(
       "sap_system_restored",
@@ -358,7 +366,7 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         sid: ^sid,
         tenant: ^tenant,
         database_instances: [^adapted_database_instance],
-        application_instances: [^application_instance],
+        application_instances: [^adapted_application_instance],
         tags: ^tags,
         database_sid: ^database_sid,
         database_id: ^database_id
@@ -436,6 +444,81 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
       %{
         id: ^id,
         ensa_version: ^ensa_version
+      },
+      1000
+    )
+  end
+
+  test "should mark application instance data as stale when ApplicationInstanceDataMarkedStale event is received" do
+    stale_at = DateTime.utc_now()
+
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:application_instance, stale_at: nil)
+
+    event = %ApplicationInstanceDataMarkedStale{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    application_instance =
+      Repo.get_by(ApplicationInstanceReadModel,
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert application_instance.stale_at == stale_at
+
+    assert_broadcast(
+      "application_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark application instance data as fresh when ApplicationInstanceDataMarkedInSync event is received" do
+    %{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:application_instance, stale_at: DateTime.utc_now())
+
+    event = %ApplicationInstanceDataMarkedInSync{
+      sap_system_id: sap_system_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    application_instance =
+      Repo.get_by(ApplicationInstanceReadModel,
+        sap_system_id: sap_system_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert application_instance.stale_at == nil
+
+    assert_broadcast(
+      "application_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        sap_system_id: ^sap_system_id,
+        stale_at: nil
       },
       1000
     )

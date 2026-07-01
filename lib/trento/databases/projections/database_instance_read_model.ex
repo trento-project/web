@@ -10,7 +10,7 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
 
   import Ecto.Changeset
 
-  require Trento.Enums.Health, as: Health
+  require Trento.SapSystems.Enums.Status, as: Status
 
   @type t :: %__MODULE__{}
 
@@ -38,8 +38,9 @@ defmodule Trento.Databases.Projections.DatabaseInstanceReadModel do
     field :system_replication_operation_mode, :string, default: ""
     field :system_replication_source_site, :string, default: ""
     field :system_replication_tier, :integer
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
     field :absent_at, :utc_datetime_usec
+    field :stale_at, :utc_datetime_usec
 
     belongs_to :host, HostReadModel,
       references: :id,

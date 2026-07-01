@@ -4,7 +4,9 @@
 defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler do
   @moduledoc """
   This event handler is responsible to forward update database health commands to the SAP systems
-  related to a database that has a new health state
+  related to a database that has a new health state.
+
+  Once the resulting event is emitted, the event handler broadcasts its results.
   """
 
   use Commanded.Event.Handler,
@@ -15,6 +17,9 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
   alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Repo
   alias Trento.SapSystems.Commands.UpdateDatabaseHealth
+  alias Trento.SapSystems.Events.SapSystemDatabaseHealthChanged
+
+  alias TrentoWeb.V1.SapSystemJSON
 
   import Ecto.Query, only: [from: 2]
 
@@ -43,6 +48,23 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
     end
 
     :ok
+  end
+
+  def handle(
+        %SapSystemDatabaseHealthChanged{
+          sap_system_id: sap_system_id,
+          database_health: database_health
+        },
+        _metadata
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:sap_systems",
+      "sap_system_updated",
+      SapSystemJSON.sap_system_database_health_changed(%{
+        id: sap_system_id,
+        database_health: database_health
+      })
+    )
   end
 
   defp commanded,

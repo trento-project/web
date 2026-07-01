@@ -105,7 +105,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Provider do
         additionalProperties: false,
         properties: %{
           disk_number: %Schema{type: :integer},
-          image: %Schema{type: :string},
+          image: %Schema{type: :string, nullable: true},
           instance_name: %Schema{type: :string},
           machine_type: %Schema{type: :string},
           network: %Schema{type: :string},

@@ -15,11 +15,13 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
 
   alias Trento.Clusters.ValueObjects.{
     AscsErsClusterDetails,
+    AscsErsClusterHealthDetails,
     HanaClusterDetails,
+    HanaClusterHealthDetails,
     SapInstance
   }
 
-  defevent version: 2 do
+  defevent version: 4 do
     field :cluster_id, Ecto.UUID
     field :name, :string
     field :type, Ecto.Enum, values: ClusterType.values()
@@ -40,8 +42,33 @@ defmodule Trento.Clusters.Events.ClusterRegistered do
       on_replace: :update
     )
 
+    polymorphic_embeds_one(:health_details,
+      types: [
+        hana_scale_up: HanaClusterHealthDetails,
+        hana_scale_out: HanaClusterHealthDetails,
+        ascs_ers: AscsErsClusterHealthDetails
+      ],
+      on_replace: :update,
+      use_parent_field_for_type: :type,
+      on_type_not_found: :nilify
+    )
+
     embeds_many :sap_instances, SapInstance
   end
 
   def upcast(params, _, 2), do: Map.put(params, "state", ClusterState.unknown())
+
+  def upcast(%{"health" => health, "type" => type} = params, _, 3)
+      when type in ["hana_scale_up", "hana_scale_out"],
+      do: Map.put(params, "health_details", %{"replication_health" => health})
+
+  def upcast(%{"health" => health, "type" => "ascs_ers"} = params, _, 3),
+    do: Map.put(params, "health_details", %{"distributed_health" => health})
+
+  def upcast(params, _, 3), do: Map.put(params, "health_details", nil)
+
+  def upcast(%{"health_details" => %{}} = params, _, 4),
+    do: put_in(params, ["health_details", "sbd_health"], Health.unknown())
+
+  def upcast(params, _, 4), do: params
 end

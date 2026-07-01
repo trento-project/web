@@ -17,12 +17,12 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
     :features,
     :http_port,
     :https_port,
-    :health
+    :status
   ]
 
   use Trento.Support.Command
 
-  require Trento.Enums.Health, as: Health
+  require Trento.SapSystems.Enums.Status, as: Status
 
   defcommand do
     field :database_id, Ecto.UUID
@@ -43,7 +43,7 @@ defmodule Trento.Databases.Commands.RegisterDatabaseInstance do
     field :system_replication_source_site, :string
     field :system_replication_tier, :integer
     field :system_replication_active_primary_site, :integer
-    field :health, Ecto.Enum, values: Health.values()
+    field :status, Ecto.Enum, values: Status.values()
 
     embeds_many :tenants, Tenant
   end

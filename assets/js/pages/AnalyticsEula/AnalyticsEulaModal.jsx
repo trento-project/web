@@ -20,7 +20,7 @@ function AnalyticsEulaModal({ isOpen = false, onEnable, onCancel }) {
       Allow the collection of{' '}
       <a
         className="text-jungle-green-500 hover:opacity-75"
-        href="https://trento-project.io/docs"
+        href="https://documentation.suse.com/sles-sap/trento/single-html/SLES-SAP-trento/SLES-SAP-trento.html#sec-trento-analytics"
         target="_blank"
         rel="noreferrer"
       >

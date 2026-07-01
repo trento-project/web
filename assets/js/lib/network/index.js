@@ -4,12 +4,7 @@
 import axios from 'axios';
 import createAuthRefresh from 'axios-auth-refresh';
 import { logError, logWarn } from '@lib/log';
-import {
-  getAccessTokenFromStore,
-  getRefreshTokenFromStore,
-  refreshAccessToken,
-  storeAccessToken,
-} from '@lib/auth';
+import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
 
 let windowReference = window;
 
@@ -33,23 +28,14 @@ networkClient.interceptors.request.use((request) => {
 });
 
 const refreshAuthLogic = async (failedRequest) => {
-  const refreshToken = getRefreshTokenFromStore();
-  if (!refreshToken) {
-    logWarn('could not refresh the access token, refresh token not found');
-    throw unrecoverableAuthError;
-  }
-
   try {
-    const { data } = await refreshAccessToken(refreshToken);
-    const accessToken = data.access_token;
-    storeAccessToken(accessToken);
-    // need the params reassign, the library works that way
-
-    failedRequest.response.config.headers.Authorization = `Bearer ${accessToken}`;
+    await refreshAndStoreAccessToken();
   } catch (e) {
     logWarn('could not refresh the token, error during the request flow', e);
     throw unrecoverableAuthError;
   }
+
+  failedRequest.response.config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
 };
 
 // Even though it looks counter intuitive, we need to add `deduplicateRefresh: false`
@@ -64,18 +50,18 @@ createAuthRefresh(networkClient, refreshAuthLogic, {
   deduplicateRefresh: false,
 });
 
+export const handleUnrecoverableAuthError = () => {
+  logWarn('unrecoverable auth flow, session expired');
+  const currentLocationPath = new URLSearchParams();
+  currentLocationPath.append('request_path', windowReference.location.pathname);
+  windowReference.location.assign(
+    `/session/new?${currentLocationPath.toString()}`
+  );
+};
+
 networkClient.interceptors.response.use(null, (error) => {
   if (error === unrecoverableAuthError) {
-    logWarn('unrecoverable auth flow, session expired');
-    const currentLocationPath = new URLSearchParams();
-    currentLocationPath.append(
-      'request_path',
-      windowReference.location.pathname
-    );
-
-    windowReference.location.assign(
-      `/session/new?${currentLocationPath.toString()}`
-    );
+    handleUnrecoverableAuthError();
   }
   throw error;
 });

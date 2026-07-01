@@ -21,10 +21,17 @@ const hostToDeregister = {
 // Selectors
 
 const sapSystemName = 'div[class="font-bold"]:contains("Name") + div span';
-const sapSystemType = 'div[class="font-bold"]:contains("Type") + div span';
+const sapSystemType = 'div[class="font-bold"]:contains("Type") + div';
+const sapSystemEnsaVersion =
+  'div[class="font-bold"]:contains("ENSA version") + div';
+const sapSystemDatabase = 'div[class="font-bold"]:contains("Database") + div';
+const sapSystemDatabaseHealth =
+  'div[class="font-bold"]:contains("Database health") + div svg';
+const sapSystemDatabaseTenant =
+  'div[class="font-bold"]:contains("Tenant") + div';
 const notFoundLabel = 'div:contains("Not Found")';
 const thirdRowStatusCellSelector =
-  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(6)';
+  'div[class="mt-16"]:contains("Layout") table tbody tr:eq(2) td:eq(0)';
 const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 const cleanUpButton = 'button:contains("Clean up")';
@@ -45,11 +52,30 @@ export const visitNonExistentSapSystem = () =>
 export const validatePageUrl = (systemId = selectedSystem.Id) =>
   basePage.validateUrl(`/sap_systems/${systemId}`);
 
+export const pageTitleHealthIsCorrectlyDisplayed = (
+  health = selectedSystem.Health
+) => basePage.pageTitleHealthIsCorrectlyDisplayed(health);
+
 export const sapSystemHasExpectedName = () =>
   cy.get(sapSystemName).should('have.text', selectedSystem.Sid);
 
 export const sapSystemHasExpectedType = () =>
   cy.get(sapSystemType).should('have.text', selectedSystem.Type);
+
+export const sapSystemHasExpectedEnsaVersion = () =>
+  cy.get(sapSystemEnsaVersion).should('have.text', selectedSystem.EnsaVersion);
+
+export const sapSystemHasExpectedDatabase = () =>
+  cy.get(sapSystemDatabase).should('have.text', selectedSystem.Database);
+
+export const sapSystemHasExpectedDatabaseHealth = (
+  health = selectedSystem.DatabaseHealth
+) => cy.get(sapSystemDatabaseHealth).should('have.class', health);
+
+export const sapSystemHasExpectedDatabaseTenant = () =>
+  cy
+    .get(sapSystemDatabaseTenant)
+    .should('have.text', selectedSystem.DatabaseTenant);
 
 export const notFoundLabelIsDisplayed = () =>
   cy.get(notFoundLabel).should('be.visible');
@@ -64,29 +90,28 @@ export const layoutTableShowsExpectedData = () =>
       cy.get(tableCellSelector).should('have.text', expectedValue);
 
       if (key === 'Status') {
-        return cy
-          .get(`${tableCellSelector} svg`)
-          .should('have.class', healthMap[instance.Status]);
+        cy.get(`${tableCellSelector} svg`)
+          .should('have.class', healthMap[instance.Status])
+          .trigger('mouseover');
+        return cy.get(`span:contains("${instance.Status}")`).should('exist');
       }
     });
   });
 
 const _getFormattedExpectedValue = (key, value) => {
   if (key === 'Features') return value.replaceAll('|', '');
-  else if (key === 'Status') return `SAPControl: ${value}`;
+  else if (key === 'Status') return '';
   else return value;
 };
 
-export const shouldDisplayExpectedHealthStatusChanges = () =>
+export const shouldDisplayExpectedStatusChanges = () =>
   cy.wrap(Object.entries(healthMap)).each(([state, health]) => {
     basePage.loadScenario(`sap-system-detail-${state.toUpperCase()}`);
-    cy.get(thirdRowStatusCellSelector).should(
-      'have.text',
-      `SAPControl: ${state}`
-    );
-    return cy
-      .get(`${thirdRowStatusCellSelector} svg`)
-      .should('have.class', health);
+
+    cy.get(`${thirdRowStatusCellSelector} svg`)
+      .should('have.class', health)
+      .trigger('mouseover');
+    return cy.get(`span:contains("${state}")`).should('exist');
   });
 
 export const eachHostHasTheExpectedLink = () =>
@@ -94,7 +119,7 @@ export const eachHostHasTheExpectedLink = () =>
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(0) a`;
     cy.get(tableCellSelector).click();
     basePage.validateUrl(`/hosts/${host.AgentId}`);
-    return cy.go('back');
+    return basePage.goBack();
   });
 
 export const eachHostHasTheExpectedClusterLink = () =>
@@ -103,7 +128,7 @@ export const eachHostHasTheExpectedClusterLink = () =>
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(3) a`;
     cy.get(tableCellSelector).click();
     basePage.validateUrl(`/clusters/${host.ClusterId}`);
-    return cy.go('back');
+    return basePage.goBack();
   });
 
 export const eachHostHasTheExpectedData = () =>
@@ -144,6 +169,9 @@ export const newSapSystemIsDisplayed = () => {
 
 export const restoreInstanceHealth = () =>
   basePage.loadScenario('sap-system-detail-GREEN');
+
+export const restoreDatabaseInstanceHealth = () =>
+  basePage.loadScenario('hana-database-detail-GREEN');
 
 export const apiDeregisterHost = () =>
   basePage.apiDeregisterHost(hostToDeregister.id);

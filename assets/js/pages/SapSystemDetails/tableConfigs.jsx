@@ -11,8 +11,6 @@ import { isHeartbeatPassing } from '@lib/model/hosts';
 import HostLink from '@common/HostLink';
 import ProviderLabel from '@common/ProviderLabel';
 import CleanUpButton from '@common/CleanUpButton';
-import Tooltip from '@common/Tooltip';
-import HealthIcon from '@common/HealthIcon';
 import OperationsButton from '@common/OperationsButton';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
@@ -36,20 +34,19 @@ export const getSystemInstancesTableConfiguration = ({
   usePadding: false,
   columns: [
     {
+      title: 'Status',
+      key: 'status',
+      className: 'w-10',
+      render: (content, item) => (
+        <InstanceStatus status={content} absent={!!item.absent_at} />
+      ),
+    },
+    {
       title: 'Hostname',
       key: 'instance_hostname',
       render: (content, item) => (
-        <span className="flex items-center">
-          {item.absent_at && (
-            <Tooltip content="Registered instance not found." place="bottom">
-              <HealthIcon health="absent" />
-            </Tooltip>
-          )}
-          <span
-            className={classNames({ 'text-gray-600': item.absent_at }, 'ml-1')}
-          >
-            {content}
-          </span>
+        <span className={classNames({ 'text-gray-600': item.absent_at })}>
+          {content}
         </span>
       ),
     },
@@ -79,14 +76,9 @@ export const getSystemInstancesTableConfiguration = ({
       render: cellRender,
     },
     {
-      title: 'Status',
-      key: 'health',
-      render: (content) => <InstanceStatus health={content} />,
-    },
-    {
       title: '',
       key: 'actions',
-      className: 'w-20',
+      className: 'w-32',
       render: (_content, item) => {
         if (item.absent_at) {
           return (

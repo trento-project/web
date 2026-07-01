@@ -143,7 +143,7 @@ export const eachSystemHasItsExpectedWorkingLink = () =>
   cy.wrap(availableSAPSystems).each(({ sid, id }) => {
     cy.get(`td:contains("${sid}")`).should('be.visible').click();
     basePage.validateUrl(`${url}/${id}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');
@@ -208,7 +208,7 @@ export const eachSystemHasItsDatabaseWorkingLink = () =>
       const databaseSidLink = `tbody > tr:nth-child(odd):eq(${index}) td:contains("${attachedDatabase.sid}") a`;
       cy.get(databaseSidLink).should('be.visible').click();
       validateUrl(`/databases/${attachedDatabase.id}`);
-      cy.go('back');
+      basePage.goBack();
       validateUrl();
       pageTitleIsCorrectlyDisplayed();
       return cy.get(sapSystemsTableRows).should('be.visible');
@@ -221,7 +221,7 @@ const validateInstanceRowData = (instance, rowIndex) => {
 
   const columnIndexOffset = isHana ? 1 : 0;
 
-  const healthBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
+  const statusBadgeSelector = `${currentRow} div[class*="cell"]:eq(0) svg`;
   const instanceNumberSelector = `${currentRow} div[class*="cell"]:eq(1)`;
   const featuresSelector = `${currentRow} div[class*="cell"]:eq(2)`;
   const hanaInstanceSelector = `${currentRow} div[class*="cell"]:eq(3)`;
@@ -232,8 +232,8 @@ const validateInstanceRowData = (instance, rowIndex) => {
     4 + columnIndexOffset
   })`;
 
-  const healthBadgeExpectedClass = healthMap[instance.health];
-  cy.get(healthBadgeSelector).should('have.class', healthBadgeExpectedClass);
+  const statusBadgeExpectedClass = healthMap[instance.status];
+  cy.get(statusBadgeSelector).should('have.class', statusBadgeExpectedClass);
 
   const expectedInstanceNumber = instance.instanceNumber;
   cy.get(instanceNumberSelector).should('have.text', expectedInstanceNumber);
@@ -272,7 +272,7 @@ export const eachHanaInstanceHasItsClusterWorkingLink = () => {
     clickAllRows();
     cy.get(hanaClusterLinks).eq(index).should('be.visible').click();
     validateUrl(`/clusters/${hanaInstance.clusterID}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');
@@ -284,7 +284,7 @@ export const eachInstanceHasItsHostWorkingLink = () =>
     clickAllRows();
     cy.get(instanceHostLinks).eq(rowIndex).should('be.visible').click();
     validateUrl(`/hosts/${instance.hostID}`);
-    cy.go('back');
+    basePage.goBack();
     validateUrl();
     pageTitleIsCorrectlyDisplayed();
     return cy.get(sapSystemsTableRows).should('be.visible');
@@ -301,45 +301,24 @@ export const javaSystemIsDiscoveredCorrectly = () => {
 export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
   cy.get(sapSystemsTableRows).should('have.length', systemsAmount);
 
-export const eachInstanceHasItsHealthStatusCorrectlyUpdated = () => {
+export const instanceHasItsStatusCorrectlyUpdated = (status, rowIndex) => {
+  const healthClass = healthMap[status];
   const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
-  cy.get(collapsibleCell).click();
+  const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
+  cy.get(sapSystemInstanceStatusBadge).should('have.class', healthClass);
 
-  return cy.wrap(Object.entries(healthMap)).each(([state, health], index) => {
-    basePage.loadScenario(`sap-systems-overview-${state}`);
-
-    const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-    cy.get(sapSystemInstanceHealthBadge).should('have.class', health);
-
-    const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
-      index + 1
-    }) div[class*="cell"]:eq(0) svg`;
-    return cy.get(appLayerInstanceHealthBadge).should('have.class', health);
-  });
-};
-
-export const sapSystemHealthChangesToRedAsExpected = () => {
-  basePage.loadScenario('sap-systems-overview-hana-RED');
-
-  const healthClass = healthMap['RED'];
-
-  const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
-  const collapsibleCell = `${sapSystemsFirstRow} > td:eq(0)`;
-  cy.get(collapsibleCell).click();
-
-  const sapSystemInstanceHealthBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
-  cy.get(sapSystemInstanceHealthBadge).should('have.class', healthClass);
-
-  const appLayerInstanceHealthBadge =
-    'tr td div[class*="flex bg-white"] div[class*="row"] div[class*="cell"] svg:eq(4)';
+  const appLayerInstanceHealthBadge = `${sapSystemsFirstRow} + tr td div[class*="row border"]:eq(${
+    rowIndex + 1
+  }) div[class*="cell"]:eq(0) svg`;
   return cy.get(appLayerInstanceHealthBadge).should('have.class', healthClass);
 };
 
-export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () => {
-  basePage.loadScenario('sap-systems-overview-DAA');
-  return cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
-};
+export const sapSystemHealthChangesToRedAsExpected = () =>
+  // 5th row, 4 app instances + 1st db instance
+  instanceHasItsStatusCorrectlyUpdated('RED', 5);
+
+export const sapDiagnosticsAgentDiscoveryVisualizationIsSkipped = () =>
+  cy.get('table[class*="table-fixed"]').should('not.contain', 'DAA');
 
 export const systemNwdIsVisible = () =>
   cy.get(`td:contains('${sapSystemNwd.sid}')`).should('be.visible');

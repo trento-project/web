@@ -48,7 +48,9 @@ defmodule Trento.Clusters.ValueObjects.SapInstanceTest do
 
       sap_instances = [
         instance_1,
-        build(:clustered_sap_instance, resource_type: SapInstanceResourceType.sap_hana_topology()),
+        build(:clustered_sap_instance,
+          resource_type: SapInstanceResourceType.sap_hana_topology()
+        ),
         build(:clustered_sap_instance,
           sid: sid_2,
           resource_type: SapInstanceResourceType.sap_instance()

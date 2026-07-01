@@ -35,6 +35,7 @@ function Users({
       {
         title: 'Username',
         key: 'username',
+        className: 'ph-mask',
         render: (content, item) => (
           <Link
             className="text-jungle-green-500 hover:opacity-75"

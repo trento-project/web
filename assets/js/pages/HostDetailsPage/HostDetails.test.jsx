@@ -38,6 +38,29 @@ describe('HostDetails component', () => {
     axiosMock.onGet(/\/api\/v1\/charts.*/gm).reply(200, {});
   });
 
+  describe('Header', () => {
+    it('should display host name and health', () => {
+      const { hostname, health } = hostFactory.build();
+
+      renderWithRouter(
+        <HostDetails
+          hostname={hostname}
+          health={health}
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+        />
+      );
+
+      const header = screen.getByRole('heading', {
+        name: `Host Details: ${hostname}`,
+      });
+
+      expect(header).toBeInTheDocument();
+      const { getByTestId } = within(header);
+      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    });
+  });
+
   describe('Checks execution', () => {
     it('should show the Checks related action buttons', () => {
       renderWithRouter(

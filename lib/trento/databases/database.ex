@@ -25,6 +25,7 @@ defmodule Trento.Databases.Database do
   alias Trento.Databases.Commands.{
     DeregisterDatabaseInstance,
     MarkDatabaseInstanceAbsent,
+    MarkDatabaseInstanceDataStale,
     RegisterDatabaseInstance,
     RollUpDatabase
   }
@@ -32,11 +33,13 @@ defmodule Trento.Databases.Database do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
-    DatabaseInstanceHealthChanged,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
     DatabaseInstanceRegistered,
+    DatabaseInstanceStatusChanged,
     DatabaseInstanceSystemReplicationChanged,
     DatabaseRegistered,
     DatabaseRestored,
@@ -47,6 +50,7 @@ defmodule Trento.Databases.Database do
   }
 
   alias Trento.Databases.ValueObjects.Tenant
+  alias Trento.SapSystems.Services.HealthService, as: SapSystemsHealthService
   alias Trento.Services.HealthService
 
   alias Trento.SapSystems.Events, as: SapSystemEvents
@@ -55,7 +59,7 @@ defmodule Trento.Databases.Database do
 
   @legacy_events [
     SapSystemEvents.ApplicationInstanceDeregistered,
-    SapSystemEvents.ApplicationInstanceHealthChanged,
+    SapSystemEvents.ApplicationInstanceStatusChanged,
     SapSystemEvents.ApplicationInstanceMarkedAbsent,
     SapSystemEvents.ApplicationInstanceMarkedPresent,
     SapSystemEvents.ApplicationInstanceMoved,
@@ -118,14 +122,14 @@ defmodule Trento.Databases.Database do
           system_replication_operation_mode: system_replication_operation_mode,
           system_replication_source_site: system_replication_source_site,
           system_replication_tier: system_replication_tier,
-          health: health
+          status: status
         }
       ) do
     [
       %DatabaseRegistered{
         database_id: database_id,
         sid: sid,
-        health: health
+        health: SapSystemsHealthService.derive_health_from_status(status)
       },
       %DatabaseInstanceRegistered{
         database_id: database_id,
@@ -145,7 +149,7 @@ defmodule Trento.Databases.Database do
         system_replication_operation_mode: system_replication_operation_mode,
         system_replication_source_site: system_replication_source_site,
         system_replication_tier: system_replication_tier,
-        health: health
+        status: status
       },
       %DatabaseTenantsUpdated{
         database_id: database_id,
@@ -187,7 +191,7 @@ defmodule Trento.Databases.Database do
           system_replication_operation_mode: system_replication_operation_mode,
           system_replication_source_site: system_replication_source_site,
           system_replication_tier: system_replication_tier,
-          health: health,
+          status: status,
           tenants: tenants
         }
       )
@@ -214,11 +218,11 @@ defmodule Trento.Databases.Database do
           system_replication_operation_mode: system_replication_operation_mode,
           system_replication_source_site: system_replication_source_site,
           system_replication_tier: system_replication_tier,
-          health: health
+          status: status
         },
         %DatabaseRestored{
           database_id: database_id,
-          health: health
+          health: SapSystemsHealthService.derive_health_from_status(status)
         }
       ]
     end)
@@ -246,13 +250,16 @@ defmodule Trento.Databases.Database do
       maybe_emit_database_instance_system_replication_changed_event(instance, command)
     end)
     |> Multi.execute(fn _ ->
-      maybe_emit_database_instance_health_changed_event(instance, command)
+      maybe_emit_database_instance_status_changed_event(instance, command)
     end)
     |> Multi.execute(fn _ ->
       maybe_emit_database_instance_registered_event(instance, command)
     end)
     |> Multi.execute(fn _ ->
       maybe_emit_database_instance_marked_present_event(instance, command)
+    end)
+    |> Multi.execute(fn _ ->
+      maybe_emit_database_instance_data_marked_in_sync_event(instance, command)
     end)
     |> Multi.execute(&maybe_emit_database_health_changed_event/1)
     |> Multi.execute(fn database ->
@@ -282,6 +289,28 @@ defmodule Trento.Databases.Database do
           host_id: host_id,
           database_id: database_id,
           absent_at: absent_at
+        }
+
+      _ ->
+        nil
+    end
+  end
+
+  def execute(
+        %Database{database_id: database_id, instances: instances},
+        %MarkDatabaseInstanceDataStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        }
+      ) do
+    case get_instance(instances, host_id, instance_number) do
+      %Instance{stale_at: nil} ->
+        %DatabaseInstanceDataMarkedStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
         }
 
       _ ->
@@ -357,7 +386,7 @@ defmodule Trento.Databases.Database do
           instance_number: instance_number,
           features: features,
           host_id: host_id,
-          health: health
+          status: status
         }
       ) do
     instances = [
@@ -374,8 +403,9 @@ defmodule Trento.Databases.Database do
         instance_number: instance_number,
         features: features,
         host_id: host_id,
-        health: health,
-        absent_at: nil
+        status: status,
+        absent_at: nil,
+        stale_at: nil
       }
       | instances
     ]
@@ -429,10 +459,10 @@ defmodule Trento.Databases.Database do
 
   def apply(
         %Database{instances: instances} = database,
-        %DatabaseInstanceHealthChanged{
+        %DatabaseInstanceStatusChanged{
           host_id: host_id,
           instance_number: instance_number,
-          health: health
+          status: status
         }
       ) do
     instances =
@@ -440,7 +470,7 @@ defmodule Trento.Databases.Database do
         instances,
         fn
           %Instance{host_id: ^host_id, instance_number: ^instance_number} = instance ->
-            %Instance{instance | health: health}
+            %Instance{instance | status: status}
 
           instance ->
             instance
@@ -477,6 +507,31 @@ defmodule Trento.Databases.Database do
         }
       ) do
     instances = update_instance(instances, instance_number, host_id, %{absent_at: absent_at})
+
+    %Database{database | instances: instances}
+  end
+
+  def apply(
+        %Database{instances: instances} = database,
+        %DatabaseInstanceDataMarkedInSync{
+          instance_number: instance_number,
+          host_id: host_id
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: nil})
+
+    %Database{database | instances: instances}
+  end
+
+  def apply(
+        %Database{instances: instances} = database,
+        %DatabaseInstanceDataMarkedStale{
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        }
+      ) do
+    instances = update_instance(instances, instance_number, host_id, %{stale_at: stale_at})
 
     %Database{database | instances: instances}
   end
@@ -557,7 +612,7 @@ defmodule Trento.Databases.Database do
            system_replication_operation_mode: system_replication_operation_mode,
            system_replication_source_site: system_replication_source_site,
            system_replication_tier: system_replication_tier,
-           health: health
+           status: status
          }
        ) do
     %DatabaseInstanceRegistered{
@@ -578,7 +633,7 @@ defmodule Trento.Databases.Database do
       system_replication_operation_mode: system_replication_operation_mode,
       system_replication_source_site: system_replication_source_site,
       system_replication_tier: system_replication_tier,
-      health: health
+      status: status
     }
   end
 
@@ -621,6 +676,24 @@ defmodule Trento.Databases.Database do
   end
 
   defp maybe_emit_database_instance_marked_present_event(_, _), do: nil
+
+  defp maybe_emit_database_instance_data_marked_in_sync_event(
+         %Instance{stale_at: stale_at},
+         %RegisterDatabaseInstance{
+           database_id: database_id,
+           instance_number: instance_number,
+           host_id: host_id
+         }
+       )
+       when not is_nil(stale_at) do
+    %DatabaseInstanceDataMarkedInSync{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+  end
+
+  defp maybe_emit_database_instance_data_marked_in_sync_event(_, _), do: nil
 
   defp maybe_emit_database_instance_system_replication_changed_event(nil, _), do: nil
 
@@ -676,27 +749,27 @@ defmodule Trento.Databases.Database do
     }
   end
 
-  defp maybe_emit_database_instance_health_changed_event(
+  defp maybe_emit_database_instance_status_changed_event(
          %Instance{
-           health: health
+           status: status
          },
          %RegisterDatabaseInstance{
            database_id: database_id,
            host_id: host_id,
            instance_number: instance_number,
-           health: new_health
+           status: new_status
          }
        )
-       when health != new_health do
-    %DatabaseInstanceHealthChanged{
+       when status != new_status do
+    %DatabaseInstanceStatusChanged{
       database_id: database_id,
       host_id: host_id,
       instance_number: instance_number,
-      health: new_health
+      status: new_status
     }
   end
 
-  defp maybe_emit_database_instance_health_changed_event(_, _), do: nil
+  defp maybe_emit_database_instance_status_changed_event(_, _), do: nil
 
   # Returns a DatabaseHealthChanged event if the newly computed aggregated health of all the instances
   # is different from the previous Database health.
@@ -707,7 +780,9 @@ defmodule Trento.Databases.Database do
        }) do
     new_health =
       instances
-      |> Enum.map(& &1.health)
+      |> Enum.map(fn %{status: status} ->
+        SapSystemsHealthService.derive_health_from_status(status)
+      end)
       |> HealthService.compute_aggregated_health()
 
     if new_health != health do

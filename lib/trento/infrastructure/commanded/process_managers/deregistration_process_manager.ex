@@ -9,6 +9,9 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     This represents a transaction to ensure that the procedure of deregistering domain aggregates
     follows a certain path and satisfies some requisites.
 
+    Additionally, it handles the stale data of the different aggregates when a host
+    heartbeat fails.
+
     For more information see https://hexdocs.pm/commanded/process-managers.html
   """
 
@@ -41,6 +44,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessManager
 
   alias Trento.Hosts.Events.{
+    HeartbeatFailed,
     HostDeregistered,
     HostDeregistrationRequested,
     HostRegistered,
@@ -68,8 +72,15 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Hosts.Commands.DeregisterHost
 
-  alias Trento.Databases.Commands.DeregisterDatabaseInstance
-  alias Trento.SapSystems.Commands.DeregisterApplicationInstance
+  alias Trento.Databases.Commands.{
+    DeregisterDatabaseInstance,
+    MarkDatabaseInstanceDataStale
+  }
+
+  alias Trento.SapSystems.Commands.{
+    DeregisterApplicationInstance,
+    MarkApplicationInstanceDataStale
+  }
 
   alias Trento.Clusters.Commands.DeregisterClusterHost
 
@@ -134,6 +145,8 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   def interested?(%ApplicationInstanceMoved{old_host_id: old_host_id, new_host_id: new_host_id}),
     do: {:continue, [old_host_id, new_host_id]}
 
+  def interested?(%HeartbeatFailed{host_id: host_id}), do: {:continue, host_id}
+
   # Stop the Process Manager
   def interested?(%HostDeregistered{host_id: host_id}), do: {:stop, host_id}
 
@@ -194,6 +207,56 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
       application_instances_deregister_commands ++
       maybe_deregister_cluster_host(cluster_id, host_id, requested_at) ++
       [%DeregisterHost{host_id: host_id, deregistered_at: requested_at}]
+  end
+
+  def handle(
+        %DeregistrationProcessManager{
+          cluster_id: nil,
+          application_instances: [],
+          database_instances: []
+        },
+        %HeartbeatFailed{}
+      ) do
+    nil
+  end
+
+  def handle(
+        %DeregistrationProcessManager{
+          application_instances: application_instances,
+          database_instances: database_instances
+        },
+        %HeartbeatFailed{
+          host_id: host_id
+        },
+        %{created_at: created_at}
+      ) do
+    application_commands =
+      Enum.map(application_instances, fn %Instance{
+                                           sap_system_id: sap_system_id,
+                                           instance_number: instance_number
+                                         } ->
+        %MarkApplicationInstanceDataStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: created_at
+        }
+      end)
+
+    database_commands =
+      Enum.map(database_instances, fn %Instance{
+                                        sap_system_id: database_id,
+                                        instance_number: instance_number
+                                      } ->
+        %MarkDatabaseInstanceDataStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: created_at
+        }
+      end)
+
+    application_commands ++ database_commands
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{

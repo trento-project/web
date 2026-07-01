@@ -8,8 +8,8 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   alias Trento.Hosts.Projections.HostReadModel
 
   alias Trento.Databases.Projections.{
-    DatabaseReadModel,
-    DatabaseInstanceReadModel
+    DatabaseInstanceReadModel,
+    DatabaseReadModel
   }
 
   alias Trento.Repo

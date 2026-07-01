@@ -25,7 +25,9 @@ defmodule Trento.ActivityLog do
     "profile_update",
     "personal_access_token_creation",
     "personal_access_token_deletion",
-    "personal_access_token_admin_deletion"
+    "personal_access_token_admin_deletion",
+    "ai_configuration_creation",
+    "ai_configuration_modification"
   ]
 
   @spec list_activity_log(map()) ::
@@ -105,7 +107,7 @@ defmodule Trento.ActivityLog do
        Some parameters are recognized by Flop and are used as is (example: last, first, after, before);
        some other parameters are used to build filters with custom operator logic (example: from_date, to_date, actor, type).
        ## Examples
-             iex> parse_params([{:from_date, "2021-01-31"}, {:to_date, "2021-01-01"}, last: 10])
+             iex> parse_params([{:from_date, "2021-01-01"}, {:to_date, "2021-01-31"}, last: 10])
        %{
           filters: [
                      %{value: "2021-01-31", op: :<=, field: :inserted_at},
@@ -124,10 +126,10 @@ defmodule Trento.ActivityLog do
     query_params
     |> Enum.map(fn
       {:from_date, v} ->
-        {:filters, %{field: :inserted_at, op: :<=, value: v}}
+        {:filters, %{field: :inserted_at, op: :>=, value: v}}
 
       {:to_date, v} ->
-        {:filters, %{field: :inserted_at, op: :>=, value: v}}
+        {:filters, %{field: :inserted_at, op: :<=, value: v}}
 
       {:actor, v} ->
         {:filters, %{field: :actor, op: :ilike_or, value: v}}
