@@ -116,19 +116,23 @@ export const shouldDisplayExpectedStatusChanges = () =>
 
 export const eachHostHasTheExpectedLink = () =>
   cy.wrap(attachedHosts).each((host, index) => {
+    const expectedHref = `/hosts/${host.AgentId}`;
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(0) a`;
-    cy.get(tableCellSelector).click();
-    basePage.validateUrl(`/hosts/${host.AgentId}`);
-    return basePage.goBack();
+    cy.get(tableCellSelector).should('have.attr', 'href', expectedHref).click();
+    basePage.validateUrl(expectedHref);
+    basePage.goBack();
+    return validatePageUrl();
   });
 
 export const eachHostHasTheExpectedClusterLink = () =>
   cy.wrap(attachedHosts).each((host, index) => {
     if (!host.ClusterId) return;
+    const expectedHref = `/clusters/${host.ClusterId}`;
     const tableCellSelector = `div[class="mt-8"]:contains("Hosts") table tbody tr:eq(${index}) td:eq(3) a`;
-    cy.get(tableCellSelector).click();
-    basePage.validateUrl(`/clusters/${host.ClusterId}`);
-    return basePage.goBack();
+    cy.get(tableCellSelector).should('have.attr', 'href', expectedHref).click();
+    basePage.validateUrl(expectedHref);
+    basePage.goBack();
+    return validatePageUrl();
   });
 
 export const eachHostHasTheExpectedData = () =>
