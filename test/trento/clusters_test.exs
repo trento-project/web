@@ -210,7 +210,7 @@ defmodule Trento.ClustersTest do
       end
     end
 
-    test "should include is_majority_maker in target host_data for hana cluster nodes" do
+    test "should include is_majority_maker in target attributes for hana cluster nodes" do
       majority_maker_hostname = "majority-maker-host"
       other_hostname = "other-host"
 
@@ -237,13 +237,13 @@ defmodule Trento.ClustersTest do
         targets_by_agent = Map.new(message.targets, &{&1.agent_id, &1})
 
         assert %Target{
-                 host_data: %{
+                 attributes: %{
                    "is_majority_maker" => %ProtobufValue{kind: {:bool_value, true}}
                  }
                } = targets_by_agent[majority_maker_host_id]
 
         assert %Target{
-                 host_data: %{
+                 attributes: %{
                    "is_majority_maker" => %ProtobufValue{kind: {:bool_value, false}}
                  }
                } = targets_by_agent[other_host_id]

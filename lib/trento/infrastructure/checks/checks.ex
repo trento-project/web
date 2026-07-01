@@ -59,7 +59,7 @@ defmodule Trento.Infrastructure.Checks do
             %Target{
               agent_id: target.host_id,
               checks: selected_checks,
-              host_data: build_target_host_data(target)
+              attributes: build_target_attributes(target)
             }
           end
         ),
@@ -107,11 +107,11 @@ defmodule Trento.Infrastructure.Checks do
     commanded().dispatch(command, correlation_id: execution_id)
   end
 
-  defp build_target_host_data(%{is_majority_maker: is_majority_maker}) do
+  defp build_target_attributes(%{is_majority_maker: is_majority_maker}) do
     %{"is_majority_maker" => %ProtobufValue{kind: {:bool_value, is_majority_maker}}}
   end
 
-  defp build_target_host_data(_), do: %{}
+  defp build_target_attributes(_), do: %{}
 
   defp build_env(%ClusterExecutionEnv{
          cluster_type: ClusterType.ascs_ers(),
