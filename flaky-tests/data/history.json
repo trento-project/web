@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-17T18:18:39Z",
-    "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
-    "run_id": "25998562741",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.07251
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-17T18:59:30Z",
     "commit": "2aa3c5adf45030a2314a633e0b4e02dc6c20ba2e",
     "run_id": "25999402382",
@@ -5281,6 +5265,22 @@
       {
         "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-01T19:20:54Z",
+    "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
+    "run_id": "28541099113",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
+        "score": 0.08646
       }
     ]
   }
