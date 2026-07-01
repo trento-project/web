@@ -49,8 +49,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                  execution_id: ^execution_id,
                  group_id: ^group_id,
                  targets: [
-                   %Target{agent_id: "agent_1", checks: ^selected_checks, host_data: %{}},
-                   %Target{agent_id: "agent_2", checks: ^selected_checks, host_data: %{}}
+                   %Target{agent_id: "agent_1", checks: ^selected_checks, attributes: %{}},
+                   %Target{agent_id: "agent_2", checks: ^selected_checks, attributes: %{}}
                  ],
                  env: %{
                    "cluster_type" => %{kind: {:string_value, "hana_scale_up"}},
@@ -74,7 +74,7 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                )
     end
 
-    test "should include is_majority_maker in host_data for cluster targets" do
+    test "should include is_majority_maker in attributes for cluster targets" do
       execution_id = UUID.uuid4()
       group_id = UUID.uuid4()
 
@@ -98,13 +98,13 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                  targets: [
                    %Target{
                      agent_id: "agent_1",
-                     host_data: %{
+                     attributes: %{
                        "is_majority_maker" => %ProtobufValue{kind: {:bool_value, true}}
                      }
                    },
                    %Target{
                      agent_id: "agent_2",
-                     host_data: %{
+                     attributes: %{
                        "is_majority_maker" => %ProtobufValue{kind: {:bool_value, false}}
                      }
                    }

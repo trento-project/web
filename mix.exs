@@ -114,7 +114,7 @@ defmodule Trento.MixProject do
       {:tzdata, "~> 1.1.3"},
       {:trento_contracts,
        github: "trento-project/contracts",
-       ref: "2d0c53202ad364964ea4965445e10ebeeaa70da0",
+       ref: "f3c137c0d92e8d4f49d24604fcdadb6d0091f8ee",
        sparse: "elixir"},
       {:unplug, "~> 1.1.0"},
       {:proper_case, "~> 1.3.1"},
