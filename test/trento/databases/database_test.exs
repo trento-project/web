@@ -2647,7 +2647,7 @@ defmodule Trento.Databases.DatabaseTest do
       )
     end
 
-    test "should mark database instance data as in sync when registering a stale instance" do
+    test "should mark database instance data as in sync when a stale instance receives data again" do
       database_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
