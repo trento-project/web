@@ -102,12 +102,15 @@ Trento.Commanded.md
 Trento.DataCase.md
 Trento.Databases.Commands.DeregisterDatabaseInstance.md
 Trento.Databases.Commands.MarkDatabaseInstanceAbsent.md
+Trento.Databases.Commands.MarkDatabaseInstanceDataStale.md
 Trento.Databases.Commands.RegisterDatabaseInstance.md
 Trento.Databases.Commands.RollUpDatabase.md
 Trento.Databases.Database.md
 Trento.Databases.Event.Upcaster.UpcastDatabaseId.md
 Trento.Databases.Events.DatabaseDeregistered.md
 Trento.Databases.Events.DatabaseHealthChanged.md
+Trento.Databases.Events.DatabaseInstanceDataMarkedInSync.md
+Trento.Databases.Events.DatabaseInstanceDataMarkedStale.md
 Trento.Databases.Events.DatabaseInstanceDeregistered.md
 Trento.Databases.Events.DatabaseInstanceHealthChanged.md
 Trento.Databases.Events.DatabaseInstanceMarkedAbsent.md

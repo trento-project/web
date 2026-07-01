@@ -19,6 +19,7 @@ Database instance read model
   instance_hostname: term(),
   instance_number: term(),
   sid: term(),
+  stale_at: term(),
   start_priority: term(),
   status: term(),
   system_replication: term(),

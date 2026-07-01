@@ -94,6 +94,8 @@ access to the application's data layer.
 
 - [Trento.Databases.Commands.MarkDatabaseInstanceAbsent](Trento.Databases.Commands.MarkDatabaseInstanceAbsent.md): Mark a database instance as absent
 
+- [Trento.Databases.Commands.MarkDatabaseInstanceDataStale](Trento.Databases.Commands.MarkDatabaseInstanceDataStale.md): Mark a database instance data as stale.
+
 - [Trento.Databases.Commands.RegisterDatabaseInstance](Trento.Databases.Commands.RegisterDatabaseInstance.md): Register a database instance to the monitoring system.
 
 - [Trento.Databases.Commands.RollUpDatabase](Trento.Databases.Commands.RollUpDatabase.md): Start a database aggregate rollup.
@@ -106,6 +108,11 @@ sap_system_id was still used.
 - [Trento.Databases.Events.DatabaseDeregistered](Trento.Databases.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned).
 
 - [Trento.Databases.Events.DatabaseHealthChanged](Trento.Databases.Events.DatabaseHealthChanged.md): This event is emitted when a database health has changed.
+
+- [Trento.Databases.Events.DatabaseInstanceDataMarkedInSync](Trento.Databases.Events.DatabaseInstanceDataMarkedInSync.md): This event is emitted when a database instance data is marked as
+synchronized and valid.
+
+- [Trento.Databases.Events.DatabaseInstanceDataMarkedStale](Trento.Databases.Events.DatabaseInstanceDataMarkedStale.md): This event is emitted when a database instance data is marked as stale.
 
 - [Trento.Databases.Events.DatabaseInstanceDeregistered](Trento.Databases.Events.DatabaseInstanceDeregistered.md): This event is emitted when a database instance is deregistered (decommissioned).
 

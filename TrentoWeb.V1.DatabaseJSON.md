@@ -13,6 +13,8 @@
 
 # `database_instance_deregistered`
 
+# `database_instance_stale_changed`
+
 # `database_instance_status_changed`
 
 # `database_instance_system_replication_changed`

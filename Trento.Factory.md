@@ -121,6 +121,10 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `database_health_changed_event_factory`
 
+# `database_instance_data_marked_in_sync_event_factory`
+
+# `database_instance_data_marked_stale_event_factory`
+
 # `database_instance_deregistered_event_factory`
 
 # `database_instance_factory`
