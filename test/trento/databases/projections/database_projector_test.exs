@@ -21,6 +21,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceMarkedPresent,
@@ -538,5 +540,80 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
     assert_broadcast "database_tenants_updated",
                      %{database_id: ^database_id, tenants: ^broadcasted_tenants},
                      1000
+  end
+
+  test "should mark database instance data as stale when DatabaseInstanceDataMarkedStale event is received" do
+    %{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:database_instance)
+
+    stale_at = DateTime.utc_now()
+
+    event = %DatabaseInstanceDataMarkedStale{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database_instance =
+      Repo.get_by(DatabaseInstanceReadModel,
+        database_id: database_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert database_instance.stale_at == stale_at
+
+    assert_broadcast(
+      "database_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        database_id: ^database_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark database instance data as fresh when DatabaseInstanceDataMarkedInSync event is received" do
+    %{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    } = insert(:database_instance, stale_at: DateTime.utc_now())
+
+    event = %DatabaseInstanceDataMarkedInSync{
+      database_id: database_id,
+      instance_number: instance_number,
+      host_id: host_id
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database_instance =
+      Repo.get_by(DatabaseInstanceReadModel,
+        database_id: database_id,
+        instance_number: instance_number,
+        host_id: host_id
+      )
+
+    assert database_instance.stale_at == nil
+
+    assert_broadcast(
+      "database_instance_stale_changed",
+      %{
+        instance_number: ^instance_number,
+        host_id: ^host_id,
+        database_id: ^database_id,
+        stale_at: nil
+      },
+      1000
+    )
   end
 end

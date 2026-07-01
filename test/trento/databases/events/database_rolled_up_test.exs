@@ -61,6 +61,7 @@ defmodule Trento.Databases.Events.DatabaseRolledUpTest do
           instance
           |> StructHelper.to_map()
           |> Map.put("health", "passing")
+          |> Map.delete("stale_at")
         end)
 
       assert %DatabaseRolledUp{

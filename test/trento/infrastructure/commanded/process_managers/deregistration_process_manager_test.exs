@@ -46,7 +46,10 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.Clusters.Commands.DeregisterClusterHost
   alias Trento.Hosts.Commands.DeregisterHost
 
-  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+  alias Trento.Databases.Commands.{
+    DeregisterDatabaseInstance,
+    MarkDatabaseInstanceDataStale
+  }
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
@@ -692,13 +695,19 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     test "should dispatch commands when HeartbeatFailed is emitted and the host has instances associated" do
       host_id = UUID.uuid4()
       sap_system_id = UUID.uuid4()
+      database_id = UUID.uuid4()
       app_instance_number_01 = "01"
       app_instance_number_02 = "02"
+      db_instance_number_01 = "00"
+      db_instance_number_02 = "10"
       created_at = DateTime.utc_now()
 
       initial_state = %DeregistrationProcessManager{
         cluster_id: nil,
-        database_instances: [],
+        database_instances: [
+          %Instance{sap_system_id: database_id, instance_number: db_instance_number_01},
+          %Instance{sap_system_id: database_id, instance_number: db_instance_number_02}
+        ],
         application_instances: [
           %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number_01},
           %Instance{sap_system_id: sap_system_id, instance_number: app_instance_number_02}
@@ -720,6 +729,18 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                %MarkApplicationInstanceDataStale{
                  sap_system_id: ^sap_system_id,
                  instance_number: ^app_instance_number_02,
+                 host_id: ^host_id,
+                 stale_at: ^created_at
+               },
+               %MarkDatabaseInstanceDataStale{
+                 database_id: ^database_id,
+                 instance_number: ^db_instance_number_01,
+                 host_id: ^host_id,
+                 stale_at: ^created_at
+               },
+               %MarkDatabaseInstanceDataStale{
+                 database_id: ^database_id,
+                 instance_number: ^db_instance_number_02,
                  host_id: ^host_id,
                  stale_at: ^created_at
                }

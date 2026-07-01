@@ -68,6 +68,8 @@ defmodule Trento.Factory do
   alias Trento.Databases.Events.{
     DatabaseDeregistered,
     DatabaseHealthChanged,
+    DatabaseInstanceDataMarkedInSync,
+    DatabaseInstanceDataMarkedStale,
     DatabaseInstanceDeregistered,
     DatabaseInstanceMarkedAbsent,
     DatabaseInstanceRegistered,
@@ -538,6 +540,23 @@ defmodule Trento.Factory do
     })
   end
 
+  def database_instance_data_marked_stale_event_factory do
+    DatabaseInstanceDataMarkedStale.new!(%{
+      database_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    })
+  end
+
+  def database_instance_data_marked_in_sync_event_factory do
+    DatabaseInstanceDataMarkedInSync.new!(%{
+      database_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4()
+    })
+  end
+
   def database_restored_event_factory do
     DatabaseRestored.new!(%{
       database_id: Faker.UUID.v4(),
@@ -841,7 +860,8 @@ defmodule Trento.Factory do
       system_replication: "",
       system_replication_status: "",
       status: Status.gray(),
-      absent_at: nil
+      absent_at: nil,
+      stale_at: nil
     }
   end
 

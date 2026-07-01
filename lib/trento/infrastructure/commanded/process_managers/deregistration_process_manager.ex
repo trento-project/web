@@ -72,7 +72,10 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   alias Trento.Hosts.Commands.DeregisterHost
 
-  alias Trento.Databases.Commands.DeregisterDatabaseInstance
+  alias Trento.Databases.Commands.{
+    DeregisterDatabaseInstance,
+    MarkDatabaseInstanceDataStale
+  }
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
@@ -219,24 +222,41 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   def handle(
         %DeregistrationProcessManager{
-          application_instances: application_instances
+          application_instances: application_instances,
+          database_instances: database_instances
         },
         %HeartbeatFailed{
           host_id: host_id
         },
         %{created_at: created_at}
       ) do
-    Enum.map(application_instances, fn %Instance{
-                                         sap_system_id: sap_system_id,
-                                         instance_number: instance_number
-                                       } ->
-      %MarkApplicationInstanceDataStale{
-        sap_system_id: sap_system_id,
-        instance_number: instance_number,
-        host_id: host_id,
-        stale_at: created_at
-      }
-    end)
+    application_commands =
+      Enum.map(application_instances, fn %Instance{
+                                           sap_system_id: sap_system_id,
+                                           instance_number: instance_number
+                                         } ->
+        %MarkApplicationInstanceDataStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: created_at
+        }
+      end)
+
+    database_commands =
+      Enum.map(database_instances, fn %Instance{
+                                        sap_system_id: database_id,
+                                        instance_number: instance_number
+                                      } ->
+        %MarkDatabaseInstanceDataStale{
+          database_id: database_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: created_at
+        }
+      end)
+
+    application_commands ++ database_commands
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{

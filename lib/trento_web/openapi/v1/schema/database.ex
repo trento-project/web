@@ -151,6 +151,14 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
             format: :datetime,
             nullable: true
           },
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database instance data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           inserted_at: %Schema{type: :string, format: :datetime},
           updated_at: %Schema{type: :string, format: :datetime, nullable: true}
         },
@@ -177,6 +185,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Database do
           health: "passing",
           status: "green",
           absent_at: "2024-01-15T08:00:00Z",
+          stale_at: "2024-01-15T09:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:45:00Z"
         }
