@@ -47,12 +47,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
   end
 
   test "should dispatch DeregisterSapSystem commands when a tenant is removed" do
-    [%{name: tenant1}, %{name: tenant2}] = tenants = build_list(2, :tenant)
+    tenant1 = "kept-tenant"
+    tenant2 = "removed-tenant"
+    tenants = [build(:tenant, name: tenant1), build(:tenant, name: tenant2)]
     %{id: database_id} = insert(:database, tenants: tenants)
 
     insert(:sap_system, database_id: database_id, tenant: tenant1)
     %{id: second_sap_system_id} = insert(:sap_system, database_id: database_id, tenant: tenant2)
-    insert(:sap_system, database_id: database_id)
+    insert(:sap_system, database_id: database_id, tenant: "unaffected-tenant")
 
     event = %DatabaseTenantsUpdated{
       database_id: database_id,
