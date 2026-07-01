@@ -33,6 +33,14 @@ defmodule Trento.AI do
   def update_user_configuration(user, attrs),
     do: configurations().update_user_configuration(user, attrs)
 
+  @doc """
+  Clears a user's AI configuration.
+
+  See `Trento.AI.Configurations.clear_user_configuration/1` for more details.
+  """
+  def clear_user_configuration(user),
+    do: configurations().clear_user_configuration(user)
+
   defp configurations,
     do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
 end

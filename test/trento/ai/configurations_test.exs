@@ -605,6 +605,59 @@ defmodule Trento.Ai.ConfigurationsTest do
     end
   end
 
+  describe "clearing a user AI configuration" do
+    test "should not allow clearing AI configuration for a deleted or disabled user" do
+      %User{id: deleted_user_id} =
+        deleted_user = insert(:user, deleted_at: Faker.DateTime.backward(3))
+
+      %User{id: disabled_user_id} =
+        disabled_user = insert(:user, locked_at: Faker.DateTime.backward(3))
+
+      insert(:ai_user_configuration, user_id: deleted_user_id)
+      insert(:ai_user_configuration, user_id: disabled_user_id)
+
+      for %User{id: user_id} = user <- [deleted_user, disabled_user] do
+        assert {:error, :forbidden} == Configurations.clear_user_configuration(user)
+
+        assert %UserConfiguration{} = load_ai_config(user_id)
+      end
+    end
+
+    test "should not allow clearing AI configuration for a user without identifier" do
+      assert {:error, :forbidden} == Configurations.clear_user_configuration(%User{})
+    end
+
+    test "should clear an existing AI configuration" do
+      %User{id: user_id} = user = insert(:user, ai_configuration: build(:ai_user_configuration))
+
+      assert %UserConfiguration{user_id: ^user_id} = load_ai_config(user_id)
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert nil == load_ai_config(user_id)
+    end
+
+    test "should be idempotent clearing AI configuration more than once" do
+      %User{id: user_id} = user = insert(:user, ai_configuration: build(:ai_user_configuration))
+
+      assert %UserConfiguration{user_id: ^user_id} = load_ai_config(user_id)
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert nil == load_ai_config(user_id)
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert nil == load_ai_config(user_id)
+    end
+
+    test "should be idempotent when no AI configuration exists" do
+      %User{id: user_id} = user = insert(:user)
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert nil == load_ai_config(user_id)
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert nil == load_ai_config(user_id)
+    end
+  end
+
   defp load_ai_config(user_id),
     do: Trento.Repo.get_by(UserConfiguration, user_id: user_id)
 end
