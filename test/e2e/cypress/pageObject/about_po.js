@@ -31,9 +31,22 @@ export const pageTitleIsDisplayed = () =>
   cy.get(pageTitle).should('have.text', 'About Trento Console');
 
 export const expectedServerVersionIsDisplayed = () =>
-  cy.readFile(versionFilePath, 'utf8').then((version) => {
-    version = version.trim();
-    return cy.get(versionLabels.server).should('have.text', version);
+  cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
+    expectedVersion = expectedVersion.trim();
+
+    return cy
+      .get(versionLabels.server)
+      .invoke('text')
+      .should((serverVersion) => {
+        const hasExpectedVersion =
+          serverVersion === expectedVersion ||
+          serverVersion.startsWith(`${expectedVersion}+`);
+
+        expect(
+          hasExpectedVersion,
+          `expected "${serverVersion}" to be "${expectedVersion}" or start with "${expectedVersion}+"`
+        ).to.be.true;
+      });
   });
 
 export const expectedGithubUrlIsDisplayed = () =>
