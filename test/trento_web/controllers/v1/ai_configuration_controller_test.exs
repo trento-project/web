@@ -784,6 +784,8 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
       conn
       |> delete("/api/v1/profile/ai_configuration")
       |> response(:no_content)
+
+      assert nil == Trento.Repo.get_by(UserConfiguration, user_id: user_id)
     end
 
     test "should be idempotent", %{conn: conn, admin_user: %{id: user_id}} do

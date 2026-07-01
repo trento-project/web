@@ -87,10 +87,9 @@ defmodule TrentoWeb.V1.AIConfigurationController do
     ]
 
   def clear_ai_configuration(conn, _) do
-    with :ok <-
-           conn
-           |> Pow.Plug.current_user()
-           |> AI.clear_user_configuration() do
+    %User{} = current_user = Pow.Plug.current_user(conn)
+
+    with :ok <- AI.clear_user_configuration(current_user) do
       send_resp(conn, :no_content, "")
     end
   end
