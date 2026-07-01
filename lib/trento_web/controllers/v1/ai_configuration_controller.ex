@@ -75,4 +75,23 @@ defmodule TrentoWeb.V1.AIConfigurationController do
       |> render(:ai_configuration, %{ai_configuration: user_ai_config})
     end
   end
+
+  operation :clear_ai_configuration,
+    summary: "Clears User's AI Configuration",
+    description: "Removes the AI configuration for the currently authenticated user.",
+    tags: ["Profile"],
+    responses: [
+      no_content: "User AI Configuration cleared successfully.",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response()
+    ]
+
+  def clear_ai_configuration(conn, _) do
+    with :ok <-
+           conn
+           |> Pow.Plug.current_user()
+           |> AI.clear_user_configuration() do
+      send_resp(conn, :no_content, "")
+    end
+  end
 end
