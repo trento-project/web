@@ -1,22 +1,30 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
-import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
-import PatchList from '.';
+import PatchList from './PatchList';
 
 export default {
   title: 'Components/PatchList',
-  components: PatchList,
+  component: PatchList,
   argTypes: {
     patches: {
-      control: {
-        type: 'array',
-      },
+      control: { type: 'object' },
       description: 'A list of patches',
+      action: 'callback',
+    },
+    onNavigate: {
+      action: 'onNavigate',
+      description:
+        'Callback function invoked when a patch is selected for navigation',
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
   decorators: [
@@ -38,6 +46,7 @@ export const Default = {
 
 export const NoPatches = {
   args: {
+    ...Default.args,
     patches: undefined,
     onNavigate: action('onNavigate'),
   },
@@ -45,6 +54,7 @@ export const NoPatches = {
 
 export const AllStates = {
   args: {
+    ...Default.args,
     patches: [
       relevantPatchFactory.build({ advisory_type: 'security_advisory' }),
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),

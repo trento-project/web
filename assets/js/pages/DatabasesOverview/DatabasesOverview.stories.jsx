@@ -1,20 +1,22 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
 import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
 import {
+  abilityFactory,
   clusterFactory,
   databaseFactory,
   databaseInstanceFactory,
   hostFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import DatabasesOverview from './DatabasesOverview';
 
-const userAbilities = [{ name: 'all', resource: 'all' }];
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const userAbilities = [allAbility];
 const databases = databaseFactory.buildList(3);
 
 const enrichedInstances = databases[0].database_instances
@@ -64,26 +66,22 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/DatabasesOverview',
-  components: DatabasesOverview,
+  component: DatabasesOverview,
   argTypes: {
     databases: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Databases',
     },
     databaseInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Database instances',
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'User profile abilities',
     },
     onTagAdd: {
@@ -113,12 +111,27 @@ export default {
   ),
 };
 
+export const Default = {
+  args: {
+    userAbilities,
+    databases,
+    databaseInstances: enrichedInstances,
+    loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
+};
+
 export const Databases = {
   args: {
     userAbilities,
     databases,
     databaseInstances: enrichedInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 
@@ -128,6 +141,9 @@ export const WithSystemReplication = {
     databases: [databaseWithSR],
     databaseInstances: systemReplicationInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 
@@ -137,6 +153,9 @@ export const WithAbsentInstances = {
     databases: [databaseWithAbsentInstances],
     databaseInstances: absentInstance,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 

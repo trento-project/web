@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { action } from 'storybook/actions';
+
 import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
 
 export default {
@@ -9,21 +11,15 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     onClearSettings: {
       description: 'Callback used to confirm the clearing of settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onClearSettings',
     },
     onCancel: {
       description: 'Callback used to cancel the clearing of settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onCancel',
     },
   },
 };
@@ -31,5 +27,7 @@ export default {
 export const Default = {
   args: {
     open: false,
+    onClearSettings: action('onClearSettings'),
+    onCancel: action('onCancel'),
   },
 };

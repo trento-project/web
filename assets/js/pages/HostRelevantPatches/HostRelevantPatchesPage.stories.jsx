@@ -1,11 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { hostFactory } from '@lib/test-utils/factories/hosts';
+import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
 import { action } from 'storybook/actions';
-
-import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
-import { hostFactory } from '@lib/test-utils/factories/hosts';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
@@ -17,15 +16,13 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/HostRelevantPatchesPage',
-  components: HostRelevantPatchesPage,
+  component: HostRelevantPatchesPage,
   argTypes: {
     hostName: {
-      type: 'string',
       description: 'The hostname to display in the header and CSV filename.',
       control: { type: 'text' },
     },
     onNavigate: {
-      type: { name: 'function' },
       description: 'Callback for navigation actions in PatchList.',
       action: 'onNavigate',
     },
@@ -34,10 +31,8 @@ export default {
       description: 'Array of patch objects to display.',
     },
     timezone: {
-      type: 'string',
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
-      defaultValue: 'Etc/UTC',
     },
   },
   render: (args) => (
@@ -45,6 +40,15 @@ export default {
       <HostRelevantPatchesPage {...args} />
     </ContainerWrapper>
   ),
+};
+
+export const Default = {
+  args: {
+    hostName: hostFactory.build().hostname,
+    patches: relevantPatchFactory.buildList(15),
+    onNavigate: action('onNavigate'),
+    timezone: 'Etc/UTC',
+  },
 };
 
 export const HasPatches = {

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 import classNames from 'classnames';
 
 import Pill from '@common/Pill';
 
-import Table from '.';
-
 import { createStringSortingPredicate } from './sorting';
+import Table from './Table';
 
 export default {
   /* 👇 The title prop is optional.
@@ -17,6 +17,52 @@ export default {
    */
   title: 'Components/Table',
   component: Table,
+  argTypes: {
+    data: {
+      description: 'Data to be displayed in the table',
+      control: { type: 'object' },
+    },
+    className: {
+      description: 'Additional container class names',
+      control: { type: 'text' },
+    },
+    config: {
+      description:
+        'Table configuration object (columns, pagination, filters, etc.)',
+      control: { type: 'object' },
+    },
+    sortBy: {
+      description:
+        'Sorting predicate function (use `createStringSortingPredicate` helper)',
+      control: { type: 'object' },
+    },
+    searchParams: {
+      description:
+        'URL search params (e.g. `new URLSearchParams(window.location.search)`) used for filters/pagination',
+      control: { type: 'object' },
+    },
+    setSearchParams: {
+      description:
+        'Setter function to update search params (usually from React Router)',
+      action: 'setSearchParams',
+    },
+    emptyStateText: {
+      description: 'Text shown when there is no data',
+      control: { type: 'text' },
+    },
+    header: {
+      description: 'Optional header node rendered above the table',
+      control: { type: 'object' },
+    },
+    rowKey: {
+      description: 'Function to compute a unique key for each row',
+      control: { type: 'object' },
+    },
+    roundedTop: {
+      description: 'Whether to render the table with rounded top corners',
+      control: { type: 'boolean' },
+    },
+  },
 };
 
 function StatusPill({ children }) {
@@ -31,6 +77,21 @@ function StatusPill({ children }) {
     </Pill>
   );
 }
+
+export const Default = {
+  args: {
+    data: [],
+    className: '',
+    config: { columns: [] },
+    sortBy: () => 0,
+    searchParams: new URLSearchParams(),
+    setSearchParams: action('setSearchParams'),
+    emptyStateText: 'No data available',
+    header: null,
+    rowKey: (row, index) => index,
+    roundedTop: false,
+  },
+};
 
 const config = {
   columns: [
@@ -110,7 +171,9 @@ const data = [
 ];
 
 export const Sorted = {
-  args: {},
+  args: {
+    ...Default.args,
+  },
   render: () => {
     const [sortingColumn, setSortingColumn] = useState(null);
     const [sortDirection, setSortDirection] = useState('asc');
@@ -177,47 +240,67 @@ export const Sorted = {
   },
 };
 
-export function Populated() {
-  return <Table config={config} data={data} />;
-}
+export const Populated = {
+  args: {
+    ...Default.args,
+    config,
+    data,
+  },
+};
 
-export function Paginated() {
-  return (
-    <Table
-      config={{ ...config, pagination: true }}
-      data={[].concat(data, data, data, data)}
-    />
-  );
-}
+export const Paginated = {
+  args: {
+    ...Default.args,
+    config: { ...config, pagination: true },
+    data: [].concat(data, data, data, data),
+  },
+};
 
-export function WithFilters(args) {
-  return <Table config={filteredConfig} data={data} {...args} />;
-}
+export const WithFilters = {
+  args: {
+    ...Default.args,
+    config: filteredConfig,
+    data,
+  },
+};
 
-export function WithHeader(args) {
-  return (
-    <Table
-      config={config}
-      data={data}
-      header={<h3 className="bg-white px-4 py-4">Header</h3>}
-      {...args}
-    />
-  );
-}
+export const WithHeader = {
+  args: {
+    ...Default.args,
+    config,
+    data,
+    header: <h3 className="bg-white px-4 py-4">Header</h3>,
+  },
+};
 
-export function WithCollapsibleRow(args) {
-  return <Table config={collapsibleConfig} data={data} {...args} />;
-}
+export const WithCollapsibleRow = {
+  args: {
+    ...Default.args,
+    config: collapsibleConfig,
+    data,
+  },
+};
 
-export function WithStyledRows() {
-  const configWithRowClass = {
-    ...config,
-    rowClassName: ({ status }) =>
-      classNames({ 'bg-gray-100': status === 'inactive' }),
-  };
-  return <Table config={configWithRowClass} data={data} />;
-}
+export const WithStyledRows = {
+  args: {
+    ...Default.args,
+    config,
+    data,
+  },
+  render: (args) => {
+    const configWithRowClass = {
+      ...args.config,
+      rowClassName: ({ status }) =>
+        classNames({ 'bg-gray-100': status === 'inactive' }),
+    };
+    return <Table {...args} config={configWithRowClass} />;
+  },
+};
 
-export function Empty() {
-  return <Table config={config} data={[]} />;
-}
+export const Empty = {
+  args: {
+    ...Default.args,
+    config,
+    data: [],
+  },
+};
