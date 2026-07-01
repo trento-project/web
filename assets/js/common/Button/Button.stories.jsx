@@ -135,25 +135,28 @@ export const Disabled = {
   },
 };
 
-export function Icon() {
-  return (
-    <Button type="icon" size="none" aria-label="Close">
-      <span className="text-2xl leading-none">×</span>
-    </Button>
-  );
-}
+export const Icon = {
+  args: {
+    ...Default.args,
+    type: 'icon',
+    size: 'none',
+    'aria-label': 'Close',
+    children: <span className="text-2xl leading-none">×</span>,
+  },
+};
 
-export function FloatingActionButton() {
-  return (
+export const FloatingActionButton = {
+  args: {
+    ...Default.args,
+    type: 'fab',
+    size: 'none',
+    className: 'size-full',
+    'aria-label': 'Open assistant',
+    children: <span className="text-xl leading-none">+</span>,
+  },
+  render: (args) => (
     <div className="size-12">
-      <Button
-        type="fab"
-        size="none"
-        className="size-full"
-        aria-label="Open assistant"
-      >
-        <span className="text-xl leading-none">+</span>
-      </Button>
+      <Button {...args} />
     </div>
-  );
-}
+  ),
+};

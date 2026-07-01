@@ -2,15 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
-<<<<<<< HEAD
-import { action } from 'storybook/actions';
-=======
+import { action } from '@storybook/addon-actions';
 import classNames from 'classnames';
 
 import Pill from '@common/Pill';
-
-import Table from '.';
->>>>>>> main
 
 import { createStringSortingPredicate } from './sorting';
 import Table from './Table';
@@ -70,6 +65,19 @@ export default {
   },
 };
 
+function StatusPill({ children }) {
+  return (
+    <Pill
+      className={classNames({
+        'bg-green-100 text-green-800': children === 'active',
+        'bg-gray-200 text-gray-800': children !== 'active',
+      })}
+    >
+      {children}
+    </Pill>
+  );
+}
+
 export const Default = {
   args: {
     data: [],
@@ -84,19 +92,6 @@ export const Default = {
     roundedTop: false,
   },
 };
-
-function StatusPill({ children }) {
-  return (
-    <Pill
-      className={classNames({
-        'bg-green-100 text-green-800': children === 'active',
-        'bg-gray-200 text-gray-800': children !== 'active',
-      })}
-    >
-      {children}
-    </Pill>
-  );
-}
 
 const config = {
   columns: [
@@ -286,7 +281,22 @@ export const WithCollapsibleRow = {
   },
 };
 
-<<<<<<< HEAD
+export const WithStyledRows = {
+  args: {
+    ...Default.args,
+    config,
+    data,
+  },
+  render: (args) => {
+    const configWithRowClass = {
+      ...args.config,
+      rowClassName: ({ status }) =>
+        classNames({ 'bg-gray-100': status === 'inactive' }),
+    };
+    return <Table {...args} config={configWithRowClass} />;
+  },
+};
+
 export const Empty = {
   args: {
     ...Default.args,
@@ -294,17 +304,3 @@ export const Empty = {
     data: [],
   },
 };
-=======
-export function WithStyledRows() {
-  const configWithRowClass = {
-    ...config,
-    rowClassName: ({ status }) =>
-      classNames({ 'bg-gray-100': status === 'inactive' }),
-  };
-  return <Table config={configWithRowClass} data={data} />;
-}
-
-export function Empty() {
-  return <Table config={config} data={[]} />;
-}
->>>>>>> main
