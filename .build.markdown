@@ -301,6 +301,7 @@ Trento.Hosts.Projections.SlesSubscriptionsProjector.md
 Trento.Hosts.ValueObjects.AwsProvider.md
 Trento.Hosts.ValueObjects.AzureProvider.md
 Trento.Hosts.ValueObjects.GcpProvider.md
+Trento.Hosts.ValueObjects.HealthDetails.md
 Trento.Hosts.ValueObjects.SaptuneNote.md
 Trento.Hosts.ValueObjects.SaptuneServiceStatus.md
 Trento.Hosts.ValueObjects.SaptuneSolution.md

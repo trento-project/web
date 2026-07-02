@@ -62,11 +62,11 @@ and only the resulting health is dispatched to the host aggregate along with Com
 @type t() :: %Trento.Hosts.Host{
   agent_version: term(),
   arch: term(),
-  checks_health: term(),
   cpu_count: term(),
   deregistered_at: term(),
   fully_qualified_domain_name: term(),
   health: term(),
+  health_details: term(),
   heartbeat: term(),
   host_id: term(),
   hostname: term(),
@@ -79,11 +79,9 @@ and only the resulting health is dispatched to the host aggregate along with Com
   provider: term(),
   provider_data: term(),
   rolling_up: term(),
-  saptune_health: term(),
   saptune_status: term(),
   selected_checks: term(),
   socket_count: term(),
-  software_updates_discovery_health: term(),
   subscriptions: term(),
   systemd_units: term(),
   total_memory_mb: term()
@@ -103,7 +101,9 @@ validates the required ones and returns a changeset.
 
 # `execute`
 
-# `maybe_emit_software_updates_discovery_events`
+# `maybe_emit_host_software_updates_discovery_health_changed_event`
+
+# `maybe_emit_software_updates_discovery_lifecycle_events`
 
 # `new`
 

@@ -451,6 +451,7 @@ and its calculated health is taken into account in host's aggregated health.
 
   - [Trento.Hosts.ValueObjects.GcpProvider](Trento.Hosts.ValueObjects.GcpProvider.md): Gcp provider value object
 
+  - [Trento.Hosts.ValueObjects.HealthDetails](Trento.Hosts.ValueObjects.HealthDetails.md): Host health details struct.
   - [Trento.Hosts.ValueObjects.SaptuneNote](Trento.Hosts.ValueObjects.SaptuneNote.md): Represents a SAP note.
 
   - [Trento.Hosts.ValueObjects.SaptuneServiceStatus](Trento.Hosts.ValueObjects.SaptuneServiceStatus.md): Represents the status of a Saptune service.
