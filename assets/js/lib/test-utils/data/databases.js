@@ -6,7 +6,7 @@ export default [
     database_instances: [
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
         http_port: 51013,
         https_port: 51014,
@@ -21,7 +21,7 @@ export default [
       },
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
         http_port: 51013,
         https_port: 51014,
@@ -44,7 +44,7 @@ export default [
     database_instances: [
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: '9cd46919-5f19-59aa-993e-cf3736c71053',
         http_port: 51013,
         https_port: 51014,
@@ -59,7 +59,7 @@ export default [
       },
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: 'b767b3e9-e802-587e-a442-541d093b86b9',
         http_port: 51013,
         https_port: 51014,
@@ -82,7 +82,7 @@ export default [
     database_instances: [
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: '99cf8a3a-48d6-57a4-b302-6e4482227ab6',
         http_port: 51013,
         https_port: 51014,
@@ -97,7 +97,7 @@ export default [
       },
       {
         features: 'HDB|HDB_WORKER',
-        health: 'passing',
+        status: 'green',
         host_id: 'e0c182db-32ff-55c6-a9eb-2b82dd21bc8b',
         http_port: 51013,
         https_port: 51014,
