@@ -6,9 +6,8 @@ defmodule Trento.Hosts.Events.HostRolledUpTest do
 
   require Trento.Enums.Health, as: Health
 
-  alias Trento.Hosts.Host
   alias Trento.Hosts.Events.HostRolledUp
-
+  alias Trento.Hosts.Host
   alias Trento.Hosts.ValueObjects.HealthDetails
 
   test "should upcast the legacy snapshot with separate health details fields" do
