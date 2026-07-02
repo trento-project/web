@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-18T19:35:30Z",
-    "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
-    "run_id": "26054934825",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05453
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-18T22:48:57Z",
     "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
     "run_id": "26057298982",
@@ -5202,5 +5186,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-02T19:22:15Z",
+    "commit": "4491f9334b03f970f4f76e774825419b7180d669",
+    "run_id": "28614680862",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.06551
+      }
+    ]
   }
 ]
