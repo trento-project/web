@@ -461,11 +461,11 @@ describe('GenericSystemDetails', () => {
       hosts,
       instances: [
         sapSystemApplicationInstanceFactory.build({
-          health: 'passing',
+          status: 'green',
           host: hosts[0],
         }),
         sapSystemApplicationInstanceFactory.build({
-          health: 'unknown',
+          status: 'gray',
           host: hosts[0],
         }),
       ],
@@ -520,33 +520,33 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start system',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start system',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop system',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop system',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show SAP system operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const system = sapSystemFactory.build({
         hosts,
         instances: sapSystemApplicationInstanceFactory.buildList(1, {
-          health,
+          status,
           host: hosts[0],
         }),
       });
@@ -572,33 +572,33 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start database',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start database',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show database operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const hosts = hostFactory.buildList(5, { heartbeat: 'passing' });
       const database = databaseFactory.build({
         hosts,
         instances: databaseInstanceFactory.buildList(1, {
-          health,
+          status,
           host: hosts[0],
         }),
       });
@@ -625,26 +625,26 @@ describe('GenericSystemDetails', () => {
     {
       operation: 'Start database',
       enabled: true,
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: 'Start database',
       enabled: false,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: true,
-      health: 'passing',
+      status: 'green',
     },
     {
       operation: 'Stop database',
       enabled: false,
-      health: 'unknown',
+      status: 'gray',
     },
   ])(
     'should show database site operation $operation with enabled state as $enabled',
-    async ({ operation, enabled, health }) => {
+    async ({ operation, enabled, status }) => {
       const user = userEvent.setup();
 
       const host1 = hostFactory.build({ heartbeat: 'passing' });
@@ -655,7 +655,7 @@ describe('GenericSystemDetails', () => {
         hosts: [host1, host2, host3],
         instances: [
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             system_replication_tier: 1,
@@ -718,16 +718,16 @@ describe('GenericSystemDetails', () => {
     {
       operation: SAP_INSTANCE_START,
       menuItemText: 'Start instance',
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: SAP_INSTANCE_STOP,
       menuItemText: 'Stop instance',
-      health: 'passing',
+      status: 'green',
     },
   ])(
     'should show instance operation $operation in running state',
-    async ({ operation, menuItemText, health }) => {
+    async ({ operation, menuItemText, status }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
       const hostID = hosts[0].id;
@@ -737,7 +737,7 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
-            health,
+            status,
             host_id: hostID,
             host: hosts[0],
             instance_number: instanceNumber,
@@ -776,34 +776,34 @@ describe('GenericSystemDetails', () => {
     {
       operation: SAP_SYSTEM_START,
       menuItemText: 'Start system',
-      health: 'unknown',
+      status: 'gray',
       type: APPLICATION_TYPE,
       getOperations: getSapSystemOperations,
     },
     {
       operation: SAP_SYSTEM_STOP,
       menuItemText: 'Stop system',
-      health: 'passing',
+      status: 'green',
       type: APPLICATION_TYPE,
       getOperations: getSapSystemOperations,
     },
     {
       operation: DATABASE_START,
       menuItemText: 'Start database',
-      health: 'unknown',
+      status: 'gray',
       type: DATABASE_TYPE,
       getOperations: getDatabaseOperations,
     },
     {
       operation: DATABASE_STOP,
       menuItemText: 'Stop database',
-      health: 'passing',
+      status: 'green',
       type: DATABASE_TYPE,
       getOperations: getDatabaseOperations,
     },
   ])(
     'should show system/database operation $operation in running state',
-    async ({ operation, menuItemText, health, type, getOperations }) => {
+    async ({ operation, menuItemText, status, type, getOperations }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
 
@@ -811,7 +811,7 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           sapSystemApplicationInstanceFactory.build({
-            health,
+            status,
             host: hosts[0],
           }),
         ],
@@ -842,16 +842,16 @@ describe('GenericSystemDetails', () => {
     {
       operation: DATABASE_START,
       menuItemText: 'Start database',
-      health: 'unknown',
+      status: 'gray',
     },
     {
       operation: DATABASE_STOP,
       menuItemText: 'Stop database',
-      health: 'passing',
+      status: 'green',
     },
   ])(
     'should show database site operation $operation in running state',
-    async ({ operation, menuItemText, health }) => {
+    async ({ operation, menuItemText, status }) => {
       const user = userEvent.setup();
       const hosts = hostFactory.buildList(2, { heartbeat: 'passing' });
       const site = 'Site1';
@@ -860,13 +860,13 @@ describe('GenericSystemDetails', () => {
         hosts,
         instances: [
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: site,
             host: hosts[0],
           }),
           databaseInstanceFactory.build({
-            health,
+            status,
             system_replication: 'Secondary',
             system_replication_site: 'Site2',
             host: hosts[1],
@@ -933,7 +933,7 @@ describe('GenericSystemDetails', () => {
           sapSystemApplicationInstanceFactory.build({
             host_id: hostID,
             sap_system_id: sapSystemID,
-            health: 'passing',
+            status: 'green',
             host: hosts[0],
           }),
         ],
@@ -977,7 +977,7 @@ describe('GenericSystemDetails', () => {
       hosts,
       instances: [
         sapSystemApplicationInstanceFactory.build({
-          health: 'unknown',
+          status: 'gray',
           host_id: hostID,
           host: hosts[0],
         }),
@@ -1252,39 +1252,39 @@ describe('GenericSystemDetails', () => {
         operation: SAP_INSTANCE_START,
         label: 'Start instance',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: false,
         operation: SAP_INSTANCE_START,
         label: 'Start instance',
         abilities: [{ name: 'start', resource: 'application_instance' }],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: true,
         operation: SAP_INSTANCE_STOP,
         label: 'Stop instance',
         abilities: [],
-        health: 'passing',
+        status: 'green',
       },
       {
         forbidden: false,
         operation: SAP_INSTANCE_STOP,
         label: 'Stop instance',
         abilities: [{ name: 'stop', resource: 'application_instance' }],
-        health: 'passing',
+        status: 'green',
       },
     ])(
       'should forbid/authorize instance operation $operation',
-      async ({ forbidden, label, abilities, health }) => {
+      async ({ forbidden, label, abilities, status }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const sapSystem = sapSystemFactory.build({
           hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
-            health,
+            status,
             host: hosts[0],
           }),
         });
@@ -1317,7 +1317,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_START,
         label: 'Start system',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1326,7 +1326,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_START,
         label: 'Start system',
         abilities: [{ name: 'start', resource: 'sap_system' }],
-        health: 'unknown',
+        status: 'gray',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1335,7 +1335,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_STOP,
         label: 'Stop system',
         abilities: [],
-        health: 'passing',
+        status: 'green',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1344,7 +1344,7 @@ describe('GenericSystemDetails', () => {
         operation: SAP_SYSTEM_STOP,
         label: 'Stop system',
         abilities: [{ name: 'stop', resource: 'sap_system' }],
-        health: 'passing',
+        status: 'green',
         type: APPLICATION_TYPE,
         getOperations: getSapSystemOperations,
       },
@@ -1353,7 +1353,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1362,7 +1362,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [{ name: 'start', resource: 'database' }],
-        health: 'unknown',
+        status: 'gray',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1371,7 +1371,7 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [],
-        health: 'passing',
+        status: 'green',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
@@ -1380,13 +1380,13 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [{ name: 'stop', resource: 'database' }],
-        health: 'passing',
+        status: 'green',
         type: DATABASE_TYPE,
         getOperations: getDatabaseOperations,
       },
     ])(
       'should forbid/authorize system/database operation $operation',
-      async ({ forbidden, label, abilities, health, type, getOperations }) => {
+      async ({ forbidden, label, abilities, status, type, getOperations }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
@@ -1394,7 +1394,7 @@ describe('GenericSystemDetails', () => {
         const sapSystem = sapSystemFactory.build({
           hosts,
           instances: sapSystemApplicationInstanceFactory.buildList(1, {
-            health,
+            status,
             host: hosts[0],
           }),
         });
@@ -1423,39 +1423,39 @@ describe('GenericSystemDetails', () => {
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: false,
         operation: DATABASE_START,
         label: 'Start database',
         abilities: [{ name: 'start', resource: 'database' }],
-        health: 'unknown',
+        status: 'gray',
       },
       {
         forbidden: true,
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [],
-        health: 'passing',
+        status: 'green',
       },
       {
         forbidden: false,
         operation: DATABASE_STOP,
         label: 'Stop database',
         abilities: [{ name: 'stop', resource: 'database' }],
-        health: 'passing',
+        status: 'green',
       },
     ])(
       'should forbid/authorize database site operation $operation',
-      async ({ forbidden, label, abilities, health }) => {
+      async ({ forbidden, label, abilities, status }) => {
         const user = userEvent.setup();
 
         const hosts = hostFactory.buildList(1, { heartbeat: 'passing' });
         const database = databaseFactory.build({
           hosts,
           instances: databaseInstanceFactory.buildList(1, {
-            health,
+            status,
             system_replication: 'Primary',
             system_replication_site: 'Site1',
             host: hosts[0],

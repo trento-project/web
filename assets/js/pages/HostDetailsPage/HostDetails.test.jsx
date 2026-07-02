@@ -726,7 +726,7 @@ describe('HostDetails component', () => {
       const sapInstances = databaseInstanceFactory
         .buildList(1)
         .map((instance) => ({ ...instance, type: DATABASE_TYPE }))
-        .map((instance) => ({ ...instance, health: 'unknown' }));
+        .map((instance) => ({ ...instance, status: 'gray' }));
 
       renderWithRouter(
         <HostDetails

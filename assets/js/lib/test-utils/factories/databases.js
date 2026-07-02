@@ -5,6 +5,8 @@ import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
 import { generateSid } from '.';
 
+const statusEnum = () =>
+  faker.helpers.arrayElement(['green', 'yellow', 'red', 'gray']);
 const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const features = () =>
@@ -12,7 +14,7 @@ const features = () =>
 
 export const databaseInstanceFactory = Factory.define(() => ({
   database_id: faker.string.uuid(),
-  health: healthEnum(),
+  status: statusEnum(),
   host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
   https_port: faker.internet.port(),
