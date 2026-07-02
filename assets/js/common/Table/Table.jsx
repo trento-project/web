@@ -14,7 +14,7 @@ import EmptyState from './EmptyState';
 import CollapsibleTableRow from './CollapsibleTableRow';
 
 const defaultCellRender = (content) => (
-  <p className="text-gray-900 whitespace-no-wrap">{content}</p>
+  <p className="whitespace-no-wrap">{content}</p>
 );
 
 const renderCells = (columns, item) => (
@@ -275,7 +275,7 @@ function Table({
                   )}
                 </tr>
               </thead>
-              <tbody className="bg-white">
+              <tbody className="bg-white text-gray-900">
                 {renderedData.length === 0 ? (
                   <EmptyState
                     colSpan={
