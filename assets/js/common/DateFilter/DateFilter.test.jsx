@@ -144,6 +144,8 @@ describe('DateFilter component', () => {
     );
     await user.click(screen.getByText('Filter by date...'));
     const input = container.querySelector('input[type="datetime-local"]');
+    await user.click(input);
+    await user.clear(input);
     await user.type(input, datetime);
 
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
@@ -167,11 +169,56 @@ describe('DateFilter component', () => {
 
     await user.click(screen.getByText('Filter by date...'));
     const input = container.querySelector('input[type="datetime-local"]');
+    await user.click(input);
+    await user.clear(input);
     await user.type(input, datetime);
 
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
 
     expect(mockOnChange).toHaveBeenCalledWith(['custom', expectedDate]);
+  });
+
+  it('leaves the custom input empty until focused, then fills the current time so a date-only calendar pick still applies the filter (Firefox)', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+    jest
+      .useFakeTimers()
+      .setSystemTime(new Date('2024-08-14T10:21:00Z').getTime());
+
+    try {
+      const mockOnChange = jest.fn();
+      const { container } = render(
+        <DateFilter
+          title="by date"
+          prefilled
+          onChange={mockOnChange}
+          timezone={DEFAULT_TIMEZONE}
+        />
+      );
+
+      await user.click(screen.getByText('Filter by date...'));
+      const input = container.querySelector('input[type="datetime-local"]');
+
+      // No default selection: the field is empty when the dropdown opens.
+      expect(input.value).toBe('');
+
+      // Focusing the field (before its native calendar opens) fills in the current
+      // time, so the time sub-fields are no longer empty. This is what lets a
+      // date-only pick work in Firefox, whose calendar does not auto-fill the time
+      // (unlike Chrome/Brave).
+      await user.click(input);
+      expect(input.value).toBe('2024-08-14T10:21');
+
+      // Clear and type the new date value so the filter triggers onChange.
+      await user.clear(input);
+      await user.type(input, '2024-08-20T10:21');
+
+      expect(mockOnChange).toHaveBeenCalledWith([
+        'custom',
+        parseDateTimeLocalToUtc('2024-08-20T10:21', DEFAULT_TIMEZONE),
+      ]);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it.each`
