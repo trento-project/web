@@ -78,7 +78,7 @@ defmodule TrentoWeb.V1.AIConfigurationController do
 
   operation :clear_ai_configuration,
     summary: "Clears User's AI Configuration",
-    description: "Removes the AI configuration for the currently authenticated user.",
+    description: "Clears the AI configuration for the currently authenticated user.",
     tags: ["Profile"],
     responses: [
       no_content: "User AI Configuration cleared successfully.",
