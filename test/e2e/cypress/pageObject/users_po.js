@@ -105,6 +105,14 @@ const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
 
 const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
 
+const aiConfigurationClearButton =
+  'button[aria-label="ai-configuration-clear-button"]:contains("Clear Settings")';
+const clearAIConfigurationModal = 'div:contains("Clear AI Configuration")';
+const confirmClearAIConfigurationButton =
+  'button[aria-label="confirm-clear-ai-settings"]';
+const cancelClearAIConfigurationButton =
+  '[role="dialog"] button:contains("Cancel")';
+
 // Toaster Messages
 const userAlreadyUpdatedWarning =
   'p:contains("Information has been updated by another user")';
@@ -668,6 +676,34 @@ export const clickModalUpdateAIConfigurationButton = (shouldWait = true) => {
     'updateAIConfiguration',
     shouldWait
   );
+};
+
+export const clearAIConfigurationButtonIsDisabled = () =>
+  cy.get(aiConfigurationClearButton).should('be.disabled');
+
+export const clearAIConfigurationButtonIsEnabled = () =>
+  cy.get(aiConfigurationClearButton).should('not.be.disabled');
+
+export const clickClearAIConfigurationButton = () =>
+  cy.get(aiConfigurationClearButton).click();
+
+export const clearAIConfigurationModalIsDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('be.visible');
+
+export const clearAIConfigurationModalIsNotDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('not.exist');
+
+export const clickCancelClearAIConfiguration = () =>
+  cy.get(cancelClearAIConfigurationButton).click();
+
+export const clickConfirmClearAIConfiguration = (shouldWait = true) => {
+  cy.intercept('DELETE', '/api/v1/profile/ai_configuration').as(
+    'clearAIConfiguration'
+  );
+  cy.get(confirmClearAIConfigurationButton).click();
+  if (shouldWait) {
+    basePage.waitForRequest('clearAIConfiguration');
+  }
 };
 
 export const apiModifyUserFullName = () =>

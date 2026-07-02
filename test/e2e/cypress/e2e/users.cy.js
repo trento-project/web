@@ -554,6 +554,7 @@ describe('Users', () => {
         usersPage.aiConfigurationModelProviderShouldBe('None');
         usersPage.aiConfigurationModelShouldBe('None');
         usersPage.aiConfigurationApiKeyShouldBe('Not set');
+        usersPage.clearAIConfigurationButtonIsDisabled();
       });
 
       it('should display AI Configuration section in user profile', () => {
@@ -572,6 +573,7 @@ describe('Users', () => {
             );
             usersPage.aiConfigurationModelShouldBe(model);
             usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+            usersPage.clearAIConfigurationButtonIsEnabled();
           });
       });
     });
@@ -741,6 +743,50 @@ describe('Users', () => {
             );
             usersPage.aiConfigurationModelShouldBe(newModel);
             usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
+      });
+    });
+
+    describe('Clearing AI Configuration', () => {
+      it('should keep configuration when clear modal is dismissed', () => {
+        usersPage
+          .apiCreateAIConfiguration(
+            'googleai',
+            'gemini-2.5-pro',
+            'test-api-key'
+          )
+          .then(({ provider, model }) => {
+            usersPage.refresh();
+            usersPage.clearAIConfigurationButtonIsEnabled();
+            usersPage.clickClearAIConfigurationButton();
+            usersPage.clearAIConfigurationModalIsDisplayed();
+            usersPage.clickCancelClearAIConfiguration();
+            usersPage.clearAIConfigurationModalIsNotDisplayed();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(provider)
+            );
+            usersPage.aiConfigurationModelShouldBe(model);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
+      });
+
+      it('should clear the AI configuration on confirm', () => {
+        usersPage
+          .apiCreateAIConfiguration(
+            'googleai',
+            'gemini-2.5-pro',
+            'test-api-key'
+          )
+          .then(() => {
+            usersPage.refresh();
+            usersPage.clickClearAIConfigurationButton();
+            usersPage.clearAIConfigurationModalIsDisplayed();
+            usersPage.clickConfirmClearAIConfiguration();
+            usersPage.clearAIConfigurationModalIsNotDisplayed();
+            usersPage.aiConfigurationModelProviderShouldBe('None');
+            usersPage.aiConfigurationModelShouldBe('None');
+            usersPage.aiConfigurationApiKeyShouldBe('Not set');
+            usersPage.clearAIConfigurationButtonIsDisabled();
           });
       });
     });
