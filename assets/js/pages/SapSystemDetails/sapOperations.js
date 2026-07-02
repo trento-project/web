@@ -47,7 +47,7 @@ export const getSapInstanceOperations = curry(
           SAP_INSTANCE_START,
           matchesInstanceNumber(instance.instance_number)
         ),
-        disabled: disabled || instance.health === 'passing',
+        disabled: disabled || instance.status === 'green',
         permitted: ['start:application_instance'],
         onClick: () => {
           setCurrentOperationInstance(instance);
@@ -62,7 +62,7 @@ export const getSapInstanceOperations = curry(
           SAP_INSTANCE_STOP,
           matchesInstanceNumber(instance.instance_number)
         ),
-        disabled: disabled || instance.health === 'unknown',
+        disabled: disabled || instance.status === 'gray',
         permitted: ['stop:application_instance'],
         onClick: () => {
           setCurrentOperationInstance(instance);
@@ -86,7 +86,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_START
     ),
-    disabled: disabled || every(sapSystem.instances, { health: 'passing' }),
+    disabled: disabled || every(sapSystem.instances, { status: 'green' }),
     permitted: ['start:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_START });
@@ -99,7 +99,7 @@ export const getSapSystemOperations = (
       sapSystem.id,
       SAP_SYSTEM_STOP
     ),
-    disabled: disabled || every(sapSystem.instances, { health: 'unknown' }),
+    disabled: disabled || every(sapSystem.instances, { status: 'gray' }),
     permitted: ['stop:sap_system'],
     onClick: () => {
       setOperationModelOpen({ open: true, operation: SAP_SYSTEM_STOP });

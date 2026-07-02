@@ -8,6 +8,8 @@ import { databaseInstanceFactory, generateSid } from '.';
 
 const ensaVersion = () =>
   faker.helpers.arrayElement(['no_ensa', 'ensa1', 'ensa2']);
+const statusEnum = () =>
+  faker.helpers.arrayElement(['green', 'yellow', 'red', 'gray']);
 const healthEnum = () =>
   faker.helpers.arrayElement(['passing', 'critical', 'warning', 'unknown']);
 const roles = () =>
@@ -23,7 +25,7 @@ const roles = () =>
 
 export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   features: roles().join('|'),
-  health: healthEnum(),
+  status: statusEnum(),
   host_id: faker.string.uuid(),
   http_port: faker.internet.port(),
   https_port: faker.internet.port(),

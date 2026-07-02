@@ -388,7 +388,7 @@ export const WithRebootEnabled = {
     operationsEnabled: true,
     sapInstances: sapInstances.map((instance) => ({
       ...instance,
-      health: 'unknown',
+      status: 'gray',
     })),
     cluster: undefined,
     heartbeat: 'passing',
