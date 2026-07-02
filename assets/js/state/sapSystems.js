@@ -118,6 +118,13 @@ export const sapSystemsListSlice = createSlice({
         { absent_at: instance.absent_at }
       );
     },
+    updateApplicationInstanceStaleAt: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { stale_at: instance.stale_at }
+      );
+    },
     setApplicationInstanceDeregistering: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
@@ -142,6 +149,8 @@ export const APPLICATION_INSTANCE_REGISTERED =
 export const APPLICATION_INSTANCE_MOVED = 'APPLICATION_INSTANCE_MOVED';
 export const APPLICATION_INSTANCE_ABSENT_AT_CHANGED =
   'APPLICATION_INSTANCE_ABSENT_AT_CHANGED';
+export const APPLICATION_INSTANCE_STALE_CHANGED =
+  'APPLICATION_INSTANCE_STALE_CHANGED';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'APPLICATION_INSTANCE_DEREGISTERED';
 export const APPLICATION_INSTANCE_STATUS_CHANGED =
@@ -162,6 +171,9 @@ export const applicationInstanceMoved = createAction(
 );
 export const applicationInstanceAbsentAtChanged = createAction(
   APPLICATION_INSTANCE_ABSENT_AT_CHANGED
+);
+export const applicationInstanceStaleChanged = createAction(
+  APPLICATION_INSTANCE_STALE_CHANGED
 );
 export const applicationInstanceDeregistered = createAction(
   APPLICATION_INSTANCE_DEREGISTERED
@@ -191,6 +203,7 @@ export const {
   removeSAPSystem,
   updateSAPSystem,
   updateApplicationInstanceAbsentAt,
+  updateApplicationInstanceStaleAt,
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
 } = sapSystemsListSlice.actions;
