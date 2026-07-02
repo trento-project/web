@@ -141,6 +141,21 @@ export default {
     },
   },
   args: { userID: USER_ID },
+  argTypes: {
+    userID: {
+      description: 'User ID for the AI assistant session',
+      control: { type: 'text' },
+    },
+    open: {
+      description: 'Whether the assistant is open',
+      control: { type: 'boolean' },
+    },
+    initialConnectionStatus: {
+      description: 'Initial connection status',
+      options: ['connected', 'connecting', 'disconnected'],
+      control: { type: 'radio' },
+    },
+  },
   decorators: [
     (Story, context) => {
       const socket = useFreshSocket();

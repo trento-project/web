@@ -2,18 +2,40 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
+import { CRITICAL, PASSING, WARNING } from '@lib/model';
 import {
   executionExpectationEvaluationErrorFactory,
   failingExpectEvaluationFactory,
 } from '@lib/test-utils/factories';
-
-import { WARNING } from '@lib/model';
 
 import ExpectationsResults from './ExpectationsResults';
 
 export default {
   title: 'Patterns/ExpectationsResults',
   component: ExpectationsResults,
+  argTypes: {
+    isTargetHost: {
+      description: 'Indicates if the target is a host',
+      control: { type: 'boolean' },
+    },
+    results: {
+      description: 'List of expectation results',
+      control: { type: 'object' },
+    },
+    isError: {
+      description: 'Indicates if there was an error during evaluation',
+      control: { type: 'boolean' },
+    },
+    errorMessage: {
+      description: 'Error message to display if an error occurred',
+      control: { type: 'text' },
+    },
+    severity: {
+      description: 'Severity level of the expectation result',
+      control: { type: 'select' },
+      options: [WARNING, CRITICAL, PASSING],
+    },
+  },
 };
 
 export const Default = {

@@ -4,14 +4,13 @@
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import DateFilter from '.';
+import DateFilter from './DateFilter';
 
 export default {
   title: 'Components/DateFilter',
   component: DateFilter,
   argTypes: {
     options: {
-      type: { name: 'array', required: true },
       description: 'List of options available',
       control: { type: 'object' },
     },
@@ -27,9 +26,21 @@ export default {
       control: { type: 'object' },
     },
     onChange: {
-      type: { name: 'function', required: false },
       description: 'Function to call when the selected options change',
-      control: { type: null },
+      action: 'onChange',
+    },
+    prefilled: {
+      description:
+        'Whether to include preconfigured date filter options in the list',
+      control: { type: 'boolean' },
+    },
+    className: {
+      description: 'CSS classes to apply to the date filter container',
+      control: { type: 'text' },
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
   render: (args) => {
@@ -53,6 +64,8 @@ export default {
 export const Default = {
   args: {
     title: 'by date',
+    options: [['1h ago', () => new Date(Date.now() - 60 * 60 * 1000)]],
+    type: 'date',
   },
 };
 

@@ -34,7 +34,11 @@ export default {
       },
     },
   },
+};
+
+export const Default = {
   args: {
+    status: 'green',
     absent: false,
     timezone: 'Etc/UTC',
   },
@@ -42,30 +46,35 @@ export default {
 
 export const GreenStatus = {
   args: {
+    ...Default.args,
     status: 'green',
   },
 };
 
 export const YellowStatus = {
   args: {
+    ...Default.args,
     status: 'yellow',
   },
 };
 
 export const RedStatus = {
   args: {
+    ...Default.args,
     status: 'red',
   },
 };
 
 export const GrayStatus = {
   args: {
+    ...Default.args,
     status: 'gray',
   },
 };
 
 export const AbsentInstance = {
   args: {
+    ...Default.args,
     status: 'green',
     absent: true,
   },
@@ -73,6 +82,7 @@ export const AbsentInstance = {
 
 export const StaleGreenStatus = {
   args: {
+    ...Default.args,
     status: 'green',
     staleAt: '2026-06-15T10:30:00Z',
   },
@@ -80,6 +90,7 @@ export const StaleGreenStatus = {
 
 export const StaleYellowStatus = {
   args: {
+    ...Default.args,
     status: 'yellow',
     staleAt: '2026-06-15T10:30:00Z',
   },
@@ -87,6 +98,7 @@ export const StaleYellowStatus = {
 
 export const StaleRedStatus = {
   args: {
+    ...Default.args,
     status: 'red',
     staleAt: '2026-06-15T10:30:00Z',
   },
@@ -94,6 +106,7 @@ export const StaleRedStatus = {
 
 export const StaleGrayStatus = {
   args: {
+    ...Default.args,
     status: 'gray',
     staleAt: '2026-06-15T10:30:00Z',
   },
@@ -101,6 +114,7 @@ export const StaleGrayStatus = {
 
 export const StaleAbsentInstance = {
   args: {
+    ...Default.args,
     status: 'green',
     absent: true,
     staleAt: '2026-06-15T10:30:00Z',
@@ -109,6 +123,7 @@ export const StaleAbsentInstance = {
 
 export const WithTimezone = {
   args: {
+    ...Default.args,
     status: 'green',
     staleAt: '2026-06-15T10:30:00Z',
     timezone: 'America/New_York',

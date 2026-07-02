@@ -3,37 +3,44 @@
 
 import React from 'react';
 
-import Tooltip, { PLACES } from '.';
+import Tooltip, { PLACES } from './Tooltip';
 
 export default {
   title: 'Components/Tooltip',
   component: Tooltip,
   argTypes: {
     content: {
-      type: 'string',
-      description: 'Content to be rendered int he tooltip',
+      description: 'Content to be rendered in the tooltip',
       options: PLACES,
       control: { type: 'text' },
     },
     place: {
-      type: 'string',
       description: 'Position of the tooltip',
       options: PLACES,
       control: { type: 'radio' },
     },
     isEnabled: {
-      type: 'boolean',
       description: 'Whether the tooltip is enabled',
       control: { type: 'boolean' },
     },
     wrap: {
-      type: 'boolean',
       description: 'Whether to wrap children in a span or not.',
+      control: { type: 'boolean' },
     },
     visible: {
-      type: 'boolean',
       description:
         'If specified, force to show or hide the tooltip regardless of the trigger event',
+      control: { type: 'boolean' },
+    },
+    className: {
+      description:
+        'Custom CSS classes applied to the tooltip overlay element for additional styling',
+      control: { type: 'text' },
+    },
+    children: {
+      description:
+        'React element(s) to be wrapped by the tooltip component; the element that triggers the tooltip on hover',
+      control: { type: 'object' },
     },
   },
   render: (args) => (

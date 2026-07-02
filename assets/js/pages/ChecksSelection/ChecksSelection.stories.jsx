@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
+import { providers } from '@lib/model';
 import { selectableCheckFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import ChecksSelection from './ChecksSelection';
 import { CUSTOMIZATION_STATUSES } from './hooks';
@@ -31,44 +33,31 @@ export default {
   component: ChecksSelection,
   argTypes: {
     groupID: {
-      type: 'string',
       description: 'The ID of the group to which the selection refers to.',
     },
     provider: {
-      type: 'string',
-      description: 'Provider of the current checkable target',
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
     },
     catalog: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Catalog data',
-      table: {
-        type: { summary: 'object' },
-      },
     },
     selectedChecks: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Currently selected checks',
-      table: {
-        type: { summary: 'array' },
-      },
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading state',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     catalogError: {
-      control: { type: 'string' },
+      control: { type: 'text' },
       description: 'Error occurred while loading the catalog',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     onUpdateCatalog: {
@@ -89,12 +78,9 @@ export default {
       description: 'Gets called when the user resets a customization.',
     },
     customizationStatus: {
-      type: 'enum',
       description: 'Current customization status',
       options: CUSTOMIZATION_STATUSES,
-      control: {
-        type: 'radio',
-      },
+      control: { type: 'radio' },
     },
   },
 };
@@ -105,6 +91,11 @@ export const Default = {
     catalog,
     userAbilities: [{ name: 'all', resource: 'check_customization' }],
     provider: 'aws',
+    loading: false,
+    onUpdateCatalog: action('onUpdateCatalog'),
+    onChange: action('onChange'),
+    onSaveCheckCustomization: action('onSaveCheckCustomization'),
+    onResetCheckCustomization: action('onResetCheckCustomization'),
   },
 };
 
