@@ -308,7 +308,8 @@ defmodule Trento.ActivityLogTest do
             "personal_access_token_deletion",
             "personal_access_token_admin_deletion",
             "ai_configuration_creation",
-            "ai_configuration_modification"
+            "ai_configuration_modification",
+            "ai_configuration_deletion"
           ] do
         insert(:activity_log_entry, type: user_management_activity_type)
       end
@@ -329,7 +330,7 @@ defmodule Trento.ActivityLogTest do
 
       {:ok, returned_results, _meta} = ActivityLog.list_activity_log(%{}, true)
 
-      assert length(returned_results) == 11
+      assert length(returned_results) == 12
     end
   end
 end
