@@ -390,7 +390,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :ai_configuration_cleared,
+        activity: :ai_configuration_deletion,
         connection_info: {TrentoWeb.V1.AIConfigurationController, :clear_ai_configuration},
         interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
