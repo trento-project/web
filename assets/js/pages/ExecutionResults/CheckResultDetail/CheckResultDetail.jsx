@@ -9,6 +9,7 @@ import {
   getExpectSameStatementsResults,
   getClusterCheckResults,
   isAgentCheckError,
+  isAgentExcluded,
   isTargetHost,
   getExpectSameFacts,
 } from '../checksUtils';
@@ -38,6 +39,28 @@ function CheckResultDetail({
     facts = [],
     message,
   } = targetResult;
+
+  if (isAgentExcluded(targetResult)) {
+    const { exclude_expression: excludeExpression } = targetResult;
+
+    return (
+      <div className="p-4 space-y-2" data-testid="excluded-by-policy">
+        <p className="text-gray-700">
+          This host was{' '}
+          <span className="font-semibold">excluded by policy</span> and was not
+          evaluated for this check.
+        </p>
+        {excludeExpression && (
+          <div>
+            <p className="text-sm text-gray-500">Exclusion predicate:</p>
+            <pre className="mt-1 p-2 bg-gray-100 rounded text-sm overflow-x-auto">
+              {excludeExpression}
+            </pre>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const isError = isAgentCheckError(targetResult);
 
