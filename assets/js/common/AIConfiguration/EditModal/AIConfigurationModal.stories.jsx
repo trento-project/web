@@ -8,7 +8,7 @@ import { aiConfigurationFactory } from '@lib/test-utils/factories';
 import AIConfigurationModal from './AIConfigurationModal';
 
 export default {
-  title: 'Components/AIConfiguration/AIConfigurationModal',
+  title: 'Components/AIConfiguration/EditModal',
   component: AIConfigurationModal,
   argTypes: {
     open: {
@@ -55,7 +55,7 @@ export default {
     },
   },
   args: {
-    open: false,
+    open: true,
     onCreate: () => action('edit clicked'),
     onUpdate: () => action('update clicked'),
   },
