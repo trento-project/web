@@ -43,3 +43,5 @@ export const createAIConfiguration = (provider, model, apiKey) =>
 
 export const editAIConfiguration = (provider, model, apiKey) =>
   patch('/profile/ai_configuration', { provider, model, api_key: apiKey });
+
+export const deleteAIConfiguration = () => del('/profile/ai_configuration');
