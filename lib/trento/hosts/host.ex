@@ -910,19 +910,6 @@ defmodule Trento.Hosts.Host do
     end
   end
 
-  def maybe_emit_host_software_updates_discovery_health_changed_event(
-        %Host{
-          host_id: host_id,
-          health_details: %HealthDetails{software_updates_discovery_health: current_health}
-        },
-        health
-      )
-      when health != current_health do
-    %SoftwareUpdatesHealthChanged{host_id: host_id, health: health}
-  end
-
-  def maybe_emit_host_software_updates_discovery_health_changed_event(_host, _health), do: nil
-
   def maybe_emit_software_updates_discovery_lifecycle_events(_host_id, nil, nil), do: []
   def maybe_emit_software_updates_discovery_lifecycle_events(_host_id, fqdn, fqdn), do: []
 
@@ -940,6 +927,19 @@ defmodule Trento.Hosts.Host do
         fully_qualified_domain_name: new_fqdn
       }
     ]
+
+  def maybe_emit_host_software_updates_discovery_health_changed_event(
+        %Host{
+          host_id: host_id,
+          health_details: %HealthDetails{software_updates_discovery_health: current_health}
+        },
+        health
+      )
+      when health != current_health do
+    %SoftwareUpdatesHealthChanged{host_id: host_id, health: health}
+  end
+
+  def maybe_emit_host_software_updates_discovery_health_changed_event(_host, _health), do: nil
 
   defp compute_saptune_health(nil), do: Health.warning()
 
