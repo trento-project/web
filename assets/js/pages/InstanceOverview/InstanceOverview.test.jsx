@@ -176,4 +176,17 @@ describe('InstanceOverview', () => {
 
     expect(screen.queryByText('not available')).toBeVisible();
   });
+
+  it('should render stale instances with stale styling', () => {
+    const staleInstance = databaseInstanceFactory.build({
+      stale_at: faker.date.past().toISOString(),
+    });
+
+    renderWithRouter(
+      <InstanceOverview instanceType={DATABASE_TYPE} instance={staleInstance} />
+    );
+
+    const tableRow = document.querySelector('.table-row');
+    expect(tableRow).toHaveClass('bg-gray-100');
+  });
 });

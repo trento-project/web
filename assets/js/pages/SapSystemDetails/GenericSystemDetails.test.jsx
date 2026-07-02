@@ -405,6 +405,34 @@ describe('GenericSystemDetails', () => {
     expect(health).toHaveClass('fill-black');
   });
 
+  it('should render stale instances with stale styling', () => {
+    const sapSystem = sapSystemFactory.build({
+      instances: [
+        sapSystemApplicationInstanceFactory.build(),
+        sapSystemApplicationInstanceFactory.build({
+          stale_at: faker.date.past().toISOString(),
+        }),
+        sapSystemApplicationInstanceFactory.build(),
+      ],
+      hosts: hostFactory.buildList(3),
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    const [layoutTable, _] = screen.getAllByRole('table');
+    const rows = layoutTable.querySelectorAll('tbody > tr');
+
+    expect(rows[0]).not.toHaveClass('bg-gray-100');
+    expect(rows[1]).toHaveClass('bg-gray-100');
+    expect(rows[2]).not.toHaveClass('bg-gray-100');
+  });
+
   it.each([
     {
       type: APPLICATION_TYPE,
