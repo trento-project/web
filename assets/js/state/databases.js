@@ -106,6 +106,13 @@ export const databasesListSlice = createSlice({
         { absent_at: instance.absent_at }
       );
     },
+    updateDatabaseInstanceStaleAt: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { stale_at: instance.stale_at }
+      );
+    },
     setDatabaseInstanceDeregistering: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
@@ -134,6 +141,8 @@ export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
 export const DATABASE_INSTANCE_ABSENT_AT_CHANGED =
   'DATABASE_INSTANCE_ABSENT_AT_CHANGED';
+export const DATABASE_INSTANCE_STALE_CHANGED =
+  'DATABASE_INSTANCE_STALE_CHANGED';
 export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
 export const DATABASE_INSTANCE_STATUS_CHANGED =
   'DATABASE_INSTANCE_STATUS_CHANGED';
@@ -150,6 +159,9 @@ export const databaseInstanceRegistered = createAction(
 );
 export const databaseInstanceAbsentAtChanged = createAction(
   DATABASE_INSTANCE_ABSENT_AT_CHANGED
+);
+export const databaseInstanceStaleChanged = createAction(
+  DATABASE_INSTANCE_STALE_CHANGED
 );
 export const databaseInstanceDeregistered = createAction(
   DATABASE_INSTANCE_DEREGISTERED
@@ -176,6 +188,7 @@ export const {
   updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
   addTagToDatabase,
   removeTagFromDatabase,
   setDatabaseInstanceDeregistering,

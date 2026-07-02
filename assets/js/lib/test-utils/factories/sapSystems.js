@@ -35,6 +35,7 @@ export const sapSystemApplicationInstanceFactory = Factory.define(() => ({
   start_priority: faker.number.int({ min: 1, max: 9 }).toString(),
   sap_system_id: faker.string.uuid(),
   absent_at: null,
+  stale_at: null,
 }));
 
 export const sapSystemFactory = Factory.define(({ params }) => {
