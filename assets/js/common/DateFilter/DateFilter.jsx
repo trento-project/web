@@ -83,9 +83,17 @@ function DateTimeInput({ value, onChange, timezone }) {
       return null;
     }
 
+    // Firefox workaround: when using the calendar picker on a datetime-local input,
+    // Firefox may only set the date part ("YYYY-MM-DD") without the time component,
+    // making the input value incomplete. Default to midnight (start of day) in this case.
+    let normalizedValue = dateTimeLocalValue;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedValue)) {
+      normalizedValue = `${normalizedValue}T00:00`;
+    }
+
     // Parse the text input as a date in the user's local timezone
     // Example: "2009-10-09T18:00, GMT+2" in GMT+2 is parsed as "2009-10-09T18:00, GMT+2"
-    const parsedDate = new Date(dateTimeLocalValue);
+    const parsedDate = new Date(normalizedValue);
 
     if (Number.isNaN(parsedDate.getTime())) {
       return null;
