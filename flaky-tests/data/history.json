@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-05-18T19:34:40Z",
-    "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
-    "run_id": "26054934825",
-    "suite": "Jest — Node 22.15.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 7
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.09501
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05781
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.04892
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-18T19:35:30Z",
     "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
     "run_id": "26054934825",
@@ -5227,5 +5191,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-02T19:20:58Z",
+    "commit": "4491f9334b03f970f4f76e774825419b7180d669",
+    "run_id": "28614680862",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
