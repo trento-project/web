@@ -22,6 +22,10 @@ export default {
       type: 'function',
       description: 'Updates AI configuration',
     },
+    onClear: {
+      type: 'function',
+      description: 'Clears AI configuration',
+    },
     onEditClick: {
       type: 'function',
       description: 'Edit button click handler',
@@ -30,10 +34,11 @@ export default {
   args: {
     aiConfiguration: {},
     onEditClick: action('Edit button clicked!'),
+    onClear: action('Clear button clicked!'),
   },
 };
 
-export const Default = {
+export const Configured = {
   args: {
     aiConfiguration: aiConfigurationFactory.build(),
   },

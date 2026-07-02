@@ -10,16 +10,19 @@ import Button from '@common/Button';
 
 import AIProviderLabel from '@common/AIProviderLabel';
 import AIConfigurationModal from './AIConfigurationModal';
+import AIConfigurationClearModal from '@common/AIConfigurationClearDialog';
 
 function AIConfiguration({
   className,
   aiConfiguration = {},
   onCreate = noop,
   onUpdate = noop,
+  onClear = noop,
   onEditClick = noop,
 }) {
   const [aiConfigurationModalOpen, setAiConfigurationModalOpen] =
     useState(false);
+  const [clearModalOpen, setClearModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState([]);
 
@@ -29,6 +32,7 @@ function AIConfiguration({
       : onEditClick;
 
   const closeModal = () => setAiConfigurationModalOpen(false);
+  const closeClearModal = () => setClearModalOpen(false);
 
   const handleRequest = (handler) => (provider, model, apiKey) => {
     setSaving(true);
@@ -38,6 +42,13 @@ function AIConfiguration({
         const apiErrors = error?.response?.data?.errors || [];
         setErrors(apiErrors);
       })
+      .finally(() => setSaving(false));
+  };
+
+  const handleClear = () => {
+    setSaving(true);
+    onClear()
+      .then(closeClearModal)
       .finally(() => setSaving(false));
   };
 
@@ -74,6 +85,11 @@ function AIConfiguration({
         errors={errors}
         saving={saving}
       />
+      <AIConfigurationClearModal
+        open={clearModalOpen}
+        onClearSettings={handleClear}
+        onCancel={closeClearModal}
+      />
       <div
         className={classNames(
           'container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg',
@@ -86,9 +102,19 @@ function AIConfiguration({
             <Button
               type="primary-white-fit"
               aria-label="ai-configuration-edit-button"
+              className="mr-2"
+              disabled={saving}
               onClick={openEditModal}
             >
               Edit Settings
+            </Button>
+            <Button
+              type="danger"
+              aria-label="ai-configuration-clear-button"
+              disabled={!hasAIConfiguration || saving}
+              onClick={() => setClearModalOpen(true)}
+            >
+              Clear Settings
             </Button>
           </span>
         </div>
