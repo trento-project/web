@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-18T22:48:57Z",
-    "commit": "56c213d5924009cf12cd6e659a816e6b922c0f91",
-    "run_id": "26057298982",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 12
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.4551
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.3453
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1032
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.05707
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-19T19:24:35Z",
     "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
     "run_id": "26119309340",
@@ -5200,6 +5152,22 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.06551
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-02T22:21:55Z",
+    "commit": "4491f9334b03f970f4f76e774825419b7180d669",
+    "run_id": "28617503817",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 8
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
+        "score": 0.08646
       }
     ]
   }
