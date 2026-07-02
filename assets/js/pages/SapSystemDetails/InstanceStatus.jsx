@@ -2,11 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { EOS_LENS_FILLED, EOS_INFO_OUTLINED } from 'eos-icons-react';
+import {
+  EOS_LENS_FILLED,
+  EOS_INFO_OUTLINED,
+  EOS_SCHEDULE_OUTLINED,
+} from 'eos-icons-react';
 import { capitalize } from 'lodash';
+import { formatDateTime } from '@lib/timezones';
 import Tooltip from '@common/Tooltip';
 
-function InstanceStatus({ status, absent = false }) {
+function InstanceStatus({ status, absent = false, staleAt = null, timezone }) {
   let cssClass;
 
   switch (status) {
@@ -24,20 +29,40 @@ function InstanceStatus({ status, absent = false }) {
       break;
   }
 
+  const IconComponent = absent ? EOS_INFO_OUTLINED : EOS_LENS_FILLED;
+  const iconClass = absent ? 'fill-black' : cssClass;
+
+  const tooltipContent = (
+    <span className="block text-center">
+      {absent ? 'Registered instance not found.' : capitalize(status)}
+      {staleAt && (
+        <>
+          <br />
+          (Stale since {formatDateTime(staleAt, timezone)})
+        </>
+      )}
+    </span>
+  );
+
   return (
-    <span className="flex items-center mx-1">
+    <div className="flex items-center mx-1">
       <Tooltip
-        content={absent ? 'Registered instance not found.' : capitalize(status)}
+        content={tooltipContent}
         place="top"
         isEnabled={true}
+        wrap={false}
       >
-        {absent ? (
-          <EOS_INFO_OUTLINED size="20" className="fill-black" />
-        ) : (
-          <EOS_LENS_FILLED size="20" className={cssClass} />
-        )}
+        <div className="relative">
+          <IconComponent size="20" className={iconClass} />
+          {staleAt && (
+            <EOS_SCHEDULE_OUTLINED
+              size="14"
+              className={`${iconClass} absolute -bottom-1 -right-1 bg-white rounded-full`}
+            />
+          )}
+        </div>
       </Tooltip>
-    </span>
+    </div>
   );
 }
 
