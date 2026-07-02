@@ -49,7 +49,8 @@ defmodule Trento.Hosts.HostTest do
   alias Trento.Hosts.ValueObjects.{
     AwsProvider,
     AzureProvider,
-    GcpProvider
+    GcpProvider,
+    HealthDetails
   }
 
   alias Trento.Hosts.Host
@@ -640,7 +641,7 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      heartbeat: Health.unknown(),
-                     checks_health: ^health,
+                     health_details: %HealthDetails{checks_health: ^health},
                      health: Health.unknown()
                    } = host
           end
@@ -692,7 +693,7 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      heartbeat: Health.unknown(),
-                     checks_health: ^current_checks_health,
+                     health_details: %HealthDetails{checks_health: ^current_checks_health},
                      health: Health.unknown()
                    } = host
           end
@@ -779,7 +780,7 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      heartbeat: ^initial_heartbeat,
-                     checks_health: ^current_checks_health,
+                     health_details: %HealthDetails{checks_health: ^current_checks_health},
                      health: ^expected_health
                    } = host
           end
@@ -816,7 +817,7 @@ defmodule Trento.Hosts.HostTest do
           assert %Host{
                    heartbeat: Health.passing(),
                    selected_checks: ^selected_checks,
-                   checks_health: Health.unknown(),
+                   health_details: %HealthDetails{checks_health: Health.unknown()},
                    health: Health.warning()
                  } = host
         end
@@ -864,7 +865,7 @@ defmodule Trento.Hosts.HostTest do
           assert %Host{
                    heartbeat: Health.passing(),
                    selected_checks: [],
-                   checks_health: Health.warning(),
+                   health_details: %HealthDetails{checks_health: Health.warning()},
                    health: Health.warning()
                  } = host
         end
@@ -1453,7 +1454,7 @@ defmodule Trento.Hosts.HostTest do
         fn state ->
           assert %Host{
                    saptune_status: nil,
-                   saptune_health: Health.passing(),
+                   health_details: %HealthDetails{saptune_health: Health.passing()},
                    health: Health.passing()
                  } = state
         end
@@ -1498,7 +1499,7 @@ defmodule Trento.Hosts.HostTest do
         fn state ->
           assert %Host{
                    saptune_status: nil,
-                   saptune_health: Health.warning(),
+                   health_details: %HealthDetails{saptune_health: Health.warning()},
                    health: Health.warning()
                  } = state
         end
@@ -1544,7 +1545,7 @@ defmodule Trento.Hosts.HostTest do
                    saptune_status: %SaptuneStatus{
                      package_version: ^unsupported_version
                    },
-                   saptune_health: Health.warning(),
+                   health_details: %HealthDetails{saptune_health: Health.warning()},
                    health: Health.warning()
                  } = state
         end
@@ -1597,7 +1598,7 @@ defmodule Trento.Hosts.HostTest do
             assert %Host{
                      saptune_status: ^saptune_status,
                      health: ^health,
-                     saptune_health: ^health
+                     health_details: %HealthDetails{saptune_health: ^health}
                    } = state
           end
         )
@@ -1641,7 +1642,7 @@ defmodule Trento.Hosts.HostTest do
                      package_version: ^unsupported_version
                    },
                    health: Health.warning(),
-                   saptune_health: Health.warning()
+                   health_details: %HealthDetails{saptune_health: Health.warning()}
                  } = state
         end
       )
@@ -1683,7 +1684,7 @@ defmodule Trento.Hosts.HostTest do
                    saptune_status: %SaptuneStatus{
                      package_version: ^unsupported_version
                    },
-                   saptune_health: Health.warning(),
+                   health_details: %HealthDetails{saptune_health: Health.warning()},
                    health: Health.warning()
                  } = state
         end
@@ -1823,7 +1824,9 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      health: ^expected_host_health,
-                     software_updates_discovery_health: ^software_updates_discovery_health
+                     health_details: %HealthDetails{
+                       software_updates_discovery_health: ^software_updates_discovery_health
+                     }
                    } = host
           end
         )
@@ -1858,8 +1861,10 @@ defmodule Trento.Hosts.HostTest do
           [],
           fn host ->
             assert %Host{
-                     software_updates_discovery_health:
-                       ^unchanged_software_updates_discovery_health
+                     health_details: %HealthDetails{
+                       software_updates_discovery_health:
+                         ^unchanged_software_updates_discovery_health
+                     }
                    } = host
           end
         )
@@ -1882,7 +1887,9 @@ defmodule Trento.Hosts.HostTest do
         fn host ->
           assert %Host{
                    health: Health.passing(),
-                   software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+                   health_details: %HealthDetails{
+                     software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+                   }
                  } = host
         end
       )
@@ -1937,7 +1944,9 @@ defmodule Trento.Hosts.HostTest do
           fn host ->
             assert %Host{
                      health: ^expected_host_health,
-                     software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+                     health_details: %HealthDetails{
+                       software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+                     }
                    } = host
           end
         )
@@ -2357,7 +2366,9 @@ defmodule Trento.Hosts.HostTest do
         },
         fn host ->
           assert %Host{
-                   software_updates_discovery_health: SoftwareUpdatesHealth.not_set(),
+                   health_details: %HealthDetails{
+                     software_updates_discovery_health: SoftwareUpdatesHealth.not_set()
+                   },
                    deregistered_at: ^deregistered_at
                  } = host
         end
