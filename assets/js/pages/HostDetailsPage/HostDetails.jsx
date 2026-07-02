@@ -57,7 +57,7 @@ import DiskSpaceChart from './DiskSpaceChart';
 
 import {
   subscriptionsTableConfiguration,
-  sapInstancesTableConfiguration,
+  getSapInstancesTableConfiguration,
 } from './tableConfigs';
 
 export const buildCidrNotation = (ipAddresses, netmasks) =>
@@ -424,7 +424,9 @@ function HostDetails({
           </div>
           <Table
             className="pt-2"
-            config={sapInstancesTableConfiguration}
+            config={getSapInstancesTableConfiguration({
+              userTimezone: timezone,
+            })}
             data={sapInstances}
           />
         </div>
