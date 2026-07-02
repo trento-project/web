@@ -940,7 +940,8 @@ defmodule Trento.Hosts.Host do
   def maybe_emit_host_software_updates_discovery_health_changed_event(
         %Host{host_id: host_id},
         health
-      ), do: %SoftwareUpdatesHealthChanged{host_id: host_id, health: health}
+      ),
+      do: %SoftwareUpdatesHealthChanged{host_id: host_id, health: health}
 
   defp compute_saptune_health(nil), do: Health.warning()
 
