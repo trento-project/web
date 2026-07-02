@@ -46,7 +46,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :sap_system_operation_requested,
         :database_operation_requested,
         :ai_configuration_creation,
-        :ai_configuration_modification
+        :ai_configuration_modification,
+        :ai_configuration_deletion
       ]
 
       connection_activity_catalog = ActivityCatalog.connection_activities()
@@ -386,6 +387,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         activity: :ai_configuration_modification,
         connection_info: {TrentoWeb.V1.AIConfigurationController, :update_ai_configuration},
         interesting_statuses: 200,
+        not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :ai_configuration_deletion,
+        connection_info: {TrentoWeb.V1.AIConfigurationController, :clear_ai_configuration},
+        interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       }
     ]

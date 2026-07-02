@@ -46,6 +46,7 @@ export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
 export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
 export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
+export const AI_CONFIGURATION_DELETION = 'ai_configuration_deletion';
 
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
@@ -322,6 +323,12 @@ export const ACTIVITY_TYPES_CONFIG = {
   [AI_CONFIGURATION_MODIFICATION]: {
     label: 'AI Configuration Updated',
     message: (_entry) => `AI configuration was updated`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_DELETION]: {
+    label: 'AI Configuration Cleared',
+    message: (_entry) => `AI configuration was cleared`,
     resource: profileResourceType,
     allowedTo: userManagement,
   },
