@@ -118,8 +118,8 @@ export const getSystemInstancesTableConfiguration = ({
 
 export const systemHostsTableConfiguration = {
   usePadding: false,
-  rowClassName: ({ heartbeat }) =>
-    classNames({ [STALE_ROW]: heartbeat !== 'passing' }),
+  rowClassName: (host) =>
+    classNames({ [STALE_ROW]: !isHeartbeatPassing(host) }),
   columns: [
     {
       title: 'Hostname',
