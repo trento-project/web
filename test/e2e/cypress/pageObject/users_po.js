@@ -107,11 +107,12 @@ const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
 
 const aiConfigurationClearButton =
   'button[aria-label="ai-configuration-clear-button"]:contains("Clear Settings")';
-const clearAIConfigurationModal = 'div:contains("Clear AI Configuration")';
+const clearAIConfigurationModal =
+  'div[id*="headlessui-dialog-panel"] h2:contains("Clear AI Configuration")';
 const confirmClearAIConfigurationButton =
   'button[aria-label="confirm-clear-ai-settings"]';
 const cancelClearAIConfigurationButton =
-  '[role="dialog"] button:contains("Cancel")';
+  'div[id*="headlessui-dialog-panel"] button:contains("Cancel")';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
