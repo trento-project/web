@@ -9,35 +9,43 @@ import ListView from '@common/ListView';
 import Button from '@common/Button';
 
 import AIProviderLabel from '@common/AIProviderLabel';
-import AIConfigurationModal from './AIConfigurationModal';
+import AIConfigurationModal from './EditModal';
+import AIConfigurationClearModal from './ClearModal';
 
 function AIConfiguration({
   className,
   aiConfiguration = {},
   onCreate = noop,
   onUpdate = noop,
-  onEditClick = noop,
+  onClear = noop,
 }) {
   const [aiConfigurationModalOpen, setAiConfigurationModalOpen] =
     useState(false);
+  const [clearModalOpen, setClearModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState([]);
 
-  const openEditModal =
-    onEditClick === noop
-      ? () => setAiConfigurationModalOpen(true)
-      : onEditClick;
+  const openEditModal = () => setAiConfigurationModalOpen(true);
+  const openClearModal = () => setClearModalOpen(true);
 
-  const closeModal = () => setAiConfigurationModalOpen(false);
+  const closeEditModal = () => setAiConfigurationModalOpen(false);
+  const closeClearModal = () => setClearModalOpen(false);
 
   const handleRequest = (handler) => (provider, model, apiKey) => {
     setSaving(true);
     handler(provider, model, apiKey)
-      .then(closeModal)
+      .then(closeEditModal)
       .catch((error) => {
         const apiErrors = error?.response?.data?.errors || [];
         setErrors(apiErrors);
       })
+      .finally(() => setSaving(false));
+  };
+
+  const handleClear = () => {
+    setSaving(true);
+    onClear()
+      .then(closeClearModal)
       .finally(() => setSaving(false));
   };
 
@@ -70,9 +78,14 @@ function AIConfiguration({
         aiConfiguration={aiConfiguration}
         onSave={handleRequest(onCreate)}
         onUpdate={handleRequest(onUpdate)}
-        onCancel={closeModal}
+        onCancel={closeEditModal}
         errors={errors}
         saving={saving}
+      />
+      <AIConfigurationClearModal
+        open={clearModalOpen}
+        onClearSettings={handleClear}
+        onCancel={closeClearModal}
       />
       <div
         className={classNames(
@@ -86,9 +99,19 @@ function AIConfiguration({
             <Button
               type="primary-white-fit"
               aria-label="ai-configuration-edit-button"
+              className="mr-2"
+              disabled={saving}
               onClick={openEditModal}
             >
               Edit Settings
+            </Button>
+            <Button
+              type="danger"
+              aria-label="ai-configuration-clear-button"
+              disabled={!hasAIConfiguration || saving}
+              onClick={openClearModal}
+            >
+              Clear Settings
             </Button>
           </span>
         </div>
