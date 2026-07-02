@@ -25,29 +25,32 @@ const amountOfSlesForSapSubscriptionsLabel =
   'div.font-bold:contains("SLES for SAP subscriptions") + div span';
 const versionFilePath = '../../VERSION';
 
+const isValidSemver = (version) =>
+  semver.valid(semver.coerce(version)) !== null;
+
 export const visit = () => basePage.visit(url);
 
 export const pageTitleIsDisplayed = () =>
   cy.get(pageTitle).should('have.text', 'About Trento Console');
 
 export const expectedServerVersionIsDisplayed = () =>
-  cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
-    expectedVersion = expectedVersion.trim();
+  Cypress.expose('web_mode') === 'prod'
+    ? cy
+        .get(versionLabels.server)
+        .invoke('text')
+        .should((serverVersion) => {
+          expect(
+            isValidSemver(serverVersion),
+            `expected "${serverVersion}" to be a valid semver`
+          ).to.be.true;
+        })
+    : cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
+        expectedVersion = expectedVersion.trim();
 
-    return cy
-      .get(versionLabels.server)
-      .invoke('text')
-      .should((serverVersion) => {
-        const hasExpectedVersion =
-          serverVersion === expectedVersion ||
-          serverVersion.startsWith(`${expectedVersion}+`);
-
-        expect(
-          hasExpectedVersion,
-          `expected "${serverVersion}" to be "${expectedVersion}" or start with "${expectedVersion}+"`
-        ).to.be.true;
+        return cy
+          .get(versionLabels.server)
+          .should('have.text', expectedVersion);
       });
-  });
 
 export const expectedGithubUrlIsDisplayed = () =>
   cy
@@ -59,9 +62,10 @@ export const expectedComponentVersionIsDisplayed = (component) =>
     .get(versionLabels[component])
     .invoke('text')
     .should((version) => {
-      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
-      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
-        .true;
+      expect(
+        isValidSemver(version),
+        `expected "${version}" to be a valid semver`
+      ).to.be.true;
     });
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
