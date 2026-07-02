@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { isEmpty } from 'lodash';
 
 import { OPERATION_NOT_ALLOWED_HOST } from '@lib/operations';
+import { STALE_ROW } from '@lib/tables';
 import { isHeartbeatPassing } from '@lib/model/hosts';
 
 import HostLink from '@common/HostLink';
@@ -18,42 +19,41 @@ import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import Features from './Features';
 import InstanceStatus from './InstanceStatus';
 
-const cellRender = (content, item) => (
-  <span className={classNames({ 'text-gray-600': !!item.absent_at })}>
-    {content}
-  </span>
-);
-
 export const getSystemInstancesTableConfiguration = ({
   userAbilities,
+  userTimezone,
   cleanUpPermittedFor,
   onCleanUpClick,
   operationsEnabled = false,
   getOperations = () => [],
 }) => ({
   usePadding: false,
+  rowClassName: ({ stale_at, absent_at }) =>
+    classNames({
+      [STALE_ROW]: !!stale_at,
+      'text-gray-600': !!absent_at,
+    }),
   columns: [
     {
       title: 'Status',
       key: 'status',
       className: 'w-10',
       render: (content, item) => (
-        <InstanceStatus status={content} absent={!!item.absent_at} />
+        <InstanceStatus
+          status={content}
+          absent={!!item.absent_at}
+          staleAt={item.stale_at}
+          timezone={userTimezone}
+        />
       ),
     },
     {
       title: 'Hostname',
       key: 'instance_hostname',
-      render: (content, item) => (
-        <span className={classNames({ 'text-gray-600': item.absent_at })}>
-          {content}
-        </span>
-      ),
     },
     {
       title: 'Instance nr',
       key: 'instance_number',
-      render: cellRender,
     },
     {
       title: 'Features',
@@ -63,17 +63,14 @@ export const getSystemInstancesTableConfiguration = ({
     {
       title: 'Http Port',
       key: 'http_port',
-      render: cellRender,
     },
     {
       title: 'Https Port',
       key: 'https_port',
-      render: cellRender,
     },
     {
       title: 'Start Prio',
       key: 'start_priority',
-      render: cellRender,
     },
     {
       title: '',
@@ -121,6 +118,8 @@ export const getSystemInstancesTableConfiguration = ({
 
 export const systemHostsTableConfiguration = {
   usePadding: false,
+  rowClassName: ({ heartbeat }) =>
+    classNames({ [STALE_ROW]: heartbeat !== 'passing' }),
   columns: [
     {
       title: 'Hostname',
@@ -132,7 +131,7 @@ export const systemHostsTableConfiguration = {
       key: 'ip_addresses',
       render: (content) =>
         content?.map((ip) => (
-          <div key={ip} className="text-sm text-gray-900">
+          <div key={ip} className="text-sm">
             {ip}
           </div>
         )),

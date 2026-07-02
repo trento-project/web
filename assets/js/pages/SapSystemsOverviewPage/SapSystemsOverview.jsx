@@ -23,6 +23,7 @@ function SapSystemsOverview({
   databaseInstances,
   loading,
   userAbilities,
+  userTimezone,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
@@ -118,6 +119,7 @@ function SapSystemsOverview({
       <SAPSystemItemOverview
         sapSystem={sapSystem}
         userAbilities={userAbilities}
+        userTimezone={userTimezone}
         onCleanUpClick={(instance, type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);

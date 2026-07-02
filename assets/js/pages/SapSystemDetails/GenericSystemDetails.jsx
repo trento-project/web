@@ -113,6 +113,7 @@ export function GenericSystemDetails({
   type,
   system,
   userAbilities,
+  userTimezone,
   cleanUpPermittedFor,
   operationsEnabled = false,
   runningOperations = [],
@@ -407,6 +408,7 @@ export function GenericSystemDetails({
                 config={getSystemInstancesTableConfiguration({
                   type,
                   userAbilities,
+                  userTimezone,
                   cleanUpPermittedFor,
                   onCleanUpClick,
                   operationsEnabled,
