@@ -319,10 +319,10 @@ describe('Users', () => {
           usersPage.interceptDeleteTotpEnrollmentEndpoint();
           usersPage.clickDisableTotpButton();
           usersPage.removeTotpDialogTitleIsNotDisplayed();
-          usersPage.waitForTotpEnrollmentEndpoint().then(() => {
-            usersPage.clickAuthenticatorAppSwitch();
-            usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
-          });
+          usersPage.waitForTotpEnrollmentEndpoint();
+          usersPage.authenticatorAppSwitchIsUnchecked();
+          usersPage.clickAuthenticatorAppSwitch();
+          usersPage.newIssuedTotpSecretIsDifferent(totpSecret);
         });
       });
     });
