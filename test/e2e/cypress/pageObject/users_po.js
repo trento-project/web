@@ -327,6 +327,12 @@ export const totpEnrollmentErrorIsDisplayed = () =>
 export const authenticatorAppSwitchIsEnabled = () =>
   cy.get(authenticatorAppSwitch).should('be.enabled');
 
+export const authenticatorAppSwitchIsUnchecked = () =>
+  cy
+    .get(authenticatorAppSwitch)
+    .should('have.attr', 'aria-checked', 'false')
+    .and('be.enabled');
+
 export const totpEnabledToasterIsDisplayed = () =>
   cy.get(totpEnabledToaster).should('be.visible');
 
