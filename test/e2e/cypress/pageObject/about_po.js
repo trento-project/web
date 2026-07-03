@@ -25,6 +25,16 @@ const amountOfSlesForSapSubscriptionsLabel =
   'div.font-bold:contains("SLES for SAP subscriptions") + div span';
 const versionFilePath = '../../VERSION';
 
+const expectedSemverVersionIsDisplayed = (versionLabel) =>
+  cy
+    .get(versionLabel)
+    .invoke('text')
+    .should((version) => {
+      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
+      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
+        .true;
+    });
+
 export const visit = () => basePage.visit(url);
 
 export const pageTitleIsDisplayed = () =>
@@ -32,18 +42,7 @@ export const pageTitleIsDisplayed = () =>
 
 export const expectedServerVersionIsDisplayed = () =>
   Cypress.expose('web_mode') === 'prod'
-    ? cy
-        .get(versionLabels.server)
-        .invoke('text')
-        .should((serverVersion) => {
-          const isValidVersion =
-            semver.valid(semver.coerce(serverVersion)) !== null;
-
-          expect(
-            isValidVersion,
-            `expected "${serverVersion}" to be a valid semver`
-          ).to.be.true;
-        })
+    ? expectedSemverVersionIsDisplayed(versionLabels.server)
     : cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
         expectedVersion = expectedVersion.trim();
 
@@ -58,14 +57,7 @@ export const expectedGithubUrlIsDisplayed = () =>
     .should('have.text', 'https://github.com/trento-project/web');
 
 export const expectedComponentVersionIsDisplayed = (component) =>
-  cy
-    .get(versionLabels[component])
-    .invoke('text')
-    .should((version) => {
-      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
-      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
-        .true;
-    });
+  expectedSemverVersionIsDisplayed(versionLabels[component]);
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
   cy
