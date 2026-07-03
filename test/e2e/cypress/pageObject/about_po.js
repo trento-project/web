@@ -25,9 +25,6 @@ const amountOfSlesForSapSubscriptionsLabel =
   'div.font-bold:contains("SLES for SAP subscriptions") + div span';
 const versionFilePath = '../../VERSION';
 
-const isValidSemver = (version) =>
-  semver.valid(semver.coerce(version)) !== null;
-
 export const visit = () => basePage.visit(url);
 
 export const pageTitleIsDisplayed = () =>
@@ -39,8 +36,11 @@ export const expectedServerVersionIsDisplayed = () =>
         .get(versionLabels.server)
         .invoke('text')
         .should((serverVersion) => {
+          const isValidVersion =
+            semver.valid(semver.coerce(serverVersion)) !== null;
+
           expect(
-            isValidSemver(serverVersion),
+            isValidVersion,
             `expected "${serverVersion}" to be a valid semver`
           ).to.be.true;
         })
@@ -62,10 +62,9 @@ export const expectedComponentVersionIsDisplayed = (component) =>
     .get(versionLabels[component])
     .invoke('text')
     .should((version) => {
-      expect(
-        isValidSemver(version),
-        `expected "${version}" to be a valid semver`
-      ).to.be.true;
+      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
+      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
+        .true;
     });
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
