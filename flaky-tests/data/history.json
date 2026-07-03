@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-05-19T22:48:00Z",
-    "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
-    "run_id": "26122075017",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 16
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.25
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.25
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.25
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1216
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1162
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.09775
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-20T19:45:48Z",
     "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
     "run_id": "26185212041",
@@ -5164,6 +5124,42 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.06077
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-03T22:14:52Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28680614714",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.02501
       }
     ]
   }
