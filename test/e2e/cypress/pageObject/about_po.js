@@ -31,10 +31,15 @@ export const pageTitleIsDisplayed = () =>
   cy.get(pageTitle).should('have.text', 'About Trento Console');
 
 export const expectedServerVersionIsDisplayed = () =>
-  cy.readFile(versionFilePath, 'utf8').then((version) => {
-    version = version.trim();
-    return cy.get(versionLabels.server).should('have.text', version);
-  });
+  Cypress.expose('web_mode') === 'prod'
+    ? expectedComponentVersionIsDisplayed('server')
+    : cy.readFile(versionFilePath, 'utf8').then((expectedVersion) => {
+        expectedVersion = expectedVersion.trim();
+
+        return cy
+          .get(versionLabels.server)
+          .should('have.text', expectedVersion);
+      });
 
 export const expectedGithubUrlIsDisplayed = () =>
   cy
