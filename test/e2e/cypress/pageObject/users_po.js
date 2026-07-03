@@ -18,6 +18,7 @@ export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
 const profileEndpointAlias = 'analyticsClosed';
+const clearAIConfigurationEndpointAlias = 'clearAIConfiguration';
 
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
@@ -699,11 +700,11 @@ export const clickCancelClearAIConfiguration = () =>
 
 export const clickConfirmClearAIConfiguration = (shouldWait = true) => {
   cy.intercept('DELETE', '/api/v1/profile/ai_configuration').as(
-    'clearAIConfiguration'
+    clearAIConfigurationEndpointAlias
   );
   cy.get(confirmClearAIConfigurationButton).click();
   if (shouldWait) {
-    basePage.waitForRequest('clearAIConfiguration');
+    basePage.waitForRequest(clearAIConfigurationEndpointAlias);
   }
 };
 
