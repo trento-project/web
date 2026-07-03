@@ -30,16 +30,6 @@ export const visit = () => basePage.visit(url);
 export const pageTitleIsDisplayed = () =>
   cy.get(pageTitle).should('have.text', 'About Trento Console');
 
-export const expectedComponentVersionIsDisplayed = (component) =>
-  cy
-    .get(versionLabels[component])
-    .invoke('text')
-    .should((version) => {
-      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
-      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
-        .true;
-    });
-
 export const expectedServerVersionIsDisplayed = () =>
   Cypress.expose('web_mode') === 'prod'
     ? expectedComponentVersionIsDisplayed('server')
@@ -55,6 +45,16 @@ export const expectedGithubUrlIsDisplayed = () =>
   cy
     .get(githubRepositoryLabel)
     .should('have.text', 'https://github.com/trento-project/web');
+
+export const expectedComponentVersionIsDisplayed = (component) =>
+  cy
+    .get(versionLabels[component])
+    .invoke('text')
+    .should((version) => {
+      const isValidVersion = semver.valid(semver.coerce(version)) !== null;
+      expect(isValidVersion, `expected "${version}" to be a valid semver`).to.be
+        .true;
+    });
 
 export const expectedSlesForSapSubscriptionsAreDisplayed = (subscriptions) =>
   cy
