@@ -246,8 +246,7 @@ describe('Users', () => {
     });
   });
 
-  // eslint-disable-next-line mocha/no-exclusive-tests
-  describe.only('TOTP authentication', () => {
+  describe('TOTP authentication', () => {
     beforeEach(() => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
