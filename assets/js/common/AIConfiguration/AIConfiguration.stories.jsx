@@ -22,18 +22,18 @@ export default {
       type: 'function',
       description: 'Updates AI configuration',
     },
-    onEditClick: {
+    onClear: {
       type: 'function',
-      description: 'Edit button click handler',
+      description: 'Clears AI configuration',
     },
   },
   args: {
     aiConfiguration: {},
-    onEditClick: action('Edit button clicked!'),
+    onClear: action('Clear button clicked!'),
   },
 };
 
-export const Default = {
+export const Configured = {
   args: {
     aiConfiguration: aiConfigurationFactory.build(),
   },
