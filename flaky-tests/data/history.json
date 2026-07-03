@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-19T19:25:31Z",
-    "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
-    "run_id": "26119309340",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-19T19:47:27Z",
     "commit": "0134ce7b92303d80f7bf5a39c2e44d7b3cf16f45",
     "run_id": "26120202327",
@@ -5162,5 +5146,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-03T18:36:46Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28677192881",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
