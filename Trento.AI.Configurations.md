@@ -3,6 +3,16 @@
 
 This module is responsible for managing user AI configurations.
 
+# `clear_user_configuration`
+
+```elixir
+@spec clear_user_configuration(Trento.Users.User.t()) :: :ok | {:error, :forbidden}
+```
+
+Clears a user's AI configuration.
+
+Only eligible users (not deleted or locked) can clear their AI configuration.
+
 # `create_user_configuration`
 
 ```elixir

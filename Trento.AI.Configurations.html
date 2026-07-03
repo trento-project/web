@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-B48D1D7F.js"></script>
+    <script defer src="dist/sidebar_items-ADE21433.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -137,6 +137,16 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#clear_user_configuration/1" data-no-tooltip="" translate="no">clear_user_configuration(user)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Clears a user's AI configuration.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#create_user_configuration/2" data-no-tooltip="" translate="no">create_user_configuration(user, attrs)</a>
 
       </div>
@@ -169,6 +179,34 @@ Trento Web
     </h2>
 
     <div class="functions-list">
+<section class="detail" id="clear_user_configuration/1">
+
+  <div class="detail-header">
+    <a href="#clear_user_configuration/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">clear_user_configuration(user)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/configurations.ex#L70" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> clear_user_configuration(Trento.Users.User.t()) :: :ok | {:error, :forbidden}</pre>
+
+      </div>
+
+<p>Clears a user's AI configuration.</p><p>Only eligible users (not deleted or locked) can clear their AI configuration.</p>
+  </section>
+</section>
 <section class="detail" id="create_user_configuration/2">
 
   <div class="detail-header">
@@ -179,7 +217,7 @@ Trento Web
       <h1 class="signature" translate="no">create_user_configuration(user, attrs)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/configurations.ex#L22" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/configurations.ex#L24" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -210,7 +248,7 @@ Trento Web
       <h1 class="signature" translate="no">update_user_configuration(user, attrs)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/configurations.ex#L44" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/configurations.ex#L46" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

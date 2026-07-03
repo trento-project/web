@@ -3,6 +3,12 @@
 
 The `Trento.AI` module provides functions to interact with the AI features of the Trento application.
 
+# `clear_user_configuration`
+
+Clears a user's AI configuration.
+
+See `Trento.AI.Configurations.clear_user_configuration/1` for more details.
+
 # `create_user_configuration`
 
 Creates a user configuration for AI.
