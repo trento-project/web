@@ -16,8 +16,8 @@ function AIConfigurationClearModal({
     <Modal title="Clear AI Configuration" open={open} onClose={onCancel}>
       <div className="py-4">
         <p className="text-gray-500">
-          By clearing the AI Configuration will no longer be available until a
-          new configuration is provided.
+          By clearing the AI Configuration, Liz will no longer be available
+          until a new configuration is provided.
         </p>
       </div>
       <span className="flex w-1/3">

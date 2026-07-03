@@ -18,6 +18,7 @@ export const DEFAULT_TOKEN_EXPIRES_AT = addDays(new Date(), 10);
 
 const totpEnrollmentEndpointAlias = 'totpEnrollment';
 const profileEndpointAlias = 'analyticsClosed';
+const clearAIConfigurationEndpointAlias = 'clearAIConfiguration';
 
 // UI Element Selectors
 const createUserButton = 'button:contains("Create User")';
@@ -104,6 +105,15 @@ const aiSelectModelDropdown = basePage.getSelectControlValue(
 const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
 
 const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
+
+const aiConfigurationClearButton =
+  'button[aria-label="ai-configuration-clear-button"]:contains("Clear Settings")';
+const clearAIConfigurationModal =
+  'div[id*="headlessui-dialog-panel"] h2:contains("Clear AI Configuration")';
+const confirmClearAIConfigurationButton =
+  'button[aria-label="confirm-clear-ai-settings"]';
+const cancelClearAIConfigurationButton =
+  'div[id*="headlessui-dialog-panel"] button:contains("Cancel")';
 
 // Toaster Messages
 const userAlreadyUpdatedWarning =
@@ -674,6 +684,34 @@ export const clickModalUpdateAIConfigurationButton = (shouldWait = true) => {
     'updateAIConfiguration',
     shouldWait
   );
+};
+
+export const clearAIConfigurationButtonIsDisabled = () =>
+  cy.get(aiConfigurationClearButton).should('be.disabled');
+
+export const clearAIConfigurationButtonIsEnabled = () =>
+  cy.get(aiConfigurationClearButton).should('not.be.disabled');
+
+export const clickClearAIConfigurationButton = () =>
+  cy.get(aiConfigurationClearButton).click();
+
+export const clearAIConfigurationModalIsDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('be.visible');
+
+export const clearAIConfigurationModalIsNotDisplayed = () =>
+  cy.get(clearAIConfigurationModal).should('not.exist');
+
+export const clickCancelClearAIConfiguration = () =>
+  cy.get(cancelClearAIConfigurationButton).click();
+
+export const clickConfirmClearAIConfiguration = (shouldWait = true) => {
+  cy.intercept('DELETE', '/api/v1/profile/ai_configuration').as(
+    clearAIConfigurationEndpointAlias
+  );
+  cy.get(confirmClearAIConfigurationButton).click();
+  if (shouldWait) {
+    basePage.waitForRequest(clearAIConfigurationEndpointAlias);
+  }
 };
 
 export const apiModifyUserFullName = () =>
