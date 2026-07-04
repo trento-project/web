@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-20T19:46:48Z",
-    "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
-    "run_id": "26185212041",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
-        "score": 0.02501
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a specific host should complete discovery",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-20T20:12:27Z",
     "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
     "run_id": "26186300860",
@@ -5137,5 +5117,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-04T18:26:39Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28715142446",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
+        "score": 0.02501
+      }
+    ]
   }
 ]
