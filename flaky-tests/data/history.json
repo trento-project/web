@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-20T20:13:29Z",
-    "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
-    "run_id": "26186300860",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.08281
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.07251
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-20T23:20:26Z",
     "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
     "run_id": "26188193224",
@@ -5127,6 +5107,22 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.08646
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-04T18:57:26Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28715865884",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "DatabasesOverview component › filtering::should filter the table content by SID filter",
+        "score": 0.02501
       }
     ]
   }
