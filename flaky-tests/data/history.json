@@ -1,53 +1,5 @@
 [
   {
-    "timestamp": "2026-05-20T23:20:26Z",
-    "commit": "55a472d002fb8b6c4d4043ec49d07c095cc6eafd",
-    "run_id": "26188193224",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 21
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1688
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1220
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1104
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.06146
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.05001
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.02501
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-21T19:22:12Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26247246423",
@@ -5122,6 +5074,22 @@
     "top_flaky_tests": [
       {
         "name": "DatabasesOverview component › filtering::should filter the table content by SID filter",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-04T22:04:52Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28717395532",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show the expected cluster stopped state::HANA cluster details Cluster state should show the expected cluster stopped state",
         "score": 0.02501
       }
     ]
