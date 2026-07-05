@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-05-21T19:23:24Z",
-    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
-    "run_id": "26247246423",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.03696
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-21T19:47:22Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26248290242",
@@ -5083,6 +5055,30 @@
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-05T18:27:36Z",
+    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
+    "run_id": "28750150969",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request saptune discovery request when 'pacemaker_disable' operation is completed",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.02501
       }
     ]
   }
