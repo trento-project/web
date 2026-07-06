@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-22T19:36:39Z",
-    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
-    "run_id": "26307226888",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1469
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.08646
-      },
-      {
-        "name": "search::should not match not included words",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-22T23:00:55Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26309673667",
@@ -5027,6 +5003,26 @@
       {
         "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-06T19:42:04Z",
+    "commit": "af7bc77da4bc0477b27ebd094fefd0c939938d14",
+    "run_id": "28817221560",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.05001
       }
     ]
   }
