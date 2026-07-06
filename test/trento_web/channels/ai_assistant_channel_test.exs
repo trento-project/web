@@ -1060,6 +1060,13 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ai_configuration_cleared", %{})
     end
+
+    test "pushes ai_configuration_created when the configuration is (re)created",
+         %{user_id: user_id} do
+      Trento.AI.broadcast_ai_configuration_created(user_id)
+
+      assert_push("ai_configuration_created", %{})
+    end
   end
 
   defp join_socket(_context) do

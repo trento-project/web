@@ -534,4 +534,15 @@ describe('WebSocketAIAgent', () => {
       expect(onAIConfigurationCleared).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('ai_configuration_created', () => {
+    it('invokes onAIConfigurationCreated', async () => {
+      const onAIConfigurationCreated = jest.fn();
+      const { channel } = await connectedAgent({ onAIConfigurationCreated });
+
+      channel.emit('ai_configuration_created');
+
+      expect(onAIConfigurationCreated).toHaveBeenCalledTimes(1);
+    });
+  });
 });

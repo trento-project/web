@@ -330,6 +330,15 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
+  def handle_info({:ai_configuration, :created}, socket) do
+    # The user's AI configuration was (re)created (this or another tab / API).
+    # Tell the client it can re-enable the assistant.
+    push(socket, "ai_configuration_created", %{})
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(_msg, socket), do: {:noreply, socket}
 
   defp delta_text(%{content: %{type: :text, content: text}}), do: text

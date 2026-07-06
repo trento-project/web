@@ -193,6 +193,43 @@ describe('AG-UI event flow', () => {
     );
   });
 
+  it('prompts to start a new chat when a new config arrives after a clear', async () => {
+    const { channel } = await renderAssistant();
+
+    await act(async () => {
+      channel.emit('ai_configuration_cleared');
+    });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).toBeDisabled();
+    });
+
+    // New config arrives while the cleared chat is still open.
+    await act(async () => {
+      channel.emit('ai_configuration_created');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/new AI configuration is available/i)
+      ).toBeInTheDocument();
+    });
+    // Still read-only until the user explicitly restarts...
+    expect(screen.getByLabelText('Message input')).toBeDisabled();
+    // ...but "New chat" is enabled to restart the loop.
+    const newChat = screen.getByRole('button', { name: 'New chat' });
+    expect(newChat).not.toBeDisabled();
+
+    const user = userEvent.setup();
+    await user.click(newChat);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).not.toBeDisabled();
+    });
+    expect(
+      screen.queryByText(/new AI configuration is available/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('handles a follow-up turn after the previous one finishes', async () => {
     const { sendUserMessage, streamAssistantTurn } = await renderAssistant();
 

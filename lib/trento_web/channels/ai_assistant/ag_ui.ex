@@ -108,13 +108,14 @@ defmodule TrentoWeb.AIAssistant.AgUi do
       })
 
   @doc """
-  Emits a standalone assistant text message informing the user that the
-  provider/model backing this conversation changed.
+  Emits an assistant text message informing the user that the provider/model
+  backing this conversation changed.
 
-  Uses its own `message_id` (`model_change_<run_id>`) so the notice renders
-  as a separate bubble and does not merge with the run's streamed reply
-  (which streams under `run_id`). The full START/CONTENT/END trio is emitted
-  synchronously — it's a fixed one-shot message, not a stream.
+  assistant-ui collapses every text message within a single run into one
+  bubble, so the notice would otherwise blend into the streamed reply. To keep
+  it visually distinct we format it as a Markdown blockquote followed by a
+  thematic break (horizontal rule) — a self-contained callout separated from
+  the response that follows. Emitted before the reply's own deltas arrive.
   """
   @spec model_change_notice(Socket.t(), %{provider: atom(), model: String.t()}) :: Socket.t()
   def model_change_notice(
@@ -122,7 +123,9 @@ defmodule TrentoWeb.AIAssistant.AgUi do
         %{provider: provider, model: model}
       ) do
     message_id = "model_change_#{run_id}"
-    text = "ℹ️ AI model changed to #{provider_label(provider)} (#{model}) for this conversation."
+
+    text =
+      "> ℹ️ **AI model changed** to #{provider_label(provider)} (#{model}) for this conversation.\n\n---\n"
 
     socket
     |> push_event(%TextMessageStart{message_id: message_id, role: "assistant"})

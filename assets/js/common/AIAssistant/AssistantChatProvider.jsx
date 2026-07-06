@@ -15,6 +15,7 @@ function AssistantChatProvider({
   threadID,
   onConnectionChange = noop,
   onAIConfigurationCleared = noop,
+  onAIConfigurationCreated = noop,
   children,
 }) {
   const socket = useSocket();
@@ -26,8 +27,15 @@ function AssistantChatProvider({
       userID,
       onConnectionChange,
       onAIConfigurationCleared,
+      onAIConfigurationCreated,
     });
-  }, [socket, userID, onConnectionChange, onAIConfigurationCleared]);
+  }, [
+    socket,
+    userID,
+    onConnectionChange,
+    onAIConfigurationCleared,
+    onAIConfigurationCreated,
+  ]);
 
   useEffect(() => {
     if (!agent) return undefined;

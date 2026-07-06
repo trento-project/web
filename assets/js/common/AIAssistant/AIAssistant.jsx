@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';
 
@@ -14,6 +14,7 @@ import Tooltip from '@common/Tooltip';
 import AssistantChatProvider from './AssistantChatProvider';
 import AssistantThread from './AssistantThread';
 import ModalFrame from './ModalFrame';
+import { STATUS } from './status';
 
 const disabledTooltipContent = (
   <span className="text-center">
@@ -61,7 +62,7 @@ export function AssistantUI({
   onOpenChange,
   onNewThread,
   handleClose,
-  disabled = false,
+  status = STATUS.OK,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
@@ -74,7 +75,7 @@ export function AssistantUI({
         onNewThread={onNewThread}
         isEmpty={isEmpty}
         isRunning={isRunning}
-        disabled={disabled}
+        status={status}
       />
     </ModalFrame>
   );
@@ -92,22 +93,43 @@ function AIAssistant({
   const [connectionStatus, setConnectionStatus] = useState(
     initialConnectionStatus
   );
-  // Starts from the initial prop; flips to false in real time when the user's
-  // AI configuration is cleared (this or another tab / a raw API call).
-  const [available, setAvailable] = useState(aiConfigured);
+  // Driven in real time by AI configuration lifecycle events pushed over the
+  // channel (this or another tab / a raw API call). Initial value comes from
+  // whether the user was configured at mount.
+  const [status, setStatus] = useState(
+    aiConfigured ? STATUS.OK : STATUS.CLEARED
+  );
 
-  const onNewThread = () => setThreadID(crypto.randomUUID());
+  // The channel stays mounted even when the launcher is disabled, so a "created"
+  // event can re-enable this tab. Handlers read the latest `isOpen` via a ref
+  // since they're memoized once (stable identity keeps the agent from rebuilding).
+  const isOpenRef = useRef(isOpen);
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  const startNewThread = useCallback(() => {
+    setThreadID(crypto.randomUUID());
+    setStatus(STATUS.OK);
+  }, []);
+
   const handleAIConfigurationCleared = useCallback(
-    () => setAvailable(false),
+    () => setStatus(STATUS.CLEARED),
     []
   );
 
-  // Once unavailable AND closed, the launcher becomes the disabled trigger and
-  // cannot be reopened. While an unavailable chat is still open it stays
-  // mounted so the user sees the read-only "cleared" state until they close it.
-  if (!available && !isOpen) {
-    return <DisabledAssistant />;
-  }
+  const handleAIConfigurationCreated = useCallback(() => {
+    // A still-open cleared chat must be explicitly restarted by the user;
+    // otherwise (closed launcher) just re-enable and reset the thread so the
+    // next open starts fresh.
+    if (isOpenRef.current) {
+      setStatus((prev) => (prev === STATUS.CLEARED ? STATUS.RESTORED : prev));
+    } else {
+      startNewThread();
+    }
+  }, [startNewThread]);
+
+  const available = status !== STATUS.CLEARED;
 
   return (
     <AssistantChatProvider
@@ -115,15 +137,23 @@ function AIAssistant({
       threadID={threadID}
       onConnectionChange={setConnectionStatus}
       onAIConfigurationCleared={handleAIConfigurationCleared}
+      onAIConfigurationCreated={handleAIConfigurationCreated}
     >
-      <AssistantUI
-        open={isOpen}
-        connectionStatus={connectionStatus}
-        onOpenChange={setIsOpen}
-        onNewThread={onNewThread}
-        handleClose={handleClose}
-        disabled={!available}
-      />
+      {!available && !isOpen ? (
+        // Launcher disabled + closed: hover tooltip points to Profile. The
+        // provider (and channel) stays mounted so a later "created" event
+        // re-enables this tab.
+        <DisabledAssistant />
+      ) : (
+        <AssistantUI
+          open={isOpen}
+          connectionStatus={connectionStatus}
+          onOpenChange={setIsOpen}
+          onNewThread={startNewThread}
+          handleClose={handleClose}
+          status={status}
+        />
+      )}
     </AssistantChatProvider>
   );
 }

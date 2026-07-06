@@ -64,6 +64,19 @@ defmodule Trento.AI do
         {:ai_configuration, :cleared}
       )
 
+  @doc """
+  Broadcasts that the given user's AI configuration was created, so all of the
+  user's open AI Assistant channels can re-enable themselves.
+  """
+  @spec broadcast_ai_configuration_created(non_neg_integer()) :: :ok
+  def broadcast_ai_configuration_created(user_id),
+    do:
+      Phoenix.PubSub.broadcast(
+        Trento.PubSub,
+        ai_configuration_topic(user_id),
+        {:ai_configuration, :created}
+      )
+
   defp configurations,
     do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
 end

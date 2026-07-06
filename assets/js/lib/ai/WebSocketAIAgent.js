@@ -67,6 +67,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     userID,
     onConnectionChange,
     onAIConfigurationCleared,
+    onAIConfigurationCreated,
     ...options
   }) {
     super(options);
@@ -76,6 +77,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.channel = null;
     this.onConnectionChange = onConnectionChange;
     this.onAIConfigurationCleared = onAIConfigurationCleared;
+    this.onAIConfigurationCreated = onAIConfigurationCreated;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
@@ -144,6 +146,9 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
     this.channel.on('ai_configuration_cleared', () =>
       this._handleAIConfigurationCleared()
+    );
+    this.channel.on('ai_configuration_created', () =>
+      this.onAIConfigurationCreated?.()
     );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);

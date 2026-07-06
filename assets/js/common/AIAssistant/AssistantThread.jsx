@@ -10,13 +10,22 @@ import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
+import { STATUS } from './status';
 
-function ClearedBanner() {
+function ThreadBanner({ children }) {
   return (
     <div
       className="mb-3 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-800"
       role="alert"
     >
+      {children}
+    </div>
+  );
+}
+
+function ClearedBanner() {
+  return (
+    <ThreadBanner>
       Your AI settings were cleared. This conversation is now read-only.
       Configure AI in your{' '}
       <Link
@@ -26,7 +35,15 @@ function ClearedBanner() {
         Profile
       </Link>{' '}
       to continue.
-    </div>
+    </ThreadBanner>
+  );
+}
+
+function RestoredBanner() {
+  return (
+    <ThreadBanner>
+      A new AI configuration is available. Start a new chat to continue.
+    </ThreadBanner>
   );
 }
 
@@ -36,8 +53,10 @@ function AssistantThread({
   isRunning = false,
   onNewThread = noop,
   onClose = noop,
-  disabled = false,
+  status = STATUS.OK,
 }) {
+  const inputDisabled = status !== STATUS.OK;
+  const newChatDisabled = status === STATUS.CLEARED;
   return (
     <ThreadPrimitive.Root
       className="relative flex h-full flex-col bg-white text-sm"
@@ -51,7 +70,7 @@ function AssistantThread({
         connectionStatus={connectionStatus}
         onNewChat={onNewThread}
         onClose={onClose}
-        disabled={disabled}
+        disabled={newChatDisabled}
       />
       <ThreadPrimitive.Viewport
         turnAnchor="top"
@@ -72,11 +91,12 @@ function AssistantThread({
           }}
         </ThreadPrimitive.Messages>
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
-          {disabled && <ClearedBanner />}
+          {status === STATUS.CLEARED && <ClearedBanner />}
+          {status === STATUS.RESTORED && <RestoredBanner />}
           <PromptComposer
             connectionStatus={connectionStatus}
             isRunning={isRunning}
-            disabled={disabled}
+            disabled={inputDisabled}
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>

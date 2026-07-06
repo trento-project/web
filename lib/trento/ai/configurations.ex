@@ -28,6 +28,15 @@ defmodule Trento.AI.Configurations do
     %UserConfiguration{}
     |> UserConfiguration.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.insert()
+    |> tap(fn
+      {:ok, _} ->
+        # Notify every open AI Assistant channel for this user (all browser
+        # tabs) so they re-enable themselves in real time.
+        Trento.AI.broadcast_ai_configuration_created(user_id)
+
+      _ ->
+        :ok
+    end)
   end
 
   def create_user_configuration(%User{}, _), do: {:error, :forbidden}

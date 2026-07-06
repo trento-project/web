@@ -57,8 +57,8 @@ function PromptComposer({
   const inputDisabled = !isConnected || disabled;
   const placeholder = disabled
     ? 'AI Assistant is disabled'
-    : PLACEHOLDERS[connectionStatus] ??
-      PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED];
+    : (PLACEHOLDERS[connectionStatus] ??
+      PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED]);
 
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
