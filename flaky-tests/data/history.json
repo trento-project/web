@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-22T19:35:52Z",
-    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
-    "run_id": "26307226888",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-22T19:36:39Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26307226888",
@@ -5026,6 +5006,26 @@
       },
       {
         "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-06T19:41:07Z",
+    "commit": "af7bc77da4bc0477b27ebd094fefd0c939938d14",
+    "run_id": "28817221560",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.1538
+      },
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
         "score": 0.02501
       }
     ]
