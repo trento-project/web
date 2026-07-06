@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
-import { userFactory } from '@lib/test-utils/factories/users';
+import {
+  userFactory,
+  aiConfigurationFactory,
+} from '@lib/test-utils/factories/users';
 
 import userReducer, {
   setAuthError,
@@ -58,6 +61,7 @@ describe('user reducer', () => {
       analytics_eula_accepted,
       timezone,
     } = userFactory.build();
+    const ai_configuration = aiConfigurationFactory.build();
 
     const action = setUser({
       username,
@@ -70,6 +74,7 @@ describe('user reducer', () => {
       analytics_enabled,
       analytics_eula_accepted,
       timezone,
+      ai_configuration,
     });
 
     expect(userReducer(initialState, action)).toEqual({
@@ -84,6 +89,7 @@ describe('user reducer', () => {
       analytics_enabled,
       analytics_eula_accepted,
       timezone,
+      ai_configuration,
     });
   });
 });

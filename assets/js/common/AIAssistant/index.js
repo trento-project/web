@@ -4,7 +4,8 @@
 import AIAssistant from './AIAssistant';
 import AssistantChatProvider from './AssistantChatProvider';
 import AssistantThread from './AssistantThread';
+import AIAssistantDisabledTrigger from './AIAssistantDisabledTrigger';
 
-export { AssistantChatProvider, AssistantThread };
+export { AssistantChatProvider, AssistantThread, AIAssistantDisabledTrigger };
 
 export default AIAssistant;

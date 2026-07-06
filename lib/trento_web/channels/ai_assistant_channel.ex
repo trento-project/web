@@ -179,6 +179,8 @@ defmodule TrentoWeb.AIAssistantChannel do
          model_config,
          prompt
        ) do
+    previous_model = TrentoAIAgent.running_model(thread_id)
+
     [
       agent_id: thread_id,
       model: model_config,
@@ -189,12 +191,13 @@ defmodule TrentoWeb.AIAssistantChannel do
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(prompt, refresh_when: &access_token_changed/2)
+    |> TrentoAIAgent.run(prompt, refresh_when: &agent_config_changed/2)
     |> case do
       :ok ->
         socket
         |> activate_run(run_id)
         |> AgUi.run_started(run_id, thread_id)
+        |> maybe_notify_model_change(previous_model, model_config)
 
       {:error, reason} ->
         error_msg = "Failed to start agent: #{inspect(reason)}"
@@ -207,18 +210,34 @@ defmodule TrentoWeb.AIAssistantChannel do
     |> then(&{:noreply, &1})
   end
 
-  defp access_token_changed(
-         %{tool_context: %{access_token: token}} = _current_agent,
-         %{tool_context: %{access_token: token}} = _new_agent
-       ) do
-    # IO.inspect("access token unchanged - no agent update needed")
-    :noop
+  # Hot-swap the running agent when either the access_token OR the effective
+  # model config changed. The freshly built agent already carries both the
+  # current token and the current model, so returning {:ok, new_agent}
+  # applies everything. `model` is the LangChain ChatModel struct; ChatX.new!/1
+  # is deterministic, so an unchanged config yields equal structs → :noop.
+  # A changed provider (different struct), model, or api_key → structs differ
+  # → swap.
+  defp agent_config_changed(
+         %{model: model, tool_context: %{access_token: token}} = _current_agent,
+         %{model: model, tool_context: %{access_token: token}} = _new_agent
+       ),
+       do: :noop
+
+  defp agent_config_changed(_current_agent, new_agent), do: {:ok, new_agent}
+
+  # Inform the user in-conversation when the provider or model changed for an
+  # already-running thread. api-key-only changes swap silently (nothing the
+  # user needs to see). New threads (:not_running) never notify.
+  defp maybe_notify_model_change(socket, {:ok, previous_model}, new_model) do
+    old = LLMBuilder.describe(previous_model)
+    new = LLMBuilder.describe(new_model)
+
+    if old.provider != new.provider or old.model != new.model,
+      do: AgUi.model_change_notice(socket, new),
+      else: socket
   end
 
-  defp access_token_changed(_current_agent, new_agent) do
-    # IO.inspect("access token changed - refreshing agent with new token")
-    {:ok, new_agent}
-  end
+  defp maybe_notify_model_change(socket, :not_running, _new_model), do: socket
 
   @impl true
   def handle_info({:agent, {:status_changed, :running, nil}}, socket),

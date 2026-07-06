@@ -223,6 +223,27 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  describe "running_model/1" do
+    test "returns {:ok, model} with the running agent's chat-model struct" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+      model = build(:random_langchain_model)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id, model: model}}
+      end)
+
+      assert {:ok, ^model} = TrentoAIAgent.running_model(agent_id)
+    end
+
+    test "returns :not_running when no AgentServer is alive for the id" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id -> {:error, :not_found} end)
+
+      assert :not_running = TrentoAIAgent.running_model(agent_id)
+    end
+  end
+
   defp run_opts(_ctx) do
     agent_id = "thread-#{Faker.UUID.v4()}"
     model = build(:random_langchain_model)

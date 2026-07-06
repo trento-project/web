@@ -7,7 +7,7 @@ import { NavLink, Outlet } from 'react-router';
 
 import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
-import { getUserProfile } from '@state/selectors/user';
+import { getUserProfile, hasAIConfiguration } from '@state/selectors/user';
 import { optinCapturing, reset } from '@lib/analytics';
 
 import {
@@ -33,7 +33,7 @@ import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
 import { SocketProvider } from '@common/SocketProvider';
-import AIAssistant from '@common/AIAssistant';
+import AIAssistant, { AIAssistantDisabledTrigger } from '@common/AIAssistant';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -103,6 +103,7 @@ function Layout() {
   }, [isCollapsed]);
 
   const { id, username, email } = useSelector(getUserProfile);
+  const aiConfigured = useSelector(hasAIConfiguration);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -248,11 +249,14 @@ function Layout() {
           </span>
         </footer>
       </div>
-      {getFromConfig('aiEnabled') && (
-        <SocketProvider>
-          <AIAssistant userID={id} />
-        </SocketProvider>
-      )}
+      {getFromConfig('aiEnabled') &&
+        (aiConfigured ? (
+          <SocketProvider>
+            <AIAssistant userID={id} />
+          </SocketProvider>
+        ) : (
+          <AIAssistantDisabledTrigger />
+        ))}
     </main>
   );
 }

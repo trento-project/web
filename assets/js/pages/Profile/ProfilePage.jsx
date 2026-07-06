@@ -180,7 +180,11 @@ function ProfilePage() {
   const handleSuccessfulAIConfigOperation =
     (successMessage) =>
     ({ data }) => {
-      setUser({ ...userState, ai_configuration: data });
+      const updatedUser = { ...userState, ai_configuration: data };
+      setUser(updatedUser);
+      // Keep the store in sync so the AI Assistant launcher enables/disables
+      // immediately, without waiting for a full page reload.
+      dispatch(setUserInState(updatedUser));
       toast.success(successMessage);
     };
 

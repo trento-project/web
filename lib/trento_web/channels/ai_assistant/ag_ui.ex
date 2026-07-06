@@ -107,6 +107,35 @@ defmodule TrentoWeb.AIAssistant.AgUi do
         role: "tool"
       })
 
+  @doc """
+  Emits a standalone assistant text message informing the user that the
+  provider/model backing this conversation changed.
+
+  Uses its own `message_id` (`model_change_<run_id>`) so the notice renders
+  as a separate bubble and does not merge with the run's streamed reply
+  (which streams under `run_id`). The full START/CONTENT/END trio is emitted
+  synchronously — it's a fixed one-shot message, not a stream.
+  """
+  @spec model_change_notice(Socket.t(), %{provider: atom(), model: String.t()}) :: Socket.t()
+  def model_change_notice(
+        %{assigns: %{current_run_id: run_id}} = socket,
+        %{provider: provider, model: model}
+      ) do
+    message_id = "model_change_#{run_id}"
+    text = "ℹ️ AI model changed to #{provider_label(provider)} (#{model}) for this conversation."
+
+    socket
+    |> push_event(%TextMessageStart{message_id: message_id, role: "assistant"})
+    |> push_event(%TextMessageContent{message_id: message_id, delta: text})
+    |> push_event(%TextMessageEnd{message_id: message_id})
+  end
+
+  # Human-friendly provider labels, mirroring assets/js/lib/ai/providers.js.
+  defp provider_label(:googleai), do: "Google Gemini"
+  defp provider_label(:openai), do: "OpenAI GPT"
+  defp provider_label(:anthropic), do: "Anthropic Claude"
+  defp provider_label(other), do: to_string(other)
+
   @spec format_error(term()) :: String.t()
   defp format_error(message) when is_binary(message), do: message
 
