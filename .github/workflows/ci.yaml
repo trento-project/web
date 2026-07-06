@@ -391,7 +391,7 @@ jobs:
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
         with:
           timeout_minutes: 30
-          max_attempts: 3
+          max_attempts: 2
           retry_on: error
           command: cd assets && npm test
           on_retry_command: |
@@ -442,7 +442,7 @@ jobs:
           MIX_ENV: test
         with:
           timeout_minutes: 30
-          max_attempts: 3
+          max_attempts: 2
           retry_on: error
           command: mix coveralls.json --warnings-as-errors --trace
           on_retry_command: |
@@ -602,9 +602,18 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm ci
+      - name: Install Cypress binary
+        if: steps.cypress-binary-cache.outputs.cache-hit != 'true'
+        run: cd test/e2e && npx cypress install
 
   test-e2e:
     name: E2E Tests
@@ -656,6 +665,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -685,22 +700,25 @@ jobs:
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
-        with:
-          timeout_minutes: 30
-          max_attempts: 3
-          retry_on: error
-          command: |
-            cd test/e2e
-            npx cypress run \
-              --config baseUrl=http://localhost:4000 \
-              --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
-          on_retry_command: |
-            echo "::warning::E2E tests (container ${{ matrix.containers }}) failed, retrying..."
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
+        with:
+          timeout_minutes: 30
+          max_attempts: 2
+          retry_on: error
+          command: |
+            cd test/e2e
+            export SPLIT="${{ strategy.job-total }}"
+            export SPLIT_INDEX="${{ strategy.job-index }}"
+            export SPLIT_FILE="cypress-split-timings.json"
+            npx cypress run \
+              --config baseUrl=http://localhost:4000 \
+              --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+          on_retry_command: |
+            echo "::warning::E2E tests (container ${{ matrix.containers }}) failed, retrying..."
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -764,6 +782,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
         with:
@@ -806,7 +830,7 @@ jobs:
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
         with:
           timeout_minutes: 30
-          max_attempts: 3
+          max_attempts: 2
           retry_on: error
           command: |
             cd test/e2e
@@ -931,6 +955,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install photofinish
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
@@ -962,7 +992,7 @@ jobs:
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
         with:
           timeout_minutes: 30
-          max_attempts: 3
+          max_attempts: 2
           retry_on: error
           command: |
             cd test/e2e
