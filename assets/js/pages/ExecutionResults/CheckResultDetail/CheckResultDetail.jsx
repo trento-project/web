@@ -21,9 +21,8 @@ function ExcludedCheckResultDetail({ excludeExpression }) {
   return (
     <div className="p-4 space-y-2" data-testid="excluded-by-policy">
       <p className="text-gray-700">
-        This host was{' '}
-        <span className="font-semibold">excluded by policy</span> and was not
-        evaluated for this check.
+        This host was <span className="font-semibold">excluded by policy</span>{' '}
+        and was not evaluated for this check.
       </p>
       {excludeExpression && (
         <div>
