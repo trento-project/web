@@ -107,6 +107,10 @@ export const APPLICATION_INSTANCE_MARKED_ABSENT =
   'application_instance_marked_absent';
 export const APPLICATION_INSTANCE_MARKED_PRESENT =
   'application_instance_marked_present';
+export const APPLICATION_INSTANCE_DATA_MARKED_STALE =
+  'application_instance_data_marked_stale';
+export const APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC =
+  'application_instance_data_marked_in_sync';
 export const APPLICATION_INSTANCE_MOVED = 'application_instance_moved';
 export const APPLICATION_INSTANCE_REGISTERED =
   'application_instance_registered';
@@ -133,6 +137,10 @@ export const DATABASE_INSTANCE_MARKED_ABSENT =
   'database_instance_marked_absent';
 export const DATABASE_INSTANCE_MARKED_PRESENT =
   'database_instance_marked_present';
+export const DATABASE_INSTANCE_DATA_MARKED_STALE =
+  'database_instance_data_marked_stale';
+export const DATABASE_INSTANCE_DATA_MARKED_IN_SYNC =
+  'database_instance_data_marked_in_sync';
 export const DATABASE_INSTANCE_REGISTERED = 'database_instance_registered';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'database_instance_system_replication_changed';
@@ -583,6 +591,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Application instance was marked present`,
     resource: sapSystemResourceType,
   },
+  [APPLICATION_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Application Instance Data Marked Stale',
+    message: (_entry) => `Application instance data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Application Instance Data Marked In Sync',
+    message: (_entry) => `Application instance data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   [APPLICATION_INSTANCE_MOVED]: {
     label: 'Application Instance Moved',
     message: (_entry) => `Application instance was moved`,
@@ -672,6 +690,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_INSTANCE_MARKED_PRESENT]: {
     label: 'Database Instance Marked Present',
     message: (_entry) => `Database instance was marked present`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Database Instance Data Marked Stale',
+    message: (_entry) => `Database instance data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Instance Data Marked In Sync',
+    message: (_entry) => `Database instance data was marked in sync`,
     resource: databaseResourceType,
   },
   [DATABASE_INSTANCE_REGISTERED]: {

@@ -8,6 +8,7 @@ import databaseReducer, {
   updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
   setDatabaseInstanceDeregistering,
   unsetDatabaseInstanceDeregistering,
 } from '@state/databases';
@@ -168,6 +169,33 @@ describe('Databases reducer', () => {
         {
           ...instance,
           absent_at: absentAt,
+        },
+      ],
+    };
+
+    expect(databaseReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of a database instance', () => {
+    const instance = databaseInstanceFactory.build();
+    const staleAt = Date.now();
+
+    const initialState = {
+      databaseInstances: [instance],
+    };
+
+    const instanceToUpdate = {
+      ...instance,
+      stale_at: staleAt,
+    };
+
+    const action = updateDatabaseInstanceStaleAt(instanceToUpdate);
+
+    const expectedState = {
+      databaseInstances: [
+        {
+          ...instance,
+          stale_at: staleAt,
         },
       ],
     };

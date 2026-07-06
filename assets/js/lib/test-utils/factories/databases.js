@@ -31,6 +31,7 @@ export const databaseInstanceFactory = Factory.define(() => ({
   system_replication_source_site: '',
   system_replication_tier: 0,
   absent_at: null,
+  stale_at: null,
 }));
 
 export const databaseFactory = Factory.define(({ params }) => {
