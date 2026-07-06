@@ -8,12 +8,18 @@ import { sortBy } from 'lodash';
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
 import InstanceOverview from '@pages/InstanceOverview';
 
-export function DatabaseInstance({ instance, userAbilities, onCleanUpClick }) {
+export function DatabaseInstance({
+  instance,
+  userAbilities,
+  userTimezone,
+  onCleanUpClick,
+}) {
   return (
     <InstanceOverview
       instanceType={DATABASE_TYPE}
       instance={instance}
       userAbilities={userAbilities}
+      userTimezone={userTimezone}
       cleanUpPermittedFor={['cleanup:database_instance']}
       onCleanUpClick={onCleanUpClick}
     />
@@ -34,6 +40,7 @@ function PlainDatabaseItemOverview({
   instances,
   asDatabaseLayer = false,
   userAbilities,
+  userTimezone,
   onCleanUpClick,
 }) {
   const sortedInstances = sortBy(instances, ['system_replication_tier']);
@@ -69,6 +76,7 @@ function PlainDatabaseItemOverview({
                   key={`${instance.host_id}_${instance.instance_number}`}
                   instance={instance}
                   userAbilities={userAbilities}
+                  userTimezone={userTimezone}
                   onCleanUpClick={onCleanUpClick}
                 />
               ))}
@@ -79,23 +87,35 @@ function PlainDatabaseItemOverview({
   );
 }
 
-function DatabaseLayer({ instances, userAbilities, onCleanUpClick }) {
+function DatabaseLayer({
+  instances,
+  userAbilities,
+  userTimezone,
+  onCleanUpClick,
+}) {
   return (
     <PlainDatabaseItemOverview
       instances={instances}
       asDatabaseLayer
       userAbilities={userAbilities}
+      userTimezone={userTimezone}
       onCleanUpClick={onCleanUpClick}
     />
   );
 }
 
-function DatabaseInstances({ instances, userAbilities, onCleanUpClick }) {
+function DatabaseInstances({
+  instances,
+  userAbilities,
+  userTimezone,
+  onCleanUpClick,
+}) {
   return (
     <div className="p-2">
       <PlainDatabaseItemOverview
         instances={instances}
         userAbilities={userAbilities}
+        userTimezone={userTimezone}
         onCleanUpClick={onCleanUpClick}
       />
     </div>
@@ -106,6 +126,7 @@ function DatabaseItemOverview({
   database,
   asDatabaseLayer = false,
   userAbilities,
+  userTimezone,
   onCleanUpClick,
 }) {
   const { databaseInstances } = database;
@@ -114,12 +135,14 @@ function DatabaseItemOverview({
     <DatabaseLayer
       instances={databaseInstances}
       userAbilities={userAbilities}
+      userTimezone={userTimezone}
       onCleanUpClick={onCleanUpClick}
     />
   ) : (
     <DatabaseInstances
       instances={databaseInstances}
       userAbilities={userAbilities}
+      userTimezone={userTimezone}
       onCleanUpClick={onCleanUpClick}
     />
   );
