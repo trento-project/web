@@ -714,9 +714,7 @@ jobs:
             export SPLIT="${{ strategy.job-total }}"
             export SPLIT_INDEX="${{ strategy.job-index }}"
             export SPLIT_FILE="cypress-split-timings.json"
-            npx cypress run \
-              --config baseUrl=http://localhost:4000 \
-              --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+            npx cypress run --config baseUrl=http://localhost:4000 --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
           on_retry_command: |
             echo "::warning::E2E tests (container ${{ matrix.containers }}) failed, retrying..."
       - name: Upload cypress test screenshots
@@ -828,21 +826,19 @@ jobs:
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
+        env:
+          cypress_video: false
+          CYPRESS_SPEC: ${{ matrix.cypress_spec }}
         with:
           timeout_minutes: 30
           max_attempts: 2
           retry_on: error
           command: |
             cd test/e2e
-            SPEC_FILES=$(echo "${{ matrix.cypress_spec }}" | tr '\n' ',')
-            npx cypress run \
-              --spec "$SPEC_FILES" \
-              --config baseUrl=http://localhost:4000 \
-              --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+            SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
+            npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --env photofinish_binary=${{ steps.photofinish-path.outputs.path }}
           on_retry_command: |
             echo "::warning::Regression tests (${{ matrix.test }}) failed, retrying..."
-        env:
-          cypress_video: false
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -990,21 +986,19 @@ jobs:
         run: mix phx.server &
       - name: Cypress run
         uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 #v4
+        env:
+          cypress_video: false
+          CYPRESS_SPEC: ${{ matrix.cypress_spec }}
         with:
           timeout_minutes: 30
           max_attempts: 2
           retry_on: error
           command: |
             cd test/e2e
-            SPEC_FILES=$(echo "${{ matrix.cypress_spec }}" | tr '\n' ',')
-            npx cypress run \
-              --spec "$SPEC_FILES" \
-              --config baseUrl=http://localhost:4000 \
-              --env photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
+            SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
+            npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --env photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
           on_retry_command: |
             echo "::warning::Integration tests (${{ matrix.test }}) failed, retrying..."
-        env:
-          cypress_video: false
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
