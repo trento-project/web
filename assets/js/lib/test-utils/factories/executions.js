@@ -118,7 +118,7 @@ export const agentCheckErrorFactory = Factory.define(() => ({
 export const agentCheckExcludedFactory = Factory.define(() => ({
   agent_id: faker.string.uuid(),
   status: 'excluded_by_policy',
-  exclude_expression: 'host["is_majority_maker"] == true',
+  exclude_expression: 'host.is_majority_maker == true',
   facts: [],
   values: [],
   expectation_evaluations: [],

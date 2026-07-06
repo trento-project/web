@@ -284,7 +284,7 @@ describe('CheckResultDetail Component', () => {
     const [{ id: target1 }] = clusterHosts;
     const targetType = 'host';
 
-    const excludeExpression = 'host["is_majority_maker"] == true';
+    const excludeExpression = 'host.is_majority_maker == true';
     const agentExcludedResult = agentCheckExcludedFactory.build({
       agent_id: target1,
       exclude_expression: excludeExpression,
