@@ -1033,6 +1033,35 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "handle_info — ai_configuration cleared" do
+    setup :join_socket_with_ai_config
+
+    test "stops the active agent, pushes ai_configuration_cleared, and resets loading",
+         %{socket: socket, user_id: user_id} do
+      seed_assigns(socket, %{
+        current_thread_id: "t-live",
+        loading: true,
+        run_has_started: true
+      })
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
+
+      Trento.AI.broadcast_ai_configuration_cleared(user_id)
+
+      assert_push("ai_configuration_cleared", %{})
+      assert %{loading: false} = wait_assigns(socket)
+    end
+
+    test "pushes ai_configuration_cleared without stopping any agent when no thread is active",
+         %{user_id: user_id} do
+      # No current_thread_id seeded → no stop_agent expectation.
+      # verify_on_exit! catches a stray stop_agent call.
+      Trento.AI.broadcast_ai_configuration_cleared(user_id)
+
+      assert_push("ai_configuration_cleared", %{})
+    end
+  end
+
   defp join_socket(_context) do
     jwt = generate_jwt(7)
     request_origin = "https://trento.test"

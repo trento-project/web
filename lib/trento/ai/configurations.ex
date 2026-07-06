@@ -71,6 +71,10 @@ defmodule Trento.AI.Configurations do
       when not is_nil(user_id) do
     Repo.delete_all(from u in UserConfiguration, where: u.user_id == ^user_id)
 
+    # Notify every open AI Assistant channel for this user (all browser tabs)
+    # so they disable themselves in real time.
+    Trento.AI.broadcast_ai_configuration_cleared(user_id)
+
     :ok
   end
 

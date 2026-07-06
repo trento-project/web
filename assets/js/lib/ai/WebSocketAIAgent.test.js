@@ -508,4 +508,30 @@ describe('WebSocketAIAgent', () => {
       expect(extractMessageText(message)).toBe('');
     });
   });
+
+  describe('ai_configuration_cleared', () => {
+    it('settles the active run (AbortError) and invokes the callback', async () => {
+      const onAIConfigurationCleared = jest.fn();
+      const { channel, agent } = await connectedAgent({
+        onAIConfigurationCleared,
+      });
+      const { error } = runAgent(agent);
+      await flushMicrotasks();
+
+      channel.emit('ai_configuration_cleared');
+
+      expect(onAIConfigurationCleared).toHaveBeenCalledTimes(1);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0].name).toBe('AbortError');
+    });
+
+    it('invokes the callback even when no run is active', async () => {
+      const onAIConfigurationCleared = jest.fn();
+      const { channel } = await connectedAgent({ onAIConfigurationCleared });
+
+      channel.emit('ai_configuration_cleared');
+
+      expect(onAIConfigurationCleared).toHaveBeenCalledTimes(1);
+    });
+  });
 });

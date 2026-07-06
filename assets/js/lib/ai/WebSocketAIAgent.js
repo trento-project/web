@@ -62,13 +62,20 @@ const withRefreshTokenOnUnauthorized = async (operation) => {
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
 export class WebSocketAIAgent extends AbstractAgent {
-  constructor({ socket, userID, onConnectionChange, ...options }) {
+  constructor({
+    socket,
+    userID,
+    onConnectionChange,
+    onAIConfigurationCleared,
+    ...options
+  }) {
     super(options);
 
     this.socket = socket;
     this.userID = userID;
     this.channel = null;
     this.onConnectionChange = onConnectionChange;
+    this.onAIConfigurationCleared = onAIConfigurationCleared;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
@@ -135,8 +142,20 @@ export class WebSocketAIAgent extends AbstractAgent {
     };
 
     this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
+    this.channel.on('ai_configuration_cleared', () =>
+      this._handleAIConfigurationCleared()
+    );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
+  }
+
+  // The user's AI configuration was cleared server-side (this or another tab,
+  // or a raw API call). Settle any in-flight run without surfacing an error
+  // (AbortError is AbstractAgent's expected-cancel path), then let the UI
+  // switch to its read-only / disabled state via the callback.
+  _handleAIConfigurationCleared() {
+    this._failActiveRun(new AbortError('AI configuration cleared'));
+    this.onAIConfigurationCleared?.();
   }
 
   _handleAgUiEvent(event) {

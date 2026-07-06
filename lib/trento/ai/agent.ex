@@ -80,6 +80,15 @@ defmodule Trento.AI.Agent do
   end
 
   @doc """
+  Stops the running agent for `agent_id`, terminating any in-flight run.
+
+  Best-effort — returns the supervisor's result verbatim (`{:error, term()}`
+  when no agent is running for the id).
+  """
+  @spec stop(String.t()) :: :ok | {:error, term()}
+  def stop(agent_id), do: AgentSupervisor.stop_agent(agent_id)
+
+  @doc """
   Returns the chat-model struct the running agent for `agent_id` is
   currently configured with, or `:not_running` when no AgentServer is
   alive for that id yet (e.g. a brand-new thread).

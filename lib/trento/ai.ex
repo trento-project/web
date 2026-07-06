@@ -41,6 +41,29 @@ defmodule Trento.AI do
   def clear_user_configuration(user),
     do: configurations().clear_user_configuration(user)
 
+  @doc """
+  PubSub topic carrying per-user AI configuration lifecycle events.
+
+  Every AI Assistant channel (one per browser tab) subscribes to this topic on
+  join so it can react in real time to configuration changes made elsewhere
+  (another tab, or a raw API call).
+  """
+  @spec ai_configuration_topic(non_neg_integer() | String.t()) :: String.t()
+  def ai_configuration_topic(user_id), do: "ai_user_config:#{user_id}"
+
+  @doc """
+  Broadcasts that the given user's AI configuration was cleared, so all of the
+  user's open AI Assistant channels can disable themselves.
+  """
+  @spec broadcast_ai_configuration_cleared(non_neg_integer()) :: :ok
+  def broadcast_ai_configuration_cleared(user_id),
+    do:
+      Phoenix.PubSub.broadcast(
+        Trento.PubSub,
+        ai_configuration_topic(user_id),
+        {:ai_configuration, :cleared}
+      )
+
   defp configurations,
     do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
 end

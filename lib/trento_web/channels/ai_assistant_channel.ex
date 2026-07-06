@@ -60,6 +60,10 @@ defmodule TrentoWeb.AIAssistantChannel do
     with :ok <- check_ai_enabled(),
          :ok <- check_socket_and_channel_user_match(user_id, current_user_id),
          :ok <- validate_access_token(token, current_user_id) do
+      # React in real time to AI configuration changes made in any other tab
+      # (or via a raw API call) for this same user.
+      Phoenix.PubSub.subscribe(Trento.PubSub, AI.ai_configuration_topic(current_user_id))
+
       {:ok,
        socket
        |> assign(:access_token, token)
@@ -309,6 +313,21 @@ defmodule TrentoWeb.AIAssistantChannel do
         socket
       ),
       do: {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
+
+  @impl true
+  def handle_info({:ai_configuration, :cleared}, socket) do
+    # The user's AI configuration was cleared (this or another tab / API).
+    # Stop any in-flight agent for this tab's thread, tell the client to go
+    # read-only, and clear the run state.
+    case socket.assigns[:current_thread_id] do
+      nil -> :ok
+      thread_id -> TrentoAIAgent.stop(thread_id)
+    end
+
+    push(socket, "ai_configuration_cleared", %{})
+
+    {:noreply, reset_run(socket)}
+  end
 
   @impl true
   def handle_info(_msg, socket), do: {:noreply, socket}

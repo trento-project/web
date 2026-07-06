@@ -656,6 +656,15 @@ defmodule Trento.Ai.ConfigurationsTest do
       assert :ok == Configurations.clear_user_configuration(user)
       assert nil == load_ai_config(user_id)
     end
+
+    test "should broadcast that the configuration was cleared" do
+      %User{id: user_id} = user = insert(:user, ai_configuration: build(:ai_user_configuration))
+
+      Phoenix.PubSub.subscribe(Trento.PubSub, Trento.AI.ai_configuration_topic(user_id))
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert_receive {:ai_configuration, :cleared}
+    end
   end
 
   defp load_ai_config(user_id),

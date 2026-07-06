@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Link } from 'react-router';
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';
 
@@ -61,6 +61,7 @@ export function AssistantUI({
   onOpenChange,
   onNewThread,
   handleClose,
+  disabled = false,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
@@ -73,6 +74,7 @@ export function AssistantUI({
         onNewThread={onNewThread}
         isEmpty={isEmpty}
         isRunning={isRunning}
+        disabled={disabled}
       />
     </ModalFrame>
   );
@@ -90,10 +92,20 @@ function AIAssistant({
   const [connectionStatus, setConnectionStatus] = useState(
     initialConnectionStatus
   );
+  // Starts from the initial prop; flips to false in real time when the user's
+  // AI configuration is cleared (this or another tab / a raw API call).
+  const [available, setAvailable] = useState(aiConfigured);
 
   const onNewThread = () => setThreadID(crypto.randomUUID());
+  const handleAIConfigurationCleared = useCallback(
+    () => setAvailable(false),
+    []
+  );
 
-  if (!aiConfigured) {
+  // Once unavailable AND closed, the launcher becomes the disabled trigger and
+  // cannot be reopened. While an unavailable chat is still open it stays
+  // mounted so the user sees the read-only "cleared" state until they close it.
+  if (!available && !isOpen) {
     return <DisabledAssistant />;
   }
 
@@ -102,6 +114,7 @@ function AIAssistant({
       userID={userID}
       threadID={threadID}
       onConnectionChange={setConnectionStatus}
+      onAIConfigurationCleared={handleAIConfigurationCleared}
     >
       <AssistantUI
         open={isOpen}
@@ -109,6 +122,7 @@ function AIAssistant({
         onOpenChange={setIsOpen}
         onNewThread={onNewThread}
         handleClose={handleClose}
+        disabled={!available}
       />
     </AssistantChatProvider>
   );

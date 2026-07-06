@@ -223,6 +223,16 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  describe "stop/1" do
+    test "delegates to the supervisor's stop_agent/1" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id -> :ok end)
+
+      assert :ok = TrentoAIAgent.stop(agent_id)
+    end
+  end
+
   describe "running_model/1" do
     test "returns {:ok, model} with the running agent's chat-model struct" do
       agent_id = "thread-#{Faker.UUID.v4()}"
