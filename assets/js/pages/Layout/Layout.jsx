@@ -33,7 +33,7 @@ import ProfileMenu from '@common/ProfileMenu';
 import ForbiddenGuard from '@common/ForbiddenGuard';
 import AnalyticsEula from '@pages/AnalyticsEula';
 import { SocketProvider } from '@common/SocketProvider';
-import AIAssistant, { AIAssistantDisabledTrigger } from '@common/AIAssistant';
+import AIAssistant from '@common/AIAssistant';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: EOS_HOME_OUTLINED },
@@ -249,14 +249,11 @@ function Layout() {
           </span>
         </footer>
       </div>
-      {getFromConfig('aiEnabled') &&
-        (aiConfigured ? (
-          <SocketProvider>
-            <AIAssistant userID={id} />
-          </SocketProvider>
-        ) : (
-          <AIAssistantDisabledTrigger />
-        ))}
+      {getFromConfig('aiEnabled') && (
+        <SocketProvider>
+          <AIAssistant userID={id} aiConfigured={aiConfigured} />
+        </SocketProvider>
+      )}
     </main>
   );
 }
