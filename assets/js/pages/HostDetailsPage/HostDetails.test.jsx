@@ -756,11 +756,11 @@ describe('HostDetails component', () => {
     it.each([
       {
         state: 'passing',
-        label: 'running',
+        label: 'Reporting',
       },
       {
         state: 'critical',
-        label: 'not running',
+        label: 'Not reporting',
       },
     ])('should show exporters state as $state', ({ state, label }) => {
       renderWithRouter(
