@@ -1,1 +1,4 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
 .github/workflows/*.lock.yml linguist-generated=true merge=ours
