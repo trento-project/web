@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "cypress": "^15.17.0",
-    "cypress-split": "^1.24.31",
+    "cypress-split": "^1.25.0",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.5.0",
     "globals": "^17.6.0",
