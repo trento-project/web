@@ -66,7 +66,7 @@ function InstanceStatus({
           {staleAt && (
             <EOS_SCHEDULE_OUTLINED
               size={convertedSize * 0.7}
-              className={`${iconClass} absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`}
+              className={`${iconClass} absolute overflow-visible bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`}
             />
           )}
         </div>
