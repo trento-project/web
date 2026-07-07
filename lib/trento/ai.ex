@@ -42,17 +42,6 @@ defmodule Trento.AI do
     do: configurations().clear_user_configuration(user)
 
   @doc """
-  Which presentation to use for the "AI model changed" notice in an ongoing
-  conversation. One of `:markdown` (in-bubble callout), `:known_shape`
-  (distinct inline chip) or `:event` (banner via a dedicated channel event).
-
-  Configurable to compare the three; defaults to `:markdown`.
-  """
-  @spec model_change_notice_strategy() :: :markdown | :known_shape | :event
-  def model_change_notice_strategy,
-    do: Keyword.get(ApplicationConfigLoader.load(), :model_change_notice_strategy, :markdown)
-
-  @doc """
   PubSub topic carrying per-user AI configuration lifecycle events.
 
   Every AI Assistant channel (one per browser tab) subscribes to this topic on
@@ -86,6 +75,22 @@ defmodule Trento.AI do
         Trento.PubSub,
         ai_configuration_topic(user_id),
         {:ai_configuration, :created}
+      )
+
+  @doc """
+  Broadcasts that the given user's AI provider/model changed, so all of the
+  user's open AI Assistant channels can surface a notice for the conversation.
+  """
+  @spec broadcast_ai_configuration_updated(non_neg_integer(), %{
+          provider: atom(),
+          model: String.t()
+        }) :: :ok
+  def broadcast_ai_configuration_updated(user_id, %{provider: _, model: _} = payload),
+    do:
+      Phoenix.PubSub.broadcast(
+        Trento.PubSub,
+        ai_configuration_topic(user_id),
+        {:ai_configuration, :updated, payload}
       )
 
   defp configurations,

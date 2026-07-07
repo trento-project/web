@@ -64,6 +64,7 @@ export function AssistantUI({
   handleClose,
   status = STATUS.OK,
   modelNotice = null,
+  onDismissModelNotice,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
@@ -78,6 +79,7 @@ export function AssistantUI({
         isRunning={isRunning}
         status={status}
         modelNotice={modelNotice}
+        onDismissModelNotice={onDismissModelNotice}
       />
     </ModalFrame>
   );
@@ -124,6 +126,8 @@ function AIAssistant({
     []
   );
 
+  const handleDismissModelNotice = useCallback(() => setModelNotice(null), []);
+
   const handleAIConfigurationCleared = useCallback(
     () => setStatus(STATUS.CLEARED),
     []
@@ -165,6 +169,7 @@ function AIAssistant({
           handleClose={handleClose}
           status={status}
           modelNotice={modelNotice}
+          onDismissModelNotice={handleDismissModelNotice}
         />
       )}
     </AssistantChatProvider>

@@ -31,17 +31,6 @@ defmodule Trento.AI.LLMBuilder do
     end
   end
 
-  @doc """
-  Describes a built chat-model struct as a provider/model pair.
-
-  Inverse of `do_build/3` — lets callers compare or label a model without
-  reaching into the LangChain struct internals.
-  """
-  @spec describe(struct()) :: %{provider: :googleai | :openai | :anthropic, model: String.t()}
-  def describe(%ChatGoogleAI{model: model}), do: %{provider: :googleai, model: model}
-  def describe(%ChatOpenAI{model: model}), do: %{provider: :openai, model: model}
-  def describe(%ChatAnthropic{model: model}), do: %{provider: :anthropic, model: model}
-
   defp do_build(:googleai, model, api_key),
     do: ChatGoogleAI.new!(%{model: model, api_key: api_key, stream: true})
 

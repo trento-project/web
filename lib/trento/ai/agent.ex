@@ -88,22 +88,6 @@ defmodule Trento.AI.Agent do
   @spec stop(String.t()) :: :ok | {:error, term()}
   def stop(agent_id), do: AgentSupervisor.stop_agent(agent_id)
 
-  @doc """
-  Returns the chat-model struct the running agent for `agent_id` is
-  currently configured with, or `:not_running` when no AgentServer is
-  alive for that id yet (e.g. a brand-new thread).
-
-  Lets the channel detect mid-conversation model/provider drift without
-  touching `Sagents.*` directly.
-  """
-  @spec running_model(String.t()) :: {:ok, struct()} | :not_running
-  def running_model(agent_id) do
-    case AgentServer.get_agent(agent_id) do
-      {:ok, %Sagents.Agent{model: model}} -> {:ok, model}
-      _ -> :not_running
-    end
-  end
-
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
          {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent) do

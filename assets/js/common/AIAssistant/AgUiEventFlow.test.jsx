@@ -193,54 +193,7 @@ describe('AG-UI event flow', () => {
     );
   });
 
-  it('renders the :known_shape notice as a distinct chip, separate from the reply', async () => {
-    const { emitAgUi, sendUserMessage } = await renderAssistant();
-    const { thread_id: threadId, run_id: runId } = await sendUserMessage('hi');
-
-    await emitAgUi({ type: 'RUN_STARTED', threadId, runId });
-
-    // Known-shape notice arrives as its own isolated text part.
-    const noticeId = `model_change_${runId}`;
-    const payload = `::trento:model-change::${JSON.stringify({
-      provider: 'googleai',
-      model: 'gemini-2.5-pro',
-    })}`;
-    await emitAgUi({
-      type: 'TEXT_MESSAGE_START',
-      messageId: noticeId,
-      role: 'assistant',
-    });
-    await emitAgUi({
-      type: 'TEXT_MESSAGE_CONTENT',
-      messageId: noticeId,
-      delta: payload,
-    });
-    await emitAgUi({ type: 'TEXT_MESSAGE_END', messageId: noticeId });
-
-    await emitAgUi({
-      type: 'TEXT_MESSAGE_START',
-      messageId: 'asst-1',
-      role: 'assistant',
-    });
-    await emitAgUi({
-      type: 'TEXT_MESSAGE_CONTENT',
-      messageId: 'asst-1',
-      delta: 'Loud and clear!',
-    });
-    await emitAgUi({ type: 'TEXT_MESSAGE_END', messageId: 'asst-1' });
-    await emitAgUi({ type: 'RUN_FINISHED', threadId, runId });
-
-    const chip = await waitFor(() => {
-      const el = document.querySelector('[data-testid="model-change-chip"]');
-      if (!el) throw new Error('chip not rendered yet');
-      return el;
-    });
-    expect(chip).toHaveTextContent(/Google Gemini/i);
-    expect(chip).not.toHaveTextContent(/Loud and clear/i);
-    expect(screen.getByText(/Loud and clear/i)).toBeInTheDocument();
-  });
-
-  it('renders the :event notice as a distinct banner', async () => {
+  it('renders the model_changed notice as a dismissable banner', async () => {
     const { channel } = await renderAssistant();
 
     await act(async () => {
@@ -256,6 +209,14 @@ describe('AG-UI event flow', () => {
       return el;
     });
     expect(banner).toHaveTextContent(/Google Gemini/i);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-testid="model-change-banner"]')
+      ).not.toBeInTheDocument();
+    });
   });
 
   it('prompts to start a new chat when a new config arrives after a clear', async () => {

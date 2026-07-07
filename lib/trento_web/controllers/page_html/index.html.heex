@@ -19,7 +19,6 @@
       operationsEnabled: <%= @operations_enabled %>,
       webversion: '<%= @version %>',
       aiEnabled: <%= @ai_enabled %>,
-      aiModelChangeNoticeStrategy: '<%= @ai_model_change_notice_strategy %>',
       aiProviders: <%= raw Jason.encode!(@ai_providers) %>
   };
 </script>

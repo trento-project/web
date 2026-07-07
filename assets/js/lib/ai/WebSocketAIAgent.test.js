@@ -551,7 +551,10 @@ describe('WebSocketAIAgent', () => {
       const onModelChanged = jest.fn();
       const { channel } = await connectedAgent({ onModelChanged });
 
-      channel.emit('model_changed', { provider: 'googleai', model: 'gemini-2.5-pro' });
+      channel.emit('model_changed', {
+        provider: 'googleai',
+        model: 'gemini-2.5-pro',
+      });
 
       expect(onModelChanged).toHaveBeenCalledWith({
         provider: 'googleai',

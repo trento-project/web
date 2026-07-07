@@ -32,7 +32,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   alias Trento.AI.LLMBuilder
   alias TrentoWeb.Auth.AccessToken
 
-  alias TrentoWeb.AIAssistant.AgUi
   alias TrentoWeb.AIAssistantChannel
   alias TrentoWeb.UserSocket
 
@@ -766,7 +765,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in send_message/3 — AI settings drift" do
     setup :join_socket_with_ai_config
 
-    test "swaps the running agent and notifies the user when the model changed",
+    test "swaps the running agent when the model changed",
          %{socket: socket, user_id: user_id} do
       jwt = generate_jwt(user_id)
       test_pid = self()
@@ -809,25 +808,9 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                       %Sagents.Agent{model: %ChatGoogleAI{model: "gemini-2.5-flash"}}},
                      1_000
 
-      # a standalone assistant bubble tells the user, under its own message id
-      assert_push("ag_ui_event", %{
-        "type" => "TEXT_MESSAGE_START",
-        "messageId" => "model_change_r-drift"
-      })
-
-      assert_push("ag_ui_event", %{
-        "type" => "TEXT_MESSAGE_CONTENT",
-        "messageId" => "model_change_r-drift",
-        "delta" => delta
-      })
-
-      assert delta =~ "Google Gemini"
-      assert delta =~ "gemini-2.5-flash"
-
-      assert_push("ag_ui_event", %{
-        "type" => "TEXT_MESSAGE_END",
-        "messageId" => "model_change_r-drift"
-      })
+      # the change is surfaced proactively over the ai_user_config topic (see the
+      # "ai_user_config lifecycle" tests), not as an in-conversation bubble
+      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
     end
 
     test "swaps the running agent silently when only the api key changed",
@@ -871,26 +854,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       # the agent is still hot-swapped (so the new key takes effect)...
       assert_receive {:swapped_with, %Sagents.Agent{}}, 1_000
       # ...but no user-facing bubble, since provider/model are unchanged
-      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
-    end
-
-    test "does not notify on a brand-new thread (no running agent yet)",
-         %{socket: socket, user_id: user_id} do
-      jwt = generate_jwt(user_id)
-
-      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
-      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
-      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
-
-      push(socket, "send_message", %{
-        "message" => "hi",
-        "run_id" => "r-new",
-        "thread_id" => "t-new",
-        "access_token" => jwt
-      })
-
-      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
       refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
     end
   end
@@ -1068,40 +1031,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ai_configuration_created", %{})
     end
-  end
 
-  describe "model-change notice emission variants" do
-    setup :join_socket
-
-    test "model_changed_event pushes a dedicated model_changed event", %{socket: socket} do
-      AgUi.model_changed_event(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
+    test "pushes model_changed when the provider/model is updated", %{user_id: user_id} do
+      Trento.AI.broadcast_ai_configuration_updated(user_id, %{
+        provider: :googleai,
+        model: "gemini-2.5-pro"
+      })
 
       assert_push("model_changed", %{provider: :googleai, model: "gemini-2.5-pro"})
-    end
-
-    test "model_change_notice_shaped pushes a marker-tagged text message", %{socket: socket} do
-      socket = %{socket | assigns: Map.put(socket.assigns, :current_run_id, "r-shape")}
-
-      AgUi.model_change_notice_shaped(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
-
-      assert_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_CONTENT", "delta" => delta})
-      assert String.starts_with?(delta, "::trento:model-change::")
-
-      assert {:ok, %{"provider" => "googleai", "model" => "gemini-2.5-pro"}} =
-               delta
-               |> String.replace_prefix("::trento:model-change::", "")
-               |> Jason.decode()
-    end
-
-    test "model_change_notice (markdown) pushes a blockquote callout", %{socket: socket} do
-      socket = %{socket | assigns: Map.put(socket.assigns, :current_run_id, "r-md")}
-
-      AgUi.model_change_notice(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
-
-      assert_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_CONTENT", "delta" => delta})
-      assert delta =~ "AI model changed"
-      assert delta =~ "Google Gemini"
-      assert delta =~ "---"
     end
   end
 

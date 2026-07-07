@@ -628,6 +628,51 @@ defmodule Trento.Ai.ConfigurationsTest do
 
       assert ^updated_config = load_ai_config(user_id)
     end
+
+    test "should broadcast that the configuration was updated when the provider/model changed" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: :provider1,
+        model: "model1"
+      )
+
+      Phoenix.PubSub.subscribe(Trento.PubSub, Trento.AI.ai_configuration_topic(user_id))
+
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{provider: :provider2})
+
+      assert_receive {:ai_configuration, :updated, %{provider: :provider2, model: "model1"}}
+    end
+
+    test "should not broadcast updated when only the api key changed" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration, user_id: user_id)
+
+      Phoenix.PubSub.subscribe(Trento.PubSub, Trento.AI.ai_configuration_topic(user_id))
+
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{
+                 api_key: Faker.String.base64()
+               })
+
+      refute_receive {:ai_configuration, :updated, _}
+    end
+
+    test "should not broadcast updated when the update fails" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration, user_id: user_id)
+
+      Phoenix.PubSub.subscribe(Trento.PubSub, Trento.AI.ai_configuration_topic(user_id))
+
+      assert {:error, %Ecto.Changeset{}} =
+               Configurations.update_user_configuration(user, %{model: Faker.Lorem.word()})
+
+      refute_receive {:ai_configuration, :updated, _}
+    end
   end
 
   describe "clearing a user AI configuration" do

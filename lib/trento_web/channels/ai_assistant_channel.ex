@@ -183,8 +183,6 @@ defmodule TrentoWeb.AIAssistantChannel do
          model_config,
          prompt
        ) do
-    previous_model = TrentoAIAgent.running_model(thread_id)
-
     [
       agent_id: thread_id,
       model: model_config,
@@ -201,7 +199,6 @@ defmodule TrentoWeb.AIAssistantChannel do
         socket
         |> activate_run(run_id)
         |> AgUi.run_started(run_id, thread_id)
-        |> maybe_notify_model_change(previous_model, model_config)
 
       {:error, reason} ->
         error_msg = "Failed to start agent: #{inspect(reason)}"
@@ -228,27 +225,6 @@ defmodule TrentoWeb.AIAssistantChannel do
        do: :noop
 
   defp agent_config_changed(_current_agent, new_agent), do: {:ok, new_agent}
-
-  # Inform the user in-conversation when the provider or model changed for an
-  # already-running thread. api-key-only changes swap silently (nothing the
-  # user needs to see). New threads (:not_running) never notify.
-  defp maybe_notify_model_change(socket, {:ok, previous_model}, new_model) do
-    old = LLMBuilder.describe(previous_model)
-    new = LLMBuilder.describe(new_model)
-
-    if old.provider != new.provider or old.model != new.model do
-      # Presentation is selectable so we can compare the three approaches.
-      case AI.model_change_notice_strategy() do
-        :event -> AgUi.model_changed_event(socket, new)
-        :known_shape -> AgUi.model_change_notice_shaped(socket, new)
-        _ -> AgUi.model_change_notice(socket, new)
-      end
-    else
-      socket
-    end
-  end
-
-  defp maybe_notify_model_change(socket, :not_running, _new_model), do: socket
 
   @impl true
   def handle_info({:agent, {:status_changed, :running, nil}}, socket),
@@ -341,6 +317,17 @@ defmodule TrentoWeb.AIAssistantChannel do
     # The user's AI configuration was (re)created (this or another tab / API).
     # Tell the client it can re-enable the assistant.
     push(socket, "ai_configuration_created", %{})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :updated, payload}, socket) do
+    # The user's AI provider/model changed (this or another tab / API). Tell the
+    # client so it can surface a notice for the conversation. The running agent
+    # itself hot-swaps to the new model on the next message via
+    # `agent_config_changed/2`.
+    push(socket, "model_changed", payload)
 
     {:noreply, socket}
   end

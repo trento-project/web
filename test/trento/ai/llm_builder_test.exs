@@ -70,24 +70,4 @@ defmodule Trento.AI.LLMBuilderTest do
       assert chat_model.thinking == %{type: "enabled"}
     end
   end
-
-  describe "describe/1" do
-    test "describes a ChatGoogleAI struct" do
-      chat_model = ChatGoogleAI.new!(%{model: "gemini-2.5-pro", api_key: "k", stream: true})
-
-      assert %{provider: :googleai, model: "gemini-2.5-pro"} = LLMBuilder.describe(chat_model)
-    end
-
-    test "describes a ChatOpenAI struct" do
-      chat_model = ChatOpenAI.new!(%{model: "gpt-4.1", api_key: "k", stream: true})
-
-      assert %{provider: :openai, model: "gpt-4.1"} = LLMBuilder.describe(chat_model)
-    end
-
-    test "describes a ChatAnthropic struct" do
-      chat_model = ChatAnthropic.new!(%{model: "claude-haiku-4-5", api_key: "k", stream: true})
-
-      assert %{provider: :anthropic, model: "claude-haiku-4-5"} = LLMBuilder.describe(chat_model)
-    end
-  end
 end
