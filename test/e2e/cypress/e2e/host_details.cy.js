@@ -157,21 +157,21 @@ context('Host Details', () => {
     });
   });
 
-  describe("Trento agent status should be 'running'", () => {
+  describe("Trento agent status should be 'Reporting'", () => {
     beforeEach(() => hostDetailsPage.visitSelectedHost());
 
-    it("should show the status as 'running'", () => {
+    it("should show the status as 'Reporting'", () => {
       hostDetailsPage.agentStatusIsCorrectlyDisplayed();
     });
   });
 
-  describe("Node exporter status should be 'running'", () => {
+  describe("Node exporter status should be 'Reporting'", () => {
     beforeEach(() => {
       hostDetailsPage.interceptNodeExporterStatusMockedForProdInstance();
       hostDetailsPage.visitSelectedHost();
     });
 
-    it("should show the status as 'running'", () => {
+    it("should show the status as 'Reporting'", () => {
       hostDetailsPage.nodeExporterStatusIsCorrectlyDisplayed();
     });
   });

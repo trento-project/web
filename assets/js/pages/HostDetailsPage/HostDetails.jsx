@@ -141,7 +141,7 @@ function HostDetails({
       <StatusPill
         key={exporterName}
         className="self-center ml-4 shadow"
-        heartbeat={exporterStatus}
+        status={exporterStatus}
       >
         {startCase(exporterName)}
       </StatusPill>
@@ -333,7 +333,7 @@ function HostDetails({
             </div>
           </div>
           <div className="pb-3">
-            <StatusPill className="self-center shadow" heartbeat={heartbeat}>
+            <StatusPill className="self-center shadow" status={heartbeat}>
               Agent
             </StatusPill>
             {renderedExporters}
