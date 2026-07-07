@@ -23,6 +23,7 @@ function DatabasesOverview({
   databaseInstances,
   loading,
   userAbilities,
+  userTimezone,
   onTagAdd,
   onTagRemove,
   onInstanceCleanUp,
@@ -123,6 +124,7 @@ function DatabasesOverview({
       <DatabaseItemOverview
         database={database}
         userAbilities={userAbilities}
+        userTimezone={userTimezone}
         onCleanUpClick={(instance, _type) => {
           setCleanUpModalOpen(true);
           setInstanceToDeregister(instance);

@@ -9,32 +9,32 @@ import StatusPill from './StatusPill';
 
 describe('StatusPill', () => {
   it('should render passing status correctly', () => {
-    render(<StatusPill heartbeat="passing">Test Service</StatusPill>);
+    render(<StatusPill status="passing">Test Service</StatusPill>);
 
     const statusPill = screen.getByText('Test Service', { exact: false });
     const svgElement = screen.getByTestId('eos-svg-component');
 
-    expect(statusPill).toHaveTextContent('running');
+    expect(statusPill).toHaveTextContent('Reporting');
     expect(statusPill).toContainElement(svgElement);
     expect(svgElement).toHaveClass('fill-jungle-green-500');
   });
 
   it('should render critical status correctly', () => {
-    render(<StatusPill heartbeat="critical">Test Service</StatusPill>);
+    render(<StatusPill status="critical">Test Service</StatusPill>);
 
     const statusPill = screen.getByText('Test Service', { exact: false });
     const svgElement = screen.getByTestId('eos-svg-component');
 
-    expect(statusPill).toHaveTextContent('not running');
+    expect(statusPill).toHaveTextContent('Not reporting');
     expect(statusPill).toContainElement(svgElement);
     expect(svgElement).toHaveClass('fill-red-500');
   });
 
   it('should render unknown status correctly', () => {
-    render(<StatusPill heartbeat="unknown">Test Service</StatusPill>);
+    render(<StatusPill status="unknown">Test Service</StatusPill>);
 
     expect(
       screen.getByText('Test Service', { exact: false })
-    ).toHaveTextContent('unknown');
+    ).toHaveTextContent('Unknown');
   });
 });
