@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-23T22:17:39Z",
-    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
-    "run_id": "26341711330",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 13
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1551
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1003
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.03696
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-24T18:20:34Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26368839061",
@@ -4989,5 +4965,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-07T22:43:16Z",
+    "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
+    "run_id": "28895634571",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": []
   }
 ]
