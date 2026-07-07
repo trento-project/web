@@ -9,9 +9,16 @@ import {
 } from 'eos-icons-react';
 import { capitalize } from 'lodash';
 import { formatDateTime } from '@lib/timezones';
+import { getIconSize } from '@lib/icon';
 import Tooltip from '@common/Tooltip';
 
-function InstanceStatus({ status, absent = false, staleAt = null, timezone }) {
+function InstanceStatus({
+  status,
+  size = 20,
+  absent = false,
+  staleAt = null,
+  timezone,
+}) {
   let cssClass;
 
   switch (status) {
@@ -44,6 +51,8 @@ function InstanceStatus({ status, absent = false, staleAt = null, timezone }) {
     </span>
   );
 
+  const convertedSize = getIconSize(size);
+
   return (
     <div className="flex items-center mx-1">
       <Tooltip
@@ -53,11 +62,11 @@ function InstanceStatus({ status, absent = false, staleAt = null, timezone }) {
         wrap={false}
       >
         <div className="relative">
-          <IconComponent size="20" className={iconClass} />
+          <IconComponent size={convertedSize} className={iconClass} />
           {staleAt && (
             <EOS_SCHEDULE_OUTLINED
-              size="14"
-              className={`${iconClass} absolute -bottom-1 -right-1 bg-white rounded-full`}
+              size={convertedSize * 0.7}
+              className={`${iconClass} absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`}
             />
           )}
         </div>
