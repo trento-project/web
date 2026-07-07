@@ -32,6 +32,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   alias Trento.AI.LLMBuilder
   alias TrentoWeb.Auth.AccessToken
 
+  alias TrentoWeb.AIAssistant.AgUi
   alias TrentoWeb.AIAssistantChannel
   alias TrentoWeb.UserSocket
 
@@ -1066,6 +1067,41 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       Trento.AI.broadcast_ai_configuration_created(user_id)
 
       assert_push("ai_configuration_created", %{})
+    end
+  end
+
+  describe "model-change notice emission variants" do
+    setup :join_socket
+
+    test "model_changed_event pushes a dedicated model_changed event", %{socket: socket} do
+      AgUi.model_changed_event(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
+
+      assert_push("model_changed", %{provider: :googleai, model: "gemini-2.5-pro"})
+    end
+
+    test "model_change_notice_shaped pushes a marker-tagged text message", %{socket: socket} do
+      socket = %{socket | assigns: Map.put(socket.assigns, :current_run_id, "r-shape")}
+
+      AgUi.model_change_notice_shaped(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
+
+      assert_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_CONTENT", "delta" => delta})
+      assert String.starts_with?(delta, "::trento:model-change::")
+
+      assert {:ok, %{"provider" => "googleai", "model" => "gemini-2.5-pro"}} =
+               delta
+               |> String.replace_prefix("::trento:model-change::", "")
+               |> Jason.decode()
+    end
+
+    test "model_change_notice (markdown) pushes a blockquote callout", %{socket: socket} do
+      socket = %{socket | assigns: Map.put(socket.assigns, :current_run_id, "r-md")}
+
+      AgUi.model_change_notice(socket, %{provider: :googleai, model: "gemini-2.5-pro"})
+
+      assert_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_CONTENT", "delta" => delta})
+      assert delta =~ "AI model changed"
+      assert delta =~ "Google Gemini"
+      assert delta =~ "---"
     end
   end
 

@@ -545,4 +545,18 @@ describe('WebSocketAIAgent', () => {
       expect(onAIConfigurationCreated).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('model_changed', () => {
+    it('invokes onModelChanged with the event payload', async () => {
+      const onModelChanged = jest.fn();
+      const { channel } = await connectedAgent({ onModelChanged });
+
+      channel.emit('model_changed', { provider: 'googleai', model: 'gemini-2.5-pro' });
+
+      expect(onModelChanged).toHaveBeenCalledWith({
+        provider: 'googleai',
+        model: 'gemini-2.5-pro',
+      });
+    });
+  });
 });

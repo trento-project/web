@@ -8,6 +8,8 @@ import { ThreadPrimitive } from '@assistant-ui/react';
 
 import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
+import { getProviderLabel } from '@lib/ai';
+
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
 import { STATUS } from './status';
@@ -47,6 +49,25 @@ function RestoredBanner() {
   );
 }
 
+// `:event` model-change-notice strategy — a distinct banner outside the chat
+// bubbles, driven by the dedicated `model_changed` channel event.
+function ModelChangeBanner({ provider, model }) {
+  return (
+    <div
+      className="mb-3 flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-gray-600 text-xs"
+      role="status"
+      data-testid="model-change-banner"
+    >
+      <span>ℹ️</span>
+      <span>
+        AI model changed to{' '}
+        <span className="font-semibold">{getProviderLabel(provider)}</span> (
+        {model}) for this conversation.
+      </span>
+    </div>
+  );
+}
+
 function AssistantThread({
   connectionStatus,
   isEmpty = false,
@@ -54,6 +75,7 @@ function AssistantThread({
   onNewThread = noop,
   onClose = noop,
   status = STATUS.OK,
+  modelNotice = null,
 }) {
   const inputDisabled = status !== STATUS.OK;
   const newChatDisabled = status === STATUS.CLEARED;
@@ -93,6 +115,7 @@ function AssistantThread({
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {status === STATUS.CLEARED && <ClearedBanner />}
           {status === STATUS.RESTORED && <RestoredBanner />}
+          {modelNotice && <ModelChangeBanner {...modelNotice} />}
           <PromptComposer
             connectionStatus={connectionStatus}
             isRunning={isRunning}

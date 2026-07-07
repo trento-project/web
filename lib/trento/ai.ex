@@ -42,6 +42,17 @@ defmodule Trento.AI do
     do: configurations().clear_user_configuration(user)
 
   @doc """
+  Which presentation to use for the "AI model changed" notice in an ongoing
+  conversation. One of `:markdown` (in-bubble callout), `:known_shape`
+  (distinct inline chip) or `:event` (banner via a dedicated channel event).
+
+  Configurable to compare the three; defaults to `:markdown`.
+  """
+  @spec model_change_notice_strategy() :: :markdown | :known_shape | :event
+  def model_change_notice_strategy,
+    do: Keyword.get(ApplicationConfigLoader.load(), :model_change_notice_strategy, :markdown)
+
+  @doc """
   PubSub topic carrying per-user AI configuration lifecycle events.
 
   Every AI Assistant channel (one per browser tab) subscribes to this topic on

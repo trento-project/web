@@ -30,6 +30,22 @@ defmodule Trento.AITest do
     end
   end
 
+  describe "model_change_notice_strategy/0" do
+    test "returns the configured strategy" do
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn ->
+        [model_change_notice_strategy: :event]
+      end)
+
+      assert AI.model_change_notice_strategy() == :event
+    end
+
+    test "defaults to :markdown when not configured" do
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [] end)
+
+      assert AI.model_change_notice_strategy() == :markdown
+    end
+  end
+
   describe "delegating creation and update to configurations module" do
     test "should delegate to configurations module" do
       expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 2, fn ->

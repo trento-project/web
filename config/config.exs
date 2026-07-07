@@ -292,6 +292,9 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 config :trento, :ai,
   enabled: true,
   base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
+  # How the "AI model changed" notice is surfaced in an ongoing conversation.
+  # One of :markdown | :known_shape | :event. See Trento.AI.model_change_notice_strategy/0.
+  model_change_notice_strategy: :markdown,
   providers: [
     googleai: [
       models: [

@@ -236,9 +236,16 @@ defmodule TrentoWeb.AIAssistantChannel do
     old = LLMBuilder.describe(previous_model)
     new = LLMBuilder.describe(new_model)
 
-    if old.provider != new.provider or old.model != new.model,
-      do: AgUi.model_change_notice(socket, new),
-      else: socket
+    if old.provider != new.provider or old.model != new.model do
+      # Presentation is selectable so we can compare the three approaches.
+      case AI.model_change_notice_strategy() do
+        :event -> AgUi.model_changed_event(socket, new)
+        :known_shape -> AgUi.model_change_notice_shaped(socket, new)
+        _ -> AgUi.model_change_notice(socket, new)
+      end
+    else
+      socket
+    end
   end
 
   defp maybe_notify_model_change(socket, :not_running, _new_model), do: socket

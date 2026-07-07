@@ -17,6 +17,7 @@ defmodule TrentoWeb.PageController do
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
     ai_enabled = Trento.AI.enabled?()
+    ai_model_change_notice_strategy = Trento.AI.model_change_notice_strategy()
 
     {sso_enabled, callback_url, login_url, enrollment_url} = sso_details(conn)
 
@@ -33,6 +34,7 @@ defmodule TrentoWeb.PageController do
       sso_enrollment_url: enrollment_url,
       operations_enabled: operations_enabled,
       ai_enabled: ai_enabled,
+      ai_model_change_notice_strategy: ai_model_change_notice_strategy,
       ai_providers: get_normalized_ai_providers(),
       version: @version,
       layout: false

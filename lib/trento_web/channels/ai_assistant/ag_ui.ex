@@ -133,6 +133,41 @@ defmodule TrentoWeb.AIAssistant.AgUi do
     |> push_event(%TextMessageEnd{message_id: message_id})
   end
 
+  # Marker prefixing the "known shape" notice payload. Kept in sync with
+  # assets/js/lib/ai/modelChangeNotice.js (MODEL_CHANGE_MARKER).
+  @model_change_marker "::trento:model-change::"
+
+  @doc """
+  `:known_shape` strategy — emits the notice as a text message whose content is
+  a machine-detectable shape (`@model_change_marker` + JSON). The whole payload
+  is sent as a single content delta so the frontend part buffer equals it
+  exactly, letting a custom part renderer swap in a distinct chip.
+  """
+  @spec model_change_notice_shaped(Socket.t(), %{provider: atom(), model: String.t()}) ::
+          Socket.t()
+  def model_change_notice_shaped(
+        %{assigns: %{current_run_id: run_id}} = socket,
+        %{provider: provider, model: model}
+      ) do
+    message_id = "model_change_#{run_id}"
+    payload = @model_change_marker <> Jason.encode!(%{provider: provider, model: model})
+
+    socket
+    |> push_event(%TextMessageStart{message_id: message_id, role: "assistant"})
+    |> push_event(%TextMessageContent{message_id: message_id, delta: payload})
+    |> push_event(%TextMessageEnd{message_id: message_id})
+  end
+
+  @doc """
+  `:event` strategy — emits a dedicated `"model_changed"` channel event (no text
+  message), letting the client render a distinct banner outside the chat bubbles.
+  """
+  @spec model_changed_event(Socket.t(), %{provider: atom(), model: String.t()}) :: Socket.t()
+  def model_changed_event(socket, %{provider: provider, model: model}) do
+    Channel.push(socket, "model_changed", %{provider: provider, model: model})
+    socket
+  end
+
   # Human-friendly provider labels, mirroring assets/js/lib/ai/providers.js.
   defp provider_label(:googleai), do: "Google Gemini"
   defp provider_label(:openai), do: "OpenAI GPT"
