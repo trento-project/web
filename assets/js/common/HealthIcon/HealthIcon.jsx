@@ -10,10 +10,8 @@ import {
   EOS_ERROR_OUTLINED,
   EOS_WARNING_OUTLINED,
   EOS_LENS_FILLED,
-  EOS_INFO_OUTLINED,
   EOS_ERROR_FILLED,
   EOS_WARNING_FILLED,
-  EOS_INFO_FILLED,
   EOS_REMOVE_FILLED,
 } from 'eos-icons-react';
 
@@ -37,9 +35,6 @@ function HealthIcon({
 
   const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
   const CriticalIcon = criticalIcon();
-
-  const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
-  const AbsentIcon = absentIcon();
 
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
@@ -73,16 +68,6 @@ function HealthIcon({
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-red-500', centered)
-          )}
-        />
-      );
-    case 'absent':
-      return (
-        <AbsentIcon
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-black', centered)
           )}
         />
       );
