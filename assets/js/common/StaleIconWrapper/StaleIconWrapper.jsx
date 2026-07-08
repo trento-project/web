@@ -23,10 +23,10 @@ function StaleIconWrapper(WrappedIcon) {
   function StaleAugmentedHealthIcon({
     staleAt,
     tooltipEnabled = true,
-    tooltipText = "",
+    tooltipText = '',
     timezone = 'Etc/UTC',
-    size = "m",
-    className = "",
+    size = 'm',
+    className = '',
     ...props
   }) {
     const convertedSize = getIconSize(size);
@@ -43,7 +43,12 @@ function StaleIconWrapper(WrappedIcon) {
 
     return (
       <div className="flex items-center mx-1">
-        <Tooltip content={tooltipContent} place="top" isEnabled={tooltipEnabled} wrap={false}>
+        <Tooltip
+          content={tooltipContent}
+          place="top"
+          isEnabled={tooltipEnabled}
+          wrap={false}
+        >
           <div className="relative">
             <WrappedIcon
               size={convertedSize}

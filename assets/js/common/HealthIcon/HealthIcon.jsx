@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { capitalize } from 'lodash';
 
 import { computedIconCssClass } from '@lib/icon';
 
@@ -36,7 +35,7 @@ function HealthIcon({
   size = 'l',
   isLink = false,
   staleAt = null,
-  timezone = 'Etc/UTC'
+  timezone = 'Etc/UTC',
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
