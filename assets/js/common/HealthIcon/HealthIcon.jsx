@@ -43,7 +43,7 @@ function HealthIcon({
   };
 
   switch (health) {
-    case 'passing':
+    case 'passing': {
       const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         <PassingIcon
@@ -57,8 +57,9 @@ function HealthIcon({
           tooltipText={capitalize(health)}
         />
       );
+    }
 
-    case 'warning':
+    case 'warning': {
       const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         <WarningIcon
@@ -72,8 +73,9 @@ function HealthIcon({
           tooltipText={capitalize(health)}
         />
       );
+    }
 
-    case 'critical':
+    case 'critical': {
       const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
@@ -87,10 +89,13 @@ function HealthIcon({
           tooltipText={capitalize(health)}
         />
       );
-    case 'pending':
-      return <Spinner />;
+    }
 
-    case 'not_available':
+    case 'pending': {
+      return <Spinner />;
+    }
+
+    case 'not_available': {
       return (
         <EOS_REMOVE_FILLED
           size={size}
@@ -100,8 +105,9 @@ function HealthIcon({
           )}
         />
       );
+    }
 
-    default:
+    default: {
       return (
         <UnknownIcon
           className={classNames(
@@ -114,6 +120,7 @@ function HealthIcon({
           tooltipText={capitalize(health)}
         />
       );
+    }
   }
 }
 
