@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-24T19:03:41Z",
-    "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
-    "run_id": "26369675489",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.07026
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-24T19:04:46Z",
     "commit": "64918fa0231199902a8e2f6d862c217cea82d9d1",
     "run_id": "26369675489",
@@ -4962,5 +4946,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-08T19:16:11Z",
+    "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
+    "run_id": "28967949734",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
+      }
+    ]
   }
 ]
