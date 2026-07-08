@@ -54,7 +54,7 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={'Etc/UTC'}
-          tooltipText={capitalize(health)}
+          tooltipEnabled={!!staleAt}
         />
       );
     }
@@ -70,7 +70,7 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={'Etc/UTC'}
-          tooltipText={capitalize(health)}
+          tooltipEnabled={!!staleAt}
         />
       );
     }
@@ -86,7 +86,7 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={'Etc/UTC'}
-          tooltipText={capitalize(health)}
+          tooltipEnabled={!!staleAt}
         />
       );
     }
@@ -117,7 +117,7 @@ function HealthIcon({
           size={size}
           staleAt={staleAt}
           timezone={'Etc/UTC'}
-          tooltipText={capitalize(health)}
+          tooltipEnabled={!!staleAt}
         />
       );
     }

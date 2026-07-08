@@ -22,6 +22,7 @@ import Tooltip from '@common/Tooltip';
 function StaleIconWrapper(WrappedIcon) {
   function StaleAugmentedHealthIcon({
     staleAt,
+    tooltipEnabled = true,
     tooltipText = "",
     timezone = 'Etc/UTC',
     size = "m",
@@ -35,18 +36,14 @@ function StaleIconWrapper(WrappedIcon) {
     const tooltipContent = (
       <span className="block text-center">
         {tooltipText}
-        {staleAt && (
-          <>
-            <br />
-            (Stale since {formatDateTime(staleAt, timezone)})
-          </>
-        )}
+        {staleAt && tooltipText && <br />}
+        {staleAt && <>Stale since {formatDateTime(staleAt, timezone)}</>}
       </span>
     );
 
     return (
       <div className="flex items-center mx-1">
-        <Tooltip content={tooltipContent} place="top" isEanbled wrap={false}>
+        <Tooltip content={tooltipContent} place="top" isEnabled={tooltipEnabled} wrap={false}>
           <div className="relative">
             <WrappedIcon
               size={convertedSize}
