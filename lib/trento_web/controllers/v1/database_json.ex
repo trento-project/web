@@ -141,6 +141,17 @@ defmodule TrentoWeb.V1.DatabaseJSON do
         stale_at: stale_at
       }
 
+  def database_stale_changed(%{
+        database: %{
+          id: id,
+          stale_at: stale_at
+        }
+      }),
+      do: %{
+        id: id,
+        stale_at: stale_at
+      }
+
   def database_tenants_updated(%{tenants: tenants, database_id: database_id}) do
     rendered_tenants = Enum.map(tenants, &database_tenant(%{tenant: &1}))
 

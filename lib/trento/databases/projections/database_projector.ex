@@ -19,6 +19,8 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
   alias TrentoWeb.V1.DatabaseJSON
 
   alias Trento.Databases.Events.{
+    DatabaseDataMarkedInSync,
+    DatabaseDataMarkedStale,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDataMarkedInSync,
@@ -276,6 +278,35 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
         })
 
       Ecto.Multi.update(multi, :database_instance, changeset)
+    end
+  )
+
+  project(
+    %DatabaseDataMarkedStale{
+      database_id: database_id,
+      stale_at: stale_at
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(database_id)
+        |> DatabaseReadModel.changeset(%{stale_at: stale_at})
+
+      Ecto.Multi.update(multi, :database, changeset)
+    end
+  )
+
+  project(
+    %DatabaseDataMarkedInSync{
+      database_id: database_id
+    },
+    fn multi ->
+      changeset =
+        DatabaseReadModel
+        |> Repo.get!(database_id)
+        |> DatabaseReadModel.changeset(%{stale_at: nil})
+
+      Ecto.Multi.update(multi, :database, changeset)
     end
   )
 
@@ -630,6 +661,47 @@ defmodule Trento.Databases.Projections.DatabaseProjector do
       @databases_topic,
       "database_tenants_updated",
       DatabaseJSON.database_tenants_updated(%{tenants: tenants, database_id: database_id})
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseDataMarkedStale{
+          database_id: database_id,
+          stale_at: stale_at
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_stale_changed",
+      DatabaseJSON.database_stale_changed(%{
+        database: %{
+          id: database_id,
+          stale_at: stale_at
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %DatabaseDataMarkedInSync{
+          database_id: database_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @databases_topic,
+      "database_stale_changed",
+      DatabaseJSON.database_stale_changed(%{
+        database: %{
+          id: database_id,
+          stale_at: nil
+        }
+      })
     )
   end
 
