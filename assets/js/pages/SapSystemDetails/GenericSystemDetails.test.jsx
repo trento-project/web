@@ -379,6 +379,7 @@ describe('GenericSystemDetails', () => {
     const siteTables = screen.getAllByRole('table');
     const { getByText } = within(siteTables[0].previousSibling);
 
+    expect(siteTables[0].previousSibling).toHaveClass('bg-white');
     expect(getByText('Tier').nextSibling).toHaveTextContent('1');
     expect(getByText('Status').nextSibling).toHaveTextContent('ACTIVE');
   });
@@ -419,6 +420,7 @@ describe('GenericSystemDetails', () => {
     const siteTables = screen.getAllByRole('table');
     const { getByText } = within(siteTables[0].previousSibling);
 
+    expect(siteTables[0].previousSibling).toHaveClass('bg-gray-100');
     expect(getByText('Tier').nextSibling).toHaveTextContent('2');
     expect(getByText('Status').nextSibling).toHaveTextContent('RECENT_STATUS');
   });
