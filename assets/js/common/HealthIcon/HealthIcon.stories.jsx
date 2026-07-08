@@ -46,6 +46,12 @@ export default {
       description: 'Whether to icon is a link or not',
       control: { type: 'boolean' },
     },
+    timezone: {
+      description: 'Timezone for displaying the stale timestamp',
+      control: {
+        type: 'text',
+      },
+    },
   },
 };
 

@@ -36,6 +36,7 @@ function HealthIcon({
   size = 'l',
   isLink = false,
   staleAt = null,
+  timezone = 'Etc/UTC'
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
@@ -53,7 +54,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={'Etc/UTC'}
+          timezone={timezone}
           tooltipEnabled={!!staleAt}
         />
       );
@@ -69,7 +70,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={'Etc/UTC'}
+          timezone={timezone}
           tooltipEnabled={!!staleAt}
         />
       );
@@ -85,7 +86,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={'Etc/UTC'}
+          timezone={timezone}
           tooltipEnabled={!!staleAt}
         />
       );
@@ -116,7 +117,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={'Etc/UTC'}
+          timezone={timezone}
           tooltipEnabled={!!staleAt}
         />
       );
