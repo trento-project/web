@@ -17,6 +17,7 @@ import {
   overSome,
   isEmpty,
   every,
+  maxBy,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -45,6 +46,7 @@ import {
   getSapSystemType,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
+import { STALE_ROW } from '@lib/tables';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
@@ -81,6 +83,11 @@ const getUniqueHosts = (hosts) =>
   );
 
 const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
+
+// Returns an active instance (stale_at === null) if available,
+// otherwise returns the most recently stale instance (highest stale_at)
+const getActiveInstance = (instances) =>
+  find(instances, ['stale_at', null]) || maxBy(instances, 'stale_at');
 
 // it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
@@ -401,9 +408,13 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         {map(sitedInstances, (instances, site) => {
-          const instance = instances[0];
+          const instance = getActiveInstance(instances);
+          const isSiteStale = every(
+            instances,
+            ({ stale_at: staleAt }) => staleAt !== null
+          );
           return (
-            <div key={site} className="mt-4 bg-white rounded-lg">
+            <div key={site} className="mt-4 rounded-lg">
               <Table
                 config={getSystemInstancesTableConfiguration({
                   type,
@@ -417,7 +428,15 @@ export function GenericSystemDetails({
                 data={instances}
                 header={
                   hasSystemReplication && (
-                    <div className="flex py-4 px-5">
+                    <div
+                      className={classNames(
+                        'flex py-4 px-5 border-b border-gray-200 ',
+                        {
+                          [STALE_ROW]: isSiteStale,
+                          'bg-white': !isSiteStale,
+                        }
+                      )}
+                    >
                       <div className="flex w-11/12 space-x-3">
                         <div className="flex space-x-2 mr-3">
                           <h3 className="text-l font-bold">{site}</h3>
