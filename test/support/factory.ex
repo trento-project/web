@@ -66,6 +66,8 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Databases.Events.{
+    DatabaseDataMarkedInSync,
+    DatabaseDataMarkedStale,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDataMarkedInSync,
@@ -581,6 +583,19 @@ defmodule Trento.Factory do
     DatabaseDeregistered.new!(%{
       database_id: Faker.UUID.v4(),
       deregistered_at: DateTime.utc_now()
+    })
+  end
+
+  def database_data_marked_stale_event_factory do
+    DatabaseDataMarkedStale.new!(%{
+      database_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    })
+  end
+
+  def database_data_marked_in_sync_event_factory do
+    DatabaseDataMarkedInSync.new!(%{
+      database_id: Faker.UUID.v4()
     })
   end
 
