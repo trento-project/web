@@ -19,7 +19,7 @@ import {
 
 import classNames from 'classnames';
 import Spinner from '@common/Spinner';
-import StaleIconWrapper from '@common/StaleIconWrapper'
+import StaleIconWrapper from '@common/StaleIconWrapper';
 
 const PassingIconBlank = StaleIconWrapper(EOS_CHECK_CIRCLE_OUTLINED);
 const PassingIconLink = StaleIconWrapper(EOS_CHECK_CIRCLE_FILLED);
@@ -35,7 +35,7 @@ function HealthIcon({
   hoverOpacity = true,
   size = 'l',
   isLink = false,
-  staleAt = null
+  staleAt = null,
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
@@ -53,7 +53,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={"Etc/UTC"}
+          timezone={'Etc/UTC'}
           tooltipText={capitalize(health)}
         />
       );
@@ -68,13 +68,13 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={"Etc/UTC"}
+          timezone={'Etc/UTC'}
           tooltipText={capitalize(health)}
         />
       );
 
     case 'critical':
-      const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank
+      const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
           className={classNames(
@@ -83,7 +83,7 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={"Etc/UTC"}
+          timezone={'Etc/UTC'}
           tooltipText={capitalize(health)}
         />
       );
@@ -110,11 +110,11 @@ function HealthIcon({
           )}
           size={size}
           staleAt={staleAt}
-          timezone={"Etc/UTC"}
+          timezone={'Etc/UTC'}
           tooltipText={capitalize(health)}
         />
       );
-  };
+  }
 }
 
 export default HealthIcon;

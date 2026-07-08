@@ -20,9 +20,18 @@ import Tooltip from '@common/Tooltip';
  * property.
  */
 function StaleIconWrapper(WrappedIcon) {
-  function StaleAugmentedHealthIcon({ staleAt, timezone, tooltipText, className, size, ...props }) {
-    const convertedSize = getIconSize(size)
-    const fillColor = className.split(' ').find(cls => cls.startsWith('fill-')) ?? 'fill-gray-500'
+  function StaleAugmentedHealthIcon({
+    staleAt,
+    timezone,
+    tooltipText,
+    className,
+    size,
+    ...props
+  }) {
+    const convertedSize = getIconSize(size);
+    const fillColor =
+      className.split(' ').find((cls) => cls.startsWith('fill-')) ??
+      'fill-gray-500';
     const tooltipContent = (
       <span className="block text-center">
         {tooltipText}
@@ -37,17 +46,26 @@ function StaleIconWrapper(WrappedIcon) {
 
     return (
       <div className="flex items-center mx-1">
-        <Tooltip content={tooltipContent} place='top' isEanbled wrap={false}>
+        <Tooltip content={tooltipContent} place="top" isEanbled wrap={false}>
           <div className="relative">
-            <WrappedIcon size={convertedSize} className={className} {...props} />
-            {staleAt && <EOS_SCHEDULE_OUTLINED size={convertedSize * 0.7} className={`${fillColor} absolute overflow-visible bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`} />}
+            <WrappedIcon
+              size={convertedSize}
+              className={className}
+              {...props}
+            />
+            {staleAt && (
+              <EOS_SCHEDULE_OUTLINED
+                size={convertedSize * 0.7}
+                className={`${fillColor} absolute overflow-visible bottom-0 right-0 translate-x-1/4 translate-y-1/4 bg-white rounded-full`}
+              />
+            )}
           </div>
         </Tooltip>
       </div>
-    )
+    );
   }
 
-  return StaleAugmentedHealthIcon
+  return StaleAugmentedHealthIcon;
 }
 
-export default StaleIconWrapper
+export default StaleIconWrapper;

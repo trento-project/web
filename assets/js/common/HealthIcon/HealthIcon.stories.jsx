@@ -37,8 +37,7 @@ export default {
       },
     },
     staleAt: {
-      description:
-        'Timestamp when the host became stale (null if not stale)',
+      description: 'Timestamp when the host became stale (null if not stale)',
       control: {
         type: 'text',
       },
@@ -65,7 +64,7 @@ export const LargeStaleUnknown = {
   args: {
     health: 'unknown',
     staleAt: '2026-06-15T10:30:00Z',
-    size: 'xl'
+    size: 'xl',
   },
 };
 
