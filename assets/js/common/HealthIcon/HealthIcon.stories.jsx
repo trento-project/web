@@ -36,6 +36,13 @@ export default {
         defaultValue: { summary: 'l' },
       },
     },
+    staleAt: {
+      description:
+        'Timestamp when the host became stale (null if not stale)',
+      control: {
+        type: 'text',
+      },
+    },
     isLink: {
       description: 'Whether to icon is a link or not',
       control: { type: 'boolean' },
@@ -47,16 +54,52 @@ export const Default = {
   args: { health: 'unknown' },
 };
 
+export const StaleUnknown = {
+  args: {
+    health: 'unknown',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
+};
+
+export const LargeStaleUnknown = {
+  args: {
+    health: 'unknown',
+    staleAt: '2026-06-15T10:30:00Z',
+    size: 'xl'
+  },
+};
+
 export const Passing = {
   args: { health: 'passing' },
+};
+
+export const StalePassing = {
+  args: {
+    health: 'passing',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
 };
 
 export const Warning = {
   args: { health: 'warning' },
 };
 
+export const StaleWarning = {
+  args: {
+    health: 'warning',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
+};
+
 export const Critical = {
   args: { health: 'critical' },
+};
+
+export const StaleCritical = {
+  args: {
+    health: 'critical',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
 };
 
 export const Pending = {
