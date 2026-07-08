@@ -310,19 +310,14 @@ defmodule Trento.Databases.Database do
       ) do
     case get_instance(instances, host_id, instance_number) do
       %Instance{stale_at: nil} ->
-        database
-        |> Multi.new()
-        |> Multi.execute(fn _ ->
+        [
           %DatabaseInstanceDataMarkedStale{
             database_id: database_id,
             instance_number: instance_number,
             host_id: host_id,
             stale_at: stale_at
           }
-        end)
-        |> Multi.execute(fn database ->
-          maybe_emit_database_data_marked_stale_event(database, stale_at)
-        end)
+        ] ++ maybe_emit_database_data_marked_stale_event(database, stale_at)
 
       _ ->
         nil
@@ -725,13 +720,15 @@ defmodule Trento.Databases.Database do
          },
          stale_at
        ) do
-    %DatabaseDataMarkedStale{
-      database_id: database_id,
-      stale_at: stale_at
-    }
+    [
+      %DatabaseDataMarkedStale{
+        database_id: database_id,
+        stale_at: stale_at
+      }
+    ]
   end
 
-  defp maybe_emit_database_data_marked_stale_event(_, _), do: nil
+  defp maybe_emit_database_data_marked_stale_event(_, _), do: []
 
   defp maybe_emit_database_data_marked_in_sync_event(%Database{stale_at: nil}), do: nil
 
