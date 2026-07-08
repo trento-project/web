@@ -22,10 +22,10 @@ import Tooltip from '@common/Tooltip';
 function StaleIconWrapper(WrappedIcon) {
   function StaleAugmentedHealthIcon({
     staleAt,
-    timezone,
-    tooltipText,
-    className,
-    size,
+    tooltipText = "",
+    timezone = 'Etc/UTC',
+    size = "m",
+    className = "",
     ...props
   }) {
     const convertedSize = getIconSize(size);
