@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import HealthIcon from '.';
@@ -112,6 +113,48 @@ describe('HealthIcon', () => {
         SCHEDULE_OUTLINED
       );
       expect(svgs[1]).toHaveClass(cssColor);
+    }
+  );
+
+  it.each([
+    { health: 'passing' },
+    { health: 'warning' },
+    { health: 'critical' },
+    { health: 'unknown' },
+  ])(
+    'shows a tooltip with staleAt timestamp for $health health',
+    async ({ health }) => {
+      const user = userEvent.setup();
+      render(<HealthIcon health={health} staleAt="2026-06-15T10:30:00Z" />);
+
+      const svgs = screen.getAllByTestId('eos-svg-component');
+      const healthSvg = svgs[0];
+      await user.hover(healthSvg);
+
+      const tooltip = document.querySelector(".rc-tooltip");
+      expect(tooltip).toBeInTheDocument();
+      expect(tooltip).toHaveTextContent('Stale since 15 Jun 2026, 10:30:00');
+    }
+  );
+
+  it.each([
+    { health: 'passing' },
+    { health: 'warning' },
+    { health: 'critical' },
+    { health: 'unknown' },
+    { health: 'not_available' },
+    { health: 'pending' },
+  ])(
+    "does not show a tooltip for $health health when it's not stale",
+    async ({ health }) => {
+      const user = userEvent.setup();
+      render(<HealthIcon health={health} />);
+
+      const healthSvg = screen.getByTestId('eos-svg-component');
+      await user.hover(healthSvg);
+
+      const tooltip = document.querySelector(".rc-tooltip");
+      expect(tooltip).not.toBeInTheDocument();
     }
   );
 
