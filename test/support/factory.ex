@@ -991,6 +991,7 @@ defmodule Trento.Factory do
       "Blocked" => false,
       "Managed" => true,
       "Orphaned" => false,
+      "Removed" => false,
       "FailureIgnored" => false,
       "NodesRunningOn" => 1
     }

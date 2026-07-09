@@ -7055,4 +7055,206 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
   end
+
+  describe "removed resource status (Pacemaker 3.0.2+ dual-name support)" do
+    test "should produce Removed status when removed attribute is true and active is false" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r -> Map.merge(r, %{"Active" => false, "Removed" => true})
+            r -> r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Removed"
+    end
+
+    test "removed takes priority over orphaned when both are true (new name wins)" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r ->
+              Map.merge(r, %{"Active" => false, "Orphaned" => true, "Removed" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Removed"
+    end
+
+    test "should produce Orphaned status when orphaned is true and Removed key is absent (old agent backward compat)" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r ->
+              r
+              |> Map.delete("Removed")
+              |> Map.merge(%{"Active" => false, "Orphaned" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Orphaned"
+    end
+  end
+
+  describe "Pacemaker 3.0.2 fixture variants" do
+    test "pacemaker302 hana_scale_up: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_scale_up_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 ascs_ers: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_ascs_ers_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 hana_scale_out: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_scale_out_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future hana_scale_up: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_scale_up_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future ascs_ers: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_ascs_ers_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future hana_scale_out: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_scale_out_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 angi_hana_scale_up: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_angi_hana_scale_up_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 aws: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_aws_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 gcp: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_gcp_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker302 hana_ascs_ers: dual-name payload is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_ascs_ers_pacemaker302"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future angi_hana_scale_up: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_angi_hana_scale_up_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future aws: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_aws_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future gcp: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_gcp_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future hana_ascs_ers: payload without orphaned field is processed without error" do
+      assert {:ok, [%RegisterOnlineClusterHost{} | _]} =
+               "ha_cluster_discovery_hana_ascs_ers_pacemaker_future"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+
+    test "pacemaker_future: removed resource gets Removed status when orphaned key is absent" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up_pacemaker_future"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r -> Map.merge(r, %{"Active" => false, "Removed" => true})
+            r -> r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Removed"
+    end
+  end
 end
