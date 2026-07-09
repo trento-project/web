@@ -14,7 +14,6 @@ export default {
         'passing',
         'warning',
         'critical',
-        'absent',
         'pending',
         'not_available',
         'unknown',
@@ -62,10 +61,6 @@ export const Critical = {
 
 export const Pending = {
   args: { health: 'pending' },
-};
-
-export const Absent = {
-  args: { health: 'absent' },
 };
 
 export const NotAvailable = {
