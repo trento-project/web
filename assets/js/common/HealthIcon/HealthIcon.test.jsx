@@ -131,7 +131,7 @@ describe('HealthIcon', () => {
       const healthSvg = svgs[0];
       await user.hover(healthSvg);
 
-      const tooltip = document.querySelector(".rc-tooltip");
+      const tooltip = document.querySelector('.rc-tooltip');
       expect(tooltip).toBeInTheDocument();
       expect(tooltip).toHaveTextContent('Stale since 15 Jun 2026, 10:30:00');
     }
@@ -153,7 +153,7 @@ describe('HealthIcon', () => {
       const healthSvg = screen.getByTestId('eos-svg-component');
       await user.hover(healthSvg);
 
-      const tooltip = document.querySelector(".rc-tooltip");
+      const tooltip = document.querySelector('.rc-tooltip');
       expect(tooltip).not.toBeInTheDocument();
     }
   );
