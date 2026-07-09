@@ -37,9 +37,9 @@ function StaleIconWrapper(WrappedIcon) {
       <span className="block text-center">
         {tooltipText}
         {staleAt && tooltipText && <br />}
-        {staleAt && tooltipText && "("}
+        {staleAt && tooltipText && '('}
         {staleAt && `Stale since ${formatDateTime(staleAt, timezone)}`}
-        {staleAt && tooltipText && ")"}
+        {staleAt && tooltipText && ')'}
       </span>
     );
 
