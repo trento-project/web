@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-25T19:03:20Z",
-    "commit": "13fc6ee5fa7cf8103ba27f1a88958c20833bd6f6",
-    "run_id": "26415160388",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandlerTest::test Clearing up software updates discoveries should clear previously tracked software updates discoveries when a SoftwareUpdatesDiscoveryCleared is emitted",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-25T19:25:08Z",
     "commit": "13fc6ee5fa7cf8103ba27f1a88958c20833bd6f6",
     "run_id": "26415771293",
@@ -4995,6 +4971,22 @@
       },
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-09T19:11:50Z",
+    "commit": "a60bbd9e9e2a2d4fecf7220f6dd15e1bfa47b66a",
+    "run_id": "29042434372",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
         "score": 0.05001
       }
     ]
