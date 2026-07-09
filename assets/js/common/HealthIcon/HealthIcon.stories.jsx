@@ -78,6 +78,13 @@ export const Passing = {
   args: { health: 'passing' },
 };
 
+export const LinkPassing = {
+  args: {
+    health: 'passing',
+    isLink: true,
+  },
+};
+
 export const StalePassing = {
   args: {
     health: 'passing',
@@ -89,6 +96,13 @@ export const Warning = {
   args: { health: 'warning' },
 };
 
+export const LinkWarning = {
+  args: {
+    health: 'warning',
+    isLink: true,
+  },
+};
+
 export const StaleWarning = {
   args: {
     health: 'warning',
@@ -98,6 +112,13 @@ export const StaleWarning = {
 
 export const Critical = {
   args: { health: 'critical' },
+};
+
+export const LinkCritical = {
+  args: {
+    health: 'critical',
+    isLink: true,
+  },
 };
 
 export const StaleCritical = {
