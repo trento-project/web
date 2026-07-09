@@ -28,13 +28,13 @@ const notFoundContainer = 'div[class="py-4"]';
 const saptunePackageVersion = 'div:contains("Package") + div span span';
 const saptuneConfiguredVersion =
   'div div[class*="bold"]:contains("Configured Version") + div span';
-const saptuneTuningStatus = 'div:contains("Tuning") + div svg + span';
+const saptuneTuningStatus = 'div:contains("Tuning") + div span';
 const saptuneService =
-  'div[class*="bold"]:contains("saptune.service") + div svg + span';
+  'div[class*="bold"]:contains("saptune.service") + div span';
 const sapConf =
-  'div[class*="bold"]:contains("sapconf.service") + div svg + span';
+  'div[class*="bold"]:contains("sapconf.service") + div span';
 const tunedService =
-  'div[class*="bold"]:contains("tuned.service") + div svg + span';
+  'div[class*="bold"]:contains("tuned.service") + div span';
 const enabledSolutionSelector =
   'div div[class*="bold"]:contains("Enabled Solution") + div span span';
 const saptuneAppliedSolution =
