@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-25T19:02:09Z",
-    "commit": "13fc6ee5fa7cf8103ba27f1a88958c20833bd6f6",
-    "run_id": "26415160388",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting software updates successfully returns software updates",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-25T19:03:20Z",
     "commit": "13fc6ee5fa7cf8103ba27f1a88958c20833bd6f6",
     "run_id": "26415160388",
@@ -4996,6 +4972,30 @@
       {
         "name": "should show vmware cloud details correctly::Host Details Cloud details for this host should be displayed should show vmware cloud details correctly",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-09T19:10:44Z",
+    "commit": "a60bbd9e9e2a2d4fecf7220f6dd15e1bfa47b66a",
+    "run_id": "29042434372",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
       }
     ]
   }
