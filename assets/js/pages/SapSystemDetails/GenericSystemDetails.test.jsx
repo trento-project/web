@@ -146,7 +146,9 @@ describe('GenericSystemDetails', () => {
       `/databases/${sapSystem.database_id}`
     );
     expect(
-      screen.getByText('Database health').nextSibling.firstChild
+      within(screen.getByText('Database health').nextSibling).getByTestId(
+        'eos-svg-component'
+      )
     ).toHaveClass('fill-jungle-green-500');
     expect(screen.getByText('Tenant').nextSibling).toHaveTextContent(
       sapSystem.tenant
