@@ -62,19 +62,19 @@ export const hasExpectedConfiguredVersion = () =>
   cy.get(saptuneConfiguredVersion).should('have.text', configuredVersion);
 
 export const hasExpectedTuning = () =>
-  cy.get(saptuneTuningStatus).should('have.text', 'No tuning');
+  cy.get(saptuneTuningStatus).first().should('have.text', 'No tuning');
 
 export const hasExpectedServiceStatus = () =>
-  cy.get(saptuneService).should('have.text', saptuneServiceStatus);
+  cy.get(saptuneService).first().should('have.text', saptuneServiceStatus);
 
 export const hasExpectedSapConf = () =>
-  cy.get(sapConf).should('have.text', sapconfServiceStatus);
+  cy.get(sapConf).first().should('have.text', sapconfServiceStatus);
 
 export const hasExpectedTunedService = () =>
-  cy.get(tunedService).should('have.text', tunedServiceStatus);
+  cy.get(tunedService).first().should('have.text', tunedServiceStatus);
 
 export const hasExpectedEnabledSolution = () =>
-  cy.get(enabledSolutionSelector).should('have.text', enabledSolutions);
+  cy.get(enabledSolutionSelector).first().should('have.text', enabledSolutions);
 
 export const hasExpectedAppliedSolution = () =>
   cy.get(saptuneAppliedSolution).should('have.text', appliedSolutions);
