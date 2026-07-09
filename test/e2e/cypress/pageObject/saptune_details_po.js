@@ -31,10 +31,8 @@ const saptuneConfiguredVersion =
 const saptuneTuningStatus = 'div:contains("Tuning") + div span';
 const saptuneService =
   'div[class*="bold"]:contains("saptune.service") + div span';
-const sapConf =
-  'div[class*="bold"]:contains("sapconf.service") + div span';
-const tunedService =
-  'div[class*="bold"]:contains("tuned.service") + div span';
+const sapConf = 'div[class*="bold"]:contains("sapconf.service") + div span';
+const tunedService = 'div[class*="bold"]:contains("tuned.service") + div span';
 const enabledSolutionSelector =
   'div div[class*="bold"]:contains("Enabled Solution") + div span span';
 const saptuneAppliedSolution =
