@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-26T19:41:33Z",
-    "commit": "b107f94accae40d048b1362f8411fefd01068e2a",
-    "run_id": "26470135827",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should ignore not tracked software updates discovery results",
-        "score": 0.5
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Clearing up software updates discoveries should clear a previously tracked software updates discovery result",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-26T19:55:41Z",
     "commit": "b107f94accae40d048b1362f8411fefd01068e2a",
     "run_id": "26470715052",
@@ -4953,6 +4929,22 @@
       {
         "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-10T18:54:37Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29115234112",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.ActivityLogTest::test retrieving logged activity should return entries ordered by occurrence date",
+        "score": 0.02501
       }
     ]
   }
