@@ -18,7 +18,7 @@ export const isValidTargetType = (targetType) =>
 export const PASSING = 'passing';
 export const WARNING = 'warning';
 export const CRITICAL = 'critical';
-export const EXCLUDED_BY_POLICY = 'excluded_by_policy';
+export const EXCLUDED = 'excluded';
 
 export const AWS_PROVIDER = 'aws';
 export const AZURE_PROVIDER = 'azure';

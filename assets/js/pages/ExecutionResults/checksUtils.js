@@ -6,7 +6,7 @@ import {
   TARGET_CLUSTER,
   TARGET_HOST,
   PASSING,
-  EXCLUDED_BY_POLICY,
+  EXCLUDED,
   isHostExpectation,
 } from '@lib/model';
 
@@ -17,7 +17,7 @@ export const isExpectSame = ({ type }) => type === EXPECT_SAME;
 
 export const isAgentCheckError = ({ type }) => !!type;
 
-export const isAgentExcluded = ({ status }) => status === EXCLUDED_BY_POLICY;
+export const isAgentExcluded = ({ status }) => status === EXCLUDED;
 
 export const description = (catalog, checkId) =>
   catalog.find(({ id }) => id === checkId)?.description;
