@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-27T19:45:36Z",
-    "commit": "5f574ac312c8d1e29ac7bc35ee259880683f7bbd",
-    "run_id": "26533905498",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-27T19:46:24Z",
     "commit": "5f574ac312c8d1e29ac7bc35ee259880683f7bbd",
     "run_id": "26533905498",
@@ -4886,5 +4862,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-11T18:15:54Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29162640565",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
