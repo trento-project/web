@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-05-27T23:17:12Z",
-    "commit": "5f574ac312c8d1e29ac7bc35ee259880683f7bbd",
-    "run_id": "26536902231",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 97,
-      "failed_runs": 15
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1181
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.09859
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.09501
-      },
-      {
-        "name": "should show the expected clusters data::Clusters Overview Registered Clusters should be available in the overview should show the expected clusters data",
-        "score": 0.06641
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.05001
-      },
-      {
-        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-28T19:55:19Z",
     "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
     "run_id": "26597925892",
@@ -4884,6 +4848,22 @@
       {
         "name": "HostsLists component › filtering::should put the filters values in the query string when filters are selected",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-11T22:00:43Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29165425930",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
+        "score": 0.05001
       }
     ]
   }
