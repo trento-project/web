@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-28T20:14:57Z",
-    "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
-    "run_id": "26598639829",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 7
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.3459
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-28T23:24:39Z",
     "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
     "run_id": "26600794103",
@@ -4859,6 +4839,26 @@
       },
       {
         "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-12T18:53:13Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29204082804",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostsLists component › filtering::should put the filters values in the query string when filters are selected",
+        "score": 0.5
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
       }
     ]
