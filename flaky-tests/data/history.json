@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-28T19:55:19Z",
-    "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
-    "run_id": "26597925892",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-28T19:58:34Z",
     "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
     "run_id": "26597925892",
@@ -4864,6 +4848,26 @@
       {
         "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-12T18:19:39Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29203170404",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
+        "score": 0.02501
       }
     ]
   }
