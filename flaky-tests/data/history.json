@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-28T20:13:36Z",
-    "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
-    "run_id": "26598639829",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.25
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1356
-      },
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-28T20:14:57Z",
     "commit": "66cdcc91a360f259cdd8539ab50e4dd0a77b3bbb",
     "run_id": "26598639829",
@@ -4864,6 +4840,26 @@
       {
         "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-12T18:52:24Z",
+    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
+    "run_id": "29204082804",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.5
+      },
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
       }
     ]
   }
