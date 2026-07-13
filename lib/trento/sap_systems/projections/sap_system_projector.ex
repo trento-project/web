@@ -20,6 +20,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
     ApplicationInstanceStatusChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -239,6 +241,35 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
         })
 
       Ecto.Multi.update(multi, :application_instance, changeset)
+    end
+  )
+
+  project(
+    %SapSystemDataMarkedStale{
+      sap_system_id: sap_system_id,
+      stale_at: stale_at
+    },
+    fn multi ->
+      changeset =
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{stale_at: stale_at})
+
+      Ecto.Multi.update(multi, :sap_system, changeset)
+    end
+  )
+
+  project(
+    %SapSystemDataMarkedInSync{
+      sap_system_id: sap_system_id
+    },
+    fn multi ->
+      changeset =
+        SapSystemReadModel
+        |> Repo.get!(sap_system_id)
+        |> SapSystemReadModel.changeset(%{stale_at: nil})
+
+      Ecto.Multi.update(multi, :sap_system, changeset)
     end
   )
 
@@ -585,6 +616,47 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
       @sap_systems_topic,
       "sap_system_updated",
       SapSystemJSON.sap_system_updated(%{id: sap_system_id, ensa_version: ensa_version})
+    )
+  end
+
+  @impl true
+  def after_update(
+        %SapSystemDataMarkedStale{
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_stale_changed",
+      SapSystemJSON.sap_system_stale_changed(%{
+        sap_system: %{
+          id: sap_system_id,
+          stale_at: stale_at
+        }
+      })
+    )
+  end
+
+  @impl true
+  def after_update(
+        %SapSystemDataMarkedInSync{
+          sap_system_id: sap_system_id
+        },
+        _,
+        _
+      ) do
+    TrentoWeb.Endpoint.broadcast(
+      @sap_systems_topic,
+      "sap_system_stale_changed",
+      SapSystemJSON.sap_system_stale_changed(%{
+        sap_system: %{
+          id: sap_system_id,
+          stale_at: nil
+        }
+      })
     )
   end
 

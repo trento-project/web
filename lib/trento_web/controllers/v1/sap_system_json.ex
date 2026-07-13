@@ -28,7 +28,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
           %{
             application_instances: application_instances,
             database_instances: database_instances,
-            database: %{sid: database_sid, health: database_health}
+            database: %{sid: database_sid, health: database_health, stale_at: database_stale_at}
           } = sap_system
       }) do
     rendered_application_instances =
@@ -48,6 +48,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     )
     |> Map.put(:database_sid, database_sid)
     |> Map.put(:database_health, database_health)
+    |> Map.put(:database_stale_at, database_stale_at)
     |> Map.put(
       :application_instances,
       rendered_application_instances
@@ -55,7 +56,9 @@ defmodule TrentoWeb.V1.SapSystemJSON do
   end
 
   def sap_system_registered(%{
-        sap_system: %{database: %{sid: database_sid, health: database_health}} = sap_system
+        sap_system:
+          %{database: %{sid: database_sid, health: database_health, stale_at: database_stale_at}} =
+            sap_system
       }) do
     sap_system
     |> Map.from_struct()
@@ -66,6 +69,7 @@ defmodule TrentoWeb.V1.SapSystemJSON do
     |> Map.delete(:tags)
     |> Map.put(:database_sid, database_sid)
     |> Map.put(:database_health, database_health)
+    |> Map.put(:database_stale_at, database_stale_at)
   end
 
   def sap_system_restored(%{sap_system: sap_system}), do: sap_system(%{sap_system: sap_system})
@@ -77,6 +81,9 @@ defmodule TrentoWeb.V1.SapSystemJSON do
 
   def sap_system_database_health_changed(%{id: id, database_health: database_health}),
     do: %{id: id, database_health: database_health}
+
+  def sap_system_database_stale_at_changed(%{id: id, database_stale_at: database_stale_at}),
+    do: %{id: id, database_stale_at: database_stale_at}
 
   def sap_system_deregistered(%{id: id, sid: sid}), do: %{id: id, sid: sid}
 
@@ -117,6 +124,17 @@ defmodule TrentoWeb.V1.SapSystemJSON do
         instance_number: instance_number,
         host_id: host_id,
         sap_system_id: sap_system_id,
+        stale_at: stale_at
+      }
+
+  def sap_system_stale_changed(%{
+        sap_system: %{
+          id: id,
+          stale_at: stale_at
+        }
+      }),
+      do: %{
+        id: id,
         stale_at: stale_at
       }
 end
