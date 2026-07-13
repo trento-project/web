@@ -38,12 +38,13 @@ function SapSystemOverviewPage() {
   const enrichedDatabaseInstances = useSelector((state) =>
     getEnrichedDatabaseInstances(state)
   );
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
   const dispatch = useDispatch();
 
   return (
     <SapSystemsOverview
       userAbilities={abilities}
+      userTimezone={timezone}
       sapSystems={sapSystems}
       applicationInstances={enrichedApplicationInstances}
       databaseInstances={enrichedDatabaseInstances}

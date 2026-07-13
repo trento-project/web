@@ -331,6 +331,8 @@ describe('ComposedFilter component', () => {
     await user.click(screen.getByText('Filter From date...'));
 
     const input = document.querySelector('input[type="datetime-local"]');
+    await user.click(input);
+    await user.clear(input);
     await user.type(input, datetime);
 
     const expectedDate = parseDateTimeLocalToUtc(datetime, timezone);
