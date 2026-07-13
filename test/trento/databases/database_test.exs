@@ -3033,15 +3033,15 @@ defmodule Trento.Databases.DatabaseTest do
           host_id: host_id_1,
           stale_at: stale_at
         ),
+        build(:database_data_marked_stale_event,
+          database_id: database_id,
+          stale_at: stale_at
+        ),
         build(:database_instance_data_marked_stale_event,
           database_id: database_id,
           instance_number: instance_number_3,
           host_id: host_id_3,
-          stale_at: stale_at
-        ),
-        build(:database_data_marked_stale_event,
-          database_id: database_id,
-          stale_at: stale_at
+          stale_at: DateTime.add(stale_at, 1, :day)
         )
       ]
 
