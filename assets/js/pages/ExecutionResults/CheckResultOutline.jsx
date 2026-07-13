@@ -8,6 +8,7 @@ import TargetResult from './TargetResult';
 import {
   getHostExpectationStatements,
   isAgentCheckError,
+  isAgentExcluded,
   getHostExpectationStatementsMet,
   isTargetCluster,
   getExpectSameStatementsResults,
@@ -17,32 +18,48 @@ const extractExpectResults = (expectations, agentsCheckResults) => {
   const expectStatementsCount =
     getHostExpectationStatements(expectations).length;
 
-  if (expectStatementsCount === 0) {
-    return [];
-  }
-
-  return agentsCheckResults.map((agentCheckResult) => {
-    const {
-      hostname,
-      expectation_evaluations = [],
-      message,
-    } = agentCheckResult;
-    const isCheckError = isAgentCheckError(agentCheckResult);
-    const metExpectations = getHostExpectationStatementsMet(
-      expectation_evaluations
-    );
-    const expectationsSummary = isCheckError
-      ? message
-      : `${metExpectations}/${expectStatementsCount} Expectations met.`;
-
-    return {
+  // Hosts excluded by the check's `exclude` predicate are never evaluated;
+  // surface them as a distinct "Excluded by policy" row regardless of how
+  // many expectations the check declares.
+  const excludedResults = agentsCheckResults
+    .filter(isAgentExcluded)
+    .map(({ hostname }) => ({
       targetType: TARGET_HOST,
       targetName: hostname,
-      expectationsSummary,
-      isAgentCheckError:
-        isCheckError || metExpectations < expectStatementsCount,
-    };
-  });
+      expectationsSummary: 'Excluded by policy',
+      isExcluded: true,
+    }));
+
+  if (expectStatementsCount === 0) {
+    return excludedResults;
+  }
+
+  const evaluatedResults = agentsCheckResults
+    .filter((agentCheckResult) => !isAgentExcluded(agentCheckResult))
+    .map((agentCheckResult) => {
+      const {
+        hostname,
+        expectation_evaluations = [],
+        message,
+      } = agentCheckResult;
+      const isCheckError = isAgentCheckError(agentCheckResult);
+      const metExpectations = getHostExpectationStatementsMet(
+        expectation_evaluations
+      );
+      const expectationsSummary = isCheckError
+        ? message
+        : `${metExpectations}/${expectStatementsCount} Expectations met.`;
+
+      return {
+        targetType: TARGET_HOST,
+        targetName: hostname,
+        expectationsSummary,
+        isAgentCheckError:
+          isCheckError || metExpectations < expectStatementsCount,
+      };
+    });
+
+  return [...excludedResults, ...evaluatedResults];
 };
 
 const extractExpectSameResults = (
@@ -118,6 +135,7 @@ function CheckResultOutline({
               expectationName,
               expectationsSummary,
               isAgentCheckError: agentCheckError,
+              isExcluded,
             }) => (
               <TargetResult
                 key={`${checkID}-${resultTargetName}-${expectationName}`}
@@ -125,6 +143,7 @@ function CheckResultOutline({
                 targetName={resultTargetName}
                 expectationsSummary={expectationsSummary}
                 isAgentCheckError={agentCheckError}
+                isExcluded={isExcluded}
                 onClick={() => {
                   const targetCheckDetailURL = getTargetCheckDetailURL(
                     targetID,

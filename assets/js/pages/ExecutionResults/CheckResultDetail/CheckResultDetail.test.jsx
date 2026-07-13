@@ -15,6 +15,7 @@ import {
   checkResultFactory,
   addCriticalExpectExpectation,
   agentCheckErrorFactory,
+  agentCheckExcludedFactory,
   executionFactErrorFactory,
   executionFactFactory,
   agentCheckResultFactory,
@@ -276,5 +277,43 @@ describe('CheckResultDetail Component', () => {
       expect(facts).toBeNull();
       expect(screen.getByText('No facts were gathered')).toBeVisible();
     });
+  });
+
+  it('should render an excluded-by-policy detail for a host excluded by the check predicate', () => {
+    const clusterHosts = hostFactory.buildList(1);
+    const [{ id: target1 }] = clusterHosts;
+    const targetType = 'host';
+
+    const excludeExpression = 'host.is_majority_maker == true';
+    const agentExcludedResult = agentCheckExcludedFactory.build({
+      agent_id: target1,
+      exclude_expression: excludeExpression,
+    });
+
+    const checkResult = checkResultFactory.build({
+      agents_check_results: [agentExcludedResult],
+    });
+
+    const executionData = checksExecutionCompletedFactory.build({
+      check_results: [checkResultFactory.build(), checkResult],
+    });
+
+    const { check_id: checkID } = checkResult;
+
+    render(
+      <CheckResultDetail
+        checkID={checkID}
+        targetID={target1}
+        targetType={targetType}
+        executionData={executionData}
+        clusterHosts={clusterHosts}
+      />
+    );
+
+    expect(screen.getByTestId('excluded-by-policy')).toBeVisible();
+    expect(screen.getByText('excluded by policy')).toBeVisible();
+    expect(screen.getByText(excludeExpression)).toBeVisible();
+    expect(screen.queryAllByText('Passing')).toHaveLength(0);
+    expect(screen.queryAllByText('Critical')).toHaveLength(0);
   });
 });
