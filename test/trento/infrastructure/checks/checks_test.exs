@@ -20,6 +20,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
 
   alias Trento.Infrastructure.Checks.AMQP.Publisher
 
+  alias Google.Protobuf.Value, as: ProtobufValue
+
   require Trento.Enums.Health, as: Health
 
   describe "Cluster Checks Execution" do
@@ -47,8 +49,8 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                  execution_id: ^execution_id,
                  group_id: ^group_id,
                  targets: [
-                   %Target{agent_id: "agent_1", checks: ^selected_checks},
-                   %Target{agent_id: "agent_2", checks: ^selected_checks}
+                   %Target{agent_id: "agent_1", checks: ^selected_checks, attributes: %{}},
+                   %Target{agent_id: "agent_2", checks: ^selected_checks, attributes: %{}}
                  ],
                  env: %{
                    "cluster_type" => %{kind: {:string_value, "hana_scale_up"}},
@@ -56,6 +58,57 @@ defmodule Trento.Infrastructure.Checks.ChecksTest do
                    "architecture_type" => %{kind: {:string_value, "classic"}}
                  },
                  target_type: "cluster"
+               } = event
+
+        :ok
+      end)
+
+      assert :ok =
+               Checks.request_execution(
+                 execution_id,
+                 group_id,
+                 env,
+                 hosts,
+                 selected_checks,
+                 :cluster
+               )
+    end
+
+    test "should include is_majority_maker in attributes for cluster targets" do
+      execution_id = UUID.uuid4()
+      group_id = UUID.uuid4()
+
+      env = %Checks.ClusterExecutionEnv{
+        cluster_type: :hana_scale_up,
+        provider: :azure,
+        architecture_type: :classic
+      }
+
+      selected_checks = ["check_1"]
+
+      hosts = [
+        %{host_id: "agent_1", is_majority_maker: true},
+        %{host_id: "agent_2", is_majority_maker: false}
+      ]
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        event ->
+        assert %ExecutionRequested{
+                 targets: [
+                   %Target{
+                     agent_id: "agent_1",
+                     attributes: %{
+                       "is_majority_maker" => %ProtobufValue{kind: {:bool_value, true}}
+                     }
+                   },
+                   %Target{
+                     agent_id: "agent_2",
+                     attributes: %{
+                       "is_majority_maker" => %ProtobufValue{kind: {:bool_value, false}}
+                     }
+                   }
+                 ]
                } = event
 
         :ok

@@ -19,6 +19,8 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
   }
 
   alias Trento.Databases.Events.{
+    DatabaseDataMarkedInSync,
+    DatabaseDataMarkedStale,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDataMarkedInSync,
@@ -611,6 +613,55 @@ defmodule Trento.Databases.Projections.DatabaseProjectorTest do
         instance_number: ^instance_number,
         host_id: ^host_id,
         database_id: ^database_id,
+        stale_at: nil
+      },
+      1000
+    )
+  end
+
+  test "should mark database data as stale when DatabaseDataMarkedStale event is received" do
+    %{id: database_id} = insert(:database, stale_at: nil)
+
+    stale_at = DateTime.utc_now()
+
+    event = %DatabaseDataMarkedStale{
+      database_id: database_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database = Repo.get!(DatabaseReadModel, database_id)
+
+    assert database.stale_at == stale_at
+
+    assert_broadcast(
+      "database_stale_changed",
+      %{
+        id: ^database_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark database data as fresh when DatabaseDataMarkedInSync event is received" do
+    %{id: database_id} = insert(:database, stale_at: DateTime.utc_now())
+
+    event = %DatabaseDataMarkedInSync{
+      database_id: database_id
+    }
+
+    ProjectorTestHelper.project(DatabaseProjector, event, "database_projector")
+
+    database = Repo.get!(DatabaseReadModel, database_id)
+
+    assert database.stale_at == nil
+
+    assert_broadcast(
+      "database_stale_changed",
+      %{
+        id: ^database_id,
         stale_at: nil
       },
       1000

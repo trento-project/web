@@ -22,6 +22,7 @@ import {
   emptyCheckResultFactory,
   agentsCheckResultsWithHostname,
   agentCheckErrorFactory,
+  agentCheckExcludedFactory,
   expectationResultFactory,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
@@ -239,5 +240,34 @@ describe('CheckResultOutline Component', () => {
 
     expect(screen.getAllByText(message1)).toHaveLength(1);
     expect(screen.getAllByText(message2)).toHaveLength(1);
+  });
+
+  it('should render an "Excluded by policy" row for a host excluded by policy', () => {
+    const checkID = faker.string.uuid();
+    const clusterName = faker.animal.bear();
+    const hostID = faker.string.uuid();
+    const hostName = faker.internet.domainName();
+
+    const expectations = catalogExpectExpectationFactory.buildList(1);
+
+    const agentsCheckResults = agentsCheckResultsWithHostname(
+      [agentCheckExcludedFactory.build({ agent_id: hostID })],
+      [{ id: hostID, hostname: hostName }]
+    );
+
+    renderWithRouter(
+      <CheckResultOutline
+        checkID={checkID}
+        targetName={clusterName}
+        targetType="cluster"
+        expectations={expectations}
+        agentsCheckResults={agentsCheckResults}
+        expectationResults={[]}
+      />
+    );
+
+    expect(screen.getAllByText(hostName)).toHaveLength(1);
+    expect(screen.getByText('Excluded by policy')).toBeInTheDocument();
+    expect(screen.queryByText(/Expectations met/)).not.toBeInTheDocument();
   });
 });
