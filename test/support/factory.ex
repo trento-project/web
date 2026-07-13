@@ -90,6 +90,9 @@ defmodule Trento.Factory do
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    SapSystemDatabaseStaleAtChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -659,6 +662,29 @@ defmodule Trento.Factory do
     })
   end
 
+  def sap_system_data_marked_stale_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDataMarkedStale.new!()
+  end
+
+  def sap_system_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDataMarkedInSync.new!()
+  end
+
   def deregister_application_instance_command_factory do
     DeregisterApplicationInstance.new!(%{
       sap_system_id: Faker.UUID.v4(),
@@ -701,6 +727,18 @@ defmodule Trento.Factory do
       sap_system_id: Faker.UUID.v4(),
       health: Health.passing()
     }
+  end
+
+  def sap_system_database_stale_at_changed_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      database_stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDatabaseStaleAtChanged.new!()
   end
 
   def application_instance_moved_event_factory do
@@ -871,6 +909,7 @@ defmodule Trento.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
       ensa_version: EnsaVersion.ensa1(),
+      stale_at: nil,
       deregistered_at: nil,
       database_id: Faker.UUID.v4()
     }

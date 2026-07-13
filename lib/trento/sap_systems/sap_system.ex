@@ -57,7 +57,8 @@ defmodule Trento.SapSystems.SapSystem do
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
-    UpdateDatabaseHealth
+    UpdateDatabaseHealth,
+    UpdateDatabaseStaleAt
   }
 
   alias Trento.SapSystems.Events.{
@@ -70,6 +71,9 @@ defmodule Trento.SapSystems.SapSystem do
     ApplicationInstanceRegistered,
     ApplicationInstanceStatusChanged,
     SapSystemDatabaseHealthChanged,
+    SapSystemDatabaseStaleAtChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -95,6 +99,8 @@ defmodule Trento.SapSystems.SapSystem do
     # field :tenant, :string
     field :ensa_version, Ecto.Enum, values: EnsaVersion.values(), default: EnsaVersion.no_ensa()
     field :rolling_up, :boolean, default: false
+    field :stale_at, :utc_datetime_usec
+    field :database_stale_at, :utc_datetime_usec
     field :deregistered_at, :utc_datetime_usec, default: nil
 
     embeds_many :instances, Instance
@@ -127,6 +133,7 @@ defmodule Trento.SapSystems.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_restored_event(sap_system, instance)
     end)
+    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
@@ -165,6 +172,7 @@ defmodule Trento.SapSystems.SapSystem do
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_registered_or_updated_event(sap_system, instance)
     end)
+    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
   end
 
@@ -198,7 +206,7 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def execute(
-        %SapSystem{sap_system_id: sap_system_id, instances: instances},
+        %SapSystem{sap_system_id: sap_system_id, instances: instances} = sap_system,
         %MarkApplicationInstanceDataStale{
           instance_number: instance_number,
           host_id: host_id,
@@ -207,12 +215,14 @@ defmodule Trento.SapSystems.SapSystem do
       ) do
     case get_instance(instances, host_id, instance_number) do
       %Instance{stale_at: nil} ->
-        %ApplicationInstanceDataMarkedStale{
-          sap_system_id: sap_system_id,
-          instance_number: instance_number,
-          host_id: host_id,
-          stale_at: stale_at
-        }
+        [
+          %ApplicationInstanceDataMarkedStale{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number,
+            host_id: host_id,
+            stale_at: stale_at
+          }
+        ] ++ maybe_emit_sap_system_data_marked_stale_event(sap_system, stale_at)
 
       _ ->
         nil
@@ -235,6 +245,7 @@ defmodule Trento.SapSystems.SapSystem do
     |> Multi.execute(fn _ ->
       maybe_emit_application_instance_deregistered_event(sap_system, instance)
     end)
+    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
     |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_deregistered_event(
         sap_system,
@@ -299,6 +310,41 @@ defmodule Trento.SapSystems.SapSystem do
       }
     end)
     |> Multi.execute(&maybe_emit_sap_system_health_changed_event/1)
+  end
+
+  def execute(
+        %SapSystem{database_stale_at: database_stale_at},
+        %UpdateDatabaseStaleAt{database_stale_at: database_stale_at}
+      ) do
+    nil
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %UpdateDatabaseStaleAt{database_stale_at: nil}
+      ) do
+    sap_system
+    |> Multi.new()
+    |> Multi.execute(fn _ ->
+      %SapSystemDatabaseStaleAtChanged{
+        sap_system_id: sap_system_id,
+        database_stale_at: nil
+      }
+    end)
+    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
+  end
+
+  def execute(
+        %SapSystem{sap_system_id: sap_system_id} = sap_system,
+        %UpdateDatabaseStaleAt{database_stale_at: database_stale_at}
+      ) do
+    [
+      %SapSystemDatabaseStaleAtChanged{
+        sap_system_id: sap_system_id,
+        database_stale_at: database_stale_at
+      }
+    ] ++
+      maybe_emit_sap_system_data_marked_stale_event(sap_system, database_stale_at)
   end
 
   def execute(
@@ -442,6 +488,15 @@ defmodule Trento.SapSystems.SapSystem do
     }
   end
 
+  def apply(%SapSystem{} = sap_system, %SapSystemDatabaseStaleAtChanged{
+        database_stale_at: database_stale_at
+      }) do
+    %SapSystem{
+      sap_system
+      | database_stale_at: database_stale_at
+    }
+  end
+
   def apply(%SapSystem{} = sap_system, %SapSystemUpdated{
         ensa_version: ensa_version
       }) do
@@ -554,6 +609,17 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def apply(%SapSystem{} = sap_system, %SapSystemTombstoned{}), do: sap_system
+
+  def apply(
+        %SapSystem{} = sap_system,
+        %SapSystemDataMarkedStale{stale_at: stale_at}
+      ) do
+    %SapSystem{sap_system | stale_at: stale_at}
+  end
+
+  def apply(%SapSystem{} = sap_system, %SapSystemDataMarkedInSync{}) do
+    %SapSystem{sap_system | stale_at: nil}
+  end
 
   defp maybe_emit_application_instance_registered_or_moved_event(
          %SapSystem{instances: []},
@@ -692,6 +758,43 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   defp maybe_emit_application_instance_data_marked_in_sync_event(_, _), do: nil
+
+  defp maybe_emit_sap_system_data_marked_stale_event(
+         %SapSystem{
+           sap_system_id: sap_system_id,
+           stale_at: nil
+         },
+         stale_at
+       ) do
+    [
+      %SapSystemDataMarkedStale{
+        sap_system_id: sap_system_id,
+        stale_at: stale_at
+      }
+    ]
+  end
+
+  defp maybe_emit_sap_system_data_marked_stale_event(_, _), do: []
+
+  defp maybe_emit_sap_system_data_marked_in_sync_event(%SapSystem{stale_at: nil}), do: nil
+
+  defp maybe_emit_sap_system_data_marked_in_sync_event(%SapSystem{
+         sap_system_id: sap_system_id,
+         instances: instances,
+         database_stale_at: database_stale_at
+       }) do
+    all_in_sync? =
+      instances
+      |> Enum.map(fn %{stale_at: stale_at} -> stale_at end)
+      |> Enum.concat([database_stale_at])
+      |> Enum.all?(&is_nil/1)
+
+    if all_in_sync? do
+      %SapSystemDataMarkedInSync{
+        sap_system_id: sap_system_id
+      }
+    end
+  end
 
   defp maybe_emit_application_instance_status_changed_event(
          %SapSystem{instances: instances},

@@ -17,7 +17,8 @@ defmodule Trento.SapSystems.SapSystemTest do
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
-    UpdateDatabaseHealth
+    UpdateDatabaseHealth,
+    UpdateDatabaseStaleAt
   }
 
   alias Trento.SapSystems.Events.{
@@ -30,6 +31,9 @@ defmodule Trento.SapSystems.SapSystemTest do
     ApplicationInstanceRegistered,
     ApplicationInstanceStatusChanged,
     SapSystemDatabaseHealthChanged,
+    SapSystemDatabaseStaleAtChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -2582,7 +2586,7 @@ defmodule Trento.SapSystems.SapSystemTest do
     end
   end
 
-  describe "instance marked stale/in sync" do
+  describe "sap system marked stale/in sync" do
     test "should mark application instance data as stale" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
@@ -2618,10 +2622,15 @@ defmodule Trento.SapSystems.SapSystemTest do
             instance_number: instance_number,
             host_id: host_id,
             stale_at: stale_at
+          },
+          %SapSystemDataMarkedStale{
+            sap_system_id: sap_system_id,
+            stale_at: stale_at
           }
         ],
         fn state ->
           assert %SapSystem{
+                   stale_at: ^stale_at,
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
@@ -2682,7 +2691,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should mark application instance data as in sync when registering a stale instance" do
+    test "should mark application instance data as in sync when data from a stale instance is received" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
@@ -2704,6 +2713,9 @@ defmodule Trento.SapSystems.SapSystemTest do
           sap_system_id: sap_system_id,
           instance_number: instance_number,
           host_id: host_id
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id
         )
       ]
 
@@ -2724,10 +2736,14 @@ defmodule Trento.SapSystems.SapSystemTest do
             sap_system_id: sap_system_id,
             instance_number: instance_number,
             host_id: host_id
+          },
+          %SapSystemDataMarkedInSync{
+            sap_system_id: sap_system_id
           }
         ],
         fn state ->
           assert %SapSystem{
+                   stale_at: nil,
                    instances: [
                      %Instance{
                        instance_number: ^instance_number,
@@ -2780,6 +2796,680 @@ defmodule Trento.SapSystems.SapSystemTest do
                        stale_at: nil
                      }
                    ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark sap system data as stale again if other instance was already stale" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id_1 = Faker.UUID.v4()
+      host_id_2 = Faker.UUID.v4()
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+      stale_at_1 = DateTime.utc_now()
+      stale_at_2 = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_1,
+          instance_number: instance_number_1,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_2,
+          instance_number: instance_number_2,
+          features: "ABAP"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number_1,
+          host_id: host_id_1,
+          stale_at: stale_at_1
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: stale_at_1
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %MarkApplicationInstanceDataStale{
+          sap_system_id: sap_system_id,
+          instance_number: instance_number_2,
+          host_id: host_id_2,
+          stale_at: stale_at_2
+        },
+        [
+          %ApplicationInstanceDataMarkedStale{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number_2,
+            host_id: host_id_2,
+            stale_at: stale_at_2
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^stale_at_1
+                 } = state
+        end
+      )
+    end
+
+    test "should mark sap system data as in sync when a stale instance receives new data" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
+        )
+      ]
+
+      command =
+        build(:register_application_instance_command,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        )
+
+      assert_events_and_state(
+        initial_events,
+        command,
+        [
+          %ApplicationInstanceDataMarkedInSync{
+            sap_system_id: sap_system_id,
+            instance_number: instance_number,
+            host_id: host_id
+          },
+          %SapSystemDataMarkedInSync{
+            sap_system_id: sap_system_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: nil,
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: nil
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should mark sap system data as in sync when a stale instance is deregistered" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id_1 = Faker.UUID.v4()
+      host_id_2 = Faker.UUID.v4()
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+      stale_at = DateTime.utc_now()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_1,
+          instance_number: instance_number_1,
+          features: "ENQREP"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_2,
+          instance_number: instance_number_2,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_2,
+          instance_number: "02",
+          features: "ABAP"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number_1,
+          host_id: host_id_1,
+          stale_at: stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id_1,
+          instance_number: instance_number_1,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: host_id_1,
+            instance_number: instance_number_1,
+            deregistered_at: deregistered_at
+          },
+          %SapSystemDataMarkedInSync{
+            sap_system_id: sap_system_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: nil,
+                   deregistered_at: nil
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark sap system data as in sync when an instance is deregistered but more stale instances are present" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id_1 = Faker.UUID.v4()
+      host_id_2 = Faker.UUID.v4()
+      host_id_3 = Faker.UUID.v4()
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+      instance_number_3 = "02"
+      stale_at = DateTime.utc_now()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_1,
+          instance_number: instance_number_1,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_2,
+          instance_number: instance_number_2,
+          features: "ABAP"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_3,
+          instance_number: instance_number_3,
+          features: "ENQREP"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number_1,
+          host_id: host_id_1,
+          stale_at: stale_at
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number_3,
+          host_id: host_id_3,
+          stale_at: stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id_3,
+          instance_number: instance_number_3,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: host_id_3,
+            instance_number: instance_number_3,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^stale_at,
+                   deregistered_at: nil,
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number_2,
+                       stale_at: nil
+                     },
+                     %Instance{
+                       instance_number: ^instance_number_1,
+                       stale_at: ^stale_at
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark sap system data as in sync when an instance is deregistered if the system was already in sync" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id_1 = Faker.UUID.v4()
+      host_id_2 = Faker.UUID.v4()
+      host_id_3 = Faker.UUID.v4()
+      instance_number_1 = "00"
+      instance_number_2 = "01"
+      instance_number_3 = "02"
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_1,
+          instance_number: instance_number_1,
+          features: "MESSAGESERVER"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_2,
+          instance_number: instance_number_2,
+          features: "ABAP"
+        ),
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id_3,
+          instance_number: instance_number_3,
+          features: "ENQREP"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %DeregisterApplicationInstance{
+          sap_system_id: sap_system_id,
+          host_id: host_id_3,
+          instance_number: instance_number_3,
+          deregistered_at: deregistered_at
+        },
+        [
+          %ApplicationInstanceDeregistered{
+            sap_system_id: sap_system_id,
+            host_id: host_id_3,
+            instance_number: instance_number_3,
+            deregistered_at: deregistered_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: nil,
+                   deregistered_at: nil,
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number_2,
+                       stale_at: nil
+                     },
+                     %Instance{
+                       instance_number: ^instance_number_1,
+                       stale_at: nil
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should mark SAP system as stale when database goes stale and system was in sync" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      database_stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        }),
+        [
+          %SapSystemDatabaseStaleAtChanged{
+            sap_system_id: sap_system_id,
+            database_stale_at: database_stale_at
+          },
+          %SapSystemDataMarkedStale{
+            sap_system_id: sap_system_id,
+            stale_at: database_stale_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^database_stale_at,
+                   database_stale_at: ^database_stale_at
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark SAP system as stale again when database goes stale and system was already stale" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      instance_stale_at = DateTime.utc_now()
+      database_stale_at = DateTime.add(instance_stale_at, 60, :second)
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: instance_stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: instance_stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        }),
+        [
+          %SapSystemDatabaseStaleAtChanged{
+            sap_system_id: sap_system_id,
+            database_stale_at: database_stale_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^instance_stale_at,
+                   database_stale_at: ^database_stale_at
+                 } = state
+        end
+      )
+    end
+
+    test "should mark SAP system as in sync when database goes in sync and all instances are in sync" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      database_stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:sap_system_database_stale_at_changed_event,
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: database_stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: nil
+        }),
+        [
+          %SapSystemDatabaseStaleAtChanged{
+            sap_system_id: sap_system_id,
+            database_stale_at: nil
+          },
+          %SapSystemDataMarkedInSync{
+            sap_system_id: sap_system_id
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: nil,
+                   database_stale_at: nil
+                 } = state
+        end
+      )
+    end
+
+    test "should not mark SAP system as in sync when database goes in sync but instances are still stale" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      instance_stale_at = DateTime.utc_now()
+      database_stale_at = DateTime.add(instance_stale_at, 60, :second)
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: instance_stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: instance_stale_at
+        ),
+        build(:sap_system_database_stale_at_changed_event,
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: nil
+        }),
+        [
+          %SapSystemDatabaseStaleAtChanged{
+            sap_system_id: sap_system_id,
+            database_stale_at: nil
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^instance_stale_at,
+                   database_stale_at: nil,
+                   instances: [
+                     %Instance{
+                       instance_number: ^instance_number,
+                       stale_at: ^instance_stale_at
+                     }
+                   ]
+                 } = state
+        end
+      )
+    end
+
+    test "should not emit any events when database stale_at is the same" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      database_stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:sap_system_database_stale_at_changed_event,
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: database_stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        }),
+        [],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^database_stale_at,
+                   database_stale_at: ^database_stale_at
+                 } = state
+        end
+      )
+    end
+
+    test "should not override sap system stale_at when database goes stale after an instance" do
+      sap_system_id = Faker.UUID.v4()
+      sid = fake_sid()
+      host_id = Faker.UUID.v4()
+      instance_number = "00"
+      instance_stale_at = DateTime.utc_now()
+      database_stale_at = DateTime.add(instance_stale_at, 60, :second)
+
+      initial_events = [
+        build(:application_instance_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid,
+          host_id: host_id,
+          instance_number: instance_number,
+          features: "MESSAGESERVER"
+        ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
+        build(:application_instance_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          instance_number: instance_number,
+          host_id: host_id,
+          stale_at: instance_stale_at
+        ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: instance_stale_at
+        )
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        UpdateDatabaseStaleAt.new!(%{
+          sap_system_id: sap_system_id,
+          database_stale_at: database_stale_at
+        }),
+        [
+          %SapSystemDatabaseStaleAtChanged{
+            sap_system_id: sap_system_id,
+            database_stale_at: database_stale_at
+          }
+        ],
+        fn state ->
+          assert %SapSystem{
+                   stale_at: ^instance_stale_at,
+                   database_stale_at: ^database_stale_at
                  } = state
         end
       )
