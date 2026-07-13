@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-29T20:16:11Z",
-    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
-    "run_id": "26659072586",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1579
-      },
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-29T23:26:29Z",
     "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
     "run_id": "26660972253",
@@ -4823,6 +4803,26 @@
       },
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-13T19:21:42Z",
+    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
+    "run_id": "29276854378",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.06641
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
         "score": 0.05001
       }
     ]
