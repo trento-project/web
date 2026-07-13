@@ -115,6 +115,10 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `cve_factory`
 
+# `database_data_marked_in_sync_event_factory`
+
+# `database_data_marked_stale_event_factory`
+
 # `database_deregistered_event_factory`
 
 # `database_factory`

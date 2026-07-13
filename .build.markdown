@@ -107,6 +107,8 @@ Trento.Databases.Commands.RegisterDatabaseInstance.md
 Trento.Databases.Commands.RollUpDatabase.md
 Trento.Databases.Database.md
 Trento.Databases.Event.Upcaster.UpcastDatabaseId.md
+Trento.Databases.Events.DatabaseDataMarkedInSync.md
+Trento.Databases.Events.DatabaseDataMarkedStale.md
 Trento.Databases.Events.DatabaseDeregistered.md
 Trento.Databases.Events.DatabaseHealthChanged.md
 Trento.Databases.Events.DatabaseInstanceDataMarkedInSync.md

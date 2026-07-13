@@ -108,6 +108,8 @@ Trento.Databases.Commands.RegisterDatabaseInstance.html
 Trento.Databases.Commands.RollUpDatabase.html
 Trento.Databases.Database.html
 Trento.Databases.Event.Upcaster.UpcastDatabaseId.html
+Trento.Databases.Events.DatabaseDataMarkedInSync.html
+Trento.Databases.Events.DatabaseDataMarkedStale.html
 Trento.Databases.Events.DatabaseDeregistered.html
 Trento.Databases.Events.DatabaseHealthChanged.html
 Trento.Databases.Events.DatabaseInstanceDataMarkedInSync.html
@@ -592,7 +594,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-33C339FF.js
-dist/sidebar_items-7B24DB60.js
+dist/search_data-B4BF3689.js
+dist/sidebar_items-47D9C20B.js
 index.html
 search.html

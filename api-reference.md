@@ -105,6 +105,10 @@ deployed HANA database.
 - [Trento.Databases.Event.Upcaster.UpcastDatabaseId](Trento.Databases.Event.Upcaster.UpcastDatabaseId.md): Adds the required upcast function to upcast from legacy events where
 sap_system_id was still used.
 
+- [Trento.Databases.Events.DatabaseDataMarkedInSync](Trento.Databases.Events.DatabaseDataMarkedInSync.md): This event is emitted when a database data is marked as in sync.
+
+- [Trento.Databases.Events.DatabaseDataMarkedStale](Trento.Databases.Events.DatabaseDataMarkedStale.md): This event is emitted when a database data is marked as stale.
+
 - [Trento.Databases.Events.DatabaseDeregistered](Trento.Databases.Events.DatabaseDeregistered.md): This event is emitted once all database instances belonging to a HANA database have been deregistered (decommissioned).
 
 - [Trento.Databases.Events.DatabaseHealthChanged](Trento.Databases.Events.DatabaseHealthChanged.md): This event is emitted when a database health has changed.

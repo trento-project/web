@@ -15,6 +15,7 @@ Database read model
   inserted_at: term(),
   sap_systems: term(),
   sid: term(),
+  stale_at: term(),
   tags: term(),
   tenants: term(),
   updated_at: term()

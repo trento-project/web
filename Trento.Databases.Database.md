@@ -21,6 +21,7 @@ to it are available now.
   instances: term(),
   rolling_up: term(),
   sid: term(),
+  stale_at: term(),
   tenants: term()
 }
 ```

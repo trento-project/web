@@ -23,6 +23,8 @@
 
 # `database_restored`
 
+# `database_stale_changed`
+
 # `database_tenant`
 
 # `database_tenants_updated`
