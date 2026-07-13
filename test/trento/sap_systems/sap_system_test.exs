@@ -2586,7 +2586,7 @@ defmodule Trento.SapSystems.SapSystemTest do
     end
   end
 
-  describe "sap system marked stale/in sync" do
+  describe "SAP system marked stale/in sync" do
     test "should mark application instance data as stale" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
@@ -2801,7 +2801,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should not mark sap system data as stale again if other instance was already stale" do
+    test "should not mark SAP system data as stale again if other instance was already stale" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id_1 = Faker.UUID.v4()
@@ -2809,7 +2809,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       instance_number_1 = "00"
       instance_number_2 = "01"
       stale_at_1 = DateTime.utc_now()
-      stale_at_2 = DateTime.utc_now()
+      stale_at_2 = DateTime.add(stale_at_1, 1, :day)
 
       initial_events = [
         build(:application_instance_registered_event,
@@ -2866,7 +2866,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should mark sap system data as in sync when a stale instance receives new data" do
+    test "should mark SAP system data as in sync when a stale instance receives new data" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
@@ -2933,7 +2933,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should mark sap system data as in sync when a stale instance is deregistered" do
+    test "should mark SAP system data as in sync when a stale instance is deregistered" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id_1 = Faker.UUID.v4()
@@ -3009,7 +3009,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should not mark sap system data as in sync when an instance is deregistered but more stale instances are present" do
+    test "should not mark SAP system data as in sync when an instance is deregistered but more stale instances are present" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id_1 = Faker.UUID.v4()
@@ -3036,6 +3036,10 @@ defmodule Trento.SapSystems.SapSystemTest do
           instance_number: instance_number_2,
           features: "ABAP"
         ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
@@ -3043,25 +3047,21 @@ defmodule Trento.SapSystems.SapSystemTest do
           instance_number: instance_number_3,
           features: "ENQREP"
         ),
-        build(:sap_system_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
-        ),
         build(:application_instance_data_marked_stale_event,
           sap_system_id: sap_system_id,
           instance_number: instance_number_1,
           host_id: host_id_1,
           stale_at: stale_at
         ),
+        build(:sap_system_data_marked_stale_event,
+          sap_system_id: sap_system_id,
+          stale_at: stale_at
+        ),
         build(:application_instance_data_marked_stale_event,
           sap_system_id: sap_system_id,
           instance_number: instance_number_3,
           host_id: host_id_3,
-          stale_at: stale_at
-        ),
-        build(:sap_system_data_marked_stale_event,
-          sap_system_id: sap_system_id,
-          stale_at: stale_at
+          stale_at: DateTime.add(stale_at, 1, :day)
         )
       ]
 
@@ -3126,16 +3126,16 @@ defmodule Trento.SapSystems.SapSystemTest do
           instance_number: instance_number_2,
           features: "ABAP"
         ),
+        build(:sap_system_registered_event,
+          sap_system_id: sap_system_id,
+          sid: sid
+        ),
         build(:application_instance_registered_event,
           sap_system_id: sap_system_id,
           sid: sid,
           host_id: host_id_3,
           instance_number: instance_number_3,
           features: "ENQREP"
-        ),
-        build(:sap_system_registered_event,
-          sap_system_id: sap_system_id,
-          sid: sid
         )
       ]
 
@@ -3422,7 +3422,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should not override sap system stale_at when database goes stale after an instance" do
+    test "should not override SAP system stale_at when database goes stale after an instance" do
       sap_system_id = Faker.UUID.v4()
       sid = fake_sid()
       host_id = Faker.UUID.v4()
