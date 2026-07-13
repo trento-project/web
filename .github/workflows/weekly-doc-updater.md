@@ -2,7 +2,7 @@
 name: Documentation Updater
 description: Automatically reviews and updates documentation based on recent code changes
 on:
-  schedule: daily
+  schedule: weekly
   workflow_dispatch:
   permissions:
     pull-requests: read
