@@ -39,7 +39,7 @@ jobs:
   # If not a PR, all jobs will run
   # Otherwise, only jobs that are impacted from changed paths will run
   detect-changes:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       elixir-changed: ${{ steps.set-outputs.outputs.elixir-changed }}
       assets-changed: ${{ steps.set-outputs.outputs.assets-changed }}
@@ -102,7 +102,7 @@ jobs:
           fi
 
   setup-matrix-env:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [detect-changes]
     outputs:
       ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
@@ -129,7 +129,7 @@ jobs:
     name: Elixir ${{ matrix.mix_env }} dependencies
     needs: [setup-matrix-env, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -189,7 +189,7 @@ jobs:
     name: Npm dependencies
     needs: [setup-matrix-env, detect-changes]
     if: needs.detect-changes.outputs.assets-changed == 'true' || always()
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -219,7 +219,7 @@ jobs:
   codespell:
     name: Check common misspellings
     needs: [detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     defaults:
       run:
         shell: bash
@@ -238,7 +238,7 @@ jobs:
   license-headers:
     name: Ensure license headers are present and correct
     needs: [detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -250,7 +250,7 @@ jobs:
   generate-docs:
     name: Generate project documentation
     needs: [detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -290,7 +290,7 @@ jobs:
     name: Static Code Analysis JS
     needs: [setup-matrix-env, npm-deps, detect-changes]
     if: needs.detect-changes.outputs.assets-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -322,7 +322,7 @@ jobs:
     name: Static Code Analysis Elixir
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -363,7 +363,7 @@ jobs:
     name: Javascript tests
     needs: [setup-matrix-env, npm-deps, detect-changes]
     if: needs.detect-changes.outputs.assets-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -393,7 +393,7 @@ jobs:
     name: Elixir tests
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -457,7 +457,7 @@ jobs:
     name: Test release build
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -518,7 +518,7 @@ jobs:
   chromatic:
     name: Chromatic deployment
     needs: [setup-matrix-env, elixir-deps, npm-deps, detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true' && needs.detect-changes.outputs.assets-changed == 'true'
     steps:
       - name: Checkout
@@ -569,7 +569,7 @@ jobs:
   npm-e2e-deps:
     name: Npm E2E dependencies
     needs: [setup-matrix-env, detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -595,7 +595,7 @@ jobs:
     name: E2E Tests
     needs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -939,7 +939,7 @@ jobs:
   target-branch-deps:
     name: Rebuild target branch dependencies
     needs: [setup-matrix-env, detect-changes]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -982,7 +982,7 @@ jobs:
     name: API docs check
     needs: [setup-matrix-env, elixir-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -1027,7 +1027,7 @@ jobs:
     name: API bc check
     needs: [setup-matrix-env, elixir-deps, target-branch-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         include:
@@ -1214,7 +1214,7 @@ jobs:
 
   run-photofinish-demo-env:
     name: Use photofinish to push mock data to the demo environment
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: |
       vars.DEPLOY_DEMO == 'true' &&
         (
