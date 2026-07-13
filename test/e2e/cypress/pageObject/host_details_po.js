@@ -29,9 +29,9 @@ const architectureLabel =
   'div[class="font-bold"]:contains("Architecture") + div';
 const ipAddressesLabel =
   'div[class="font-bold"]:contains("IP Addresses") + div';
-const agentRunningLabel = 'span:contains("Agent:running")';
-const agentRunningBadge = `${agentRunningLabel} svg`;
-const nodeExporterLabel = 'span:contains("Node Exporter:running")';
+const agentReportingLabel = 'span:contains("Agent:Reporting")';
+const agentReportingBadge = `${agentReportingLabel} svg`;
+const nodeExporterLabel = 'span:contains("Node Exporter:Reporting")';
 const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
 const notRecognizedProviderLabel = 'div:contains("Provider not recognized")';
@@ -396,9 +396,9 @@ const _getTableHeaders = (tableName) =>
   });
 
 export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentRunningLabel).should('be.visible');
+  cy.get(agentReportingLabel).should('be.visible');
   return cy
-    .get(agentRunningBadge)
+    .get(agentReportingBadge)
     .invoke('attr', 'class')
     .then((classAttr) => {
       expect(classAttr).to.contain('jungle-green');

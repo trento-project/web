@@ -11,6 +11,7 @@ import {
   APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_STATUS_CHANGED,
   APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
+  APPLICATION_INSTANCE_STALE_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_RESTORED,
@@ -23,6 +24,7 @@ import {
   updateApplicationInstanceHost,
   updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
+  updateApplicationInstanceStaleAt,
   removeSAPSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -96,6 +98,10 @@ export function* applicationInstanceAbsentAtChanged({ payload }) {
   );
 }
 
+export function* applicationInstanceStaleChanged({ payload }) {
+  yield put(updateApplicationInstanceStaleAt(payload));
+}
+
 export function* sapSystemDeregistered({ payload: { id, sid } }) {
   yield put(removeSAPSystem({ id }));
   yield put(
@@ -163,6 +169,10 @@ export function* watchSapSystemEvents() {
   yield takeEvery(
     APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
     applicationInstanceAbsentAtChanged
+  );
+  yield takeEvery(
+    APPLICATION_INSTANCE_STALE_CHANGED,
+    applicationInstanceStaleChanged
   );
   yield takeEvery(
     APPLICATION_INSTANCE_DEREGISTERED,

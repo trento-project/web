@@ -210,6 +210,50 @@ defmodule Trento.ClustersTest do
       end
     end
 
+    test "should include is_majority_maker in target attributes for hana cluster nodes" do
+      majority_maker_hostname = "majority-maker-host"
+      other_hostname = "other-host"
+
+      %{id: cluster_id} =
+        insert(:cluster,
+          type: ClusterType.hana_scale_up(),
+          details:
+            build(:hana_cluster_details,
+              nodes: [
+                build(:hana_cluster_node, name: majority_maker_hostname, is_majority_maker: true),
+                build(:hana_cluster_node, name: other_hostname, is_majority_maker: false)
+              ]
+            )
+        )
+
+      %{id: majority_maker_host_id} =
+        insert(:host, cluster_id: cluster_id, hostname: majority_maker_hostname)
+
+      %{id: other_host_id} = insert(:host, cluster_id: cluster_id, hostname: other_hostname)
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
+        targets_by_agent = Map.new(message.targets, &{&1.agent_id, &1})
+
+        assert %Target{
+                 attributes: %{
+                   "is_majority_maker" => %ProtobufValue{kind: {:bool_value, true}}
+                 }
+               } = targets_by_agent[majority_maker_host_id]
+
+        assert %Target{
+                 attributes: %{
+                   "is_majority_maker" => %ProtobufValue{kind: {:bool_value, false}}
+                 }
+               } = targets_by_agent[other_host_id]
+
+        :ok
+      end)
+
+      assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
+
     test "should not start checks execution if the cluster is not registered" do
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
         :ok

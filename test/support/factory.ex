@@ -66,6 +66,8 @@ defmodule Trento.Factory do
   }
 
   alias Trento.Databases.Events.{
+    DatabaseDataMarkedInSync,
+    DatabaseDataMarkedStale,
     DatabaseDeregistered,
     DatabaseHealthChanged,
     DatabaseInstanceDataMarkedInSync,
@@ -584,6 +586,29 @@ defmodule Trento.Factory do
     })
   end
 
+  def database_data_marked_stale_event_factory(attrs) do
+    data = %{
+      database_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> DatabaseDataMarkedStale.new!()
+  end
+
+  def database_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      database_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> DatabaseDataMarkedInSync.new!()
+  end
+
   def application_instance_registered_event_factory do
     %ApplicationInstanceRegistered{
       sap_system_id: Faker.UUID.v4(),
@@ -833,7 +858,8 @@ defmodule Trento.Factory do
     %DatabaseReadModel{
       id: Faker.UUID.v4(),
       sid: Faker.StarWars.planet(),
-      health: Health.unknown()
+      health: Health.unknown(),
+      stale_at: nil
     }
   end
 

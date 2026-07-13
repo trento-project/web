@@ -14,6 +14,29 @@ export default {
       },
       options: ['green', 'yellow', 'red', 'gray'],
     },
+    size: {
+      description: 'The size of the icon',
+      control: { type: 'radio' },
+      options: [
+        'xs',
+        's',
+        'base',
+        'm',
+        'l',
+        'xl',
+        'xxl',
+        'xxxl',
+        16,
+        20,
+        24,
+        32,
+        48,
+      ],
+      table: {
+        type: { summary: 'string|number' },
+        defaultValue: { summary: 20 },
+      },
+    },
     absent: {
       description: 'Whether the instance is absent',
       control: {
@@ -112,5 +135,21 @@ export const WithTimezone = {
     status: 'green',
     staleAt: '2026-06-15T10:30:00Z',
     timezone: 'America/New_York',
+  },
+};
+
+export const LargeSize = {
+  args: {
+    status: 'green',
+    staleAt: '2026-06-15T10:30:00Z',
+    size: 'xl',
+  },
+};
+
+export const SmallSize = {
+  args: {
+    status: 'yellow',
+    staleAt: '2026-06-15T10:30:00Z',
+    size: 's',
   },
 };

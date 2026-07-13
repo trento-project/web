@@ -11,6 +11,7 @@ function TargetResult({
   targetName,
   expectationsSummary,
   isAgentCheckError = false,
+  isExcluded = false,
   onClick = () => {},
 }) {
   return (
@@ -33,7 +34,12 @@ function TargetResult({
       </div>
       <div className="table-cell p-2 align-middle">
         <div className="flex p-1 justify-between">
-          <span className={classNames({ 'text-red-500': isAgentCheckError })}>
+          <span
+            className={classNames({
+              'text-red-500': isAgentCheckError,
+              'text-gray-500 italic': isExcluded,
+            })}
+          >
             {expectationsSummary}
           </span>
           <span>
