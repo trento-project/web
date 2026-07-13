@@ -586,17 +586,27 @@ defmodule Trento.Factory do
     })
   end
 
-  def database_data_marked_stale_event_factory do
-    DatabaseDataMarkedStale.new!(%{
+  def database_data_marked_stale_event_factory(attrs) do
+    data = %{
       database_id: Faker.UUID.v4(),
       stale_at: DateTime.utc_now()
-    })
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> DatabaseDataMarkedStale.new!()
   end
 
-  def database_data_marked_in_sync_event_factory do
-    DatabaseDataMarkedInSync.new!(%{
+  def database_data_marked_in_sync_event_factory(attrs) do
+    data = %{
       database_id: Faker.UUID.v4()
-    })
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> DatabaseDataMarkedInSync.new!()
   end
 
   def application_instance_registered_event_factory do
