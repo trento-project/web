@@ -30,6 +30,7 @@ import {
 import {
   sapSystemRegistered,
   sapSystemHealthChanged,
+  sapSystemStaleChanged,
   applicationInstanceRegistered,
   applicationInstanceMoved,
   applicationInstanceAbsentAtChanged,
@@ -46,6 +47,7 @@ import {
   databaseDeregistered,
   databaseRestored,
   databaseHealthChanged,
+  databaseStaleChanged,
   databaseInstanceRegistered,
   databaseInstanceAbsentAtChanged,
   databaseInstanceStaleChanged,
@@ -144,6 +146,10 @@ const sapSystemEvents = [
     action: sapSystemHealthChanged,
   },
   {
+    name: 'sap_system_stale_changed',
+    action: sapSystemStaleChanged,
+  },
+  {
     name: 'application_instance_registered',
     action: applicationInstanceRegistered,
   },
@@ -197,6 +203,10 @@ const databaseEvents = [
   {
     name: 'database_health_changed',
     action: databaseHealthChanged,
+  },
+  {
+    name: 'database_stale_changed',
+    action: databaseStaleChanged,
   },
   {
     name: 'database_instance_registered',
