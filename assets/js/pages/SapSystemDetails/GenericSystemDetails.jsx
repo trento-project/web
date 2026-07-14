@@ -47,6 +47,7 @@ import {
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
 import { STALE_ROW } from '@lib/tables';
+import { formatDateTime } from '@lib/timezones';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
@@ -63,6 +64,7 @@ import SapSystemLink from '@common/SapSystemLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
 
 import Pill from '@common/Pill';
+import Banner from '@common/Banners';
 import { getReplicationStatusClasses } from '@pages/InstanceOverview/InstanceOverview';
 
 import {
@@ -293,7 +295,12 @@ export function GenericSystemDetails({
       />
       <div className="flex flex-wrap">
         <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-          <DetailsViewHeader className="font-bold" health={system.health}>
+          <DetailsViewHeader
+            className="font-bold"
+            health={system.health}
+            staleAt={system.stale_at}
+            timezone={userTimezone}
+          >
             {title}
           </DetailsViewHeader>
         </div>
@@ -311,6 +318,13 @@ export function GenericSystemDetails({
           </div>
         )}
       </div>
+      {system.stale_at && (
+        <Banner type="warning" truncate={false}>
+          Trento agent heartbeat failed in some host composing this{' '}
+          {type === APPLICATION_TYPE ? 'SAP system' : 'Database'}... Information
+          is outdated since {formatDateTime(system.stale_at, userTimezone)}.
+        </Banner>
+      )}
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
         {type === APPLICATION_TYPE ? (
           <ListView
@@ -338,7 +352,14 @@ export function GenericSystemDetails({
               {
                 title: 'Database health',
                 content: system.database_health,
-                render: (content) => <HealthIcon health={content} size="l" />,
+                render: (content) => (
+                  <HealthIcon
+                    health={content}
+                    size="l"
+                    staleAt={system.database_stale_at}
+                    timezone={userTimezone}
+                  />
+                ),
               },
               {
                 title: 'ENSA version',
