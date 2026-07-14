@@ -293,6 +293,56 @@ describe('SapSystemsOverviews component', () => {
         ).toHaveAttribute('href', `/hosts/${instance.host.id}`);
       });
     });
+
+    it('should display stale SAP systems with gray background and stale icon', async () => {
+      const user = userEvent.setup();
+      const sapSystemID = faker.string.uuid();
+      const staleDate = faker.date.past().toISOString();
+      const sapSystem = sapSystemFactory.build({
+        id: sapSystemID,
+        health: 'passing',
+        stale_at: staleDate,
+        application_instances: sapSystemApplicationInstanceFactory.buildList(
+          2,
+          { sap_system_id: sapSystemID, stale_at: staleDate }
+        ),
+      });
+
+      const { application_instances: applicationInstances } = sapSystem;
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={[sapSystem]}
+          applicationInstances={applicationInstances}
+          databaseInstances={[]}
+        />
+      );
+
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0]).toHaveClass('bg-gray-100');
+
+      const healthCell = rows[0].querySelector('td:nth-child(2)');
+      const svgs = healthCell.querySelectorAll(
+        '[data-testid="eos-svg-component"]'
+      );
+      expect(svgs).toHaveLength(2);
+
+      const table = screen.getByRole('table');
+      await user.click(
+        table.querySelector('tbody tr:nth-child(1) td:nth-child(1)')
+      );
+
+      const detailsRow = screen
+        .getByRole('table')
+        .querySelectorAll('tbody > tr')[1];
+      expect(detailsRow).toHaveClass('bg-gray-100');
+
+      const instanceRows = detailsRow.querySelectorAll(
+        'div.table-row-group > div.table-row'
+      );
+      expect(instanceRows[0]).toHaveClass('bg-gray-100');
+    });
   });
 
   describe('instance cleanup', () => {
