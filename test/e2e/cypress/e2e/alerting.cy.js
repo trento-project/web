@@ -8,8 +8,8 @@ context('Email Alerting feature', () => {
     if (!Cypress.expose('ALERTING_TESTS')) {
       this.skip();
     }
-    alertingPage.deleteAllEmailsFromMailpit();
     alertingPage.preloadTestData();
+    alertingPage.deleteAllEmailsFromMailpit();
     alertingPage.getAlertingSettings().then((resp) => {
       if (resp.status === 404 || resp.body.enforced_from_env === false) {
         const requestMethod = resp.status === 404 ? 'POST' : 'PATCH';
