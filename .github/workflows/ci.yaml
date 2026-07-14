@@ -388,9 +388,7 @@ jobs:
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Run JS tests
-        run: |
-          source .github/scripts/retry.sh
-          retry "cd assets && npm test" "JavaScript tests (Node ${{ matrix.nodejs }})" 2 1800
+        run: cd assets && npm test
 
   test-elixir:
     name: Elixir tests (Elixir ${{ matrix.elixir }})
@@ -700,8 +698,7 @@ jobs:
           export SPLIT_INDEX="${{ strategy.job-index }}"
           export SPLIT_FILE="cypress-split-timings.json"
 
-          source ../../.github/scripts/retry.sh
-          retry "npx cypress run --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}" "E2E tests (container ${{ matrix.containers }})" 2 1800
+          npx cypress run --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -817,8 +814,7 @@ jobs:
           cd test/e2e
           SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
 
-          source ../../.github/scripts/retry.sh
-          retry "npx cypress run --spec \"$SPEC_LIST\" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}" "Regression tests (${{ matrix.test }})" 2 1800
+          npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -972,8 +968,7 @@ jobs:
           cd test/e2e
           SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
 
-          source ../../.github/scripts/retry.sh
-          retry "npx cypress run --spec \"$SPEC_LIST\" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}" "Integration tests (${{ matrix.test }})" 2 1800
+          npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()

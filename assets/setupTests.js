@@ -3,6 +3,8 @@
 
 import { mockAnimationsApi } from 'jsdom-testing-mocks';
 
+jest.retryTimes(2, { logErrorsBeforeRetry: true });
+
 // Silence the Headless UI warning globally
 mockAnimationsApi();
 
