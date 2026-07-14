@@ -46,5 +46,6 @@ export const databaseFactory = Factory.define(({ params }) => {
       database_id: id,
       sid,
     }),
+    stale_at: null,
   };
 });
