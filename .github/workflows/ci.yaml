@@ -976,6 +976,32 @@ jobs:
           name: integration-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
 
+  rerun-on-failure:
+    needs: [test-javascript, test-elixir, test-e2e, test-regression, test-integration, coveralls-finish]
+    if: |
+      always() &&
+      fromJSON(github.run_attempt) < 3 &&
+      (
+        needs.test-javascript.result == 'failure' ||
+        needs.test-elixir.result == 'failure' ||
+        needs.test-e2e.result == 'failure' ||
+        needs.test-regression.result == 'failure' ||
+        needs.test-integration.result == 'failure' ||
+        needs.coveralls-finish.result == 'failure'
+      )
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+    steps:
+      - name: Trigger rerun of failed jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh workflow run rerun.yml \
+            --ref "${{ github.head_ref || github.ref_name }}" \
+            -F run_id=${{ github.run_id }}
+
   target-branch-deps:
     name: Rebuild target branch dependencies (Elixir ${{ matrix.elixir }})
     needs: [setup-matrix-env, detect-changes]
