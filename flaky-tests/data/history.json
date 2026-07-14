@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-05-30T18:24:59Z",
-    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
-    "run_id": "26691193883",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.6667
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-30T19:03:44Z",
     "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
     "run_id": "26691928151",
@@ -4786,5 +4766,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-14T18:27:06Z",
+    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
+    "run_id": "29356858409",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
