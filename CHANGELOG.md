@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.1.5](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.4...3.1.5) - 2026-07-15
+
+### What's Changed
+
+* Trigger release 3.1.5 (#4510) @balanza
+* Regenerate package lock (#4509) @balanza
+
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.4...3.1.5
+
 ## [3.1.4](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.3...3.1.4) - 2026-07-15
 
 ### What's Changed
@@ -468,7 +477,6 @@
 * Fix start/stop AgentHeartbeat logic in before/after Each hooks in e2e tests (#3537) @vicenteqa
 * Table top margin (#3517) @arbulu89
 #### Features
-
 * Build containers on deploy-demo from wanda (#3901) @nelsonkopliku
 * Avoid PAT collision in test (#3895) @nelsonkopliku
 * Simplify reboot operation policy to only check current host cluster (#3889) @arbulu89
@@ -858,7 +866,6 @@
 * Activity Log search by metadata (#3056) @nelsonkopliku
 * ActivityLog searching by metadata BE implementation (#3059) @gagandeepb
 * Replaces Empty Favicon with Trento Logo (#3144) @jagabomb
-
 #### Bug Fixes
 
 * Bugfix for web as it fails to start when no IPV6 is available (#3490) @EMaksy
@@ -1337,7 +1344,6 @@
 - Bump postcss from 8.4.48 to 8.4.49 in /assets [#3141](https://github.com/trento-project/web/pull/3141) ([dependabot](https://github.com/dependabot))
 ## [2.3.2](https://github.com/trento-project/web/tree/2.3.2) (2024-07-24)
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
-
 **Fixed bugs:**
 
 - Fix process manager rename [#2814](https://github.com/trento-project/web/pull/2814) ([arbulu89](https://github.com/arbulu89))
