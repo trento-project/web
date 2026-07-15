@@ -8,8 +8,8 @@ defmodule Trento.ProjectorTestHelper do
 
   def project(projector, event, metadata \\ %{}, projection_name) do
     system_metadata = %{
-        event_number: next_event_number(projector, projection_name),
-        handler_name: projection_name
+      event_number: next_event_number(projector, projection_name),
+      handler_name: projection_name
     }
 
     :ok =
