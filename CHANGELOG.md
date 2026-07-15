@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.1.4](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.3...3.1.4) - 2026-07-15
+
+### What's Changed
+
+* Create SIDs list properly using filtered array IDs (#4508) @balanza
+* Update /assets npm lockfile to remediate transitive vulnerabilities (#4507) @balanza
+
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.3...3.1.4
+
 ## [3.1.3](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.2...3.1.3) - 2026-07-15
 
 ### What's Changed
@@ -458,7 +467,6 @@
 * Show error when fail to fetch data from SUSE Manager (#3551) @balanza
 * Fix start/stop AgentHeartbeat logic in before/after Each hooks in e2e tests (#3537) @vicenteqa
 * Table top margin (#3517) @arbulu89
-
 #### Features
 
 * Build containers on deploy-demo from wanda (#3901) @nelsonkopliku
@@ -781,7 +789,6 @@
 * Activity log autorefresh e2e (#3169) @nelsonkopliku
 * Add sap hana scale up cost optimized and performance optimized discovery (#3152) @EMaksy
 #### Features
-
 * Reset modal options on cancel (#3504) @arbulu89
 * SMTP allows talking to unauthenticated servers (#3489) @skrech
 * Add cluster maintenance change modal (#3487) @arbulu89
@@ -1329,7 +1336,6 @@
 - Bump `photofinish` to v1.4.1 [#3139](https://github.com/trento-project/web/pull/3139) ([balanza](https://github.com/balanza))
 - Bump postcss from 8.4.48 to 8.4.49 in /assets [#3141](https://github.com/trento-project/web/pull/3141) ([dependabot](https://github.com/dependabot))
 ## [2.3.2](https://github.com/trento-project/web/tree/2.3.2) (2024-07-24)
-
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
 
 **Fixed bugs:**
