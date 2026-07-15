@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-05-31T18:24:50Z",
-    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
-    "run_id": "26720455333",
-    "suite": "Backend — Elixir 1.18.4-otp-27, OTP 27.1.3",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.1053
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users update_user/2 deletes the user abilities",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-31T18:25:38Z",
     "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
     "run_id": "26720455333",
@@ -4729,6 +4705,22 @@
       },
       {
         "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-15T18:29:33Z",
+    "commit": "43e5c106312b7d437ff820d666c6a3b72b6f76c3",
+    "run_id": "29439777030",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.ActivityLogTest::test Activity Log types inclusion should exclude user management activities by default",
         "score": 0.02501
       }
     ]
