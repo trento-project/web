@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.40.3">
-    <meta name="project" content="Trento Web v3.1.2">
+    <meta name="project" content="Trento Web v3.1.3">
 
 
-    <title>Trento.DataCase — Trento Web v3.1.2</title>
+    <title>Trento.DataCase — Trento Web v3.1.3</title>
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-47D9C20B.js"></script>
+    <script defer src="dist/sidebar_items-3F9BE019.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -41,7 +41,7 @@
 Trento Web
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v3.1.2
+          v3.1.3
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@ Trento Web
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Trento.<wbr />DataCase</span> 
-      <small class="app-vsn" translate="no">(Trento Web v3.1.2)</small>
+      <small class="app-vsn" translate="no">(Trento Web v3.1.3)</small>
 
     </h1>
 
@@ -185,9 +185,9 @@ this option is not recommended for other databases.</p>
 
   <section class="docstring">
 
-<p>A helper that transforms changeset errors into a map of messages.</p><pre><code class="makeup elixir" translate="no"><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="6416256745-1">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="6416256745-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Accounts</span><span class="o">.</span><span class="n">create_user</span><span class="p" data-group-id="6416256745-2">(</span><span class="p" data-group-id="6416256745-3">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;short&quot;</span><span class="p" data-group-id="6416256745-3">}</span><span class="p" data-group-id="6416256745-2">)</span><span class="w">
-</span><span class="n">assert</span><span class="w"> </span><span class="s">&quot;password is too short&quot;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="6416256745-4">(</span><span class="n">changeset</span><span class="p" data-group-id="6416256745-4">)</span><span class="o">.</span><span class="n">password</span><span class="w">
-</span><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="6416256745-5">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="6416256745-6">[</span><span class="s">&quot;password is too short&quot;</span><span class="p" data-group-id="6416256745-6">]</span><span class="p" data-group-id="6416256745-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="6416256745-7">(</span><span class="n">changeset</span><span class="p" data-group-id="6416256745-7">)</span></code></pre>
+<p>A helper that transforms changeset errors into a map of messages.</p><pre><code class="makeup elixir" translate="no"><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="0000640536-1">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">changeset</span><span class="p" data-group-id="0000640536-1">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">Accounts</span><span class="o">.</span><span class="n">create_user</span><span class="p" data-group-id="0000640536-2">(</span><span class="p" data-group-id="0000640536-3">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;short&quot;</span><span class="p" data-group-id="0000640536-3">}</span><span class="p" data-group-id="0000640536-2">)</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="s">&quot;password is too short&quot;</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="0000640536-4">(</span><span class="n">changeset</span><span class="p" data-group-id="0000640536-4">)</span><span class="o">.</span><span class="n">password</span><span class="w">
+</span><span class="n">assert</span><span class="w"> </span><span class="p" data-group-id="0000640536-5">%{</span><span class="ss">password</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="0000640536-6">[</span><span class="s">&quot;password is too short&quot;</span><span class="p" data-group-id="0000640536-6">]</span><span class="p" data-group-id="0000640536-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">errors_on</span><span class="p" data-group-id="0000640536-7">(</span><span class="n">changeset</span><span class="p" data-group-id="0000640536-7">)</span></code></pre>
   </section>
 </section>
 
