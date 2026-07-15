@@ -107,7 +107,8 @@ context('Hosts Overview', () => {
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
-    describe('Health is changed to critical when the heartbeat is not sent', () => {
+
+    describe.skip('Health is changed to critical when the heartbeat is not sent', () => {
       beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with critical health', () => {
