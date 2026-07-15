@@ -40,7 +40,7 @@
     "postcss": "^8.5.12",
     "jsdom-testing-mocks": "^1.16.0",
     "postcss-import": "^16.1.1",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.5",
     "redux-mock-store": "^1.5.5",
     "storybook": "^10.2.10",
     "tailwindcss": "^3.4.19"
