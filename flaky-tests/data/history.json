@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-05-31T18:25:38Z",
-    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
-    "run_id": "26720455333",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify api key will be expired soon",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-05-31T19:07:14Z",
     "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
     "run_id": "26721317078",
@@ -4721,6 +4705,26 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.ActivityLogTest::test Activity Log types inclusion should exclude user management activities by default",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-15T18:30:45Z",
+    "commit": "43e5c106312b7d437ff820d666c6a3b72b6f76c3",
+    "run_id": "29439777030",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is MESSAGESERVER without completing a SAP system registration",
         "score": 0.02501
       }
     ]
