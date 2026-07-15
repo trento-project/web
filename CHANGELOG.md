@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.1.3](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.2...3.1.3) - 2026-07-15
+
+### What's Changed
+
+* Bump `fast-uri` to 3.1.3 (#4487) @balanza
+* Bump redux-saga from 1.4.2 to 1.5.0 in /assets (#4488) @balanza
+* Relax gcp image metadata requirement (#4489) @balanza
+* Make only SAPSYSTEM and SAPLOCALHOST properties mandatory (#4490) @balanza
+* Bump brace-expansion to 2.1.2 and 1.1.16 (#4492) @balanza
+
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.2...3.1.3
+
 ## [3.1.2](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.1...3.1.2) - 2026-06-19
 
 ### What's Changed
@@ -370,7 +382,6 @@
 **Full Changelog**: https://github.com/trento-project/web/compare/3.0.0...3.1.0
 ## [3.0.0](https://github.com/trento-project/web/tree/2.4.0/compare/2.5.0...3.0.0) - 2025-11-27
 ### What's Changed
-
 * Release version 3.0.0 (#3929) @nelsonkopliku
 * Refine cluster start/stop policy (#3914) @balanza
 * Revert "Bump posthog-js from 1.297.0 to 1.297.3 in /assets (#3923)" (#3925) @gagandeepb
@@ -769,7 +780,6 @@
 * Add info tooltip for metadata search (#3186) @balanza
 * Activity log autorefresh e2e (#3169) @nelsonkopliku
 * Add sap hana scale up cost optimized and performance optimized discovery (#3152) @EMaksy
-
 #### Features
 
 * Reset modal options on cancel (#3504) @arbulu89
@@ -1318,7 +1328,6 @@
 - Sort csv content by alphabet [#3135](https://github.com/trento-project/web/pull/3135) ([EMaksy](https://github.com/EMaksy))
 - Bump `photofinish` to v1.4.1 [#3139](https://github.com/trento-project/web/pull/3139) ([balanza](https://github.com/balanza))
 - Bump postcss from 8.4.48 to 8.4.49 in /assets [#3141](https://github.com/trento-project/web/pull/3141) ([dependabot](https://github.com/dependabot))
-
 ## [2.3.2](https://github.com/trento-project/web/tree/2.3.2) (2024-07-24)
 
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
