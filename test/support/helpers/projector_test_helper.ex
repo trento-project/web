@@ -6,12 +6,14 @@ defmodule Trento.ProjectorTestHelper do
   This module contains helper functions for testing projectors
   """
 
-  def project(projector, event, projection_name) do
-    :ok =
-      projector.handle(event, %{
+  def project(projector, event, metadata \\ %{}, projection_name) do
+    system_metadata = %{
         event_number: next_event_number(projector, projection_name),
         handler_name: projection_name
-      })
+    }
+
+    :ok =
+      projector.handle(event, Map.merge(system_metadata, metadata))
   end
 
   defp next_event_number(projector, projection_name),

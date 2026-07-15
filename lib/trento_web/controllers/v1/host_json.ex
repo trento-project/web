@@ -61,7 +61,10 @@ defmodule TrentoWeb.V1.HostJSON do
     broadcast_host(%{host: host})
   end
 
-  def heartbeat_result(%{host: %{id: id, hostname: hostname}}), do: %{id: id, hostname: hostname}
+  def heartbeat_result(%{host: %{id: id, hostname: hostname, stale_at: stale_at}}) do
+    data = %{id: id, hostname: hostname, stale_at: stale_at}
+    if is_nil(data.stale_at), do: Map.delete(data, :stale_at), else: data
+  end
 
   def saptune_status_updated(%{
         host: %{id: id, saptune_status: status, hostname: hostname}
