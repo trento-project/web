@@ -1,89 +1,5 @@
 [
   {
-    "timestamp": "2026-05-31T22:27:25Z",
-    "commit": "1d4cb25fe2ea1ba92b83fe718fd7e1bbdb674108",
-    "run_id": "26722538335",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 100
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.2554
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1849
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.06461
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
-        "score": 0.02501
-      },
-      {
-        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
-        "score": 0.02501
-      },
-      {
-        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
-        "score": 0.02501
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
-        "score": 0.02501
-      },
-      {
-        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
-        "score": 0.02501
-      },
-      {
-        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
-        "score": 0.02501
-      },
-      {
-        "name": "should have expected cluster health in header::HANA cluster details HANA cluster details should be consistent with the state of the cluster should have expected cluster health in header",
-        "score": 0.02501
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-01T21:17:09Z",
     "commit": "c601be9e2da4d0e015bc5d9aa740ca4b6bf2406f",
     "run_id": "26781826834",
@@ -4725,6 +4641,22 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-16T19:04:29Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29525188684",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
       }
     ]
