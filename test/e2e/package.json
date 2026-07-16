@@ -7,6 +7,11 @@
     "format:check": "prettier --check .",
     "format": "prettier --write ."
   },
+  "overrides": {
+    "mocha": {
+      "js-yaml": "4.3.0"
+    }
+  },
   "devDependencies": {
     "cypress": "^15.13.1",
     "cypress-split": "^1.24.31",

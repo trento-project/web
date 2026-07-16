@@ -98,6 +98,17 @@
     "@assistant-ui/core": "0.1.13",
     "tailwindcss": {
       "yaml": "^1.10.0"
+    },
+    "@istanbuljs/load-nyc-config": {
+      "js-yaml": "3.15.0"
+    },
+    "@eslint/eslintrc": {
+      "js-yaml": "4.3.0"
+    },
+    "fork-ts-checker-webpack-plugin": {
+      "cosmiconfig": {
+        "js-yaml": "4.3.0"
+      }
     }
   },
   "scripts": {
