@@ -346,6 +346,85 @@ describe('GenericSystemDetails', () => {
     );
   });
 
+  it('should render System Replication data with active instance data', () => {
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 999,
+          system_replication_status: 'STALE_STATUS',
+          stale_at: faker.date.past().toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'ACTIVE',
+          stale_at: null,
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-white');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('1');
+    expect(getByText('Status').nextSibling).toHaveTextContent('ACTIVE');
+  });
+
+  it('should render System Replication data with newest stale instance data if all instances are stale', () => {
+    const olderDate = new Date('2024-01-01T10:00:00Z');
+    const newerDate = new Date('2024-01-02T10:00:00Z');
+
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'OLD_STATUS',
+          stale_at: olderDate.toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 2,
+          system_replication_status: 'RECENT_STATUS',
+          stale_at: newerDate.toISOString(),
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-gray-100');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('2');
+    expect(getByText('Status').nextSibling).toHaveTextContent('RECENT_STATUS');
+  });
+
   it('should render hosts table', () => {
     const cluster = clusterFactory.build({ type: 'hana_scale_up' });
     const host = hostFactory.build({ cluster });

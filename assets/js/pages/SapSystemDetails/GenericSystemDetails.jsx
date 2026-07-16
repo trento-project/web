@@ -17,6 +17,7 @@ import {
   overSome,
   isEmpty,
   every,
+  maxBy,
 } from 'lodash';
 
 import classNames from 'classnames';
@@ -45,6 +46,7 @@ import {
   getSapSystemType,
 } from '@lib/model/sapSystems';
 import { isSomeHostHeartbeatPassing } from '@lib/model/hosts';
+import { STALE_ROW } from '@lib/tables';
 
 import ListView from '@common/ListView';
 import Table from '@common/Table';
@@ -81,6 +83,11 @@ const getUniqueHosts = (hosts) =>
   );
 
 const mapInstancesHosts = (instances) => map(instances, ({ host }) => host);
+
+// Returns an active instance (stale_at === null) if available,
+// otherwise returns the most recently stale instance (highest stale_at)
+const getActiveInstance = (instances) =>
+  find(instances, ['stale_at', null]) || maxBy(instances, 'stale_at');
 
 // it includes SAP and HANA operations
 const instanceStartStopOperations = [SAP_INSTANCE_START, SAP_INSTANCE_STOP];
@@ -401,9 +408,13 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         {map(sitedInstances, (instances, site) => {
-          const instance = instances[0];
+          const activeInstance = getActiveInstance(instances);
+          const isSiteStale = every(
+            instances,
+            ({ stale_at: staleAt }) => staleAt !== null
+          );
           return (
-            <div key={site} className="mt-4 bg-white rounded-lg">
+            <div key={site} className="mt-4 rounded-lg">
               <Table
                 config={getSystemInstancesTableConfiguration({
                   type,
@@ -417,46 +428,58 @@ export function GenericSystemDetails({
                 data={instances}
                 header={
                   hasSystemReplication && (
-                    <div className="flex py-4 px-5">
+                    <div
+                      className={classNames(
+                        'flex py-4 px-5 border-b border-gray-200 ',
+                        {
+                          [STALE_ROW]: isSiteStale,
+                          'bg-white': !isSiteStale,
+                        }
+                      )}
+                    >
                       <div className="flex w-11/12 space-x-3">
                         <div className="flex space-x-2 mr-3">
                           <h3 className="text-l font-bold">{site}</h3>
                           <Pill className="bg-green-100 text-green-800 !py-0 items-center">
-                            {upperCase(instance.system_replication)}
+                            {upperCase(activeInstance.system_replication)}
                           </Pill>
                         </div>
                         <SystemReplicationDataPill
                           label="Tier"
-                          data={instance.system_replication_tier || '-'}
+                          data={activeInstance.system_replication_tier || '-'}
                         />
 
-                        {instance.system_replication === 'Primary' && (
+                        {activeInstance.system_replication === 'Primary' && (
                           <SystemReplicationDataPill
                             label="Status"
                             data={
-                              instance.system_replication_status || SR_INACTIVE
+                              activeInstance.system_replication_status ||
+                              SR_INACTIVE
                             }
                             className={getReplicationStatusClasses(
-                              instance.system_replication_status
+                              activeInstance.system_replication_status
                             )}
                           />
                         )}
-                        {instance.system_replication === 'Secondary' && (
+                        {activeInstance.system_replication === 'Secondary' && (
                           <>
                             <SystemReplicationDataPill
                               label="Replicating"
                               data={
-                                instance.system_replication_source_site || '-'
+                                activeInstance.system_replication_source_site ||
+                                '-'
                               }
                               className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
                             />
                             <SystemReplicationDataPill
                               label="Replication Mode"
-                              data={instance.system_replication_mode}
+                              data={activeInstance.system_replication_mode}
                             />
                             <SystemReplicationDataPill
                               label="Operation Mode"
-                              data={instance.system_replication_operation_mode}
+                              data={
+                                activeInstance.system_replication_operation_mode
+                              }
                             />
                           </>
                         )}
