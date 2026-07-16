@@ -291,6 +291,14 @@ defmodule Trento.SapSystems.SapSystem do
   end
 
   def execute(
+        %SapSystem{deregistered_at: deregistered_at},
+        _
+      )
+      when not is_nil(deregistered_at) do
+    {:error, :sap_system_not_registered}
+  end
+
+  def execute(
         %SapSystem{database_health: database_health},
         %UpdateDatabaseHealth{database_health: database_health}
       ) do
@@ -335,14 +343,6 @@ defmodule Trento.SapSystems.SapSystem do
       maybe_emit_sap_system_data_marked_stale_event(sap_system, database_stale_at)
     end)
     |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
-  end
-
-  def execute(
-        %SapSystem{deregistered_at: deregistered_at},
-        _
-      )
-      when not is_nil(deregistered_at) do
-    {:error, :sap_system_not_registered}
   end
 
   def apply(
@@ -450,6 +450,7 @@ defmodule Trento.SapSystems.SapSystem do
         sid: sid,
         health: health,
         database_health: database_health,
+        database_stale_at: database_stale_at,
         ensa_version: ensa_version
       }) do
     %SapSystem{
@@ -458,6 +459,7 @@ defmodule Trento.SapSystems.SapSystem do
         sid: sid,
         health: health,
         database_health: database_health,
+        database_stale_at: database_stale_at,
         ensa_version: ensa_version
     }
   end
@@ -588,12 +590,14 @@ defmodule Trento.SapSystems.SapSystem do
 
   def apply(%SapSystem{} = sap_system, %SapSystemRestored{
         health: health,
-        database_health: database_health
+        database_health: database_health,
+        database_stale_at: database_stale_at
       }) do
     %SapSystem{
       sap_system
       | health: health,
         database_health: database_health,
+        database_stale_at: database_stale_at,
         deregistered_at: nil
     }
   end
@@ -815,7 +819,8 @@ defmodule Trento.SapSystems.SapSystem do
            tenant: tenant,
            db_host: db_host,
            status: status,
-           database_health: database_health
+           database_health: database_health,
+           database_stale_at: database_stale_at
          }
        ) do
     if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
@@ -824,12 +829,15 @@ defmodule Trento.SapSystems.SapSystem do
         health: SapSystemsHealthService.derive_health_from_status(status),
         sap_system_id: sap_system_id,
         tenant: tenant,
-        database_health: database_health
+        database_health: database_health,
+        database_stale_at: database_stale_at
       }
     end
   end
 
-  # Restore a SAP system when the restore command is received, check for the required instances
+  # Restore a SAP system when the restore command is received, check for the required instances.
+  # stale_at is set to nil as the SAP is restored because the associated database was restored,
+  # which cannot happen being stale
   defp maybe_emit_sap_system_restored_event(
          %SapSystem{instances: instances, health: health},
          %RestoreSapSystem{
@@ -845,7 +853,8 @@ defmodule Trento.SapSystems.SapSystem do
         db_host: db_host,
         tenant: tenant,
         sap_system_id: sap_system_id,
-        database_health: database_health
+        database_health: database_health,
+        database_stale_at: nil
       }
     end
   end
@@ -860,7 +869,8 @@ defmodule Trento.SapSystems.SapSystem do
            status: status,
            ensa_version: ensa_version,
            database_id: database_id,
-           database_health: database_health
+           database_health: database_health,
+           database_stale_at: database_stale_at
          }
        ) do
     if instances_have_abap_or_java?(instances) and instances_have_messageserver?(instances) do
@@ -872,7 +882,8 @@ defmodule Trento.SapSystems.SapSystem do
         health: SapSystemsHealthService.derive_health_from_status(status),
         ensa_version: ensa_version,
         database_id: database_id,
-        database_health: database_health
+        database_health: database_health,
+        database_stale_at: database_stale_at
       }
     end
   end

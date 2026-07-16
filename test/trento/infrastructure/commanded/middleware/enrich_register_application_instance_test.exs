@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
     [%{name: tenant_name}, _] = tenants = build_list(2, :tenant)
 
     %{id: host_id, ip_addresses: [ip]} = insert(:host)
-    %{id: database_id, health: health} = insert(:database, tenants: tenants)
+    %{id: database_id, health: health, stale_at: stale_at} = insert(:database, tenants: tenants)
     insert(:database_instance, database_id: database_id, host_id: host_id)
 
     command =
@@ -37,7 +37,8 @@ defmodule Trento.Infrastructure.Commanded.Middleware.EnrichRegisterApplicationIn
             %RegisterApplicationInstance{
               sap_system_id: ^expected_sap_system_id,
               database_id: ^database_id,
-              database_health: ^health
+              database_health: ^health,
+              database_stale_at: ^stale_at
             }} =
              Enrichable.enrich(command, %{})
   end
