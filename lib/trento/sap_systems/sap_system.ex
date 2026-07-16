@@ -321,30 +321,20 @@ defmodule Trento.SapSystems.SapSystem do
 
   def execute(
         %SapSystem{sap_system_id: sap_system_id} = sap_system,
-        %UpdateDatabaseStaleAt{database_stale_at: nil}
+        %UpdateDatabaseStaleAt{database_stale_at: database_stale_at}
       ) do
     sap_system
     |> Multi.new()
     |> Multi.execute(fn _ ->
       %SapSystemDatabaseStaleAtChanged{
         sap_system_id: sap_system_id,
-        database_stale_at: nil
-      }
-    end)
-    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
-  end
-
-  def execute(
-        %SapSystem{sap_system_id: sap_system_id} = sap_system,
-        %UpdateDatabaseStaleAt{database_stale_at: database_stale_at}
-      ) do
-    [
-      %SapSystemDatabaseStaleAtChanged{
-        sap_system_id: sap_system_id,
         database_stale_at: database_stale_at
       }
-    ] ++
+    end)
+    |> Multi.execute(fn sap_system ->
       maybe_emit_sap_system_data_marked_stale_event(sap_system, database_stale_at)
+    end)
+    |> Multi.execute(&maybe_emit_sap_system_data_marked_in_sync_event/1)
   end
 
   def execute(
