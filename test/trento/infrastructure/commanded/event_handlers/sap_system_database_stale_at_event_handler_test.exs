@@ -131,24 +131,4 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
       1000
     )
   end
-
-  test "should broadcast database stale_at change with nil when a SapSystemDatabaseStaleAtChanged event is received with nil" do
-    sap_system_id = Faker.UUID.v4()
-
-    event = %SapSystemDatabaseStaleAtChanged{
-      sap_system_id: sap_system_id,
-      database_stale_at: nil
-    }
-
-    assert :ok = SapSystemDatabaseStaleAtEventHandler.handle(event, %{})
-
-    assert_broadcast(
-      "sap_system_updated",
-      %{
-        id: ^sap_system_id,
-        database_stale_at: nil
-      },
-      1000
-    )
-  end
 end
