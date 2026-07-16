@@ -82,8 +82,10 @@ defmodule TrentoWeb.V1.SapSystemJSON do
   def sap_system_database_health_changed(%{id: id, database_health: database_health}),
     do: %{id: id, database_health: database_health}
 
-  def sap_system_database_stale_at_changed(%{id: id, database_stale_at: database_stale_at}),
-    do: %{id: id, database_stale_at: database_stale_at}
+  def sap_system_database_stale_at_changed(%{
+        sap_system: %{id: id, database_stale_at: database_stale_at}
+      }),
+      do: %{id: id, database_stale_at: database_stale_at}
 
   def sap_system_deregistered(%{id: id, sid: sid}), do: %{id: id, sid: sid}
 

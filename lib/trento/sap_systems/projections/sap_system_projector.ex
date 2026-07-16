@@ -621,41 +621,30 @@ defmodule Trento.SapSystems.Projections.SapSystemProjector do
 
   @impl true
   def after_update(
-        %SapSystemDataMarkedStale{
-          sap_system_id: sap_system_id,
-          stale_at: stale_at
-        },
+        %SapSystemDataMarkedStale{},
         _,
-        _
+        %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_stale_changed",
       SapSystemJSON.sap_system_stale_changed(%{
-        sap_system: %{
-          id: sap_system_id,
-          stale_at: stale_at
-        }
+        sap_system: sap_system
       })
     )
   end
 
   @impl true
   def after_update(
-        %SapSystemDataMarkedInSync{
-          sap_system_id: sap_system_id
-        },
+        %SapSystemDataMarkedInSync{},
         _,
-        _
+        %{sap_system: %SapSystemReadModel{} = sap_system}
       ) do
     TrentoWeb.Endpoint.broadcast(
       @sap_systems_topic,
       "sap_system_stale_changed",
       SapSystemJSON.sap_system_stale_changed(%{
-        sap_system: %{
-          id: sap_system_id,
-          stale_at: nil
-        }
+        sap_system: sap_system
       })
     )
   end

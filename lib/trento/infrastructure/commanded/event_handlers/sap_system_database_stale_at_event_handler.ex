@@ -44,8 +44,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
       "monitoring:sap_systems",
       "sap_system_updated",
       SapSystemJSON.sap_system_database_stale_at_changed(%{
-        id: sap_system_id,
-        database_stale_at: database_stale_at
+        sap_system: %{
+          id: sap_system_id,
+          database_stale_at: database_stale_at
+        }
       })
     )
   end
