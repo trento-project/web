@@ -408,7 +408,7 @@ export function GenericSystemDetails({
           <h2 className="text-2xl font-bold self-center">Layout</h2>
         </div>
         {map(sitedInstances, (instances, site) => {
-          const instance = getActiveInstance(instances);
+          const activeInstance = getActiveInstance(instances);
           const isSiteStale = every(
             instances,
             ({ stale_at: staleAt }) => staleAt !== null
@@ -441,41 +441,45 @@ export function GenericSystemDetails({
                         <div className="flex space-x-2 mr-3">
                           <h3 className="text-l font-bold">{site}</h3>
                           <Pill className="bg-green-100 text-green-800 !py-0 items-center">
-                            {upperCase(instance.system_replication)}
+                            {upperCase(activeInstance.system_replication)}
                           </Pill>
                         </div>
                         <SystemReplicationDataPill
                           label="Tier"
-                          data={instance.system_replication_tier || '-'}
+                          data={activeInstance.system_replication_tier || '-'}
                         />
 
-                        {instance.system_replication === 'Primary' && (
+                        {activeInstance.system_replication === 'Primary' && (
                           <SystemReplicationDataPill
                             label="Status"
                             data={
-                              instance.system_replication_status || SR_INACTIVE
+                              activeInstance.system_replication_status ||
+                              SR_INACTIVE
                             }
                             className={getReplicationStatusClasses(
-                              instance.system_replication_status
+                              activeInstance.system_replication_status
                             )}
                           />
                         )}
-                        {instance.system_replication === 'Secondary' && (
+                        {activeInstance.system_replication === 'Secondary' && (
                           <>
                             <SystemReplicationDataPill
                               label="Replicating"
                               data={
-                                instance.system_replication_source_site || '-'
+                                activeInstance.system_replication_source_site ||
+                                '-'
                               }
                               className="bg-gray-200 text-gray-500 max-w-32 truncate !inline self-center !py-0.5"
                             />
                             <SystemReplicationDataPill
                               label="Replication Mode"
-                              data={instance.system_replication_mode}
+                              data={activeInstance.system_replication_mode}
                             />
                             <SystemReplicationDataPill
                               label="Operation Mode"
-                              data={instance.system_replication_operation_mode}
+                              data={
+                                activeInstance.system_replication_operation_mode
+                              }
                             />
                           </>
                         )}
