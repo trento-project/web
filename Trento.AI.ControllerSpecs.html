@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.40.3">
-    <meta name="project" content="Trento Web v3.1.3">
+    <meta name="project" content="Trento Web v3.1.5">
 
 
-    <title>Trento.AI.ControllerSpecs — Trento Web v3.1.3</title>
+    <title>Trento.AI.ControllerSpecs — Trento Web v3.1.5</title>
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-3F9BE019.js"></script>
+    <script defer src="dist/sidebar_items-63176FD7.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -41,7 +41,7 @@
 Trento Web
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v3.1.3
+          v3.1.5
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@ Trento Web
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">Trento.<wbr />AI.<wbr />ControllerSpecs</span> 
-      <small class="app-vsn" translate="no">(Trento Web v3.1.3)</small>
+      <small class="app-vsn" translate="no">(Trento Web v3.1.5)</small>
 
     </h1>
 
@@ -120,12 +120,12 @@ Trento Web
     <section id="moduledoc">
 <p>Per-action AI-tool metadata macro. Sits next to <a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.ControllerSpecs.html#operation/2"><code class="inline">OpenApiSpex.ControllerSpecs.operation/2</code></a>
 in controllers and labels the immediately following public function as an AI tool.</p><pre><code class="makeup elixir" translate="no"><span class="n">operation</span><span class="w"> </span><span class="ss">:index</span><span class="p">,</span><span class="w">
-  </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="5487105315-1">[</span><span class="s">&quot;User Management&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MCP&quot;</span><span class="p" data-group-id="5487105315-1">]</span><span class="p">,</span><span class="w">
+  </span><span class="ss">tags</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="4072262978-1">[</span><span class="s">&quot;User Management&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;MCP&quot;</span><span class="p" data-group-id="4072262978-1">]</span><span class="p">,</span><span class="w">
   </span><span class="ss">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gets the list of users in the system.&quot;</span><span class="w">
 
 </span><span class="n">ai_tool</span><span class="w"> </span><span class="ss">:users_list</span><span class="p">,</span><span class="w"> </span><span class="ss">display_text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;List users&quot;</span><span class="w">
 
-</span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="5487105315-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="5487105315-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="n">...</span></code></pre><p>The first positional argument is the <strong>tool name</strong> as an atom; it becomes
+</span><span class="kd">def</span><span class="w"> </span><span class="nf">index</span><span class="p" data-group-id="4072262978-2">(</span><span class="n">conn</span><span class="p">,</span><span class="w"> </span><span class="c">_params</span><span class="p" data-group-id="4072262978-2">)</span><span class="p">,</span><span class="w"> </span><span class="ss">do</span><span class="p">:</span><span class="w"> </span><span class="n">...</span></code></pre><p>The first positional argument is the <strong>tool name</strong> as an atom; it becomes
 the LLM-facing identifier verbatim via <a href="https://hexdocs.pm/elixir/Atom.html#to_string/1"><code class="inline">Atom.to_string/1</code></a> (no casing
 transform). The controller action the override applies to is inferred
 from the immediately following public <code class="inline">def</code> via <code class="inline">@on_definition</code>.</p><p>Supported options:</p><ul><li><code class="inline">:display_text</code> — string. Overrides <code class="inline">operation.summary</code> as the human-friendly label
