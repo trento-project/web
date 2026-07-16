@@ -76,8 +76,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
           database_stale_at: database_stale_at
         },
         correlation_id: correlation_id,
-        causation_id: causation_id,
-        consistency: :strong
+        causation_id: causation_id
       )
     end
 
