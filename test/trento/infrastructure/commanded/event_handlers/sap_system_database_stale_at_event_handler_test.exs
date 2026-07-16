@@ -95,6 +95,22 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
     assert :ok = SapSystemDatabaseStaleAtEventHandler.handle(event, metadata)
   end
 
+  test "should not dispatch any command when the database does not have associated SAP systems" do
+    event = %DatabaseDataMarkedStale{
+      database_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    metadata = %{
+      correlation_id: Faker.UUID.v4(),
+      causation_id: Faker.UUID.v4()
+    }
+
+    expect(Trento.Commanded.Mock, :dispatch, 0, fn _ -> :ok end)
+
+    assert :ok = SapSystemDatabaseStaleAtEventHandler.handle(event, metadata)
+  end
+
   test "should broadcast database stale_at change when a SapSystemDatabaseStaleAtChanged event is received" do
     sap_system_id = Faker.UUID.v4()
     stale_at = DateTime.utc_now()

@@ -14,10 +14,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
     name: "sap_system_database_stale_at_event_handler"
 
   alias Trento.Databases.Events.{DatabaseDataMarkedInSync, DatabaseDataMarkedStale}
-  alias Trento.Databases.Projections.DatabaseReadModel
   alias Trento.Repo
   alias Trento.SapSystems.Commands.UpdateDatabaseStaleAt
   alias Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged
+  alias Trento.SapSystems.Projections.SapSystemReadModel
 
   alias TrentoWeb.V1.SapSystemJSON
 
@@ -57,12 +57,11 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAt
          database_stale_at,
          %{correlation_id: correlation_id, causation_id: causation_id}
        ) do
-    %{sap_systems: sap_systems} =
-      Repo.one!(
-        from(d in DatabaseReadModel,
-          where: d.id == ^database_id,
-          preload: [:sap_systems],
-          select: [:id]
+    sap_systems =
+      Repo.all(
+        from(s in SapSystemReadModel,
+          where: s.database_id == ^database_id,
+          select: [:id, :sid]
         )
       )
 
