@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-06-02T00:27:17Z",
-    "commit": "c601be9e2da4d0e015bc5d9aa740ca4b6bf2406f",
-    "run_id": "26783863125",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 99,
-      "failed_runs": 22
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2090
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1402
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.07953
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.06641
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.06077
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-02T20:26:46Z",
     "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
     "run_id": "26845287462",
@@ -4648,6 +4612,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-17T18:57:51Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29604569272",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Settings sagas › checkApiKeyExpiration saga::should dispatch a dismissable notification if the api key is to expire in less than 30 days",
+        "score": 0.05001
       }
     ]
   }
