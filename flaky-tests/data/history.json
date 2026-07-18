@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-02T20:48:16Z",
-    "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
-    "run_id": "26846134845",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-02T20:49:08Z",
     "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
     "run_id": "26846134845",
@@ -4644,6 +4624,22 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-18T18:16:02Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29655052291",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
       }
     ]
   }
