@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-03T20:37:20Z",
-    "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
-    "run_id": "26910727317",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-03T20:59:24Z",
     "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
     "run_id": "26911691713",
@@ -4623,6 +4603,34 @@
       {
         "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-18T22:29:17Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29657967049",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 29
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1704
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1536
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.09936
+      },
+      {
+        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
+        "score": 0.07392
       }
     ]
   }
