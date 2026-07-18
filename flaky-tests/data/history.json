@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-02T20:49:08Z",
-    "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
-    "run_id": "26846134845",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      },
-      {
-        "name": "UpgradablePackagesPage::should render correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-03T00:10:05Z",
     "commit": "eec91da2bf729260be86f4fabb11b62ada655362",
     "run_id": "26848919782",
@@ -4642,5 +4622,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-18T18:16:50Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29655052291",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
