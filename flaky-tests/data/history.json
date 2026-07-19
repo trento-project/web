@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-04T19:44:29Z",
-    "commit": "820e5898b6f6b38e97f37c5f5577e9a6cc002ba5",
-    "run_id": "26974559100",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 1
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-04T20:05:09Z",
     "commit": "820e5898b6f6b38e97f37c5f5577e9a6cc002ba5",
     "run_id": "26975482505",
@@ -4595,6 +4579,42 @@
       {
         "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-19T22:31:55Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29700805585",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 22
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not include deregistered host in the list::SAP system details Deregistration should not include deregistered host in the list",
+        "score": 0.25
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1850
+      },
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1590
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.1485
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
       }
     ]
   }
