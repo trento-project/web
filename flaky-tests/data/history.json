@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-06-03T21:00:13Z",
-    "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
-    "run_id": "26911691713",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.25
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.2141
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Start system with enabled state as false",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-04T00:16:08Z",
     "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
     "run_id": "26914218987",
@@ -4630,6 +4602,26 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-19T18:17:49Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29698008149",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.ClustersTest::test request_operation/3 should request cluster_maintenance_change operation on online and heartbeat passing nodes",
         "score": 0.02501
       }
     ]
