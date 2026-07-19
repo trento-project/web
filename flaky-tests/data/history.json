@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-03T20:59:24Z",
-    "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
-    "run_id": "26911691713",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-03T21:00:13Z",
     "commit": "e6c1229488b02bf761f5af3df9e5ac21f8b0ebe0",
     "run_id": "26911691713",
@@ -4631,6 +4615,22 @@
       {
         "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
         "score": 0.07392
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-19T18:17:00Z",
+    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
+    "run_id": "29698008149",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.02501
       }
     ]
   }
