@@ -41,13 +41,15 @@ Find additional information about the application association in `Trento.SapSyst
 ```elixir
 @type t() :: %Trento.SapSystems.SapSystem{
   database_health: term(),
+  database_stale_at: term(),
   deregistered_at: term(),
   ensa_version: term(),
   health: term(),
   instances: term(),
   rolling_up: term(),
   sap_system_id: term(),
-  sid: term()
+  sid: term(),
+  stale_at: term()
 }
 ```
 

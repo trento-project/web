@@ -494,6 +494,8 @@ deployed SAP systems, which is composed by the application layer.
 
   - [Trento.SapSystems.Commands.UpdateDatabaseHealth](Trento.SapSystems.Commands.UpdateDatabaseHealth.md): Update the health of the database associated to the SAP system.
 
+  - [Trento.SapSystems.Commands.UpdateDatabaseStaleAt](Trento.SapSystems.Commands.UpdateDatabaseStaleAt.md): Update the stale_at timestamp of the database associated to the SAP system.
+
   - [Trento.SapSystems.Enums.EnsaVersion](Trento.SapSystems.Enums.EnsaVersion.md): Type that represents the supported ENSA versions.
 
   - [Trento.SapSystems.Enums.Status](Trento.SapSystems.Enums.Status.md): Type that represents SAP and HANA instances status.
@@ -536,7 +538,13 @@ synchronized and valid.
 
   - [Trento.SapSystems.Events.DatabaseRestored](Trento.SapSystems.Events.DatabaseRestored.md): This event is emitted when a database is restored.
 
+  - [Trento.SapSystems.Events.SapSystemDataMarkedInSync](Trento.SapSystems.Events.SapSystemDataMarkedInSync.md): This event is emitted when a SAP system data is marked as in sync.
+
+  - [Trento.SapSystems.Events.SapSystemDataMarkedStale](Trento.SapSystems.Events.SapSystemDataMarkedStale.md): This event is emitted when a SAP system data is marked as stale.
+
   - [Trento.SapSystems.Events.SapSystemDatabaseHealthChanged](Trento.SapSystems.Events.SapSystemDatabaseHealthChanged.md): This event is emitted when the SAP System database health has changed.
+
+  - [Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged](Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged.md): This event is emitted when the database stale state associated to a SAP System changes.
 
   - [Trento.SapSystems.Events.SapSystemDeregistered](Trento.SapSystems.Events.SapSystemDeregistered.md): This event is emitted when a SAP system is deregistered (decommissioned).
 
@@ -685,6 +693,8 @@ related to a restored database
 
   - [Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.md): This event handler is responsible to forward update database health commands to the SAP systems
 related to a database that has a new health state.
+  - [Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAtEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAtEventHandler.md): This event handler is responsible to forward update database stale_at commands to the SAP systems
+related to a database that has a new stale_at state.
   - [Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler](Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.md): Event handler to update saptune status when application or HANA database instances are registered/deregistered.
 A host saptune health depends on SAP instances running on the host, so any update on that
 needs to be applied in the saptune state health.

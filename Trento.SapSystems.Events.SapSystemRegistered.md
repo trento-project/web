@@ -9,6 +9,7 @@ This event is emitted when a sap system is registered.
 @type t() :: %Trento.SapSystems.Events.SapSystemRegistered{
   database_health: term(),
   database_id: term(),
+  database_stale_at: term(),
   db_host: term(),
   ensa_version: term(),
   health: term(),

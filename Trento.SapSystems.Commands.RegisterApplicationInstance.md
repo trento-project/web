@@ -23,6 +23,7 @@ This information is required in order to decide whether the instance was moved b
   clustered: term(),
   database_health: term(),
   database_id: term(),
+  database_stale_at: term(),
   db_host: term(),
   ensa_version: term(),
   features: term(),

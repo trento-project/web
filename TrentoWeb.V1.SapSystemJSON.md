@@ -17,6 +17,8 @@
 
 # `sap_system_database_health_changed`
 
+# `sap_system_database_stale_at_changed`
+
 # `sap_system_deregistered`
 
 # `sap_system_health_changed`
@@ -24,6 +26,8 @@
 # `sap_system_registered`
 
 # `sap_system_restored`
+
+# `sap_system_stale_changed`
 
 # `sap_system_updated`
 

@@ -19,6 +19,7 @@ SAP System read model
   id: term(),
   inserted_at: term(),
   sid: term(),
+  stale_at: term(),
   tags: term(),
   tenant: term(),
   updated_at: term()

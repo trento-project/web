@@ -331,6 +331,7 @@ Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler
 Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.html
+Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAtEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler.html
 Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.html
@@ -395,6 +396,7 @@ Trento.SapSystems.Commands.RegisterApplicationInstance.html
 Trento.SapSystems.Commands.RestoreSapSystem.html
 Trento.SapSystems.Commands.RollUpSapSystem.html
 Trento.SapSystems.Commands.UpdateDatabaseHealth.html
+Trento.SapSystems.Commands.UpdateDatabaseStaleAt.html
 Trento.SapSystems.Enums.EnsaVersion.html
 Trento.SapSystems.Enums.Status.html
 Trento.SapSystems.Events.ApplicationInstanceDataMarkedInSync.html
@@ -416,7 +418,10 @@ Trento.SapSystems.Events.DatabaseInstanceRegistered.html
 Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged.html
 Trento.SapSystems.Events.DatabaseRegistered.html
 Trento.SapSystems.Events.DatabaseRestored.html
+Trento.SapSystems.Events.SapSystemDataMarkedInSync.html
+Trento.SapSystems.Events.SapSystemDataMarkedStale.html
 Trento.SapSystems.Events.SapSystemDatabaseHealthChanged.html
+Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged.html
 Trento.SapSystems.Events.SapSystemDeregistered.html
 Trento.SapSystems.Events.SapSystemHealthChanged.html
 Trento.SapSystems.Events.SapSystemRegistered.html
@@ -594,7 +599,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-A254B881.js
-dist/sidebar_items-63176FD7.js
+dist/search_data-DF072523.js
+dist/sidebar_items-DEAC79CB.js
 index.html
 search.html

@@ -255,6 +255,12 @@ Raises a helpful error if no factory is defined.
 
 # `rollup_sap_system_command_factory`
 
+# `sap_system_data_marked_in_sync_event_factory`
+
+# `sap_system_data_marked_stale_event_factory`
+
+# `sap_system_database_stale_at_changed_event_factory`
+
 # `sap_system_deregistered_event_factory`
 
 # `sap_system_factory`

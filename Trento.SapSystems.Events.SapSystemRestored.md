@@ -8,6 +8,7 @@ This event is emitted when a sap system is restored.
 ```elixir
 @type t() :: %Trento.SapSystems.Events.SapSystemRestored{
   database_health: term(),
+  database_stale_at: term(),
   db_host: term(),
   health: term(),
   sap_system_id: term(),

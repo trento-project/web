@@ -330,6 +330,7 @@ Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandler
 Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHandler.md
 Trento.Infrastructure.Commanded.EventHandlers.RollUpEventHandler.md
 Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthEventHandler.md
+Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseStaleAtEventHandler.md
 Trento.Infrastructure.Commanded.EventHandlers.SaptuneStatusUpdateEventHandler.md
 Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscoveryEventHandler.md
 Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.md
@@ -394,6 +395,7 @@ Trento.SapSystems.Commands.RegisterApplicationInstance.md
 Trento.SapSystems.Commands.RestoreSapSystem.md
 Trento.SapSystems.Commands.RollUpSapSystem.md
 Trento.SapSystems.Commands.UpdateDatabaseHealth.md
+Trento.SapSystems.Commands.UpdateDatabaseStaleAt.md
 Trento.SapSystems.Enums.EnsaVersion.md
 Trento.SapSystems.Enums.Status.md
 Trento.SapSystems.Events.ApplicationInstanceDataMarkedInSync.md
@@ -415,7 +417,10 @@ Trento.SapSystems.Events.DatabaseInstanceRegistered.md
 Trento.SapSystems.Events.DatabaseInstanceSystemReplicationChanged.md
 Trento.SapSystems.Events.DatabaseRegistered.md
 Trento.SapSystems.Events.DatabaseRestored.md
+Trento.SapSystems.Events.SapSystemDataMarkedInSync.md
+Trento.SapSystems.Events.SapSystemDataMarkedStale.md
 Trento.SapSystems.Events.SapSystemDatabaseHealthChanged.md
+Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged.md
 Trento.SapSystems.Events.SapSystemDeregistered.md
 Trento.SapSystems.Events.SapSystemHealthChanged.md
 Trento.SapSystems.Events.SapSystemRegistered.md
