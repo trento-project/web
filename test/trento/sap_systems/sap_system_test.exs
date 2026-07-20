@@ -3483,7 +3483,7 @@ defmodule Trento.SapSystems.SapSystemTest do
       )
     end
 
-    test "should mark SAP system data as in sync when the SAP is restored and database sync state has changed" do
+    test "should mark SAP system data as in sync when the SAP is restored and database stale state had changed in the meantime" do
       sap_system_id = UUID.uuid4()
 
       database_host_id = UUID.uuid4()

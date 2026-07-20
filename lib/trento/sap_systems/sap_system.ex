@@ -836,9 +836,10 @@ defmodule Trento.SapSystems.SapSystem do
     end
   end
 
-  # Restore a SAP system when the restore command is received, check for the required instances.
-  # stale_at is set to nil as the SAP is restored because the associated database was restored,
-  # which cannot happen being stale
+  # Restore a SAP system when the RestoreSapSystem command is received, checking that the required instances are
+  # present. This command is sent when the database associated to this SAP system was restored.
+  #
+  # A database can only be restored while it is not stale, so database_stale_at is set to nil to reflect that.
   defp maybe_emit_sap_system_restored_event(
          %SapSystem{instances: instances, health: health},
          %RestoreSapSystem{
