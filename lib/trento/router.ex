@@ -46,7 +46,8 @@ defmodule Trento.Router do
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
-    UpdateDatabaseHealth
+    UpdateDatabaseHealth,
+    UpdateDatabaseStaleAt
   }
 
   alias Trento.Clusters
@@ -99,7 +100,8 @@ defmodule Trento.Router do
              MarkApplicationInstanceDataStale,
              RegisterApplicationInstance,
              RollUpSapSystem,
-             UpdateDatabaseHealth
+             UpdateDatabaseHealth,
+             UpdateDatabaseStaleAt
            ],
            to: SapSystems.SapSystem,
            lifespan: SapSystems.Lifespan

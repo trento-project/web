@@ -9,7 +9,8 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
 
   describe "SapSystemJSON" do
     test "should render sap_systems.json" do
-      %{id: database_id, sid: database_sid, health: database_health} = database = build(:database)
+      %{id: database_id, sid: database_sid, health: database_health, stale_at: database_stale_at} =
+        database = build(:database)
 
       database_instances = build_list(1, :database_instance, database_id: database_id)
       application_instances = build_list(1, :application_instance)
@@ -30,6 +31,7 @@ defmodule TrentoWeb.V1.SapSystemJSONTest do
         |> Map.delete(:database)
         |> Map.put(:database_sid, database_sid)
         |> Map.put(:database_health, database_health)
+        |> Map.put(:database_stale_at, database_stale_at)
         |> Map.put(
           :application_instances,
           Enum.map(application_instances, fn app_instance ->

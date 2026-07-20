@@ -475,7 +475,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
     test "should ignore specific domain events" do
       excluded_events = [
         :host_checks_selected_event,
-        :cluster_checks_selected_event
+        :cluster_checks_selected_event,
+        :sap_system_database_stale_at_changed_event
       ]
 
       for excluded_event <- excluded_events do

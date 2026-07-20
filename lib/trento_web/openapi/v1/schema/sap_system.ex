@@ -199,8 +199,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           },
           database_sid: %Schema{type: :string, description: "Database SID.", example: "HA1"},
           database_health: ResourceHealth,
+          database_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database associated to this SAP system data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           database_instances: Database.DatabaseInstances,
           tags: Tags,
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the SAP system data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
           updated_at: %Schema{
             type: :string,
@@ -221,6 +237,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_sid: "HA1",
           database_instances: [],
           tags: [],
+          stale_at: "2024-01-15T08:00:00Z",
+          database_stale_at: "2024-01-15T08:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:30:00Z"
         }
@@ -252,6 +270,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             database_sid: "HA1",
             database_instances: [],
             tags: [],
+            stale_at: "2024-01-15T08:00:00Z",
+            database_stale_at: "2024-01-15T08:00:00Z",
             inserted_at: "2024-01-15T10:30:00Z",
             updated_at: "2024-01-15T12:30:00Z"
           }
