@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-06-04T23:14:10Z",
-    "commit": "820e5898b6f6b38e97f37c5f5577e9a6cc002ba5",
-    "run_id": "26977495184",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 22
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2861
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.25
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1502
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-05T19:17:15Z",
     "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
     "run_id": "27034482221",
@@ -4612,5 +4584,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-20T19:35:32Z",
+    "commit": "5ec298580cf4da23d321cc4f4d210b3ce4ed760f",
+    "run_id": "29771229682",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.1088
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.05001
+      }
+    ]
   }
 ]
