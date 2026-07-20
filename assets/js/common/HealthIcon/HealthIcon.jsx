@@ -3,8 +3,6 @@
 
 import React from 'react';
 
-import { computedIconCssClass } from '@lib/icon';
-
 import {
   EOS_CHECK_CIRCLE_OUTLINED,
   EOS_CHECK_CIRCLE_FILLED,
@@ -17,16 +15,34 @@ import {
 } from 'eos-icons-react';
 
 import classNames from 'classnames';
+import { flow } from 'lodash';
 import Spinner from '@common/Spinner';
 import StaleIconWrapper from '@common/StaleIconWrapper';
 
-const PassingIconBlank = StaleIconWrapper(EOS_CHECK_CIRCLE_OUTLINED);
-const PassingIconLink = StaleIconWrapper(EOS_CHECK_CIRCLE_FILLED);
-const WarningIconBlank = StaleIconWrapper(EOS_WARNING_OUTLINED);
-const WarningIconLink = StaleIconWrapper(EOS_WARNING_FILLED);
-const CriticalIconBlank = StaleIconWrapper(EOS_ERROR_OUTLINED);
-const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
-const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
+// Makes sure an Icon, when rendered with `centered`, has its output wrapped
+// in a horizontally centering container.
+const Centerable = (Icon) =>
+  function CenteredIcon({ centered = false, ...props }) {
+    return centered ? (
+      <div className="w-fit mx-auto">
+        <Icon {...props} />
+      </div>
+    ) : (
+      <Icon {...props} />
+    );
+  };
+
+const CenteredStaleIcon = flow(StaleIconWrapper, Centerable);
+
+const PassingIconBlank = CenteredStaleIcon(EOS_CHECK_CIRCLE_OUTLINED);
+const PassingIconLink = CenteredStaleIcon(EOS_CHECK_CIRCLE_FILLED);
+const WarningIconBlank = CenteredStaleIcon(EOS_WARNING_OUTLINED);
+const WarningIconLink = CenteredStaleIcon(EOS_WARNING_FILLED);
+const CriticalIconBlank = CenteredStaleIcon(EOS_ERROR_OUTLINED);
+const CriticalIconLink = CenteredStaleIcon(EOS_ERROR_FILLED);
+const UnknownIcon = CenteredStaleIcon(EOS_LENS_FILLED);
+const PendingIcon = Centerable(Spinner);
+const NotAvailableIcon = Centerable(EOS_REMOVE_FILLED);
 
 function HealthIcon({
   health = undefined,
@@ -47,10 +63,8 @@ function HealthIcon({
       const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         <PassingIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -63,10 +77,8 @@ function HealthIcon({
       const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         <WarningIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -79,10 +91,8 @@ function HealthIcon({
       const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -92,17 +102,15 @@ function HealthIcon({
     }
 
     case 'pending': {
-      return <Spinner />;
+      return <PendingIcon centered={centered} />;
     }
 
     case 'not_available': {
       return (
-        <EOS_REMOVE_FILLED
+        <NotAvailableIcon
+          centered={centered}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered)
-          )}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
         />
       );
     }
@@ -110,10 +118,8 @@ function HealthIcon({
     default: {
       return (
         <UnknownIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
