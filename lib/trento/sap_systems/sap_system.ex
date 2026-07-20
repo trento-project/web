@@ -759,7 +759,8 @@ defmodule Trento.SapSystems.SapSystem do
            stale_at: nil
          },
          stale_at
-       ) do
+       )
+       when not is_nil(stale_at) do
     [
       %SapSystemDataMarkedStale{
         sap_system_id: sap_system_id,
