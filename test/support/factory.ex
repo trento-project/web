@@ -206,8 +206,8 @@ defmodule Trento.Factory do
 
   use ExMachina.Ecto, repo: Trento.Repo
 
-  def host_registered_event_factory do
-    %HostRegistered{
+  def host_registered_event_factory(attrs) do
+    event = %{
       host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
       ip_addresses: ["#{Faker.Internet.ip_v4_address()}/#{Enum.random([16, 24, 32])}"],
@@ -219,13 +219,18 @@ defmodule Trento.Factory do
       os_version: Faker.App.semver(),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
-      prometheus_targets: build(:host_prometheus_targets),
+      prometheus_targets: params_for(:host_prometheus_targets),
       prometheus_mode: PrometheusMode.pull(),
       heartbeat: :unknown,
-      systemd_units: build_list(2, :host_systemd_unit),
+      systemd_units: Enum.map(1..2, fn _ -> params_for(:host_systemd_unit) end),
       last_boot_timestamp:
         Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     }
+
+    event
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> HostRegistered.new!()
   end
 
   def host_details_updated_event_factory do
@@ -1221,11 +1226,16 @@ defmodule Trento.Factory do
     })
   end
 
-  def host_health_changed_event_factory do
-    HostHealthChanged.new!(%{
+  def host_health_changed_event_factory(attrs) do
+    event = %{
       host_id: Faker.UUID.v4(),
       health: Health.passing()
-    })
+    }
+
+    event
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> HostHealthChanged.new!()
   end
 
   def software_updates_settings_factory(attrs) do

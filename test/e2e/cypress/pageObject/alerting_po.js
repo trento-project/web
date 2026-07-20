@@ -43,8 +43,7 @@ export const emailIsReceived = (type) =>
     .then((result) => cy.wrap(result.length).should('equal', 1));
 
 export const triggerHostAlertingEmail = () => {
-  basePage.startAgentsHeartbeat(['9cd46919-5f19-59aa-993e-cf3736c71053']);
-  return basePage.stopAgentsHeartbeat();
+  basePage.loadScenario('host-vmhdbprd01-saptune-not-compliant');
 };
 
 export const triggerClusterAlertingEmail = () => {
