@@ -61,7 +61,9 @@ export const sapSystemFactory = Factory.define(({ params }) => {
     tags: [],
     database_sid: databaseSid,
     database_health: healthEnum(),
+    database_stale_at: null,
     tenant: databaseSid,
     database_id: databaseId,
+    stale_at: null,
   };
 });

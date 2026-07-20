@@ -7,6 +7,7 @@ import { del } from '@lib/network';
 import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
+  SAP_SYSTEM_STALE_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_STATUS_CHANGED,
@@ -19,6 +20,7 @@ import {
   DEREGISTER_APPLICATION_INSTANCE,
   appendSapsystem,
   updateSapSystemHealth,
+  updateSapSystemStaleAt,
   upsertApplicationInstances,
   removeApplicationInstance,
   updateApplicationInstanceHost,
@@ -54,6 +56,10 @@ function* sapSystemHealthChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* sapSystemStaleChanged({ payload }) {
+  yield put(updateSapSystemStaleAt(payload));
 }
 
 function* applicationInstanceRegistered({ payload }) {
@@ -161,6 +167,7 @@ export function* deregisterApplicationInstance({
 export function* watchSapSystemEvents() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
+  yield takeEvery(SAP_SYSTEM_STALE_CHANGED, sapSystemStaleChanged);
   yield takeEvery(
     APPLICATION_INSTANCE_REGISTERED,
     applicationInstanceRegistered

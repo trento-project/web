@@ -124,6 +124,8 @@ export const SAP_SYSTEM_ROLLED_UP = 'sap_system_rolled_up';
 export const SAP_SYSTEM_ROLL_UP_REQUESTED = 'sap_system_roll_up_requested';
 export const SAP_SYSTEM_TOMBSTONED = 'sap_system_tombstoned';
 export const SAP_SYSTEM_UPDATED = 'sap_system_updated';
+export const SAP_SYSTEM_DATA_MARKED_STALE = 'sap_system_data_marked_stale';
+export const SAP_SYSTEM_DATA_MARKED_IN_SYNC = 'sap_system_data_marked_in_sync';
 
 // Database events
 export const DATABASE_DEREGISTERED = 'database_deregistered';
@@ -150,6 +152,8 @@ export const DATABASE_ROLLED_UP = 'database_rolled_up';
 export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
+export const DATABASE_DATA_MARKED_STALE = 'database_data_marked_stale';
+export const DATABASE_DATA_MARKED_IN_SYNC = 'database_data_marked_in_sync';
 
 // Operations
 export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
@@ -656,6 +660,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `SAP system was updated`,
     resource: sapSystemResourceType,
   },
+  [SAP_SYSTEM_DATA_MARKED_STALE]: {
+    label: 'SAP System Data Marked Stale',
+    message: (_entry) => `SAP System data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [SAP_SYSTEM_DATA_MARKED_IN_SYNC]: {
+    label: 'SAP System Data Marked In Sync',
+    message: (_entry) => `SAP System data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   // Database events
   [DATABASE_DEREGISTERED]: {
     label: 'Database Deregistered',
@@ -740,6 +754,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_TOMBSTONED]: {
     label: 'Database Tombstoned',
     message: (_entry) => `Database was tombstoned`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_STALE]: {
+    label: 'Database Data Marked Stale',
+    message: (_entry) => `Database data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Data Marked In Sync',
+    message: (_entry) => `Database data was marked in sync`,
     resource: databaseResourceType,
   },
   // Operations

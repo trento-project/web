@@ -9,6 +9,7 @@ import {
   DATABASE_DEREGISTERED,
   DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
+  DATABASE_STALE_CHANGED,
   DATABASE_INSTANCE_REGISTERED,
   DATABASE_INSTANCE_ABSENT_AT_CHANGED,
   DATABASE_INSTANCE_STALE_CHANGED,
@@ -19,6 +20,7 @@ import {
   appendDatabase,
   upsertDatabaseInstances,
   updateDatabaseHealth,
+  updateDatabaseStaleAt,
   updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
@@ -53,6 +55,10 @@ function* databaseHealthChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* databaseStaleChanged({ payload }) {
+  yield put(updateDatabaseStaleAt(payload));
 }
 
 function* databaseInstanceRegistered({ payload }) {
@@ -148,6 +154,7 @@ export function* watchDatabaseEvents() {
   yield takeEvery(DATABASE_DEREGISTERED, databaseDeregistered);
   yield takeEvery(DATABASE_RESTORED, databaseRestored);
   yield takeEvery(DATABASE_HEALTH_CHANGED, databaseHealthChanged);
+  yield takeEvery(DATABASE_STALE_CHANGED, databaseStaleChanged);
   yield takeEvery(DATABASE_INSTANCE_REGISTERED, databaseInstanceRegistered);
   yield takeEvery(
     DATABASE_INSTANCE_ABSENT_AT_CHANGED,
