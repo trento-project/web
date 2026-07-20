@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-06-05T19:18:24Z",
-    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
-    "run_id": "27034482221",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
-        "score": 0.6667
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.ClustersTest::test request_operation/3 should request cluster_resource_refresh operation on online and heartbeat passing nodes",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-05T19:41:38Z",
     "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
     "run_id": "27035391983",
@@ -4611,6 +4583,58 @@
       {
         "name": "Deregistration Modal component::should render a host deregistration modal correctly",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-20T22:54:45Z",
+    "commit": "5ec298580cf4da23d321cc4f4d210b3ce4ed760f",
+    "run_id": "29774028951",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 22
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
+        "score": 0.1674
+      },
+      {
+        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
+        "score": 0.1416
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1359
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
       }
     ]
   }
