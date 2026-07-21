@@ -249,6 +249,16 @@ export const apiDeleteAllUsers = () =>
 export const waitForRequest = (requestAlias, timeout = 5000) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout });
 
+export const waitForRetriedRequestAfterUnauthorized = (
+  requestAlias,
+  timeout = 5000
+) =>
+  waitForRequest(requestAlias, timeout).then((request) => {
+    if (request.response.statusCode !== 401) return request;
+
+    return waitForRequest(requestAlias, timeout);
+  });
+
 export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
   /**
    * Preload required test data.

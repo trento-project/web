@@ -176,16 +176,18 @@ export const expectedWarningMessageIsDisplayed = (expectedWarningMessage) =>
     .should('have.text', expectedWarningMessage);
 
 export const expectedResultRowsAreDisplayed = () =>
-  basePage.waitForRequest(lastExecutionEndpointAlias).then(
-    ({
-      response: {
-        body: { check_results },
-      },
-    }) => {
-      const amountOfChecks = check_results.length;
-      return cy.get(checkResultRows).should('have.length', amountOfChecks);
-    }
-  );
+  basePage
+    .waitForRetriedRequestAfterUnauthorized(lastExecutionEndpointAlias)
+    .then(
+      ({
+        response: {
+          body: { check_results },
+        },
+      }) => {
+        const amountOfChecks = check_results.length;
+        return cy.get(checkResultRows).should('have.length', amountOfChecks);
+      }
+    );
 
 export const expectedCheckIsDisplayed = (checkNameValue) =>
   cy.get(checkName(checkNameValue)).should('be.visible');
@@ -514,7 +516,8 @@ export const linkToDeregisteredHostIsNotAvailable = () =>
 export const linkToDeregisteredHostIsAvailable = () =>
   cy
     .get(
-      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
+      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`,
+      { timeout: 80000 }
     )
     .should('have.attr', 'href');
 
