@@ -137,4 +137,29 @@ context('HANA database details', () => {
       hanaDbDetailsPage.deregisteredHostIsDisplayed();
     });
   });
+
+  describe('Stale data', () => {
+    before(() => hanaDbDetailsPage.startDatabaseAgentsHeartbeat());
+
+    after(() => hanaDbDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark database data as stale when an agent composing the database stops reporting', () => {
+      hanaDbDetailsPage.stopDatabaseAgentHeartbeat();
+      hanaDbDetailsPage.databaseHealthIsMarkedAsStale();
+      hanaDbDetailsPage.databaseStaleBannerIsDisplayed();
+      hanaDbDetailsPage.databaseSiteIsMarkedAsStale();
+      hanaDbDetailsPage.databaseInstanceRowIsMarkedAsStale();
+      hanaDbDetailsPage.hostRowIsMarkedAsStale();
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      hanaDbDetailsPage.startDatabaseAgentHeartbeat();
+      hanaDbDetailsPage.markDatabaseAsPresent();
+      hanaDbDetailsPage.databaseHealthIsMarkedInSync();
+      hanaDbDetailsPage.databaseStaleBannerIsNotDisplayed();
+      hanaDbDetailsPage.databaseSiteIsMarkedInSync();
+      hanaDbDetailsPage.databaseInstanceRowIsMarkedInSync();
+      hanaDbDetailsPage.hostRowIsMarkedInSync();
+    });
+  });
 });
