@@ -86,7 +86,7 @@ function HealthIcon({
     }
 
     case 'pending': {
-      return <Spinner className={classNames({ 'w-fit mx-auto': centered })} />;
+      return <Spinner />;
     }
 
     case 'not_available': {
