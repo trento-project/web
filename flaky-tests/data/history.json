@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-05T19:41:38Z",
-    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
-    "run_id": "27035391983",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-05T19:42:50Z",
     "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
     "run_id": "27035391983",
@@ -4635,6 +4619,22 @@
       {
         "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-21T18:35:28Z",
+    "commit": "2ee6c815b8989ba2f05a85ba33e6e1bccf7b4220",
+    "run_id": "29856846789",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 39,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
       }
     ]
   }
