@@ -100,7 +100,7 @@ describe('HomeHealthSummary component', () => {
 
     expect(
       container
-        .querySelector(':nth-child(4) > :nth-child(3) svg')
+        .querySelector(':nth-child(4) > :nth-child(3) > svg')
         .classList.toString()
     ).toContain('hover:opacity-100');
   });

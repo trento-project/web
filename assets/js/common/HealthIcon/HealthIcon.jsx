@@ -3,6 +3,8 @@
 
 import React from 'react';
 
+import { computedIconCssClass } from '@lib/icon';
+
 import {
   EOS_CHECK_CIRCLE_OUTLINED,
   EOS_CHECK_CIRCLE_FILLED,
@@ -15,34 +17,16 @@ import {
 } from 'eos-icons-react';
 
 import classNames from 'classnames';
-import { flow } from 'lodash';
 import Spinner from '@common/Spinner';
 import StaleIconWrapper from '@common/StaleIconWrapper';
 
-// Makes sure an Icon, when rendered with `centered`, has its output wrapped
-// in a horizontally centering container.
-const Centerable = (Icon) =>
-  function CenteredIcon({ centered = false, ...props }) {
-    return centered ? (
-      <div className="w-fit mx-auto">
-        <Icon {...props} />
-      </div>
-    ) : (
-      <Icon {...props} />
-    );
-  };
-
-const CenteredStaleIcon = flow(StaleIconWrapper, Centerable);
-
-const PassingIconBlank = CenteredStaleIcon(EOS_CHECK_CIRCLE_OUTLINED);
-const PassingIconLink = CenteredStaleIcon(EOS_CHECK_CIRCLE_FILLED);
-const WarningIconBlank = CenteredStaleIcon(EOS_WARNING_OUTLINED);
-const WarningIconLink = CenteredStaleIcon(EOS_WARNING_FILLED);
-const CriticalIconBlank = CenteredStaleIcon(EOS_ERROR_OUTLINED);
-const CriticalIconLink = CenteredStaleIcon(EOS_ERROR_FILLED);
-const UnknownIcon = CenteredStaleIcon(EOS_LENS_FILLED);
-const PendingIcon = Centerable(Spinner);
-const NotAvailableIcon = Centerable(EOS_REMOVE_FILLED);
+const PassingIconBlank = StaleIconWrapper(EOS_CHECK_CIRCLE_OUTLINED);
+const PassingIconLink = StaleIconWrapper(EOS_CHECK_CIRCLE_FILLED);
+const WarningIconBlank = StaleIconWrapper(EOS_WARNING_OUTLINED);
+const WarningIconLink = StaleIconWrapper(EOS_WARNING_FILLED);
+const CriticalIconBlank = StaleIconWrapper(EOS_ERROR_OUTLINED);
+const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
+const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
 function HealthIcon({
   health = undefined,
@@ -102,15 +86,17 @@ function HealthIcon({
     }
 
     case 'pending': {
-      return <PendingIcon centered={centered} />;
+      return <Spinner className={classNames({ 'w-fit mx-auto': centered })} />;
     }
 
     case 'not_available': {
       return (
-        <NotAvailableIcon
-          centered={centered}
+        <EOS_REMOVE_FILLED
           size={size}
-          className={classNames(hoverOpacityClass, 'fill-gray-500')}
+          className={classNames(
+            hoverOpacityClass,
+            computedIconCssClass('fill-gray-500', centered)
+          )}
         />
       );
     }
