@@ -399,7 +399,8 @@ export const apiDeregisterProdHost = () =>
       })
   );
 
-export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+export const stopAgentsHeartbeat = (agents = []) =>
+  cy.task('stopAgentsHeartbeat', { agents });
 
 export const isHostRegistered = (hostId) =>
   apiLogin()
