@@ -362,37 +362,30 @@ export const cleanUpButonIsEnabled = () =>
   cy.get(cleanUpButton).should('be.enabled');
 
 export const nwdSystemDataIsMarkedAsStale = () =>
-  cy.get(nwdSystemCell, { timeout: 20000 }).should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(nwdSystemCell);
 
 export const nwdSystemDataIsMarkedInSync = () =>
-  cy.get(nwdSystemCell).should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(nwdSystemCell);
 
 export const nwdSystemInstanceRowIsMarkedAsStale = () =>
-  cy
-    .get(getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row), {
-      timeout: 20000,
-    })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
 
 export const nwdSystemInstanceRowIsMarkedInSync = () =>
-  cy
-    .get(getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
 
 export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
-  cy
-    .get(
-      getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row),
-      {
-        timeout: 20000,
-      }
-    )
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
 
 export const hddDatabaseInstanceRowIsMarkedInSync = () =>
-  cy
-    .get(getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
 
 export const existentTagCannotBeModified = () =>
   cy.get(existentEnv3Tag).should('have.class', 'opacity-50');

@@ -128,24 +128,20 @@ export const cleanUpButtonIsNotDisplayed = () => {
 };
 
 export const hddDatabaseDataIsMarkedAsStale = () =>
-  cy
-    .get(hddDatabaseCell, { timeout: 20000 })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(hddDatabaseCell);
 
 export const hddDatabaseDataIsMarkedInSync = () =>
-  cy.get(hddDatabaseCell).should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(hddDatabaseCell);
 
 export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
-  cy
-    .get(getHddDatabaseInstanceRow(hddDatabase.instance.row), {
-      timeout: 20000,
-    })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(
+    getHddDatabaseInstanceRow(hddDatabase.instance.row)
+  );
 
 export const hddDatabaseInstanceRowIsMarkedInSync = () =>
-  cy
-    .get(getHddDatabaseInstanceRow(hddDatabase.instance.row))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(
+    getHddDatabaseInstanceRow(hddDatabase.instance.row)
+  );
 
 // UI Interactions
 

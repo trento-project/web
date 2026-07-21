@@ -308,10 +308,10 @@ export const deregisteredHostIsDisplayed = () =>
   cy.get(newRegisteredHost, { timeout: 20000 }).should('be.visible');
 
 export const databaseHealthIsMarkedAsStale = () =>
-  cy.get(pageTitleHealthIcons, { timeout: 20000 }).should('have.length', 2);
+  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
 
 export const databaseHealthIsMarkedInSync = () =>
-  cy.get(pageTitleHealthIcons).should('have.length', 1);
+  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
 
 export const databaseStaleBannerIsDisplayed = () =>
   cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
@@ -320,36 +320,26 @@ export const databaseStaleBannerIsNotDisplayed = () =>
   cy.get(staleDataBanner).should('not.exist');
 
 export const databaseSiteIsMarkedAsStale = () =>
-  cy
-    .get(siteReplicationHeader(selectedDatabase.Sites[0].Name), {
-      timeout: 20000,
-    })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(
+    siteReplicationHeader(selectedDatabase.Sites[0].Name)
+  );
 
 export const databaseSiteIsMarkedInSync = () =>
-  cy
-    .get(siteReplicationHeader(selectedDatabase.Sites[0].Name))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(
+    siteReplicationHeader(selectedDatabase.Sites[0].Name)
+  );
 
 export const databaseInstanceRowIsMarkedAsStale = () =>
-  cy
-    .get(layoutTableHostRow(attachedHosts[1].Name), { timeout: 20000 })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(layoutTableHostRow(attachedHosts[1].Name));
 
 export const databaseInstanceRowIsMarkedInSync = () =>
-  cy
-    .get(layoutTableHostRow(attachedHosts[1].Name))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(layoutTableHostRow(attachedHosts[1].Name));
 
 export const hostRowIsMarkedAsStale = () =>
-  cy
-    .get(hostsTableHostRow(attachedHosts[1].Name), { timeout: 20000 })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(hostsTableHostRow(attachedHosts[1].Name));
 
 export const hostRowIsMarkedInSync = () =>
-  cy
-    .get(hostsTableHostRow(attachedHosts[1].Name))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(hostsTableHostRow(attachedHosts[1].Name));
 
 // API
 

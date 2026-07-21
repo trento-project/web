@@ -178,16 +178,16 @@ export const newSapSystemIsDisplayed = () => {
 };
 
 export const sapSystemHealthIsMarkedAsStale = () =>
-  cy.get(pageTitleHealthIcons, { timeout: 20000 }).should('have.length', 2);
+  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
 
 export const sapSystemHealthIsMarkedInSync = () =>
-  cy.get(pageTitleHealthIcons).should('have.length', 1);
+  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
 
 export const sapSystemDatabaseHealthIsMarkedAsStale = () =>
-  cy.get(sapSystemDatabaseHealth, { timeout: 20000 }).should('have.length', 2);
+  basePage.healthIconIsMarkedStale(sapSystemDatabaseHealth);
 
 export const sapSystemDatabaseHealthIsMarkedInSync = () =>
-  cy.get(sapSystemDatabaseHealth).should('have.length', 1);
+  basePage.healthIconIsMarkedInSync(sapSystemDatabaseHealth);
 
 export const sapSystemStaleBannerIsDisplayed = () =>
   cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
@@ -196,26 +196,20 @@ export const sapSystemStaleBannerIsNotDisplayed = () =>
   cy.get(staleDataBanner).should('not.exist');
 
 export const sapSystemInstanceRowIsMarkedAsStale = () =>
-  cy
-    .get(layoutTableHostRow(selectedSystem.Hosts[1].Hostname), {
-      timeout: 20000,
-    })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
 
 export const sapSystemInstanceRowIsMarkedInSync = () =>
-  cy
-    .get(layoutTableHostRow(selectedSystem.Hosts[1].Hostname))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
 
 export const hostRowIsMarkedAsStale = () =>
-  cy
-    .get(hostsTableHostRow(attachedHosts[1].Name), { timeout: 20000 })
-    .should('have.class', 'bg-gray-100');
+  basePage.elementIsMarkedStale(hostsTableHostRow(attachedHosts[1].Name));
 
 export const hostRowIsMarkedInSync = () =>
-  cy
-    .get(hostsTableHostRow(attachedHosts[1].Name))
-    .should('not.have.class', 'bg-gray-100');
+  basePage.elementIsMarkedInSync(hostsTableHostRow(attachedHosts[1].Name));
 
 // API
 
