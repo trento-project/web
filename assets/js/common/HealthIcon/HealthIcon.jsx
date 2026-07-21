@@ -48,31 +48,58 @@ function HealthIcon({
     case 'passing':
       return (
         <PassingIcon
+<<<<<<< HEAD
           size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-jungle-green-500', centered)
           )}
+=======
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
+          size={size}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+>>>>>>> 387305d (Improve icon centering (#4524))
         />
       );
     case 'warning':
       return (
         <WarningIcon
+<<<<<<< HEAD
           size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-yellow-500', centered)
           )}
+=======
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
+          size={size}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+>>>>>>> 387305d (Improve icon centering (#4524))
         />
       );
     case 'critical':
       return (
         <CriticalIcon
+<<<<<<< HEAD
           size={size}
           className={classNames(
             hoverOpacityClass,
             computedIconCssClass('fill-red-500', centered)
           )}
+=======
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
+          size={size}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+>>>>>>> 387305d (Improve icon centering (#4524))
         />
       );
     case 'absent':
@@ -97,6 +124,23 @@ function HealthIcon({
           )}
         />
       );
+<<<<<<< HEAD
+=======
+    }
+
+    default: {
+      return (
+        <UnknownIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
+          size={size}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
+        />
+      );
+    }
+>>>>>>> 387305d (Improve icon centering (#4524))
   }
 }
 
