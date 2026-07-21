@@ -511,7 +511,9 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(
-      screen.getByText(/Information is outdated since 15 Jun 2026, 06:30:00/)
+      screen.getByText(
+        /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/
+      )
     ).toBeInTheDocument();
 
     expect(

@@ -320,9 +320,10 @@ export function GenericSystemDetails({
       </div>
       {system.stale_at && (
         <Banner type="warning" truncate={false}>
-          Trento agent heartbeat failed in some host composing this{' '}
-          {type === APPLICATION_TYPE ? 'SAP system' : 'Database'}... Information
-          is outdated since {formatDateTime(system.stale_at, userTimezone)}.
+          An agent in one of the{' '}
+          {type === APPLICATION_TYPE ? 'SAP system' : 'database'} hosts is not
+          reporting since {formatDateTime(system.stale_at, userTimezone)}. Some
+          information in this view might be stale.
         </Banner>
       )}
       <div className="mt-4 bg-white shadow rounded-lg py-4 px-8">
