@@ -486,8 +486,11 @@ describe('GenericSystemDetails', () => {
     expect(health).toHaveClass('fill-black');
   });
 
-  it('should render stale instances with stale styling', () => {
+  it('should render stale system and instances', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const userTimezone = 'America/New_York';
     const sapSystem = sapSystemFactory.build({
+      stale_at: staleAt,
       instances: [
         sapSystemApplicationInstanceFactory.build(),
         sapSystemApplicationInstanceFactory.build({
@@ -500,11 +503,24 @@ describe('GenericSystemDetails', () => {
 
     renderWithRouter(
       <GenericSystemDetails
-        title={faker.string.uuid()}
+        title="SAP System Details"
         system={sapSystem}
         type={APPLICATION_TYPE}
+        userTimezone={userTimezone}
       />
     );
+
+    expect(
+      screen.getByText(
+        /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/
+      )
+    ).toBeInTheDocument();
+
+    expect(
+      within(
+        screen.getByText('SAP System Details').previousSibling
+      ).getAllByTestId('eos-svg-component')
+    ).toHaveLength(2);
 
     const [layoutTable, _] = screen.getAllByRole('table');
     const rows = layoutTable.querySelectorAll('tbody > tr');
@@ -512,6 +528,28 @@ describe('GenericSystemDetails', () => {
     expect(rows[0]).not.toHaveClass('bg-gray-100');
     expect(rows[1]).toHaveClass('bg-gray-100');
     expect(rows[2]).not.toHaveClass('bg-gray-100');
+  });
+
+  it('should render stale database in a SAP system details view', () => {
+    const sapSystem = sapSystemFactory.build({
+      database_stale_at: '2026-06-15T10:30:00Z',
+      instances: [],
+      hosts: [],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(
+      within(screen.getByText('Database health').nextSibling).getAllByTestId(
+        'eos-svg-component'
+      ).length
+    ).toBe(2);
   });
 
   it.each([
