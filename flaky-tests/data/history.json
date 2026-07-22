@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-07T18:26:53Z",
-    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
-    "run_id": "27100713308",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.1051
-      },
-      {
-        "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-07T18:27:36Z",
     "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
     "run_id": "27100713308",
@@ -4609,6 +4589,22 @@
       },
       {
         "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-22T19:06:02Z",
+    "commit": "b15547a5bc64b844e1efc3c5bcdb04c6fccd21a3",
+    "run_id": "29948058612",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
       }
     ]
