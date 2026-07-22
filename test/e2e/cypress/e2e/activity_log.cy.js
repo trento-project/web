@@ -84,6 +84,7 @@ context('Activity Log page', () => {
 
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
 
       const fromDateQueryString =
         activityLogPage.formatEncodedDateForQueryString(fromDate);
@@ -149,6 +150,7 @@ context('Activity Log page', () => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
         let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
         activityLogPage.clickNextPageButton();
+        activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
@@ -333,6 +335,7 @@ context('Activity Log page', () => {
       activityLogPage.selectFilterTypeOption('Tag Added');
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
       const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
