@@ -71,6 +71,7 @@ context('Activity Log page', () => {
       const toDate = '2024-08-14T10:21';
 
       activityLogPage.visit(`?${defaultSeverity}`);
+      activityLogPage.waitForActivityLogRequest();
 
       activityLogPage.clickFilterFromDateButton();
       activityLogPage.typeFilterFromDateInputField(fromDate);
@@ -84,6 +85,7 @@ context('Activity Log page', () => {
 
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.waitForActivityLogRequest();
 
       const fromDateQueryString =
         activityLogPage.formatEncodedDateForQueryString(fromDate);
@@ -97,6 +99,7 @@ context('Activity Log page', () => {
     it('should reset filters', () => {
       const queryString = `?${defaultSeverity}&from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar`;
       activityLogPage.visit(queryString);
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickResetFiltersButton();
       activityLogPage.filterTypeHasNothingSelected();
       activityLogPage.filterFromDateHasNothingSelected();
@@ -149,6 +152,7 @@ context('Activity Log page', () => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
         let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
         activityLogPage.clickNextPageButton();
+        activityLogPage.waitForActivityLogRequest();
         activityLogPage.validateUrl(expectedUrl);
       });
       activityLogPage.clickFilterTypeButton();
@@ -156,6 +160,7 @@ context('Activity Log page', () => {
       activityLogPage.searchForDesiredFilterType('Login');
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.waitForActivityLogRequest();
       cy.get('button[data-testid="filter-Type"]').should(
         'have.text',
         'Login Attempt'
@@ -282,8 +287,10 @@ context('Activity Log page', () => {
       const queryString =
         '?from_date=custom&from_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&search=foo+bar&refreshRate=10000';
       activityLogPage.visit(queryString);
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue('10s');
       activityLogPage.clickResetFiltersButton();
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue('10s');
       const expectedUrl = `/activity_log?${defaultSeverity}&first=20&refreshRate=10000`;
       activityLogPage.validateUrl(expectedUrl);
@@ -324,14 +331,15 @@ context('Activity Log page', () => {
         activityLogPage.expectedAggregateAmountOfRequests(4);
       });
     });
-
-    it(`should update querystring when filters are selected`, () => {
+    it('should update querystring when filters are selected', () => {
       activityLogPage.visit(`?${defaultSeverity}&refreshRate=5000`);
+      activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickFilterTypeButton();
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.selectFilterTypeOption('Tag Added');
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.waitForActivityLogRequest();
       const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
