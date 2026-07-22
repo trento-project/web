@@ -9,7 +9,7 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   @moduledoc """
   This enrichment protocol is an exception caused by legacy events.
   If the deregistration process manager state is populated by legacy events,
-  specially old sap system data, it can have application instances with IDs
+  especially old SAP system data, it can have application instances with IDs
   that now belong to the database aggregate.
   This causes many issues.
   In order to avoid that, application instance commands whose sap_system_id
