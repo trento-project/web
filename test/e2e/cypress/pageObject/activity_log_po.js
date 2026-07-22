@@ -120,27 +120,6 @@ export const selectRefreshRate = (refreshRate) => {
 export const searchForDesiredFilterType = (text) =>
   cy.get(`${filterTypeButton} + div input`).type(text);
 
-export const validateUrlWithActivityLogRequestsDebug = (expectedUrl) =>
-  cy.get(`@${activityLogEndpointAlias}.all`).then((requests) => {
-    const requestSummary = requests.map(({ request, response }, index) => ({
-      index,
-      requestUrl: request.url,
-      responseUrl: response?.url,
-      statusCode: response?.statusCode,
-      endCursor: response?.body?.pagination?.end_cursor,
-      hasNextPage: response?.body?.pagination?.has_next_page,
-    }));
-
-    cy.url().should((url) => {
-      expect(
-        url,
-        `Activity log requests (${requestSummary.length}): ${JSON.stringify(
-          requestSummary
-        )}`
-      ).to.eq(`${Cypress.config().baseUrl}${expectedUrl}`);
-    });
-  });
-
 export const filterTypeOptionsAreDisplayed = () =>
   cy.get(`${filterTypeButton} + div`).should('be.visible');
 

@@ -156,6 +156,7 @@ context('Activity Log page', () => {
       activityLogPage.searchForDesiredFilterType('Login');
       activityLogPage.selectFilterTypeOption('Login Attempt');
       activityLogPage.clickApplyFiltersButton();
+      activityLogPage.activityLogRequestHasExpectedStatusCode(200);
       cy.get('button[data-testid="filter-Type"]').should(
         'have.text',
         'Login Attempt'
@@ -174,7 +175,7 @@ context('Activity Log page', () => {
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
         const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
-        activityLogPage.validateUrlWithActivityLogRequestsDebug(expectedUrl);
+        activityLogPage.validateUrl(expectedUrl);
       });
     });
 
