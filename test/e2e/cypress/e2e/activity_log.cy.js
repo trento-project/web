@@ -174,7 +174,7 @@ context('Activity Log page', () => {
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
         const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
-        activityLogPage.validateUrl(expectedUrl);
+        activityLogPage.validateUrlWithActivityLogRequestsDebug(expectedUrl);
       });
     });
 
