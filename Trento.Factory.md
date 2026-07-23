@@ -219,6 +219,8 @@ Raises a helpful error if no factory is defined.
 
 # `installation_settings_factory`
 
+# `mark_application_instance_data_stale_command_factory`
+
 # `operation_completed_v1_factory`
 
 # `operation_completed_with_errors_v1_factory`
