@@ -118,6 +118,7 @@ defmodule Trento.Factory do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
+    MarkApplicationInstanceDataStale,
     RegisterApplicationInstance,
     RollUpSapSystem
   }
@@ -692,6 +693,20 @@ defmodule Trento.Factory do
       instance_number: "00",
       host_id: Faker.UUID.v4()
     })
+  end
+
+  def mark_application_instance_data_stale_command_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> MarkApplicationInstanceDataStale.new!()
   end
 
   def database_registered_event_factory do
