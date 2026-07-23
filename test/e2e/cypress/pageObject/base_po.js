@@ -421,6 +421,7 @@ export const apiDeregisterProdHost = () =>
         },
       })
       .then(({ body }) => {
+        if (body.length === 0) return;
         const hostId = body[0].id;
         return apiDeregisterHost(hostId);
       })

@@ -16,10 +16,11 @@ context('Checks customization', () => {
   });
 
   after(() => {
-    // Reset checks and run new execution to restore health
     checksSelectionPage.apiResetAllChecks();
-    checksSelectionPage.apiRequestExecution();
-    checksSelectionPage.waitUntilExecutionFinished();
+    if (Cypress.expose('wanda_mode') === 'demo') {
+      checksSelectionPage.apiRequestExecution();
+      checksSelectionPage.waitUntilExecutionFinished();
+    }
   });
 
   describe('Checks customization should be possible for a cluster target', () => {
