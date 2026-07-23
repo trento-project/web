@@ -19,6 +19,7 @@ export const initialState = {
   analytics_enabled: undefined,
   analytics_eula_accepted: undefined,
   timezone: undefined,
+  ai_configuration: undefined,
 };
 
 export const userSlice = createSlice({
@@ -53,6 +54,7 @@ export const userSlice = createSlice({
           analytics_enabled,
           analytics_eula_accepted,
           timezone,
+          ai_configuration,
         },
       }
     ) {
@@ -67,6 +69,7 @@ export const userSlice = createSlice({
       state.analytics_enabled = analytics_enabled;
       state.analytics_eula_accepted = analytics_eula_accepted;
       state.timezone = timezone;
+      state.ai_configuration = ai_configuration;
     },
   },
 });
