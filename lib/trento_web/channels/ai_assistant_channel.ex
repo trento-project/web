@@ -202,7 +202,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(prompt, refresh_when: &access_token_changed/2)
+    |> TrentoAIAgent.run(prompt, refresh_when: &agent_config_changed/2)
     |> case do
       :ok ->
         socket
@@ -220,18 +220,20 @@ defmodule TrentoWeb.AIAssistantChannel do
     |> then(&{:noreply, &1})
   end
 
-  defp access_token_changed(
-         %{tool_context: %{access_token: token}} = _current_agent,
-         %{tool_context: %{access_token: token}} = _new_agent
-       ) do
-    # IO.inspect("access token unchanged - no agent update needed")
-    :noop
-  end
+  # Hot-swap the running agent when either the access_token OR the effective
+  # model config changed. The freshly built agent already carries both the
+  # current token and the current model, so returning {:ok, new_agent}
+  # applies everything. `model` is the LangChain ChatModel struct; ChatX.new!/1
+  # is deterministic, so an unchanged config yields equal structs → :noop.
+  # A changed provider (different struct), model, or api_key → structs differ
+  # → swap.
+  defp agent_config_changed(
+         %{model: model, tool_context: %{access_token: token}} = _current_agent,
+         %{model: model, tool_context: %{access_token: token}} = _new_agent
+       ),
+       do: :noop
 
-  defp access_token_changed(_current_agent, new_agent) do
-    # IO.inspect("access token changed - refreshing agent with new token")
-    {:ok, new_agent}
-  end
+  defp agent_config_changed(_current_agent, new_agent), do: {:ok, new_agent}
 
   @impl true
   def handle_info({:agent, {:status_changed, :running, nil}}, socket),
@@ -325,6 +327,17 @@ defmodule TrentoWeb.AIAssistantChannel do
     push(socket, "ai_configuration_cleared", %{})
 
     {:noreply, reset_run(socket)}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :updated, payload}, socket) do
+    # The user's AI provider/model changed (this or another tab / API). Tell the
+    # client so it can surface a notice for the conversation. The running agent
+    # itself hot-swaps to the new model on the next message via
+    # `agent_config_changed/2`.
+    push(socket, "model_changed", payload)
+
+    {:noreply, socket}
   end
 
   @impl true

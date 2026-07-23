@@ -16,6 +16,7 @@ function AssistantChatProvider({
   onConnectionChange = noop,
   onAIConfigurationCleared = noop,
   onAIConfigurationCreated = noop,
+  onModelChanged = noop,
   children,
 }) {
   const socket = useSocket();
@@ -28,6 +29,7 @@ function AssistantChatProvider({
       onConnectionChange,
       onAIConfigurationCleared,
       onAIConfigurationCreated,
+      onModelChanged,
     });
   }, [
     socket,
@@ -35,6 +37,7 @@ function AssistantChatProvider({
     onConnectionChange,
     onAIConfigurationCleared,
     onAIConfigurationCreated,
+    onModelChanged,
   ]);
 
   useEffect(() => {

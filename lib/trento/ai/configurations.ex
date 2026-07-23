@@ -61,10 +61,28 @@ defmodule Trento.AI.Configurations do
         user_configuration
         |> UserConfiguration.changeset(attrs)
         |> Repo.update()
+        |> tap(fn
+          {:ok, updated} -> maybe_broadcast_update(user_configuration, updated)
+          _ -> :ok
+        end)
     end
   end
 
   def update_user_configuration(%User{}, _), do: {:error, :forbidden}
+
+  # Notify every open AI Assistant channel for this user (all browser tabs) so
+  # they surface a model-change notice — but only when the provider or model
+  # actually changed (api-key-only edits stay silent).
+  defp maybe_broadcast_update(%UserConfiguration{} = before, %UserConfiguration{} = later) do
+    if before.provider != later.provider or before.model != later.model do
+      Events.broadcast_updated(later.user_id, %{
+        provider: later.provider,
+        model: later.model
+      })
+    end
+
+    :ok
+  end
 
   @doc """
   Clears a user's AI configuration.
