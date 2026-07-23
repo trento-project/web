@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-06-07T22:31:42Z",
-    "commit": "037507cf8e1cb44d989803271dfe2a015bac111f",
-    "run_id": "27102914451",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 23
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2267
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.2038
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.08646
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-08T19:45:41Z",
     "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
     "run_id": "27161781713",
@@ -4608,6 +4580,22 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-23T19:07:21Z",
+    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
+    "run_id": "30035265603",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
       }
     ]
