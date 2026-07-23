@@ -79,7 +79,7 @@ const pageTitle = 'h1:contains("SAP Systems")';
 export const visit = () => {
   cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url);
-  return basePage.waitForRequest('databasesRequest', 10000);
+  return basePage.waitForRequest('databasesRequest', { timeout: 10000 });
 };
 
 export const tagSapSystems = () =>

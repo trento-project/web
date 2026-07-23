@@ -360,20 +360,22 @@ export const waitForSettingsPageRequests = () => {
 
 export const checkSettingsEndpointsRequestsAreForbidden = (forbidden) => {
   const matcher = forbidden ? 'eq' : 'not.eq';
+  const waitOptions = { retryUnauthorized: false };
+
   basePage
-    .waitForRequest('apiKeySettingsEndpoint')
+    .waitForRequest('apiKeySettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
   basePage
-    .waitForRequest('activityLogSettingsEndpoint')
+    .waitForRequest('activityLogSettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
   basePage
-    .waitForRequest('sumaSettingsEndpoint')
+    .waitForRequest('sumaSettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
   return basePage
-    .waitForRequest('alertingSettingsEndpoint')
+    .waitForRequest('alertingSettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
 };

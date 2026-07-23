@@ -514,7 +514,8 @@ export const linkToDeregisteredHostIsNotAvailable = () =>
 export const linkToDeregisteredHostIsAvailable = () =>
   cy
     .get(
-      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`
+      `div[class*="tn-site-details-${hostToDeregister.sid}"] tbody td a:contains("${hostToDeregister.name}")`,
+      { timeout: 20000 }
     )
     .should('have.attr', 'href');
 

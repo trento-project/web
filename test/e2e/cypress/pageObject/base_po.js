@@ -246,8 +246,23 @@ export const apiDeleteAllUsers = () =>
       )
   );
 
-export const waitForRequest = (requestAlias, timeout = 5000) =>
-  cy.wait(`@${requestAlias}`, { timeout: timeout });
+const hasRefreshToken = () =>
+  cy.window().then((win) => Boolean(win.localStorage.getItem('refresh_token')));
+
+export const waitForRequest = (
+  requestAlias,
+  { timeout = 5000, retryUnauthorized = true } = {}
+) =>
+  cy.wait(`@${requestAlias}`, { timeout: timeout }).then((request) => {
+    if (!retryUnauthorized || request.response.statusCode !== 401) {
+      return request;
+    }
+
+    return hasRefreshToken().then((hasToken) => {
+      if (!hasToken) return request;
+      return cy.wait(`@${requestAlias}`, { timeout: timeout });
+    });
+  });
 
 export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
   /**
