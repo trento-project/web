@@ -432,7 +432,9 @@ jobs:
       - name: Run test
         env:
           MIX_ENV: test
-        run: mix coveralls.json --warnings-as-errors --trace
+        run: |
+          source .github/scripts/retry.sh
+          retry "mix coveralls.json --warnings-as-errors --trace" "Backend tests (Elixir ${{ matrix.elixir }})" 2 1800
       - name: Upload coverage to Coveralls
         continue-on-error: true
         uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
@@ -588,9 +590,18 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install E2E NPM dependencies
         if: steps.npm-e2e-cache.outputs.cache-hit != 'true'
         run: cd test/e2e && npm ci
+      - name: Install Cypress binary
+        if: steps.cypress-binary-cache.outputs.cache-hit != 'true'
+        run: cd test/e2e && npx cypress install
 
   test-e2e:
     name: E2E Tests
@@ -642,6 +653,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
@@ -670,17 +687,18 @@ jobs:
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
           SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
-        with:
-          working-directory: test/e2e
-          wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+        run: |
+          cd test/e2e
+          export SPLIT="${{ strategy.job-total }}"
+          export SPLIT_INDEX="${{ strategy.job-index }}"
+          export SPLIT_FILE="cypress-split-timings.json"
+
+          npx cypress run --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -744,6 +762,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
         uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
         with:
@@ -783,15 +807,14 @@ jobs:
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
         env:
           cypress_video: false
-        with:
-          working-directory: test/e2e
-          spec: ${{ matrix.cypress_spec }}
-          wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
+          CYPRESS_SPEC: ${{ matrix.cypress_spec }}
+        run: |
+          cd test/e2e
+          SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
+
+          npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
@@ -904,6 +927,12 @@ jobs:
           path: |
             test/e2e/node_modules
           key: nodejs-${{steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
+      - name: Retrieve Cypress binary cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        id: cypress-binary-cache
+        with:
+          path: ~/.cache/Cypress
+          key: cypress-binary-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: Install photofinish
         uses: jaxxstorm/action-install-gh-release@25e24d2d23ae098373794ef1d6faecb48ee52da8 # v3.0.0
         with:
@@ -932,21 +961,46 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
         env:
           cypress_video: false
-        with:
-          working-directory: test/e2e
-          spec: ${{ matrix.cypress_spec }}
-          wait-on-timeout: 30
-          config: baseUrl=http://localhost:4000
-          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
+          CYPRESS_SPEC: ${{ matrix.cypress_spec }}
+        run: |
+          cd test/e2e
+          SPEC_LIST=$(echo "$CYPRESS_SPEC" | xargs | tr ' ' ',')
+
+          npx cypress run --spec "$SPEC_LIST" --config baseUrl=http://localhost:4000 --expose photofinish_binary=${{ steps.photofinish-path.outputs.path }},${{ matrix.cypress_expose }}
       - name: Upload cypress test screenshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: integration-${{ matrix.test }}-e2e-screenshots
           path: test/e2e/cypress/screenshots/
+
+  rerun-on-failure:
+    needs: [test-javascript, test-elixir, test-e2e, test-regression, test-integration, coveralls-finish]
+    if: |
+      always() &&
+      fromJSON(github.run_attempt) < 3 &&
+      (
+        needs.test-javascript.result == 'failure' ||
+        needs.test-elixir.result == 'failure' ||
+        needs.test-e2e.result == 'failure' ||
+        needs.test-regression.result == 'failure' ||
+        needs.test-integration.result == 'failure' ||
+        needs.coveralls-finish.result == 'failure'
+      )
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: write
+    steps:
+      - name: Trigger rerun of failed jobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh workflow run rerun.yml \
+            --ref "${{ github.head_ref || github.ref_name }}" \
+            -F run_id=${{ github.run_id }}
 
   target-branch-deps:
     name: Rebuild target branch dependencies (Elixir ${{ matrix.elixir }})

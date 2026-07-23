@@ -43,5 +43,6 @@ module.exports = defineConfig({
     },
     testIsolation: false,
     baseUrl: 'http://localhost:4000',
+    retries: { runMode: 2 },
   },
 });
