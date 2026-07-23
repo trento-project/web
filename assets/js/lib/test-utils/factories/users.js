@@ -40,6 +40,7 @@ export const userFactory = Factory.define(() => ({
   ai_configuration: aiConfigurationFactory.build(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
+  ai_configuration: aiConfigurationFactory.build(),
 }));
 
 export const profileFactory = Factory.define(() => ({
