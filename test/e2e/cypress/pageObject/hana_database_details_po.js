@@ -24,12 +24,21 @@ const databaseTypeLabel =
 const systemReplicationLabel =
   'div[class*="grid-flow-row"]:contains("System Replication") div:nth-child(2)';
 const pageNotFoundLabel = 'div:contains("Not Found")';
+const pageTitleHealthIcons = 'h1 div svg';
+const staleDataBanner =
+  'span[data-testid="banner"]:contains("An agent in one of the database hosts is not reporting since")';
 const attachedHostsTableRows = 'div[class="mt-16"]:contains("Layout") tbody tr';
 const newRegisteredHost = `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`;
 const layoutTableHostNameCell = (hostName) =>
   `div[class="mt-16"]:contains("Layout") td:contains("${hostName}")`;
 const hostsTableHostNameCell = (hostName) =>
   `div[class="mt-8"]:contains("Hosts") td:contains("${hostName}")`;
+const layoutTableHostRow = (hostName) =>
+  `div[class="mt-16"]:contains("Layout") tr:has(td:contains("${hostName}"))`;
+const hostsTableHostRow = (hostName) =>
+  `div[class="mt-8"]:contains("Hosts") tr:has(td:contains("${hostName}"))`;
+const siteReplicationHeader = (site) =>
+  `div[class*="border-gray-200"]:has(h3:contains("${site}"))`;
 const siteHeader = (site) => `div:has(div > h3:contains("${site}"))`;
 
 //UI Interactions
@@ -298,6 +307,40 @@ export const deregisteredHostIsNotDisplayed = () =>
 export const deregisteredHostIsDisplayed = () =>
   cy.get(newRegisteredHost, { timeout: 20000 }).should('be.visible');
 
+export const databaseHealthIsMarkedAsStale = () =>
+  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
+
+export const databaseHealthIsMarkedInSync = () =>
+  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
+
+export const databaseStaleBannerIsDisplayed = () =>
+  cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
+
+export const databaseStaleBannerIsNotDisplayed = () =>
+  cy.get(staleDataBanner).should('not.exist');
+
+export const databaseSiteIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    siteReplicationHeader(selectedDatabase.Sites[0].Name)
+  );
+
+export const databaseSiteIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    siteReplicationHeader(selectedDatabase.Sites[0].Name)
+  );
+
+export const databaseInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(layoutTableHostRow(attachedHosts[1].Name));
+
+export const databaseInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(layoutTableHostRow(attachedHosts[1].Name));
+
+export const hostRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(hostsTableHostRow(attachedHosts[1].Name));
+
+export const hostRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(hostsTableHostRow(attachedHosts[1].Name));
+
 // API
 
 export const loadNewSapInstance = () =>
@@ -311,3 +354,17 @@ export const restoreFirstAttachedHost = () =>
 
 export const restoreDatabaseInstanceHealth = () =>
   basePage.loadScenario('hana-database-detail-GREEN');
+
+export const markDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedDatabase.Sid}-${selectedDatabase.Hosts[1].Instance}-present`
+  );
+
+export const startDatabaseAgentsHeartbeat = () =>
+  basePage.startAgentsHeartbeat(attachedHosts.map((host) => host.AgentId));
+
+export const startDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([attachedHosts[1].AgentId]);
+
+export const stopDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([attachedHosts[1].AgentId]);

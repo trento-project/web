@@ -20,6 +20,18 @@ const sapSystemNwd = {
   hostId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
   instanceNumber: '02',
   hostname: 'vmnwdev01',
+  agentId: '9a3ec76a-dd4f-5013-9cf0-5eb4cf89898f',
+  applicationInstance: {
+    row: 1,
+  },
+  attachedDatabase: {
+    sid: 'HDD',
+    agentId: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+    instance: {
+      instanceNumber: '10',
+      row: 0,
+    },
+  },
   messageserverInstance: {
     instanceNumber: '00',
   },
@@ -72,8 +84,19 @@ const instancesRowsSelector =
 const hanaClusterLinks = 'div[class*="cell"] a span:contains("hana")';
 const instanceHostLinks = 'div[class*="cell"] a[href*="/host"]';
 const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-child`;
+const nwdSystemCell = `tr:contains("${sapSystemNwd.sid}")`;
 const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
 const pageTitle = 'h1:contains("SAP Systems")';
+
+const getNwdApplicationInstanceRow = (index) =>
+  `${nwdSystemCell} + tr div[class="table-row-group"]:eq(0) div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  })`;
+
+const getNwdDatabaseInstanceRow = (index) =>
+  `${nwdSystemCell} + tr div[class="table-row-group"]:eq(1) div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  })`;
 
 // UI Interactions
 export const visit = () => {
@@ -338,6 +361,32 @@ export const cleanUpButonIsDisabled = () =>
 export const cleanUpButonIsEnabled = () =>
   cy.get(cleanUpButton).should('be.enabled');
 
+export const nwdSystemDataIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(nwdSystemCell);
+
+export const nwdSystemDataIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(nwdSystemCell);
+
+export const nwdSystemInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
+
+export const nwdSystemInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+  );
+
+export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
+
+export const hddDatabaseInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+  );
+
 export const existentTagCannotBeModified = () =>
   cy.get(existentEnv3Tag).should('have.class', 'opacity-50');
 
@@ -475,6 +524,11 @@ export const loadAbsentMessageServerInstance = () =>
     `sap-systems-overview-${sapSystemNwd.sid}-${sapSystemNwd.messageserverInstance.instanceNumber}-absent`
   );
 
+export const markHddDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${sapSystemNwd.attachedDatabase.sid}-${sapSystemNwd.attachedDatabase.instance.instanceNumber}-present`
+  );
+
 export const apiSetTagNwdSystem = () => apiSetTag(sapSystemNwd.sid, 'env3');
 
 const apiSetTag = (systemSid, tag) => {
@@ -488,6 +542,33 @@ const systemIdBySid = (systemName) =>
 export const apiCreateUserWithSapSystemTagsAbility = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'sap_system_tags' },
+  ]);
+
+export const startNwdSystemAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([sapSystemNwd.agentId]);
+
+export const stopNwdSystemAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([sapSystemNwd.agentId]);
+
+export const startHddDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([sapSystemNwd.attachedDatabase.agentId]);
+
+export const stopHddDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([sapSystemNwd.attachedDatabase.agentId]);
+
+export const startAllSapSystemsAgentsHeartbeat = () =>
+  apiGetSapSystemAgentIds().then((agentIds) =>
+    basePage.startAgentsHeartbeat(agentIds)
+  );
+
+const apiGetSapSystemAgentIds = () =>
+  apiGetSapSystems().then(({ body }) => [
+    ...new Set(
+      body.flatMap((sapSystem) => [
+        ...sapSystem.application_instances.map((instance) => instance.host_id),
+        ...sapSystem.database_instances.map((instance) => instance.host_id),
+      ])
+    ),
   ]);
 
 export const loadAppCleanUpPermissionsScenario = () => {

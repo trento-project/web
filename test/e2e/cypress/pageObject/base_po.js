@@ -169,6 +169,18 @@ export const removeTagButtonIsDisabled = () =>
 export const removeTagButtonIsEnabled = () =>
   cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
 
+export const elementIsMarkedStale = (element, timeout = 20000) =>
+  cy.get(element, { timeout }).should('have.class', 'bg-gray-100');
+
+export const elementIsMarkedInSync = (element) =>
+  cy.get(element).should('not.have.class', 'bg-gray-100');
+
+export const healthIconIsMarkedStale = (icon, timeout = 20000) =>
+  cy.get(icon, { timeout }).should('have.length', 2);
+
+export const healthIconIsMarkedInSync = (icon) =>
+  cy.get(icon).should('have.length', 1);
+
 // API Interactions & Validations
 
 export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
@@ -414,7 +426,8 @@ export const apiDeregisterProdHost = () =>
       })
   );
 
-export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+export const stopAgentsHeartbeat = (agents = []) =>
+  cy.task('stopAgentsHeartbeat', { agents });
 
 export const isHostRegistered = (hostId) =>
   apiLogin()
