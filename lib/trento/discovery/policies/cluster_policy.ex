@@ -940,6 +940,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_resource_status(%{blocked: true}), do: "Blocked"
   defp parse_resource_status(%{failed: true}), do: "Failed"
   defp parse_resource_status(%{failure_ignored: true}), do: "FailureIgnored"
+  defp parse_resource_status(%{removed: true}), do: "Removed"
   defp parse_resource_status(%{orphaned: true}), do: "Orphaned"
   defp parse_resource_status(_), do: ""
 
