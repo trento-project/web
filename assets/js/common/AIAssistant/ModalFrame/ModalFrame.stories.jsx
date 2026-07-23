@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
+import { MemoryRouter } from 'react-router';
 import ModalFrame from './ModalFrame';
 
 export default {
@@ -51,4 +52,15 @@ export const Closed = {
       </ModalFrame>
     );
   },
+};
+
+export const Disabled = {
+  name: 'Disabled (no AI configuration)',
+  render: () => (
+    <MemoryRouter>
+      <ModalFrame open={false} onOpenChange={() => {}} disabled>
+        <PlaceholderContent />
+      </ModalFrame>
+    </MemoryRouter>
+  ),
 };
