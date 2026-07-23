@@ -67,6 +67,7 @@ context('Databases Overview', () => {
   describe('Stale data', () => {
     before(() => {
       databasesOverviewPage.startAllDatabasesAgentsHeartbeat();
+      databasesOverviewPage.visit();
       databasesOverviewPage.expandHddDatabaseRow();
     });
 

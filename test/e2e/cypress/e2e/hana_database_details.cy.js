@@ -139,7 +139,10 @@ context('HANA database details', () => {
   });
 
   describe('Stale data', () => {
-    before(() => hanaDbDetailsPage.startDatabaseAgentsHeartbeat());
+    before(() => {
+      hanaDbDetailsPage.startDatabaseAgentsHeartbeat();
+      hanaDbDetailsPage.visitDatabase();
+    });
 
     after(() => hanaDbDetailsPage.stopAgentsHeartbeat());
 

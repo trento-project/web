@@ -196,7 +196,10 @@ context('SAP Systems Overview', () => {
   });
 
   describe('Stale data', () => {
-    before(() => sapSystemsOverviewPage.startAllSapSystemsAgentsHeartbeat());
+    before(() => {
+      sapSystemsOverviewPage.startAllSapSystemsAgentsHeartbeat();
+      sapSystemsOverviewPage.visit();
+    });
 
     beforeEach(() => sapSystemsOverviewPage.expandNwdSapSystem());
 

@@ -100,7 +100,10 @@ context('SAP system details', () => {
   });
 
   describe('Stale data', () => {
-    before(() => sapSystemDetailsPage.startSapSystemAgentsHeartbeat());
+    before(() => {
+      sapSystemDetailsPage.startSapSystemAgentsHeartbeat();
+      sapSystemDetailsPage.visit();
+    });
 
     after(() => sapSystemDetailsPage.stopAgentsHeartbeat());
 
