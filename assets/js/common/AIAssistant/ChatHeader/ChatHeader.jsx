@@ -7,6 +7,8 @@ import { EOS_CLOSE } from 'eos-icons-react';
 import Button from '@common/Button';
 import { CONNECTION_STATUS } from '@lib/ai';
 
+import { STATUS } from '../status';
+
 const STATUS_VIEW = {
   [CONNECTION_STATUS.CONNECTED]: { text: 'Online', dot: 'bg-white' },
   [CONNECTION_STATUS.CONNECTING]: {
@@ -20,13 +22,18 @@ const stopPointerDown = (e) => e.stopPropagation();
 
 function ChatHeader({
   connectionStatus,
+  status = STATUS.OK,
   onNewChat,
   onClose,
   disabled = false,
 }) {
+  // A cleared AI configuration takes Liz offline regardless of the socket state;
+  // a restored/ok configuration falls back to the live connection status.
   const { text, dot } =
-    STATUS_VIEW[connectionStatus] ??
-    STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
+    status === STATUS.CLEARED
+      ? STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED]
+      : (STATUS_VIEW[connectionStatus] ??
+         STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED]);
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">

@@ -69,6 +69,7 @@ function AssistantThread({
     >
       <ChatHeader
         connectionStatus={connectionStatus}
+        status={status}
         onNewChat={onNewThread}
         onClose={onClose}
         disabled={newChatDisabled}

@@ -177,6 +177,7 @@ describe('AG-UI event flow', () => {
     const { channel } = await renderAssistant();
 
     expect(screen.getByLabelText('Message input')).not.toBeDisabled();
+    expect(screen.getByText('Online')).toBeInTheDocument();
 
     await act(async () => {
       channel.emit('ai_configuration_cleared');
@@ -186,6 +187,8 @@ describe('AG-UI event flow', () => {
       expect(screen.getByLabelText('Message input')).toBeDisabled();
     });
 
+    // Liz goes offline in the header alongside the read-only banner.
+    expect(screen.getByText('Offline')).toBeInTheDocument();
     expect(screen.getByText(/settings were cleared/i)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Profile' })).toHaveAttribute(
       'href',
