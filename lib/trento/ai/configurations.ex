@@ -10,6 +10,7 @@ defmodule Trento.AI.Configurations do
 
   alias Trento.Users.User
 
+  alias Trento.AI.Configurations.Events
   alias Trento.AI.UserConfiguration
 
   alias Trento.Repo
@@ -28,6 +29,10 @@ defmodule Trento.AI.Configurations do
     %UserConfiguration{}
     |> UserConfiguration.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.insert()
+    |> tap(fn
+      {:ok, _} -> Events.broadcast_created(user_id)
+      _ -> :ok
+    end)
   end
 
   def create_user_configuration(%User{}, _), do: {:error, :forbidden}
@@ -70,6 +75,8 @@ defmodule Trento.AI.Configurations do
   def clear_user_configuration(%User{id: user_id, deleted_at: nil, locked_at: nil})
       when not is_nil(user_id) do
     Repo.delete_all(from u in UserConfiguration, where: u.user_id == ^user_id)
+
+    Events.broadcast_cleared(user_id)
 
     :ok
   end
