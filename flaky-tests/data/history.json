@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-08T20:12:23Z",
-    "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
-    "run_id": "27162869545",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "search::should not match not included words",
-        "score": 0.5
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.09501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-08T23:22:00Z",
     "commit": "20e872c5ee968fe6d2d9bc0584fe38647622d823",
     "run_id": "27165255973",
@@ -4655,5 +4635,29 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-24T18:40:42Z",
+    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
+    "run_id": "30116840766",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
