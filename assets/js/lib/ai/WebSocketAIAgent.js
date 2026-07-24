@@ -3,7 +3,7 @@
 
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
-import { isArray, isString, last } from 'lodash';
+import { isArray, isString, last, noop, each } from 'lodash';
 
 import { EventType } from '@ag-ui/core';
 
@@ -62,13 +62,22 @@ const withRefreshTokenOnUnauthorized = async (operation) => {
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
 export class WebSocketAIAgent extends AbstractAgent {
-  constructor({ socket, userID, onConnectionChange, ...options }) {
+  constructor({
+    socket,
+    userID,
+    onConnectionChange = noop,
+    onAIConfigurationCleared = noop,
+    onAIConfigurationCreated = noop,
+    ...options
+  }) {
     super(options);
 
     this.socket = socket;
     this.userID = userID;
     this.channel = null;
     this.onConnectionChange = onConnectionChange;
+    this.onAIConfigurationCleared = onAIConfigurationCleared;
+    this.onAIConfigurationCreated = onAIConfigurationCreated;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
@@ -134,9 +143,26 @@ export class WebSocketAIAgent extends AbstractAgent {
       this._failActiveRun(new Error('AI assistant connection lost'));
     };
 
-    this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
+    const messageHandlerMap = [
+      ['ag_ui_event', (event) => this._handleAgUiEvent(event)],
+      ['ai_configuration_cleared', () => this._handleAIConfigurationCleared()],
+      ['ai_configuration_created', () => this.onAIConfigurationCreated()],
+    ];
+
+    each(messageHandlerMap, ([eventName, handler]) =>
+      this.channel.on(eventName, handler)
+    );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
+  }
+
+  // The user's AI configuration was cleared server-side (this or another tab,
+  // or a raw API call). Settle any in-flight run without surfacing an error
+  // (AbortError is AbstractAgent's expected-cancel path), then let the UI
+  // switch to its read-only / disabled state via the callback.
+  _handleAIConfigurationCleared() {
+    this._failActiveRun(new AbortError('AI configuration cleared'));
+    this.onAIConfigurationCleared();
   }
 
   _handleAgUiEvent(event) {
@@ -236,7 +262,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   _setConnectionStatus(status) {
     if (this._connectionStatus === status) return;
     this._connectionStatus = status;
-    this.onConnectionChange?.(status);
+    this.onConnectionChange(status);
   }
 
   disconnect() {

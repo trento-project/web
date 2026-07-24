@@ -44,7 +44,7 @@ function MarkdownText(props) {
 function MessageError() {
   return (
     <MessagePrimitive.Error>
-      <ErrorPrimitive.Root className="mt-2 rounded-md border border-destructive bg-destructive/10 p-3 text-destructive text-sm dark:bg-destructive/5 dark:text-red-200">
+      <ErrorPrimitive.Root className="mt-2 rounded-md border border-destructive bg-destructive/10 p-3 text-destructive text-sm bg-red-50 text-red-500">
         <ErrorPrimitive.Message className="line-clamp-2" />
       </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -66,9 +66,9 @@ export function AssistantMessage({ isRunning }) {
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
-        <MessageError />
         <AgentProgressIndicator isRunning={isRunning} />
       </MessageBubbleView>
+      <MessageError />
     </MessagePrimitive.Root>
   );
 }

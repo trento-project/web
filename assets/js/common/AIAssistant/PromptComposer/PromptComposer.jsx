@@ -48,11 +48,17 @@ function SendButton({ disabled, isRunning }) {
   );
 }
 
-function PromptComposer({ connectionStatus, isRunning = false }) {
+function PromptComposer({
+  connectionStatus,
+  isRunning = false,
+  disabled = false,
+}) {
   const isConnected = connectionStatus === CONNECTION_STATUS.CONNECTED;
-  const placeholder =
-    PLACEHOLDERS[connectionStatus] ??
-    PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED];
+  const inputDisabled = !isConnected || disabled;
+  const placeholder = disabled
+    ? 'AI Assistant is disabled'
+    : (PLACEHOLDERS[connectionStatus] ??
+      PLACEHOLDERS[CONNECTION_STATUS.DISCONNECTED]);
 
   return (
     <ComposerPrimitive.Root className="relative flex w-full flex-col">
@@ -61,14 +67,14 @@ function PromptComposer({ connectionStatus, isRunning = false }) {
           <ComposerPrimitive.Input
             className={COMPOSER_INPUT_CLASS_NAME}
             placeholder={placeholder}
-            disabled={!isConnected}
+            disabled={inputDisabled}
             aria-label="Message input"
           />
         </ComposerPrimitive.AttachmentDropzone>
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
-        <SendButton disabled={!isConnected} isRunning={isRunning} />
+        <SendButton disabled={inputDisabled} isRunning={isRunning} />
       </div>
     </ComposerPrimitive.Root>
   );

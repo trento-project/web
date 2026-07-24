@@ -30,6 +30,30 @@ describe('ChatHeader', () => {
     expect(screen.getByText('Offline')).toBeVisible();
   });
 
+  it('shows Liz as Offline when the AI configuration was cleared, even while connected', () => {
+    render(
+      <ChatHeader {...defaults} connectionStatus="connected" status="cleared" />
+    );
+    expect(screen.getByText('Offline')).toBeVisible();
+  });
+
+  it.each([
+    { status: 'ok', text: 'Online' },
+    { status: 'restored', text: 'Online' },
+  ])(
+    'follows the connection status ($text) when the configuration is $status',
+    ({ status, text }) => {
+      render(
+        <ChatHeader
+          {...defaults}
+          connectionStatus="connected"
+          status={status}
+        />
+      );
+      expect(screen.getByText(text)).toBeVisible();
+    }
+  );
+
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
     const user = userEvent.setup();
     const onNewChat = jest.fn();
