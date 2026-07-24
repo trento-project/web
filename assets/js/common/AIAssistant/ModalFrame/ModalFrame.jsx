@@ -61,9 +61,7 @@ function ModalFrame({
 }) {
   return (
     <AssistantModalPrimitive.Root open={open} onOpenChange={onOpenChange}>
-      <AssistantModalPrimitive.Anchor
-        className={'fixed right-6 bottom-20 size-12 z-40'}
-      >
+      <AssistantModalPrimitive.Anchor className="fixed right-6 bottom-20 size-12 z-40">
         {disabled ? (
           <Tooltip
             content={disabledTooltipContent}
