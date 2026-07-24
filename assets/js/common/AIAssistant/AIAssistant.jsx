@@ -20,6 +20,8 @@ export function AssistantUI({
   handleClose,
   disabled = false,
   status = STATUS.OK,
+  modelNotice = null,
+  onDismissModelNotice,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
@@ -33,6 +35,8 @@ export function AssistantUI({
         isEmpty={isEmpty}
         isRunning={isRunning}
         status={status}
+        modelNotice={modelNotice}
+        onDismissModelNotice={onDismissModelNotice}
       />
     </ModalFrame>
   );
@@ -56,6 +60,9 @@ function AIAssistant({
   const [status, setStatus] = useState(
     aiConfigured ? STATUS.OK : STATUS.CLEARED
   );
+  // `:event` model-change-notice strategy — latest {provider, model} pushed via
+  // the dedicated channel event, rendered as a distinct banner.
+  const [modelNotice, setModelNotice] = useState(null);
 
   // The channel stays mounted even when the launcher is disabled, so a "created"
   // event can re-enable this tab. Handlers read the latest `isOpen` via a ref
@@ -68,7 +75,15 @@ function AIAssistant({
   const startNewThread = useCallback(() => {
     setThreadID(crypto.randomUUID());
     setStatus(STATUS.OK);
+    setModelNotice(null);
   }, []);
+
+  const handleModelChanged = useCallback(
+    (payload) => setModelNotice(payload),
+    []
+  );
+
+  const handleDismissModelNotice = useCallback(() => setModelNotice(null), []);
 
   const handleAIConfigurationCleared = useCallback(
     () => setStatus(STATUS.CLEARED),
@@ -95,6 +110,7 @@ function AIAssistant({
       onConnectionChange={setConnectionStatus}
       onAIConfigurationCleared={handleAIConfigurationCleared}
       onAIConfigurationCreated={handleAIConfigurationCreated}
+      onModelChanged={handleModelChanged}
     >
       <AssistantUI
         open={isOpen}
@@ -103,6 +119,8 @@ function AIAssistant({
         onNewThread={startNewThread}
         handleClose={handleClose}
         status={status}
+        modelNotice={modelNotice}
+        onDismissModelNotice={handleDismissModelNotice}
         // Only present the disabled launcher when the chat is closed; if it's
         // open when the config disappears, keep the modal (read-only banner).
         disabled={!available && !isOpen}

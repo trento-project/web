@@ -193,6 +193,32 @@ describe('AG-UI event flow', () => {
     );
   });
 
+  it('renders the model_changed notice as a dismissable banner', async () => {
+    const { channel } = await renderAssistant();
+
+    await act(async () => {
+      channel.emit('model_changed', {
+        provider: 'googleai',
+        model: 'gemini-2.5-pro',
+      });
+    });
+
+    const banner = await waitFor(() => {
+      const el = document.querySelector('[data-testid="model-change-banner"]');
+      if (!el) throw new Error('banner not rendered yet');
+      return el;
+    });
+    expect(banner).toHaveTextContent(/Google Gemini/i);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+    await waitFor(() => {
+      expect(
+        document.querySelector('[data-testid="model-change-banner"]')
+      ).not.toBeInTheDocument();
+    });
+  });
+
   it('prompts to start a new chat when a new config arrives after a clear', async () => {
     const { channel } = await renderAssistant();
 

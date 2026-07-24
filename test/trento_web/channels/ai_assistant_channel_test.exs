@@ -28,6 +28,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   import Mox
   import Trento.Factory
 
+  alias LangChain.ChatModels.ChatGoogleAI
+  alias Trento.AI.LLMBuilder
   alias TrentoWeb.Auth.AccessToken
 
   alias TrentoWeb.AIAssistantChannel
@@ -696,18 +698,20 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_receive {:updated_with, %Sagents.Agent{tool_context: %{access_token: ^jwt}}}, 1_000
     end
 
-    test "does not call update_agent_and_state when running AgentServer already holds the same token",
+    test "does not call update_agent_and_state when running AgentServer already holds the same token and model",
          %{socket: socket, user_id: user_id} do
       jwt = generate_jwt(user_id)
+      # Same model the channel will build for this user + same token → :noop.
+      {:ok, same_model} = LLMBuilder.build_for_user(user_id)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ ->
-        {:ok, %Sagents.Agent{tool_context: %{access_token: jwt}}}
+        {:ok, %Sagents.Agent{model: same_model, tool_context: %{access_token: jwt}}}
       end)
 
       # No get_info / update_agent_and_state expectations —
-      # access_token matches so the channel's refresh_when returns :noop.
+      # token AND model match so the channel's refresh_when returns :noop.
       expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
@@ -719,6 +723,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       })
 
       assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+      # unchanged config → no model-change notice bubble
+      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
     end
 
     test "forwards :request_origin into the agent's tool_context",
@@ -789,6 +795,102 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert %Sagents.Agent{
                tool_context: %{access_token: ^jwt, request_origin: nil}
              } = opts[:agent]
+    end
+  end
+
+  describe "handle_in send_message/3 — AI settings drift" do
+    setup :join_socket_with_ai_config
+
+    test "swaps the running agent when the model changed",
+         %{socket: socket, user_id: user_id} do
+      jwt = generate_jwt(user_id)
+      test_pid = self()
+
+      # Running agent was started with a different model (same provider, older
+      # model) + the same token → only the model changed.
+      running_model = ChatGoogleAI.new!(%{model: "gemini-2.5-pro", api_key: "k", stream: true})
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ ->
+        {:ok, %Sagents.Agent{model: running_model, tool_context: %{access_token: jwt}}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn agent_id ->
+        %{state: %Sagents.State{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn _agent_id,
+                                                                      swapped_agent,
+                                                                      _state ->
+        send(test_pid, {:swapped_with, swapped_agent})
+        :ok
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-drift",
+        "thread_id" => "t-drift",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      # the running agent is hot-swapped to the newly-built (gemini-2.5-flash) model
+      assert_receive {:swapped_with,
+                      %Sagents.Agent{model: %ChatGoogleAI{model: "gemini-2.5-flash"}}},
+                     1_000
+
+      # the change is surfaced proactively over the ai_user_config topic (see the
+      # "ai_user_config lifecycle" tests), not as an in-conversation bubble
+      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
+    end
+
+    test "swaps the running agent silently when only the api key changed",
+         %{socket: socket, user_id: user_id} do
+      jwt = generate_jwt(user_id)
+      test_pid = self()
+
+      # Same provider + model as the channel will build, but a different api key.
+      running_model =
+        ChatGoogleAI.new!(%{model: "gemini-2.5-flash", api_key: "OLD-KEY", stream: true})
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ ->
+        {:ok, %Sagents.Agent{model: running_model, tool_context: %{access_token: jwt}}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn agent_id ->
+        %{state: %Sagents.State{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn _agent_id,
+                                                                      swapped_agent,
+                                                                      _state ->
+        send(test_pid, {:swapped_with, swapped_agent})
+        :ok
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r-key",
+        "thread_id" => "t-key",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      # the agent is still hot-swapped (so the new key takes effect)...
+      assert_receive {:swapped_with, %Sagents.Agent{}}, 1_000
+      # ...but no user-facing bubble, since provider/model are unchanged
+      refute_push("ag_ui_event", %{"type" => "TEXT_MESSAGE_START"}, 100)
     end
   end
 
@@ -907,6 +1009,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         })
 
       Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
+      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
+
+      # run_agent probes the running agent (for model-drift detection) before
+      # starting it — brand-new thread here, so :not_found.
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ ->
         {:error, :boom}
@@ -977,6 +1084,15 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       AIConfigurationsEvents.broadcast_created(user_id)
 
       assert_push("ai_configuration_created", %{})
+    end
+
+    test "pushes model_changed when the provider/model is updated", %{user_id: user_id} do
+      AIConfigurationsEvents.broadcast_updated(user_id, %{
+        provider: :googleai,
+        model: "gemini-2.5-pro"
+      })
+
+      assert_push("model_changed", %{provider: :googleai, model: "gemini-2.5-pro"})
     end
   end
 

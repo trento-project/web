@@ -68,6 +68,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     onConnectionChange,
     onAIConfigurationCleared,
     onAIConfigurationCreated,
+    onModelChanged,
     ...options
   }) {
     super(options);
@@ -78,6 +79,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.onConnectionChange = onConnectionChange;
     this.onAIConfigurationCleared = onAIConfigurationCleared;
     this.onAIConfigurationCreated = onAIConfigurationCreated;
+    this.onModelChanged = onModelChanged;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
@@ -149,6 +151,11 @@ export class WebSocketAIAgent extends AbstractAgent {
     );
     this.channel.on('ai_configuration_created', () =>
       this.onAIConfigurationCreated?.()
+    );
+    // `:event` model-change-notice strategy — a distinct banner is driven by
+    // this event instead of an in-conversation message.
+    this.channel.on('model_changed', (payload) =>
+      this.onModelChanged?.(payload)
     );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
