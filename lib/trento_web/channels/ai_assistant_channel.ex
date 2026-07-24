@@ -59,7 +59,8 @@ defmodule TrentoWeb.AIAssistantChannel do
       ) do
     with :ok <- check_ai_enabled(),
          :ok <- check_socket_and_channel_user_match(user_id, current_user_id),
-         :ok <- validate_access_token(token, current_user_id) do
+         :ok <- validate_access_token(token, current_user_id),
+         :ok <- subscribe_to_configuration_events(current_user_id) do
       {:ok,
        socket
        |> assign(:access_token, token)
@@ -130,6 +131,18 @@ defmodule TrentoWeb.AIAssistantChannel do
     case AccessToken.verify_and_validate(token) do
       {:ok, %{"sub" => ^current_user_id}} -> :ok
       _ -> {:error, :unauthorized}
+    end
+  end
+
+  defp subscribe_to_configuration_events(user_id) do
+    case AI.subscribe_to_configuration_events(user_id) do
+      :ok ->
+        :ok
+
+      error ->
+        Logger.warning("Cannot subscribe to AI configuration events: #{inspect(error)}")
+
+        {:error, :unable_to_subscribe_to_ai_configuration_events}
     end
   end
 
@@ -290,6 +303,29 @@ defmodule TrentoWeb.AIAssistantChannel do
         socket
       ),
       do: {:noreply, AgUi.tool_call_result(socket, call_id, tool_info[:result] || %{})}
+
+  @impl true
+  def handle_info({:ai_configuration, :created}, socket) do
+    # The user's AI configuration was (re)created.
+    # Tell the client it can re-enable the assistant.
+    push(socket, "ai_configuration_created", %{})
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :cleared}, socket) do
+    # The user's AI configuration was cleared.
+    # Stop any in-flight agent for this thread and notify the client
+    case socket.assigns[:current_thread_id] do
+      nil -> :ok
+      thread_id -> TrentoAIAgent.stop(thread_id)
+    end
+
+    push(socket, "ai_configuration_cleared", %{})
+
+    {:noreply, reset_run(socket)}
+  end
 
   @impl true
   def handle_info(_msg, socket), do: {:noreply, socket}

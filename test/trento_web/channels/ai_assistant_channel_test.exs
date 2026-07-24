@@ -33,6 +33,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   alias TrentoWeb.AIAssistantChannel
   alias TrentoWeb.UserSocket
 
+  alias Trento.AI.Configurations.Events, as: AIConfigurationsEvents
+
   setup :verify_on_exit!
 
   setup do
@@ -152,6 +154,40 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                UserSocket
                |> socket("user_id", %{current_user_id: 42})
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42xyz", %{
+                 "access_token" => generate_jwt(42)
+               })
+    end
+
+    test "subscribes the joined channel to AI configuration lifecycle events" do
+      {:ok, _, _socket} =
+        UserSocket
+        |> socket("user_id", %{current_user_id: 42})
+        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42", %{
+          "access_token" => generate_jwt(42)
+        })
+
+      AIConfigurationsEvents.broadcast_created(42)
+
+      assert_push("ai_configuration_created", %{})
+    end
+
+    test "rejects the join when subscribing to AI configuration events fails" do
+      ai = Application.get_env(:trento, :ai)
+
+      Application.put_env(
+        :trento,
+        :ai,
+        Keyword.put(ai, :ai_configuration_events_adapter, AIConfigurationsEvents.Mock)
+      )
+
+      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+
+      expect(AIConfigurationsEvents.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
+
+      assert {:error, :unable_to_subscribe_to_ai_configuration_events} =
+               UserSocket
+               |> socket("user_id", %{current_user_id: 42})
+               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42", %{
                  "access_token" => generate_jwt(42)
                })
     end
@@ -887,6 +923,60 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         "type" => "RUN_ERROR",
         "message" => "Failed to start agent: :boom"
       })
+    end
+  end
+
+  describe "handle_info — listening on ai configuration events" do
+    setup :join_socket_with_ai_config
+
+    test "stops the active agent, pushes ai_configuration_cleared, and resets loading",
+         %{socket: socket, user_id: user_id} do
+      seed_assigns(socket, %{
+        current_thread_id: "t-live",
+        loading: true,
+        run_has_started: true
+      })
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
+
+      Trento.AI.Configurations.Events.broadcast_cleared(user_id)
+
+      assert_push("ai_configuration_cleared", %{})
+      assert %{loading: false} = wait_assigns(socket)
+    end
+
+    test "still goes read-only when stopping the agent fails (best-effort stop)",
+         %{socket: socket, user_id: user_id} do
+      seed_assigns(socket, %{
+        current_thread_id: "t-live",
+        loading: true,
+        run_has_started: true
+      })
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" ->
+        {:error, :not_found}
+      end)
+
+      AIConfigurationsEvents.broadcast_cleared(user_id)
+
+      assert_push("ai_configuration_cleared", %{})
+      assert %{loading: false} = wait_assigns(socket)
+    end
+
+    test "pushes ai_configuration_cleared without stopping any agent when no thread is active",
+         %{user_id: user_id} do
+      # No current_thread_id seeded → no stop_agent expectation.
+      # verify_on_exit! catches a stray stop_agent call.
+      AIConfigurationsEvents.broadcast_cleared(user_id)
+
+      assert_push("ai_configuration_cleared", %{})
+    end
+
+    test "pushes ai_configuration_created when the configuration is (re)created",
+         %{user_id: user_id} do
+      AIConfigurationsEvents.broadcast_created(user_id)
+
+      assert_push("ai_configuration_created", %{})
     end
   end
 

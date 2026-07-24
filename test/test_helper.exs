@@ -74,6 +74,14 @@ Mox.defmock(Trento.AI.Agent.Supervisor.Mock,
   for: Trento.AI.Agent.Supervisor
 )
 
+# Deliberately NOT wired into `test_ai_config` below — the real
+# `PubSubConfigurationEvents` stays the default so the config-events tests keep
+# their real PubSub round-trips.
+# Override in tests that need failure
+Mox.defmock(Trento.AI.Configurations.Events.Mock,
+  for: Trento.AI.Configurations.Events
+)
+
 default_ai_config = Application.get_env(:trento, :ai, [])
 
 test_ai_config = [

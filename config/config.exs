@@ -323,6 +323,7 @@ config :trento, :ai,
   ],
   agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
   agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
+  ai_configuration_events_adapter: Trento.Infrastructure.AI.PubSubConfigurationEvents,
   tool_sources: [
     TrentoWeb.AI.ControllerToolSource,
     {Trento.AI.RemoteOpenApiToolSource,
