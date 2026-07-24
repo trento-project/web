@@ -18,7 +18,12 @@ const STATUS_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-function ChatHeader({ connectionStatus, onNewChat, onClose }) {
+function ChatHeader({
+  connectionStatus,
+  onNewChat,
+  onClose,
+  disabled = false,
+}) {
   const { text, dot } =
     STATUS_VIEW[connectionStatus] ??
     STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED];
@@ -38,6 +43,7 @@ function ChatHeader({ connectionStatus, onNewChat, onClose }) {
         <Button
           type="link"
           size="none"
+          disabled={disabled}
           onPointerDown={stopPointerDown}
           onClick={onNewChat}
           className="text-sm !text-white hover:!text-white hover:underline"

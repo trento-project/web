@@ -5,6 +5,7 @@ import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { BrowserRouter } from 'react-router';
 import { config as rxjsConfig } from 'rxjs';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { buildAssistantTurn } from '@lib/test-utils/aguiEvents';
@@ -40,7 +41,11 @@ async function renderAssistant({ userId = 'user-1' } = {}) {
   const socket = makeMockSocket();
   useSocket.mockReturnValue(socket);
 
-  const utils = render(<AIAssistant userID={userId} open />);
+  const utils = render(
+    <BrowserRouter>
+      <AIAssistant userID={userId} open />
+    </BrowserRouter>
+  );
 
   const channel = await waitFor(() => {
     const c = socket.channels.get(`ai_assistant:${userId}`);
@@ -166,6 +171,63 @@ describe('AG-UI event flow', () => {
     await waitFor(() => {
       expect(screen.getByLabelText('Message input')).toBeDisabled();
     });
+  });
+
+  it('goes read-only with a banner when the AI configuration is cleared', async () => {
+    const { channel } = await renderAssistant();
+
+    expect(screen.getByLabelText('Message input')).not.toBeDisabled();
+
+    await act(async () => {
+      channel.emit('ai_configuration_cleared');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).toBeDisabled();
+    });
+
+    expect(screen.getByText(/settings were cleared/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Profile' })).toHaveAttribute(
+      'href',
+      '/profile'
+    );
+  });
+
+  it('prompts to start a new chat when a new config arrives after a clear', async () => {
+    const { channel } = await renderAssistant();
+
+    await act(async () => {
+      channel.emit('ai_configuration_cleared');
+    });
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).toBeDisabled();
+    });
+
+    // New config arrives while the cleared chat is still open.
+    await act(async () => {
+      channel.emit('ai_configuration_created');
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/new AI configuration is available/i)
+      ).toBeInTheDocument();
+    });
+    // Still read-only until the user explicitly restarts...
+    expect(screen.getByLabelText('Message input')).toBeDisabled();
+    // ...but "New chat" is enabled to restart the loop.
+    const newChat = screen.getByRole('button', { name: 'New chat' });
+    expect(newChat).not.toBeDisabled();
+
+    const user = userEvent.setup();
+    await user.click(newChat);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).not.toBeDisabled();
+    });
+    expect(
+      screen.queryByText(/new AI configuration is available/i)
+    ).not.toBeInTheDocument();
   });
 
   it('handles a follow-up turn after the previous one finishes', async () => {
