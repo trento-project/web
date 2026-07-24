@@ -3,7 +3,7 @@
 
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
-import { isArray, isString, last } from 'lodash';
+import { isArray, isString, last, noop, each } from 'lodash';
 
 import { EventType } from '@ag-ui/core';
 
@@ -65,9 +65,9 @@ export class WebSocketAIAgent extends AbstractAgent {
   constructor({
     socket,
     userID,
-    onConnectionChange,
-    onAIConfigurationCleared,
-    onAIConfigurationCreated,
+    onConnectionChange = noop,
+    onAIConfigurationCleared = noop,
+    onAIConfigurationCreated = noop,
     ...options
   }) {
     super(options);
@@ -143,12 +143,14 @@ export class WebSocketAIAgent extends AbstractAgent {
       this._failActiveRun(new Error('AI assistant connection lost'));
     };
 
-    this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
-    this.channel.on('ai_configuration_cleared', () =>
-      this._handleAIConfigurationCleared()
-    );
-    this.channel.on('ai_configuration_created', () =>
-      this.onAIConfigurationCreated?.()
+    const messageHandlerMap = [
+      ['ag_ui_event', (event) => this._handleAgUiEvent(event)],
+      ['ai_configuration_cleared', () => this._handleAIConfigurationCleared()],
+      ['ai_configuration_created', () => this.onAIConfigurationCreated()],
+    ];
+
+    each(messageHandlerMap, ([eventName, handler]) =>
+      this.channel.on(eventName, handler)
     );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
@@ -160,7 +162,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // switch to its read-only / disabled state via the callback.
   _handleAIConfigurationCleared() {
     this._failActiveRun(new AbortError('AI configuration cleared'));
-    this.onAIConfigurationCleared?.();
+    this.onAIConfigurationCleared();
   }
 
   _handleAgUiEvent(event) {
@@ -260,7 +262,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   _setConnectionStatus(status) {
     if (this._connectionStatus === status) return;
     this._connectionStatus = status;
-    this.onConnectionChange?.(status);
+    this.onConnectionChange(status);
   }
 
   disconnect() {

@@ -44,7 +44,11 @@ describe('ChatHeader', () => {
     'follows the connection status ($text) when the configuration is $status',
     ({ status, text }) => {
       render(
-        <ChatHeader {...defaults} connectionStatus="connected" status={status} />
+        <ChatHeader
+          {...defaults}
+          connectionStatus="connected"
+          status={status}
+        />
       );
       expect(screen.getByText(text)).toBeVisible();
     }

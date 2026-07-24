@@ -33,7 +33,7 @@ function ChatHeader({
     status === STATUS.CLEARED
       ? STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED]
       : (STATUS_VIEW[connectionStatus] ??
-         STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED]);
+        STATUS_VIEW[CONNECTION_STATUS.DISCONNECTED]);
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">
