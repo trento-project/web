@@ -10,8 +10,11 @@ defmodule Trento.AI.AgentTest do
   import Trento.Factory
 
   alias LangChain.Message
+  alias Sagents.AgentSupervisor
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent, as: TrentoAIAgent
+  alias Trento.AI.Agent.Supervisor, as: TrentoAIAgentSupervisor
+  alias Trento.Infrastructure.AI.SagentsDynamicSupervisor
   alias Trento.Users.User
 
   setup :verify_on_exit!
@@ -220,6 +223,83 @@ defmodule Trento.AI.AgentTest do
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
       assert :ok = TrentoAIAgent.run(agent, prompt)
+    end
+  end
+
+  describe "stop/1" do
+    test "delegates to the supervisor's stop_agent/1" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id -> :ok end)
+
+      assert :ok = TrentoAIAgent.stop(agent_id)
+    end
+
+    test "propagates the supervisor's error verbatim (nothing running)" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id ->
+        {:error, :not_found}
+      end)
+
+      assert {:error, :not_found} = TrentoAIAgent.stop(agent_id)
+    end
+  end
+
+  # Exercises the real Sagents supervisor tree through the public API,
+  # proving that a genuinely running agent process is actually terminated
+  # the mock tests above only prove the call is wired.
+  #
+  # The test adapters are mocks (see test_helper.exs), so this describe swaps the
+  # supervisor adapter for the real SagentsDynamicSupervisor for its duration.
+  describe "stop/1 — integration (real supervisor)" do
+    @describetag :integration
+
+    setup do
+      ai = Application.get_env(:trento, :ai)
+
+      Application.put_env(
+        :trento,
+        :ai,
+        Keyword.put(ai, :agent_supervisor_adapter, SagentsDynamicSupervisor)
+      )
+
+      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+    end
+
+    test "terminates the running agent's process tree" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      agent =
+        TrentoAIAgent.new!(
+          agent_id: agent_id,
+          model: build(:random_langchain_model),
+          scope: build(:user)
+        )
+
+      assert {:ok, _sup} =
+               TrentoAIAgentSupervisor.start_agent_sync(
+                 agent_id: agent_id,
+                 agent: agent,
+                 pubsub: {Phoenix.PubSub, Trento.PubSub}
+               )
+
+      assert {:ok, pid} = AgentSupervisor.get_pid(agent_id)
+      assert Process.alive?(pid)
+      ref = Process.monitor(pid)
+
+      assert :ok = TrentoAIAgent.stop(agent_id)
+
+      # DOWN + not-alive prove the process tree is gone.
+      # Deliberately not assertin on AgentSupervisor.get_pid/1
+      # the registry unregisters via its own monitor, asynchronously,
+      # so it can still return the stale entry right after DOWN.
+      assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, 5_000
+      refute Process.alive?(pid)
+    end
+
+    test "returns {:error, :not_found} when no agent is running for the id" do
+      assert {:error, :not_found} = TrentoAIAgent.stop("thread-#{Faker.UUID.v4()}")
     end
   end
 
