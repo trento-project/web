@@ -32,7 +32,7 @@ defmodule Trento.AITest do
 
   describe "delegating creation and update to configurations module" do
     test "should delegate to configurations module" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 2, fn ->
+      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, 3, fn ->
         [
           enabled: true,
           configurations: DummyConfigurations
@@ -48,6 +48,7 @@ defmodule Trento.AITest do
 
       assert AI.create_user_configuration(user, attrs) == {:ok, :created}
       assert AI.update_user_configuration(user, attrs) == {:ok, :updated}
+      assert AI.clear_user_configuration(user) == {:ok, :cleared}
     end
   end
 end
@@ -59,5 +60,9 @@ defmodule DummyConfigurations do
 
   def update_user_configuration(_user, _attrs) do
     {:ok, :updated}
+  end
+
+  def clear_user_configuration(_user) do
+    {:ok, :cleared}
   end
 end
