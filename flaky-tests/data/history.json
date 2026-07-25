@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-10T19:57:50Z",
-    "commit": "bd3d63abe0e3ffae0c60b2a057d3ab9784b0829a",
-    "run_id": "27301581039",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.07953
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.V1.SettingsControllerTest::test AlertingSettings should successfully create settings",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-10T20:00:41Z",
     "commit": "bd3d63abe0e3ffae0c60b2a057d3ab9784b0829a",
     "run_id": "27301581039",
@@ -4689,6 +4665,22 @@
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-25T18:56:20Z",
+    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
+    "run_id": "30169925253",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › operations::should show Saptune apply operation running",
+        "score": 0.02501
       }
     ]
   }
