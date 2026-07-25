@@ -1,49 +1,5 @@
 [
   {
-    "timestamp": "2026-06-09T23:08:37Z",
-    "commit": "4903c3710377c570e534fb5dda833da8166bc726",
-    "run_id": "27233344320",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 24
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2401
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1061
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.09801
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.08646
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.05001
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-10T19:57:50Z",
     "commit": "bd3d63abe0e3ffae0c60b2a057d3ab9784b0829a",
     "run_id": "27301581039",
@@ -4716,6 +4672,22 @@
       },
       {
         "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-25T18:55:21Z",
+    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
+    "run_id": "30169925253",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
         "score": 0.05001
       }
     ]
