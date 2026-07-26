@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-11T19:54:14Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27372688003",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.07001
-      },
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-11T19:55:05Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27372688003",
@@ -4662,6 +4642,22 @@
       },
       {
         "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-26T18:59:24Z",
+    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
+    "run_id": "30215175304",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
         "score": 0.05001
       }
     ]
