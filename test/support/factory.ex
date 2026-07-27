@@ -519,8 +519,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_factory do
-    %ClusterReadModel{
+  def cluster_factory(attrs) do
+    cluster = %ClusterReadModel{
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sap_instances: build_list(1, :clustered_sap_instance),
@@ -529,8 +529,13 @@ defmodule Trento.Factory do
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       details: %{},
-      state: :S_IDLE
+      state: :S_IDLE,
+      stale_at: nil
     }
+
+    cluster
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 
   def cluster_enrichment_data_factory do
