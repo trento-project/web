@@ -291,7 +291,7 @@ defmodule Trento.AI.AgentTest do
       assert :ok = TrentoAIAgent.stop(agent_id)
 
       # DOWN + not-alive prove the process tree is gone.
-      # Deliberately not assertin on AgentSupervisor.get_pid/1
+      # Deliberately not asserting on AgentSupervisor.get_pid/1
       # the registry unregisters via its own monitor, asynchronously,
       # so it can still return the stale entry right after DOWN.
       assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, 5_000
