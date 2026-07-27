@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-06-11T23:21:41Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27375771058",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 99,
-      "failed_runs": 31
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2951
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1452
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.1293
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.06540
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-12T19:32:20Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27437639947",
@@ -4710,5 +4678,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-27T19:19:52Z",
+    "commit": "04a64420235cb0e96cfc76a00c05b8517fe468be",
+    "run_id": "30296317054",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
