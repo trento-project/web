@@ -476,6 +476,8 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       excluded_events = [
         :host_checks_selected_event,
         :cluster_checks_selected_event,
+        :cluster_host_data_marked_stale_event,
+        :cluster_host_data_marked_in_sync_event,
         :sap_system_database_stale_at_changed_event
       ]
 
