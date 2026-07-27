@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-12T19:33:25Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27437639947",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-12T19:52:12Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27438393190",
@@ -4683,6 +4663,94 @@
       {
         "name": "search::should not match not included words",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-27T22:56:49Z",
+    "commit": "04a64420235cb0e96cfc76a00c05b8517fe468be",
+    "run_id": "30300318745",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1705
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.09051
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.09051
+      },
+      {
+        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
+        "score": 0.05001
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
+        "score": 0.02501
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should render filtered results when visiting a URL with filter params::Hosts Overview Filter and browser navigation should render filtered results when visiting a URL with filter params",
+        "score": 0.02501
+      },
+      {
+        "name": "should show health status of the entire cluster of 27 hosts with critical health::Hosts Overview Health Detection Health is changed to critical when the heartbeat is not sent should show health status of the entire cluster of 27 hosts with critical health",
+        "score": 0.02501
       }
     ]
   }
