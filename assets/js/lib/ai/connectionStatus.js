@@ -10,3 +10,6 @@ export const CONNECTION_STATUS = Object.freeze({
   CONNECTING: 'connecting',
   DISCONNECTED: 'disconnected',
 });
+
+export const isOnline = (connectionStatus) =>
+  connectionStatus === CONNECTION_STATUS.CONNECTED;
