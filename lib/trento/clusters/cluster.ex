@@ -388,13 +388,11 @@ defmodule Trento.Clusters.Cluster do
     cluster
     |> Multi.new()
     |> Multi.execute(fn cluster ->
-      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.offline())
+      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.offline()) ++
+        maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
     end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_details_updated_event(cluster, command)
-    end)
-    |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
     end)
     |> handle_cluster_health_events(command)
   end
@@ -412,12 +410,10 @@ defmodule Trento.Clusters.Cluster do
     cluster
     |> Multi.new()
     |> Multi.execute(fn cluster ->
-      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
+      maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online()) ++
+        maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
     end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
-    |> Multi.execute(fn cluster ->
-      maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
-    end)
     |> handle_cluster_health_events(command)
   end
 
