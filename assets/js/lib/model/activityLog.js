@@ -94,6 +94,8 @@ export const CLUSTER_TOMBSTONED = 'cluster_tombstoned';
 export const HOST_ADDED_TO_CLUSTER = 'host_added_to_cluster';
 export const HOST_REMOVED_FROM_CLUSTER = 'host_removed_from_cluster';
 export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
+export const CLUSTER_DATA_MARKED_STALE = 'cluster_data_marked_stale';
+export const CLUSTER_DATA_MARKED_IN_SYNC = 'cluster_data_marked_in_sync';
 
 // SAP System events
 
@@ -567,6 +569,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Cluster Host Status Changed',
     message: ({ metadata }) =>
       `Cluster host status changed to ${metadata.cluster_host_status}`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DATA_MARKED_STALE]: {
+    label: 'Cluster Data Marked Stale',
+    message: (_entry) => `Cluster data was marked stale`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DATA_MARKED_IN_SYNC]: {
+    label: 'Cluster Data Marked In Sync',
+    message: (_entry) => `Cluster data was marked in sync`,
     resource: clusterResourceType,
   },
   // SAP System events
