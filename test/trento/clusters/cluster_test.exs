@@ -17,6 +17,7 @@ defmodule Trento.ClusterTest do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
+    MarkClusterHostStale,
     RegisterOfflineClusterHost,
     RegisterOnlineClusterHost,
     RollUpCluster,
@@ -33,11 +34,15 @@ defmodule Trento.ClusterTest do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterDistributedHealthChanged,
     ClusterHealthChanged,
+    ClusterHostDataMarkedInSync,
+    ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterReplicationHealthChanged,
@@ -2183,6 +2188,255 @@ defmodule Trento.ClusterTest do
           }
         ],
         fn cluster -> assert dat == cluster.deregistered_at end
+      )
+    end
+  end
+
+  describe "cluster marked stale/in sync" do
+    test "should mark the cluster as stale only once and ignore already stale hosts" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      stale_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # first stale host marks both the host and the cluster as stale
+          %MarkClusterHostStale{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            stale_at: stale_at
+          },
+          # a second stale host only marks the host, the cluster is already stale
+          %MarkClusterHostStale{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            stale_at: stale_at
+          },
+          # an already stale host does not emit any event
+          %MarkClusterHostStale{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            stale_at: stale_at
+          }
+        ],
+        [
+          %ClusterHostDataMarkedStale{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            stale_at: stale_at
+          },
+          %ClusterDataMarkedStale{
+            cluster_id: cluster_id,
+            stale_at: stale_at
+          },
+          %ClusterHostDataMarkedStale{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            stale_at: stale_at
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [^host_2_id, ^host_1_id]} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster as in sync only when all its stale hosts send fresh data again" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      host_3_id = UUID.uuid4()
+
+      initial_events = [
+        registered_event =
+          build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 3),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_3_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # a host that was never stale sending data does not emit any event
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_3_id,
+            designated_controller: false
+          ),
+          # a stale host recovering only syncs the host, the cluster is still stale
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            designated_controller: false
+          ),
+          # the last stale host recovering syncs both the host and the cluster
+          build(:register_online_cluster_host,
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            designated_controller: true,
+            name: registered_event.name,
+            type: registered_event.type,
+            sap_instances: Enum.map(registered_event.sap_instances, &Map.from_struct/1),
+            provider: registered_event.provider,
+            resources_number: registered_event.resources_number,
+            hosts_number: registered_event.hosts_number,
+            state: registered_event.state,
+            details: StructHelper.to_map(registered_event.details)
+          )
+        ],
+        [
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_2_id
+          },
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: []} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster host and cluster in sync when a stale host is registered as offline" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 2),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:cluster_host_status_changed_event,
+          cluster_id: cluster_id,
+          host_id: host_1_id,
+          cluster_host_status: ClusterHostStatus.offline()
+        ),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id)
+      ]
+
+      register_command =
+        build(:register_offline_cluster_host, cluster_id: cluster_id, host_id: host_1_id)
+
+      assert_events_and_state(
+        initial_events,
+        register_command,
+        [
+          %ClusterHostDataMarkedInSync{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: []} = cluster
+        end
+      )
+    end
+
+    test "should mark the cluster in sync only when the last stale host is removed from the cluster" do
+      cluster_id = UUID.uuid4()
+      host_1_id = UUID.uuid4()
+      host_2_id = UUID.uuid4()
+      host_3_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 3),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_2_id),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_3_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_1_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_2_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        [
+          # removing a stale host while other stale hosts remain keeps the cluster stale
+          %DeregisterClusterHost{
+            cluster_id: cluster_id,
+            host_id: host_1_id,
+            deregistered_at: deregistered_at
+          },
+          # removing the last stale host marks the cluster in sync
+          %DeregisterClusterHost{
+            cluster_id: cluster_id,
+            host_id: host_2_id,
+            deregistered_at: deregistered_at
+          }
+        ],
+        [
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_1_id
+          },
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_2_id
+          },
+          %ClusterDataMarkedInSync{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [], hosts: [^host_3_id]} = cluster
+        end
+      )
+    end
+
+    test "should not mark the cluster in sync when removing the last stale host also deregisters the cluster" do
+      cluster_id = UUID.uuid4()
+      host_id = UUID.uuid4()
+      deregistered_at = DateTime.utc_now()
+
+      initial_events = [
+        build(:cluster_registered_event, cluster_id: cluster_id, hosts_number: 1),
+        build(:host_added_to_cluster_event, cluster_id: cluster_id, host_id: host_id),
+        build(:cluster_host_data_marked_stale_event, cluster_id: cluster_id, host_id: host_id)
+      ]
+
+      assert_events_and_state(
+        initial_events,
+        %DeregisterClusterHost{
+          cluster_id: cluster_id,
+          host_id: host_id,
+          deregistered_at: deregistered_at
+        },
+        [
+          %HostRemovedFromCluster{
+            cluster_id: cluster_id,
+            host_id: host_id
+          },
+          %ClusterDeregistered{
+            cluster_id: cluster_id,
+            deregistered_at: deregistered_at
+          },
+          %ClusterTombstoned{
+            cluster_id: cluster_id
+          }
+        ],
+        fn cluster ->
+          assert %Cluster{stale_hosts: [], deregistered_at: ^deregistered_at} = cluster
+        end
       )
     end
   end

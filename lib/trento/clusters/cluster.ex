@@ -95,6 +95,7 @@ defmodule Trento.Clusters.Cluster do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
+    MarkClusterHostStale,
     RegisterOfflineClusterHost,
     RegisterOnlineClusterHost,
     RollUpCluster,
@@ -111,11 +112,15 @@ defmodule Trento.Clusters.Cluster do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterDistributedHealthChanged,
     ClusterHealthChanged,
+    ClusterHostDataMarkedInSync,
+    ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterReplicationHealthChanged,
@@ -149,6 +154,7 @@ defmodule Trento.Clusters.Cluster do
     field :state, Ecto.Enum, values: ClusterState.values()
     field :hosts, {:array, :string}, default: []
     field :offline_hosts, {:array, :string}, default: []
+    field :stale_hosts, {:array, :string}, default: []
     field :selected_checks, {:array, :string}, default: []
     field :rolling_up, :boolean, default: false
     field :deregistered_at, :utc_datetime_usec, default: nil
@@ -369,7 +375,8 @@ defmodule Trento.Clusters.Cluster do
           designated_controller: false
         }
       ) do
-    maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
+    maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online()) ++
+      maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
   end
 
   def execute(
@@ -385,6 +392,9 @@ defmodule Trento.Clusters.Cluster do
     end)
     |> Multi.execute(fn cluster ->
       maybe_emit_cluster_details_updated_event(cluster, command)
+    end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
     end)
     |> handle_cluster_health_events(command)
   end
@@ -405,6 +415,9 @@ defmodule Trento.Clusters.Cluster do
       maybe_emit_host_added_to_cluster_event(cluster, host_id, ClusterHostStatus.online())
     end)
     |> Multi.execute(fn cluster -> maybe_emit_cluster_details_updated_event(cluster, command) end)
+    |> Multi.execute(fn cluster ->
+      maybe_emit_cluster_host_data_marked_in_sync_event(cluster, host_id)
+    end)
     |> handle_cluster_health_events(command)
   end
 
@@ -446,13 +459,47 @@ defmodule Trento.Clusters.Cluster do
       ) do
     cluster
     |> Multi.new()
-    |> Multi.execute(fn _ ->
-      %HostRemovedFromCluster{
-        cluster_id: cluster_id,
-        host_id: host_id
-      }
+    |> Multi.execute(fn cluster ->
+      [
+        %HostRemovedFromCluster{
+          cluster_id: cluster_id,
+          host_id: host_id
+        }
+      ] ++ maybe_emit_cluster_data_marked_in_sync_event(cluster, host_id)
     end)
     |> Multi.execute(&maybe_emit_cluster_deregistered_event(&1, command))
+  end
+
+  def execute(
+        %Cluster{cluster_id: cluster_id, stale_hosts: []},
+        %MarkClusterHostStale{host_id: host_id, stale_at: stale_at}
+      ) do
+    [
+      %ClusterHostDataMarkedStale{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        stale_at: stale_at
+      },
+      %ClusterDataMarkedStale{
+        cluster_id: cluster_id,
+        stale_at: stale_at
+      }
+    ]
+  end
+
+  def execute(
+        %Cluster{cluster_id: cluster_id, stale_hosts: stale_hosts},
+        %MarkClusterHostStale{host_id: host_id, stale_at: stale_at}
+      ) do
+    if host_id in stale_hosts do
+      nil
+    else
+      %ClusterHostDataMarkedStale{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        stale_at: stale_at
+      }
+    end
   end
 
   def apply(
@@ -722,7 +769,8 @@ defmodule Trento.Clusters.Cluster do
     %Cluster{
       cluster
       | hosts: List.delete(hosts, host_id),
-        offline_hosts: List.delete(cluster.offline_hosts, host_id)
+        offline_hosts: List.delete(cluster.offline_hosts, host_id),
+        stale_hosts: List.delete(cluster.stale_hosts, host_id)
     }
   end
 
@@ -735,6 +783,24 @@ defmodule Trento.Clusters.Cluster do
   def apply(%Cluster{} = cluster, %ClusterRestored{}) do
     %Cluster{cluster | deregistered_at: nil}
   end
+
+  def apply(
+        %Cluster{stale_hosts: stale_hosts} = cluster,
+        %ClusterHostDataMarkedStale{host_id: host_id}
+      ) do
+    %Cluster{cluster | stale_hosts: [host_id | stale_hosts]}
+  end
+
+  def apply(
+        %Cluster{stale_hosts: stale_hosts} = cluster,
+        %ClusterHostDataMarkedInSync{host_id: host_id}
+      ) do
+    %Cluster{cluster | stale_hosts: List.delete(stale_hosts, host_id)}
+  end
+
+  def apply(%Cluster{} = cluster, %ClusterDataMarkedStale{}), do: cluster
+
+  def apply(%Cluster{} = cluster, %ClusterDataMarkedInSync{}), do: cluster
 
   def apply(cluster, %legacy_event{}) when legacy_event in @legacy_events, do: cluster
 
@@ -806,30 +872,83 @@ defmodule Trento.Clusters.Cluster do
        ) do
     cond do
       host_id not in hosts ->
-        %HostAddedToCluster{
-          cluster_id: cluster_id,
-          host_id: host_id,
-          cluster_host_status: cluster_host_status
-        }
+        [
+          %HostAddedToCluster{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_host_status: cluster_host_status
+          }
+        ]
 
       host_id in offline_hosts and cluster_host_status == ClusterHostStatus.online() ->
-        %ClusterHostStatusChanged{
-          cluster_id: cluster_id,
-          host_id: host_id,
-          cluster_host_status: ClusterHostStatus.online()
-        }
+        [
+          %ClusterHostStatusChanged{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_host_status: ClusterHostStatus.online()
+          }
+        ]
 
       host_id not in offline_hosts and cluster_host_status == ClusterHostStatus.offline() ->
-        %ClusterHostStatusChanged{
-          cluster_id: cluster_id,
-          host_id: host_id,
-          cluster_host_status: ClusterHostStatus.offline()
-        }
+        [
+          %ClusterHostStatusChanged{
+            cluster_id: cluster_id,
+            host_id: host_id,
+            cluster_host_status: ClusterHostStatus.offline()
+          }
+        ]
 
       true ->
         []
     end
   end
+
+  defp maybe_emit_cluster_host_data_marked_in_sync_event(
+         %Cluster{cluster_id: cluster_id, stale_hosts: [host_id]},
+         host_id
+       ) do
+    [
+      %ClusterHostDataMarkedInSync{
+        cluster_id: cluster_id,
+        host_id: host_id
+      },
+      %ClusterDataMarkedInSync{
+        cluster_id: cluster_id
+      }
+    ]
+  end
+
+  defp maybe_emit_cluster_host_data_marked_in_sync_event(
+         %Cluster{cluster_id: cluster_id, stale_hosts: stale_hosts},
+         host_id
+       ) do
+    if host_id in stale_hosts do
+      [
+        %ClusterHostDataMarkedInSync{
+          cluster_id: cluster_id,
+          host_id: host_id
+        }
+      ]
+    else
+      []
+    end
+  end
+
+  # Emitted only when the removed host is the last stale one and the cluster keeps
+  # other hosts (i.e. it is not being deregistered).
+  defp maybe_emit_cluster_data_marked_in_sync_event(
+         %Cluster{cluster_id: cluster_id, stale_hosts: [host_id], hosts: hosts},
+         host_id
+       )
+       when length(hosts) > 1 do
+    [
+      %ClusterDataMarkedInSync{
+        cluster_id: cluster_id
+      }
+    ]
+  end
+
+  defp maybe_emit_cluster_data_marked_in_sync_event(_cluster, _host_id), do: []
 
   defp handle_cluster_health_events(multi, command) do
     multi
