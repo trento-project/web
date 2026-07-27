@@ -86,7 +86,10 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     MarkApplicationInstanceDataStale
   }
 
-  alias Trento.Clusters.Commands.DeregisterClusterHost
+  alias Trento.Clusters.Commands.{
+    DeregisterClusterHost,
+    MarkClusterHostStale
+  }
 
   alias Trento.SapSystems
   alias Trento.SapSystems.SapSystem
@@ -226,6 +229,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
 
   def handle(
         %DeregistrationProcessManager{
+          cluster_id: cluster_id,
           application_instances: application_instances,
           database_instances: database_instances
         },
@@ -260,7 +264,9 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
         }
       end)
 
-    application_commands ++ database_commands
+    application_commands ++
+      database_commands ++
+      maybe_mark_cluster_host_stale(cluster_id, host_id, created_at)
   end
 
   def apply(%DeregistrationProcessManager{} = state, %HostAddedToCluster{
@@ -469,6 +475,18 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
         host_id: host_id,
         cluster_id: cluster_id,
         deregistered_at: requested_at
+      }
+    ]
+  end
+
+  defp maybe_mark_cluster_host_stale(nil, _, _), do: []
+
+  defp maybe_mark_cluster_host_stale(cluster_id, host_id, stale_at) do
+    [
+      %MarkClusterHostStale{
+        cluster_id: cluster_id,
+        host_id: host_id,
+        stale_at: stale_at
       }
     ]
   end
