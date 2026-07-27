@@ -21,5 +21,5 @@ defmodule Trento.Infrastructure.AI.PubSubConfigurationEvents do
   defp broadcast(user_id, message),
     do: Phoenix.PubSub.broadcast(Trento.PubSub, topic(user_id), message)
 
-  defp topic(user_id), do: "ai_user_config:#{user_id}"
+  defp topic(user_id), do: "ai_user_configuration:#{user_id}"
 end
