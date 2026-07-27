@@ -30,6 +30,19 @@ describe('ChatHeader', () => {
     expect(screen.getByText('Offline')).toBeVisible();
   });
 
+  it.each(['connecting', 'disconnected', 'unknown'])(
+    'disables the "New chat" button when %s',
+    (connectionStatus) => {
+      render(<ChatHeader {...defaults} connectionStatus={connectionStatus} />);
+      expect(screen.getByRole('button', { name: 'New chat' })).toBeDisabled();
+    }
+  );
+
+  it('enables the "New chat" button when connected', () => {
+    render(<ChatHeader {...defaults} connectionStatus="connected" />);
+    expect(screen.getByRole('button', { name: 'New chat' })).not.toBeDisabled();
+  });
+
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
     const user = userEvent.setup();
     const onNewChat = jest.fn();
