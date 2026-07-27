@@ -25,6 +25,7 @@ import {
   clusterCibLastWrittenUpdated,
   clusterDeregistered,
   clusterRestored,
+  clusterStaleChanged,
 } from '@state/clusters';
 
 import {
@@ -121,6 +122,10 @@ const clusterEvents = [
   {
     name: 'cluster_health_changed',
     action: clusterHealthChanged,
+  },
+  {
+    name: 'cluster_stale_changed',
+    action: clusterStaleChanged,
   },
   {
     name: 'cluster_cib_last_written_updated',
