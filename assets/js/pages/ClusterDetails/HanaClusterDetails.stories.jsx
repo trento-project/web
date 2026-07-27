@@ -164,9 +164,11 @@ export const Hana = {
     sapSystems,
     details,
     state,
+    staleAt: null,
     lastExecution,
     catalog,
     userAbilities,
+    userTimezone: 'Etc/UTC',
     onStartExecution: () => {},
     navigate: () => {},
   },
@@ -289,5 +291,12 @@ export const AngiArchitectureCostOptScenarioWithoutEnrichedData = {
       architecture_type: 'angi',
       hana_scenario: 'cost_optimized',
     },
+  },
+};
+
+export const Stale = {
+  args: {
+    ...Hana.args,
+    staleAt: '2026-06-15T10:30:00Z',
   },
 };
