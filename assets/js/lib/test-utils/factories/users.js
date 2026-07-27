@@ -12,6 +12,11 @@ import { timezones } from '@lib/timezones';
 export const fakeAppTimezone = () =>
   faker.helpers.arrayElement(timezones).value;
 
+export const aiConfigurationFactory = Factory.define(() => ({
+  provider: 'googleai',
+  model: 'gemini-2.5-pro',
+}));
+
 export const abilityFactory = Factory.define(() => ({
   id: faker.number.int(),
   name: faker.word.noun(),
@@ -32,6 +37,7 @@ export const userFactory = Factory.define(() => ({
   analytics_eula_enabled: faker.datatype.boolean(),
   timezone: fakeAppTimezone(),
   last_login_at: formatISO(faker.date.past()),
+  ai_configuration: aiConfigurationFactory.build(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
 }));
@@ -79,9 +85,4 @@ export const personalAccessTokenFactory = Factory.define(() => ({
   name: faker.internet.displayName(),
   expires_at: formatISO(faker.date.future()),
   created_at: formatISO(faker.date.past()),
-}));
-
-export const aiConfigurationFactory = Factory.define(() => ({
-  provider: 'googleai',
-  model: 'gemini-2.5-pro',
 }));

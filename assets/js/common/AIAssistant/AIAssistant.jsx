@@ -17,12 +17,13 @@ export function AssistantUI({
   onOpenChange,
   onNewThread,
   handleClose,
+  disabled = false,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
 
   return (
-    <ModalFrame open={open} onOpenChange={onOpenChange}>
+    <ModalFrame open={open} onOpenChange={onOpenChange} disabled={disabled}>
       <AssistantThread
         connectionStatus={connectionStatus}
         onClose={handleClose}
@@ -36,6 +37,7 @@ export function AssistantUI({
 
 function AIAssistant({
   userID,
+  aiConfigured = true,
   open = false,
   initialConnectionStatus = CONNECTION_STATUS.DISCONNECTED,
 }) {
@@ -60,6 +62,7 @@ function AIAssistant({
         onOpenChange={setIsOpen}
         onNewThread={onNewThread}
         handleClose={handleClose}
+        disabled={!aiConfigured && !isOpen}
       />
     </AssistantChatProvider>
   );

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
+import { MemoryRouter } from 'react-router';
 
 import { SocketContext } from '@common/SocketProvider';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
@@ -159,6 +160,19 @@ export default {
 export const Closed = {
   name: 'Closed (FAB only)',
   args: { open: false },
+};
+
+export const Disabled = {
+  name: 'Disabled — no AI configuration',
+  args: { open: false, aiConfigured: false },
+  decorators: [
+    // Router needed for the disabled launcher tooltip's Profile link.
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 };
 
 export const OpenEmpty = {
