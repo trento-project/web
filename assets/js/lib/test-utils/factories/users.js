@@ -37,9 +37,9 @@ export const userFactory = Factory.define(() => ({
   analytics_eula_enabled: faker.datatype.boolean(),
   timezone: fakeAppTimezone(),
   last_login_at: formatISO(faker.date.past()),
+  ai_configuration: aiConfigurationFactory.build(),
   created_at: formatISO(faker.date.past()),
   updated_at: formatISO(faker.date.past()),
-  ai_configuration: aiConfigurationFactory.build(),
 }));
 
 export const profileFactory = Factory.define(() => ({
