@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-12T19:52:12Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27438393190",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-12T19:53:07Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27438393190",
@@ -4751,6 +4735,26 @@
       {
         "name": "should show health status of the entire cluster of 27 hosts with critical health::Hosts Overview Health Detection Health is changed to critical when the heartbeat is not sent should show health status of the entire cluster of 27 hosts with critical health",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-28T18:37:34Z",
+    "commit": "270e01c0ea32e35245ec60dfac6c669d5e096ab2",
+    "run_id": "30387037576",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not register or move application, if the application has an already existing instance number and the host is the same",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
       }
     ]
   }
