@@ -25,6 +25,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   use TrentoWeb.ChannelCase
   use Trento.AI.AICase
 
+  import Phoenix.ChannelTest, except: [assert_push: 2]
+
   import Mox
   import Trento.Factory
 
@@ -36,6 +38,19 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   alias TrentoWeb.UserSocket
 
   alias Trento.AI.Configurations.Events, as: AIConfigurationsEvents
+
+  # Shadow `assert_push` so that we can add a timeout once for all the call sites.
+  #
+  # Why it needs widening:
+  # because the first `send_message` pays a one-time warm-up cost about tool generation
+  # and so we mitigate possible timing out if resources are constrained.
+  @push_timeout 500
+
+  defmacrop assert_push(event, payload) do
+    quote do
+      Phoenix.ChannelTest.assert_push(unquote(event), unquote(payload), @push_timeout)
+    end
+  end
 
   setup :verify_on_exit!
 
