@@ -8,6 +8,7 @@ import hostsReducer, {
   setHostListDeregisterable,
   setHostNotDeregisterable,
   setHostDeregistering,
+  setStaleAt,
   unsetHostDeregistering,
   updateHostHealth,
   updateSelectedChecks,
@@ -165,6 +166,27 @@ describe('Hosts reducer', () => {
     const expectedState = {
       hosts: [{ ...host1, health: newHealth }, host2],
     };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should set the stale_at field of the host when it goes stale', () => {
+    const host = hostFactory.build();
+    const staleAt = Date.now();
+
+    const initialState = { hosts: [host] };
+    const action = setStaleAt({id: host.id, stale_at: staleAt});
+    const expectedState = { hosts: [{ ...host, stale_at: staleAt }] };
+
+    expect(hostsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should clear the stale_at field of the host when it goes in-sync', () => {
+    const host = hostFactory.build({ stale_at: Date.now() });
+
+    const initialState = { hosts: [host] };
+    const action = setStaleAt({id: host.id });
+    const expectedState = { hosts: [{ ...host, stale_at: null }] };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);
   });
