@@ -25,7 +25,16 @@ defmodule Trento.AI.Agent.Supervisor do
   """
   @callback start_agent_sync(keyword()) :: {:ok, pid()} | {:error, term()}
 
+  @doc """
+  Stop the running agent for `agent_id`.
+
+  Best-effort: returns `{:error, term()}` when no agent is running for the id.
+  """
+  @callback stop_agent(String.t()) :: :ok | {:error, term()}
+
   def start_agent_sync(opts), do: impl().start_agent_sync(opts)
+
+  def stop_agent(agent_id), do: impl().stop_agent(agent_id)
 
   defp impl, do: Keyword.get(ApplicationConfigLoader.load(), :agent_supervisor_adapter)
 end
