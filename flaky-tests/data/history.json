@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-13T18:33:19Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27475078579",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
-        "score": 1
-      },
-      {
-        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-13T18:34:08Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27475078579",
@@ -4715,6 +4691,34 @@
       "failed_runs": 1
     },
     "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-28T19:17:01Z",
+    "commit": "270e01c0ea32e35245ec60dfac6c669d5e096ab2",
+    "run_id": "30389668177",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.5
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "search::should not match not included words",
+        "score": 0.05001
+      },
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
