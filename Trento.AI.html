@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-4BBC0DD8.js"></script>
+    <script defer src="dist/sidebar_items-4624B56E.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -167,6 +167,17 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#subscribe_to_configuration_events/1" data-no-tooltip="" translate="no">subscribe_to_configuration_events(user_id)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Subscribes the calling process to the given user's AI configuration lifecycle
+events.</p></div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#update_user_configuration/2" data-no-tooltip="" translate="no">update_user_configuration(user, attrs)</a>
 
       </div>
@@ -259,6 +270,38 @@ Trento Web
       </div>
 
 <p>Checks if the AI features are enabled.</p>
+  </section>
+</section>
+<section class="detail" id="subscribe_to_configuration_events/1">
+
+  <div class="detail-header">
+    <a href="#subscribe_to_configuration_events/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">subscribe_to_configuration_events(user_id)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai.ex#L54" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> subscribe_to_configuration_events(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>() | <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) ::
+  :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>Subscribes the calling process to the given user's AI configuration lifecycle
+events.</p><p>Every AI Assistant channel (one per browser tab) subscribes on join so it can
+react in real time to configuration changes made elsewhere (another tab, or a
+raw API call). See <a href="Trento.AI.Configurations.Events.html"><code class="inline">Trento.AI.Configurations.Events</code></a> for the message contract.</p>
   </section>
 </section>
 <section class="detail" id="update_user_configuration/2">

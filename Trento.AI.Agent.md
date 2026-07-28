@@ -40,6 +40,17 @@ Ensure the agent for `:agent_id` is running, subscribe the calling
 process to its event stream, and send the user prompt. Returns `:ok`
 or the first `{:error, reason}` from the start/subscribe/send chain.
 
+# `stop`
+
+```elixir
+@spec stop(String.t()) :: :ok | {:error, term()}
+```
+
+Stops the running agent for `agent_id`, terminating any in-flight run.
+
+Best-effort — returns the supervisor's result verbatim (`{:error, term()}`
+when no agent is running for the id).
+
 ---
 
 *Consult [api-reference.md](api-reference.md) for complete listing*

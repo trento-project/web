@@ -23,7 +23,19 @@ Sagents.AgentsDynamicSupervisor.start_agent_sync/1 spec declares
 
 however, the `:already_started` case is not actually returned by the implementation.
 
+# `stop_agent`
+
+```elixir
+@callback stop_agent(String.t()) :: :ok | {:error, term()}
+```
+
+Stop the running agent for `agent_id`.
+
+Best-effort: returns `{:error, term()}` when no agent is running for the id.
+
 # `start_agent_sync`
+
+# `stop_agent`
 
 ---
 

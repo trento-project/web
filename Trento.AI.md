@@ -23,6 +23,20 @@ See `Trento.AI.Configurations.create_user_configuration/2` for more details.
 
 Checks if the AI features are enabled.
 
+# `subscribe_to_configuration_events`
+
+```elixir
+@spec subscribe_to_configuration_events(non_neg_integer() | String.t()) ::
+  :ok | {:error, term()}
+```
+
+Subscribes the calling process to the given user's AI configuration lifecycle
+events.
+
+Every AI Assistant channel (one per browser tab) subscribes on join so it can
+react in real time to configuration changes made elsewhere (another tab, or a
+raw API call). See `Trento.AI.Configurations.Events` for the message contract.
+
 # `update_user_configuration`
 
 Updates a user configuration for AI.

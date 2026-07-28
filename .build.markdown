@@ -8,6 +8,7 @@ Trento.AI.Agent.Server.md
 Trento.AI.Agent.Supervisor.md
 Trento.AI.Agent.md
 Trento.AI.ApplicationConfigLoader.md
+Trento.AI.Configurations.Events.md
 Trento.AI.Configurations.md
 Trento.AI.ControllerSpecs.md
 Trento.AI.LLMBuilder.md
@@ -312,6 +313,7 @@ Trento.Hosts.ValueObjects.SaptuneStatus.md
 Trento.Hosts.ValueObjects.SlesSubscription.md
 Trento.Hosts.ValueObjects.SystemdUnit.md
 Trento.Hosts.md
+Trento.Infrastructure.AI.PubSubConfigurationEvents.md
 Trento.Infrastructure.AI.SagentsAgentServer.md
 Trento.Infrastructure.AI.SagentsDynamicSupervisor.md
 Trento.Infrastructure.Alerting.Alerting.md

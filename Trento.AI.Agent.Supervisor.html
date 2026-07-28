@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-4BBC0DD8.js"></script>
+    <script defer src="dist/sidebar_items-4624B56E.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -148,6 +148,16 @@ substitute a Mox mock.</p>
 
     </div>
 
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:stop_agent/1" data-no-tooltip="" translate="no">stop_agent(t)</a>
+
+      </div>
+
+        <div class="summary-synopsis"><p>Stop the running agent for <code class="inline">agent_id</code>.</p></div>
+
+    </div>
+
 </div>
 <div class="summary-functions summary">
   <h3>
@@ -157,6 +167,14 @@ substitute a Mox mock.</p>
     <div class="summary-row">
       <div class="summary-signature">
         <a href="#start_agent_sync/1" data-no-tooltip="" translate="no">start_agent_sync(opts)</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#stop_agent/1" data-no-tooltip="" translate="no">stop_agent(agent_id)</a>
 
       </div>
 
@@ -201,7 +219,35 @@ substitute a Mox mock.</p>
 
       </div>
 
-<p>Start an agent supervisor synchronously.</p><p>Sagents.AgentsDynamicSupervisor.start_agent_sync/1 spec declares</p><p>@spec start_agent_sync(keyword()) ::</p><pre><code class="makeup elixir" translate="no"><span class="w">    </span><span class="p" data-group-id="8236617854-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="8236617854-2">(</span><span class="p" data-group-id="8236617854-2">)</span><span class="p" data-group-id="8236617854-1">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="8236617854-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="8236617854-4">(</span><span class="p" data-group-id="8236617854-4">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:already_started</span><span class="p" data-group-id="8236617854-3">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="8236617854-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">term</span><span class="p" data-group-id="8236617854-6">(</span><span class="p" data-group-id="8236617854-6">)</span><span class="p" data-group-id="8236617854-5">}</span></code></pre><p>however, the <code class="inline">:already_started</code> case is not actually returned by the implementation.</p>
+<p>Start an agent supervisor synchronously.</p><p>Sagents.AgentsDynamicSupervisor.start_agent_sync/1 spec declares</p><p>@spec start_agent_sync(keyword()) ::</p><pre><code class="makeup elixir" translate="no"><span class="w">    </span><span class="p" data-group-id="3076947300-1">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="3076947300-2">(</span><span class="p" data-group-id="3076947300-2">)</span><span class="p" data-group-id="3076947300-1">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="3076947300-3">{</span><span class="ss">:ok</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p" data-group-id="3076947300-4">(</span><span class="p" data-group-id="3076947300-4">)</span><span class="p">,</span><span class="w"> </span><span class="ss">:already_started</span><span class="p" data-group-id="3076947300-3">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p" data-group-id="3076947300-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">term</span><span class="p" data-group-id="3076947300-6">(</span><span class="p" data-group-id="3076947300-6">)</span><span class="p" data-group-id="3076947300-5">}</span></code></pre><p>however, the <code class="inline">:already_started</code> case is not actually returned by the implementation.</p>
+  </section>
+</section>
+<section class="detail" id="c:stop_agent/1">
+
+  <div class="detail-header">
+    <a href="#c:stop_agent/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">stop_agent(t)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/supervisor.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@callback</span> stop_agent(<a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: :ok | {:error, <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+
+      </div>
+
+<p>Stop the running agent for <code class="inline">agent_id</code>.</p><p>Best-effort: returns <code class="inline">{:error, term()}</code> when no agent is running for the id.</p>
   </section>
 </section>
 
@@ -227,7 +273,29 @@ substitute a Mox mock.</p>
       <h1 class="signature" translate="no">start_agent_sync(opts)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/supervisor.ex#L28" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/supervisor.ex#L35" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+
+  </section>
+</section>
+<section class="detail" id="stop_agent/1">
+
+  <div class="detail-header">
+    <a href="#stop_agent/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">stop_agent(agent_id)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/supervisor.ex#L37" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

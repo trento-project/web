@@ -22,6 +22,7 @@
 
 - [Trento.AI.Configurations](Trento.AI.Configurations.md): This module is responsible for managing user AI configurations.
 
+- [Trento.AI.Configurations.Events](Trento.AI.Configurations.Events.md): Behaviour + dispatcher for per-user AI configuration lifecycle events.
 - [Trento.AI.ControllerSpecs](Trento.AI.ControllerSpecs.md): Per-action AI-tool metadata macro. Sits next to `OpenApiSpex.ControllerSpecs.operation/2`
 in controllers and labels the immediately following public function as an AI tool.
 - [Trento.AI.LLMBuilder](Trento.AI.LLMBuilder.md): Builds a LangChain chat-model struct for a given User.
@@ -710,6 +711,9 @@ Here is where the actual integration with the external system happens and releva
   - [Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler](Trento.Infrastructure.Commanded.EventHandlers.StreamRollUpEventHandler.md): This module is responsible for triggering the roll-up of an aggregate.
 
 - Infrastructure
+  - [Trento.Infrastructure.AI.PubSubConfigurationEvents](Trento.Infrastructure.AI.PubSubConfigurationEvents.md): Default `Trento.AI.Configurations.Events` implementation: per-user AI
+configuration lifecycle events carried over `Phoenix.PubSub`.
+
   - [Trento.Infrastructure.AI.SagentsAgentServer](Trento.Infrastructure.AI.SagentsAgentServer.md): Production implementation of `Trento.AI.Agent.Server` —
 delegates to `Sagents.AgentServer`.
 
