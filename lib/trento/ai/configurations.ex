@@ -61,6 +61,10 @@ defmodule Trento.AI.Configurations do
         user_configuration
         |> UserConfiguration.changeset(attrs)
         |> Repo.update()
+        |> tap(fn
+          {:ok, updated} -> maybe_broadcast_update(user_configuration, updated)
+          _ -> :ok
+        end)
     end
   end
 
@@ -82,4 +86,17 @@ defmodule Trento.AI.Configurations do
   end
 
   def clear_user_configuration(%User{}), do: {:error, :forbidden}
+
+  defp maybe_broadcast_update(
+         %UserConfiguration{provider: provider, model: model},
+         %UserConfiguration{provider: provider, model: model}
+       ),
+       do: :ok
+
+  defp maybe_broadcast_update(%UserConfiguration{}, %UserConfiguration{
+         user_id: user_id,
+         provider: provider,
+         model: model
+       }),
+       do: Events.broadcast_updated(user_id, %{provider: provider, model: model})
 end

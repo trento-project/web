@@ -18,6 +18,10 @@ defmodule Trento.Infrastructure.AI.PubSubConfigurationEvents do
   @impl true
   def broadcast_cleared(user_id), do: broadcast(user_id, {:ai_configuration, :cleared})
 
+  @impl true
+  def broadcast_updated(user_id, payload),
+    do: broadcast(user_id, {:ai_configuration, :updated, payload})
+
   defp broadcast(user_id, message),
     do: Phoenix.PubSub.broadcast(Trento.PubSub, topic(user_id), message)
 
