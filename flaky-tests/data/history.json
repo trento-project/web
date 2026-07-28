@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-13T18:34:08Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27475078579",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.08646
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-13T19:13:40Z",
     "commit": "048633810c686cd600096fbe9509b3670f997c24",
     "run_id": "27475960950",
@@ -4721,6 +4705,74 @@
       },
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-28T22:35:02Z",
+    "commit": "270e01c0ea32e35245ec60dfac6c669d5e096ab2",
+    "run_id": "30393848727",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1185
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1185
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1185
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1185
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1185
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1185
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1185
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
+        "score": 0.05001
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
         "score": 0.02501
       }
     ]
