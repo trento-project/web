@@ -27,7 +27,6 @@ const instancesWithHosts = sapSystemApplicationInstanceFactory
     host: hosts[index] || hosts[0],
   }));
 
-
 const system = {
   ...sapSystemFactory.build({
     instances: instancesWithHosts,
