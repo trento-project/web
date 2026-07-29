@@ -24,34 +24,6 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
       assert [] = HealthSummaryService.get_health_summary()
     end
 
-    test "should raise an exception when a cluster couldn't be loaded" do
-      %HostReadModel{id: a_host_id} = insert(:host, cluster_id: Faker.UUID.v4())
-
-      %DatabaseReadModel{id: database_id} = insert(:database)
-
-      %SapSystemReadModel{
-        id: sap_system_id,
-        sid: sid
-      } = insert(:sap_system, database_id: database_id)
-
-      insert(
-        :database_instance,
-        database_id: database_id,
-        host_id: a_host_id
-      )
-
-      insert(
-        :application_instance,
-        sap_system_id: sap_system_id,
-        sid: sid,
-        host_id: a_host_id
-      )
-
-      assert_raise Ecto.NoResultsError, fn ->
-        HealthSummaryService.get_health_summary()
-      end
-    end
-
     test "should determine health summary for a SAP System" do
       app_cluster_stale_at = DateTime.utc_now()
 
@@ -149,12 +121,15 @@ defmodule Trento.SapSystems.Services.HealthSummaryServiceTest do
              ] == HealthSummaryService.get_health_summary()
     end
 
-    test "should set as nil the database and application clusters health when those clusters do not exist" do
+    test "should set as nil the database and application clusters health when those clusters do not exist or are deregistered" do
+      %ClusterReadModel{id: deregistered_cluster_id} =
+        insert(:cluster, deregistered_at: DateTime.utc_now())
+
       %HostReadModel{id: db_host_id} =
         db_host = insert(:host, cluster_id: nil, health: Health.passing())
 
       %HostReadModel{id: app_host_id} =
-        app_host = insert(:host, cluster_id: nil, health: Health.passing())
+        app_host = insert(:host, cluster_id: deregistered_cluster_id, health: Health.passing())
 
       %DatabaseReadModel{id: database_id, health: database_health, sid: database_sid} =
         insert(:database)

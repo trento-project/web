@@ -29,9 +29,11 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> where([s], is_nil(s.deregistered_at))
     |> order_by(asc: :sid)
     |> Repo.all()
-    |> Repo.preload(application_instances: :host)
-    |> Repo.preload(database_instances: :host)
-    |> Repo.preload(:database)
+    |> Repo.preload([
+      :database,
+      {:application_instances, host: :cluster},
+      {:database_instances, host: :cluster}
+    ])
     |> Enum.map(&summary_from_sap_system/1)
   end
 
@@ -86,8 +88,7 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
         ) :: ClusterReadModel.t() | map()
   defp get_cluster_from_instances(instances) do
     Enum.find_value(instances, %{}, fn
-      %{host: %{cluster_id: nil}} -> false
-      %{host: %{cluster_id: cluster_id}} -> Repo.get!(ClusterReadModel, cluster_id)
+      %{host: %{cluster: %ClusterReadModel{} = cluster}} -> cluster
       _ -> false
     end)
   end
