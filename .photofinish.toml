@@ -486,6 +486,27 @@ files = [
     "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/1b0e9297-97dd-55d6-9874-8efde4d84c90_subscription_discovery.json",
 ]
 
+[sapsystem-NWP-restore]
+
+files = [
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/116d49bd-85e1-5e59-b820-83f66db8800c_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/116d49bd-85e1-5e59-b820-83f66db8800c_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/116d49bd-85e1-5e59-b820-83f66db8800c_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/4b30a6af-4b52-5bda-bccb-f2248a12c992_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/4b30a6af-4b52-5bda-bccb-f2248a12c992_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/4b30a6af-4b52-5bda-bccb-f2248a12c992_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/a3297d85-5e8b-5ac5-b8a3-55eebc2b8d12_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/a3297d85-5e8b-5ac5-b8a3-55eebc2b8d12_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0fc07435-7ee2-54ca-b0de-fb27ffdc5deb_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/0fc07435-7ee2-54ca-b0de-fb27ffdc5deb_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/9cd46919-5f19-59aa-993e-cf3736c71053_sap_system_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_host_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_ha_cluster_discovery.json",
+    "./test/fixtures/scenarios/healthy-27-node-SAP-cluster/b767b3e9-e802-587e-a442-541d093b86b9_sap_system_discovery.json",
+]
+
 [cluster-hana_cluster_1-restore]
 
 files = [
