@@ -37,7 +37,14 @@ function Label({ icon, label }) {
  * @param {function} props.onChange Function to call when the selected options change
  * @param {string} props.className Additional classes to apply to the filter
  */
-function Filter({ options, title, value = [], onChange, className }) {
+function Filter({
+  options,
+  title,
+  value = [],
+  hideMobile = false,
+  onChange,
+  className,
+}) {
   const ref = useRef();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -62,7 +69,14 @@ function Filter({ options, title, value = [], onChange, className }) {
   useOnClickOutside(ref, () => setOpen(false));
 
   return (
-    <div className={classNames('top-16', className)} ref={ref}>
+    <div
+      className={classNames(
+        'top-16',
+        { 'hidden xl:block': hideMobile },
+        className
+      )}
+      ref={ref}
+    >
       <div className="relative">
         {parsedValue.length !== 0 && (
           <button
