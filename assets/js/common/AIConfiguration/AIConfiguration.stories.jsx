@@ -26,6 +26,10 @@ export default {
       description: 'Edit button click handler',
       action: 'onEditClick',
     },
+    onClear: {
+      type: 'function',
+      description: 'Clears AI configuration',
+    },
     className: {
       description: 'CSS classes to apply to the AI configuration container',
       control: { type: 'text' },
@@ -34,6 +38,7 @@ export default {
   args: {
     aiConfiguration: {},
     onEditClick: action('onEditClick'),
+    onClear: action('Clear button clicked!'),
   },
 };
 

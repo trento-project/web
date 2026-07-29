@@ -8,12 +8,18 @@ import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import DatabaseItemOverview from '@pages/DatabasesOverview/DatabaseItemOverview';
 import InstanceOverview from '@pages/InstanceOverview';
 
-function ApplicationInstance({ instance, userAbilities, onCleanUpClick }) {
+function ApplicationInstance({
+  instance,
+  userAbilities,
+  userTimezone,
+  onCleanUpClick,
+}) {
   return (
     <InstanceOverview
       instanceType={APPLICATION_TYPE}
       instance={instance}
       userAbilities={userAbilities}
+      userTimezone={userTimezone}
       cleanUpPermittedFor={['cleanup:application_instance']}
       onCleanUpClick={onCleanUpClick}
     />
@@ -29,7 +35,12 @@ const applicationInstanceColumns = [
   { key: 'cleanupButton', cssClass: 'w-48' },
 ];
 
-function SapSystemItemOverview({ sapSystem, userAbilities, onCleanUpClick }) {
+function SapSystemItemOverview({
+  sapSystem,
+  userAbilities,
+  userTimezone,
+  onCleanUpClick,
+}) {
   const { applicationInstances, databaseInstances } = sapSystem;
 
   return (
@@ -62,6 +73,7 @@ function SapSystemItemOverview({ sapSystem, userAbilities, onCleanUpClick }) {
                     key={`${instance.host_id}_${instance.instance_number}`}
                     instance={instance}
                     userAbilities={userAbilities}
+                    userTimezone={userTimezone}
                     onCleanUpClick={onCleanUpClick}
                   />
                 ))}
@@ -73,6 +85,7 @@ function SapSystemItemOverview({ sapSystem, userAbilities, onCleanUpClick }) {
         database={{ databaseInstances }}
         asDatabaseLayer
         userAbilities={userAbilities}
+        userTimezone={userTimezone}
         onCleanUpClick={onCleanUpClick}
       />
     </div>

@@ -14,7 +14,6 @@ export default {
         'passing',
         'warning',
         'critical',
-        'absent',
         'pending',
         'not_available',
         'unknown',
@@ -33,9 +32,21 @@ export default {
       control: { type: 'select' },
       options: ['xs', 's', 'm', 'l', 'xl'],
     },
+    staleAt: {
+      description: 'Timestamp when the host became stale (null if not stale)',
+      control: {
+        type: 'text',
+      },
+    },
     isLink: {
       description: 'Whether to icon is a link or not',
       control: { type: 'boolean' },
+    },
+    timezone: {
+      description: 'Timezone for displaying the stale timestamp',
+      control: {
+        type: 'text',
+      },
     },
   },
 };
@@ -50,11 +61,40 @@ export const Default = {
   },
 };
 
+export const StaleUnknown = {
+  args: {
+    health: 'unknown',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
+};
+
+export const LargeStaleUnknown = {
+  args: {
+    health: 'unknown',
+    staleAt: '2026-06-15T10:30:00Z',
+    size: 'xl',
+  },
+};
+
 export const Passing = {
   args: {
     ...Default.args,
     health: 'passing',
     isLink: false,
+  },
+};
+
+export const LinkPassing = {
+  args: {
+    health: 'passing',
+    isLink: true,
+  },
+};
+
+export const StalePassing = {
+  args: {
+    health: 'passing',
+    staleAt: '2026-06-15T10:30:00Z',
   },
 };
 
@@ -66,11 +106,39 @@ export const Warning = {
   },
 };
 
+export const LinkWarning = {
+  args: {
+    health: 'warning',
+    isLink: true,
+  },
+};
+
+export const StaleWarning = {
+  args: {
+    health: 'warning',
+    staleAt: '2026-06-15T10:30:00Z',
+  },
+};
+
 export const Critical = {
   args: {
     ...Default.args,
     health: 'critical',
     isLink: false,
+  },
+};
+
+export const LinkCritical = {
+  args: {
+    health: 'critical',
+    isLink: true,
+  },
+};
+
+export const StaleCritical = {
+  args: {
+    health: 'critical',
+    staleAt: '2026-06-15T10:30:00Z',
   },
 };
 

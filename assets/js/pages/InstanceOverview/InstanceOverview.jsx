@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { get, some } from 'lodash';
 
 import { DATABASE_TYPE } from '@lib/model/sapSystems';
+import { STALE_ROW } from '@lib/tables';
 
 import CleanUpButton from '@common/CleanUpButton';
 import HostLink from '@common/HostLink';
@@ -38,9 +39,11 @@ function InstanceOverview({
     host_id: hostID,
     host,
     absent_at: absentAt,
+    stale_at: staleAt,
     deregistering,
   },
   userAbilities,
+  userTimezone,
   cleanUpPermittedFor,
   onCleanUpClick,
 }) {
@@ -50,24 +53,26 @@ function InstanceOverview({
 
   const isDatabase = DATABASE_TYPE === instanceType;
   const rowClasses = classNames(
-    { 'bg-gray-100': absentAt },
+    { [STALE_ROW]: absentAt || staleAt },
     'table-row border-b'
   );
 
-  const textColor = classNames({ 'text-gray-500': absentAt });
   return (
     <div className={rowClasses}>
       <div className="table-cell p-2 pl-3 align-middle">
-        <InstanceStatus status={status} absent={!!absentAt} />
+        <InstanceStatus
+          status={status}
+          absent={!!absentAt}
+          staleAt={staleAt}
+          timezone={userTimezone}
+        />
       </div>
-      <div className={classNames(textColor, 'table-cell p-2 text-center')}>
-        {instanceNumber}
-      </div>
+      <div className={'table-cell p-2 text-center'}>{instanceNumber}</div>
       <div className="table-cell p-2 text-gray-500 dark:text-gray-300 text-sm">
         <Features features={features} />
       </div>
       {isDatabase && (
-        <div className={classNames(textColor, 'table-cell p-2')}>
+        <div className={'table-cell p-2'}>
           {systemReplication && `HANA ${systemReplication}`}{' '}
           {systemReplicationStatus && (
             <Pill
@@ -90,8 +95,8 @@ function InstanceOverview({
       <div className="table-cell p-2">
         <HostLink hostId={hostID}>{hostname}</HostLink>
       </div>
-      {absentAt && (
-        <div className="table-cell p-2">
+      <div className="table-cell p-2">
+        {absentAt && (
           <CleanUpButton
             size="fit"
             type="transparent"
@@ -101,8 +106,8 @@ function InstanceOverview({
             permittedFor={cleanUpPermittedFor}
             onClick={() => onCleanUpClick(instance, instanceType)}
           />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

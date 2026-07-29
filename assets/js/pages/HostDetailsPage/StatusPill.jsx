@@ -8,43 +8,30 @@ import { EOS_LENS_FILLED } from 'eos-icons-react';
 
 import Pill from '@common/Pill';
 
-function StatusPill({ className, children, heartbeat }) {
-  switch (heartbeat) {
+const pillBgClass = 'bg-gray-200 text-gray-500 items-center';
+
+function StatusPill({ className, children, status }) {
+  switch (status) {
     case 'passing':
       return (
-        <Pill
-          className={classNames(
-            className,
-            'bg-gray-200 text-gray-500 items-center'
-          )}
-        >
+        <Pill className={classNames(className, pillBgClass)}>
           {children}:
           <EOS_LENS_FILLED size="base" className="fill-jungle-green-500 mx-1" />
-          running
+          Reporting
         </Pill>
       );
     case 'critical':
       return (
-        <Pill
-          className={classNames(
-            'bg-gray-200 text-gray-500 items-center',
-            className
-          )}
-        >
+        <Pill className={classNames(className, pillBgClass)}>
           {children}:
-          <EOS_LENS_FILLED size="base" className="fill-red-500 px-2" />
-          not running
+          <EOS_LENS_FILLED size="base" className="fill-red-500 mx-1" />
+          Not reporting
         </Pill>
       );
     default:
       return (
-        <Pill
-          className={classNames(
-            'bg-gray-200 text-gray-500 items-center',
-            className
-          )}
-        >
-          {children}: unknown
+        <Pill className={classNames(className, pillBgClass)}>
+          {children}: Unknown
         </Pill>
       );
   }

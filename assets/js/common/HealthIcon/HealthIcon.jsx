@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+
 import { computedIconCssClass } from '@lib/icon';
 
 import {
@@ -10,15 +11,22 @@ import {
   EOS_ERROR_OUTLINED,
   EOS_WARNING_OUTLINED,
   EOS_LENS_FILLED,
-  EOS_INFO_OUTLINED,
   EOS_ERROR_FILLED,
   EOS_WARNING_FILLED,
-  EOS_INFO_FILLED,
   EOS_REMOVE_FILLED,
 } from 'eos-icons-react';
 
-import Spinner from '@common/Spinner';
 import classNames from 'classnames';
+import Spinner from '@common/Spinner';
+import StaleIconWrapper from '@common/StaleIconWrapper';
+
+const PassingIconBlank = StaleIconWrapper(EOS_CHECK_CIRCLE_OUTLINED);
+const PassingIconLink = StaleIconWrapper(EOS_CHECK_CIRCLE_FILLED);
+const WarningIconBlank = StaleIconWrapper(EOS_WARNING_OUTLINED);
+const WarningIconLink = StaleIconWrapper(EOS_WARNING_FILLED);
+const CriticalIconBlank = StaleIconWrapper(EOS_ERROR_OUTLINED);
+const CriticalIconLink = StaleIconWrapper(EOS_ERROR_FILLED);
+const UnknownIcon = StaleIconWrapper(EOS_LENS_FILLED);
 
 function HealthIcon({
   health = undefined,
@@ -26,69 +34,62 @@ function HealthIcon({
   hoverOpacity = true,
   size = 'l',
   isLink = false,
+  staleAt = null,
+  timezone = 'Etc/UTC',
 }) {
-  const passingIcon = () =>
-    isLink ? EOS_CHECK_CIRCLE_FILLED : EOS_CHECK_CIRCLE_OUTLINED;
-  const PassingIcon = passingIcon();
-
-  const warningIcon = () =>
-    isLink ? EOS_WARNING_FILLED : EOS_WARNING_OUTLINED;
-  const WarningIcon = warningIcon();
-
-  const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
-  const CriticalIcon = criticalIcon();
-
-  const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
-  const AbsentIcon = absentIcon();
-
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
+
   switch (health) {
-    case 'passing':
+    case 'passing': {
+      const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         <PassingIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
         />
       );
-    case 'warning':
+    }
+
+    case 'warning': {
+      const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         <WarningIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
         />
       );
-    case 'critical':
+    }
+
+    case 'critical': {
+      const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
         />
       );
-    case 'absent':
-      return (
-        <AbsentIcon
-          size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-black', centered)
-          )}
-        />
-      );
-    case 'pending':
+    }
+
+    case 'pending': {
       return <Spinner />;
-    case 'not_available':
+    }
+
+    case 'not_available': {
       return (
         <EOS_REMOVE_FILLED
           size={size}
@@ -98,16 +99,20 @@ function HealthIcon({
           )}
         />
       );
-    default:
+    }
+
+    default: {
       return (
-        <EOS_LENS_FILLED
+        <UnknownIcon
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
           size={size}
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered)
-          )}
+          staleAt={staleAt}
+          timezone={timezone}
+          tooltipEnabled={!!staleAt}
         />
       );
+    }
   }
 }
 

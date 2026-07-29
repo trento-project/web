@@ -22,6 +22,7 @@ import {
   generatePersonalAccessToken,
   createAIConfiguration,
   editAIConfiguration,
+  clearAIConfiguration,
 } from '@lib/api/users';
 import {
   setUser as setUserInState,
@@ -179,7 +180,9 @@ function ProfilePage() {
   const handleSuccessfulAIConfigOperation =
     (successMessage) =>
     ({ data }) => {
-      setUser({ ...userState, ai_configuration: data });
+      const updatedUser = { ...userState, ai_configuration: data };
+      setUser(updatedUser);
+      dispatch(setUserInState(updatedUser));
       toast.success(successMessage);
     };
 
@@ -200,6 +203,12 @@ function ProfilePage() {
     return editAIConfiguration(provider, model, apiKey)
       .then(handleSuccessfulAIConfigOperation('AI configuration updated!'))
       .catch(handleFailedAIConfigOperation('Error updating AI configuration.'));
+  };
+
+  const clearAIConfig = () => {
+    return clearAIConfiguration()
+      .then(handleSuccessfulAIConfigOperation('AI configuration cleared!'))
+      .catch(handleFailedAIConfigOperation('Error clearing AI configuration.'));
   };
 
   if (loading) {
@@ -265,6 +274,7 @@ function ProfilePage() {
           aiConfiguration={getAIConfiguration(userState)}
           onCreate={createAIConfig}
           onUpdate={updateAIConfig}
+          onClear={clearAIConfig}
         />
       )}
     </>

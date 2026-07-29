@@ -247,6 +247,7 @@ defmodule TrentoWeb.Router do
           scope "/ai_configuration" do
             post "/", AIConfigurationController, :create_ai_configuration
             patch "/", AIConfigurationController, :update_ai_configuration
+            delete "/", AIConfigurationController, :clear_ai_configuration
           end
         end
       end

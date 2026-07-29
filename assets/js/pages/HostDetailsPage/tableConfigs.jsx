@@ -3,7 +3,9 @@
 
 import React from 'react';
 import { capitalize } from 'lodash';
+import classNames from 'classnames';
 
+import { STALE_ROW } from '@lib/tables';
 import SapSystemLink from '@common/SapSystemLink';
 import { Features, InstanceStatus } from '@pages/SapSystemDetails';
 
@@ -48,14 +50,24 @@ export const subscriptionsTableConfiguration = {
   ],
 };
 
-export const sapInstancesTableConfiguration = {
+export const getSapInstancesTableConfiguration = ({ userTimezone }) => ({
   usePadding: false,
+  rowClassName: ({ stale_at, absent_at }) =>
+    classNames({
+      [STALE_ROW]: !!stale_at,
+      'text-gray-600': !!absent_at,
+    }),
   columns: [
     {
       title: 'Status',
       key: 'status',
       render: (content, item) => (
-        <InstanceStatus status={content} absent={!!item.absent_at} />
+        <InstanceStatus
+          status={content}
+          absent={!!item.absent_at}
+          staleAt={item.stale_at}
+          timezone={userTimezone}
+        />
       ),
     },
     {
@@ -78,4 +90,4 @@ export const sapInstancesTableConfiguration = {
     },
     { title: 'Instance Number', key: 'instance_number' },
   ],
-};
+});

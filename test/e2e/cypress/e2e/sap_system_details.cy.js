@@ -99,6 +99,47 @@ context('SAP system details', () => {
     });
   });
 
+  describe('Stale data', () => {
+    before(() => {
+      sapSystemDetailsPage.startSapSystemAgentsHeartbeat();
+      sapSystemDetailsPage.visit();
+    });
+
+    after(() => sapSystemDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark SAP system data as stale when an agent composing the system stops reporting', () => {
+      sapSystemDetailsPage.stopSapSystemAgentHeartbeat();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemStaleBannerIsDisplayed();
+      sapSystemDetailsPage.sapSystemInstanceRowIsMarkedAsStale();
+      sapSystemDetailsPage.hostRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent starts reporting data again', () => {
+      sapSystemDetailsPage.startSapSystemAgentHeartbeat();
+      sapSystemDetailsPage.markSapSystemAsPresent();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemStaleBannerIsNotDisplayed();
+      sapSystemDetailsPage.sapSystemInstanceRowIsMarkedInSync();
+      sapSystemDetailsPage.hostRowIsMarkedInSync();
+    });
+
+    it('should mark SAP system data as stale when an agent with a database instance composing the system stops reporting', () => {
+      sapSystemDetailsPage.stopDatabaseAgentHeartbeat();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemDatabaseHealthIsMarkedAsStale();
+      sapSystemDetailsPage.sapSystemStaleBannerIsDisplayed();
+    });
+
+    it('should mark SAP system data as sync when the agent with a database instance starts reporting data again', () => {
+      sapSystemDetailsPage.startDatabaseAgentHeartbeat();
+      sapSystemDetailsPage.markDatabaseAsPresent();
+      sapSystemDetailsPage.sapSystemHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemDatabaseHealthIsMarkedInSync();
+      sapSystemDetailsPage.sapSystemStaleBannerIsNotDisplayed();
+    });
+  });
+
   describe('Forbidden actions', () => {
     beforeEach(() => {
       sapSystemDetailsPage.apiDeleteAllUsers();

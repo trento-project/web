@@ -27,6 +27,7 @@ const instancesWithHosts = sapSystemApplicationInstanceFactory
     host: hosts[index] || hosts[0],
   }));
 
+
 const system = {
   ...sapSystemFactory.build({
     instances: instancesWithHosts,
@@ -55,6 +56,19 @@ systemWithAbsentInstance.instances[1].absent_at = faker.date
   .past()
   .toISOString();
 
+const systemWithStaleData = {
+  ...sapSystemFactory.build({
+    stale_at: '2026-06-15T10:30:00Z',
+    instances: [
+      sapSystemApplicationInstanceFactory.build({
+        stale_at: '2026-06-15T10:30:00Z',
+      }),
+      sapSystemApplicationInstanceFactory.build(),
+    ],
+  }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
+
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
@@ -73,6 +87,12 @@ export default {
     userAbilities: {
       control: { type: 'object' },
       description: 'Current user abilities',
+    },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
     },
     cleanUpPermittedFor: {
       control: { type: 'object' },
@@ -162,8 +182,8 @@ export const SapSystem = {
     type: APPLICATION_TYPE,
     system,
     userAbilities: [{ name: 'all', resource: 'all' }],
+    userTimezone: 'Etc/UTC',
     cleanUpPermittedFor: ['cleanup:application_instance'],
-    getInstanceOperations: getSapInstanceOperations,
     operationsEnabled: true,
     onInstanceCleanUp: action('onInstanceCleanUp'),
     getSystemOperations: action('getSystemOperations'),
@@ -184,5 +204,12 @@ export const CleanUpUnauthorized = {
   args: {
     ...SapSystemWithAbsentInstance.args,
     userAbilities: [],
+  },
+};
+
+export const SapSystemWithStaleData = {
+  args: {
+    ...SapSystem.args,
+    system: systemWithStaleData,
   },
 };

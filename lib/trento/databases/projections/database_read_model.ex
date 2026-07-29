@@ -39,6 +39,7 @@ defmodule Trento.Databases.Projections.DatabaseReadModel do
       foreign_key: :database_id,
       preload_order: [asc: :instance_number, asc: :host_id]
 
+    field :stale_at, :utc_datetime_usec
     field :deregistered_at, :utc_datetime_usec
 
     timestamps(type: :utc_datetime_usec)

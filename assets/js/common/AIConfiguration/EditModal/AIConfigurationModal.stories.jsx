@@ -8,7 +8,7 @@ import { action } from 'storybook/actions';
 import AIConfigurationModal from './AIConfigurationModal';
 
 export default {
-  title: 'Components/AIConfiguration/AIConfigurationModal',
+  title: 'Components/AIConfiguration/EditModal',
   component: AIConfigurationModal,
   argTypes: {
     open: {
@@ -56,7 +56,8 @@ export const Default = {
     errors: [],
     onCancel: action('onCancel'),
     onSave: action('onSave'),
-    onUpdate: action('onUpdate'),
+    onCreate: () => action('edit clicked'),
+    onUpdate: () => action('update clicked'),
   },
 };
 

@@ -46,6 +46,7 @@ export const ACTIVITY_LOG_SETTINGS_UPDATE = 'activity_log_settings_update';
 
 export const AI_CONFIGURATION_CREATION = 'ai_configuration_creation';
 export const AI_CONFIGURATION_MODIFICATION = 'ai_configuration_modification';
+export const AI_CONFIGURATION_DELETION = 'ai_configuration_deletion';
 
 // Host events
 export const HEARTBEAT_FAILED = 'heartbeat_failed';
@@ -106,6 +107,10 @@ export const APPLICATION_INSTANCE_MARKED_ABSENT =
   'application_instance_marked_absent';
 export const APPLICATION_INSTANCE_MARKED_PRESENT =
   'application_instance_marked_present';
+export const APPLICATION_INSTANCE_DATA_MARKED_STALE =
+  'application_instance_data_marked_stale';
+export const APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC =
+  'application_instance_data_marked_in_sync';
 export const APPLICATION_INSTANCE_MOVED = 'application_instance_moved';
 export const APPLICATION_INSTANCE_REGISTERED =
   'application_instance_registered';
@@ -119,6 +124,8 @@ export const SAP_SYSTEM_ROLLED_UP = 'sap_system_rolled_up';
 export const SAP_SYSTEM_ROLL_UP_REQUESTED = 'sap_system_roll_up_requested';
 export const SAP_SYSTEM_TOMBSTONED = 'sap_system_tombstoned';
 export const SAP_SYSTEM_UPDATED = 'sap_system_updated';
+export const SAP_SYSTEM_DATA_MARKED_STALE = 'sap_system_data_marked_stale';
+export const SAP_SYSTEM_DATA_MARKED_IN_SYNC = 'sap_system_data_marked_in_sync';
 
 // Database events
 export const DATABASE_DEREGISTERED = 'database_deregistered';
@@ -132,6 +139,10 @@ export const DATABASE_INSTANCE_MARKED_ABSENT =
   'database_instance_marked_absent';
 export const DATABASE_INSTANCE_MARKED_PRESENT =
   'database_instance_marked_present';
+export const DATABASE_INSTANCE_DATA_MARKED_STALE =
+  'database_instance_data_marked_stale';
+export const DATABASE_INSTANCE_DATA_MARKED_IN_SYNC =
+  'database_instance_data_marked_in_sync';
 export const DATABASE_INSTANCE_REGISTERED = 'database_instance_registered';
 export const DATABASE_INSTANCE_SYSTEM_REPLICATION_CHANGED =
   'database_instance_system_replication_changed';
@@ -141,6 +152,8 @@ export const DATABASE_ROLLED_UP = 'database_rolled_up';
 export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
+export const DATABASE_DATA_MARKED_STALE = 'database_data_marked_stale';
+export const DATABASE_DATA_MARKED_IN_SYNC = 'database_data_marked_in_sync';
 
 // Operations
 export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
@@ -322,6 +335,12 @@ export const ACTIVITY_TYPES_CONFIG = {
   [AI_CONFIGURATION_MODIFICATION]: {
     label: 'AI Configuration Updated',
     message: (_entry) => `AI configuration was updated`,
+    resource: profileResourceType,
+    allowedTo: userManagement,
+  },
+  [AI_CONFIGURATION_DELETION]: {
+    label: 'AI Configuration Cleared',
+    message: (_entry) => `AI configuration was cleared`,
     resource: profileResourceType,
     allowedTo: userManagement,
   },
@@ -576,6 +595,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `Application instance was marked present`,
     resource: sapSystemResourceType,
   },
+  [APPLICATION_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Application Instance Data Marked Stale',
+    message: (_entry) => `Application instance data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [APPLICATION_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Application Instance Data Marked In Sync',
+    message: (_entry) => `Application instance data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   [APPLICATION_INSTANCE_MOVED]: {
     label: 'Application Instance Moved',
     message: (_entry) => `Application instance was moved`,
@@ -631,6 +660,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `SAP system was updated`,
     resource: sapSystemResourceType,
   },
+  [SAP_SYSTEM_DATA_MARKED_STALE]: {
+    label: 'SAP System Data Marked Stale',
+    message: (_entry) => `SAP System data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [SAP_SYSTEM_DATA_MARKED_IN_SYNC]: {
+    label: 'SAP System Data Marked In Sync',
+    message: (_entry) => `SAP System data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   // Database events
   [DATABASE_DEREGISTERED]: {
     label: 'Database Deregistered',
@@ -665,6 +704,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_INSTANCE_MARKED_PRESENT]: {
     label: 'Database Instance Marked Present',
     message: (_entry) => `Database instance was marked present`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_STALE]: {
+    label: 'Database Instance Data Marked Stale',
+    message: (_entry) => `Database instance data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_INSTANCE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Instance Data Marked In Sync',
+    message: (_entry) => `Database instance data was marked in sync`,
     resource: databaseResourceType,
   },
   [DATABASE_INSTANCE_REGISTERED]: {
@@ -705,6 +754,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_TOMBSTONED]: {
     label: 'Database Tombstoned',
     message: (_entry) => `Database was tombstoned`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_STALE]: {
+    label: 'Database Data Marked Stale',
+    message: (_entry) => `Database data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Data Marked In Sync',
+    message: (_entry) => `Database data was marked in sync`,
     resource: databaseResourceType,
   },
   // Operations

@@ -349,14 +349,20 @@ describe('HostsLists component', () => {
           },
           sapSystemsList: {
             applicationInstances: [
-              { sid: 'PRD', host_id: 'host1' },
-              { sid: 'QAS', host_id: 'host3' },
+              sapSystemApplicationInstanceFactory.build({
+                sid: 'PRD',
+                host_id: 'host1',
+              }),
+              sapSystemApplicationInstanceFactory.build({
+                sid: 'QAS',
+                host_id: 'host3',
+              }),
             ],
           },
           databasesList: {
             databaseInstances: [
-              { sid: 'PRD', host_id: 'host2' },
-              { sid: 'QAS', host_id: 'host4' },
+              databaseInstanceFactory.build({ sid: 'PRD', host_id: 'host2' }),
+              databaseInstanceFactory.build({ sid: 'QAS', host_id: 'host4' }),
             ],
           },
         },
@@ -462,7 +468,10 @@ describe('HostsLists component', () => {
           hosts,
         },
         sapSystemsList: {
-          applicationInstances: [{ sid, host_id: 'host1' }],
+          applicationInstances: sapSystemApplicationInstanceFactory.buildList(
+            1,
+            { sid, host_id: 'host1' }
+          ),
           databaseInstances: [],
         },
       };

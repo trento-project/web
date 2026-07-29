@@ -32,11 +32,12 @@ function DatabasesOverviewPage() {
     getEnrichedDatabaseInstances(state)
   );
   const dispatch = useDispatch();
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   return (
     <DatabasesOverview
       userAbilities={abilities}
+      userTimezone={timezone}
       databases={databases}
       databaseInstances={enrichedDatabaseInstances}
       loading={loading}

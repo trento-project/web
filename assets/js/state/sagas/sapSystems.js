@@ -7,10 +7,12 @@ import { del } from '@lib/network';
 import {
   SAP_SYSTEM_REGISTERED,
   SAP_SYSTEM_HEALTH_CHANGED,
+  SAP_SYSTEM_STALE_CHANGED,
   APPLICATION_INSTANCE_REGISTERED,
   APPLICATION_INSTANCE_MOVED,
   APPLICATION_INSTANCE_STATUS_CHANGED,
   APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
+  APPLICATION_INSTANCE_STALE_CHANGED,
   APPLICATION_INSTANCE_DEREGISTERED,
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_RESTORED,
@@ -18,11 +20,13 @@ import {
   DEREGISTER_APPLICATION_INSTANCE,
   appendSapsystem,
   updateSapSystemHealth,
+  updateSapSystemStaleAt,
   upsertApplicationInstances,
   removeApplicationInstance,
   updateApplicationInstanceHost,
   updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
+  updateApplicationInstanceStaleAt,
   removeSAPSystem,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -52,6 +56,10 @@ function* sapSystemHealthChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* sapSystemStaleChanged({ payload }) {
+  yield put(updateSapSystemStaleAt(payload));
 }
 
 function* applicationInstanceRegistered({ payload }) {
@@ -94,6 +102,10 @@ export function* applicationInstanceAbsentAtChanged({ payload }) {
       icon: 'ℹ️',
     })
   );
+}
+
+export function* applicationInstanceStaleChanged({ payload }) {
+  yield put(updateApplicationInstanceStaleAt(payload));
 }
 
 export function* sapSystemDeregistered({ payload: { id, sid } }) {
@@ -155,6 +167,7 @@ export function* deregisterApplicationInstance({
 export function* watchSapSystemEvents() {
   yield takeEvery(SAP_SYSTEM_REGISTERED, sapSystemRegistered);
   yield takeEvery(SAP_SYSTEM_HEALTH_CHANGED, sapSystemHealthChanged);
+  yield takeEvery(SAP_SYSTEM_STALE_CHANGED, sapSystemStaleChanged);
   yield takeEvery(
     APPLICATION_INSTANCE_REGISTERED,
     applicationInstanceRegistered
@@ -163,6 +176,10 @@ export function* watchSapSystemEvents() {
   yield takeEvery(
     APPLICATION_INSTANCE_ABSENT_AT_CHANGED,
     applicationInstanceAbsentAtChanged
+  );
+  yield takeEvery(
+    APPLICATION_INSTANCE_STALE_CHANGED,
+    applicationInstanceStaleChanged
   );
   yield takeEvery(
     APPLICATION_INSTANCE_DEREGISTERED,

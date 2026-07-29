@@ -77,6 +77,14 @@ export const sapSystemsListSlice = createSlice({
         return sapSystem;
       });
     },
+    updateSapSystemStaleAt: (state, { payload: { id, stale_at } }) => {
+      state.sapSystems = state.sapSystems.map((sapSystem) => {
+        if (sapSystem.id === id) {
+          sapSystem.stale_at = stale_at;
+        }
+        return sapSystem;
+      });
+    },
     // When a new ApplicationInstanceRegistered comes in,
     // it need to be appended to the list of the application instances of the relative sap system
     upsertApplicationInstances: (state, { payload: instances }) => {
@@ -118,6 +126,13 @@ export const sapSystemsListSlice = createSlice({
         { absent_at: instance.absent_at }
       );
     },
+    updateApplicationInstanceStaleAt: (state, { payload: instance }) => {
+      state.applicationInstances = updateInstance(
+        state.applicationInstances,
+        instance,
+        { stale_at: instance.stale_at }
+      );
+    },
     setApplicationInstanceDeregistering: (state, { payload: instance }) => {
       state.applicationInstances = updateInstance(
         state.applicationInstances,
@@ -137,23 +152,30 @@ export const sapSystemsListSlice = createSlice({
 
 export const SAP_SYSTEM_REGISTERED = 'SAP_SYSTEM_REGISTERED';
 export const SAP_SYSTEM_HEALTH_CHANGED = 'SAP_SYSTEM_HEALTH_CHANGED';
+export const SAP_SYSTEM_STALE_CHANGED = 'SAP_SYSTEM_STALE_CHANGED';
+export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
+export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
+export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 export const APPLICATION_INSTANCE_REGISTERED =
   'APPLICATION_INSTANCE_REGISTERED';
 export const APPLICATION_INSTANCE_MOVED = 'APPLICATION_INSTANCE_MOVED';
 export const APPLICATION_INSTANCE_ABSENT_AT_CHANGED =
   'APPLICATION_INSTANCE_ABSENT_AT_CHANGED';
+export const APPLICATION_INSTANCE_STALE_CHANGED =
+  'APPLICATION_INSTANCE_STALE_CHANGED';
 export const APPLICATION_INSTANCE_DEREGISTERED =
   'APPLICATION_INSTANCE_DEREGISTERED';
 export const APPLICATION_INSTANCE_STATUS_CHANGED =
   'APPLICATION_INSTANCE_STATUS_CHANGED';
-export const SAP_SYSTEM_DEREGISTERED = 'SAP_SYSTEM_DEREGISTERED';
-export const SAP_SYSTEM_RESTORED = 'SAP_SYSTEM_RESTORED';
-export const SAP_SYSTEM_UPDATED = 'SAP_SYSTEM_UPDATED';
 export const DEREGISTER_APPLICATION_INSTANCE =
   'DEREGISTER_APPLICATION_INSTANCE';
 
 export const sapSystemRegistered = createAction(SAP_SYSTEM_REGISTERED);
 export const sapSystemHealthChanged = createAction(SAP_SYSTEM_HEALTH_CHANGED);
+export const sapSystemStaleChanged = createAction(SAP_SYSTEM_STALE_CHANGED);
+export const sapSystemDeregistered = createAction(SAP_SYSTEM_DEREGISTERED);
+export const sapSystemRestored = createAction(SAP_SYSTEM_RESTORED);
+export const sapSystemUpdated = createAction(SAP_SYSTEM_UPDATED);
 export const applicationInstanceRegistered = createAction(
   APPLICATION_INSTANCE_REGISTERED
 );
@@ -163,15 +185,15 @@ export const applicationInstanceMoved = createAction(
 export const applicationInstanceAbsentAtChanged = createAction(
   APPLICATION_INSTANCE_ABSENT_AT_CHANGED
 );
+export const applicationInstanceStaleChanged = createAction(
+  APPLICATION_INSTANCE_STALE_CHANGED
+);
 export const applicationInstanceDeregistered = createAction(
   APPLICATION_INSTANCE_DEREGISTERED
 );
 export const applicationInstanceStatusChanged = createAction(
   APPLICATION_INSTANCE_STATUS_CHANGED
 );
-export const sapSystemDeregistered = createAction(SAP_SYSTEM_DEREGISTERED);
-export const sapSystemRestored = createAction(SAP_SYSTEM_RESTORED);
-export const sapSystemUpdated = createAction(SAP_SYSTEM_UPDATED);
 export const deregisterApplicationInstance = createAction(
   DEREGISTER_APPLICATION_INSTANCE
 );
@@ -191,6 +213,8 @@ export const {
   removeSAPSystem,
   updateSAPSystem,
   updateApplicationInstanceAbsentAt,
+  updateApplicationInstanceStaleAt,
+  updateSapSystemStaleAt,
   setApplicationInstanceDeregistering,
   unsetApplicationInstanceDeregistering,
 } = sapSystemsListSlice.actions;

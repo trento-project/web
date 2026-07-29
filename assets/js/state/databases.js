@@ -64,6 +64,14 @@ export const databasesListSlice = createSlice({
         return database;
       });
     },
+    updateDatabaseStaleAt: (state, { payload: { id, stale_at } }) => {
+      state.databases = state.databases.map((database) => {
+        if (database.id === id) {
+          database.stale_at = stale_at;
+        }
+        return database;
+      });
+    },
     upsertDatabaseInstances: (state, { payload: instances }) => {
       state.databaseInstances = upsertInstances(
         state.databaseInstances,
@@ -106,6 +114,13 @@ export const databasesListSlice = createSlice({
         { absent_at: instance.absent_at }
       );
     },
+    updateDatabaseInstanceStaleAt: (state, { payload: instance }) => {
+      state.databaseInstances = updateInstance(
+        state.databaseInstances,
+        instance,
+        { stale_at: instance.stale_at }
+      );
+    },
     setDatabaseInstanceDeregistering: (state, { payload: instance }) => {
       state.databaseInstances = updateInstance(
         state.databaseInstances,
@@ -131,9 +146,12 @@ export const DATABASE_REGISTERED = 'DATABASE_REGISTERED';
 export const DATABASE_DEREGISTERED = 'DATABASE_DEREGISTERED';
 export const DATABASE_RESTORED = 'DATABASE_RESTORED';
 export const DATABASE_HEALTH_CHANGED = 'DATABASE_HEALTH_CHANGED';
+export const DATABASE_STALE_CHANGED = 'DATABASE_STALE_CHANGED';
 export const DATABASE_INSTANCE_REGISTERED = 'DATABASE_INSTANCE_REGISTERED';
 export const DATABASE_INSTANCE_ABSENT_AT_CHANGED =
   'DATABASE_INSTANCE_ABSENT_AT_CHANGED';
+export const DATABASE_INSTANCE_STALE_CHANGED =
+  'DATABASE_INSTANCE_STALE_CHANGED';
 export const DATABASE_INSTANCE_DEREGISTERED = 'DATABASE_INSTANCE_DEREGISTERED';
 export const DATABASE_INSTANCE_STATUS_CHANGED =
   'DATABASE_INSTANCE_STATUS_CHANGED';
@@ -145,11 +163,15 @@ export const databaseRegistered = createAction(DATABASE_REGISTERED);
 export const databaseDeregistered = createAction(DATABASE_DEREGISTERED);
 export const databaseRestored = createAction(DATABASE_RESTORED);
 export const databaseHealthChanged = createAction(DATABASE_HEALTH_CHANGED);
+export const databaseStaleChanged = createAction(DATABASE_STALE_CHANGED);
 export const databaseInstanceRegistered = createAction(
   DATABASE_INSTANCE_REGISTERED
 );
 export const databaseInstanceAbsentAtChanged = createAction(
   DATABASE_INSTANCE_ABSENT_AT_CHANGED
+);
+export const databaseInstanceStaleChanged = createAction(
+  DATABASE_INSTANCE_STALE_CHANGED
 );
 export const databaseInstanceDeregistered = createAction(
   DATABASE_INSTANCE_DEREGISTERED
@@ -173,9 +195,11 @@ export const {
   removeDatabaseInstance,
   upsertDatabaseInstances,
   updateDatabaseHealth,
+  updateDatabaseStaleAt,
   updateDatabaseInstanceStatus,
   updateDatabaseInstanceSystemReplication,
   updateDatabaseInstanceAbsentAt,
+  updateDatabaseInstanceStaleAt,
   addTagToDatabase,
   removeTagFromDatabase,
   setDatabaseInstanceDeregistering,

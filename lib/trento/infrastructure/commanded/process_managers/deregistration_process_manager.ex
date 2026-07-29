@@ -12,6 +12,10 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
     Additionally, it handles the stale data of the different aggregates when a host
     heartbeat fails.
 
+    Note: legacy state may hold application instances whose sap_system_id now
+    belongs to a database aggregate; the commands emitted here are guarded before
+    dispatch in enrich_legacy_application_instance_commands.ex.
+
     For more information see https://hexdocs.pm/commanded/process-managers.html
   """
 

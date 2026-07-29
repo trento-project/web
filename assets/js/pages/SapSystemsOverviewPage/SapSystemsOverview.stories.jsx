@@ -110,6 +110,12 @@ export default {
       control: { type: 'object' },
       description: 'User profile abilities',
     },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
+    },
     onTagAdd: {
       action: 'Add tag',
       description: 'Called when a new tag is added',
@@ -153,6 +159,7 @@ export const Default = {
 export const SapSystems = {
   args: {
     userAbilities,
+    userTimezone: 'Etc/UTC',
     sapSystems,
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
@@ -185,6 +192,28 @@ export const SapSystemsWithDifferentTypes = {
     userAbilities,
     sapSystems: sapSystemsWithCustomTypes,
     applicationInstances: sapSystemApplicationInstances,
+    databaseInstances: {},
+  },
+};
+
+const sapSystemIDForStale = faker.string.uuid();
+const staleAt = faker.date.past().toISOString();
+export const WithStaleSystem = {
+  args: {
+    userAbilities,
+    sapSystems: sapSystemFactory.buildList(1, {
+      id: sapSystemIDForStale,
+      stale_at: staleAt,
+    }),
+    applicationInstances: [
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystemIDForStale,
+        stale_at: staleAt,
+      }),
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystemIDForStale,
+      }),
+    ],
     databaseInstances: {},
   },
 };

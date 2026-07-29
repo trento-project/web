@@ -121,10 +121,36 @@ function DateTimeInput({ value, onChange, timezone }) {
     return format(date, DATETIME_LOCAL_FORMAT, { in: tz(timezone) });
   };
 
+  // Keep the edited text in local state so the controlled value does not reset while
+  // the user types, and start empty so the field shows a placeholder rather than a
+  // preselected "now".
+  const [draft, setDraft] = useState('');
+
+  // On a date-only calendar pick Firefox leaves the time sub-fields empty, making
+  // the input value an empty string and silently dropping the selection; Chrome and
+  // Brave auto-fill the time, which is why the bug is Firefox-only. Filling in the
+  // current time when the field is focused (which happens before its native calendar
+  // opens) makes the time sub-fields non-empty, so a subsequent date-only pick yields
+  // a complete "datetime-local" value — without showing a default selection up front.
+  const fillTimeOnFocus = (e) => {
+    if (e.target.value) {
+      return;
+    }
+    setDraft(
+      format(
+        new Date(),
+        DATETIME_LOCAL_FORMAT,
+        timezone ? { in: tz(timezone) } : undefined
+      )
+    );
+  };
+
   return (
     <Input
-      value={value && dateToValue(value)}
+      value={value ? dateToValue(value) : draft}
+      onFocus={fillTimeOnFocus}
       onChange={(e) => {
+        setDraft(e.target.value);
         const utcDate = dateTimeLocalToUtcDate(e.target.value);
 
         if (utcDate) {
