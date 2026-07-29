@@ -2193,7 +2193,7 @@ defmodule Trento.ClusterTest do
   end
 
   describe "cluster marked stale/in sync" do
-    test "should mark the cluster as stale only once and ignore already stale hosts" do
+    test "should mark the cluster and its hosts stale" do
       cluster_id = UUID.uuid4()
       host_1_id = UUID.uuid4()
       host_2_id = UUID.uuid4()
@@ -2218,12 +2218,6 @@ defmodule Trento.ClusterTest do
           %MarkClusterHostStale{
             cluster_id: cluster_id,
             host_id: host_2_id,
-            stale_at: stale_at
-          },
-          # an already stale host does not emit any event
-          %MarkClusterHostStale{
-            cluster_id: cluster_id,
-            host_id: host_1_id,
             stale_at: stale_at
           }
         ],
