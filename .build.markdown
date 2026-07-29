@@ -49,6 +49,7 @@ Trento.Clusters.Cluster.md
 Trento.Clusters.ClusterEnrichmentData.md
 Trento.Clusters.Commands.CompleteChecksExecution.md
 Trento.Clusters.Commands.DeregisterClusterHost.md
+Trento.Clusters.Commands.MarkClusterHostStale.md
 Trento.Clusters.Commands.RegisterOfflineClusterHost.md
 Trento.Clusters.Commands.RegisterOnlineClusterHost.md
 Trento.Clusters.Commands.RollUpCluster.md
@@ -65,11 +66,15 @@ Trento.Clusters.Enums.SapInstanceResourceType.md
 Trento.Clusters.Enums.SbdDeviceStatus.md
 Trento.Clusters.Events.ChecksSelected.md
 Trento.Clusters.Events.ClusterChecksHealthChanged.md
+Trento.Clusters.Events.ClusterDataMarkedInSync.md
+Trento.Clusters.Events.ClusterDataMarkedStale.md
 Trento.Clusters.Events.ClusterDeregistered.md
 Trento.Clusters.Events.ClusterDetailsUpdated.md
 Trento.Clusters.Events.ClusterDiscoveredHealthChanged.md
 Trento.Clusters.Events.ClusterDistributedHealthChanged.md
 Trento.Clusters.Events.ClusterHealthChanged.md
+Trento.Clusters.Events.ClusterHostDataMarkedInSync.md
+Trento.Clusters.Events.ClusterHostDataMarkedStale.md
 Trento.Clusters.Events.ClusterHostStatusChanged.md
 Trento.Clusters.Events.ClusterRegistered.md
 Trento.Clusters.Events.ClusterReplicationHealthChanged.md

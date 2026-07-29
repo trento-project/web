@@ -50,6 +50,7 @@ Trento.Clusters.Cluster.html
 Trento.Clusters.ClusterEnrichmentData.html
 Trento.Clusters.Commands.CompleteChecksExecution.html
 Trento.Clusters.Commands.DeregisterClusterHost.html
+Trento.Clusters.Commands.MarkClusterHostStale.html
 Trento.Clusters.Commands.RegisterOfflineClusterHost.html
 Trento.Clusters.Commands.RegisterOnlineClusterHost.html
 Trento.Clusters.Commands.RollUpCluster.html
@@ -66,11 +67,15 @@ Trento.Clusters.Enums.SapInstanceResourceType.html
 Trento.Clusters.Enums.SbdDeviceStatus.html
 Trento.Clusters.Events.ChecksSelected.html
 Trento.Clusters.Events.ClusterChecksHealthChanged.html
+Trento.Clusters.Events.ClusterDataMarkedInSync.html
+Trento.Clusters.Events.ClusterDataMarkedStale.html
 Trento.Clusters.Events.ClusterDeregistered.html
 Trento.Clusters.Events.ClusterDetailsUpdated.html
 Trento.Clusters.Events.ClusterDiscoveredHealthChanged.html
 Trento.Clusters.Events.ClusterDistributedHealthChanged.html
 Trento.Clusters.Events.ClusterHealthChanged.html
+Trento.Clusters.Events.ClusterHostDataMarkedInSync.html
+Trento.Clusters.Events.ClusterHostDataMarkedStale.html
 Trento.Clusters.Events.ClusterHostStatusChanged.html
 Trento.Clusters.Events.ClusterRegistered.html
 Trento.Clusters.Events.ClusterReplicationHealthChanged.html
@@ -601,7 +606,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-0C311596.js
-dist/sidebar_items-4624B56E.js
+dist/search_data-173AECAC.js
+dist/sidebar_items-EAC13CF4.js
 index.html
 search.html

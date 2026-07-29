@@ -21,6 +21,7 @@ Cluster read model
   resources_number: term(),
   sap_instances: term(),
   selected_checks: term(),
+  stale_at: term(),
   state: term(),
   tags: term(),
   type: term(),

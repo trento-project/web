@@ -275,6 +275,8 @@ SAP workloads.
 
   - [Trento.Clusters.Commands.DeregisterClusterHost](Trento.Clusters.Commands.DeregisterClusterHost.md): Deregister a host from a cluster
 
+  - [Trento.Clusters.Commands.MarkClusterHostStale](Trento.Clusters.Commands.MarkClusterHostStale.md): Mark a cluster host data as stale.
+
   - [Trento.Clusters.Commands.RegisterOfflineClusterHost](Trento.Clusters.Commands.RegisterOfflineClusterHost.md): Command to register a host in a cluster when the host is offline.
 
   - [Trento.Clusters.Commands.RegisterOnlineClusterHost](Trento.Clusters.Commands.RegisterOnlineClusterHost.md): Register a cluster node to the monitoring system.
@@ -308,6 +310,12 @@ https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa
 
   - [Trento.Clusters.Events.ClusterChecksHealthChanged](Trento.Clusters.Events.ClusterChecksHealthChanged.md): This event is emitted when the checks health of a cluster changes.
 
+  - [Trento.Clusters.Events.ClusterDataMarkedInSync](Trento.Clusters.Events.ClusterDataMarkedInSync.md): This event is emitted when a cluster's data is marked as in sync after all its
+cluster host data is marked in sync.
+
+  - [Trento.Clusters.Events.ClusterDataMarkedStale](Trento.Clusters.Events.ClusterDataMarkedStale.md): This event is emitted when a cluster's data is marked as stale after at least
+one cluster host data is marked stale.
+
   - [Trento.Clusters.Events.ClusterDeregistered](Trento.Clusters.Events.ClusterDeregistered.md): This event is emitted when a cluster is deregistered.
 
   - [Trento.Clusters.Events.ClusterDetailsUpdated](Trento.Clusters.Events.ClusterDetailsUpdated.md): This event is emitted when cluster details are updated.
@@ -317,6 +325,12 @@ https://github.com/ClusterLabs/pacemaker/blob/main/daemons/controld/controld_fsa
 Only applicable for ASCS/ERS clusters.
 
   - [Trento.Clusters.Events.ClusterHealthChanged](Trento.Clusters.Events.ClusterHealthChanged.md): ClusterHealthChanged event
+
+  - [Trento.Clusters.Events.ClusterHostDataMarkedInSync](Trento.Clusters.Events.ClusterHostDataMarkedInSync.md): This event is emitted when a cluster host data is marked as in sync
+because the stale host sent fresh data again.
+
+  - [Trento.Clusters.Events.ClusterHostDataMarkedStale](Trento.Clusters.Events.ClusterHostDataMarkedStale.md): This event is emitted when a cluster host data is marked as stale
+because the host stopped sending fresh data.
 
   - [Trento.Clusters.Events.ClusterHostStatusChanged](Trento.Clusters.Events.ClusterHostStatusChanged.md): When a host's cluster status changes, from online to offline or vice versa,
 

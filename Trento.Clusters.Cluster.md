@@ -85,6 +85,7 @@ This domain only knows about the health, the details about the execution are sto
   rolling_up: term(),
   sap_instances: term(),
   selected_checks: term(),
+  stale_hosts: term(),
   state: term(),
   type: term()
 }

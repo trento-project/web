@@ -11,6 +11,8 @@
 
 # `cluster_restored`
 
+# `cluster_stale_changed`
+
 # `clusters`
 
 ---

@@ -61,6 +61,10 @@ A simple Factory helper module to be used within tests to generate test data
 
 # `cluster_checks_selected_event_factory`
 
+# `cluster_data_marked_in_sync_event_factory`
+
+# `cluster_data_marked_stale_event_factory`
+
 # `cluster_deregistered_event_factory`
 
 # `cluster_details_updated_event_factory`
@@ -72,6 +76,10 @@ A simple Factory helper module to be used within tests to generate test data
 # `cluster_factory`
 
 # `cluster_health_changed_event_factory`
+
+# `cluster_host_data_marked_in_sync_event_factory`
+
+# `cluster_host_data_marked_stale_event_factory`
 
 # `cluster_host_status_changed_event_factory`
 
