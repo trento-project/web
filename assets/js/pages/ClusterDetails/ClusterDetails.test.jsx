@@ -54,6 +54,40 @@ describe('ClusterDetails ClusterDetails component', () => {
     expect(getByTestId('eos-svg-component')).toBeInTheDocument();
   });
 
+  it('should render a stale cluster', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const userTimezone = 'America/New_York';
+    const { id, name, health, details } = clusterFactory.build();
+
+    renderWithRouter(
+      <ClusterDetails
+        clusterID={id}
+        clusterName={name}
+        details={details}
+        hasSelectedChecks={false}
+        hosts={[]}
+        health={health}
+        staleAt={staleAt}
+        selectedChecks={[]}
+        userAbilities={userAbilities}
+        userTimezone={userTimezone}
+        onStartExecution={noop}
+        navigate={noop}
+      />
+    );
+
+    expect(
+      screen.getByText(
+        /An agent in one of the cluster hosts is not reporting since 15 Jun 2026, 06:30:00/
+      )
+    ).toBeInTheDocument();
+
+    const header = screen.getByRole('heading', {
+      name: `Pacemaker Cluster Details: ${name}`,
+    });
+    expect(within(header).getAllByTestId('eos-svg-component')).toHaveLength(2);
+  });
+
   it.each([
     {
       condition: 'checks are not selected',
