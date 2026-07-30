@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-06-14T22:42:05Z",
-    "commit": "048633810c686cd600096fbe9509b3670f997c24",
-    "run_id": "27510309906",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 24
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1638
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1097
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.09835
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.09501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.08961
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-15T20:48:24Z",
     "commit": "5ae823225c85847360779a670a13472a26487e88",
     "run_id": "27574418337",
@@ -4799,6 +4763,26 @@
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register and not move an application instance, if the instance number exists but it's in another host and the application is not clustered",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-30T19:26:20Z",
+    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
+    "run_id": "30572812261",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
+        "score": 0.05001
+      },
+      {
+        "name": "UpgradablePackagesPage::should render correctly",
+        "score": 0.05001
       }
     ]
   }
