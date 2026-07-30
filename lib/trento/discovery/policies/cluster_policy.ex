@@ -1239,6 +1239,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     MapSet.subset?(sap_resource_ids, constrained_resources)
   end
 
+  # :masters only has entries for CIBs still using the deprecated <master> tag
+  # (Pacemaker < 2.0); modern promotable clones already live in :clones.
   defp sap_clone_master_ids(%{clones: clones, masters: masters}) do
     (clones ++ masters)
     |> Enum.filter(fn %{primitive: %{type: type}} ->
