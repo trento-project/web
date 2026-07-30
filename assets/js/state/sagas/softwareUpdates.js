@@ -32,11 +32,11 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
 
     const errorCode = get(error, ['response', 'status']);
     const errors = get(error, ['response', 'data', 'errors'], []);
-    const suma_unauthorized = errors.some(
+    const smlm_unauthorized = errors.some(
       ({ detail }) => detail === 'SUSE Multi-Linux Manager settings not configured.'
     );
 
-    if (errorCode === 404 && suma_unauthorized) {
+    if (errorCode === 404 && smlm_unauthorized) {
       yield put(setSettingsNotConfigured());
     } else {
       yield put(setSettingsConfigured());
@@ -63,11 +63,11 @@ export function* fetchUpgradablePackagesPatches({ payload: { hostID } }) {
     const errorCode = get(error, ['response', 'status']);
     const errors = get(error, ['response', 'data', 'errors'], []);
 
-    const suma_unauthorized = errors.some(
+    const smlm_unauthorized = errors.some(
       ({ detail }) => detail === 'SUSE Multi-Linux Manager settings not configured.'
     );
 
-    if (errorCode === 404 && suma_unauthorized) {
+    if (errorCode === 404 && smlm_unauthorized) {
       yield put(setSettingsNotConfigured());
     } else {
       yield put(setSettingsConfigured());

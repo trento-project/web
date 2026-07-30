@@ -6,7 +6,7 @@ import { capitalize, noop } from 'lodash';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
 import { formatDateOnly } from '@lib/timezones';
 
-import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/smlm';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -36,7 +36,7 @@ const getCertificatePayload = (
   };
 };
 
-function SuseManagerSettingsModal({
+function SuseMultiLinuxManagerSettingsModal({
   open = false,
   loading = false,
   initialUsername,
@@ -60,19 +60,19 @@ function SuseManagerSettingsModal({
 
   return (
     <Modal
-      title={`Enter ${SUMA_PRODUCT_LABEL} Settings`}
+      title={`Enter ${SMLM_PRODUCT_LABEL} Settings`}
       open={open}
       onClose={onCancel}
     >
       <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2" required>
-          {SUMA_PRODUCT_LABEL} URL
+          {SMLM_PRODUCT_LABEL} URL
         </Label>
         <div className="col-span-4">
           <Input
             value={url}
             placeholder="Enter a URL"
-            name="suma-url-input"
+            name="smlm-url-input"
             error={hasError('url', errors)}
             onChange={({ target: { value } }) => {
               setUrl(value);
@@ -80,7 +80,7 @@ function SuseManagerSettingsModal({
             }}
           />
           {hasError('url', errors) && (
-            <p aria-label="suma-url-input-error" className="text-red-500 mt-1">
+            <p aria-label="smlm-url-input-error" className="text-red-500 mt-1">
               {capitalize(getError('url', errors))}
             </p>
           )}
@@ -95,7 +95,7 @@ function SuseManagerSettingsModal({
           <div className="col-span-4">
             <Textarea
               value={certificate}
-              name="suma-cacert-input"
+              name="smlm-cacert-input"
               placeholder="Starts with -----BEGIN CERTIFICATE-----"
               error={hasError('ca_cert', errors)}
               onChange={({ target: { value } }) => {
@@ -105,7 +105,7 @@ function SuseManagerSettingsModal({
             />
             {hasError('ca_cert', errors) && (
               <p
-                aria-label="suma-cacert-input-error"
+                aria-label="smlm-cacert-input-error"
                 className="text-red-500 mt-1"
               >
                 {capitalize(getError('ca_cert', errors))}
@@ -123,7 +123,7 @@ function SuseManagerSettingsModal({
             </div>
             <div className="flex flex-row grow justify-end">
               <Button
-                aria-label="remove-suma-cacert"
+                aria-label="remove-smlm-cacert"
                 type="danger"
                 onClick={() => setEditingCertificate(true)}
               >
@@ -138,8 +138,8 @@ function SuseManagerSettingsModal({
         <div className="col-span-4">
           <Input
             value={username}
-            name="suma-username-input"
-            placeholder={`Enter a ${SUMA_PRODUCT_LABEL} username`}
+            name="smlm-username-input"
+            placeholder={`Enter a ${SMLM_PRODUCT_LABEL} username`}
             error={hasError('username', errors)}
             onChange={({ target: { value } }) => {
               setUsername(value);
@@ -148,7 +148,7 @@ function SuseManagerSettingsModal({
           />
           {hasError('username', errors) && (
             <p
-              aria-label="suma-username-input-error"
+              aria-label="smlm-username-input-error"
               className="text-red-500 mt-1"
             >
               {capitalize(getError('username', errors))}
@@ -162,8 +162,8 @@ function SuseManagerSettingsModal({
           <div className="col-span-4">
             <Password
               initialValue={password}
-              name="suma-password-input"
-              placeholder={`Enter a ${SUMA_PRODUCT_LABEL} password`}
+              name="smlm-password-input"
+              placeholder={`Enter a ${SMLM_PRODUCT_LABEL} password`}
               error={hasError('password', errors)}
               onChange={({ target: { value } }) => {
                 setPassword(value);
@@ -172,7 +172,7 @@ function SuseManagerSettingsModal({
             />
             {hasError('password', errors) && (
               <p
-                aria-label="suma-password-input-error"
+                aria-label="smlm-password-input-error"
                 className="text-red-500 mt-1"
               >
                 {capitalize(getError('password', errors))}
@@ -183,7 +183,7 @@ function SuseManagerSettingsModal({
           <div className="col-span-4 border border-gray-200 p-5 rounded-md">
             <p className="inline align-sub leading-10">•••••</p>
             <Button
-              aria-label="remove-suma-password"
+              aria-label="remove-smlm-password"
               className="float-right"
               type="danger"
               onClick={() => setEditingPassword(true)}
@@ -224,4 +224,4 @@ function SuseManagerSettingsModal({
   );
 }
 
-export default SuseManagerSettingsModal;
+export default SuseMultiLinuxManagerSettingsModal;

@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import SuseManagerSettingsModal from './SuseManagerSettingsModal';
+import SuseMultiLinuxManagerSettingsModal from './SuseMultiLinuxManagerSettingsModal';
 
 export default {
-  title: 'Components/SuseManagerSettingsModal',
-  component: SuseManagerSettingsModal,
+  title: 'Components/SuseMultiLinuxManagerSettingsModal',
+  component: SuseMultiLinuxManagerSettingsModal,
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
@@ -52,7 +52,7 @@ export const Default = {
 export const WithPreviousSettings = {
   args: {
     open: false,
-    initialUrl: 'https://demo.trento-project.io/suse_manager',
+    initialUrl: 'https://demo.trento-project.io/smlm',
     initialUsername: 'trentorulez',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
   },
@@ -61,7 +61,7 @@ export const WithPreviousSettings = {
 export const WithErrors = {
   args: {
     open: false,
-    initialUrl: 'https://demo.trento-project.io/suse_manager',
+    initialUrl: 'https://demo.trento-project.io/smlm',
     initialUsername: 'trentorulez',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     errors: [

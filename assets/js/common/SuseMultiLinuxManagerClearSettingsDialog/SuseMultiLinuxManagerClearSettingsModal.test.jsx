@@ -6,16 +6,16 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import SuseManagerClearSettingsModal from '.';
+import SuseMultiLinuxManagerClearSettingsModal from '.';
 
-describe('SuseManagerClearSettingsModal', () => {
+describe('SuseMultiLinuxManagerClearSettingsModal', () => {
   it("Clicking 'Clear Settings' button clears the SUSE Multi-Linux Manager settings", async () => {
     const user = userEvent.setup();
     const onClearSettings = jest.fn();
 
     await act(() =>
       render(
-        <SuseManagerClearSettingsModal
+        <SuseMultiLinuxManagerClearSettingsModal
           open
           onClearSettings={onClearSettings}
           onCancel={() => {}}
@@ -37,7 +37,7 @@ describe('SuseManagerClearSettingsModal', () => {
 
     await act(() =>
       render(
-        <SuseManagerClearSettingsModal
+        <SuseMultiLinuxManagerClearSettingsModal
           open
           onClearSettings={() => {}}
           onCancel={onCancel}

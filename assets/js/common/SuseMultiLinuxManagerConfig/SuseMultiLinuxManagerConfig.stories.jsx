@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import SuseManagerConfig from './SuseManagerConfig';
+import SuseMultiLinuxManagerConfig from './SuseMultiLinuxManagerConfig';
 
 export default {
-  title: 'Components/SuseManagerConfig',
-  component: SuseManagerConfig,
+  title: 'Components/SuseMultiLinuxManagerConfig',
+  component: SuseMultiLinuxManagerConfig,
   argTypes: {
     username: {
       description: 'SUSE Multi-Linux Manager username',
@@ -79,7 +79,7 @@ export const Default = {
   },
 };
 
-export const WithVeryLongSUMAUrl = {
+export const WithVeryLongSMLMUrl = {
   args: {
     ...Default.args,
     url: 'https://this.is-a-very.long.url-that-will-be-truncated.trento-project.io/suse-manager',

@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
+import SuseMultiLinuxManagerClearSettingsModal from './SuseMultiLinuxManagerClearSettingsModal';
 
 export default {
-  title: 'Components/SuseManagerClearSettingsModal',
-  component: SuseManagerClearSettingsModal,
+  title: 'Components/SuseMultiLinuxManagerClearSettingsModal',
+  component: SuseMultiLinuxManagerClearSettingsModal,
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',

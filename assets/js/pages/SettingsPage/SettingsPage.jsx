@@ -7,14 +7,14 @@ import { Transition } from '@headlessui/react';
 import { isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 
-import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/smlm';
 import { formatDateOnly } from '@lib/timezones';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
-import SuseManagerConfig from '@common/SuseManagerConfig';
-import SuseManagerSettingsModal from '@common/SuseManagerSettingsDialog';
+import SuseMultiLinuxManagerConfig from '@common/SuseMultiLinuxManagerConfig';
+import SuseMultiLinuxManagerSettingsModal from '@common/SuseMultiLinuxManagerSettingsDialog';
 import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
 import ApiKeyBox from '@common/ApiKeyBox';
 import CopyButton from '@common/CopyButton';
@@ -42,7 +42,7 @@ import AlertingSettingsModal from '@common/AlertingSettingsModal';
 
 import {
   useApiKeySettings,
-  useSuseManagerSettings,
+  useSuseMultiLinuxManagerSettings,
   useAlertingSettings,
 } from '@pages/SettingsPage/hooks';
 
@@ -75,20 +75,20 @@ function SettingsPage() {
   const { saveApiKeySettings, apiKey, apiKeyExpiration, apiKeyLoading } =
     useApiKeySettings();
   const {
-    fetchSuseManagerSettings,
-    saveSuseManagerSettings,
-    updateSuseManagerSettings,
-    testSuseManagerSettings,
-    deleteSuseManagerSettings,
-    suseManagerSettingsLoading,
-    suseManagerSettings,
-    suseManagerSettingsEntityErrors,
-    suseManagerSettingsfetchError,
-    suseManagerSettingsTesting,
-    clearSuseManagerEntityErrors,
-  } = useSuseManagerSettings();
+    fetchSuseMultiLinuxManagerSettings,
+    saveSuseMultiLinuxManagerSettings,
+    updateSuseMultiLinuxManagerSettings,
+    testSuseMultiLinuxManagerSettings,
+    deleteSuseMultiLinuxManagerSettings,
+    suseMultiLinuxManagerSettingsLoading,
+    suseMultiLinuxManagerSettings,
+    suseMultiLinuxManagerSettingsEntityErrors,
+    suseMultiLinuxManagerSettingsfetchError,
+    suseMultiLinuxManagerSettingsTesting,
+    clearSuseMultiLinuxManagerEntityErrors,
+  } = useSuseMultiLinuxManagerSettings();
 
-  const [suseManagerSettingsModalOpen, setSuseManagerSettingsModalOpen] =
+  const [suseMultiLinuxManagerSettingsModalOpen, setSuseMultiLinuxManagerSettingsModalOpen] =
     useState(false);
 
   const [apiKeySettingModalOpen, setApiKeySettingsModalOpen] = useState(false);
@@ -100,11 +100,11 @@ function SettingsPage() {
   }, []);
 
   useEffect(() => {
-    setSuseManagerSettingsModalOpen(false);
-  }, [suseManagerSettings]);
+    setSuseMultiLinuxManagerSettingsModalOpen(false);
+  }, [suseMultiLinuxManagerSettings]);
 
   const hasSoftwareUpdatesSettings =
-    Object.keys(suseManagerSettings).length > 0;
+    Object.keys(suseMultiLinuxManagerSettings).length > 0;
 
   const { abilities, timezone } = useSelector(getUserProfile);
 
@@ -272,59 +272,59 @@ function SettingsPage() {
       <section>
         <div className="py-4">
           <SettingsLoader
-            sectionName={SUMA_PRODUCT_LABEL}
+            sectionName={SMLM_PRODUCT_LABEL}
             status={calculateSettingsLoaderStatus(
-              suseManagerSettingsLoading,
-              suseManagerSettingsfetchError
+              suseMultiLinuxManagerSettingsLoading,
+              suseMultiLinuxManagerSettingsfetchError
             )}
-            onRetry={() => fetchSuseManagerSettings()}
+            onRetry={() => fetchSuseMultiLinuxManagerSettings()}
           >
-            <SuseManagerConfig
+            <SuseMultiLinuxManagerConfig
               userAbilities={abilities}
               timezone={timezone}
-              url={suseManagerSettings.url}
-              username={suseManagerSettings.username}
-              certUploadDate={suseManagerSettings.ca_uploaded_at}
+              url={suseMultiLinuxManagerSettings.url}
+              username={suseMultiLinuxManagerSettings.username}
+              certUploadDate={suseMultiLinuxManagerSettings.ca_uploaded_at}
               onEditClick={() => {
-                clearSuseManagerEntityErrors();
-                setSuseManagerSettingsModalOpen(true);
+                clearSuseMultiLinuxManagerEntityErrors();
+                setSuseMultiLinuxManagerSettingsModalOpen(true);
               }}
               clearSettingsDialogOpen={clearingSoftwareUpdatesSettings}
               onClearClick={() => setClearingSoftwareUpdatesSettings(true)}
               onClearSettings={() => {
-                deleteSuseManagerSettings();
+                deleteSuseMultiLinuxManagerSettings();
                 setClearingSoftwareUpdatesSettings(false);
               }}
               testConnectionEnabled={
-                hasSoftwareUpdatesSettings && !suseManagerSettingsTesting
+                hasSoftwareUpdatesSettings && !suseMultiLinuxManagerSettingsTesting
               }
-              onTestConnection={() => testSuseManagerSettings()}
+              onTestConnection={() => testSuseMultiLinuxManagerSettings()}
               onCancel={() => {
                 setClearingSoftwareUpdatesSettings(false);
               }}
             />
           </SettingsLoader>
-          <SuseManagerSettingsModal
-            key={`${suseManagerSettings.url}-${suseManagerSettings.username}-${suseManagerSettings.ca_uploaded_at}-${suseManagerSettingsModalOpen}`}
-            open={suseManagerSettingsModalOpen}
-            errors={suseManagerSettingsEntityErrors}
-            loading={suseManagerSettingsLoading}
-            initialUsername={suseManagerSettings.username}
-            initialUrl={suseManagerSettings.url}
-            certUploadDate={suseManagerSettings.ca_uploaded_at}
+          <SuseMultiLinuxManagerSettingsModal
+            key={`${suseMultiLinuxManagerSettings.url}-${suseMultiLinuxManagerSettings.username}-${suseMultiLinuxManagerSettings.ca_uploaded_at}-${suseMultiLinuxManagerSettingsModalOpen}`}
+            open={suseMultiLinuxManagerSettingsModalOpen}
+            errors={suseMultiLinuxManagerSettingsEntityErrors}
+            loading={suseMultiLinuxManagerSettingsLoading}
+            initialUsername={suseMultiLinuxManagerSettings.username}
+            initialUrl={suseMultiLinuxManagerSettings.url}
+            certUploadDate={suseMultiLinuxManagerSettings.ca_uploaded_at}
             timezone={timezone}
             onSave={(payload) => {
               if (
-                suseManagerSettings.username ||
-                suseManagerSettings.url ||
-                suseManagerSettings.ca_uploaded_at
+                suseMultiLinuxManagerSettings.username ||
+                suseMultiLinuxManagerSettings.url ||
+                suseMultiLinuxManagerSettings.ca_uploaded_at
               ) {
-                updateSuseManagerSettings(payload);
+                updateSuseMultiLinuxManagerSettings(payload);
               } else {
-                saveSuseManagerSettings(payload);
+                saveSuseMultiLinuxManagerSettings(payload);
               }
             }}
-            onCancel={() => setSuseManagerSettingsModalOpen(false)}
+            onCancel={() => setSuseMultiLinuxManagerSettingsModalOpen(false)}
           />
         </div>
       </section>

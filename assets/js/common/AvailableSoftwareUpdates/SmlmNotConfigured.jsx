@@ -6,11 +6,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { EOS_SETTINGS } from 'eos-icons-react';
 
-import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/smlm';
 
 import Button from '@common/Button';
 
-function SumaNotConfigured({ className, onBackToSettings = noop }) {
+function SmlmNotConfigured({ className, onBackToSettings = noop }) {
   return (
     <div
       className={classNames(
@@ -24,8 +24,8 @@ function SumaNotConfigured({ className, onBackToSettings = noop }) {
         <p className="font-bold text-2xl">Available Software Updates</p>
 
         <p>
-          {SUMA_PRODUCT_LABEL} is not configured. Go to Settings to add your{' '}
-          {SUMA_PRODUCT_LABEL} connection credentials.
+          {SMLM_PRODUCT_LABEL} is not configured. Go to Settings to add your{' '}
+          {SMLM_PRODUCT_LABEL} connection credentials.
         </p>
       </div>
 
@@ -41,4 +41,4 @@ function SumaNotConfigured({ className, onBackToSettings = noop }) {
   );
 }
 
-export default SumaNotConfigured;
+export default SmlmNotConfigured;

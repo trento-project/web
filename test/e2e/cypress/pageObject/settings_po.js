@@ -32,23 +32,23 @@ const closeToExpireApiKeyToaster = 'p:contains("API Key expires in 9 days")';
 
 // SUMA selectors
 
-const sumaUrlLabel = '[aria-label="suma-url"]';
-const sumaCertUploadDateLabel = '[aria-label="suma-cacert-upload-date"]';
-const sumaUsernameLabel = '[aria-label="suma-username"]';
-const sumaPasswordLabel = '[aria-label="suma-password"]';
+const sumaUrlLabel = '[aria-label="smlm-url"]';
+const sumaCertUploadDateLabel = '[aria-label="smlm-cacert-upload-date"]';
+const sumaUsernameLabel = '[aria-label="smlm-username"]';
+const sumaPasswordLabel = '[aria-label="smlm-password"]';
 const sumaEditSettingsButton =
   'h2:contains("Linux Manager") + span button:contains("Edit Settings")';
-const clearSumaSettingsButton = '[aria-label="clear-suma-settings"]';
-const confirmClearSumaSettings = '[aria-label="confirm-clear-suma-settings"]';
-const testSumaConnectionButton = '[aria-label="test-suma-connection"]';
+const clearSumaSettingsButton = '[aria-label="clear-smlm-settings"]';
+const confirmClearSumaSettings = '[aria-label="confirm-clear-smlm-settings"]';
+const testSumaConnectionButton = '[aria-label="test-smlm-connection"]';
 
 const sumaSettingsModal = {
   urlInput: 'label:contains("URL") + div input',
   caCertInput: 'label:contains("Certificate") + div textarea',
-  removeCaCertButton: `[aria-label="remove-suma-cacert"]`,
+  removeCaCertButton: `[aria-label="remove-smlm-cacert"]`,
   usernameInput: 'label:contains("Username") + div input',
   passwordInput: 'label:contains("Password") + div input',
-  removePasswordButton: `[aria-label="remove-suma-password"]`,
+  removePasswordButton: `[aria-label="remove-smlm-password"]`,
   cancelButton: 'button:contains("Cancel")',
   saveButton: 'button:contains("Save Settings")',
 };

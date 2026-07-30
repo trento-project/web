@@ -9,13 +9,17 @@ import '@testing-library/jest-dom';
 
 import { capitalize } from 'lodash';
 
-import SuseManagerSettingsModal from '.';
+import SuseMultiLinuxManagerSettingsModal from '.';
 
-describe('SuseManagerSettingsModal component', () => {
+describe('SuseMultiLinuxManagerSettingsModal component', () => {
   it('renders correctly', async () => {
     await act(() =>
       render(
-        <SuseManagerSettingsModal open onSave={() => {}} onChange={() => {}} />
+        <SuseMultiLinuxManagerSettingsModal
+          open
+          onSave={() => {}}
+          onChange={() => {}}
+        />
       )
     );
 
@@ -36,7 +40,7 @@ describe('SuseManagerSettingsModal component', () => {
 
     await act(() =>
       render(
-        <SuseManagerSettingsModal
+        <SuseMultiLinuxManagerSettingsModal
           open
           initialUrl={initialUrl}
           initialUsername={initialUsername}
@@ -64,7 +68,11 @@ describe('SuseManagerSettingsModal component', () => {
 
     await act(() =>
       render(
-        <SuseManagerSettingsModal open onSave={onSave} onCancel={() => {}} />
+        <SuseMultiLinuxManagerSettingsModal
+          open
+          onSave={onSave}
+          onCancel={() => {}}
+        />
       )
     );
 
@@ -102,7 +110,7 @@ describe('SuseManagerSettingsModal component', () => {
 
     await act(() =>
       render(
-        <SuseManagerSettingsModal
+        <SuseMultiLinuxManagerSettingsModal
           initialUsername={faker.word.noun()}
           initialUrl={faker.internet.url()}
           certUploadDate={faker.date.recent()}
@@ -150,7 +158,7 @@ describe('SuseManagerSettingsModal component', () => {
 
     await act(() =>
       render(
-        <SuseManagerSettingsModal
+        <SuseMultiLinuxManagerSettingsModal
           initialUsername={faker.word.noun()}
           initialUrl={faker.internet.url()}
           errors={errors}

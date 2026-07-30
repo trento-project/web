@@ -7,7 +7,7 @@ import { EOS_HEALING, EOS_PACKAGE_UPGRADE_OUTLINED } from 'eos-icons-react';
 import { noop, gt, gte } from 'lodash';
 
 import Loading from './Loading';
-import SumaNotConfigured from './SumaNotConfigured';
+import SmlmNotConfigured from './SmlmNotConfigured';
 import Indicator from './Indicator';
 
 const containerClassNames = classNames(
@@ -39,7 +39,7 @@ function AvailableSoftwareUpdates({
 
   if (!settingsConfigured) {
     return (
-      <SumaNotConfigured
+      <SmlmNotConfigured
         className={containerClassNames}
         onBackToSettings={onBackToSettings}
       />
