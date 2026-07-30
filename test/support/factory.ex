@@ -103,10 +103,14 @@ defmodule Trento.Factory do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostDataMarkedInSync,
+    ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterTombstoned,
@@ -408,6 +412,54 @@ defmodule Trento.Factory do
     }
   end
 
+  def cluster_host_data_marked_stale_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterHostDataMarkedStale.new!()
+  end
+
+  def cluster_host_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterHostDataMarkedInSync.new!()
+  end
+
+  def cluster_data_marked_stale_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterDataMarkedStale.new!()
+  end
+
+  def cluster_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterDataMarkedInSync.new!()
+  end
+
   def host_added_to_cluster_event_factory do
     %HostAddedToCluster{
       cluster_id: Faker.UUID.v4(),
@@ -467,8 +519,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_factory do
-    %ClusterReadModel{
+  def cluster_factory(attrs) do
+    cluster = %ClusterReadModel{
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sap_instances: build_list(1, :clustered_sap_instance),
@@ -477,8 +529,13 @@ defmodule Trento.Factory do
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       details: %{},
-      state: :S_IDLE
+      state: :S_IDLE,
+      stale_at: nil
     }
+
+    cluster
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 
   def cluster_enrichment_data_factory do
