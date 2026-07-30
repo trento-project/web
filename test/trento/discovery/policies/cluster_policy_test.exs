@@ -7057,7 +7057,6 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
   end
 
   describe "Pacemaker 3+ support" do
-
     test "should produce Removed status when both -removed- and -orphaned- attributes are true (new name wins)" do
       fixture =
         "ha_cluster_discovery_hana_scale_up"
@@ -7262,7 +7261,13 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
       # Combined HANA + ASCS/ERS clusters don't get per-resource details (details: nil),
       # so this only proves the dual-name attributes don't break discovery/sap_instances.
       assert {:ok,
-              [%RegisterOnlineClusterHost{details: nil, sap_instances: [_ | _], type: :hana_ascs_ers}]} =
+              [
+                %RegisterOnlineClusterHost{
+                  details: nil,
+                  sap_instances: [_ | _],
+                  type: :hana_ascs_ers
+                }
+              ]} =
                "ha_cluster_discovery_hana_ascs_ers_pacemaker3"
                |> load_discovery_event_fixture()
                |> ClusterPolicy.handle(nil)
