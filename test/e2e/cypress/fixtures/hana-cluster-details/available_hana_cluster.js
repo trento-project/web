@@ -173,7 +173,7 @@ export const availableHanaCluster = {
     {
       id: 'rsc_SAPHana_HDP_HDB10',
       type: 'ocf::suse:SAPHana',
-      role: 'Master',
+      role: 'Promoted',
       status: 'Active',
       managed: 'True',
       failCount: '0',
@@ -182,7 +182,7 @@ export const availableHanaCluster = {
     {
       id: 'rsc_SAPHana_HDP_HDB10',
       type: 'ocf::suse:SAPHana',
-      role: 'Slave',
+      role: 'Unpromoted',
       status: 'Active',
       managed: 'True',
       failCount: '0',

@@ -90,7 +90,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 1_000_000,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -162,7 +162,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 300,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -305,7 +305,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 1_000_000,
                       managed: true,
@@ -320,7 +320,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 300,
                       managed: true,
@@ -499,7 +499,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 1_000_000,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -571,7 +571,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 300,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -717,7 +717,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 1_000_000,
                       managed: true,
@@ -732,7 +732,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 300,
                       managed: true,
@@ -912,7 +912,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: true
                           },
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
@@ -992,7 +992,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_HDQ_HDB10",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -1067,7 +1067,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_HDQ_HDB10",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 0,
                       managed: true,
@@ -1082,7 +1082,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_HDQ_HDB10",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 0,
                       managed: true,
@@ -2969,7 +2969,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: true
                           },
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
@@ -3019,7 +3019,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                             managed: true,
                             multi_state: true
                           },
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana"
                         },
@@ -3090,7 +3090,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 0,
                       managed: true,
@@ -3105,7 +3105,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 0,
                       managed: true,
@@ -3269,7 +3269,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 0,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -3391,7 +3391,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 0,
                       managed: true,
@@ -3555,7 +3555,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 1_000_000,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -3627,7 +3627,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 300,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -3773,7 +3773,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 1_000_000,
                       managed: true,
@@ -3788,7 +3788,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 300,
                       managed: true,
@@ -3959,7 +3959,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 1_000_000,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Master",
+                          role: "Promoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -4009,7 +4009,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                         %ClusterResource{
                           fail_count: 300,
                           id: "rsc_SAPHana_PRD_HDB00",
-                          role: "Slave",
+                          role: "Unpromoted",
                           status: "Active",
                           type: "ocf::suse:SAPHana",
                           managed: true,
@@ -4071,7 +4071,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Master",
+                      role: "Promoted",
                       status: "Active",
                       fail_count: 1_000_000,
                       managed: true,
@@ -4086,7 +4086,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                     %ClusterResource{
                       id: "rsc_SAPHana_PRD_HDB00",
                       type: "ocf::suse:SAPHana",
-                      role: "Slave",
+                      role: "Unpromoted",
                       status: "Active",
                       fail_count: 300,
                       managed: true,
@@ -4257,7 +4257,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Master",
+                            role: "Promoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4301,7 +4301,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4345,7 +4345,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4389,7 +4389,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4433,7 +4433,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4477,7 +4477,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4550,7 +4550,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Master",
+                        role: "Promoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4565,7 +4565,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4580,7 +4580,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4595,7 +4595,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4610,7 +4610,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4625,7 +4625,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -4822,7 +4822,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4867,7 +4867,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4912,7 +4912,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Master",
+                            role: "Promoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -4983,7 +4983,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaCon_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5117,7 +5117,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaCon_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5132,7 +5132,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaCon_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5147,7 +5147,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaCon_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5162,7 +5162,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaCon_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Master",
+                        role: "Promoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5308,7 +5308,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Master",
+                            role: "Promoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5352,7 +5352,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5396,7 +5396,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5440,7 +5440,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5484,7 +5484,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5528,7 +5528,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHanaController_PRD_HDB00",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5601,7 +5601,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Master",
+                        role: "Promoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5616,7 +5616,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5631,7 +5631,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5646,7 +5646,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5661,7 +5661,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5676,7 +5676,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHanaController_PRD_HDB00",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -5852,7 +5852,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHana_PRD_HDB01",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Master",
+                            role: "Promoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5936,7 +5936,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHana_PRD_HDB01",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -5993,7 +5993,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHana_PRD_HDB01",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -6050,7 +6050,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                           %ClusterResource{
                             id: "rsc_SAPHana_PRD_HDB01",
                             type: "ocf::suse:SAPHanaController",
-                            role: "Slave",
+                            role: "Unpromoted",
                             status: "Active",
                             fail_count: 0,
                             managed: true,
@@ -6268,7 +6268,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHana_PRD_HDB01",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -6283,7 +6283,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHana_PRD_HDB01",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Master",
+                        role: "Promoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -6298,7 +6298,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHana_PRD_HDB01",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -6313,7 +6313,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                       %ClusterResource{
                         id: "rsc_SAPHana_PRD_HDB01",
                         type: "ocf::suse:SAPHanaController",
-                        role: "Slave",
+                        role: "Unpromoted",
                         status: "Active",
                         fail_count: 0,
                         managed: true,
@@ -6493,7 +6493,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                            %ClusterResource{
                              id: "rsc_SAPHanaCon_HN9_HDB09",
                              type: "ocf::suse:SAPHanaController",
-                             role: "Master",
+                             role: "Promoted",
                              status: "Active",
                              fail_count: 0,
                              managed: true,
@@ -6545,7 +6545,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                                managed: true,
                                multi_state: true
                              },
-                             role: "Slave",
+                             role: "Unpromoted",
                              status: "Active",
                              type: "ocf::suse:SAPHanaController"
                            }
@@ -6623,7 +6623,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        %ClusterResource{
                          id: "rsc_SAPHanaCon_HN9_HDB09",
                          type: "ocf::suse:SAPHanaController",
-                         role: "Master",
+                         role: "Promoted",
                          status: "Active",
                          fail_count: 0,
                          managed: true,
@@ -6638,7 +6638,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        %ClusterResource{
                          id: "rsc_SAPHanaCon_HN9_HDB09",
                          type: "ocf::suse:SAPHanaController",
-                         role: "Slave",
+                         role: "Unpromoted",
                          status: "Active",
                          fail_count: 0,
                          managed: true,
@@ -6773,7 +6773,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                            %ClusterResource{
                              id: "rsc_SAPHanaCon_HN9_HDB09",
                              type: "ocf::suse:SAPHanaController",
-                             role: "Master",
+                             role: "Promoted",
                              status: "Active",
                              fail_count: 0,
                              managed: true,
@@ -6882,7 +6882,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                        %ClusterResource{
                          id: "rsc_SAPHanaCon_HN9_HDB09",
                          type: "ocf::suse:SAPHanaController",
-                         role: "Master",
+                         role: "Promoted",
                          status: "Active",
                          fail_count: 0,
                          managed: true,
