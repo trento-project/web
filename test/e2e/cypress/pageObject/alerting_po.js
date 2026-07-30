@@ -17,6 +17,11 @@ const alertingDevEnvSettings = {
   recipientEmail: 'admin@trento-project.io',
 };
 
+const testHost = {
+  id: '9cd46919-5f19-59aa-993e-cf3736c71053',
+  hostname: 'vmhdbprd01',
+};
+
 export const apiSetDevEnvAlertingSettings = (method = 'POST') =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
@@ -42,8 +47,11 @@ export const emailIsReceived = (type) =>
     .task('searchEmailInMailpit', `Trento Alert: ${type}`)
     .then((result) => cy.wrap(result.length).should('equal', 1));
 
-export const triggerHostAlertingEmail = () => {
-  basePage.startAgentsHeartbeat(['9cd46919-5f19-59aa-993e-cf3736c71053']);
+export const heartbeatFailedEmailIsReceived = () =>
+  emailIsReceived(`Host ${testHost.hostname} stopped reporting`);
+
+export const triggerHeartbeatFailedAlertingEmail = () => {
+  basePage.startAgentsHeartbeat([testHost.id]);
   return basePage.stopAgentsHeartbeat();
 };
 

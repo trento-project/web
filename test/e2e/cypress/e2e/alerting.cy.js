@@ -38,6 +38,11 @@ context('Email Alerting feature', () => {
       alertingPage.triggerDatabaseAlertingEmail();
       alertingPage.emailIsReceived('database');
     });
+
+    it('Receive email when the host heartbeat fails', () => {
+      alertingPage.triggerHeartbeatFailedAlertingEmail();
+      alertingPage.heartbeatFailedEmailIsReceived();
+    });
   });
 
   after(() => alertingPage.deleteAllEmailsFromMailpit());
