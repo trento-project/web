@@ -28,6 +28,17 @@ databaseWithAbsentInstance.instances[1].absent_at = faker.date
   .past()
   .toISOString();
 
+const databaseWithStaleData = {
+  ...databaseFactory.build({
+    stale_at: '2026-06-15T10:30:00Z',
+    instances: [
+      databaseInstanceFactory.build({ stale_at: '2026-06-15T10:30:00Z' }),
+      databaseInstanceFactory.build(),
+    ],
+  }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
+
 function ContainerWrapper({ children }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">{children}</div>
@@ -45,6 +56,12 @@ export default {
     userAbilities: {
       control: 'array',
       description: 'Current user abilities',
+    },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
     },
     cleanUpPermittedFor: {
       control: 'array',
@@ -75,7 +92,9 @@ export const Database = {
     type: DATABASE_TYPE,
     system: database,
     userAbilities: [{ name: 'all', resource: 'all' }],
+    userTimezone: 'Etc/UTC',
     cleanUpPermittedFor: ['cleanup:database_instance'],
+    operationsEnabled: true,
   },
 };
 
@@ -90,5 +109,12 @@ export const CleanUpUnauthorized = {
   args: {
     ...DatabaseWithAbsentInstance.args,
     userAbilities: [],
+  },
+};
+
+export const DatabaseWithStaleData = {
+  args: {
+    ...Database.args,
+    system: databaseWithStaleData,
   },
 };

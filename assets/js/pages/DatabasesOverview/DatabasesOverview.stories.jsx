@@ -146,3 +146,24 @@ export const UnauthorizedCleanUp = {
     userAbilities: [],
   },
 };
+
+const databaseIDForStale = faker.string.uuid();
+const staleAt = faker.date.past().toISOString();
+export const WithStaleDatabase = {
+  args: {
+    userAbilities,
+    databases: databaseFactory.buildList(1, {
+      id: databaseIDForStale,
+      stale_at: staleAt,
+    }),
+    databaseInstances: [
+      databaseInstanceFactory.build({
+        database_id: databaseIDForStale,
+        stale_at: staleAt,
+      }),
+      databaseInstanceFactory.build({
+        database_id: databaseIDForStale,
+      }),
+    ],
+  },
+};

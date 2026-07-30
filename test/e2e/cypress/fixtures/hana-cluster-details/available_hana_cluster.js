@@ -17,6 +17,14 @@ export const availableHanaCluster = {
   sapHanaSRHealthState: 4,
   cibLastWritten: '25 Jan 2022, 15:36:59',
   hanaSystemReplicationOperationMode: 'logreplay',
+  hosts: [
+    {
+      id: '9cd46919-5f19-59aa-993e-cf3736c71053',
+    },
+    {
+      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
+    },
+  ],
   sites: [
     {
       name: 'NBG',

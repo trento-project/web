@@ -47,10 +47,8 @@ function HealthIcon({
       const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         <PassingIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -63,10 +61,8 @@ function HealthIcon({
       const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         <WarningIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -79,10 +75,8 @@ function HealthIcon({
       const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
@@ -110,10 +104,8 @@ function HealthIcon({
     default: {
       return (
         <UnknownIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}

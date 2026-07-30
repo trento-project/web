@@ -27,6 +27,8 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
     ApplicationInstanceMarkedPresent,
     ApplicationInstanceMoved,
     ApplicationInstanceStatusChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRestored,
@@ -518,6 +520,55 @@ defmodule Trento.SapSystems.Projections.SapSystemProjectorTest do
         instance_number: ^instance_number,
         host_id: ^host_id,
         sap_system_id: ^sap_system_id,
+        stale_at: nil
+      },
+      1000
+    )
+  end
+
+  test "should mark SAP system data as stale when SapSystemDataMarkedStale event is received" do
+    %{id: sap_system_id} = insert(:sap_system, stale_at: nil)
+
+    stale_at = DateTime.utc_now()
+
+    event = %SapSystemDataMarkedStale{
+      sap_system_id: sap_system_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
+
+    assert sap_system.stale_at == stale_at
+
+    assert_broadcast(
+      "sap_system_stale_changed",
+      %{
+        id: ^sap_system_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark SAP system data as fresh when SapSystemDataMarkedInSync event is received" do
+    %{id: sap_system_id} = insert(:sap_system, stale_at: DateTime.utc_now())
+
+    event = %SapSystemDataMarkedInSync{
+      sap_system_id: sap_system_id
+    }
+
+    ProjectorTestHelper.project(SapSystemProjector, event, "sap_system_projector")
+
+    sap_system = Repo.get!(SapSystemReadModel, sap_system_id)
+
+    assert sap_system.stale_at == nil
+
+    assert_broadcast(
+      "sap_system_stale_changed",
+      %{
+        id: ^sap_system_id,
         stale_at: nil
       },
       1000

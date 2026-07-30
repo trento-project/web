@@ -60,6 +60,14 @@ export const clustersListSlice = createSlice({
         return cluster;
       });
     },
+    updateClusterStaleAt: (state, { payload: { id, stale_at } }) => {
+      state.clusters = state.clusters.map((cluster) => {
+        if (cluster.id === id) {
+          cluster.stale_at = stale_at;
+        }
+        return cluster;
+      });
+    },
     startClustersLoading: (state) => {
       state.loading = true;
     },
@@ -91,6 +99,7 @@ export const CLUSTER_DEREGISTERED = 'CLUSTER_DEREGISTERED';
 export const CLUSTER_RESTORED = 'CLUSTER_RESTORED';
 export const CLUSTER_CHECKS_SELECTED = 'CLUSTER_CHECKS_SELECTED';
 export const CLUSTER_HEALTH_CHANGED = 'CLUSTER_HEALTH_CHANGED';
+export const CLUSTER_STALE_CHANGED = 'CLUSTER_STALE_CHANGED';
 
 export const clusterRegistered = createAction(CLUSTER_REGISTERED);
 export const clusterDetailsUpdated = createAction(CLUSTER_DETAILS_UPDATED);
@@ -100,6 +109,7 @@ export const clusterCibLastWrittenUpdated = createAction(
 );
 export const clusterDeregistered = createAction(CLUSTER_DEREGISTERED);
 export const clusterRestored = createAction(CLUSTER_RESTORED);
+export const clusterStaleChanged = createAction(CLUSTER_STALE_CHANGED);
 export const checksSelected = createAction(CLUSTER_CHECKS_SELECTED);
 
 export const {
@@ -111,6 +121,7 @@ export const {
   updateSelectedChecks,
   updateChecksResults,
   updateClusterHealth,
+  updateClusterStaleAt,
   updateCibLastWritten,
   startClustersLoading,
   stopClustersLoading,

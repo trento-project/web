@@ -15,8 +15,6 @@ import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
 
-import { getSapInstanceOperations } from './sapOperations';
-
 const system = {
   ...sapSystemFactory.build({
     instances: sapSystemApplicationInstanceFactory.buildList(2),
@@ -33,6 +31,19 @@ const systemWithAbsentInstance = {
 systemWithAbsentInstance.instances[1].absent_at = faker.date
   .past()
   .toISOString();
+
+const systemWithStaleData = {
+  ...sapSystemFactory.build({
+    stale_at: '2026-06-15T10:30:00Z',
+    instances: [
+      sapSystemApplicationInstanceFactory.build({
+        stale_at: '2026-06-15T10:30:00Z',
+      }),
+      sapSystemApplicationInstanceFactory.build(),
+    ],
+  }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
 
 function ContainerWrapper({ children }) {
   return (
@@ -52,6 +63,12 @@ export default {
     userAbilities: {
       control: 'array',
       description: 'Current user abilities',
+    },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
     },
     cleanUpPermittedFor: {
       control: 'array',
@@ -86,8 +103,8 @@ export const SapSystem = {
     type: APPLICATION_TYPE,
     system,
     userAbilities: [{ name: 'all', resource: 'all' }],
+    userTimezone: 'Etc/UTC',
     cleanUpPermittedFor: ['cleanup:application_instance'],
-    getInstanceOperations: getSapInstanceOperations,
     operationsEnabled: true,
   },
 };
@@ -103,5 +120,12 @@ export const CleanUpUnauthorized = {
   args: {
     ...SapSystemWithAbsentInstance.args,
     userAbilities: [],
+  },
+};
+
+export const SapSystemWithStaleData = {
+  args: {
+    ...SapSystem.args,
+    system: systemWithStaleData,
   },
 };
