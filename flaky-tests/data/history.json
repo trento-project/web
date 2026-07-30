@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-15T20:48:24Z",
-    "commit": "5ae823225c85847360779a670a13472a26487e88",
-    "run_id": "27574418337",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-15T20:49:56Z",
     "commit": "5ae823225c85847360779a670a13472a26487e88",
     "run_id": "27574418337",
@@ -4785,5 +4769,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-07-30T19:27:36Z",
+    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
+    "run_id": "30572812261",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
