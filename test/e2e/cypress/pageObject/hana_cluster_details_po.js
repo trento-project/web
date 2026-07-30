@@ -101,6 +101,10 @@ const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
 const clusterStateLabel = 'span:contains("State:")';
 const clusterStateBadge = `${clusterStateLabel} svg`;
 
+const pageTitleHealthIcons = 'h1 div svg';
+const staleDataBanner =
+  'span[data-testid="banner"]:contains("An agent in one of the cluster hosts is not reporting since")';
+
 // UI Interactions
 
 export const visit = (clusterId = '') => basePage.visit(`${url}/${clusterId}`);
@@ -528,6 +532,18 @@ export const notAuthorizedTooltipIsDisplayed = () =>
 export const notAuthorizedTooltipIsNotDisplayed = () =>
   cy.get(actionNotAuthorizedTooltip).should('not.exist');
 
+export const hanaClusterHealthIsMarkedAsStale = () =>
+  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
+
+export const hanaClusterHealthIsMarkedInSync = () =>
+  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
+
+export const hanaClusterStaleBannerIsDisplayed = () =>
+  cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
+
+export const hanaClusterStaleBannerIsNotDisplayed = () =>
+  cy.get(staleDataBanner).should('not.exist');
+
 // API
 
 export const interceptGetChecks = () =>
@@ -590,6 +606,15 @@ export const deregisterAngiClusterCostOptHosts = () =>
   cy
     .wrap(availableAngiCluster.hosts)
     .each(({ id }) => basePage.apiDeregisterHost(id));
+
+export const startHanaClusterAgentsHeartbeat = () =>
+  basePage.startAgentsHeartbeat(availableHanaCluster.hosts.map(({ id }) => id));
+
+export const startHanaClusterAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([availableHanaCluster.hosts[1].id]);
+
+export const stopHanaClusterAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([availableHanaCluster.hosts[1].id]);
 
 // Helpers
 
