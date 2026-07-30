@@ -292,10 +292,7 @@
                 "Provider": "suse",
                 "Type": "SAPHanaTopology"
               }
-            }
-          ],
-          "Groups": null,
-          "Masters": [
+            },
             {
               "Id": "msl_SAPHanaController_PRD_HDB00",
               "MetaAttributes": [
@@ -303,6 +300,16 @@
                   "Id": "msl_SAPHanaController_PRD_HDB00-meta_attributes-master-max",
                   "Name": "master-max",
                   "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHanaController_PRD_HDB00-meta_attributes-promoted-max",
+                  "Name": "promoted-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHanaController_PRD_HDB00-meta_attributes-promotable",
+                  "Name": "promotable",
+                  "Value": "true"
                 },
                 {
                   "Id": "msl_SAPHanaController_PRD_HDB00-meta_attributes-clone-node-max",
@@ -372,14 +379,14 @@
                     "Id": "rsc_SAPHanaController_PRD_HDB00-monitor-60",
                     "Interval": "60",
                     "Name": "monitor",
-                    "Role": "Master",
+                    "Role": "Promoted",
                     "Timeout": "700"
                   },
                   {
                     "Id": "rsc_SAPHanaController_PRD_HDB00-monitor-61",
                     "Interval": "61",
                     "Name": "monitor",
-                    "Role": "Slave",
+                    "Role": "Unpromoted",
                     "Timeout": "700"
                   }
                 ],
@@ -388,6 +395,8 @@
               }
             }
           ],
+          "Groups": null,
+          "Masters": null,
           "Primitives": [
             {
               "Class": "stonith",
@@ -508,7 +517,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Master"
+              "Role": "Promoted"
             },
             {
               "Active": true,
@@ -526,7 +535,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             },
             {
               "Active": true,
@@ -544,7 +553,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             },
             {
               "Active": true,
@@ -562,7 +571,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             },
             {
               "Active": true,
@@ -580,7 +589,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             },
             {
               "Active": true,
@@ -598,7 +607,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             }
           ],
           "Unique": false

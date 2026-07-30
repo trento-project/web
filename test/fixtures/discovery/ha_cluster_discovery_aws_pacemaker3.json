@@ -37,6 +37,11 @@
               "Value": "true"
             },
             {
+              "Id": "cib-bootstrap-options-fencing-action",
+              "Name": "fencing-action",
+              "Value": "off"
+            },
+            {
               "Id": "cib-bootstrap-options-stonith-action",
               "Name": "stonith-action",
               "Value": "off"
@@ -282,7 +287,8 @@
               ]
             }
           ],
-          "Masters": [
+          "Masters": null,
+          "Clones": [
             {
               "Id": "msl_SAPHana_PRD_HDB00",
               "MetaAttributes": [
@@ -295,6 +301,11 @@
                   "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-clone-node-max",
                   "Name": "clone-node-max",
                   "Value": "1"
+                },
+                {
+                  "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-promotable",
+                  "Name": "promotable",
+                  "Value": "true"
                 },
                 {
                   "Id": "msl_SAPHana_PRD_HDB00-meta_attributes-interleave",
@@ -360,22 +371,20 @@
                   {
                     "Id": "rsc_SAPHana_PRD_HDB00-monitor-60",
                     "Name": "monitor",
-                    "Role": "Master",
+                    "Role": "Promoted",
                     "Interval": "60",
                     "Timeout": "700"
                   },
                   {
                     "Id": "rsc_SAPHana_PRD_HDB00-monitor-61",
                     "Name": "monitor",
-                    "Role": "Slave",
+                    "Role": "Unpromoted",
                     "Interval": "61",
                     "Timeout": "700"
                   }
                 ]
               }
-            }
-          ],
-          "Clones": [
+            },
             {
               "Id": "cln_SAPHanaTopology_PRD_HDB00",
               "MetaAttributes": [
@@ -738,7 +747,7 @@
             {
               "Id": "rsc_SAPHana_PRD_HDB00",
               "Agent": "ocf::suse:SAPHana",
-              "Role": "Master",
+              "Role": "Promoted",
               "Active": true,
               "Orphaned": false,
               "Removed": false,
@@ -756,7 +765,7 @@
             {
               "Id": "rsc_SAPHana_PRD_HDB00",
               "Agent": "ocf::suse:SAPHana",
-              "Role": "Slave",
+              "Role": "Unpromoted",
               "Active": true,
               "Orphaned": false,
               "Removed": false,

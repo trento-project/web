@@ -50,6 +50,11 @@
               "Value": "true"
             },
             {
+              "Id": "cib-bootstrap-options-fencing-action",
+              "Name": "fencing-action",
+              "Value": "reboot"
+            },
+            {
               "Id": "cib-bootstrap-options-stonith-action",
               "Name": "stonith-action",
               "Value": "reboot"
@@ -485,7 +490,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Master"
+              "Role": "Promoted"
             },
             {
               "Active": true,
@@ -503,7 +508,7 @@
               "NodesRunningOn": 1,
               "Orphaned": false,
               "Removed": false,
-              "Role": "Slave"
+              "Role": "Unpromoted"
             }
           ],
           "Unique": false
