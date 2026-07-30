@@ -7,6 +7,8 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
   import Swoosh.Email
   use TrentoWeb, :html
 
+  alias Trento.Infrastructure.Alerting.Emails.EmailLayout
+
   embed_templates "email_templates/*"
 
   def api_key_expired(sender: sender, recipient: recipient) do
