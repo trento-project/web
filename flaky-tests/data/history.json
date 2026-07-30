@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-15T20:49:56Z",
-    "commit": "5ae823225c85847360779a670a13472a26487e88",
-    "run_id": "27574418337",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.04751
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-15T21:05:52Z",
     "commit": "5ae823225c85847360779a670a13472a26487e88",
     "run_id": "27574904204",
@@ -4780,5 +4764,81 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-07-30T22:58:41Z",
+    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
+    "run_id": "30576678355",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 10
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1122
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1122
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.08281
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.06641
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.06641
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.06641
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.06477
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.06477
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.06477
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.06477
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.04141
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.02501
+      },
+      {
+        "name": "should allow to deregister a host after clean-up confirmation::Host Details Deregistration \"Clean up\" button should deregister a host should allow to deregister a host after clean-up confirmation",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed::Host Details Deregistration \"Clean up\" button should be visible only for an unhealthy host should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
