@@ -69,19 +69,19 @@ describe('AvailableSoftwareUpdates component', () => {
     expect(screen.getAllByLabelText('Loading')).toHaveLength(1);
   });
 
-  it('renders "SUSE Manager is not configured"', () => {
+  it('renders "SUSE Multi-Linux Manager is not configured"', () => {
     render(<AvailableSoftwareUpdates settingsConfigured={false} />);
 
     expect(
       screen.getByText(
-        'SUSE Multi-Linux Manager is not configured. Go to Settings to add your SUSE Manager connection credentials.'
+        'SUSE Multi-Linux Manager is not configured. Go to Settings to add your SUSE Multi-Linux Manager connection credentials.'
       )
     ).toBeVisible();
 
     expect(screen.getByRole('button', { name: 'Settings' })).toBeVisible();
   });
 
-  it('should navigate to a SUSE Manager view', async () => {
+  it('should navigate to a SUSE Multi-Linux Manager view', async () => {
     const user = userEvent.setup();
     const relevantPatches = faker.number.int({ min: 1 });
     const upgradablePackages = faker.number.int();
@@ -102,7 +102,7 @@ describe('AvailableSoftwareUpdates component', () => {
     expect(navigateToPatches).toHaveBeenCalled();
   });
 
-  it('should not navigate to a SUSE Manager view when erroring', async () => {
+  it('should not navigate to a SUSE Multi-Linux Manager view when erroring', async () => {
     const user = userEvent.setup();
     const navigateToPatches = jest.fn();
     const tooltip = faker.lorem.words({ min: 3, max: 5 });

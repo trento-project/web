@@ -4,10 +4,7 @@
 import React from 'react';
 import { defaultTo, noop } from 'lodash';
 
-import {
-  SUMA_PRODUCT_LABEL,
-  SUMA_PRODUCT_LABEL_SHORT,
-} from '@lib/model/suse_manager';
+import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 import Button from '@common/Button';
 
@@ -88,7 +85,7 @@ function SuseManagerConfig({
         </p>
 
         <div className="grid grid-cols-6 mt-5 items-center">
-          <div className="font-bold mb-3">{SUMA_PRODUCT_LABEL_SHORT} URL</div>
+          <div className="font-bold mb-3">{SUMA_PRODUCT_LABEL} URL</div>
           <div
             aria-label="suma-url"
             className="col-span-2 text-gray-500 mb-3 truncate pr-12"

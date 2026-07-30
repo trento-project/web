@@ -33,7 +33,7 @@ export function* fetchSoftwareUpdates({ payload: hostID }) {
     const errorCode = get(error, ['response', 'status']);
     const errors = get(error, ['response', 'data', 'errors'], []);
     const suma_unauthorized = errors.some(
-      ({ detail }) => detail === 'SUSE Manager settings not configured.'
+      ({ detail }) => detail === 'SUSE Multi-Linux Manager settings not configured.'
     );
 
     if (errorCode === 404 && suma_unauthorized) {
@@ -64,7 +64,7 @@ export function* fetchUpgradablePackagesPatches({ payload: { hostID } }) {
     const errors = get(error, ['response', 'data', 'errors'], []);
 
     const suma_unauthorized = errors.some(
-      ({ detail }) => detail === 'SUSE Manager settings not configured.'
+      ({ detail }) => detail === 'SUSE Multi-Linux Manager settings not configured.'
     );
 
     if (errorCode === 404 && suma_unauthorized) {

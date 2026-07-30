@@ -274,7 +274,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     do: String.trim_trailing(base_url, "/") <> "/rhn/manager/api"
 
   defp try_login(_, _, _, _, 0) do
-    Logger.error("Failed to Log into SUSE Manager. Max retries reached.")
+    Logger.error("Failed to Log into SUSE Multi-Linux Manager. Max retries reached.")
     {:error, :max_login_retries_reached}
   end
 
@@ -284,7 +284,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
         successful_login
 
       {:error, reason} ->
-        Logger.error("Failed to Log into SUSE Manager, retrying...", error: inspect(reason))
+        Logger.error("Failed to Log into SUSE Multi-Linux Manager, retrying...", error: inspect(reason))
         try_login(url, username, password, ca_cert, retry - 1)
     end
   end
@@ -292,18 +292,18 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   defp do_login(url, username, password, ca_cert) do
     case http_executor().login(url, username, password, ca_cert) do
       {:ok, %HTTPoison.Response{headers: headers, status_code: 200} = response} ->
-        Logger.debug("Successfully logged into SUMA #{inspect(response)}")
+        Logger.debug("Successfully logged into SUSE Multi-Linux Manager #{inspect(response)}")
         {:ok, get_session_cookies(headers)}
 
       {:ok, %HTTPoison.Response{status_code: _} = response} ->
         Logger.error(
-          "Failed to login to SUSE Manager due to unsuccessful response. Response: #{inspect(response)}"
+          "Failed to login to SUSE Multi-Linux Manager due to unsuccessful response. Response: #{inspect(response)}"
         )
 
         {:error, :login_error}
 
       {:error, reason} ->
-        Logger.error("Failed to login to SUSE Manager due to an error. Error: #{inspect(reason)}")
+        Logger.error("Failed to login to SUSE Multi-Linux Manager due to an error. Error: #{inspect(reason)}")
         {:error, :login_error}
     end
   end
@@ -346,7 +346,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
 
   defp extract_system_id({:ok, response}) do
     Logger.error(
-      "Could not get system id for host from SUMA result. Result: #{inspect(response)}"
+      "Could not get system id for host from SUSE Multi-Linux Manager result. Result: #{inspect(response)}"
     )
 
     {:error, :system_id_not_found}

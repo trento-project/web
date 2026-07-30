@@ -186,7 +186,7 @@ export const availableResourceNameKeys = pipe(
   uniq
 )(resourceTypesToNameKeyMap);
 
-const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
+const sumaSettingsResourceType = (_entry) => 'SUSE Multi-Linux Manager Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
 const profileResourceType = (_entry) => 'Profile';
@@ -268,18 +268,18 @@ export const ACTIVITY_TYPES_CONFIG = {
     resource: (_entry) => 'API Key',
   },
   [SAVING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Saved',
-    message: (_entry) => 'SUMA Settings was saved',
+    label: 'SUSE Multi-Linux Manager Settings Saved',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings was saved',
     resource: sumaSettingsResourceType,
   },
   [CHANGING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Changed',
-    message: (_entry) => 'SUMA Settings was changed',
+    label: 'SUSE Multi-Linux Manager Settings Changed',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings was changed',
     resource: sumaSettingsResourceType,
   },
   [CLEARING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Cleared',
-    message: (_entry) => 'SUMA Settings was cleared',
+    label: 'SUSE Multi-Linux Manager Settings Cleared',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings was cleared',
     resource: sumaSettingsResourceType,
   },
   [SAVING_ALERTING_SETTINGS]: {

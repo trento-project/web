@@ -347,8 +347,8 @@ export const WithSoftwareUpdatesFailed = {
     softwareUpdatesSettingsSaved: true,
     relevantPatches: undefined,
     upgradablePackages: undefined,
-    softwareUpdatesErrorMessage: 'Connection to SUMA not working',
-    softwareUpdatesTooltip: 'Please review SUSE Manager settings',
+    softwareUpdatesErrorMessage: 'Connection to SUSE Multi-Linux Manager not working',
+    softwareUpdatesTooltip: 'Please review SUSE Multi-Linux Manager settings',
   },
 };
 

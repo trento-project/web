@@ -20,13 +20,13 @@ export default {
       },
     },
     initialUsername: {
-      description: 'Initial SUSE Manager username',
+      description: 'Initial SUSE Multi-Linux Manager username',
       control: {
         type: 'string',
       },
     },
     initialUrl: {
-      description: 'Initial SUSE Manager URL',
+      description: 'Initial SUSE Multi-Linux Manager URL',
       control: {
         type: 'string',
       },

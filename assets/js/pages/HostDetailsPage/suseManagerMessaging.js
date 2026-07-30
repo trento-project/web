@@ -1,14 +1,13 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
+import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 export const getSoftwareUpdatesErrorMessage = (errors) => {
   const hostNotFoundInSUMA = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail ===
-        `No system ID was found on ${SUMA_PRODUCT_LABEL_SHORT} for this host.`
+      detail === `No system ID was found on ${SUMA_PRODUCT_LABEL} for this host.`
   );
 
   const connectionNotWorking = errors.some(
@@ -16,11 +15,11 @@ export const getSoftwareUpdatesErrorMessage = (errors) => {
   );
 
   if (hostNotFoundInSUMA) {
-    return `Host not found in ${SUMA_PRODUCT_LABEL_SHORT}`;
+    return `Host not found in ${SUMA_PRODUCT_LABEL}`;
   }
 
   if (connectionNotWorking) {
-    return `Connection to ${SUMA_PRODUCT_LABEL_SHORT} not working`;
+    return `Connection to ${SUMA_PRODUCT_LABEL} not working`;
   }
 
   return 'Unknown';
@@ -30,8 +29,7 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
   const hostNotFoundInSUMA = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail ===
-        `No system ID was found on ${SUMA_PRODUCT_LABEL_SHORT} for this host.`
+      detail === `No system ID was found on ${SUMA_PRODUCT_LABEL} for this host.`
   );
 
   const connectionNotWorking = errors.some(
@@ -39,11 +37,11 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
   );
 
   if (hostNotFoundInSUMA) {
-    return `Contact your ${SUMA_PRODUCT_LABEL_SHORT} admin to ensure the host is managed by ${SUMA_PRODUCT_LABEL_SHORT}`;
+    return `Contact your ${SUMA_PRODUCT_LABEL} admin to ensure the host is managed by ${SUMA_PRODUCT_LABEL}`;
   }
 
   if (connectionNotWorking) {
-    return `Please review ${SUMA_PRODUCT_LABEL_SHORT} settings`;
+    return `Please review ${SUMA_PRODUCT_LABEL} settings`;
   }
 
   if (errors.length) {

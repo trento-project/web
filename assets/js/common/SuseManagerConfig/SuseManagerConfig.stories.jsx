@@ -8,23 +8,24 @@ export default {
   component: SuseManagerConfig,
   argTypes: {
     username: {
-      description: 'SUSE Manager username',
+      description: 'SUSE Multi-Linux Manager username',
       control: {
         type: 'text',
       },
     },
     userAbilities: {
-      description: 'Users abilities that allow changing SUSE Manager settings',
+      description:
+        'Users abilities that allow changing SUSE Multi-Linux Manager settings',
       control: 'array',
     },
     url: {
-      description: 'SUSE Manager URL',
+      description: 'SUSE Multi-Linux Manager URL',
       control: {
         type: 'text',
       },
     },
     certUploadDate: {
-      description: 'SUSE Manager self-signed certificate upload date',
+      description: 'SUSE Multi-Linux Manager self-signed certificate upload date',
       control: {
         type: 'date',
       },

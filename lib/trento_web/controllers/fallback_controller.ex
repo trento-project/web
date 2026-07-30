@@ -24,7 +24,7 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_status(:not_found)
     |> put_view(json: ErrorJSON)
-    |> render(:"404", reason: "SUSE Manager settings not configured.")
+    |> render(:"404", reason: "SUSE Multi-Linux Manager settings not configured.")
   end
 
   def call(conn, {:error, :alerting_settings_not_configured}) do
@@ -45,7 +45,7 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: ErrorJSON)
-    |> render(:"422", reason: "SUSE Manager authentication error.")
+    |> render(:"422", reason: "SUSE Multi-Linux Manager authentication error.")
   end
 
   def call(conn, {:error, :invalid_refresh_token}) do
@@ -158,7 +158,7 @@ defmodule TrentoWeb.FallbackController do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: ErrorJSON)
-    |> render(:"422", reason: "No system ID was found on SUSE Manager for this host.")
+    |> render(:"422", reason: "No system ID was found on SUSE Multi-Linux Manager for this host.")
   end
 
   def call(conn, {:error, :error_getting_patches}) do
