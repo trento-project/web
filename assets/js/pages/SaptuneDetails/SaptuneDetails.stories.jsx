@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
-import { hostFactory, saptuneStatusFactory } from '@lib/test-utils/factories';
 
 import SaptuneDetails from './SaptuneDetails';
 
@@ -32,19 +31,19 @@ export default {
   component: SaptuneDetails,
   argTypes: {
     appliedNotes: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Applied notes',
     },
     appliedSolution: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Applied solution',
     },
     enabledNotes: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Enabled notes',
     },
     enabledSolution: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Enabled solutions',
     },
     configuredVersion: {
@@ -52,36 +51,27 @@ export default {
       description: 'The configured version of saptune',
     },
     hostname: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The hostname',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     hostID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The host identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     packageVersion: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The saptune installed version',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     services: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Services',
     },
     staging: {
-      control: 'object',
+      control: { type: 'object' },
       description: 'Staging',
     },
     tuningState: {
-      control: 'select',
+      control: { type: 'select' },
       options: ['compliant', 'not compliant', 'not tuned'],
       description: 'The tuning state of saptune',
     },
@@ -122,6 +112,7 @@ export const StagingDisabled = {
     staging: { enabled: false, notes: [], solutions_ids: [] },
   },
 };
+
 export const SaptuneServiceStatusPassing = {
   args: {
     ...Default.args,
@@ -133,6 +124,7 @@ export const SaptuneServiceStatusPassing = {
     ],
   },
 };
+
 export const SaptuneServiceStatusFailing = {
   args: {
     ...Default.args,

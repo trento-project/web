@@ -1,39 +1,50 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import AIProviderLabel from '.';
+import AIProviderLabel from './AIProviderLabel';
 
 export default {
   title: 'Components/AIProviderLabel',
   component: AIProviderLabel,
   argTypes: {
     provider: {
-      control: 'select',
+      description: 'AI provider name',
+      control: { type: 'select' },
       options: ['googleai', 'openai', 'anthropic', 'unmapped_provider'],
     },
   },
 };
 
+export const Default = {
+  args: {
+    provider: 'anthropic',
+  },
+};
+
 export const GoogleAI = {
   args: {
+    ...Default.args,
     provider: 'googleai',
   },
 };
 
 export const OpenAI = {
   args: {
+    ...Default.args,
     provider: 'openai',
   },
 };
 
 export const Anthropic = {
   args: {
+    ...Default.args,
     provider: 'anthropic',
   },
 };
 
 export const UnmappedProvider = {
   args: {
+    ...Default.args,
     provider: 'unmapped_provider',
   },
 };

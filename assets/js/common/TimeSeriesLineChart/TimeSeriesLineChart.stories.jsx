@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-console */
-import React, { useEffect, useRef, useState } from 'react';
 import { faker } from '@faker-js/faker';
 import {
   addMinutes,
@@ -11,6 +10,9 @@ import {
   subHours,
   subMinutes,
 } from 'date-fns';
+import React, { useEffect, useRef, useState } from 'react';
+import { action } from 'storybook/actions';
+
 import TimeSeriesLineChart from './TimeSeriesLineChart';
 
 const now = new Date();
@@ -35,9 +37,6 @@ export default {
     title: {
       description: 'Chart title',
       control: { type: 'text' },
-      table: {
-        type: { summary: 'string' },
-      },
     },
     start: {
       description: 'Start of the time interval, as Date object',
@@ -50,17 +49,42 @@ export default {
     datasets: {
       description:
         'Array of datasets, a series of objects containing a value and a Date',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     chartWrapperClassNames: {
       description: 'Classnames for the parent of chart canvas',
+      control: { type: 'text' },
     },
     className: {
       description: 'Classname for component',
+      control: { type: 'text' },
     },
     onIntervalChange: {
       description:
         'Callback called with the selected/zoomed time interval, check the console',
+      action: 'onIntervalChange',
+    },
+    chartRef: {
+      description:
+        'Reference to the Chart.js instance for direct chart manipulation',
+      control: { type: 'object' },
+    },
+    yAxisMaxValue: {
+      description: 'Maximum value for the Y axis scale',
+      control: { type: 'number' },
+    },
+    yAxisLabelFormatter: {
+      description: 'Function to format Y axis tick labels',
+      action: 'yAxisLabelFormatter',
+    },
+    yAxisScaleType: {
+      description: 'The type of scale for the Y axis',
+      control: { type: 'select' },
+      options: ['linear', 'logarithmic'],
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
 };
@@ -113,8 +137,8 @@ export const Default = {
     title: 'CPU',
     start: subHours(now, 5),
     end: now,
-    onIntervalChange: (start, end) =>
-      console.log(`Interval changed, start ${start} - end ${end}`),
+    onIntervalChange: action('onIntervalChange'),
+    yAxisLabelFormatter: action('yAxisLabelFormatter'),
     datasets: buildDatasets(defaultTimeframes),
   },
 };
@@ -176,7 +200,7 @@ function ChartUpdaterWrapper(props) {
         );
       }
     }, 20000);
-  }, []);
+  }, [datasets]);
 
   return (
     <TimeSeriesLineChart
@@ -195,6 +219,7 @@ function ChartUpdaterWrapper(props) {
  */
 export const WithUpdates = {
   args: {
+    ...Default.args,
     title: 'CPU',
   },
   render: (args) => <ChartUpdaterWrapper {...args} />,

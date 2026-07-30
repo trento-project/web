@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { healthSummaryFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-
-import { healthSummaryFactory } from '@lib/test-utils/factories';
 
 import HomeHealthSummary from './HomeHealthSummary';
 
@@ -36,7 +35,7 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/HomeHealthSummary',
-  components: HomeHealthSummary,
+  component: HomeHealthSummary,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -49,6 +48,23 @@ export default {
       <HomeHealthSummary {...args} />
     </ContainerWrapper>
   ),
+  argTypes: {
+    sapSystemsHealth: {
+      description: 'Health summary of SAP systems',
+      control: { type: 'object' },
+    },
+    loading: {
+      description: 'Loading state of the health summary',
+      control: { type: 'boolean' },
+    },
+  },
+};
+
+export const Default = {
+  args: {
+    sapSystemsHealth: healthSummaryFactory.buildList(3),
+    loading: false,
+  },
 };
 
 export const Random = {

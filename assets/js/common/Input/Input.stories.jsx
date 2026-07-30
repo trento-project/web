@@ -1,11 +1,11 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
-
 import { EOS_SEARCH, EOS_VISIBILITY_OFF_OUTLINED } from 'eos-icons-react';
+import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
-import Input from '.';
+import Input from './Input';
 
 export default {
   title: 'Components/Input',
@@ -13,71 +13,80 @@ export default {
   argTypes: {
     id: {
       description: 'The id attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     name: {
       description: 'The name attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     type: {
       description: 'The type attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     value: {
       description: 'The value attribute of the input',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     prefix: {
       description: 'The prefix icon to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     suffix: {
       description: 'The suffix icon to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     placeholder: {
       description: 'The placeholder text to render',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     allowClear: {
       description: 'Whether the input should have a clear icon or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     error: {
       description: 'Whether the field has an error',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabled: {
       description: 'Whether the input should be disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
+    },
+    className: {
+      description: 'Additional CSS classes to apply to the input wrapper',
+      control: { type: 'text' },
+    },
+    initialValue: {
+      description:
+        'The initial default value to populate the input with when the component mounts',
+      control: { type: 'text' },
+    },
+    onChange: {
+      description: 'Callback function invoked when the input value changes',
+      action: 'onChange',
     },
   },
 };
 
-export const Default = {};
+export const Default = {
+  args: {
+    id: 'input-1',
+    name: 'default-input',
+    prefix: undefined,
+    suffix: undefined,
+    placeholder: 'Enter text...',
+    allowClear: false,
+    error: false,
+    disabled: false,
+    className: '',
+    initialValue: '',
+    onChange: action('onChange'),
+  },
+};
 
 export const WithControlledValue = {
-  args: {},
+  args: {
+    ...Default.args,
+  },
   render: () => {
     const [value, setValue] = useState('Value');
     return <Input value={value} onChange={(e) => setValue(e.target.value)} />;
@@ -86,12 +95,14 @@ export const WithControlledValue = {
 
 export const WithInitialValue = {
   args: {
+    ...Default.args,
     initialValue: 'Initial Value',
   },
 };
 
 export const WithPlaceholder = {
   args: {
+    ...Default.args,
     placeholder: 'Placeholder',
   },
 };
@@ -109,6 +120,7 @@ export const Clearable = {
     allowClear: true,
   },
 };
+
 export const ClearableDisabled = {
   args: {
     ...Clearable.args,
@@ -153,24 +165,28 @@ export const WithSuffixDisabled = {
 
 export const Checkbox = {
   args: {
+    ...Default.args,
     type: 'checkbox',
   },
 };
 
 export const Date = {
   args: {
+    ...Default.args,
     type: 'date',
   },
 };
 
 export const DateTime = {
   args: {
+    ...Default.args,
     type: 'datetime-local',
   },
 };
 
 export const File = {
   args: {
+    ...Default.args,
     type: 'file',
   },
 };

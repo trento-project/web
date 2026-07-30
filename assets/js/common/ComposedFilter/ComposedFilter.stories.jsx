@@ -4,35 +4,47 @@
 import React, { useState } from 'react';
 import { action } from 'storybook/actions';
 
-import ComposedFilter from '.';
+import ComposedFilter from './ComposedFilter';
 
 export default {
   title: 'Components/ComposedFilter',
   component: ComposedFilter,
   argTypes: {
-    options: {
-      type: { name: 'array', required: true, defaultValue: [] },
-      description:
-        'Describe the list of filters to be composed. Filters are displayed in order.',
-      control: { type: 'object' },
-    },
     value: {
-      type: { name: 'object', required: false, defaultValue: {} },
       description:
         'Key/value pairs of selected filters, where key is the filter id',
       control: { type: 'object' },
     },
     onChange: {
-      type: { name: 'function', required: false },
       description:
         'Function to call when the composed value changes. If autoApply is true, this function is called on every filter change',
-      control: { type: null },
+      action: 'onChange',
     },
     autoApply: {
       type: { name: 'boolean', required: false, defaultValue: false },
       description:
         'If true, onChange is called on every filter change; otherwise, an apply button is shown',
       control: { type: 'boolean' },
+    },
+    className: {
+      description: 'Additional CSS classes applied to the filter container',
+      control: { type: 'text' },
+    },
+    filters: {
+      description:
+        'Array of filter configuration objects defining the filters to compose',
+      control: { type: 'object' },
+    },
+    resetValue: {
+      type: 'object',
+      description:
+        'Object containing the default filter values used when reset is applied',
+      control: { type: 'object' },
+    },
+    children: {
+      description:
+        'Additional React elements displayed after the filters when not in autoApply mode',
+      control: { type: 'text' },
     },
   },
   render: ({ filters, value, onChange, autoApply }) => {
@@ -54,6 +66,8 @@ export default {
 
 export const Default = {
   args: {
+    value: {},
+    type: 'select',
     filters: [
       {
         key: 'filter1',
@@ -69,11 +83,13 @@ export const Default = {
       },
     ],
     onChange: action('onChange'),
+    autoApply: false,
   },
 };
 
 export const WithDateFilter = {
   args: {
+    ...Default.args,
     filters: [
       {
         key: 'filter1',
@@ -95,6 +111,7 @@ export const WithDateFilter = {
 
 export const WithSearchBox = {
   args: {
+    ...Default.args,
     filters: [
       {
         key: 'filter1',

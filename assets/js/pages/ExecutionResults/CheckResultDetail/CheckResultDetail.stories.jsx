@@ -1,22 +1,21 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { CRITICAL, EXPECT_ENUM, PASSING, WARNING } from '@lib/model';
 import {
+  addCriticalExpectExpectation,
+  addExpectationWithResult,
   addPassingExpectExpectation,
   addPassingExpectSameExpectation,
-  addExpectationWithResult,
-  emptyCheckResultFactory,
-  hostFactory,
-  checksExecutionCompletedFactory,
-  checkResultFactory,
-  addCriticalExpectExpectation,
-  withOverriddenValues,
+  catalogExpectEnumExpectationFactory,
   catalogExpectExpectationFactory,
   catalogExpectSameExpectationFactory,
-  catalogExpectEnumExpectationFactory,
+  checkResultFactory,
+  checksExecutionCompletedFactory,
+  emptyCheckResultFactory,
+  hostFactory,
+  withOverriddenValues,
 } from '@lib/test-utils/factories';
-
-import { EXPECT_ENUM, WARNING } from '@lib/model';
 
 import CheckResultDetail from './CheckResultDetail';
 
@@ -72,6 +71,36 @@ const executionDataWithoutValues = checksExecutionCompletedFactory.build({
 export default {
   title: 'Layouts/CheckResultDetail',
   component: CheckResultDetail,
+  argTypes: {
+    checkID: {
+      description: 'ID of the check to display details for',
+      control: { type: 'text' },
+    },
+    targetID: {
+      description: 'ID of the target associated with the check result',
+      control: { type: 'text' },
+    },
+    targetType: {
+      description: 'Type of the target',
+      options: ['host', 'cluster'],
+      control: { type: 'select' },
+    },
+    executionData: {
+      description:
+        'Data from the checks execution containing results and expectations',
+      control: { type: 'object' },
+    },
+    expectations: {
+      description:
+        'List of expectations associated with the check results for display',
+      control: { type: 'object' },
+    },
+    severity: {
+      description: 'Severity level of the check result',
+      control: { type: 'select' },
+      options: [WARNING, CRITICAL, PASSING],
+    },
+  },
 };
 
 export const Default = {
