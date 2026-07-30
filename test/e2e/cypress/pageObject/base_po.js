@@ -410,22 +410,6 @@ export const apiDeregisterHost = (hostId) =>
     } else return;
   });
 
-export const apiDeregisterProdHost = () =>
-  apiLogin().then(({ accessToken }) =>
-    cy
-      .request({
-        url: '/api/v1/hosts',
-        method: 'GET',
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then(({ body }) => {
-        const hostId = body[0].id;
-        return apiDeregisterHost(hostId);
-      })
-  );
-
 export const stopAgentsHeartbeat = (agents = []) =>
   cy.task('stopAgentsHeartbeat', { agents });
 
