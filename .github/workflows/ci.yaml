@@ -1291,7 +1291,9 @@ jobs:
   dependabot-auto-merge:
     name: Approve and merge Dependabot PRs
     if: >
-      success() &&
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
       github.event_name == 'pull_request' &&
       github.event.pull_request.user.login == 'dependabot[bot]'
     needs:
