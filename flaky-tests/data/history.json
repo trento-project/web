@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-06-16T00:07:02Z",
-    "commit": "5ae823225c85847360779a670a13472a26487e88",
-    "run_id": "27577258342",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 33
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.2974
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.1708
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1077
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.06077
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05001
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-16T20:30:24Z",
     "commit": "5ae823225c85847360779a670a13472a26487e88",
     "run_id": "27645275894",
@@ -4821,6 +4781,26 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should move an application instance if the host_id changed and the instance number already exists and the application is clustered",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-07-31T19:18:39Z",
+    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
+    "run_id": "30657225988",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.07953
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
         "score": 0.02501
       }
     ]
