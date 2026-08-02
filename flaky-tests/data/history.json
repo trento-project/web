@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-06-17T23:47:29Z",
-    "commit": "930a016bb009d6ea0c5bd99113e4d305b5582a76",
-    "run_id": "27717801421",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 25
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1735
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1436
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1138
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.1131
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.04070
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-18T19:49:19Z",
     "commit": "77ad8a953644889dfe9fe542947d1506921ec5d4",
     "run_id": "27784438869",
@@ -4876,5 +4844,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-02T18:57:02Z",
+    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
+    "run_id": "30761531900",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.5
+      }
+    ]
   }
 ]
