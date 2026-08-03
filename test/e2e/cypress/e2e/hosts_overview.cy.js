@@ -107,7 +107,6 @@ context('Hosts Overview', () => {
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
-
     describe('Health is changed to critical when the heartbeat is not sent', () => {
       beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 

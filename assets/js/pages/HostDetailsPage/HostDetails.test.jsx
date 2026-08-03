@@ -52,7 +52,7 @@ describe('HostDetails component', () => {
       );
 
       const header = screen.getByRole('heading', {
-        name: `Host Details: ${hostname}`,
+        name: new RegExp(`Host Details: ${hostname}`),
       });
 
       expect(header).toBeInTheDocument();

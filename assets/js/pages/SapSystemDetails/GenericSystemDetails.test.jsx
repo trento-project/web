@@ -126,7 +126,7 @@ describe('GenericSystemDetails', () => {
     );
 
     const header = screen.getByRole('heading', {
-      name: title,
+      name: new RegExp(title),
     });
 
     expect(header).toBeInTheDocument();

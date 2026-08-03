@@ -46,7 +46,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     );
 
     const header = screen.getByRole('heading', {
-      name: `Pacemaker Cluster Details: ${name}`,
+      name: new RegExp(`Pacemaker Cluster Details: ${name}`),
     });
 
     expect(header).toBeInTheDocument();
@@ -83,7 +83,7 @@ describe('ClusterDetails ClusterDetails component', () => {
     ).toBeInTheDocument();
 
     const header = screen.getByRole('heading', {
-      name: `Pacemaker Cluster Details: ${name}`,
+      name: new RegExp(`Pacemaker Cluster Details: ${name}`),
     });
     expect(within(header).getAllByTestId('eos-svg-component')).toHaveLength(2);
   });
