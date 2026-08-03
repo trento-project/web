@@ -115,6 +115,107 @@ defmodule Trento.DiscoveryTest do
     assert 0 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
   end
 
+  describe "prune discovery events in batches" do
+    setup do
+      original_batch_size = Application.get_env(:trento, :prune_batch_size)
+      Application.put_env(:trento, :prune_batch_size, 3)
+
+      on_exit(fn ->
+        if original_batch_size do
+          Application.put_env(:trento, :prune_batch_size, original_batch_size)
+        else
+          Application.delete_env(:trento, :prune_batch_size)
+        end
+      end)
+
+      :ok
+    end
+
+    test "should batch delete outdated discovery events" do
+      insert_list(
+        10,
+        :discovery_event,
+        discovery_type: "discovery_type",
+        payload: %{},
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+
+      # Events newer than the cutoff must be preserved.
+      newer_events =
+        insert_list(
+          2,
+          :discovery_event,
+          discovery_type: "discovery_type",
+          payload: %{},
+          inserted_at: DateTime.utc_now()
+        )
+
+      assert :ok == Discovery.prune_discovery_events(10)
+
+      remaining = DiscoveryEvent |> Trento.Repo.all() |> length()
+      assert length(newer_events) == remaining
+    end
+
+    test "should delete all outdated discovery events when they are less than the batch size" do
+      insert_list(
+        2,
+        :discovery_event,
+        discovery_type: "discovery_type",
+        payload: %{},
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+
+      # Events newer than the cutoff must be preserved.
+      newer_events =
+        insert_list(
+          2,
+          :discovery_event,
+          discovery_type: "discovery_type",
+          payload: %{},
+          inserted_at: DateTime.utc_now()
+        )
+
+      assert :ok == Discovery.prune_discovery_events(10)
+
+      remaining = DiscoveryEvent |> Trento.Repo.all() |> length()
+      assert length(newer_events) == remaining
+    end
+
+    test "should batch delete outdated discarded discovery events" do
+      insert_list(
+        10,
+        :discarded_discovery_event,
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+
+      insert_list(
+        2,
+        :discarded_discovery_event,
+        inserted_at: DateTime.utc_now()
+      )
+
+      assert :ok == Discovery.prune_discovery_events(10)
+      assert 2 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
+    end
+
+    test "should delete all outdated discarded discovery events when they are less than the batch size" do
+      insert_list(
+        2,
+        :discarded_discovery_event,
+        inserted_at: Timex.shift(DateTime.utc_now(), days: -11)
+      )
+
+      insert_list(
+        2,
+        :discarded_discovery_event,
+        inserted_at: DateTime.utc_now()
+      )
+
+      assert :ok == Discovery.prune_discovery_events(10)
+      assert 2 == DiscardedDiscoveryEvent |> Trento.Repo.all() |> length()
+    end
+  end
+
   test "should discard discovery events with invalid payload" do
     event = %{
       "agent_id" => "invalid_uuid",
