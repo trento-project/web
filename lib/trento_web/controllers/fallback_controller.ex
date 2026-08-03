@@ -41,7 +41,7 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"409", reason: "Alerting settings can not be set, enforced by ENV.")
   end
 
-  def call(conn, {:error, :suma_authentication_error}) do
+  def call(conn, {:error, :smlm_authentication_error}) do
     conn
     |> put_status(:unprocessable_entity)
     |> put_view(json: ErrorJSON)

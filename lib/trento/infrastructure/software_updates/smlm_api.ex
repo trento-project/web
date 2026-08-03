@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
+defmodule Trento.Infrastructure.SoftwareUpdates.SmlmApi do
   @moduledoc """
   SUSE Multi-Linux Manager API client supporting software updates discovery.
   """
@@ -21,7 +21,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   def login(url, username, password, ca_cert),
     do:
       url
-      |> get_suma_api_url()
+      |> get_smlm_api_url()
       |> try_login(username, password, ca_cert, @login_retries)
 
   @spec get_system_id(
@@ -30,10 +30,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           fully_qualified_domain_name :: String.t(),
           ca_cert :: String.t() | nil
         ) ::
-          {:ok, pos_integer()} | {:error, :system_id_not_found | :suma_authentication_error}
+          {:ok, pos_integer()} | {:error, :system_id_not_found | :smlm_authentication_error}
   def get_system_id(url, auth, fully_qualified_domain_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_system_id(auth, fully_qualified_domain_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -50,10 +50,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_patches | :suma_authentication_error}
+          | {:error, :error_getting_patches | :smlm_authentication_error}
   def get_relevant_patches(url, auth, system_id, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_relevant_patches(auth, system_id, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -70,10 +70,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_packages | :suma_authentication_error}
+          | {:error, :error_getting_packages | :smlm_authentication_error}
   def get_upgradable_packages(url, auth, system_id, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_upgradable_packages(auth, system_id, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -90,10 +90,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_patches | :suma_authentication_error}
+          | {:error, :error_getting_patches | :smlm_authentication_error}
   def get_patches_for_package(url, auth, package_id, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_patches_for_package(auth, package_id, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -110,10 +110,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_affected_systems | :suma_authentication_error}
+          | {:error, :error_getting_affected_systems | :smlm_authentication_error}
   def get_affected_systems(url, auth, advisory_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_affected_systems(auth, advisory_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -130,10 +130,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_errata_details | :suma_authentication_error}
+          | {:error, :error_getting_errata_details | :smlm_authentication_error}
   def get_errata_details(url, auth, advisory_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_errata_details(auth, advisory_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -150,10 +150,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_cves | :suma_authentication_error}
+          | {:error, :error_getting_cves | :smlm_authentication_error}
   def get_cves(url, auth, advisory_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_cves(auth, advisory_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -170,10 +170,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_affected_packages | :suma_authentication_error}
+          | {:error, :error_getting_affected_packages | :smlm_authentication_error}
   def get_affected_packages(url, auth, advisory_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_affected_packages(auth, advisory_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -190,10 +190,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_fixes | :suma_authentication_error}
+          | {:error, :error_getting_fixes | :smlm_authentication_error}
   def get_bugzilla_fixes(url, auth, advisory_name, ca_cert) do
     url
-    |> get_suma_api_url()
+    |> get_smlm_api_url()
     |> http_executor().get_bugzilla_fixes(auth, advisory_name, ca_cert)
     |> handle_auth_error()
     |> decode_response(
@@ -204,7 +204,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   end
 
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: 401}}),
-    do: {:error, :suma_authentication_error}
+    do: {:error, :smlm_authentication_error}
 
   defp handle_auth_error({:ok, %HTTPoison.Response{status_code: _, body: body}}),
     do: {:ok, body}
@@ -229,8 +229,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
     end
   end
 
-  defp decode_response({:error, :suma_authentication_error}, _),
-    do: {:error, :suma_authentication_error}
+  defp decode_response({:error, :smlm_authentication_error}, _),
+    do: {:error, :smlm_authentication_error}
 
   defp decode_response({:error, %HTTPoison.Error{reason: :timeout}} = error,
          error_atom: error_atom,
@@ -270,7 +270,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
 
   defp extract_result({:error, _} = error), do: error
 
-  defp get_suma_api_url(base_url),
+  defp get_smlm_api_url(base_url),
     do: String.trim_trailing(base_url, "/") <> "/rhn/manager/api"
 
   defp try_login(_, _, _, _, 0) do
@@ -311,23 +311,23 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SumaApi do
   defp get_session_cookies(login_response_headers),
     do:
       login_response_headers
-      |> Enum.filter(&suma_session_cookie?/1)
-      |> Enum.map(fn {_, value} -> get_suma_session_cookie(value) end)
+      |> Enum.filter(&smlm_session_cookie?/1)
+      |> Enum.map(fn {_, value} -> get_smlm_session_cookie(value) end)
       |> List.last()
 
-  defp suma_session_cookie?({header_name, header_value}),
+  defp smlm_session_cookie?({header_name, header_value}),
     do:
       String.match?(header_name, ~r/\Aset-cookie\z/i) &&
-        match_suma_session_cookie(header_value)
+        match_smlm_session_cookie(header_value)
 
-  defp match_suma_session_cookie(cookies),
+  defp match_smlm_session_cookie(cookies),
     do: String.starts_with?(cookies, "pxt-session-cookie=")
 
-  defp get_suma_session_cookie(cookies),
+  defp get_smlm_session_cookie(cookies),
     do:
       cookies
       |> String.split(";")
-      |> Enum.find(&match_suma_session_cookie(&1))
+      |> Enum.find(&match_smlm_session_cookie(&1))
 
   defp extract_system_id(
          {:ok,

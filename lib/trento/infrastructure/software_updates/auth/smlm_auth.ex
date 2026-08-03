@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
+defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth do
   @moduledoc """
   GenServer module to authenticate with SUSE Multi-Linux Manager
   """
@@ -11,10 +11,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   use GenServer, restart: :transient
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
-  alias Trento.Infrastructure.SoftwareUpdates.SumaApi
+  alias Trento.Infrastructure.SoftwareUpdates.SmlmApi
   alias Trento.Settings
 
-  @default_name "suma_authentication"
+  @default_name "smlm_authentication"
 
   def start_link([]), do: start_link(@default_name)
 
@@ -81,7 +81,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   defp setup_auth(%State{auth: nil} = state) do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
            Settings.get_suse_manager_settings(),
-         {:ok, auth_cookie} <- SumaApi.login(url, username, password, ca_cert) do
+         {:ok, auth_cookie} <- SmlmApi.login(url, username, password, ca_cert) do
       {:ok,
        %State{
          state

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
+defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   use Trento.DataCase
 
   import Mox
@@ -10,10 +10,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.{
     State,
-    SumaAuth
+    SmlmAuth
   }
 
-  alias Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock, as: SumaApiMock
+  alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock, as: SmlmApiMock
   alias Trento.Settings.SuseManagerSettings
 
   setup [:set_mox_from_context, :verify_on_exit!]
@@ -23,21 +23,21 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
   defp setup_initial_settings, do: {:ok, %{settings: insert_software_updates_settings()}}
 
   describe "Process start up and identification" do
-    test "should find an already started SUMA process" do
-      assert {_, {:already_started, pid}} = start_supervised(SumaAuth)
+    test "should find an already started SMLM process" do
+      assert {_, {:already_started, pid}} = start_supervised(SmlmAuth)
 
-      assert pid == SumaAuth.identify()
+      assert pid == SmlmAuth.identify()
     end
 
     test "should start a new identifiable process" do
-      assert {:ok, pid} = start_supervised({SumaAuth, @test_integration_name})
+      assert {:ok, pid} = start_supervised({SmlmAuth, @test_integration_name})
 
-      assert pid == SumaAuth.identify(@test_integration_name)
+      assert pid == SmlmAuth.identify(@test_integration_name)
     end
 
     test "should have expected initial state" do
-      {_, {:already_started, _}} = start_supervised(SumaAuth)
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {_, {:already_started, _}} = start_supervised(SmlmAuth)
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       expected_state = %State{
         url: nil,
@@ -47,8 +47,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         auth: nil
       }
 
-      assert :sys.get_state(SumaAuth.identify()) == expected_state
-      assert :sys.get_state(SumaAuth.identify(@test_integration_name)) == expected_state
+      assert :sys.get_state(SmlmAuth.identify()) == expected_state
+      assert :sys.get_state(SmlmAuth.identify(@test_integration_name)) == expected_state
     end
   end
 
@@ -57,18 +57,18 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
       setup_initial_settings()
     end
 
-    test "should redact sensitive data in SUMA state", %{
+    test "should redact sensitive data in SMLM state", %{
       settings: %SuseManagerSettings{url: url, username: username, password: password}
     } do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
+      expect(SmlmApiMock, :login, fn ^base_api_url, ^username, ^password, _ ->
         successful_login_response()
       end)
 
-      assert {:ok, %State{username: ^username}} = SumaAuth.authenticate(@test_integration_name)
+      assert {:ok, %State{username: ^username}} = SmlmAuth.authenticate(@test_integration_name)
 
       expected = %{
         url: url,
@@ -80,7 +80,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
 
       {output, _} =
         @test_integration_name
-        |> SumaAuth.identify()
+        |> SmlmAuth.identify()
         |> :sys.get_state()
         |> inspect
         |> Code.eval_string()
@@ -91,23 +91,23 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
     test "should use an already authenticated auth cookie", %{
       settings: %SuseManagerSettings{url: url, username: username, password: password}
     } do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       base_api_url = "#{url}/rhn/manager/api"
 
-      expect(SumaApiMock, :login, 1, fn ^base_api_url, ^username, ^password, _ ->
+      expect(SmlmApiMock, :login, 1, fn ^base_api_url, ^username, ^password, _ ->
         successful_login_response()
       end)
 
       assert {:ok, %State{username: ^username, ca_cert: initial_cookie}} =
-               SumaAuth.authenticate(@test_integration_name)
+               SmlmAuth.authenticate(@test_integration_name)
 
       assert {:ok, %State{username: ^username, ca_cert: ^initial_cookie}} =
-               SumaAuth.authenticate(@test_integration_name)
+               SmlmAuth.authenticate(@test_integration_name)
     end
 
     test "should handle error when reaching maximum login retries" do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       error_causes = [
         {:ok, %HTTPoison.Response{status_code: 401}},
@@ -116,10 +116,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
       ]
 
       for error_cause <- error_causes do
-        expect(SumaApiMock, :login, 5, fn _, _, _, _ -> error_cause end)
+        expect(SmlmApiMock, :login, 5, fn _, _, _, _ -> error_cause end)
 
         assert {:error, :max_login_retries_reached} =
-                 SumaAuth.authenticate(@test_integration_name)
+                 SmlmAuth.authenticate(@test_integration_name)
 
         expected_state = %State{
           url: nil,
@@ -130,13 +130,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         }
 
         assert @test_integration_name
-               |> SumaAuth.identify()
+               |> SmlmAuth.identify()
                |> :sys.get_state() == expected_state
       end
     end
 
     test "should successfully login after retrying" do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       auth_cookie = "pxt-session-cookie=4321"
 
@@ -148,7 +148,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
 
       {:ok, _} = Agent.start_link(fn -> 0 end, name: :login_call_iteration)
 
-      expect(SumaApiMock, :login, 3, fn _, _, _, _ ->
+      expect(SmlmApiMock, :login, 3, fn _, _, _, _ ->
         iteration = Agent.get(:login_call_iteration, & &1)
 
         iteration_response = Enum.at(responses, iteration)
@@ -157,15 +157,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         iteration_response
       end)
 
-      assert {:ok, %State{auth: ^auth_cookie}} = SumaAuth.authenticate(@test_integration_name)
+      assert {:ok, %State{auth: ^auth_cookie}} = SmlmAuth.authenticate(@test_integration_name)
     end
   end
 
   describe "Authenticate without settings" do
     test "should return an error when settings are not configured" do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
-      assert {:error, :settings_not_configured} = SumaAuth.authenticate(@test_integration_name)
+      assert {:error, :settings_not_configured} = SmlmAuth.authenticate(@test_integration_name)
     end
   end
 
@@ -182,9 +182,9 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         ca_cert: ca_cert
       }
     } do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
-      expect(SumaApiMock, :login, fn _, _, _, _ -> successful_login_response() end)
+      expect(SmlmApiMock, :login, fn _, _, _, _ -> successful_login_response() end)
 
       expected_state = %State{
         url: url,
@@ -194,17 +194,17 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
         auth: "pxt-session-cookie=4321"
       }
 
-      assert {:ok, ^expected_state} = SumaAuth.authenticate(@test_integration_name)
+      assert {:ok, ^expected_state} = SmlmAuth.authenticate(@test_integration_name)
 
-      assert :ok = SumaAuth.clear(@test_integration_name)
+      assert :ok = SmlmAuth.clear(@test_integration_name)
 
       assert @test_integration_name
-             |> SumaAuth.identify()
+             |> SmlmAuth.identify()
              |> :sys.get_state() == %State{}
     end
 
     test "should support clearing an already empty service state" do
-      {:ok, _} = start_supervised({SumaAuth, @test_integration_name})
+      {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
       empty_state = %State{
         url: nil,
@@ -215,13 +215,13 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuthTest do
       }
 
       assert @test_integration_name
-             |> SumaAuth.identify()
+             |> SmlmAuth.identify()
              |> :sys.get_state() == empty_state
 
-      assert :ok = SumaAuth.clear(@test_integration_name)
+      assert :ok = SmlmAuth.clear(@test_integration_name)
 
       assert @test_integration_name
-             |> SumaAuth.identify()
+             |> SmlmAuth.identify()
              |> :sys.get_state() == empty_state
     end
   end

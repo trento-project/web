@@ -10,7 +10,7 @@ config :trento, TrentoWeb.Endpoint,
 config :swoosh, local: false
 
 config :trento, Trento.SoftwareUpdates.Discovery,
-  adapter: Trento.Infrastructure.SoftwareUpdates.Suma
+  adapter: Trento.Infrastructure.SoftwareUpdates.Smlm
 
 config :trento,
   operations_enabled: true

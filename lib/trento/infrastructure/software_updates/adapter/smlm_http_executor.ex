@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
+defmodule Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor do
   @moduledoc """
   SUSE Multi-Linux Manager Http requests executor
   """
@@ -86,7 +86,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor do
             ) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
 
-  @behaviour Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+  @behaviour Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 
   @impl true
   def login(base_url, username, password, ca_cert) do

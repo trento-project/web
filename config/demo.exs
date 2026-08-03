@@ -35,7 +35,7 @@ config :trento, Trento.Infrastructure.Prometheus,
 config :trento, Trento.Charts,
   host_data_fetcher: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSmlm,
   relevant_patches_system_ids: [
     # 5870 matches to "vmhdbdev01.l15cqsinwnpu5gfyrf1r5l51fe.ax.internal.cloudapp.net" fqdn
     5870

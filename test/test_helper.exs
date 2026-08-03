@@ -13,12 +13,12 @@ Application.put_env(:trento, Trento.Infrastructure.Prometheus,
 
 Mox.defmock(Trento.Support.HttpClient.Mock, for: Trento.Support.HttpClient)
 
-Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock,
-  for: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock,
+  for: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 )
 
-Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
-  executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.Mock
+Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
+  executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock
 )
 
 Mox.defmock(Trento.SoftwareUpdates.Discovery.Mock, for: Trento.SoftwareUpdates.Discovery.Gen)
@@ -33,7 +33,7 @@ Mox.defmock(Trento.Infrastructure.SoftwareUpdates.Auth.Mock,
 
 Application.put_env(:trento, :correlations, Trento.ActivityLog.Correlations.TestCorrelations)
 
-Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Suma,
+Application.put_env(:trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.Mock
 )
 

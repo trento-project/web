@@ -3,11 +3,11 @@
 
 import { action } from 'storybook/actions';
 
-import SumaNotConfigured from './SumaNotConfigured';
+import SmlmNotConfigured from './SmlmNotConfigured';
 
 export default {
-  title: 'Components/SumaNotConfigured',
-  component: SumaNotConfigured,
+  title: 'Components/SmlmNotConfigured',
+  component: SmlmNotConfigured,
   argTypes: {
     className: {
       description: 'Additional CSS classes for the container.',
