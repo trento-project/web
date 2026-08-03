@@ -79,6 +79,15 @@ defmodule Trento.AI.Agent do
     end
   end
 
+  @doc """
+  Stops the running agent for `agent_id`, terminating any in-flight run.
+
+  Best-effort — returns the supervisor's result verbatim (`{:error, term()}`
+  when no agent is running for the id).
+  """
+  @spec stop(String.t()) :: :ok | {:error, term()}
+  def stop(agent_id), do: AgentSupervisor.stop_agent(agent_id)
+
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
          {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent) do

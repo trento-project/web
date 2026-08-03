@@ -11,6 +11,8 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
   import Trento.Factory
 
   alias Trento.Clusters.Events.{
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
@@ -275,6 +277,55 @@ defmodule Trento.Clusters.Projections.ClusterProjectorTest do
     assert_broadcast(
       "cluster_health_changed",
       %{cluster_id: ^cluster_id, name: ^name, health: ^health},
+      1000
+    )
+  end
+
+  test "should mark cluster data as stale when ClusterDataMarkedStale event is received" do
+    %{id: cluster_id} = insert(:cluster, stale_at: nil)
+
+    stale_at = DateTime.utc_now()
+
+    event = %ClusterDataMarkedStale{
+      cluster_id: cluster_id,
+      stale_at: stale_at
+    }
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+
+    cluster = Repo.get!(ClusterReadModel, cluster_id)
+
+    assert cluster.stale_at == stale_at
+
+    assert_broadcast(
+      "cluster_stale_changed",
+      %{
+        id: ^cluster_id,
+        stale_at: ^stale_at
+      },
+      1000
+    )
+  end
+
+  test "should mark cluster data as fresh when ClusterDataMarkedInSync event is received" do
+    %{id: cluster_id} = insert(:cluster, stale_at: DateTime.utc_now())
+
+    event = %ClusterDataMarkedInSync{
+      cluster_id: cluster_id
+    }
+
+    ProjectorTestHelper.project(ClusterProjector, event, "cluster_projector")
+
+    cluster = Repo.get!(ClusterReadModel, cluster_id)
+
+    assert cluster.stale_at == nil
+
+    assert_broadcast(
+      "cluster_stale_changed",
+      %{
+        id: ^cluster_id,
+        stale_at: nil
+      },
       1000
     )
   end

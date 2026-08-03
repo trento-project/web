@@ -112,6 +112,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "cluster_rolled_up" => :debug,
     "cluster_rollup_requested" => :debug,
     "cluster_tombstoned" => :debug,
+    "cluster_data_marked_stale" => :debug,
+    "cluster_data_marked_in_sync" => :debug,
     "host_added_to_cluster" => :debug,
     "host_removed_from_cluster" => :debug,
     "application_instance_deregistered" => :warning,
@@ -125,6 +127,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "application_instance_marked_present" => :info,
     "application_instance_moved" => :info,
     "application_instance_registered" => :info,
+    "application_instance_data_marked_stale" => :debug,
+    "application_instance_data_marked_in_sync" => :debug,
     "sap_system_database_health_changed" => %{
       type: :kv,
       key_suffix: "health",
@@ -143,19 +147,8 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "sap_system_rollup_requested" => :debug,
     "sap_system_tombstoned" => :debug,
     "sap_system_updated" => :info,
-    "database_cleanup_requested" => :warning,
-    "database_deregistered" => :warning,
-    "database_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
+    "sap_system_data_marked_stale" => :debug,
+    "sap_system_data_marked_in_sync" => :debug,
     "database_instance_deregistered" => :warning,
     "database_instance_health_changed" => %{
       type: :kv,
@@ -172,12 +165,29 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "database_instance_marked_present" => :info,
     "database_instance_registered" => :info,
     "database_instance_system_replication_changed" => :warning,
+    "database_instance_data_marked_stale" => :debug,
+    "database_instance_data_marked_in_sync" => :debug,
     "database_registered" => :info,
     "database_restored" => :info,
+    "database_cleanup_requested" => :warning,
+    "database_deregistered" => :warning,
+    "database_health_changed" => %{
+      type: :kv,
+      key_suffix: "health",
+      values: %{
+        "critical" => :critical,
+        "warning" => :warning,
+        "unknown" => :warning,
+        "*" => :info
+      },
+      condition: :map_value_to_severity
+    },
     "database_rolled_up" => :debug,
     "database_rollup_requested" => :info,
     "database_tenants_updated" => :info,
     "database_tombstoned" => :debug,
+    "database_data_marked_stale" => :debug,
+    "database_data_marked_in_sync" => :debug,
     "cluster_operation_requested" => :info,
     "host_operation_requested" => :info,
     "application_instance_operation_requested" => :info,

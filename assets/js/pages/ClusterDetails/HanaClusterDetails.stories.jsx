@@ -1,26 +1,30 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-
+import { providers } from '@lib/model';
+import { clusterTypes } from '@lib/model/clusters';
 import {
+  abilityFactory,
+  catalogFactory,
+  checksExecutionCompletedFactory,
+  checksExecutionRunningFactory,
   clusterFactory,
+  clusterResourceFactory,
   hanaClusterDetailsFactory,
   hanaClusterDetailsNodesFactory,
   hanaClusterSiteFactory,
   hostFactory,
-  checksExecutionCompletedFactory,
-  checksExecutionRunningFactory,
   sapSystemFactory,
-  catalogFactory,
-  clusterResourceFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import ClusterDetails from './ClusterDetails';
 import HanaClusterDetails from './HanaClusterDetails';
 
-const userAbilities = [{ name: 'all', resource: 'all' }];
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const userAbilities = [allAbility];
 
 const {
   id: clusterID,
@@ -77,13 +81,10 @@ const scaleOutDetails = hanaClusterDetailsFactory.build({
 
 const scaleOutDetailsNodeStatus = {
   ...scaleOutDetails,
-  nodes: [
-    { ...scaleOutDetails.nodes[0], status: 'Online' },
-    { ...scaleOutDetails.nodes[1], status: 'Offline' },
-    { ...scaleOutDetails.nodes[2], status: 'Standby' },
-    { ...scaleOutDetails.nodes[3], status: 'Maintenance' },
-    { ...scaleOutDetails.nodes[4], status: 'Other' },
-  ],
+  nodes: scaleOutDetails.nodes.map((node, index) => ({
+    ...node,
+    status: ['Online', 'Offline', 'Standby', 'Maintenance', 'Other'][index],
+  })),
 };
 
 const lastExecution = {
@@ -135,7 +136,7 @@ function ContainerWrapper({ children, ...props }) {
 
 export default {
   title: 'Layouts/HanaClusterDetails',
-  components: HanaClusterDetails,
+  component: HanaClusterDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -148,9 +149,69 @@ export default {
       <HanaClusterDetails {...args} />
     </ContainerWrapper>
   ),
+  argTypes: {
+    clusterID: {
+      description: 'Unique identifier for the cluster',
+      control: { type: 'text' },
+    },
+    hosts: {
+      description: 'List of hosts in the cluster',
+      control: { type: 'object' },
+    },
+    details: {
+      description: 'Detailed information about the cluster',
+      control: { type: 'object' },
+    },
+    lastExecution: {
+      description: 'Information about the last checks execution',
+      control: { type: 'object' },
+    },
+    userAbilities: {
+      description: 'List of user abilities for actions on the cluster',
+      control: { type: 'object' },
+    },
+    cibLastWritten: {
+      description: 'Timestamp when the CIB was last written',
+      control: { type: 'date' },
+    },
+    provider: {
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
+    },
+    sapSystems: {
+      description: 'Array of SAP system objects for the cluster',
+      control: { type: 'object' },
+    },
+    catalog: {
+      description: 'Catalog data (may include loading and data fields)',
+      control: { type: 'object' },
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+    },
+    navigate: {
+      description: 'Navigation function (e.g., from react-router)',
+      action: 'navigate',
+    },
+    getClusterHostOperations: {
+      description: 'Function returning available host operations for a host',
+      action: 'getClusterHostOperations',
+    },
+    clusterType: {
+      description: 'Type of the cluster',
+      control: { type: 'select' },
+      options: clusterTypes,
+    },
+    clusterSids: {
+      description: 'List of cluster SIDs',
+      control: { type: 'object' },
+    },
+  },
 };
 
-export const Hana = {
+export const Default = {
   args: {
     clusterID,
     clusterName,
@@ -167,8 +228,35 @@ export const Hana = {
     lastExecution,
     catalog,
     userAbilities,
-    onStartExecution: () => {},
-    navigate: () => {},
+    timezone: 'Etc/UTC',
+    onStartExecution: action('onStartExecution'),
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
+  },
+};
+
+export const Hana = {
+  args: {
+    clusterID,
+    clusterName,
+    selectedChecks,
+    hasSelectedChecks: true,
+    hosts,
+    clusterType,
+    cibLastWritten,
+    clusterSids: [sid],
+    provider,
+    sapSystems,
+    details,
+    state,
+    staleAt: null,
+    lastExecution,
+    catalog,
+    userAbilities,
+    userTimezone: 'Etc/UTC',
+    onStartExecution: action('onStartExecution'),
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
   },
 };
 
@@ -289,5 +377,12 @@ export const AngiArchitectureCostOptScenarioWithoutEnrichedData = {
       architecture_type: 'angi',
       hana_scenario: 'cost_optimized',
     },
+  },
+};
+
+export const Stale = {
+  args: {
+    ...Hana.args,
+    staleAt: '2026-06-15T10:30:00Z',
   },
 };

@@ -1,7 +1,13 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { abilityFactory, userFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
+
 import SuseManagerConfig from './SuseManagerConfig';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const user = userFactory.build();
 
 export default {
   title: 'Components/SuseManagerConfig',
@@ -9,62 +15,52 @@ export default {
   argTypes: {
     username: {
       description: 'SUSE Manager username',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     userAbilities: {
       description: 'Users abilities that allow changing SUSE Manager settings',
-      control: 'array',
+      control: { type: 'object' },
     },
     url: {
       description: 'SUSE Manager URL',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     certUploadDate: {
       description: 'SUSE Manager self-signed certificate upload date',
-      control: {
-        type: 'date',
-      },
+      control: { type: 'date' },
     },
     onEditClick: {
       description: 'Callback used to edit settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onEditClick',
     },
     clearSettingsDialogOpen: {
       description: "Whether the 'Clear Settings' dialog is open or not",
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     testConnectionEnabled: {
       description: "Whether the 'Test connection' button is enabled or not",
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     onClearClick: {
       description: "Callback used to open 'Clear Settings' dialog",
-      control: {
-        type: 'function',
-      },
+      action: 'onClearClick',
     },
     onClearSettings: {
       description: 'Callback used to clear settings',
-      control: {
-        type: 'function',
-      },
+      action: 'onClearSettings',
     },
     onCancel: {
       description:
         "Callback used to close the 'Edit Settings' and 'Clear Settings' dialogs",
-      control: {
-        type: 'function',
-      },
+      action: 'onCancel',
+    },
+    onTestConnection: {
+      description: 'Callback function to test the SUSE Manager connection',
+      action: 'callback',
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
 };
@@ -72,9 +68,14 @@ export default {
 export const Default = {
   args: {
     url: 'https://trento-project.io/suse-manager',
-    username: 'trentoAdm',
+    username: user.username,
     certUploadDate: '2024-01-29T08:41:47.291734Z',
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
+    onEditClick: action('onEditClick'),
+    onClearClick: action('onClearClick'),
+    onClearSettings: action('onClearSettings'),
+    onCancel: action('onCancel'),
+    onTestConnection: action('onTestConnection'),
   },
 };
 
@@ -87,7 +88,8 @@ export const WithVeryLongSUMAUrl = {
 
 export const Empty = {
   args: {
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    ...Default.args,
+    userAbilities: [allAbility],
   },
 };
 

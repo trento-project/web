@@ -180,7 +180,9 @@ function ProfilePage() {
   const handleSuccessfulAIConfigOperation =
     (successMessage) =>
     ({ data }) => {
-      setUser({ ...userState, ai_configuration: data });
+      const updatedUser = { ...userState, ai_configuration: data };
+      setUser(updatedUser);
+      dispatch(setUserInState(updatedUser));
       toast.success(successMessage);
     };
 

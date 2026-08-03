@@ -1,26 +1,33 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { aboutFactory } from '@lib/test-utils/factories';
 import React from 'react';
-import AboutPage from '.';
 
+import AboutPage from './AboutPage';
+
+const aboutData = aboutFactory.build();
 const fetchAboutPageData = () =>
   Promise.resolve({
-    data: {
-      sles_subscriptions: '27',
-      version: '1.2.0+git.dev310.1680767518.f5894f7c',
-    },
+    data: aboutData,
   });
 
 export default {
   title: 'Layouts/AboutPage',
   component: AboutPage,
+  args: {
+    onFetch: fetchAboutPageData,
+  },
+  argTypes: {
+    onFetch: {
+      description: 'Function to fetch the about page data',
+      action: 'fetch',
+    },
+  },
+};
 
+export const Default = {
   args: {
     onFetch: fetchAboutPageData,
   },
 };
-
-export function Default(args) {
-  return <AboutPage {...args} />;
-}
