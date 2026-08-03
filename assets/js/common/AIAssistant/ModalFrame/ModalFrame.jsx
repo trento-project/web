@@ -24,9 +24,6 @@ const ChatboxTrigger = forwardRef(({ disabled = false, ...props }, ref) => (
     size="none"
     className="size-full"
     disabled={disabled}
-    data-testid={
-      disabled ? 'ai-assistant-trigger-disabled' : 'ai-assistant-trigger'
-    }
     aria-label={disabled ? 'AI Assistant is disabled' : 'Open AI Assistant'}
   >
     <EOS_CHAT_BUBBLE_OUTLINED className="fill-white" />

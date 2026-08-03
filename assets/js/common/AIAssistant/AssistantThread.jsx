@@ -20,8 +20,6 @@ import {
   isConfigurationRestored,
 } from './status';
 
-const stopPointerDown = (e) => e.stopPropagation();
-
 function ThreadBanner({ children }) {
   return (
     <div
@@ -61,7 +59,7 @@ function ModelChangeBanner({ provider, model, onDismiss = noop }) {
   return (
     <ThreadBanner>
       <div className="flex items-start justify-between gap-2">
-        <span data-testid="model-change-banner">
+        <span>
           AI model changed to{' '}
           <span className="font-semibold">{getProviderLabel(provider)}</span> (
           {model}) for this conversation.
@@ -69,7 +67,6 @@ function ModelChangeBanner({ provider, model, onDismiss = noop }) {
         <Button
           type="icon"
           size="none"
-          onPointerDown={stopPointerDown}
           onClick={onDismiss}
           aria-label="Dismiss"
           className="!text-yellow-800 hover:opacity-75"

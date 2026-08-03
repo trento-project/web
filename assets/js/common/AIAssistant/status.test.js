@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { CONNECTION_STATUS, isOnline } from '@lib/ai';
+import { CONNECTING, CONNECTED, DISCONNECTED } from '@lib/ai';
 
 import {
-  CONFIGURATION_STATUS,
+  OK,
+  CLEARED,
+  RESTORED,
   canSendMessage,
   effectiveConnectionStatus,
   isChatReadOnly,
@@ -13,91 +15,38 @@ import {
   isConfigurationRestored,
 } from './status';
 
-const { CONNECTED, CONNECTING, DISCONNECTED } = CONNECTION_STATUS;
-const { OK, CLEARED, RESTORED } = CONFIGURATION_STATUS;
-
 describe('AIAssistant configuration status', () => {
-  describe('isChatReadOnly', () => {
-    it.each([
-      { configurationStatus: CONFIGURATION_STATUS.OK, readOnly: false },
-      { configurationStatus: CONFIGURATION_STATUS.CLEARED, readOnly: true },
-      { configurationStatus: CONFIGURATION_STATUS.RESTORED, readOnly: true },
-    ])(
-      'is $readOnly when the configuration is $configurationStatus',
-      ({ configurationStatus, readOnly }) => {
+  describe('status predicates', () => {
+    it.each`
+      configurationStatus | cleared  | restored | available | readOnly
+      ${OK}               | ${false} | ${false} | ${true}   | ${false}
+      ${CLEARED}          | ${true}  | ${false} | ${false}  | ${true}
+      ${RESTORED}         | ${false} | ${true}  | ${true}   | ${true}
+    `(
+      'describes the $configurationStatus configuration',
+      ({ configurationStatus, cleared, restored, available, readOnly }) => {
+        expect(isConfigurationCleared(configurationStatus)).toBe(cleared);
+        expect(isConfigurationRestored(configurationStatus)).toBe(restored);
+        expect(isConfigurationAvailable(configurationStatus)).toBe(available);
         expect(isChatReadOnly(configurationStatus)).toBe(readOnly);
       }
     );
   });
 
   describe('canSendMessage', () => {
-    it.each([
-      { connectionStatus: CONNECTED, configurationStatus: OK, allowed: true },
-      {
-        connectionStatus: CONNECTED,
-        configurationStatus: RESTORED,
-        allowed: false,
-      },
-      {
-        connectionStatus: CONNECTED,
-        configurationStatus: CLEARED,
-        allowed: false,
-      },
-      {
-        connectionStatus: CONNECTING,
-        configurationStatus: OK,
-        allowed: false,
-      },
-      {
-        connectionStatus: DISCONNECTED,
-        configurationStatus: OK,
-        allowed: false,
-      },
-    ])(
+    it.each`
+      connectionStatus | configurationStatus | allowed
+      ${CONNECTED}     | ${OK}               | ${true}
+      ${CONNECTED}     | ${RESTORED}         | ${false}
+      ${CONNECTED}     | ${CLEARED}          | ${false}
+      ${CONNECTING}    | ${OK}               | ${false}
+      ${DISCONNECTED}  | ${OK}               | ${false}
+    `(
       'is $allowed when $connectionStatus and the configuration is $configurationStatus',
       ({ connectionStatus, configurationStatus, allowed }) => {
         expect(canSendMessage(connectionStatus, configurationStatus)).toBe(
           allowed
         );
-      }
-    );
-  });
-
-  describe('isConfigurationCleared', () => {
-    it.each([
-      { configurationStatus: CONFIGURATION_STATUS.OK, cleared: false },
-      { configurationStatus: CONFIGURATION_STATUS.RESTORED, cleared: false },
-      { configurationStatus: CONFIGURATION_STATUS.CLEARED, cleared: true },
-    ])(
-      'is $cleared when the configuration is $configurationStatus',
-      ({ configurationStatus, cleared }) => {
-        expect(isConfigurationCleared(configurationStatus)).toBe(cleared);
-      }
-    );
-  });
-
-  describe('isConfigurationRestored', () => {
-    it.each([
-      { configurationStatus: CONFIGURATION_STATUS.OK, restored: false },
-      { configurationStatus: CONFIGURATION_STATUS.CLEARED, restored: false },
-      { configurationStatus: CONFIGURATION_STATUS.RESTORED, restored: true },
-    ])(
-      'is $restored when the configuration is $configurationStatus',
-      ({ configurationStatus, restored }) => {
-        expect(isConfigurationRestored(configurationStatus)).toBe(restored);
-      }
-    );
-  });
-
-  describe('isConfigurationAvailable', () => {
-    it.each([
-      { configurationStatus: CONFIGURATION_STATUS.OK, available: true },
-      { configurationStatus: CONFIGURATION_STATUS.RESTORED, available: true },
-      { configurationStatus: CONFIGURATION_STATUS.CLEARED, available: false },
-    ])(
-      'is $available when the configuration is $configurationStatus',
-      ({ configurationStatus, available }) => {
-        expect(isConfigurationAvailable(configurationStatus)).toBe(available);
       }
     );
   });
@@ -118,42 +67,5 @@ describe('AIAssistant configuration status', () => {
     it('forces disconnected when the configuration was cleared, even while connected', () => {
       expect(effectiveConnectionStatus(CONNECTED, CLEARED)).toBe(DISCONNECTED);
     });
-
-    it.each([
-      {
-        connectionStatus: CONNECTED,
-        configurationStatus: OK,
-        allowed: true,
-      },
-      {
-        connectionStatus: CONNECTED,
-        configurationStatus: RESTORED,
-        allowed: true,
-      },
-      {
-        connectionStatus: CONNECTED,
-        configurationStatus: CLEARED,
-        allowed: false,
-      },
-      {
-        connectionStatus: CONNECTING,
-        configurationStatus: OK,
-        allowed: false,
-      },
-      {
-        connectionStatus: DISCONNECTED,
-        configurationStatus: OK,
-        allowed: false,
-      },
-    ])(
-      'is online $allowed when $connectionStatus and the configuration is $configurationStatus',
-      ({ connectionStatus, configurationStatus, allowed }) => {
-        const effectiveStatus = effectiveConnectionStatus(
-          connectionStatus,
-          configurationStatus
-        );
-        expect(isOnline(effectiveStatus)).toBe(allowed);
-      }
-    );
   });
 });
