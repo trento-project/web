@@ -189,7 +189,9 @@ describe('Hosts sagas', () => {
 
     const settingsResponse = softwareUpdatesSettingsFactory.build();
 
-    axiosMock.onGet('/settings/suse_multi_linux_manager').reply(200, settingsResponse);
+    axiosMock
+      .onGet('/settings/suse_multi_linux_manager')
+      .reply(200, settingsResponse);
 
     const softwareUpdatesResponse = {
       relevant_patches: [

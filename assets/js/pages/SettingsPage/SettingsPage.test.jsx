@@ -125,7 +125,9 @@ describe('Settings Page', () => {
         ...defaultInitialState,
       });
 
-      axiosMock.onGet('/api/v1/settings/suse_multi_linux_manager').reply(404, {});
+      axiosMock
+        .onGet('/api/v1/settings/suse_multi_linux_manager')
+        .reply(404, {});
 
       await act(async () => {
         renderWithRouter(StatefulSettings);
@@ -153,7 +155,9 @@ describe('Settings Page', () => {
         ...defaultInitialState,
       });
 
-      axiosMock.onGet('/api/v1/settings/suse_multi_linux_manager').reply(200, settings);
+      axiosMock
+        .onGet('/api/v1/settings/suse_multi_linux_manager')
+        .reply(200, settings);
 
       const { url, username, ca_uploaded_at } = settings;
 

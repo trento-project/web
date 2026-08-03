@@ -7,7 +7,8 @@ export const getSoftwareUpdatesErrorMessage = (errors) => {
   const hostNotFoundInSMLM = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail === `No system ID was found on ${SMLM_PRODUCT_LABEL} for this host.`
+      detail ===
+        `No system ID was found on ${SMLM_PRODUCT_LABEL} for this host.`
   );
 
   const connectionNotWorking = errors.some(
@@ -29,7 +30,8 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
   const hostNotFoundInSMLM = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
-      detail === `No system ID was found on ${SMLM_PRODUCT_LABEL} for this host.`
+      detail ===
+        `No system ID was found on ${SMLM_PRODUCT_LABEL} for this host.`
   );
 
   const connectionNotWorking = errors.some(

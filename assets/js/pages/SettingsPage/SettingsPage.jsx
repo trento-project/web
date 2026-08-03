@@ -88,8 +88,10 @@ function SettingsPage() {
     clearSuseMultiLinuxManagerEntityErrors,
   } = useSuseMultiLinuxManagerSettings();
 
-  const [suseMultiLinuxManagerSettingsModalOpen, setSuseMultiLinuxManagerSettingsModalOpen] =
-    useState(false);
+  const [
+    suseMultiLinuxManagerSettingsModalOpen,
+    setSuseMultiLinuxManagerSettingsModalOpen,
+  ] = useState(false);
 
   const [apiKeySettingModalOpen, setApiKeySettingsModalOpen] = useState(false);
   const [clearingSoftwareUpdatesSettings, setClearingSoftwareUpdatesSettings] =
@@ -296,7 +298,8 @@ function SettingsPage() {
                 setClearingSoftwareUpdatesSettings(false);
               }}
               testConnectionEnabled={
-                hasSoftwareUpdatesSettings && !suseMultiLinuxManagerSettingsTesting
+                hasSoftwareUpdatesSettings &&
+                !suseMultiLinuxManagerSettingsTesting
               }
               onTestConnection={() => testSuseMultiLinuxManagerSettings()}
               onCancel={() => {

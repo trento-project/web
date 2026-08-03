@@ -22,8 +22,8 @@ function SuseMultiLinuxManagerClearSettingsModal({
     >
       <div className="py-4">
         <p className="text-gray-500">
-          By clearing {SMLM_PRODUCT_LABEL} Settings you will no longer be
-          able to view information relating to software packages and updates for
+          By clearing {SMLM_PRODUCT_LABEL} Settings you will no longer be able
+          to view information relating to software packages and updates for
           hosts.
         </p>
       </div>

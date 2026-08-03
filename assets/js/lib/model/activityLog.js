@@ -186,7 +186,8 @@ export const availableResourceNameKeys = pipe(
   uniq
 )(resourceTypesToNameKeyMap);
 
-const smlmSettingsResourceType = (_entry) => 'SUSE Multi-Linux Manager Settings';
+const smlmSettingsResourceType = (_entry) =>
+  'SUSE Multi-Linux Manager Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
 const profileResourceType = (_entry) => 'Profile';
