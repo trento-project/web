@@ -36,19 +36,86 @@ describe('PromptComposer', () => {
     }
   );
 
-  it('disables the input and the send button when not connected', () => {
-    render(<PromptComposer connectionStatus="disconnected" />);
-    expect(screen.getByLabelText('Message input')).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled();
-  });
+  it.each([
+    { configurationStatus: 'cleared', placeholder: 'AI Assistant is disabled' },
+    {
+      configurationStatus: 'restored',
+      placeholder: 'Start a new chat to continue',
+    },
+  ])(
+    'uses the $placeholder placeholder when the configuration is $configurationStatus',
+    ({ configurationStatus, placeholder }) => {
+      render(
+        <PromptComposer
+          connectionStatus="connected"
+          configurationStatus={configurationStatus}
+        />
+      );
+      expect(screen.getByPlaceholderText(placeholder)).toBeVisible();
+    }
+  );
 
-  it('enables the input and the send button when connected', () => {
+  it.each([
+    { connectionStatus: 'connecting', configurationStatus: 'ok' },
+    { connectionStatus: 'disconnected', configurationStatus: 'ok' },
+    // Online, but there is nothing configured to answer with.
+    { connectionStatus: 'connected', configurationStatus: 'cleared' },
+    // Online and configured, but this thread belongs to the old configuration.
+    { connectionStatus: 'connected', configurationStatus: 'restored' },
+  ])(
+    'disables the input and the send button when $connectionStatus and the configuration is $configurationStatus',
+    ({ connectionStatus, configurationStatus }) => {
+      render(
+        <PromptComposer
+          connectionStatus={connectionStatus}
+          configurationStatus={configurationStatus}
+        />
+      );
+      expect(screen.getByLabelText('Message input')).toBeDisabled();
+      expect(
+        screen.getByRole('button', { name: 'Send message' })
+      ).toBeDisabled();
+    }
+  );
+
+  it('enables the input and the send button when connected with an ok configuration', () => {
     render(<PromptComposer connectionStatus="connected" />);
     expect(screen.getByLabelText('Message input')).not.toBeDisabled();
     expect(
       screen.getByRole('button', { name: 'Send message' })
     ).not.toBeDisabled();
   });
+
+  it.each([
+    {
+      connectionStatus: 'disconnected',
+      configurationStatus: 'ok',
+      title: 'Offline - waiting to reconnect...',
+    },
+    {
+      connectionStatus: 'connected',
+      configurationStatus: 'cleared',
+      title: 'AI Assistant is disabled',
+    },
+    {
+      connectionStatus: 'connected',
+      configurationStatus: 'restored',
+      title: 'Start a new chat to continue',
+    },
+  ])(
+    'explains why sending is off with "$title"',
+    ({ connectionStatus, configurationStatus, title }) => {
+      render(
+        <PromptComposer
+          connectionStatus={connectionStatus}
+          configurationStatus={configurationStatus}
+        />
+      );
+      expect(
+        screen.getByRole('button', { name: 'Send message' })
+      ).toHaveAttribute('title', title);
+    }
+  );
 
   it('hides the send button while the thread is running', () => {
     render(<PromptComposer connectionStatus="connected" isRunning />);
