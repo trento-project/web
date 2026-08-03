@@ -22,6 +22,15 @@ Broadcasts that the given user's AI configuration was cleared.
 
 Broadcasts that the given user's AI configuration was created.
 
+# `broadcast_updated`
+
+```elixir
+@callback broadcast_updated(non_neg_integer(), %{provider: atom(), model: String.t()}) ::
+  :ok
+```
+
+Broadcasts that the given user's AI provider/model changed.
+
 # `subscribe`
 
 ```elixir
@@ -34,6 +43,8 @@ lifecycle events.
 # `broadcast_cleared`
 
 # `broadcast_created`
+
+# `broadcast_updated`
 
 # `subscribe`
 
