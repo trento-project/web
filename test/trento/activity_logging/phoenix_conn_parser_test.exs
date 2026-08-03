@@ -76,11 +76,11 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
             expected_metadata: %{"foo" => "bar"}
           },
           %{
-            action: :saving_suma_settings,
+            action: :saving_smlm_settings,
             expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
           },
           %{
-            action: :changing_suma_settings,
+            action: :changing_smlm_settings,
             expected_metadata: %{"foo" => "bar", correlation_id: @correlation_id}
           }
         ] do

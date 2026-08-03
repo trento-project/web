@@ -132,8 +132,8 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
         }
       )
       when action in [
-             :saving_suma_settings,
-             :changing_suma_settings
+             :saving_smlm_settings,
+             :changing_smlm_settings
            ] do
     request_body
     |> redact(:password)

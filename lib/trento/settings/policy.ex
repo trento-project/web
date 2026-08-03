@@ -66,7 +66,7 @@ defmodule Trento.Settings.Policy do
     do: user_has_ability?(user, %{name: "all", resource: "activity_logs_settings"})
 
   defp has_smlm_settings_change_ability?(user),
-    do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})
+    do: user_has_ability?(user, %{name: "all", resource: "smlm_settings"})
 
   defp has_alerting_settings_resource_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "alerting_settings"})

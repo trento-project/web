@@ -19,9 +19,9 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :resource_tagging,
         :resource_untagging,
         :api_key_generation,
-        :saving_suma_settings,
-        :changing_suma_settings,
-        :clearing_suma_settings,
+        :saving_smlm_settings,
+        :changing_smlm_settings,
+        :clearing_smlm_settings,
         :saving_alerting_settings,
         :changing_alerting_settings,
         :user_creation,
@@ -232,25 +232,25 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :saving_suma_settings,
+        activity: :saving_smlm_settings,
         connection_info: {TrentoWeb.V1.SettingsController, :save_suse_manager_settings},
         interesting_statuses: 201,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :changing_suma_settings,
+        activity: :changing_smlm_settings,
         connection_info: {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :changing_suma_settings,
+        activity: :changing_smlm_settings,
         connection_info: {TrentoWeb.V1.SettingsController, :put_suse_manager_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
-        activity: :clearing_suma_settings,
+        activity: :clearing_smlm_settings,
         connection_info: {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings},
         interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
