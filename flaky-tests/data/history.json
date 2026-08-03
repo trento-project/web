@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-06-18T23:24:54Z",
-    "commit": "77ad8a953644889dfe9fe542947d1506921ec5d4",
-    "run_id": "27787880797",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 30
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.2948
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.2051
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1597
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.08964
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.04653
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should reset pagination when filters are changed::Activity Log page Pagination should reset pagination when filters are changed",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-19T19:20:37Z",
     "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
     "run_id": "27843684729",
@@ -4899,5 +4859,33 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-03T19:29:10Z",
+    "commit": "0a29eb0ffce24073795ce33d6c0ca8466d196750",
+    "run_id": "30844494396",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.08281
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
