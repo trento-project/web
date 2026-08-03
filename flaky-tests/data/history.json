@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-19T19:21:56Z",
-    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
-    "run_id": "27843684729",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-19T19:36:04Z",
     "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
     "run_id": "27844239559",
@@ -4890,6 +4870,58 @@
       {
         "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
         "score": 0.25
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-03T22:53:00Z",
+    "commit": "0a29eb0ffce24073795ce33d6c0ca8466d196750",
+    "run_id": "30848072303",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 15
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1892
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1892
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1892
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1892
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1844
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1844
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1844
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
       }
     ]
   }
