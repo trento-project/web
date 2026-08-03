@@ -233,25 +233,29 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :saving_smlm_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :save_suse_multi_linux_manager_settings},
+        connection_info:
+          {TrentoWeb.V1.SettingsController, :save_suse_multi_linux_manager_settings},
         interesting_statuses: 201,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :changing_smlm_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :patch_suse_multi_linux_manager_settings},
+        connection_info:
+          {TrentoWeb.V1.SettingsController, :patch_suse_multi_linux_manager_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :changing_smlm_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :put_suse_multi_linux_manager_settings},
+        connection_info:
+          {TrentoWeb.V1.SettingsController, :put_suse_multi_linux_manager_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
       %{
         activity: :clearing_smlm_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :delete_suse_multi_linux_manager_settings},
+        connection_info:
+          {TrentoWeb.V1.SettingsController, :delete_suse_multi_linux_manager_settings},
         interesting_statuses: 204,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },

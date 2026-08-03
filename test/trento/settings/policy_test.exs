@@ -76,36 +76,107 @@ defmodule Trento.Settings.PolicyTest do
     test "should allow SUSE Multi-Linux Manager settings actions if the user has all:all ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-      assert Policy.authorize(:get_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:save_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:update_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:delete_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:test_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
+      assert Policy.authorize(
+               :get_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :save_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :update_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :delete_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :test_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
     end
 
     test "should allow SUSE Multi-Linux Manager settings actions if the user has all:smlm_settings ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "smlm_settings"}]}
 
-      assert Policy.authorize(:get_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:save_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:update_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:delete_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:test_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
+      assert Policy.authorize(
+               :get_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :save_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :update_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :delete_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :test_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
     end
 
     test "should allow SUSE Multi-Linux Manager settings actions if the user has no abilities" do
       user = %User{abilities: []}
 
-      assert Policy.authorize(:get_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      assert Policy.authorize(:test_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
+      assert Policy.authorize(
+               :get_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      assert Policy.authorize(
+               :test_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
     end
 
     test "should disallow creating, updating or changing SUSE Multi-Linux Manager settings if the user has no abilities" do
       user = %User{abilities: []}
 
-      refute Policy.authorize(:save_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      refute Policy.authorize(:update_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
-      refute Policy.authorize(:delete_suse_multi_linux_manager_settings, user, SuseMultiLinuxManagerSettings)
+      refute Policy.authorize(
+               :save_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      refute Policy.authorize(
+               :update_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
+
+      refute Policy.authorize(
+               :delete_suse_multi_linux_manager_settings,
+               user,
+               SuseMultiLinuxManagerSettings
+             )
     end
   end
 

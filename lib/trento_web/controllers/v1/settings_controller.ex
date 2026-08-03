@@ -204,14 +204,19 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :patch_suse_multi_linux_manager_settings, @update_suse_multi_linux_manager_operation_options
-  operation :put_suse_multi_linux_manager_settings, @update_suse_multi_linux_manager_operation_options
+  operation :patch_suse_multi_linux_manager_settings,
+            @update_suse_multi_linux_manager_operation_options
+
+  operation :put_suse_multi_linux_manager_settings,
+            @update_suse_multi_linux_manager_operation_options
 
   @spec patch_suse_multi_linux_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def patch_suse_multi_linux_manager_settings(conn, params), do: update_suse_multi_linux_manager_settings(conn, params)
+  def patch_suse_multi_linux_manager_settings(conn, params),
+    do: update_suse_multi_linux_manager_settings(conn, params)
 
   @spec put_suse_multi_linux_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_multi_linux_manager_settings(conn, params), do: update_suse_multi_linux_manager_settings(conn, params)
+  def put_suse_multi_linux_manager_settings(conn, params),
+    do: update_suse_multi_linux_manager_settings(conn, params)
 
   operation :delete_suse_multi_linux_manager_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
@@ -242,7 +247,8 @@ defmodule TrentoWeb.V1.SettingsController do
          Schema.UnprocessableEntity}
     ]
 
-  ai_tool :settings_test_suse_multi_linux_manager, display_text: "Test Multi-Linux-Manager connection"
+  ai_tool :settings_test_suse_multi_linux_manager,
+    display_text: "Test Multi-Linux-Manager connection"
 
   @spec test_suse_multi_linux_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def test_suse_multi_linux_manager_settings(conn, _) do
@@ -371,7 +377,8 @@ defmodule TrentoWeb.V1.SettingsController do
     update_settings_paylod = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_multi_linux_manager_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.change_suse_multi_linux_manager_settings(update_settings_paylod) do
+    with {:ok, saved_settings} <-
+           Settings.change_suse_multi_linux_manager_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
       |> render(:suse_multi_linux_manager, %{settings: saved_settings})

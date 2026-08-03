@@ -141,7 +141,8 @@ defmodule Trento.SettingsTest do
       end
 
       test "should return an error when settings are not available" do
-        assert {:error, :settings_not_configured} == Settings.get_suse_multi_linux_manager_settings()
+        assert {:error, :settings_not_configured} ==
+                 Settings.get_suse_multi_linux_manager_settings()
       end
 
       test "should return settings without ca certificate" do
@@ -241,7 +242,8 @@ defmodule Trento.SettingsTest do
           submission
           |> List.wrap()
           |> Enum.each(fn submission ->
-            assert {:error, %{errors: ^errors}} = Settings.save_suse_multi_linux_manager_settings(submission)
+            assert {:error, %{errors: ^errors}} =
+                     Settings.save_suse_multi_linux_manager_settings(submission)
           end)
         end
       end
@@ -305,7 +307,10 @@ defmodule Trento.SettingsTest do
                   ca_cert: ^ca_cert,
                   ca_uploaded_at: ^now
                 }} =
-                 Settings.save_suse_multi_linux_manager_settings(settings, Trento.Support.DateService.Mock)
+                 Settings.save_suse_multi_linux_manager_settings(
+                   settings,
+                   Trento.Support.DateService.Mock
+                 )
       end
 
       test "should not save SUSE Multi-Linux Manager settings if already saved" do
@@ -660,7 +665,9 @@ defmodule Trento.SettingsTest do
 
         Enum.each(1..3, fn _ ->
           assert :ok == Settings.clear_suse_multi_linux_manager_settings()
-          assert {:error, :settings_not_configured} == Settings.get_suse_multi_linux_manager_settings()
+
+          assert {:error, :settings_not_configured} ==
+                   Settings.get_suse_multi_linux_manager_settings()
         end)
       end
     end

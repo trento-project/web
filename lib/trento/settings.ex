@@ -122,19 +122,26 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec save_suse_multi_linux_manager_settings(suse_multi_linux_manager_settings_save_submission, module()) ::
+  @spec save_suse_multi_linux_manager_settings(
+          suse_multi_linux_manager_settings_save_submission,
+          module()
+        ) ::
           {:ok, SuseMultiLinuxManagerSettings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_suse_multi_linux_manager_settings(settings_submission, date_service \\ DateService) do
-    with {:ok, :settings_not_configured, settings} <- ensure_no_suse_multi_linux_manager_settings_configured() do
+    with {:ok, :settings_not_configured, settings} <-
+           ensure_no_suse_multi_linux_manager_settings_configured() do
       settings
       |> save_or_update_suse_multi_linux_manager_settings(settings_submission, date_service)
       |> log_error("Error while saving software updates settings")
     end
   end
 
-  @spec change_suse_multi_linux_manager_settings(suse_multi_linux_manager_settings_change_submission, module()) ::
+  @spec change_suse_multi_linux_manager_settings(
+          suse_multi_linux_manager_settings_change_submission,
+          module()
+        ) ::
           {:ok, SuseMultiLinuxManagerSettings.t()}
           | {:error, :settings_not_configured}
           | {:error, any()}
@@ -263,7 +270,11 @@ defmodule Trento.Settings do
     end
   end
 
-  defp save_or_update_suse_multi_linux_manager_settings(settings, settings_submission, date_service) do
+  defp save_or_update_suse_multi_linux_manager_settings(
+         settings,
+         settings_submission,
+         date_service
+       ) do
     result =
       case settings do
         nil ->

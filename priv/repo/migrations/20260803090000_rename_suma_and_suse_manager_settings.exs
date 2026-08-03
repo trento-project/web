@@ -36,7 +36,8 @@ defmodule Trento.Repo.Migrations.RenameSumaAndSuseManagerSettings do
     WHERE type = 'suse_manager_settings'
     """
 
-    rename table(:settings), :suse_manager_settings_url, to: :suse_multi_linux_manager_settings_url
+    rename table(:settings), :suse_manager_settings_url,
+      to: :suse_multi_linux_manager_settings_url
 
     rename table(:settings), :suse_manager_settings_username,
       to: :suse_multi_linux_manager_settings_username
@@ -52,7 +53,8 @@ defmodule Trento.Repo.Migrations.RenameSumaAndSuseManagerSettings do
   end
 
   def down do
-    rename table(:settings), :suse_multi_linux_manager_settings_url, to: :suse_manager_settings_url
+    rename table(:settings), :suse_multi_linux_manager_settings_url,
+      to: :suse_manager_settings_url
 
     rename table(:settings), :suse_multi_linux_manager_settings_username,
       to: :suse_manager_settings_username

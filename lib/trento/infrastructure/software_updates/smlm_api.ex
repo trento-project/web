@@ -284,7 +284,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SmlmApi do
         successful_login
 
       {:error, reason} ->
-        Logger.error("Failed to Log into SUSE Multi-Linux Manager, retrying...", error: inspect(reason))
+        Logger.error("Failed to Log into SUSE Multi-Linux Manager, retrying...",
+          error: inspect(reason)
+        )
+
         try_login(url, username, password, ca_cert, retry - 1)
     end
   end
@@ -303,7 +306,10 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SmlmApi do
         {:error, :login_error}
 
       {:error, reason} ->
-        Logger.error("Failed to login to SUSE Multi-Linux Manager due to an error. Error: #{inspect(reason)}")
+        Logger.error(
+          "Failed to login to SUSE Multi-Linux Manager due to an error. Error: #{inspect(reason)}"
+        )
+
         {:error, :login_error}
     end
   end

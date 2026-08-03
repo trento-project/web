@@ -317,9 +317,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
-    test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved", %{
-      conn: conn
-    } do
+    test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved",
+         %{
+           conn: conn
+         } do
       submission = %{
         url: "https://validurl.com",
         username: Faker.Internet.user_name(),
