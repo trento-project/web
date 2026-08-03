@@ -23,22 +23,18 @@ function AssistantChatProvider({
 
   const agent = useMemo(() => {
     if (!socket || !userID) return null;
-    return new WebSocketAIAgent({
-      socket,
-      userID,
+    return new WebSocketAIAgent({ socket, userID });
+  }, [socket, userID]);
+
+  useEffect(() => {
+    if (!agent) return;
+    agent.withCallbacks({
       onConnectionChange,
       onAIConfigurationCleared,
       onAIConfigurationCreated,
       onModelChanged,
     });
-  }, [
-    socket,
-    userID,
-    onConnectionChange,
-    onAIConfigurationCleared,
-    onAIConfigurationCreated,
-    onModelChanged,
-  ]);
+  });
 
   useEffect(() => {
     if (!agent) return undefined;
