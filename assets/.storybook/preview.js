@@ -1,10 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import '../../priv/static/assets/app.css';
-
 import React from 'react';
 import { withState } from '@lib/test-utils';
+
+import '../../priv/static/assets/app.css';
 
 export default {
   parameters: {

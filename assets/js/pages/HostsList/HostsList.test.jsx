@@ -160,7 +160,7 @@ describe('HostsLists component', () => {
     });
 
     it('should show stale hosts with correct styling', async () => {
-      const staleDate = '2024-01-01T00:00:00.000Z';
+      const staleDate = faker.date.past();
       const state = {
         user: adminUser.build(),
         hostsList: {

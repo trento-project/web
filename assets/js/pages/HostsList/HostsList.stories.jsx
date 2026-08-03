@@ -34,7 +34,7 @@ export const Default = {
   parameters: {
     storeState: {
       user: admin,
-      hostsList: { hosts: hosts },
+      hostsList: { hosts },
     },
   },
 };
@@ -45,10 +45,10 @@ export const WithStaleHost = {
       user: admin,
       hostsList: {
         hosts: hosts.map((host, idx) =>
-          idx == 1
+          idx === 1
             ? {
                 ...host,
-                stale_at: faker.date.past().toISOString(),
+                stale_at: faker.date.past(),
                 heartbeat: 'critical',
               }
             : host
