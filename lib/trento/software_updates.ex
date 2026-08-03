@@ -27,7 +27,7 @@ defmodule Trento.SoftwareUpdates do
 
   @spec run_discovery :: :ok | {:error, :settings_not_configured}
   def run_discovery do
-    case Settings.get_suse_manager_settings() do
+    case Settings.get_suse_multi_linux_manager_settings() do
       {:ok, _} ->
         Discovery.discover_software_updates()
         :ok
@@ -49,7 +49,7 @@ defmodule Trento.SoftwareUpdates do
              | :error_getting_packages
              | :max_login_retries_reached}
   def get_software_updates(host_id) do
-    with {:ok, _} <- Settings.get_suse_manager_settings(),
+    with {:ok, _} <- Settings.get_suse_multi_linux_manager_settings(),
          {:ok, relevant_patches, upgradable_packages} <- Discovery.get_discovery_result(host_id) do
       {:ok, %{relevant_patches: relevant_patches, upgradable_packages: upgradable_packages}}
     end
@@ -63,7 +63,7 @@ defmodule Trento.SoftwareUpdates do
              | :error_getting_affected_packages
              | :max_login_retries_reached}
   def get_packages_patches(host_id) do
-    with {:ok, _} <- Settings.get_suse_manager_settings(),
+    with {:ok, _} <- Settings.get_suse_multi_linux_manager_settings(),
          {:ok, relevant_patches, upgradable_packages} <- Discovery.get_discovery_result(host_id),
          {:ok, affected_packages_for_patches} <-
            get_affected_packages_for_patches(relevant_patches) do

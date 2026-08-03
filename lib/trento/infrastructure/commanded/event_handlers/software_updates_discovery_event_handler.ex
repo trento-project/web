@@ -28,7 +28,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
         },
         _
       ) do
-    case Settings.get_suse_manager_settings() do
+    case Settings.get_suse_multi_linux_manager_settings() do
       {:ok, _} ->
         Discovery.discover_host_software_updates(host_id, fully_qualified_domain_name)
         :ok

@@ -80,7 +80,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth do
 
   defp setup_auth(%State{auth: nil} = state) do
     with {:ok, %{url: url, username: username, password: password, ca_cert: ca_cert}} <-
-           Settings.get_suse_manager_settings(),
+           Settings.get_suse_multi_linux_manager_settings(),
          {:ok, auth_cookie} <- SmlmApi.login(url, username, password, ca_cert) do
       {:ok,
        %State{

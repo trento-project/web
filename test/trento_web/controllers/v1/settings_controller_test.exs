@@ -165,7 +165,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     end
   end
 
-  describe "SuseManagerSettings" do
+  describe "SuseMultiLinuxManagerSettings" do
     setup do
       correlation_id = UUID.uuid4()
       key = UUID.uuid4()
@@ -182,7 +182,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> get("/api/v1/settings/suse_manager")
       |> json_response(:ok)
-      |> assert_schema("SuseManagerSettingsV1", api_spec)
+      |> assert_schema("SuseMultiLinuxManagerSettingsV1", api_spec)
     end
 
     test "should return forbidden if no user settings have been saved", %{

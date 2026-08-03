@@ -4,7 +4,7 @@
 import CertificateUploadDate from './CertificateUploadDate';
 
 export default {
-  title: 'Components/SuseManagerConfig/CertificateUploadDate',
+  title: 'Components/SuseMultiLinuxManagerConfig/CertificateUploadDate',
   component: CertificateUploadDate,
   argTypes: {
     date: {

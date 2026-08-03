@@ -17,7 +17,7 @@ defmodule Trento.Settings.Policy do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
-    SuseManagerSettings
+    SuseMultiLinuxManagerSettings
   }
 
   alias Trento.Users.User
@@ -25,10 +25,10 @@ defmodule Trento.Settings.Policy do
   @action_to_resource %{
     update_api_key_settings: Trento.Settings.ApiKeySettings,
     update_activity_log_settings: Trento.Settings.ActivityLogSettings,
-    save_suse_manager_settings: Trento.Settings.SuseManagerSettings,
-    update_suse_manager_settings: Trento.Settings.SuseManagerSettings,
-    delete_suse_manager_settings: Trento.Settings.SuseManagerSettings,
-    test_suse_manager_settings: Trento.Settings.SuseManagerSettings,
+    save_suse_multi_linux_manager_settings: Trento.Settings.SuseMultiLinuxManagerSettings,
+    update_suse_multi_linux_manager_settings: Trento.Settings.SuseMultiLinuxManagerSettings,
+    delete_suse_multi_linux_manager_settings: Trento.Settings.SuseMultiLinuxManagerSettings,
+    test_suse_multi_linux_manager_settings: Trento.Settings.SuseMultiLinuxManagerSettings,
     get_alerting_settings: Trento.Settings.AlertingSettings,
     create_alerting_settings: Trento.Settings.AlertingSettings,
     update_alerting_settings: Trento.Settings.AlertingSettings
@@ -40,11 +40,11 @@ defmodule Trento.Settings.Policy do
   def authorize(:update_activity_log_settings, %User{} = user, ActivityLogSettings),
     do: has_global_ability?(user) or has_activity_logs_settings_change_ability?(user)
 
-  def authorize(action, %User{} = user, SuseManagerSettings)
+  def authorize(action, %User{} = user, SuseMultiLinuxManagerSettings)
       when action in [
-             :save_suse_manager_settings,
-             :update_suse_manager_settings,
-             :delete_suse_manager_settings
+             :save_suse_multi_linux_manager_settings,
+             :update_suse_multi_linux_manager_settings,
+             :delete_suse_multi_linux_manager_settings
            ] do
     has_global_ability?(user) or has_smlm_settings_change_ability?(user)
   end

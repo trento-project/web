@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Settings.SuseManagerSettings do
+defmodule Trento.Settings.SuseMultiLinuxManagerSettings do
   @moduledoc """
   Schema for SUSE Multi-Linux Manager settings.
   """
 
   use Ecto.Schema
-  use Trento.Support.Ecto.STI, sti_identifier: :suse_manager_settings
+  use Trento.Support.Ecto.STI, sti_identifier: :suse_multi_linux_manager_settings
 
   import Ecto.Changeset
 
@@ -18,11 +18,17 @@ defmodule Trento.Settings.SuseManagerSettings do
   @derive {Jason.Encoder, except: [:__meta__, :__struct__]}
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "settings" do
-    field :url, :string, source: :suse_manager_settings_url
-    field :username, :string, source: :suse_manager_settings_username
-    field :password, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_password
-    field :ca_cert, Trento.Support.Ecto.EncryptedBinary, source: :suse_manager_settings_ca_cert
-    field :ca_uploaded_at, :utc_datetime_usec, source: :suse_manager_settings_ca_uploaded_at
+    field :url, :string, source: :suse_multi_linux_manager_settings_url
+    field :username, :string, source: :suse_multi_linux_manager_settings_username
+
+    field :password, Trento.Support.Ecto.EncryptedBinary,
+      source: :suse_multi_linux_manager_settings_password
+
+    field :ca_cert, Trento.Support.Ecto.EncryptedBinary,
+      source: :suse_multi_linux_manager_settings_ca_cert
+
+    field :ca_uploaded_at, :utc_datetime_usec,
+      source: :suse_multi_linux_manager_settings_ca_uploaded_at
 
     timestamps(type: :utc_datetime_usec)
     sti_fields()

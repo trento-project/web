@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule TrentoWeb.V1.SUSEManagerJSON do
+defmodule TrentoWeb.V1.SuseMultiLinuxManagerJSON do
   alias Trento.SoftwareUpdates.Enums.AdvisoryType
 
   def software_updates(%{

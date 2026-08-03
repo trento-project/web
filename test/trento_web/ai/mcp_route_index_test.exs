@@ -67,7 +67,7 @@ defmodule TrentoWeb.AI.McpRouteIndexTest do
       assert find_entry(V1.SettingsController, :get_api_key_settings).tool_name ==
                "settings_get_api_key"
 
-      assert find_entry(V1.SUSEManagerController, :software_updates).tool_name ==
+      assert find_entry(V1.SuseMultiLinuxManagerController, :software_updates).tool_name ==
                "mlm_software_updates"
     end
 

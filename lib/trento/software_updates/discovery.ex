@@ -99,7 +99,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
     |> Enum.each(fn command_payload ->
       command_payload
       |> ClearSoftwareUpdatesDiscovery.new!()
-      |> CommandedUtils.correlated_dispatch(:suse_manager_settings)
+      |> CommandedUtils.correlated_dispatch(:suse_multi_linux_manager_settings)
     end)
 
     clear()
@@ -235,7 +235,7 @@ defmodule Trento.SoftwareUpdates.Discovery do
            health: discovered_health
          }
          |> CompleteSoftwareUpdatesDiscovery.new!()
-         |> CommandedUtils.correlated_dispatch(:suse_manager_settings) do
+         |> CommandedUtils.correlated_dispatch(:suse_multi_linux_manager_settings) do
       :ok ->
         {:ok, :dispatched}
 

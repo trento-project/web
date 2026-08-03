@@ -15,7 +15,7 @@ defmodule Trento.Settings do
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
-    SuseManagerSettings
+    SuseMultiLinuxManagerSettings
   }
 
   alias Trento.Support.DateService
@@ -23,14 +23,14 @@ defmodule Trento.Settings do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Logger
 
-  @type suse_manager_settings_save_submission :: %{
+  @type suse_multi_linux_manager_settings_save_submission :: %{
           url: String.t(),
           username: String.t(),
           password: String.t(),
           ca_cert: String.t() | nil
         }
 
-  @type suse_manager_settings_change_submission :: %{
+  @type suse_multi_linux_manager_settings_change_submission :: %{
           url: String.t() | nil,
           username: String.t() | nil,
           password: String.t() | nil,
@@ -110,10 +110,10 @@ defmodule Trento.Settings do
 
   # SUSE Multi-Linux Manager settings
 
-  @spec get_suse_manager_settings ::
-          {:ok, SuseManagerSettings.t()} | {:error, :settings_not_configured}
-  def get_suse_manager_settings do
-    settings = Repo.one(SuseManagerSettings.base_query())
+  @spec get_suse_multi_linux_manager_settings ::
+          {:ok, SuseMultiLinuxManagerSettings.t()} | {:error, :settings_not_configured}
+  def get_suse_multi_linux_manager_settings do
+    settings = Repo.one(SuseMultiLinuxManagerSettings.base_query())
 
     if settings do
       {:ok, settings}
@@ -122,33 +122,33 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec save_suse_manager_settings(suse_manager_settings_save_submission, module()) ::
-          {:ok, SuseManagerSettings.t()}
+  @spec save_suse_multi_linux_manager_settings(suse_multi_linux_manager_settings_save_submission, module()) ::
+          {:ok, SuseMultiLinuxManagerSettings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
-  def save_suse_manager_settings(settings_submission, date_service \\ DateService) do
-    with {:ok, :settings_not_configured, settings} <- ensure_no_suse_manager_settings_configured() do
+  def save_suse_multi_linux_manager_settings(settings_submission, date_service \\ DateService) do
+    with {:ok, :settings_not_configured, settings} <- ensure_no_suse_multi_linux_manager_settings_configured() do
       settings
-      |> save_or_update_suse_manager_settings(settings_submission, date_service)
+      |> save_or_update_suse_multi_linux_manager_settings(settings_submission, date_service)
       |> log_error("Error while saving software updates settings")
     end
   end
 
-  @spec change_suse_manager_settings(suse_manager_settings_change_submission, module()) ::
-          {:ok, SuseManagerSettings.t()}
+  @spec change_suse_multi_linux_manager_settings(suse_multi_linux_manager_settings_change_submission, module()) ::
+          {:ok, SuseMultiLinuxManagerSettings.t()}
           | {:error, :settings_not_configured}
           | {:error, any()}
-  def change_suse_manager_settings(settings_submission, date_service \\ DateService) do
-    with {:ok, settings} <- get_suse_manager_settings() do
+  def change_suse_multi_linux_manager_settings(settings_submission, date_service \\ DateService) do
+    with {:ok, settings} <- get_suse_multi_linux_manager_settings() do
       settings
-      |> save_or_update_suse_manager_settings(settings_submission, date_service)
+      |> save_or_update_suse_multi_linux_manager_settings(settings_submission, date_service)
       |> log_error("Error while updating software updates settings")
     end
   end
 
-  @spec clear_suse_manager_settings :: :ok
-  def clear_suse_manager_settings do
-    Repo.delete_all(SuseManagerSettings.base_query())
+  @spec clear_suse_multi_linux_manager_settings :: :ok
+  def clear_suse_multi_linux_manager_settings do
+    Repo.delete_all(SuseMultiLinuxManagerSettings.base_query())
 
     SoftwareUpdatesDiscovery.clear_software_updates_discoveries()
 
@@ -263,17 +263,17 @@ defmodule Trento.Settings do
     end
   end
 
-  defp save_or_update_suse_manager_settings(settings, settings_submission, date_service) do
+  defp save_or_update_suse_multi_linux_manager_settings(settings, settings_submission, date_service) do
     result =
       case settings do
         nil ->
-          %SuseManagerSettings{}
-          |> SuseManagerSettings.changeset(settings_submission, date_service)
+          %SuseMultiLinuxManagerSettings{}
+          |> SuseMultiLinuxManagerSettings.changeset(settings_submission, date_service)
           |> Repo.insert()
 
-        %SuseManagerSettings{} ->
+        %SuseMultiLinuxManagerSettings{} ->
           settings
-          |> SuseManagerSettings.changeset(settings_submission, date_service)
+          |> SuseMultiLinuxManagerSettings.changeset(settings_submission, date_service)
           |> Repo.update()
       end
 
@@ -292,12 +292,12 @@ defmodule Trento.Settings do
     end
   end
 
-  defp ensure_no_suse_manager_settings_configured do
-    case Repo.one(SuseManagerSettings.base_query()) do
+  defp ensure_no_suse_multi_linux_manager_settings_configured do
+    case Repo.one(SuseMultiLinuxManagerSettings.base_query()) do
       nil ->
         {:ok, :settings_not_configured, nil}
 
-      %SuseManagerSettings{} ->
+      %SuseMultiLinuxManagerSettings{} ->
         Logger.error("Error: software updates settings already configured")
         {:error, :settings_already_configured}
     end

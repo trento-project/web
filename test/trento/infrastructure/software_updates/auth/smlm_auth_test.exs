@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   }
 
   alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock, as: SmlmApiMock
-  alias Trento.Settings.SuseManagerSettings
+  alias Trento.Settings.SuseMultiLinuxManagerSettings
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -58,7 +58,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
     end
 
     test "should redact sensitive data in SMLM state", %{
-      settings: %SuseManagerSettings{url: url, username: username, password: password}
+      settings: %SuseMultiLinuxManagerSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
@@ -89,7 +89,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
     end
 
     test "should use an already authenticated auth cookie", %{
-      settings: %SuseManagerSettings{url: url, username: username, password: password}
+      settings: %SuseMultiLinuxManagerSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
@@ -175,7 +175,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
     end
 
     test "should clear service state", %{
-      settings: %SuseManagerSettings{
+      settings: %SuseMultiLinuxManagerSettings{
         url: url,
         username: username,
         password: password,

@@ -195,12 +195,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule SaveSuseManagerSettingsRequest do
+  defmodule SaveSuseMultiLinuxManagerSettingsRequest do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "SaveSuseManagerSettingsRequestV1",
+        title: "SaveSuseMultiLinuxManagerSettingsRequestV1",
         description:
           "Represents the request body for saving SUSE Multi-Linux Manager settings, including connection and authentication details for secure management.",
         type: :object,
@@ -208,7 +208,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           url: %Schema{
             type: :string,
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -226,7 +226,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         },
         required: [:url, :username, :password],
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin",
           password: "secretpassword",
           ca_cert:
@@ -237,12 +237,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule UpdateSuseManagerSettingsRequest do
+  defmodule UpdateSuseMultiLinuxManagerSettingsRequest do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "UpdateSuseManagerSettingsRequestV1",
+        title: "UpdateSuseMultiLinuxManagerSettingsRequestV1",
         description:
           "Request body for updating SUSE Multi-Linux Manager settings.\nOnly provide fields to be updated.",
         type: :object,
@@ -251,7 +251,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           url: %Schema{
             type: :string,
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -269,7 +269,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           }
         },
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin"
         }
       },
@@ -277,12 +277,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule SuseManagerSettings do
+  defmodule SuseMultiLinuxManagerSettings do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "SuseManagerSettingsV1",
+        title: "SuseMultiLinuxManagerSettingsV1",
         description:
           "Represents the settings for SUSE Multi-Linux Manager, including connection details and certificate upload information for secure management.",
         type: :object,
@@ -292,7 +292,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :string,
             description:
               "The URL used to access SUSE Multi-Linux Manager, supporting connectivity and management.",
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -310,7 +310,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           }
         },
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin",
           ca_uploaded_at: "2024-01-15T10:30:00Z"
         }

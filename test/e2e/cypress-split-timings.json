@@ -77,7 +77,7 @@
       "duration": 0
     },
     {
-      "spec": "cypress/e2e/suse_manager_overviews.cy.js",
+      "spec": "cypress/e2e/suse_multi_linux_manager_overviews.cy.js",
       "duration": 40000
     },
     {

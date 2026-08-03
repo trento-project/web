@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule TrentoWeb.V1.SUSEManagerControllerTest do
+defmodule TrentoWeb.V1.SuseMultiLinuxManagerControllerTest do
   use TrentoWeb.ConnCase, async: true
   use Trento.SoftwareUpdates.DiscoveryCase
 

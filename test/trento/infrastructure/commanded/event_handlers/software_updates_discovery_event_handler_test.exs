@@ -69,7 +69,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
           :with_correlation ->
             correlation_id = UUID.uuid4()
             Process.put(:correlation_key, correlation_id)
-            key = ActivityLog.correlation_key(:suse_manager_settings)
+            key = ActivityLog.correlation_key(:suse_multi_linux_manager_settings)
             _ = ActivityLog.put_correlation_id(key, correlation_id)
 
             expect(

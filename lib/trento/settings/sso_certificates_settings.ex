@@ -31,7 +31,7 @@ defmodule Trento.Settings.SSOCertificatesSettings do
     certificates_settings
     |> cast(attrs, __MODULE__.__schema__(:fields))
     |> validate_required([:name, :key_file, :certificate_file])
-    # TODO: move suse_manager_settings.ex certificates function to some support module
+    # TODO: move suse_multi_linux_manager_settings.ex certificates function to some support module
     # |> validate_cert_and_key
     |> sti_changes()
     |> unique_constraint(:type)

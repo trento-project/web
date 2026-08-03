@@ -148,12 +148,12 @@ defmodule TrentoWeb.Router do
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
       get "/hosts/:id/metrics/query", HostController, :query_metrics
 
-      get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+      get "/hosts/:id/software_updates", SuseMultiLinuxManagerController, :software_updates
 
-      get "/software_updates/packages", SUSEManagerController, :patches_for_packages
+      get "/software_updates/packages", SuseMultiLinuxManagerController, :patches_for_packages
 
       get "/software_updates/errata_details/:advisory_name",
-          SUSEManagerController,
+          SuseMultiLinuxManagerController,
           :errata_details
 
       post "/clusters/:id/tags", TagsController, :add_tag_to_cluster,
@@ -263,12 +263,12 @@ defmodule TrentoWeb.Router do
         get "/activity_log", SettingsController, :get_activity_log_settings
 
         scope "/suse_manager" do
-          get "/", SettingsController, :get_suse_manager_settings
-          post "/", SettingsController, :save_suse_manager_settings
-          patch "/", SettingsController, :patch_suse_manager_settings
-          put "/", SettingsController, :put_suse_manager_settings
-          delete "/", SettingsController, :delete_suse_manager_settings
-          post "/test", SettingsController, :test_suse_manager_settings
+          get "/", SettingsController, :get_suse_multi_linux_manager_settings
+          post "/", SettingsController, :save_suse_multi_linux_manager_settings
+          patch "/", SettingsController, :patch_suse_multi_linux_manager_settings
+          put "/", SettingsController, :put_suse_multi_linux_manager_settings
+          delete "/", SettingsController, :delete_suse_multi_linux_manager_settings
+          post "/test", SettingsController, :test_suse_multi_linux_manager_settings
         end
 
         scope "/alerting" do

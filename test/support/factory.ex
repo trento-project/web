@@ -168,7 +168,7 @@ defmodule Trento.Factory do
     ApiKeySettings,
     InstallationSettings,
     SSOCertificatesSettings,
-    SuseManagerSettings
+    SuseMultiLinuxManagerSettings
   }
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
@@ -1309,9 +1309,9 @@ defmodule Trento.Factory do
     ca_cert = Map.get(attrs, :ca_cert, self_signed_cert)
     ca_uploaded_at = Map.get(attrs, :ca_uploaded_at, DateTime.utc_now())
 
-    %SuseManagerSettings{}
-    |> SuseManagerSettings.changeset(%{
-      type: :suse_manager_settings,
+    %SuseMultiLinuxManagerSettings{}
+    |> SuseMultiLinuxManagerSettings.changeset(%{
+      type: :suse_multi_linux_manager_settings,
       url: url,
       username: username,
       password: password,

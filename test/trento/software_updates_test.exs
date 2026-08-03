@@ -36,8 +36,8 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
       expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 3, fn -> :ok end)
 
       Enum.each(1..3, fn _ ->
-        assert :ok == Settings.clear_suse_manager_settings()
-        assert {:error, :settings_not_configured} == Settings.get_suse_manager_settings()
+        assert :ok == Settings.clear_suse_multi_linux_manager_settings()
+        assert {:error, :settings_not_configured} == Settings.get_suse_multi_linux_manager_settings()
       end)
     end
   end

@@ -78,8 +78,8 @@ From front-end jest tests:
 python check_flakes.py --junit-files=/tmp --grouping-option=runs --window-size=5 --window-count=100 --top-n=40
 
 Top 40 flaky tests based on latest window exponential weighted moving average fliprate score
-SuseManagerSettingsModal component::should try to save all the fields --- score: 0.4945
-SuseManagerSettingsModal component::should attempt saving only what changed --- score: 0.4945
+SuseMultiLinuxManagerSettingsModal component::should try to save all the fields --- score: 0.4945
+SuseMultiLinuxManagerSettingsModal component::should attempt saving only what changed --- score: 0.4945
 PatchList::renders the content correctly --- score: 0.1325
 search::should not match not included words --- score: 0.06413
 Table component::should display the header --- score: 0.05145
