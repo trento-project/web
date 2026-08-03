@@ -169,6 +169,8 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.expandNwdSapSystem();
     });
 
+    after(() => sapSystemsOverviewPage.restoreNwdHost());
+
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
       sapSystemsOverviewPage.loadAbsentInstanceScenario();
       sapSystemsOverviewPage.nwdInstance01CleanUpButtonIsVisible();
@@ -190,6 +192,43 @@ context('SAP Systems Overview', () => {
       sapSystemsOverviewPage.clickNwdInstance00CleanUpButton();
       sapSystemsOverviewPage.clickCleanUpModalConfirmationButton();
       sapSystemsOverviewPage.systemNwdIsNotDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      sapSystemsOverviewPage.startAllSapSystemsAgentsHeartbeat();
+      sapSystemsOverviewPage.visit();
+    });
+
+    beforeEach(() => sapSystemsOverviewPage.expandNwdSapSystem());
+
+    after(() => sapSystemsOverviewPage.stopAgentsHeartbeat());
+
+    it('should mark SAP system data as stale when an agent composing the system stops reporting', () => {
+      sapSystemsOverviewPage.stopNwdSystemAgentHeartbeat();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedAsStale();
+      sapSystemsOverviewPage.nwdSystemInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent starts reporting data again', () => {
+      sapSystemsOverviewPage.startNwdSystemAgentHeartbeat();
+      sapSystemsOverviewPage.loadPresentInstanceScenario();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedInSync();
+      sapSystemsOverviewPage.nwdSystemInstanceRowIsMarkedInSync();
+    });
+
+    it('should mark SAP system data as stale when an agent with a database instance composing the system stops reporting', () => {
+      sapSystemsOverviewPage.stopHddDatabaseAgentHeartbeat();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedAsStale();
+      sapSystemsOverviewPage.hddDatabaseInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark SAP system data as sync when the agent with a database instance starts reporting data again', () => {
+      sapSystemsOverviewPage.startHddDatabaseAgentHeartbeat();
+      sapSystemsOverviewPage.markHddDatabaseAsPresent();
+      sapSystemsOverviewPage.nwdSystemDataIsMarkedInSync();
+      sapSystemsOverviewPage.hddDatabaseInstanceRowIsMarkedInSync();
     });
   });
 

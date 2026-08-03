@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
+import { MemoryRouter } from 'react-router';
 
 import { SocketContext } from '@common/SocketProvider';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
@@ -141,6 +142,21 @@ export default {
     },
   },
   args: { userID: USER_ID },
+  argTypes: {
+    userID: {
+      description: 'User ID for the AI assistant session',
+      control: { type: 'text' },
+    },
+    open: {
+      description: 'Whether the assistant is open',
+      control: { type: 'boolean' },
+    },
+    initialConnectionStatus: {
+      description: 'Initial connection status',
+      options: ['connected', 'connecting', 'disconnected'],
+      control: { type: 'radio' },
+    },
+  },
   decorators: [
     (Story, context) => {
       const socket = useFreshSocket();
@@ -159,6 +175,19 @@ export default {
 export const Closed = {
   name: 'Closed (FAB only)',
   args: { open: false },
+};
+
+export const Disabled = {
+  name: 'Disabled — no AI configuration',
+  args: { open: false, aiConfigured: false },
+  decorators: [
+    // Router needed for the disabled launcher tooltip's Profile link.
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
 };
 
 export const OpenEmpty = {

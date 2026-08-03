@@ -1,29 +1,58 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Rnd } from 'react-rnd';
+import { Link } from 'react-router';
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';
 import { AssistantModalPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
+import Tooltip from '@common/Tooltip';
 
-const defaultTrigger = (
+// forwardRef + `{...props}` spread are required so the
+// enabled instance works inside `AssistantModalPrimitive.Trigger asChild`
+// (which injects onClick / data-state / aria-expanded + a ref).
+const ChatboxTrigger = forwardRef(({ disabled = false, ...props }, ref) => (
+  // `{...props}` first so injected behavior (onClick / data-state / aria-expanded)
+  // is kept, but the presentational props below win — notably `type="fab"`, which
+  // `Trigger asChild` would otherwise overwrite with the HTML `type="button"`.
   <Button
+    ref={ref}
+    {...props}
     type="fab"
     size="none"
     className="size-full"
-    data-testid="ai-assistant-trigger"
-    aria-label="Open AI Assistant"
+    disabled={disabled}
+    data-testid={
+      disabled ? 'ai-assistant-trigger-disabled' : 'ai-assistant-trigger'
+    }
+    aria-label={disabled ? 'AI Assistant is disabled' : 'Open AI Assistant'}
   >
     <EOS_CHAT_BUBBLE_OUTLINED className="fill-white" />
   </Button>
+));
+
+ChatboxTrigger.displayName = 'ChatboxTrigger';
+
+const disabledTooltipContent = (
+  <span className="text-center">
+    AI Assistant is disabled. <br />
+    Please check{' '}
+    <Link
+      to="/profile"
+      className="underline hover:opacity-75 text-jungle-green-500"
+    >
+      Profile
+    </Link>{' '}
+    for Settings.
+  </span>
 );
 
 function ModalFrame({
   open,
   onOpenChange,
-  trigger = defaultTrigger,
+  disabled = false,
   initialSize = { width: 384, height: 650 },
   initialPosition = { x: -400, y: -650 },
   minWidth = 300,
@@ -33,9 +62,19 @@ function ModalFrame({
   return (
     <AssistantModalPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <AssistantModalPrimitive.Anchor className="fixed right-6 bottom-20 size-12 z-40">
-        <AssistantModalPrimitive.Trigger asChild>
-          {trigger}
-        </AssistantModalPrimitive.Trigger>
+        {disabled ? (
+          <Tooltip
+            content={disabledTooltipContent}
+            place="left"
+            mouseLeaveDelay={0.3}
+          >
+            <ChatboxTrigger disabled />
+          </Tooltip>
+        ) : (
+          <AssistantModalPrimitive.Trigger asChild>
+            <ChatboxTrigger />
+          </AssistantModalPrimitive.Trigger>
+        )}
       </AssistantModalPrimitive.Anchor>
 
       <AssistantModalPrimitive.Content

@@ -1,10 +1,18 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { noop } from 'lodash';
-
 import { PLACES } from '@common/Tooltip';
+import { abilityFactory } from '@lib/test-utils/factories';
+import { noop } from 'lodash';
+import { action } from 'storybook/actions';
+
 import OperationsButton from './OperationsButton';
+
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const forbiddenAbility = abilityFactory.build({
+  name: 'foo',
+  resource: 'resource',
+});
 
 export default {
   title: 'Components/OperationsButton',
@@ -12,38 +20,49 @@ export default {
   argTypes: {
     operations: {
       description: 'Operations to be displayed in the operations button menu',
-      control: 'array',
+      control: { type: 'object' },
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     menuPosition: {
-      type: 'string',
       description: 'Position of the menu',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     disabled: {
-      type: 'boolean',
       description: 'Main button disabled or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     disabledTooltip: {
-      type: 'string',
       description: 'Tooltip for the main button when disabled',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     disabledTooltipPosition: {
-      type: 'string',
       description: 'Position of the main button tooltip',
       options: PLACES,
       control: { type: 'radio' },
+    },
+    text: {
+      description: 'Display text for the main operations button',
+      control: { type: 'text' },
+    },
+    transparent: {
+      description:
+        'Boolean determining whether the button uses transparent styling',
+      control: { type: 'boolean' },
+    },
+    value: {
+      description: 'Current value of the component',
+      control: { type: 'text' },
+    },
+    running: {
+      description: 'The running prop',
+      control: { type: 'boolean' },
+    },
+    onClick: {
+      description: 'Callback function invoked when click',
+      action: 'onClick',
     },
   },
 };
@@ -66,7 +85,8 @@ export const Default = {
         onClick: noop,
       },
     ],
-    userAbilities: [{ name: 'all', resource: 'all' }],
+    userAbilities: [allAbility],
+    onClick: action('onClick'),
   },
 };
 
@@ -105,7 +125,7 @@ export const Running = {
 export const Transparent = {
   args: {
     ...Default.args,
-    text: '',
+    text: 'Operations',
     transparent: true,
     menuPosition: 'bottom',
   },
@@ -114,7 +134,7 @@ export const Transparent = {
 export const Forbidden = {
   args: {
     ...Default.args,
-    userAbilities: [{ name: 'foo', resource: 'resource' }],
+    userAbilities: [forbiddenAbility],
   },
 };
 

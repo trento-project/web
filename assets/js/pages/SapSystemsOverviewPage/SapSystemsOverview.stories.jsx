@@ -1,16 +1,16 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
 import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
 import {
   clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
@@ -88,31 +88,33 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/SapSystemsOverview',
-  components: SapSystemsOverview,
+  component: SapSystemsOverview,
   argTypes: {
     sapSystems: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'SAP systems',
     },
     applicationInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Application instances',
     },
     databaseInstances: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'Database instances',
     },
     loading: {
       control: { type: 'boolean' },
       description: 'Loading',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: false },
-      },
     },
     userAbilities: {
-      control: { type: 'array' },
+      control: { type: 'object' },
       description: 'User profile abilities',
+    },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
     },
     onTagAdd: {
       action: 'Add tag',
@@ -141,13 +143,30 @@ export default {
   ),
 };
 
-export const SapSystems = {
+export const Default = {
   args: {
     userAbilities,
     sapSystems,
     applicationInstances: enrichedApplicationInstances,
     databaseInstances: enrichedDatabaseInstances,
     loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+  },
+};
+
+export const SapSystems = {
+  args: {
+    userAbilities,
+    userTimezone: 'Etc/UTC',
+    sapSystems,
+    applicationInstances: enrichedApplicationInstances,
+    databaseInstances: enrichedDatabaseInstances,
+    loading: false,
+    onTagAdd: action('onTagAdd'),
+    onTagRemove: action('onTagRemove'),
+    onInstanceCleanUp: action('onInstanceCleanUp'),
   },
 };
 
@@ -167,11 +186,34 @@ export const UnauthorizedCleanUp = {
     userAbilities: [],
   },
 };
+
 export const SapSystemsWithDifferentTypes = {
   args: {
     userAbilities,
     sapSystems: sapSystemsWithCustomTypes,
     applicationInstances: sapSystemApplicationInstances,
+    databaseInstances: {},
+  },
+};
+
+const sapSystemIDForStale = faker.string.uuid();
+const staleAt = faker.date.past().toISOString();
+export const WithStaleSystem = {
+  args: {
+    userAbilities,
+    sapSystems: sapSystemFactory.buildList(1, {
+      id: sapSystemIDForStale,
+      stale_at: staleAt,
+    }),
+    applicationInstances: [
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystemIDForStale,
+        stale_at: staleAt,
+      }),
+      sapSystemApplicationInstanceFactory.build({
+        sap_system_id: sapSystemIDForStale,
+      }),
+    ],
     databaseInstances: {},
   },
 };

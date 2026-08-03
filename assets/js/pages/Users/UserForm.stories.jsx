@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-
 import {
   abilityFactory,
   adminUser,
   userFactory,
 } from '@lib/test-utils/factories/users';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import UserForm from './UserForm';
 
@@ -44,30 +44,20 @@ export default {
   argTypes: {
     fullName: {
       description: 'Full name',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     emailAddress: {
       description: 'Email address',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     username: {
       description: 'Username',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     status: {
       control: { type: 'radio' },
       options: ['Enabled', 'Disabled'],
       description: 'Status',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'Enabled' },
-      },
     },
     abilities: {
       description: 'Available abilities',
@@ -79,79 +69,56 @@ export default {
     },
     createdAt: {
       description: 'User creation timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     updatedAt: {
       description: 'User last update timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     totpEnabledAt: {
       description: 'User enablement of totp feature',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     lastLoginAt: {
       description: 'User last login timestamp',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     analyticsEnabledConfig: {
       description:
         'Toggles visibility of Analytics switch. Analytics config is enabled',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     analyticsEnabled: {
       description: 'Toggles tracking user analytics',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     timezone: {
-      description: 'User timezone',
-      control: {
-        type: 'text',
-      },
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
     editing: {
       description: 'User is being edited',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     timezones: {
       description: 'Available timezones',
-      control: {
-        type: 'object',
-      },
+      control: { type: 'object' },
     },
     saving: {
       description: 'User is being saved',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     saveEnabled: {
       description: 'User saving is enabled',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     saveText: {
       description: 'Save button text',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: { type: 'object' },
     },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',
@@ -180,6 +147,26 @@ export default {
   ),
 };
 
+export const Default = {
+  args: {
+    fullName: fullname,
+    emailAddress: email,
+    username,
+    status: 'Enabled',
+    abilities,
+    userAbilities,
+    createdAt,
+    updatedAt,
+    totpEnabledAt,
+    lastLoginAt,
+    timezone,
+    editing: false,
+    timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+  },
+};
+
 export const Empty = {};
 
 export const Editing = {
@@ -187,6 +174,7 @@ export const Editing = {
     fullName: fullname,
     emailAddress: email,
     username,
+    status: 'Enabled',
     createdAt,
     updatedAt,
     totpEnabledAt,
@@ -195,6 +183,8 @@ export const Editing = {
     editing: true,
     saveText: 'Save',
     timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
   },
 };
 

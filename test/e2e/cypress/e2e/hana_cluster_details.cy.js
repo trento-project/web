@@ -444,6 +444,28 @@ context('HANA cluster details', () => {
     });
   });
 
+  describe('Stale data', () => {
+    before(() => {
+      hanaClusterDetailsPage.startHanaClusterAgentsHeartbeat();
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
+
+    after(() => hanaClusterDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark cluster data as stale when an agent composing the cluster stops reporting', () => {
+      hanaClusterDetailsPage.stopHanaClusterAgentHeartbeat();
+      hanaClusterDetailsPage.hanaClusterHealthIsMarkedAsStale();
+      hanaClusterDetailsPage.hanaClusterStaleBannerIsDisplayed();
+    });
+
+    it('should mark cluster data as sync when the agent starts reporting data again', () => {
+      hanaClusterDetailsPage.startHanaClusterAgentHeartbeat();
+      hanaClusterDetailsPage.apiRestoreWdfHost();
+      hanaClusterDetailsPage.hanaClusterHealthIsMarkedInSync();
+      hanaClusterDetailsPage.hanaClusterStaleBannerIsNotDisplayed();
+    });
+  });
+
   describe('Forbidden actions', () => {
     beforeEach(() => {
       hanaClusterDetailsPage.apiDeleteAllUsers();

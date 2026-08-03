@@ -9,6 +9,8 @@ defmodule Trento.Ai.ConfigurationsTest do
 
   alias Trento.AI.{Configurations, UserConfiguration}
 
+  alias Trento.AI.Configurations.Events
+
   import Trento.Factory
 
   import Mox
@@ -280,6 +282,31 @@ defmodule Trento.Ai.ConfigurationsTest do
                )
 
       assert ^created_config = load_ai_config(user_id)
+    end
+
+    test "should broadcast that the configuration was created" do
+      %User{id: user_id} = user = insert(:user)
+
+      Events.subscribe(user_id)
+
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.create_user_configuration(
+                 user,
+                 build(:ai_configuration_creation_params)
+               )
+
+      assert_receive {:ai_configuration, :created}
+    end
+
+    test "should not broadcast created when creation fails" do
+      %User{id: user_id} = user = insert(:user)
+
+      Events.subscribe(user_id)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Configurations.create_user_configuration(user, %{})
+
+      refute_receive {:ai_configuration, :created}
     end
 
     test "should support creating AI configuration with a model that is supported by multiple providers" do
@@ -655,6 +682,15 @@ defmodule Trento.Ai.ConfigurationsTest do
 
       assert :ok == Configurations.clear_user_configuration(user)
       assert nil == load_ai_config(user_id)
+    end
+
+    test "should broadcast that the configuration was cleared" do
+      %User{id: user_id} = user = insert(:user, ai_configuration: build(:ai_user_configuration))
+
+      Events.subscribe(user_id)
+
+      assert :ok == Configurations.clear_user_configuration(user)
+      assert_receive {:ai_configuration, :cleared}
     end
   end
 

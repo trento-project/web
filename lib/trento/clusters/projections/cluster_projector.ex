@@ -15,6 +15,8 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   alias Trento.Clusters.Events.{
     ChecksSelected,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
@@ -150,6 +152,30 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
 
+  project(
+    %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
+    fn multi ->
+      changeset =
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{stale_at: stale_at})
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
+  project(
+    %ClusterDataMarkedInSync{cluster_id: cluster_id},
+    fn multi ->
+      changeset =
+        ClusterReadModel
+        |> Repo.get!(cluster_id)
+        |> ClusterReadModel.changeset(%{stale_at: nil})
+
+      Ecto.Multi.update(multi, :cluster, changeset)
+    end
+  )
+
   @impl true
   def after_update(
         %ClusterRegistered{},
@@ -217,6 +243,24 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       "monitoring:clusters",
       "cluster_restored",
       ClusterJSON.cluster_restored(%{cluster: restored_cluster})
+    )
+  end
+
+  @impl true
+  def after_update(%ClusterDataMarkedStale{}, _, %{cluster: %ClusterReadModel{} = cluster}) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_stale_changed",
+      ClusterJSON.cluster_stale_changed(%{cluster: cluster})
+    )
+  end
+
+  @impl true
+  def after_update(%ClusterDataMarkedInSync{}, _, %{cluster: %ClusterReadModel{} = cluster}) do
+    TrentoWeb.Endpoint.broadcast(
+      "monitoring:clusters",
+      "cluster_stale_changed",
+      ClusterJSON.cluster_stale_changed(%{cluster: cluster})
     )
   end
 

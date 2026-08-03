@@ -57,6 +57,17 @@ export const selectedSystem = {
   ],
 };
 
+export const attachedDatabaseInstances = [
+  {
+    Instance: '10',
+    AgentId: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
+  },
+  {
+    Instance: '10',
+    AgentId: '0a055c90-4cb6-54ce-ac9c-ae3fedaf40d4',
+  },
+];
+
 export const attachedHosts = [
   {
     Name: 'vmnwdev01',

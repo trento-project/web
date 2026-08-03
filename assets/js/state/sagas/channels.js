@@ -25,11 +25,13 @@ import {
   clusterCibLastWrittenUpdated,
   clusterDeregistered,
   clusterRestored,
+  clusterStaleChanged,
 } from '@state/clusters';
 
 import {
   sapSystemRegistered,
   sapSystemHealthChanged,
+  sapSystemStaleChanged,
   applicationInstanceRegistered,
   applicationInstanceMoved,
   applicationInstanceAbsentAtChanged,
@@ -46,6 +48,7 @@ import {
   databaseDeregistered,
   databaseRestored,
   databaseHealthChanged,
+  databaseStaleChanged,
   databaseInstanceRegistered,
   databaseInstanceAbsentAtChanged,
   databaseInstanceStaleChanged,
@@ -121,6 +124,10 @@ const clusterEvents = [
     action: clusterHealthChanged,
   },
   {
+    name: 'cluster_stale_changed',
+    action: clusterStaleChanged,
+  },
+  {
     name: 'cluster_cib_last_written_updated',
     action: clusterCibLastWrittenUpdated,
   },
@@ -142,6 +149,10 @@ const sapSystemEvents = [
   {
     name: 'sap_system_health_changed',
     action: sapSystemHealthChanged,
+  },
+  {
+    name: 'sap_system_stale_changed',
+    action: sapSystemStaleChanged,
   },
   {
     name: 'application_instance_registered',
@@ -197,6 +208,10 @@ const databaseEvents = [
   {
     name: 'database_health_changed',
     action: databaseHealthChanged,
+  },
+  {
+    name: 'database_stale_changed',
+    action: databaseStaleChanged,
   },
   {
     name: 'database_instance_registered',

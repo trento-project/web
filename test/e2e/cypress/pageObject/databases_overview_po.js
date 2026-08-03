@@ -34,6 +34,7 @@ const hddDatabase = {
     instanceNumber: '10',
     row: 0,
   },
+  agentId: '13e8c25c-3180-5a9a-95c8-51ec38e50cfc',
 };
 
 // Selectors
@@ -62,6 +63,11 @@ const getCleanUpButtonByIdAndInstanceIndex = (id, index) =>
   `tbody tr:contains("${id}") + tr div[class="table-row-group"] div[class*="table-row border-b"]:nth-child(${
     index + 1
   }) span:contains("Clean up")`;
+
+const getHddDatabaseInstanceRow = (index) =>
+  `${hddDatabaseCell} + tr div[class="table-row-group"] div[class*="table-row border-b"]:nth-child(${
+    index + 1
+  })`;
 
 export const visit = () => basePage.visit('/databases');
 
@@ -121,6 +127,22 @@ export const cleanUpButtonIsNotDisplayed = () => {
   return cy.get(cleanUpButtonSelector).should('not.exist', { timeout: 15000 });
 };
 
+export const hddDatabaseDataIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(hddDatabaseCell);
+
+export const hddDatabaseDataIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(hddDatabaseCell);
+
+export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    getHddDatabaseInstanceRow(hddDatabase.instance.row)
+  );
+
+export const hddDatabaseInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    getHddDatabaseInstanceRow(hddDatabase.instance.row)
+  );
+
 // UI Interactions
 
 export const expandHdqDatabaseRow = () =>
@@ -175,6 +197,17 @@ export const markHddDatabaseAsPresent = () =>
     `sap-systems-overview-${hddDatabase.sid}-${hddDatabase.instance.instanceNumber}-present`
   );
 
+export const startHddDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([hddDatabase.agentId]);
+
+export const startAllDatabasesAgentsHeartbeat = () =>
+  apiGetDatabaseAgentIds().then((agentIds) =>
+    basePage.startAgentsHeartbeat(agentIds)
+  );
+
+export const stopHddDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([hddDatabase.agentId]);
+
 export const apiCreateUserWithDatabaseTagsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'database_tags' },
@@ -196,6 +229,15 @@ const apiGetDatabases = () =>
       },
     });
   });
+
+const apiGetDatabaseAgentIds = () =>
+  apiGetDatabases().then(({ body }) => [
+    ...new Set(
+      body.flatMap((database) =>
+        database.database_instances.map((instance) => instance.host_id)
+      )
+    ),
+  ]);
 
 export const apiRemoveAllDatabaseTags = () =>
   apiGetDatabases()

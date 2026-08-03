@@ -1,38 +1,72 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { MemoryRouter } from 'react-router';
 import { faker } from '@faker-js/faker';
-
+import { APPLICATION_TYPE } from '@lib/model/sapSystems';
 import {
   clusterFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
   sapSystemFactory,
 } from '@lib/test-utils/factories';
-import { APPLICATION_TYPE } from '@lib/model/sapSystems';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
 import { GenericSystemDetails } from './GenericSystemDetails';
-
 import { getSapInstanceOperations } from './sapOperations';
+
+const hosts = hostFactory.buildList(2, {
+  cluster: clusterFactory.build(),
+  heartbeat: 'passing',
+});
+const instancesWithHosts = sapSystemApplicationInstanceFactory
+  .buildList(2)
+  .map((instance, index) => ({
+    ...instance,
+    host: hosts[index] || hosts[0],
+  }));
 
 const system = {
   ...sapSystemFactory.build({
-    instances: sapSystemApplicationInstanceFactory.buildList(2),
+    instances: instancesWithHosts,
   }),
-  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+  hosts,
 };
+
+const hostsForAbsent = hostFactory.buildList(2, {
+  cluster: clusterFactory.build(),
+  heartbeat: 'passing',
+});
+const instancesWithHostsAbsent = sapSystemApplicationInstanceFactory
+  .buildList(2)
+  .map((instance, index) => ({
+    ...instance,
+    host: hostsForAbsent[index] || hostsForAbsent[0],
+  }));
 
 const systemWithAbsentInstance = {
   ...sapSystemFactory.build({
-    instances: sapSystemApplicationInstanceFactory.buildList(2),
+    instances: instancesWithHostsAbsent,
   }),
-  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+  hosts: hostsForAbsent,
 };
 systemWithAbsentInstance.instances[1].absent_at = faker.date
   .past()
   .toISOString();
+
+const systemWithStaleData = {
+  ...sapSystemFactory.build({
+    stale_at: '2026-06-15T10:30:00Z',
+    instances: [
+      sapSystemApplicationInstanceFactory.build({
+        stale_at: '2026-06-15T10:30:00Z',
+      }),
+      sapSystemApplicationInstanceFactory.build(),
+    ],
+  }),
+  hosts: hostFactory.buildList(2, { cluster: clusterFactory.build() }),
+};
 
 function ContainerWrapper({ children }) {
   return (
@@ -42,19 +76,25 @@ function ContainerWrapper({ children }) {
 
 export default {
   title: 'Layouts/SapSystemDetails',
-  components: GenericSystemDetails,
+  component: GenericSystemDetails,
   argTypes: {
     system: {
-      control: 'object',
+      control: { type: 'object' },
       description:
         'The object containing the details that are going to be represented in this view',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
+    userTimezone: {
+      description: 'Current user timezone',
+      control: {
+        type: 'text',
+      },
+    },
     cleanUpPermittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow instance clean up',
     },
     getInstanceOperations: {
@@ -64,6 +104,44 @@ export default {
     onInstanceCleanUp: {
       action: 'Clean up instance',
       description: 'Deregister and clean up an absent instance',
+    },
+    title: {
+      description:
+        'Main page title displayed at the top of the SAP/Database system details view',
+      control: { type: 'text' },
+    },
+    type: {
+      description:
+        'System type indicator: APPLICATION_TYPE for SAP systems or DATABASE_TYPE for HANA databases',
+      control: { type: 'text' },
+    },
+    operationsEnabled: {
+      description:
+        'Boolean flag that determines whether operation buttons are rendered for system start/stop actions',
+      control: { type: 'boolean' },
+    },
+    runningOperations: {
+      description: 'Array of currently executing operations on the system',
+      control: { type: 'object' },
+    },
+    getSystemOperations: {
+      description:
+        'Callback function that returns available system-level operations',
+      action: 'Get system operations function',
+    },
+    getSiteOperations: {
+      description:
+        'Callback function that returns site-level operations for system replication',
+      action: 'Get site operations function',
+    },
+    onRequestOperation: {
+      description: 'Callback invoked when a user requests an operation',
+      action: 'Request operation',
+    },
+    onCleanForbiddenOperation: {
+      description:
+        'Callback invoked when a forbidden operation modal is dismissed',
+      action: 'Clean forbidden operation',
     },
   },
   decorators: [
@@ -80,7 +158,7 @@ export default {
   ),
 };
 
-export const SapSystem = {
+export const Default = {
   args: {
     title: 'SAP System Details',
     type: APPLICATION_TYPE,
@@ -89,6 +167,28 @@ export const SapSystem = {
     cleanUpPermittedFor: ['cleanup:application_instance'],
     getInstanceOperations: getSapInstanceOperations,
     operationsEnabled: true,
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+    getSystemOperations: action('getSystemOperations'),
+    getSiteOperations: action('getSiteOperations'),
+    onRequestOperation: action('onRequestOperation'),
+    onCleanForbiddenOperation: action('onCleanForbiddenOperation'),
+  },
+};
+
+export const SapSystem = {
+  args: {
+    title: 'SAP System Details',
+    type: APPLICATION_TYPE,
+    system,
+    userAbilities: [{ name: 'all', resource: 'all' }],
+    userTimezone: 'Etc/UTC',
+    cleanUpPermittedFor: ['cleanup:application_instance'],
+    operationsEnabled: true,
+    onInstanceCleanUp: action('onInstanceCleanUp'),
+    getSystemOperations: action('getSystemOperations'),
+    getSiteOperations: action('getSiteOperations'),
+    onRequestOperation: action('onRequestOperation'),
+    onCleanForbiddenOperation: action('onCleanForbiddenOperation'),
   },
 };
 
@@ -103,5 +203,12 @@ export const CleanUpUnauthorized = {
   args: {
     ...SapSystemWithAbsentInstance.args,
     userAbilities: [],
+  },
+};
+
+export const SapSystemWithStaleData = {
+  args: {
+    ...SapSystem.args,
+    system: systemWithStaleData,
   },
 };

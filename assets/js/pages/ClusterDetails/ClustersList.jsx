@@ -4,8 +4,10 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useSearchParams } from 'react-router';
+import classNames from 'classnames';
 
 import { post, del } from '@lib/network';
+import { STALE_ROW } from '@lib/tables';
 import {
   ASCS_ERS,
   HANA_ASCS_ERS,
@@ -62,20 +64,29 @@ function ClustersList() {
   const clusters = useSelector(getClustersWithEnrichedSapInstances);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone: userTimezone } = useSelector(getUserProfile);
 
   const config = {
     pagination: true,
     usePadding: false,
+    rowClassName: ({ staleAt }) =>
+      classNames({
+        [STALE_ROW]: !!staleAt,
+      }),
     columns: [
       {
         title: 'Health',
         key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (health, { checks_execution: checksExecution }) => (
+        render: (health, { checks_execution: checksExecution, staleAt }) => (
           <div className="ml-4">
-            <ExecutionIcon health={health} executionState={checksExecution} />
+            <ExecutionIcon
+              health={health}
+              executionState={checksExecution}
+              staleAt={staleAt}
+              timezone={userTimezone}
+            />
           </div>
         ),
       },
@@ -192,6 +203,7 @@ function ClustersList() {
     checks_execution: cluster.checks_execution,
     selected_checks: cluster.selected_checks,
     tags: (cluster.tags && cluster.tags.map((tag) => tag.value)) || [],
+    staleAt: cluster.stale_at,
   }));
 
   const counters = getCounters(data || []);
