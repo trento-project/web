@@ -5,10 +5,13 @@ import React from 'react';
 import { noop } from 'lodash';
 import { Link } from 'react-router';
 import { ThreadPrimitive } from '@assistant-ui/react';
+import { EOS_CLOSE } from 'eos-icons-react';
+
+import Button from '@common/Button';
+import { getProviderLabel } from '@lib/ai';
 
 import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
-
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
 import {
@@ -16,6 +19,8 @@ import {
   isConfigurationCleared,
   isConfigurationRestored,
 } from './status';
+
+const stopPointerDown = (e) => e.stopPropagation();
 
 function ThreadBanner({ children }) {
   return (
@@ -52,6 +57,30 @@ function RestoredBanner() {
   );
 }
 
+function ModelChangeBanner({ provider, model, onDismiss = noop }) {
+  return (
+    <ThreadBanner>
+      <div className="flex items-start justify-between gap-2">
+        <span data-testid="model-change-banner">
+          AI model changed to{' '}
+          <span className="font-semibold">{getProviderLabel(provider)}</span> (
+          {model}) for this conversation.
+        </span>
+        <Button
+          type="icon"
+          size="none"
+          onPointerDown={stopPointerDown}
+          onClick={onDismiss}
+          aria-label="Dismiss"
+          className="!text-yellow-800 hover:opacity-75"
+        >
+          <EOS_CLOSE className="h-5 w-5 fill-current" />
+        </Button>
+      </div>
+    </ThreadBanner>
+  );
+}
+
 function AssistantThread({
   connectionStatus,
   configurationStatus,
@@ -59,6 +88,8 @@ function AssistantThread({
   isRunning = false,
   onNewThread = noop,
   onClose = noop,
+  modelNotice = null,
+  onDismissModelNotice = noop,
 }) {
   const connection = effectiveConnectionStatus(
     connectionStatus,
@@ -100,6 +131,12 @@ function AssistantThread({
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
           {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
+          {modelNotice && (
+            <ModelChangeBanner
+              {...modelNotice}
+              onDismiss={onDismissModelNotice}
+            />
+          )}
           <PromptComposer
             connectionStatus={connection}
             configurationStatus={configurationStatus}

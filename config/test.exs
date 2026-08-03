@@ -176,7 +176,8 @@ config :trento, :ai,
     ],
     provider2: [
       models: [
-        "model1"
+        "model1",
+        "model3"
       ]
     ]
   ]

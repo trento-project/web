@@ -24,6 +24,8 @@ function AssistantUI({
   onNewThread,
   handleClose,
   disabled = false,
+  modelNotice = null,
+  onDismissModelNotice,
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
@@ -37,6 +39,8 @@ function AssistantUI({
         onNewThread={onNewThread}
         isEmpty={isEmpty}
         isRunning={isRunning}
+        modelNotice={modelNotice}
+        onDismissModelNotice={onDismissModelNotice}
       />
     </ModalFrame>
   );
@@ -57,6 +61,7 @@ function AIAssistant({
   const [configurationStatus, setConfigurationStatus] = useState(
     aiConfigured ? CONFIGURATION_STATUS.OK : CONFIGURATION_STATUS.CLEARED
   );
+  const [modelNotice, setModelNotice] = useState(null);
 
   // The channel stays mounted even when the launcher is disabled, so a "created" event can re-enable this tab
   const isOpenRef = useRef(isOpen);
@@ -67,7 +72,15 @@ function AIAssistant({
   const startNewThread = useCallback(() => {
     setThreadID(crypto.randomUUID());
     setConfigurationStatus(CONFIGURATION_STATUS.OK);
+    setModelNotice(null);
   }, []);
+
+  const handleModelChanged = useCallback(
+    (payload) => setModelNotice(payload),
+    []
+  );
+
+  const handleDismissModelNotice = useCallback(() => setModelNotice(null), []);
 
   const handleAIConfigurationCleared = useCallback(
     () => setConfigurationStatus(CONFIGURATION_STATUS.CLEARED),
@@ -96,6 +109,7 @@ function AIAssistant({
       onConnectionChange={setConnectionStatus}
       onAIConfigurationCleared={handleAIConfigurationCleared}
       onAIConfigurationCreated={handleAIConfigurationCreated}
+      onModelChanged={handleModelChanged}
     >
       <AssistantUI
         open={isOpen}
@@ -104,6 +118,8 @@ function AIAssistant({
         onOpenChange={setIsOpen}
         onNewThread={startNewThread}
         handleClose={handleClose}
+        modelNotice={modelNotice}
+        onDismissModelNotice={handleDismissModelNotice}
         disabled={!configurationAvailable && !isOpen}
       />
     </AssistantChatProvider>
