@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useAuiState } from '@assistant-ui/react';
 
@@ -46,17 +46,12 @@ function AssistantUI({
   );
 }
 
-function AIAssistant({
-  userID,
-  aiConfigured = true,
-  open = false,
-  initialConnectionStatus = CONNECTION_STATUS.DISCONNECTED,
-}) {
+function AIAssistant({ userID, aiConfigured = true, open = false }) {
   const [isOpen, setIsOpen] = useState(open);
   const handleClose = () => setIsOpen(false);
   const [threadID, setThreadID] = useState(() => crypto.randomUUID());
   const [connectionStatus, setConnectionStatus] = useState(
-    initialConnectionStatus
+    CONNECTION_STATUS.DISCONNECTED
   );
   const [configurationStatus, setConfigurationStatus] = useState(
     aiConfigured ? CONFIGURATION_STATUS.OK : CONFIGURATION_STATUS.CLEARED
@@ -64,41 +59,31 @@ function AIAssistant({
   const [modelNotice, setModelNotice] = useState(null);
 
   // The channel stays mounted even when the launcher is disabled, so a "created" event can re-enable this tab
-  const isOpenRef = useRef(isOpen);
-  useEffect(() => {
-    isOpenRef.current = isOpen;
-  }, [isOpen]);
-
-  const startNewThread = useCallback(() => {
+  const startNewThread = () => {
     setThreadID(crypto.randomUUID());
     setConfigurationStatus(CONFIGURATION_STATUS.OK);
     setModelNotice(null);
-  }, []);
+  };
 
-  const handleModelChanged = useCallback(
-    (payload) => setModelNotice(payload),
-    []
-  );
+  const handleModelChanged = (payload) => setModelNotice(payload);
 
-  const handleDismissModelNotice = useCallback(() => setModelNotice(null), []);
+  const handleDismissModelNotice = () => setModelNotice(null);
 
-  const handleAIConfigurationCleared = useCallback(
-    () => setConfigurationStatus(CONFIGURATION_STATUS.CLEARED),
-    []
-  );
+  const handleAIConfigurationCleared = () =>
+    setConfigurationStatus(CONFIGURATION_STATUS.CLEARED);
 
-  const handleAIConfigurationCreated = useCallback(() => {
+  const handleAIConfigurationCreated = () => {
     // A still-open cleared chat must be explicitly restarted by the user;
     // otherwise (closed launcher) just re-enable and reset the thread so the
     // next open starts fresh.
-    if (isOpenRef.current) {
+    if (isOpen) {
       setConfigurationStatus((prev) =>
         isConfigurationCleared(prev) ? CONFIGURATION_STATUS.RESTORED : prev
       );
     } else {
       startNewThread();
     }
-  }, [startNewThread]);
+  };
 
   const configurationAvailable = isConfigurationAvailable(configurationStatus);
 

@@ -48,6 +48,23 @@ function useChannelScript(socket, script) {
   }, [socket, script]);
 }
 
+// Since ai configuration events are pushed by the server, we need a way to simulate them in stories.
+function useConfigurationEvents(socket, events) {
+  useEffect(() => {
+    if (!events?.length) return undefined;
+
+    const channel = socket.channels.get(TOPIC);
+    if (!channel) return undefined;
+
+    const timers = events.map(({ event, payload }, i) =>
+      setTimeout(() => channel.emit(event, payload), 50 + i * 50)
+    );
+    return () => timers.forEach(clearTimeout);
+    // The event list is captured at mount, as with useSimulatedTurn.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+}
+
 // Types the user's prompt into the composer, hits send, then plays an
 // assistant turn back through the channel. Assumes useChannelScript has
 // already brought the channel up. `turn.stepDelayMs > 0` reveals deltas
@@ -139,19 +156,25 @@ export default {
     aiAssistant: {
       script: 'fireOk',
       turn: null,
+      events: null,
     },
   },
   args: { userID: USER_ID },
   decorators: [
     (Story, context) => {
       const socket = useFreshSocket();
-      const { script, turn } = context.parameters.aiAssistant ?? {};
+      const { script, turn, events } = context.parameters.aiAssistant ?? {};
       useChannelScript(socket, script);
       useSimulatedTurn(socket, turn);
+      useConfigurationEvents(socket, events);
+      // Router needed by the Profile links in the disabled launcher tooltip
+      // and the cleared-configuration banner.
       return (
-        <StoryProviders socket={socket}>
-          <Story />
-        </StoryProviders>
+        <MemoryRouter>
+          <StoryProviders socket={socket}>
+            <Story />
+          </StoryProviders>
+        </MemoryRouter>
       );
     },
   ],
@@ -165,14 +188,6 @@ export const Closed = {
 export const Disabled = {
   name: 'Disabled — no AI configuration',
   args: { open: false, aiConfigured: false },
-  decorators: [
-    // Router needed for the disabled launcher tooltip's Profile link.
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
 };
 
 export const OpenEmpty = {
@@ -202,6 +217,42 @@ export const OpenDisconnected = {
   args: { open: true },
   parameters: {
     aiAssistant: { script: 'dropAfterConnect' },
+  },
+};
+
+export const OpenConfigurationCleared = {
+  name: 'Open — AI settings cleared (read-only)',
+  args: { open: true },
+  parameters: {
+    aiAssistant: { events: [{ event: 'ai_configuration_cleared' }] },
+  },
+};
+
+export const OpenConfigurationRestored = {
+  name: 'Open — new configuration, awaiting a new chat',
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      events: [
+        { event: 'ai_configuration_cleared' },
+        { event: 'ai_configuration_created' },
+      ],
+    },
+  },
+};
+
+export const OpenModelChanged = {
+  name: 'Open — model changed notice',
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      events: [
+        {
+          event: 'model_changed',
+          payload: { provider: 'googleai', model: 'gemini-2.5-pro' },
+        },
+      ],
+    },
   },
 };
 
