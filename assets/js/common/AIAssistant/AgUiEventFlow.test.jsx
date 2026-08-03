@@ -8,13 +8,6 @@ import '@testing-library/jest-dom';
 import { renderAIAssistant } from '@lib/test-utils/aiAssistant';
 import { aguiEvents } from '@lib/test-utils/aguiEvents';
 
-// Markdown rendering is its own concern — replace with a plain span so the
-// scenarios can assert text directly without dragging react-markdown into
-// the test path.
-jest.mock('@assistant-ui/react-markdown', () => ({
-  MarkdownTextPrimitive: ({ text }) => <span data-aui-md>{text}</span>,
-}));
-
 const assistantBubble = () => {
   const nodes = document.querySelectorAll('[data-role="assistant"]');
   return nodes[nodes.length - 1] || null;
@@ -126,20 +119,38 @@ describe('AG-UI event flow', () => {
     });
   });
 
-  it('renders the model_changed notice as a dismissable banner', async () => {
-    const user = userEvent.setup();
-    const { channel } = await renderAIAssistant({ open: true });
-
-    await act(async () => {
+  const emitModelChange = (channel) =>
+    act(async () => {
       channel.emit('model_changed', {
         provider: 'googleai',
         model: 'gemini-2.5-pro',
       });
     });
 
+  it('renders the model_changed notice as a dismissable banner', async () => {
+    const user = userEvent.setup();
+    const { channel } = await renderAIAssistant({ open: true });
+
+    await emitModelChange(channel);
+
     expect(await screen.findByText(/AI model changed to/i)).toBeVisible();
 
     await user.click(screen.getByRole('button', { name: 'Dismiss' }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/AI model changed to/i)
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  it('"New chat" clears the model-change notice', async () => {
+    const { channel, user } = await renderAIAssistant({ open: true });
+
+    await emitModelChange(channel);
+    expect(await screen.findByText(/AI model changed to/i)).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
 
     await waitFor(() => {
       expect(
