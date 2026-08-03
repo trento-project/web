@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import {
+  adminUser,
   databaseInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
@@ -156,6 +157,35 @@ describe('HostsLists component', () => {
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
       expect(screen.getAllByText(duplicatedSID).length).toBe(1);
+    });
+
+    it('should show stale hosts with correct styling', async () => {
+      const staleDate = '2024-01-01T00:00:00.000Z';
+      const state = {
+        user: adminUser.build(),
+        hostsList: {
+          hosts: [
+            hostFactory.build({ heartbeat: 'critical', stale_at: staleDate }),
+            hostFactory.build({ heartbeat: 'passing', stale_at: null }),
+          ],
+        },
+      };
+
+      const [HostsListWithState] = withState(<HostsList />, state, true);
+
+      renderWithRouter(HostsListWithState);
+
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0]).toHaveClass('bg-gray-100');
+      expect(rows[1]).not.toHaveClass('bg-gray-100');
+
+      expect(
+        within(rows[0]).getByRole('img', { name: /health icon/i })
+      ).toHaveAttribute('data-stale');
+
+      expect(
+        within(rows[1]).getByRole('img', { name: /health icon/i })
+      ).not.toHaveAttribute('data-stale');
     });
   });
 

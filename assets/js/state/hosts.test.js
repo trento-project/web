@@ -175,7 +175,7 @@ describe('Hosts reducer', () => {
     const staleAt = Date.now();
 
     const initialState = { hosts: [host] };
-    const action = setStaleAt({id: host.id, stale_at: staleAt});
+    const action = setStaleAt({ id: host.id, stale_at: staleAt });
     const expectedState = { hosts: [{ ...host, stale_at: staleAt }] };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);
@@ -185,7 +185,7 @@ describe('Hosts reducer', () => {
     const host = hostFactory.build({ stale_at: Date.now() });
 
     const initialState = { hosts: [host] };
-    const action = setStaleAt({id: host.id });
+    const action = setStaleAt({ id: host.id });
     const expectedState = { hosts: [{ ...host, stale_at: null }] };
 
     expect(hostsReducer(initialState, action)).toEqual(expectedState);

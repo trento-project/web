@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
+import classNames from 'classnames';
 import semver from 'semver';
 
 import CleanUpButton from '@common/CleanUpButton';
@@ -22,6 +23,7 @@ import Tooltip from '@common/Tooltip';
 
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
+import { STALE_ROW } from '@lib/tables';
 
 const compareAgentVersions = (a, b) => {
   const coercedA = semver.coerce(a);
@@ -60,7 +62,7 @@ function HostsList() {
   const hosts = useSelector((state) => state.hostsList.hosts);
   const clusters = useSelector((state) => state.clustersList.clusters);
   const allInstances = useSelector(getAllSAPInstances);
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
@@ -81,14 +83,23 @@ function HostsList() {
   const config = {
     pagination: true,
     usePadding: false,
+    rowClassName: ({ staleAt }) =>
+      classNames({
+        [STALE_ROW]: !!staleAt,
+      }),
     columns: [
       {
         title: 'Health',
         key: 'health',
         filter: true,
         filterFromParams: true,
-        render: (_content, { health }) => (
-          <HealthIcon health={health} centered />
+        render: (health, { staleAt }) => (
+          <HealthIcon
+            health={health}
+            staleAt={staleAt}
+            timezone={timezone}
+            centered
+          />
         ),
       },
       {
@@ -104,7 +115,7 @@ function HostsList() {
         key: 'ip',
         render: (content) =>
           content.map((ip) => (
-            <div key={ip} className="text-sm text-gray-900">
+            <div key={ip} className="text-sm">
               {ip}
             </div>
           )),
@@ -249,6 +260,7 @@ function HostsList() {
       sap_systems: sapSystemList,
       deregisterable: host.deregisterable,
       deregistering: host.deregistering,
+      staleAt: host.stale_at,
     };
   });
 

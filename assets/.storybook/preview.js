@@ -3,6 +3,9 @@
 
 import '../../priv/static/assets/app.css';
 
+import React from 'react';
+import { withState } from '@lib/test-utils';
+
 export default {
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
@@ -14,4 +17,18 @@ export default {
     },
   },
   tags: ['autodocs', 'autodocs'],
+  decorators: [
+    (Story, { parameters }) => {
+      if (!parameters.storeState) {
+        return <Story />;
+      }
+
+      const [StoryWithState] = withState(
+        <Story />,
+        parameters.storeState,
+        true
+      );
+      return StoryWithState;
+    },
+  ],
 };

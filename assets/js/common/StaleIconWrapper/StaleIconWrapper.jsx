@@ -46,7 +46,12 @@ function StaleIconWrapper(WrappedIcon) {
     );
 
     return (
-      <div className="flex items-center mx-1">
+      <div
+        className="flex items-center mx-1"
+        role="img"
+        aria-label="Health icon"
+        {...(staleAt && { 'data-stale': '' })}
+      >
         <Tooltip
           content={tooltipContent}
           place="top"
