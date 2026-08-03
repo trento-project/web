@@ -10,7 +10,7 @@ import {
   validCertificate,
   anotherValidCertificate,
   expiredCertificate,
-} from '../fixtures/suma_credentials/certificates';
+} from '../fixtures/smlm_credentials/certificates';
 
 // Selectors
 
@@ -30,19 +30,19 @@ const expiredApiKeyToaster =
   'p:contains("API Key has expired. Go to Settings to issue a new key")';
 const closeToExpireApiKeyToaster = 'p:contains("API Key expires in 9 days")';
 
-// SUMA selectors
+// SMLM selectors
 
-const sumaUrlLabel = '[aria-label="smlm-url"]';
-const sumaCertUploadDateLabel = '[aria-label="smlm-cacert-upload-date"]';
-const sumaUsernameLabel = '[aria-label="smlm-username"]';
-const sumaPasswordLabel = '[aria-label="smlm-password"]';
-const sumaEditSettingsButton =
+const smlmUrlLabel = '[aria-label="smlm-url"]';
+const smlmCertUploadDateLabel = '[aria-label="smlm-cacert-upload-date"]';
+const smlmUsernameLabel = '[aria-label="smlm-username"]';
+const smlmPasswordLabel = '[aria-label="smlm-password"]';
+const smlmEditSettingsButton =
   'h2:contains("Linux Manager") + span button:contains("Edit Settings")';
-const clearSumaSettingsButton = '[aria-label="clear-smlm-settings"]';
-const confirmClearSumaSettings = '[aria-label="confirm-clear-smlm-settings"]';
-const testSumaConnectionButton = '[aria-label="test-smlm-connection"]';
+const clearSmlmSettingsButton = '[aria-label="clear-smlm-settings"]';
+const confirmClearSmlmSettings = '[aria-label="confirm-clear-smlm-settings"]';
+const testSmlmConnectionButton = '[aria-label="test-smlm-connection"]';
 
-const sumaSettingsModal = {
+const smlmSettingsModal = {
   urlInput: 'label:contains("URL") + div input',
   caCertInput: 'label:contains("Certificate") + div textarea',
   removeCaCertButton: `[aria-label="remove-smlm-cacert"]`,
@@ -100,14 +100,14 @@ const retentionTimeInput = 'input[role="spinbutton"]';
 
 const url = '/settings';
 
-const sumaUrl = 'https://valid';
-const sumaUsername = 'admin';
-const sumaPassword = 'adminpassword';
+const smlmUrl = 'https://valid';
+const smlmUsername = 'admin';
+const smlmPassword = 'adminpassword';
 
 const baseInitialSettings = {
-  url: sumaUrl,
-  username: sumaUsername,
-  password: sumaPassword,
+  url: smlmUrl,
+  username: smlmUsername,
+  password: smlmPassword,
 };
 
 const alertingDevEnvSettings = {
@@ -211,19 +211,19 @@ export const clickActivityLogSettingsSaveButton = () =>
 export const clickEditActivityLogSettingsButton = () =>
   cy.get(editActivityLogsSettingsButton).click();
 
-export const clearSumaSettings = () => {
-  cy.get(clearSumaSettingsButton).click();
-  return cy.get(confirmClearSumaSettings).click();
+export const clearSmlmSettings = () => {
+  cy.get(clearSmlmSettingsButton).click();
+  return cy.get(confirmClearSmlmSettings).click();
 };
 
-export const clickSumaSettingsModalSaveButton = () =>
-  cy.get(sumaSettingsModal.saveButton).click();
+export const clickSmlmSettingsModalSaveButton = () =>
+  cy.get(smlmSettingsModal.saveButton).click();
 
-export const clickSumaEditSettingsButton = () =>
-  cy.get(sumaEditSettingsButton).click();
+export const clickSmlmEditSettingsButton = () =>
+  cy.get(smlmEditSettingsButton).click();
 
 export const clickModalCancelButton = () =>
-  cy.get(sumaSettingsModal.cancelButton).click();
+  cy.get(smlmSettingsModal.cancelButton).click();
 
 export const clickGenerateApiKeyButton = () =>
   cy.get(generateApiKeyButton).click();
@@ -266,19 +266,19 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 
 export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
 
-export const interceptTestSUMASettingsRequest = (expectedStatusCode) =>
+export const interceptTestSMLMSettingsRequest = (expectedStatusCode) =>
   cy.intercept('/api/v1/settings/suse_manager/test', {
     statusCode: expectedStatusCode,
   });
 
-export const clickSumaConnectionTestButton = () =>
-  cy.get(testSumaConnectionButton).click();
+export const clickSmlmConnectionTestButton = () =>
+  cy.get(testSmlmConnectionButton).click();
 
 const _clickRemovePasswordButton = () =>
-  cy.get(sumaSettingsModal.removePasswordButton).click();
+  cy.get(smlmSettingsModal.removePasswordButton).click();
 
-const _clickRemoveSumaCaCertButton = () =>
-  cy.get(sumaSettingsModal.removeCaCertButton).click();
+const _clickRemoveSmlmCaCertButton = () =>
+  cy.get(smlmSettingsModal.removeCaCertButton).click();
 
 const typeAlertingServer = (text) =>
   cy.get(alertingServerEditField).clear().type(text);
@@ -343,7 +343,7 @@ export const interceptSettingsPageEndpoints = () => {
   cy.intercept('/api/v1/settings/activity_log').as(
     'activityLogSettingsEndpoint'
   );
-  cy.intercept('/api/v1/settings/suse_manager').as('sumaSettingsEndpoint');
+  cy.intercept('/api/v1/settings/suse_manager').as('smlmSettingsEndpoint');
   return cy
     .intercept('/api/v1/settings/alerting')
     .as('alertingSettingsEndpoint');
@@ -354,7 +354,7 @@ export const waitForSettingsPageRequests = () => {
   // need to wait twice for api key as it is loaded in the initial fetch as well
   basePage.waitForRequest('apiKeySettingsEndpoint');
   basePage.waitForRequest('activityLogSettingsEndpoint');
-  basePage.waitForRequest('sumaSettingsEndpoint');
+  basePage.waitForRequest('smlmSettingsEndpoint');
   return basePage.waitForRequest('alertingSettingsEndpoint');
 };
 
@@ -371,7 +371,7 @@ export const checkSettingsEndpointsRequestsAreForbidden = (forbidden) => {
     .its('response.statusCode')
     .should(matcher, 401);
   basePage
-    .waitForRequest('sumaSettingsEndpoint', waitOptions)
+    .waitForRequest('smlmSettingsEndpoint', waitOptions)
     .its('response.statusCode')
     .should(matcher, 401);
   return basePage
@@ -388,20 +388,20 @@ export const activityLogsEditButtonIsEnabled = () =>
 export const activityLogsEditButtonIsDisabled = () =>
   cy.get(editActivityLogsSettingsButton).should('be.disabled');
 
-export const sumaClearSettingsButtonIsEnabled = () =>
-  cy.get(clearSumaSettingsButton).should('be.enabled');
+export const smlmClearSettingsButtonIsEnabled = () =>
+  cy.get(clearSmlmSettingsButton).should('be.enabled');
 
-export const sumaClearSettingsButtonIsDisabled = () =>
-  cy.get(clearSumaSettingsButton).should('be.disabled');
+export const smlmClearSettingsButtonIsDisabled = () =>
+  cy.get(clearSmlmSettingsButton).should('be.disabled');
 
-export const sumaEditSettingsButtonIsEnabled = () =>
-  cy.get(sumaEditSettingsButton).should('be.enabled');
+export const smlmEditSettingsButtonIsEnabled = () =>
+  cy.get(smlmEditSettingsButton).should('be.enabled');
 
-export const sumaEditSettingsButtonIsDisabled = () =>
-  cy.get(sumaEditSettingsButton).should('be.disabled');
+export const smlmEditSettingsButtonIsDisabled = () =>
+  cy.get(smlmEditSettingsButton).should('be.disabled');
 
-export const sumaConnectionTestButtonIsEnabled = () =>
-  cy.get(testSumaConnectionButton).should('be.enabled');
+export const smlmConnectionTestButtonIsEnabled = () =>
+  cy.get(testSmlmConnectionButton).should('be.enabled');
 
 export const changeSettingsEndpointIsNotCalled = () =>
   cy.get('@changeSettingsEndpoint').should('not.have.been.called');
@@ -412,13 +412,13 @@ export const activityLogSettingsModalIsNotDisplayed = () =>
 export const retentionTimeIsTheExpected = (expectedValue) =>
   cy.get(retentionTime).should('have.text', expectedValue);
 
-export const showExpectedToasterAfterTestingSUMA = (expectedToasterMessage) =>
+export const showExpectedToasterAfterTestingSMLM = (expectedToasterMessage) =>
   cy
     .get(`p:contains("Connection ${expectedToasterMessage}!")`)
     .should('be.visible');
 
-export const sumaConnectionButtonIsDisabled = () =>
-  cy.get(testSumaConnectionButton).should('be.disabled');
+export const smlmConnectionButtonIsDisabled = () =>
+  cy.get(testSmlmConnectionButton).should('be.disabled');
 
 export const expectedSavingValidationsAreDisplayed = () => {
   const savingValidationScenarios = [
@@ -426,14 +426,14 @@ export const expectedSavingValidationsAreDisplayed = () => {
       selector: 'missing fields',
       values: [],
       expectedErrors: [
-        { selector: sumaSettingsModal.urlInput, error: 'Missing field: url' },
-        { selector: sumaSettingsModal.caCertInput, error: null },
+        { selector: smlmSettingsModal.urlInput, error: 'Missing field: url' },
+        { selector: smlmSettingsModal.caCertInput, error: null },
         {
-          selector: sumaSettingsModal.usernameInput,
+          selector: smlmSettingsModal.usernameInput,
           error: 'Missing field: username',
         },
         {
-          selector: sumaSettingsModal.passwordInput,
+          selector: smlmSettingsModal.passwordInput,
           error: 'Missing field: password',
         },
       ],
@@ -441,33 +441,33 @@ export const expectedSavingValidationsAreDisplayed = () => {
     {
       selector: 'blank fields',
       values: [
-        { selector: sumaSettingsModal.urlInput, value: ' ' },
-        { selector: sumaSettingsModal.caCertInput, value: ' ' },
-        { selector: sumaSettingsModal.usernameInput, value: ' ' },
-        { selector: sumaSettingsModal.passwordInput, value: ' ' },
+        { selector: smlmSettingsModal.urlInput, value: ' ' },
+        { selector: smlmSettingsModal.caCertInput, value: ' ' },
+        { selector: smlmSettingsModal.usernameInput, value: ' ' },
+        { selector: smlmSettingsModal.passwordInput, value: ' ' },
       ],
       expectedErrors: [
-        { selector: sumaSettingsModal.urlInput, error: "Can't be blank" },
-        { selector: sumaSettingsModal.caCertInput, error: "Can't be blank" },
-        { selector: sumaSettingsModal.usernameInput, error: "Can't be blank" },
-        { selector: sumaSettingsModal.passwordInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.urlInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.caCertInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.usernameInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.passwordInput, error: "Can't be blank" },
       ],
     },
     {
       selector: 'invalid url and certificate',
       values: [
-        { selector: sumaSettingsModal.urlInput, value: 'invalid' },
-        { selector: sumaSettingsModal.caCertInput, value: 'foobar' },
-        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+        { selector: smlmSettingsModal.urlInput, value: 'invalid' },
+        { selector: smlmSettingsModal.caCertInput, value: 'foobar' },
+        { selector: smlmSettingsModal.usernameInput, value: 'admin' },
+        { selector: smlmSettingsModal.passwordInput, value: 'adminpassword' },
       ],
       expectedErrors: [
         {
-          selector: sumaSettingsModal.urlInput,
+          selector: smlmSettingsModal.urlInput,
           error: 'Can only be an https url',
         },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           error: 'Unable to parse x.509 certificate',
         },
       ],
@@ -475,22 +475,22 @@ export const expectedSavingValidationsAreDisplayed = () => {
     {
       selector: 'http url and invalid certificate',
       values: [
-        { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+        { selector: smlmSettingsModal.urlInput, value: 'http://invalid' },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value:
             '-----BEGIN CERTIFICATE-----\nfoobar\n-----END CERTIFICATE-----',
         },
-        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+        { selector: smlmSettingsModal.usernameInput, value: 'admin' },
+        { selector: smlmSettingsModal.passwordInput, value: 'adminpassword' },
       ],
       expectedErrors: [
         {
-          selector: sumaSettingsModal.urlInput,
+          selector: smlmSettingsModal.urlInput,
           error: 'Can only be an https url',
         },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           error: 'Unable to parse x.509 certificate',
         },
       ],
@@ -498,21 +498,21 @@ export const expectedSavingValidationsAreDisplayed = () => {
     {
       selector: 'expired certificate',
       values: [
-        { selector: sumaSettingsModal.urlInput, value: 'http://invalid' },
+        { selector: smlmSettingsModal.urlInput, value: 'http://invalid' },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value: expiredCertificate,
         },
-        { selector: sumaSettingsModal.usernameInput, value: 'admin' },
-        { selector: sumaSettingsModal.passwordInput, value: 'adminpassword' },
+        { selector: smlmSettingsModal.usernameInput, value: 'admin' },
+        { selector: smlmSettingsModal.passwordInput, value: 'adminpassword' },
       ],
       expectedErrors: [
         {
-          selector: sumaSettingsModal.urlInput,
+          selector: smlmSettingsModal.urlInput,
           error: 'Can only be an https url',
         },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           error: 'The x.509 certificate is not valid',
         },
       ],
@@ -522,13 +522,13 @@ export const expectedSavingValidationsAreDisplayed = () => {
   return cy
     .wrap(savingValidationScenarios)
     .each(({ values, expectedErrors }) => {
-      clickSumaEditSettingsButton();
+      clickSmlmEditSettingsButton();
       cy.wrap(values).each(({ selector, value }) =>
         cy.get(selector).type(value, { delay: 0 })
       );
 
-      clickSumaSettingsModalSaveButton();
-      basePage.waitForRequest('sumaSettingsEndpoint');
+      clickSmlmSettingsModalSaveButton();
+      basePage.waitForRequest('smlmSettingsEndpoint');
 
       cy.wrap(expectedErrors).each(({ selector, error }) => {
         const errorMessageSelector = `${selector.split('+')[0]} + div p`;
@@ -537,18 +537,18 @@ export const expectedSavingValidationsAreDisplayed = () => {
           : cy.get(errorMessageSelector).should('not.exist');
       });
       clickModalCancelButton();
-      sumaUrlHasExpectedValue('https://');
-      sumaCaCertUploadDateHasExpectedValue('-');
-      sumaUsernameHasExpectedValue('.....');
-      sumaPasswordHasExpectedValue('.....');
+      smlmUrlHasExpectedValue('https://');
+      smlmCaCertUploadDateHasExpectedValue('-');
+      smlmUsernameHasExpectedValue('.....');
+      smlmPasswordHasExpectedValue('.....');
     });
 };
 
 export const eachSaveSettingsScenarioWorkAsExpected = () => {
   const defaultInputValues = [
-    { selector: sumaSettingsModal.urlInput, value: sumaUrl },
-    { selector: sumaSettingsModal.usernameInput, value: sumaUsername },
-    { selector: sumaSettingsModal.passwordInput, value: sumaPassword },
+    { selector: smlmSettingsModal.urlInput, value: smlmUrl },
+    { selector: smlmSettingsModal.usernameInput, value: smlmUsername },
+    { selector: smlmSettingsModal.passwordInput, value: smlmPassword },
   ];
 
   const savingScenarios = [
@@ -560,7 +560,7 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
       values: [
         ...defaultInputValues,
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value: validCertificate,
         },
       ],
@@ -569,23 +569,23 @@ export const eachSaveSettingsScenarioWorkAsExpected = () => {
   ];
 
   return cy.wrap(savingScenarios).each(({ values, expectCertUploadDate }) => {
-    clickSumaEditSettingsButton();
+    clickSmlmEditSettingsButton();
     cy.wrap(values).each(({ selector, value }) =>
       cy.get(selector).type(value, { delay: 0 })
     );
 
-    clickSumaSettingsModalSaveButton();
-    basePage.waitForRequest('sumaSettingsEndpoint');
+    clickSmlmSettingsModalSaveButton();
+    basePage.waitForRequest('smlmSettingsEndpoint');
 
-    sumaUrlHasExpectedValue(sumaUrl);
+    smlmUrlHasExpectedValue(smlmUrl);
     const expectedCaCertDate = expectCertUploadDate
       ? 'Certificate Uploaded'
       : '-';
-    sumaCaCertUploadDateHasExpectedValue(expectedCaCertDate);
-    sumaUsernameHasExpectedValue(sumaUsername);
-    sumaPasswordHasExpectedValue('•••••');
+    smlmCaCertUploadDateHasExpectedValue(expectedCaCertDate);
+    smlmUsernameHasExpectedValue(smlmUsername);
+    smlmPasswordHasExpectedValue('•••••');
 
-    basePage.clearSUMASettings();
+    basePage.clearSMLMSettings();
     return basePage.refresh();
   });
 };
@@ -603,23 +603,23 @@ export const editFormIsDisplayedAsExpected = () => {
   ];
 
   return cy.wrap(initialEditFormScenarios).each(({ settings }) => {
-    basePage.saveSUMASettings(settings);
+    basePage.saveSMLMSettings(settings);
     basePage.refresh();
-    clickSumaEditSettingsButton();
+    clickSmlmEditSettingsButton();
     const { url, username, ca_cert } = settings;
-    sumaUrlHasExpectedValue(url);
+    smlmUrlHasExpectedValue(url);
     if (ca_cert) {
-      cy.get(sumaSettingsModal.caCertInput).should('not.exist');
-      _sumaRemoveCaCertButtonIsDisplayed();
+      cy.get(smlmSettingsModal.caCertInput).should('not.exist');
+      _smlmRemoveCaCertButtonIsDisplayed();
     } else {
-      sumaCaCertIsEmpty();
-      sumaRemoveCaCertButtonIsNotDisplayed();
+      smlmCaCertIsEmpty();
+      smlmRemoveCaCertButtonIsNotDisplayed();
     }
-    cy.get(sumaSettingsModal.usernameInput).should('have.value', username);
-    cy.get(sumaSettingsModal.passwordInput).should('not.exist');
+    cy.get(smlmSettingsModal.usernameInput).should('have.value', username);
+    cy.get(smlmSettingsModal.passwordInput).should('not.exist');
     _removePasswordButtonIsDisplayed();
     clickModalCancelButton();
-    return basePage.clearSUMASettings();
+    return basePage.clearSMLMSettings();
   });
 };
 
@@ -628,12 +628,12 @@ export const changingSettingsValidationsWorkAsExpected = () => {
     {
       selector: 'blank fields',
       newValues: [
-        { selector: sumaSettingsModal.urlInput, value: ' ' },
-        { selector: sumaSettingsModal.usernameInput, value: '   ' },
+        { selector: smlmSettingsModal.urlInput, value: ' ' },
+        { selector: smlmSettingsModal.usernameInput, value: '   ' },
       ],
       expectedErrors: [
-        { selector: sumaSettingsModal.urlInput, error: "Can't be blank" },
-        { selector: sumaSettingsModal.usernameInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.urlInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.usernameInput, error: "Can't be blank" },
       ],
     },
     {
@@ -642,37 +642,37 @@ export const changingSettingsValidationsWorkAsExpected = () => {
       changeInitialPassword: true,
       newValues: [
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value:
             '-----BEGIN CERTIFICATE-----\nfoobar\n-----END CERTIFICATE-----',
         },
-        { selector: sumaSettingsModal.passwordInput, value: ' ' },
+        { selector: smlmSettingsModal.passwordInput, value: ' ' },
       ],
       expectedErrors: [
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           error: 'Unable to parse x.509 certificate',
         },
-        { selector: sumaSettingsModal.passwordInput, error: "Can't be blank" },
+        { selector: smlmSettingsModal.passwordInput, error: "Can't be blank" },
       ],
     },
     {
       selector: 'expired certificate and invalid url',
       withInitialCert: true,
       newValues: [
-        { selector: sumaSettingsModal.urlInput, value: 'invalid' },
+        { selector: smlmSettingsModal.urlInput, value: 'invalid' },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value: expiredCertificate,
         },
       ],
       expectedErrors: [
         {
-          selector: sumaSettingsModal.urlInput,
+          selector: smlmSettingsModal.urlInput,
           error: 'Can only be an https url',
         },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           error: 'The x.509 certificate is not valid',
         },
       ],
@@ -692,20 +692,20 @@ export const changingSettingsValidationsWorkAsExpected = () => {
           ...baseInitialSettings,
           ...(withInitialCert && { ca_cert: validCertificate }),
         };
-        basePage.saveSUMASettings(initialSettings);
+        basePage.saveSMLMSettings(initialSettings);
         basePage.refresh();
-        basePage.waitForRequest('sumaSettingsEndpoint');
-        clickSumaEditSettingsButton();
+        basePage.waitForRequest('smlmSettingsEndpoint');
+        clickSmlmEditSettingsButton();
 
-        if (withInitialCert) _clickRemoveSumaCaCertButton();
+        if (withInitialCert) _clickRemoveSmlmCaCertButton();
         if (changeInitialPassword) _clickRemovePasswordButton();
 
         cy.wrap(newValues).each(({ selector, value }) =>
           cy.get(selector).clear().type(value, { delay: 0 })
         );
 
-        clickSumaSettingsModalSaveButton();
-        basePage.waitForRequest('sumaSettingsEndpoint');
+        clickSmlmSettingsModalSaveButton();
+        basePage.waitForRequest('smlmSettingsEndpoint');
 
         cy.wrap(expectedErrors).each(({ selector, error }) => {
           const errorMessageSelector = `${selector.split('+')[0]} + div p`;
@@ -714,19 +714,19 @@ export const changingSettingsValidationsWorkAsExpected = () => {
             : cy.get(errorMessageSelector).should('not.exist');
         });
         clickModalCancelButton();
-        sumaUrlHasExpectedValue(baseInitialSettings.url);
-        const expectedSumaCaCertValue = withInitialCert
+        smlmUrlHasExpectedValue(baseInitialSettings.url);
+        const expectedSmlmCaCertValue = withInitialCert
           ? 'Certificate Uploaded'
           : '-';
-        sumaCaCertUploadDateHasExpectedValue(expectedSumaCaCertValue);
-        sumaUsernameHasExpectedValue(baseInitialSettings.username);
-        sumaPasswordHasExpectedValue('•••••');
-        return basePage.clearSUMASettings();
+        smlmCaCertUploadDateHasExpectedValue(expectedSmlmCaCertValue);
+        smlmUsernameHasExpectedValue(baseInitialSettings.username);
+        smlmPasswordHasExpectedValue('•••••');
+        return basePage.clearSMLMSettings();
       }
     );
 };
 
-export const sumaSettingsAreCorrectlyChanged = () => {
+export const smlmSettingsAreCorrectlyChanged = () => {
   const newUrl = 'https://new-valid-url';
   const newUsername = 'newuser';
   const newPassword = 'newpassword';
@@ -745,9 +745,9 @@ export const sumaSettingsAreCorrectlyChanged = () => {
       withInitialCert: false,
       changeInitialPassword: true,
       newValues: [
-        { selector: sumaSettingsModal.urlInput, value: newUrl },
-        { selector: sumaSettingsModal.usernameInput, value: newUsername },
-        { selector: sumaSettingsModal.passwordInput, value: newPassword },
+        { selector: smlmSettingsModal.urlInput, value: newUrl },
+        { selector: smlmSettingsModal.usernameInput, value: newUsername },
+        { selector: smlmSettingsModal.passwordInput, value: newPassword },
       ],
       expectNewUrl: true,
       expectNewUsername: true,
@@ -759,11 +759,11 @@ export const sumaSettingsAreCorrectlyChanged = () => {
       changeInitialPassword: true,
       changeInitialCaCert: true,
       newValues: [
-        { selector: sumaSettingsModal.urlInput, value: newUrl },
-        { selector: sumaSettingsModal.usernameInput, value: newUsername },
-        { selector: sumaSettingsModal.passwordInput, value: newPassword },
+        { selector: smlmSettingsModal.urlInput, value: newUrl },
+        { selector: smlmSettingsModal.usernameInput, value: newUsername },
+        { selector: smlmSettingsModal.passwordInput, value: newPassword },
         {
-          selector: sumaSettingsModal.caCertInput,
+          selector: smlmSettingsModal.caCertInput,
           value: anotherValidCertificate,
         },
       ],
@@ -796,79 +796,79 @@ export const sumaSettingsAreCorrectlyChanged = () => {
       ...baseInitialSettings,
       ...(withInitialCert && { ca_cert: validCertificate }),
     };
-    basePage.saveSUMASettings(initialSettings);
+    basePage.saveSMLMSettings(initialSettings);
     basePage.refresh();
-    basePage.waitForRequest('sumaSettingsEndpoint');
+    basePage.waitForRequest('smlmSettingsEndpoint');
 
-    clickSumaEditSettingsButton();
+    clickSmlmEditSettingsButton();
 
-    if (changeInitialCaCert) _clickRemoveSumaCaCertButton();
+    if (changeInitialCaCert) _clickRemoveSmlmCaCertButton();
     if (changeInitialPassword) _clickRemovePasswordButton();
 
     cy.wrap(newValues).each(({ selector, value }) =>
       cy.get(selector).clear().type(value, { delay: 0 })
     );
 
-    clickSumaSettingsModalSaveButton();
-    basePage.waitForRequest('sumaSettingsEndpoint');
+    clickSmlmSettingsModalSaveButton();
+    basePage.waitForRequest('smlmSettingsEndpoint');
 
     const expectedUrl = expectNewUrl ? newUrl : baseInitialSettings.url;
-    sumaUrlHasExpectedValue(expectedUrl);
+    smlmUrlHasExpectedValue(expectedUrl);
 
     const expectedCaCertDate = expectCertUploadDate
       ? 'Certificate Uploaded'
       : '-';
-    sumaCaCertUploadDateHasExpectedValue(expectedCaCertDate);
+    smlmCaCertUploadDateHasExpectedValue(expectedCaCertDate);
 
     const expectedUsername = expectNewUsername
       ? newUsername
       : baseInitialSettings.username;
-    sumaUsernameHasExpectedValue(expectedUsername);
-    sumaPasswordHasExpectedValue('•••••');
-    return basePage.clearSUMASettings();
+    smlmUsernameHasExpectedValue(expectedUsername);
+    smlmPasswordHasExpectedValue('•••••');
+    return basePage.clearSMLMSettings();
   });
 };
 
-export const sumaRemovePasswordButtonIsNotDisplayed = () =>
-  cy.get(sumaSettingsModal.removePasswordButton).should('not.exist');
+export const smlmRemovePasswordButtonIsNotDisplayed = () =>
+  cy.get(smlmSettingsModal.removePasswordButton).should('not.exist');
 
 const _removePasswordButtonIsDisplayed = () =>
-  cy.get(sumaSettingsModal.removePasswordButton).should('be.visible');
+  cy.get(smlmSettingsModal.removePasswordButton).should('be.visible');
 
-export const sumaPasswordInputIsEmpty = () =>
-  cy.get(sumaSettingsModal.passwordInput).should('have.value', '');
+export const smlmPasswordInputIsEmpty = () =>
+  cy.get(smlmSettingsModal.passwordInput).should('have.value', '');
 
-export const sumaUsernameInputIsEmpty = () =>
-  cy.get(sumaSettingsModal.usernameInput).should('have.value', '');
+export const smlmUsernameInputIsEmpty = () =>
+  cy.get(smlmSettingsModal.usernameInput).should('have.value', '');
 
-export const sumaRemoveCaCertButtonIsNotDisplayed = () =>
-  cy.get(sumaSettingsModal.removeCaCertButton).should('not.exist');
+export const smlmRemoveCaCertButtonIsNotDisplayed = () =>
+  cy.get(smlmSettingsModal.removeCaCertButton).should('not.exist');
 
-const _sumaRemoveCaCertButtonIsDisplayed = () =>
-  cy.get(sumaSettingsModal.removeCaCertButton).should('be.visible');
+const _smlmRemoveCaCertButtonIsDisplayed = () =>
+  cy.get(smlmSettingsModal.removeCaCertButton).should('be.visible');
 
-export const sumaCaCertIsEmpty = () =>
-  cy.get(sumaSettingsModal.caCertInput).should('have.value', '');
+export const smlmCaCertIsEmpty = () =>
+  cy.get(smlmSettingsModal.caCertInput).should('have.value', '');
 
-export const sumaUrlInputIsEmpty = () =>
-  cy.get(sumaSettingsModal.urlInput).should('have.value', '');
+export const smlmUrlInputIsEmpty = () =>
+  cy.get(smlmSettingsModal.urlInput).should('have.value', '');
 
-export const sumaUsernameHasExpectedValue = (
+export const smlmUsernameHasExpectedValue = (
   expectedValue = baseInitialSettings.username
-) => cy.get(sumaUsernameLabel).should('have.text', expectedValue);
+) => cy.get(smlmUsernameLabel).should('have.text', expectedValue);
 
-export const sumaPasswordHasExpectedValue = (expectedValue) =>
-  cy.get(sumaPasswordLabel).should('have.text', expectedValue);
+export const smlmPasswordHasExpectedValue = (expectedValue) =>
+  cy.get(smlmPasswordLabel).should('have.text', expectedValue);
 
-export const sumaUrlHasExpectedValue = (
+export const smlmUrlHasExpectedValue = (
   expectedValue = baseInitialSettings.url
-) => cy.get(sumaUrlLabel).should('have.text', expectedValue);
+) => cy.get(smlmUrlLabel).should('have.text', expectedValue);
 
-export const sumaCaCertUploadDateHasExpectedValue = (
+export const smlmCaCertUploadDateHasExpectedValue = (
   expectedValue = 'Certificate Uploaded'
 ) => {
   const specificSelector = expectedValue === '-' ? '' : ' div div div';
-  const selector = `${sumaCertUploadDateLabel}${specificSelector}`;
+  const selector = `${smlmCertUploadDateLabel}${specificSelector}`;
   return cy.get(selector).first().should('have.text', expectedValue);
 };
 
@@ -990,12 +990,12 @@ export const alertingEditFormDisplaysInitialSettings = () =>
 
 // API
 
-export const saveDefaultSUMAsettings = () => {
-  const defaultSumaSettings = {
+export const saveDefaultSMLMsettings = () => {
+  const defaultSmlmSettings = {
     ...baseInitialSettings,
     ca_cert: validCertificate,
   };
-  return basePage.saveSUMASettings(defaultSumaSettings);
+  return basePage.saveSMLMSettings(defaultSmlmSettings);
 };
 
 export const setExpiredApiKey = () =>

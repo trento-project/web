@@ -495,8 +495,8 @@ export const apiSelectChecks = (clusterId, checks) => {
   });
 };
 
-export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  clearSUMASettings().then(() =>
+export const saveSMLMSettings = ({ url, username, password, ca_cert }) =>
+  clearSMLMSettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
@@ -514,7 +514,7 @@ export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
     )
   );
 
-export const clearSUMASettings = () =>
+export const clearSMLMSettings = () =>
   apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/suse_manager',

@@ -7,7 +7,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test Data
-import * as sumaMocks from '../fixtures/suma-software-updates/software_updates.js';
+import * as smlmMocks from '../fixtures/smlm-software-updates/software_updates.js';
 import {
   selectedHost,
   attachedSapInstance,
@@ -542,26 +542,26 @@ export const interceptSoftwareUpdatesRequestsMockedForProdInstance = () => {
     return cy
       .intercept('GET', '/api/v1/hosts/*/software_updates', {
         statusCode: 422,
-        body: sumaMocks.getHostNotFoundError(),
+        body: smlmMocks.getHostNotFoundError(),
       })
       .as('getSoftwareUpdatesNotFound');
   }
 };
 
-export const interceptSumaRequestsMockedForProdInstance = () => {
+export const interceptSmlmRequestsMockedForProdInstance = () => {
   const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
 
   if (isTrentoProdInstance) {
     cy.intercept('GET', '/api/v1/hosts/*/software_updates', {
-      body: sumaMocks.getSoftwareUpdatesList(),
+      body: smlmMocks.getSoftwareUpdatesList(),
     });
 
     cy.intercept('GET', '/api/v1/software_updates/errata_details/*', {
-      body: sumaMocks.getErrataDetails(),
+      body: smlmMocks.getErrataDetails(),
     });
 
     cy.intercept('GET', '/api/v1/software_updates/packages*', {
-      body: sumaMocks.getPackagesPatches(),
+      body: smlmMocks.getPackagesPatches(),
     }).as('getPackagesPatches');
 
     cy.intercept('POST', '/api/v1/settings/suse_manager', {
@@ -635,8 +635,8 @@ export const apiCreateUserWithHostCleanupAbilities = () =>
     },
   ]);
 
-export const saveSUMASettingsForAdmin = () =>
-  basePage.saveSUMASettings({
+export const saveSMLMSettingsForAdmin = () =>
+  basePage.saveSMLMSettings({
     url: 'https://trento.io',
     username: 'suseManagerAdmin',
     password: 'suseManagerPw',
