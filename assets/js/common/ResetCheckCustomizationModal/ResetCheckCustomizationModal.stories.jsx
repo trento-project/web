@@ -1,30 +1,28 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { action } from 'storybook/actions';
 import { faker } from '@faker-js/faker';
+import { action } from 'storybook/actions';
 
-import ResetCheckCustomizationModal from '.';
+import ResetCheckCustomizationModal from './ResetCheckCustomizationModal';
 
 export default {
   title: 'Patterns/ResetCheckCustomizationModal',
   component: ResetCheckCustomizationModal,
   argTypes: {
     checkId: {
-      type: 'string',
       description: 'The check ID for which the customization will be reset',
     },
     open: {
-      type: 'boolean',
       description: 'Sets the visibility of the modal',
     },
     onReset: {
-      type: 'function',
       description: 'Callback when the Reset button is clicked',
+      action: 'onReset',
     },
     onCancel: {
-      type: 'function',
       description: 'Callback when the Cancel button is clicked',
+      action: 'onCancel',
     },
   },
 };
@@ -32,7 +30,15 @@ export default {
 export const Default = {
   args: {
     checkId: faker.lorem.word(),
-    onReset: action('reset clicked'),
-    onCancel: action('cancel clicked'),
+    open: true,
+    onReset: action('onReset'),
+    onCancel: action('onCancel'),
+  },
+};
+
+export const Closed = {
+  args: {
+    ...Default.args,
+    open: false,
   },
 };

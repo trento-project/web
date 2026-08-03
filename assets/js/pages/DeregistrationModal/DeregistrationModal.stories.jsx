@@ -1,12 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
-
-import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import Button from '@common/Button';
+import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
+import React, { useState } from 'react';
+import { action } from 'storybook/actions';
 
-import DeregistrationModal from '.';
+import DeregistrationModal from './DeregistrationModal';
 
 export default {
   title: 'Patterns/DeregistrationModal',
@@ -16,33 +16,35 @@ export default {
       control: { type: 'radio' },
       options: ['host', APPLICATION_TYPE, DATABASE_TYPE],
       description: 'The content type of the deregistration modal',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'host' },
-      },
     },
     hostname: {
-      type: 'string',
       description:
         'The host name to confirm deregistration of. Only used in host deregistration modal',
       control: { type: 'text' },
     },
     sid: {
-      type: 'string',
       description:
         'The sid of the deregistered instance. Only used in application and database deregistratio modals',
       control: { type: 'text' },
     },
     instanceNumber: {
-      type: 'string',
       description:
         'The sid of the deregistered instance. Only used in application and database deregistratio modals',
       control: { type: 'text' },
     },
     isOpen: {
-      type: 'boolean',
       description: 'Sets the visibility of the modal',
-      control: false,
+      control: { type: 'boolean' },
+    },
+    onCleanUp: {
+      description:
+        'Callback function triggered when the user clicks the Clean up button; handles deregistration',
+      action: 'onCleanUp',
+    },
+    onCancel: {
+      description:
+        'Callback function triggered when the user clicks the Cancel button; closes the modal',
+      action: 'onCancel',
     },
   },
 };
@@ -80,27 +82,50 @@ function ButtonToOpenModal({ ...rest }) {
   );
 }
 
+export const Default = {
+  args: {
+    contentType: 'host',
+    isOpen: false,
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
+    hostname: 'example-host',
+    sid: '',
+    instanceNumber: '',
+  },
+  render: (args) => <ButtonToOpenModal {...args} />,
+};
+
 export const Host = {
   args: {
+    ...Default.args,
     hostname: 'example host',
+    isOpen: true,
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };
 
 export const ApplicationInstance = {
   args: {
+    ...Default.args,
     contentType: APPLICATION_TYPE,
     sid: 'PRD',
     instanceNumber: '00',
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };
 
 export const DatabaseInstance = {
   args: {
+    ...Default.args,
     contentType: DATABASE_TYPE,
     sid: 'PRD',
     instanceNumber: '00',
+    onCleanUp: action('onCleanUp'),
+    onCancel: action('onCancel'),
   },
   render: (args) => <ButtonToOpenModal {...args} />,
 };

@@ -1,9 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { userFactory } from '@lib/test-utils/factories/users';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
-import { userFactory } from '@lib/test-utils/factories/users';
+import { action } from 'storybook/actions';
 
 import ProfileForm from './ProfileForm';
 
@@ -30,89 +31,60 @@ export default {
   argTypes: {
     fullName: {
       description: 'Full name',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     emailAddress: {
       description: 'Email address',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     username: {
       description: 'Username',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     abilities: {
       description: 'User abilities array',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     errors: {
       description: 'OpenAPI errors coming from backend validation',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onSave: {
       action: 'Save user',
       description: 'Save user action',
-      control: {
-        type: 'text',
-      },
     },
     totpEnabled: {
       description: 'User TOTP enabled',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     totpSecret: {
       description: 'User TOTP secret',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     totpQrData: {
       description: 'User TOTP secret encoded as qr',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     totpBoxOpen: {
       description: 'Show TOTP enrollment box',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'boolean' },
     },
     analyticsEulaAccepted: {
       description: 'Whether the user accepted the analytics EULA',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'boolean' },
     },
     timezone: {
-      description: 'User timezone',
-      control: {
-        type: 'text',
-      },
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
     timezones: {
       description:
         'Available timezone options for the timezone select (array of { value, label })',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'object' },
     },
     disableForm: {
       description: 'When true, disables all inputs and actions in the form',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'boolean' },
     },
     singleSignOnEnabled: {
       description: 'Single sign on login is enabled',
@@ -129,45 +101,31 @@ export default {
     },
     toggleTotpBox: {
       description: 'Callback to open or close the TOTP enrollment box',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     loading: {
       description: 'Indicates whether the form is in a loading state',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     togglePasswordModal: {
       description: 'Callback to open or close the password change modal',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onResetTotp: {
       description: "Callback invoked to reset the user's TOTP (disable TOTP)",
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onVerifyTotp: {
       description: 'Callback invoked to verify a TOTP token during enrollment',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onEnableTotp: {
       description: 'Callback invoked to start the TOTP enrollment flow',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     passwordModalOpen: {
       description: 'Whether the change-password modal is currently open',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
   },
   render: (args) => (
@@ -181,6 +139,8 @@ export default {
 
 export const Default = {
   args: {
+    fullName: fullname,
+    emailAddress: email,
     username,
     abilities,
     totpSecret: 'HKJDFHJKHDIU379847HJKDJKH',
@@ -190,11 +150,19 @@ export const Default = {
     analyticsEnabled,
     timezone,
     timezones: ['GMT+00:00', 'GMT+01:00', 'GMT+02:00'],
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+    toggleTotpBox: action('toggleTotpBox'),
+    togglePasswordModal: action('togglePasswordModal'),
+    onResetTotp: action('onResetTotp'),
+    onVerifyTotp: action('onVerifyTotp'),
+    onEnableTotp: action('onEnableTotp'),
   },
 };
 
 export const Loading = {
   args: {
+    ...Default.args,
     fullName: fullname,
     emailAddress: email,
     username,
