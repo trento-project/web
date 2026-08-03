@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { action } from 'storybook/actions';
 import { aiConfigurationFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import AIConfiguration from './AIConfiguration';
 
@@ -15,25 +15,34 @@ export default {
       control: { type: 'object' },
     },
     onCreate: {
-      type: 'function',
       description: 'Creates or updates AI configuration',
+      action: 'onCreate',
     },
     onUpdate: {
-      type: 'function',
       description: 'Updates AI configuration',
+      action: 'onUpdate',
+    },
+    onEditClick: {
+      description: 'Edit button click handler',
+      action: 'onEditClick',
     },
     onClear: {
       type: 'function',
       description: 'Clears AI configuration',
     },
+    className: {
+      description: 'CSS classes to apply to the AI configuration container',
+      control: { type: 'text' },
+    },
   },
   args: {
     aiConfiguration: {},
+    onEditClick: action('onEditClick'),
     onClear: action('Clear button clicked!'),
   },
 };
 
-export const Configured = {
+export const Default = {
   args: {
     aiConfiguration: aiConfigurationFactory.build(),
   },
@@ -41,6 +50,7 @@ export const Configured = {
 
 export const WithUnmappedModel = {
   args: {
+    ...Default.args,
     aiConfiguration: aiConfigurationFactory.build({
       provider: 'custom_provider',
       model: 'custom_model',

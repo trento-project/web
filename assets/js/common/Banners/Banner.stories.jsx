@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
+
 import Banner from './Banner';
 
 export default {
@@ -12,39 +13,35 @@ export default {
       description: 'The type of the banner',
       control: { type: 'radio' },
       options: ['info', 'success', 'warning', 'error'],
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'info' },
-      },
     },
     iconSize: {
       description: 'The size of the icon in the banner',
       control: { type: 'radio' },
       options: ['s', 'm', 'l', 'xl', 'xxl', 16, 24, 32, 48, 64],
-      table: {
-        type: { summary: 'string|number' },
-        defaultValue: { summary: 'm' },
-      },
     },
     truncate: {
       description: 'Whether to truncate the banner text',
       control: { type: 'boolean' },
-      table: {
-        type: { summary: 'boolean' },
-        defaultValue: { summary: true },
-      },
+    },
+    children: {
+      description: 'The text or content to display inside the banner',
+      control: { type: 'text' },
     },
   },
 };
 
 export const Default = {
   args: {
+    type: 'info',
+    iconSize: 'm',
+    truncate: true,
     children: 'Banner content',
   },
 };
 
 export const WithTruncatedContent = {
   args: {
+    ...Default.args,
     children: faker.lorem.sentences(20),
     truncate: true,
   },
@@ -52,6 +49,7 @@ export const WithTruncatedContent = {
 
 export const SuccessBanner = {
   args: {
+    ...Default.args,
     type: 'success',
     children: 'SUCCESS',
   },
@@ -59,6 +57,7 @@ export const SuccessBanner = {
 
 export const WarningBanner = {
   args: {
+    ...Default.args,
     type: 'warning',
     children: 'WARNING',
   },
@@ -66,6 +65,7 @@ export const WarningBanner = {
 
 export const ErrorBanner = {
   args: {
+    ...Default.args,
     type: 'error',
     children: 'ERROR',
   },
