@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { CONNECTION_STATUS, isOnline } from './connectionStatus';
-
-const { CONNECTED, CONNECTING, DISCONNECTED } = CONNECTION_STATUS;
+import {
+  CONNECTING,
+  CONNECTED,
+  DISCONNECTED,
+  isOnline,
+} from './connectionStatus';
 
 describe('isOnline', () => {
   it.each([

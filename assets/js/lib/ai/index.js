@@ -3,4 +3,10 @@
 
 export { getProviderLabel, getProviderIcon } from './providers';
 export { WebSocketAIAgent, extractMessageText } from './WebSocketAIAgent';
-export { CONNECTION_STATUS, isOnline } from './connectionStatus';
+export {
+  CONNECTING,
+  CONNECTED,
+  DISCONNECTED,
+  CONNECTION_STATUS,
+  isOnline,
+} from './connectionStatus';

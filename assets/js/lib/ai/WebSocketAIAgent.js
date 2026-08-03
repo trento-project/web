@@ -25,50 +25,20 @@ export const extractMessageText = ({ content } = {}) => {
   return '';
 };
 
-class AbortError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'AbortError';
-  }
-}
-
 const isUnauthorized = (error) => error === 'unauthorized';
-
-// Refresh the access token; on failure, kick off the global "session expired"
-// redirect and re-throw
-const refreshOrAbort = async () => {
-  try {
-    await refreshAndStoreAccessToken();
-  } catch {
-    handleUnrecoverableAuthError();
-    throw new Error('Session expired — please log in again');
-  }
-};
-
-// Run `operation` and, if it rejects with an "unauthorized" wire payload,
-// refresh the access token once and retry. Any other rejection from
-// `operation` propagates verbatim.
-const withRefreshTokenOnUnauthorized = async (operation) => {
-  try {
-    return await operation();
-  } catch (error) {
-    if (!isUnauthorized(error)) throw error;
-  }
-  await refreshOrAbort();
-  return operation();
-};
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
 export class WebSocketAIAgent extends AbstractAgent {
+  #callbacks = {};
+
   constructor({
     socket,
     userID,
-    onConnectionChange = noop,
-    onAIConfigurationCleared = noop,
-    onAIConfigurationCreated = noop,
-    onModelChanged = noop,
+    getAccessToken = getAccessTokenFromStore,
+    refreshToken = refreshAndStoreAccessToken,
+    onUnrecoverableAuthError = handleUnrecoverableAuthError,
     ...options
   }) {
     super(options);
@@ -76,13 +46,28 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.socket = socket;
     this.userID = userID;
     this.channel = null;
-    this.onConnectionChange = onConnectionChange;
-    this.onAIConfigurationCleared = onAIConfigurationCleared;
-    this.onAIConfigurationCreated = onAIConfigurationCreated;
-    this.onModelChanged = onModelChanged;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._getAccessToken = getAccessToken;
+    this._refreshToken = refreshToken;
+    this._onUnrecoverableAuthError = onUnrecoverableAuthError;
+    this.withCallbacks();
+  }
+
+  withCallbacks({
+    onConnectionChange = noop,
+    onAIConfigurationCleared = noop,
+    onAIConfigurationCreated = noop,
+    onModelChanged = noop,
+  } = {}) {
+    this.#callbacks = {
+      onConnectionChange,
+      onAIConfigurationCleared,
+      onAIConfigurationCreated,
+      onModelChanged,
+    };
+    return this;
   }
 
   // Idempotent async initializer for the channel connection
@@ -93,7 +78,7 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     this._setConnectionStatus(CONNECTION_STATUS.CONNECTING);
     try {
-      await this._join();
+      await this._withRefreshTokenOnUnauthorized(() => this._join());
     } catch (error) {
       this._teardown();
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
@@ -101,18 +86,36 @@ export class WebSocketAIAgent extends AbstractAgent {
     }
   }
 
-  // Join the channel, refreshing the access token + retrying once if the
-  // server replies 'unauthorized'.
-  _join() {
-    return withRefreshTokenOnUnauthorized(() => this._doJoin());
+  // Run `operation` and, if it rejects with an "unauthorized" wire payload,
+  // refresh the access token once and retry. Any other rejection from
+  // `operation` propagates verbatim.
+  async _withRefreshTokenOnUnauthorized(operation) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (!isUnauthorized(error)) throw error;
+    }
+    await this._refreshOrAbort();
+    return operation();
+  }
+
+  // Refresh the access token; on failure, kick off the global "session expired"
+  // redirect and re-throw
+  async _refreshOrAbort() {
+    try {
+      await this._refreshToken();
+    } catch {
+      this._onUnrecoverableAuthError();
+      throw new Error('Session expired — please log in again');
+    }
   }
 
   // Build a fresh channel and await its join.
   // On 'unauthorized' the channel reference is dropped so the helper's retry rebuilds
   // with the just-refreshed token in the params callback.
-  _doJoin() {
+  _join() {
     this.channel = this.socket.channel(`ai_assistant:${this.userID}`, () => ({
-      access_token: getAccessTokenFromStore(),
+      access_token: this._getAccessToken(),
     }));
     this._setupChannelHandlers();
     return new Promise((resolve, reject) => {
@@ -142,14 +145,17 @@ export class WebSocketAIAgent extends AbstractAgent {
     // sequence Just Work.
     const dropConnection = () => {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-      this._failActiveRun(new Error('AI assistant connection lost'));
+      this._settleActiveRun(new Error('AI assistant connection lost'));
     };
 
     const messageHandlerMap = [
       ['ag_ui_event', (event) => this._handleAgUiEvent(event)],
       ['ai_configuration_cleared', () => this._handleAIConfigurationCleared()],
-      ['ai_configuration_created', () => this.onAIConfigurationCreated()],
-      ['model_changed', (payload) => this.onModelChanged(payload)],
+      [
+        'ai_configuration_created',
+        () => this.#callbacks.onAIConfigurationCreated(),
+      ],
+      ['model_changed', (payload) => this.#callbacks.onModelChanged(payload)],
     ];
 
     each(messageHandlerMap, ([eventName, handler]) =>
@@ -163,13 +169,18 @@ export class WebSocketAIAgent extends AbstractAgent {
   // Settle any in-flight run without surfacing an error
   // and let the UI switch to its read-only / disabled state via the callback.
   _handleAIConfigurationCleared() {
-    this._failActiveRun(new AbortError('AI configuration cleared'));
-    this.onAIConfigurationCleared();
+    this._settleActiveRun();
+    this.#callbacks.onAIConfigurationCleared();
+  }
+
+  _isStaleRunFinished({ type, runId }) {
+    return type === EventType.RUN_FINISHED && runId !== this._activeRunId;
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
+    if (this._isStaleRunFinished(event)) return;
 
     subscriber.next(event);
 
@@ -207,11 +218,13 @@ export class WebSocketAIAgent extends AbstractAgent {
       const setupRun = async () => {
         try {
           await this.initialize();
-          await this._sendMessage({
-            message: extractMessageText(lastMessage),
-            thread_id: threadId,
-            run_id: runId,
-          });
+          await this._withRefreshTokenOnUnauthorized(() =>
+            this._sendMessage({
+              message: extractMessageText(lastMessage),
+              thread_id: threadId,
+              run_id: runId,
+            })
+          );
         } catch (error) {
           if (this._activeRunId === runId) this._clearActiveRun();
           subscriber.error(error);
@@ -228,31 +241,25 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
-  // Send the message, refreshing the access token + retrying once if the
-  // server replies 'unauthorized'.
-  _sendMessage(payload) {
-    return withRefreshTokenOnUnauthorized(() => this._doSendMessage(payload));
-  }
-
   // Raw send: one push, resolves on 'ok', rejects on 'error'. Reads the
   // access token fresh from storage so a retry after refresh naturally picks
   // up the new value.
-  _doSendMessage(payload) {
+  _sendMessage(payload) {
     return new Promise((resolve, reject) => {
       this.channel
         .push('send_message', {
           ...payload,
-          access_token: getAccessTokenFromStore(),
+          access_token: this._getAccessToken(),
         })
         .receive('ok', resolve)
         .receive('error', reject);
     });
   }
 
-  _failActiveRun(error) {
+  _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    subscriber.error(error);
+    maybeError ? subscriber.error(maybeError) : subscriber.complete();
     this._clearActiveRun();
   }
 
@@ -264,17 +271,13 @@ export class WebSocketAIAgent extends AbstractAgent {
   _setConnectionStatus(status) {
     if (this._connectionStatus === status) return;
     this._connectionStatus = status;
-    this.onConnectionChange(status);
+    this.#callbacks.onConnectionChange(status);
   }
 
   disconnect() {
     if (!this.channel) return;
     this._teardown();
-    // Tag the teardown error as an AbortError so AbstractAgent's `onError`
-    // treats it as an expected unmount/cancel.
-    //
-    // (See AbstractAgent.onError's allowlist in @ag-ui/client.)
-    this._failActiveRun(new AbortError('AI assistant disconnected'));
+    this._settleActiveRun();
     this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
   }
 
