@@ -33,7 +33,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
   });
 
   beforeEach(() => {
-    axiosMock.onGet('/settings/suse_manager').reply(200, baseSmlmSettings);
+    axiosMock.onGet('/settings/suse_multi_linux_manager').reply(200, baseSmlmSettings);
   });
 
   it('should fetch SUSE Multi-Linux Manager on mount and return the settings', async () => {
@@ -70,7 +70,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
     };
 
     axiosMock
-      .onPost('/api/v1/settings/suse_manager', newSettings)
+      .onPost('/api/v1/settings/suse_multi_linux_manager', newSettings)
       .reply(200, newSettings);
 
     await act(() => {
@@ -99,7 +99,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
     };
 
     axiosMock
-      .onPatch('/api/v1/settings/suse_manager', newSettings)
+      .onPatch('/api/v1/settings/suse_multi_linux_manager', newSettings)
       .reply(200, newSettings);
 
     await act(() => {
@@ -127,7 +127,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
       password: faker.internet.password(),
     };
 
-    axiosMock.onPatch('/api/v1/settings/suse_manager', newSettings).reply(422, {
+    axiosMock.onPatch('/api/v1/settings/suse_multi_linux_manager', newSettings).reply(422, {
       errors: [{ error: 'error' }],
     });
 
@@ -152,7 +152,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
       hookResult = result;
     });
 
-    axiosMock.onDelete('/api/v1/settings/suse_manager').reply(204, {});
+    axiosMock.onDelete('/api/v1/settings/suse_multi_linux_manager').reply(204, {});
 
     await act(() => {
       hookResult.current.deleteSuseMultiLinuxManagerSettings();
@@ -173,7 +173,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
       hookResult = result;
     });
 
-    axiosMock.onDelete('/api/v1/settings/suse_manager').reply(422, {
+    axiosMock.onDelete('/api/v1/settings/suse_multi_linux_manager').reply(422, {
       errors: [{ error: 'error' }],
     });
 
@@ -202,7 +202,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
       hookResult = result;
     });
 
-    axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(200);
+    axiosMock.onPost('/api/v1/settings/suse_multi_linux_manager/test').reply(200);
 
     await act(() => {
       hookResult.current.testSuseMultiLinuxManagerSettings();
@@ -230,7 +230,7 @@ describe('useSuseMultiLinuxManagerSettings', () => {
       hookResult = result;
     });
 
-    axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(500);
+    axiosMock.onPost('/api/v1/settings/suse_multi_linux_manager/test').reply(500);
 
     await act(() => {
       hookResult.current.testSuseMultiLinuxManagerSettings();

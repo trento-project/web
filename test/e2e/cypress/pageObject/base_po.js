@@ -499,7 +499,7 @@ export const saveSMLMSettings = ({ url, username, password, ca_cert }) =>
   clearSMLMSettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
-        url: '/api/v1/settings/suse_manager',
+        url: '/api/v1/settings/suse_multi_linux_manager',
         method: 'POST',
         auth: {
           bearer: accessToken,
@@ -517,7 +517,7 @@ export const saveSMLMSettings = ({ url, username, password, ca_cert }) =>
 export const clearSMLMSettings = () =>
   apiLogin().then(({ accessToken }) =>
     cy.request({
-      url: '/api/v1/settings/suse_manager',
+      url: '/api/v1/settings/suse_multi_linux_manager',
       method: 'DELETE',
       auth: {
         bearer: accessToken,

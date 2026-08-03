@@ -62,7 +62,7 @@ export default {
   decorators: [
     (Story) => {
       const axiosMock = new MockAdapter(networkClient);
-      axiosMock.onGet('/settings/suse_manager').reply(404);
+      axiosMock.onGet('/settings/suse_multi_linux_manager').reply(404);
       axiosMock.onGet('/settings/alerting').reply(404);
       axiosMock
         .onGet('/settings/api_key')

@@ -262,6 +262,16 @@ defmodule TrentoWeb.Router do
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
 
+        scope "/suse_multi_linux_manager" do
+          get "/", SettingsController, :get_suse_multi_linux_manager_settings
+          post "/", SettingsController, :save_suse_multi_linux_manager_settings
+          patch "/", SettingsController, :patch_suse_multi_linux_manager_settings
+          put "/", SettingsController, :put_suse_multi_linux_manager_settings
+          delete "/", SettingsController, :delete_suse_multi_linux_manager_settings
+          post "/test", SettingsController, :test_suse_multi_linux_manager_settings
+        end
+
+        # Deprecated: use the /suse_multi_linux_manager endpoint above instead.
         scope "/suse_manager" do
           get "/", SettingsController, :get_suse_multi_linux_manager_settings
           post "/", SettingsController, :save_suse_multi_linux_manager_settings

@@ -180,7 +180,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       )
 
       conn
-      |> get("/api/v1/settings/suse_manager")
+      |> get("/api/v1/settings/suse_multi_linux_manager")
       |> json_response(:ok)
       |> assert_schema("SuseMultiLinuxManagerSettingsV1", api_spec)
     end
@@ -190,7 +190,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       api_spec: api_spec
     } do
       conn
-      |> get("/api/v1/settings/suse_manager")
+      |> get("/api/v1/settings/suse_multi_linux_manager")
       |> json_response(:not_found)
       |> assert_schema("NotFoundV1", api_spec)
     end
@@ -208,7 +208,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager", settings)
+        |> post("/api/v1/settings/suse_multi_linux_manager", settings)
         |> json_response(:created)
 
       assert %{"url" => ^url, "username" => ^username} = resp
@@ -226,7 +226,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager", settings)
+        |> post("/api/v1/settings/suse_multi_linux_manager", settings)
         |> json_response(:unprocessable_entity)
 
       assert %{
@@ -244,7 +244,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager", nil)
+        |> post("/api/v1/settings/suse_multi_linux_manager", nil)
         |> json_response(:unprocessable_entity)
 
       assert %{
@@ -281,7 +281,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager", new_settings)
+        |> post("/api/v1/settings/suse_multi_linux_manager", new_settings)
         |> json_response(:unprocessable_entity)
 
       assert %{
@@ -303,7 +303,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager", settings)
+        |> post("/api/v1/settings/suse_multi_linux_manager", settings)
         |> json_response(:unprocessable_entity)
 
       assert %{
@@ -330,7 +330,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/suse_manager", submission)
+        |> patch("/api/v1/settings/suse_multi_linux_manager", submission)
         |> json_response(:not_found)
 
       assert %{
@@ -353,7 +353,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/suse_manager", submission)
+        |> patch("/api/v1/settings/suse_multi_linux_manager", submission)
         |> json_response(:unprocessable_entity)
 
       assert %{
@@ -481,7 +481,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
           resp =
             conn
             |> put_req_header("content-type", "application/json")
-            |> patch("/api/v1/settings/suse_manager", change_submission)
+            |> patch("/api/v1/settings/suse_multi_linux_manager", change_submission)
             |> json_response(:unprocessable_entity)
 
           assert %{"errors" => errors} == resp
@@ -510,7 +510,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/suse_manager", change_submission)
+        |> patch("/api/v1/settings/suse_multi_linux_manager", change_submission)
         |> json_response(:ok)
 
       assert %{
@@ -543,7 +543,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/suse_manager", change_submission)
+        |> patch("/api/v1/settings/suse_multi_linux_manager", change_submission)
         |> json_response(:ok)
 
       assert %{"url" => ^new_url, "username" => ^initial_username} = resp
@@ -573,7 +573,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/suse_manager", change_submission)
+        |> patch("/api/v1/settings/suse_multi_linux_manager", change_submission)
         |> json_response(:ok)
 
       assert %{
@@ -584,7 +584,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     end
 
     test "should return 204 if no user settings have previously been saved", %{conn: conn} do
-      conn = delete(conn, "/api/v1/settings/suse_manager")
+      conn = delete(conn, "/api/v1/settings/suse_multi_linux_manager")
 
       assert response(conn, 204) == ""
     end
@@ -592,7 +592,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     test "should return 204 when user settings have previously been saved", %{conn: conn} do
       insert_software_updates_settings()
 
-      conn = delete(conn, "/api/v1/settings/suse_manager")
+      conn = delete(conn, "/api/v1/settings/suse_multi_linux_manager")
 
       assert response(conn, 204) == ""
     end
@@ -609,7 +609,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/settings/suse_manager/test", %{})
+          |> post("/api/v1/settings/suse_multi_linux_manager/test", %{})
           |> json_response(:unprocessable_entity)
 
         assert %{
@@ -629,10 +629,27 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       resp =
         conn
         |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/suse_manager/test")
+        |> post("/api/v1/settings/suse_multi_linux_manager/test")
         |> json_response(:ok)
 
       assert "" == resp
+    end
+  end
+
+  describe "SuseManagerSettings (deprecated path)" do
+    test "should still serve the old /suse_manager path for backward compatibility", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings(
+        ca_cert: build(:self_signed_certificate),
+        ca_uploaded_at: DateTime.utc_now()
+      )
+
+      conn
+      |> get("/api/v1/settings/suse_manager")
+      |> json_response(:ok)
+      |> assert_schema("SuseMultiLinuxManagerSettingsV1", api_spec)
     end
   end
 
@@ -894,7 +911,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       conn
       |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/settings/suse_manager", settings)
+      |> post("/api/v1/settings/suse_multi_linux_manager", settings)
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end
@@ -909,7 +926,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       conn
       |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/settings/suse_manager", change_submission)
+      |> patch("/api/v1/settings/suse_multi_linux_manager", change_submission)
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end
@@ -920,7 +937,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
     } do
       conn
       |> put_req_header("content-type", "application/json")
-      |> delete("/api/v1/settings/suse_manager")
+      |> delete("/api/v1/settings/suse_multi_linux_manager")
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end

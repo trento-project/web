@@ -564,10 +564,10 @@ export const interceptSmlmRequestsMockedForProdInstance = () => {
       body: smlmMocks.getPackagesPatches(),
     }).as('getPackagesPatches');
 
-    cy.intercept('POST', '/api/v1/settings/suse_manager', {
+    cy.intercept('POST', '/api/v1/settings/suse_multi_linux_manager', {
       statusCode: 201,
     });
-    return cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
+    return cy.intercept('DELETE', '/api/v1/settings/suse_multi_linux_manager', {
       statusCode: 204,
     });
   }
@@ -638,6 +638,6 @@ export const apiCreateUserWithHostCleanupAbilities = () =>
 export const saveSMLMSettingsForAdmin = () =>
   basePage.saveSMLMSettings({
     url: 'https://trento.io',
-    username: 'suseManagerAdmin',
-    password: 'suseManagerPw',
+    username: 'smlmAdmin',
+    password: 'smlmPw',
   });
