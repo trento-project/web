@@ -14,8 +14,10 @@ jest.mock('@assistant-ui/react', () => ({
   },
   MessagePrimitive: {
     Root: ({ children, ...props }) => <div {...props}>{children}</div>,
-    Parts: () => <span data-testid="parts">parts</span>,
-    Error: ({ children }) => <div data-testid="error-slot">{children}</div>,
+    Parts: () => <span>message parts</span>,
+    // Real primitive renders its children only when the message carries an
+    // error. This stub is unconditional, so the tests below can prove the slot is mounted
+    Error: ({ children }) => <div>{children}</div>,
   },
   // AssistantMessage renders <AgentProgressIndicator> which subscribes via
   // useAuiState((s) => s.message). Default: empty content + no run in flight.
@@ -32,12 +34,12 @@ describe('UserMessage', () => {
 
     expect(container.querySelector('[data-role="user"]')).toBeInTheDocument();
     expect(screen.getByText('You')).toBeVisible();
-    expect(screen.getByTestId('parts')).toBeVisible();
+    expect(screen.getByText('message parts')).toBeVisible();
   });
 
   it('does not render the assistant-only error slot', () => {
     render(<UserMessage />);
-    expect(screen.queryByTestId('error-slot')).not.toBeInTheDocument();
+    expect(screen.queryByText('Error message')).not.toBeInTheDocument();
   });
 });
 
@@ -48,8 +50,8 @@ describe('AssistantMessage', () => {
     expect(
       container.querySelector('[data-role="assistant"]')
     ).toBeInTheDocument();
-    expect(screen.getByTestId('parts')).toBeVisible();
-    expect(screen.getByTestId('error-slot')).toBeInTheDocument();
+    expect(screen.getByText('message parts')).toBeVisible();
+    expect(screen.getByText('Error message')).toBeInTheDocument();
   });
 
   it('omits the user-only "You" label', () => {

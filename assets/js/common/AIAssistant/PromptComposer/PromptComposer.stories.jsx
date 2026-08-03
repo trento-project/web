@@ -4,9 +4,11 @@
 import React, { useState } from 'react';
 
 import { SocketContext } from '@common/SocketProvider';
+import { CONNECTION_STATUS } from '@lib/ai';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 
 import AssistantChatProvider from '../AssistantChatProvider';
+import { CONFIGURATION_STATUS } from '../status';
 import PromptComposer from './PromptComposer';
 
 // PromptComposer relies on @assistant-ui/react's ComposerPrimitive.*, which
@@ -34,7 +36,14 @@ export default {
     connectionStatus: {
       description:
         'Connection state used to drive the placeholder + disabled state',
-      options: ['connected', 'connecting', 'disconnected'],
+      options: Object.values(CONNECTION_STATUS),
+      control: { type: 'radio' },
+    },
+    configurationStatus: {
+      description:
+        'AI configuration state. Anything other than "ok" makes the thread ' +
+        'read-only and takes over the placeholder, whatever the connection is',
+      options: Object.values(CONFIGURATION_STATUS),
       control: { type: 'radio' },
     },
     isRunning: {
@@ -42,6 +51,7 @@ export default {
       control: { type: 'boolean' },
     },
   },
+  args: { configurationStatus: CONFIGURATION_STATUS.OK },
   decorators: [
     (Story) => (
       <StoryProviders>
@@ -52,13 +62,31 @@ export default {
 };
 
 export const Idle = {
-  args: { connectionStatus: 'connected', isRunning: false },
+  args: { connectionStatus: CONNECTION_STATUS.CONNECTED, isRunning: false },
 };
 
 export const Disabled = {
-  args: { connectionStatus: 'disconnected', isRunning: false },
+  args: { connectionStatus: CONNECTION_STATUS.DISCONNECTED, isRunning: false },
 };
 
 export const Sending = {
-  args: { connectionStatus: 'connected', isRunning: true },
+  args: { connectionStatus: CONNECTION_STATUS.CONNECTED, isRunning: true },
+};
+
+export const ConfigurationCleared = {
+  name: 'Read-only — AI settings cleared',
+  args: {
+    connectionStatus: CONNECTION_STATUS.CONNECTED,
+    configurationStatus: CONFIGURATION_STATUS.CLEARED,
+    isRunning: false,
+  },
+};
+
+export const ConfigurationRestored = {
+  name: 'Read-only — awaiting a new chat',
+  args: {
+    connectionStatus: CONNECTION_STATUS.CONNECTED,
+    configurationStatus: CONFIGURATION_STATUS.RESTORED,
+    isRunning: false,
+  },
 };

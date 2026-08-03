@@ -27,12 +27,10 @@ describe('AgentProgressIndicatorView', () => {
   );
 
   it('renders a spinner alongside the label', () => {
-    const { container } = render(
+    render(
       <AgentProgressIndicatorView>Thinking...</AgentProgressIndicatorView>
     );
-    expect(
-      container.querySelector('svg, [role="status"], .animate-spin')
-    ).not.toBeNull();
+    expect(screen.getByRole('alert', { name: 'Loading' })).toBeVisible();
   });
 });
 
