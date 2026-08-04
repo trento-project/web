@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-06-19T19:37:11Z",
-    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
-    "run_id": "27844239559",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.07953
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "UpgradablePackagesPage::should render correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-19T22:37:28Z",
     "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
     "run_id": "27846040590",
@@ -4924,5 +4896,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-08-04T19:04:33Z",
+    "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
+    "run_id": "30940001762",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 46,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
