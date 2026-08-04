@@ -30,16 +30,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
     expect(Trento.Commanded.Mock, :dispatch, fn %DeregisterSapSystem{
                                                   sap_system_id: ^first_sap_system_id,
                                                   deregistered_at: ^deregistered_at
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 
     expect(Trento.Commanded.Mock, :dispatch, fn %DeregisterSapSystem{
                                                   sap_system_id: ^second_sap_system_id,
                                                   deregistered_at: ^deregistered_at
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 
@@ -67,8 +65,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEv
     expect(Trento.Commanded.Mock, :dispatch, fn %DeregisterSapSystem{
                                                   sap_system_id: ^second_sap_system_id,
                                                   deregistered_at: ^deregistered_at
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 
