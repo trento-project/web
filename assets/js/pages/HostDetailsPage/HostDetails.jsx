@@ -11,7 +11,7 @@ import {
 } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
-import { buildCidrNotation } from '@lib/ip';
+import { buildCidrNotation } from '@lib/network/ip';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,

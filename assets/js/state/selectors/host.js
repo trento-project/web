@@ -4,7 +4,7 @@
 import { get } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
-import { buildCidrNotation } from '@lib/ip';
+import { buildCidrNotation } from '@lib/network/ip';
 import { getAllSAPInstances } from '@state/selectors/sapSystem';
 
 function getInstancesByHost(instances, hostId) {
