@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
-import { get, zipWith, startCase, some } from 'lodash';
+import { get, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -11,6 +11,7 @@ import {
 } from 'eos-icons-react';
 
 import { agentVersionWarning } from '@lib/agent';
+import { buildCidrNotation } from '@lib/ip';
 import {
   SAPTUNE_SOLUTION_APPLY,
   SAPTUNE_SOLUTION_CHANGE,
@@ -59,13 +60,6 @@ import {
   subscriptionsTableConfiguration,
   getSapInstancesTableConfiguration,
 } from './tableConfigs';
-
-export const buildCidrNotation = (ipAddresses, netmasks) =>
-  zipWith(
-    ipAddresses,
-    netmasks,
-    (address, netmask) => `${address}${netmask ? `/${netmask}` : ''}`
-  );
 
 function HostDetails({
   agentVersion,
