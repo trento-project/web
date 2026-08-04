@@ -45,13 +45,12 @@ describe('ClusterDetails ClusterDetails component', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: new RegExp(`Pacemaker Cluster Details: ${name}`),
+    const header = screen.getByRole('banner', {
+      name: `Pacemaker Cluster Details: ${name}`,
     });
-
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    expect(
+      within(header).getByRole('img', { name: /health icon/i })
+    ).toBeInTheDocument();
   });
 
   it('should render a stale cluster', () => {
@@ -82,10 +81,12 @@ describe('ClusterDetails ClusterDetails component', () => {
       )
     ).toBeInTheDocument();
 
-    const header = screen.getByRole('heading', {
-      name: new RegExp(`Pacemaker Cluster Details: ${name}`),
+    const header = screen.getByRole('banner', {
+      name: `Pacemaker Cluster Details: ${name}`,
     });
-    expect(within(header).getAllByTestId('eos-svg-component')).toHaveLength(2);
+    expect(
+      within(header).getByRole('img', { name: /health icon/i })
+    ).toHaveAttribute('data-stale');
   });
 
   it.each([

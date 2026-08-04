@@ -51,13 +51,12 @@ describe('HostDetails component', () => {
         />
       );
 
-      const header = screen.getByRole('heading', {
-        name: new RegExp(`Host Details: ${hostname}`),
+      const header = screen.getByRole('banner', {
+        name: `Host Details: ${hostname}`,
       });
-
-      expect(header).toBeInTheDocument();
-      const { getByTestId } = within(header);
-      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+      expect(
+        within(header).getByRole('img', { name: /health icon/i })
+      ).toBeInTheDocument();
     });
   });
 

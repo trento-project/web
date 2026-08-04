@@ -125,13 +125,12 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: new RegExp(title),
+    const header = screen.getByRole('banner', {
+      name: title,
     });
-
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    expect(
+      within(header).getByRole('img', { name: /health icon/i })
+    ).toBeInTheDocument();
 
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
@@ -518,9 +517,9 @@ describe('GenericSystemDetails', () => {
 
     expect(
       within(
-        screen.getByText('SAP System Details').previousSibling
-      ).getAllByTestId('eos-svg-component')
-    ).toHaveLength(2);
+        screen.getByRole('banner', { name: 'SAP System Details' })
+      ).getByRole('img', { name: /health icon/i })
+    ).toHaveAttribute('data-stale');
 
     const [layoutTable, _] = screen.getAllByRole('table');
     const rows = layoutTable.querySelectorAll('tbody > tr');

@@ -6,7 +6,10 @@ import classNames from 'classnames';
 
 function PageHeader({ className, children }) {
   return (
-    <h1 className={classNames('text-3xl pb-2 truncate', className)}>
+    <h1
+      id="page-heading"
+      className={classNames('text-3xl pb-2 truncate', className)}
+    >
       {children}
     </h1>
   );

@@ -7,17 +7,23 @@ import PageHeader from './PageHeader';
 
 function DetailsViewHeader({ className, health, staleAt, timezone, children }) {
   return (
-    <PageHeader className={className}>
-      <div className="flex items-center justify-center space-x-2">
+    <div
+      className="flex items-center justify-center space-x-2"
+      role="banner"
+      aria-labelledby="page-heading"
+    >
+      <div className="pb-2">
         <HealthIcon
           health={health}
           size="xl"
           staleAt={staleAt}
           timezone={timezone}
         />
-        <span>{children}</span>
       </div>
-    </PageHeader>
+      <PageHeader className={className}>
+        <span>{children}</span>
+      </PageHeader>
+    </div>
   );
 }
 
