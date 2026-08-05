@@ -8,7 +8,7 @@ import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { TUNING_VALUES } from '@lib/test-utils/saptune';

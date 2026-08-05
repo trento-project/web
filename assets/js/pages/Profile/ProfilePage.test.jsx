@@ -4,7 +4,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { toast } from 'react-hot-toast';
 import { withState } from '@lib/test-utils';
 import { faker } from '@faker-js/faker';

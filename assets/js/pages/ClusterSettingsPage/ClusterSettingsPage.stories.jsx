@@ -9,7 +9,7 @@ import {
   userFactory,
 } from '@lib/test-utils/factories';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter, Route, Routes } from 'react-router';

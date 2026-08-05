@@ -3,7 +3,7 @@
 
 import { networkClient } from '@lib/network';
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 

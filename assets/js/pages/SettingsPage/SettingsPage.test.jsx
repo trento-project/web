@@ -15,7 +15,7 @@ import {
 import { softwareUpdatesSettingsFactory } from '@lib/test-utils/factories/softwareUpdatesSettings';
 import { networkClient } from '@lib/network';
 import { formatDateOnly } from '@lib/timezones';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import SettingsPage from './SettingsPage';
 import {

@@ -3,7 +3,7 @@
 
 import { act, renderHook } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { every, has } from 'lodash';
 import { hookWrapperWithState } from '@lib/test-utils';
 
