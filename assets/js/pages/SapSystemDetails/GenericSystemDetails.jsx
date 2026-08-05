@@ -300,6 +300,7 @@ export function GenericSystemDetails({
             health={system.health}
             staleAt={system.stale_at}
             timezone={userTimezone}
+            healthAriaLabelPrefix="System"
           >
             {title}
           </DetailsViewHeader>

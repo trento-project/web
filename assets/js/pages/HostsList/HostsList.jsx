@@ -32,7 +32,7 @@ import { getCounters } from '@pages/HealthSummary/summarySelection';
 
 import { addTagToHost, removeTagFromHost, deregisterHost } from '@state/hosts';
 import { getUserProfile } from '@state/selectors/user';
-import { hostsDataSelector } from '@state/selectors/host';
+import { hostsListSelector } from '@state/selectors/host';
 import { getInstanceID } from '@state/instances';
 
 const compareAgentVersions = (a, b) => {
@@ -55,7 +55,7 @@ const removeTag = (tag, hostId) => {
 };
 
 function HostsList() {
-  const hostsData = useSelector(hostsDataSelector);
+  const hostsData = useSelector(hostsListSelector);
   const { abilities, timezone } = useSelector(getUserProfile);
 
   const [searchParams, setSearchParams] = useSearchParams();

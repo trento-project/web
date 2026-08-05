@@ -125,12 +125,12 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    const header = screen.getByRole('banner', {
-      name: title,
-    });
     expect(
-      within(header).getByRole('img', { name: /health icon/i })
-    ).toBeInTheDocument();
+      screen.getByRole('heading', {
+        name: title,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toBeVisible();
 
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
@@ -510,16 +510,16 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(
-      screen.getByText(
-        /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/
-      )
-    ).toBeInTheDocument();
-
+      screen.getByRole('heading', { name: 'SAP System Details' })
+    ).toBeVisible();
     expect(
-      within(
-        screen.getByRole('banner', { name: 'SAP System Details' })
-      ).getByRole('img', { name: /health icon/i })
-    ).toHaveAttribute('data-stale');
+      screen.getByRole('alert', {
+        name: /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toHaveAttribute(
+      'data-stale'
+    );
 
     const [layoutTable, _] = screen.getAllByRole('table');
     const rows = layoutTable.querySelectorAll('tbody > tr');

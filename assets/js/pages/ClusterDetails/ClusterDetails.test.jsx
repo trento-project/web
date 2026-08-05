@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { formatDateTime } from '@lib/timezones';
 
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
@@ -45,11 +46,13 @@ describe('ClusterDetails ClusterDetails component', () => {
       />
     );
 
-    const header = screen.getByRole('banner', {
-      name: `Pacemaker Cluster Details: ${name}`,
-    });
     expect(
-      within(header).getByRole('img', { name: /health icon/i })
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('img', { name: /cluster health/i })
     ).toBeInTheDocument();
   });
 
@@ -76,17 +79,18 @@ describe('ClusterDetails ClusterDetails component', () => {
     );
 
     expect(
-      screen.getByText(
-        /An agent in one of the cluster hosts is not reporting since 15 Jun 2026, 06:30:00/
-      )
-    ).toBeInTheDocument();
-
-    const header = screen.getByRole('banner', {
-      name: `Pacemaker Cluster Details: ${name}`,
-    });
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
     expect(
-      within(header).getByRole('img', { name: /health icon/i })
+      screen.getByRole('img', { name: /cluster health/i })
     ).toHaveAttribute('data-stale');
+    expect(
+      screen.getByRole('alert', {
+        name: /An agent in one of the cluster hosts is not reporting/i,
+      })
+    ).toHaveTextContent(formatDateTime(staleAt, userTimezone));
   });
 
   it.each([

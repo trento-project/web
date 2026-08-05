@@ -17,7 +17,7 @@ describe('Banner', () => {
       </Banner>
     );
 
-    expect(screen.getByTestId('banner')).toHaveTextContent(
+    expect(screen.getByRole('alert', { name: /Warning/ })).toHaveTextContent(
       'You should have a look on this!'
     );
   });

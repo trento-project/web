@@ -11,7 +11,7 @@ function getInstancesByHost(instances, hostId) {
   return instances.filter((instance) => instance.host_id === hostId);
 }
 
-export const hostsDataSelector = createSelector(
+export const hostsListSelector = createSelector(
   [
     (state) => state.hostsList.hosts,
     (state) => state.clustersList.clusters,

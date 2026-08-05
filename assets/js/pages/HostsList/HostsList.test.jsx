@@ -180,11 +180,11 @@ describe('HostsLists component', () => {
       expect(rows[1]).not.toHaveClass('bg-gray-100');
 
       expect(
-        within(rows[0]).getByRole('img', { name: /health icon/i })
+        within(rows[0]).getByRole('img', { name: /health/i })
       ).toHaveAttribute('data-stale');
 
       expect(
-        within(rows[1]).getByRole('img', { name: /health icon/i })
+        within(rows[1]).getByRole('img', { name: /health/i })
       ).not.toHaveAttribute('data-stale');
     });
   });

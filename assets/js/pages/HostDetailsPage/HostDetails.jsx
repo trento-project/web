@@ -20,7 +20,6 @@ import {
   getOperationLabel,
 } from '@lib/operations';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-import { isHeartbeatPassing } from '@lib/model/hosts';
 import { formatBytes } from '@lib/charts';
 import { formatDateTime } from '@lib/timezones';
 
@@ -70,6 +69,7 @@ function HostDetails({
   deregistering,
   exportersStatus = {},
   heartbeat,
+  staleAt,
   health,
   hostID,
   hostname,
@@ -225,7 +225,12 @@ function HostDetails({
         <BackButton url="/hosts">Back to Hosts</BackButton>
         <div className="flex flex-wrap">
           <div className="flex w-1/2 h-auto overflow-hidden overflow-ellipsis break-words">
-            <DetailsViewHeader health={health}>
+            <DetailsViewHeader
+              health={health}
+              staleAt={staleAt}
+              timezone={timezone}
+              healthAriaLabelPrefix="Host"
+            >
               Host Details: <span className="font-bold">{hostname}</span>
             </DetailsViewHeader>
           </div>
@@ -234,7 +239,7 @@ function HostDetails({
               {operationsEnabled && (
                 <OperationsButton
                   userAbilities={userAbilities}
-                  disabled={!isHeartbeatPassing({ heartbeat })}
+                  disabled={!!staleAt}
                   disabledTooltip={OPERATION_NOT_ALLOWED_HOST}
                   operations={[
                     {
@@ -333,6 +338,13 @@ function HostDetails({
             {renderedExporters}
           </div>
         </div>
+        {staleAt && (
+          <Banner type="warning" truncate={false}>
+            The agent in this host is not responding since{' '}
+            {formatDateTime(staleAt, timezone)}. Some information in this view
+            might be stale.
+          </Banner>
+        )}
         {versionWarningMessage && (
           <Banner type="warning">{versionWarningMessage}</Banner>
         )}

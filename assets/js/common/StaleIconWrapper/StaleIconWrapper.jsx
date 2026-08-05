@@ -29,6 +29,8 @@ function StaleIconWrapper(WrappedIcon) {
     size = 'm',
     className = '',
     centered = false,
+    ariaLabel = 'Icon',
+    containerProps = {},
     ...props
   }) {
     const convertedSize = getIconSize(size);
@@ -49,7 +51,8 @@ function StaleIconWrapper(WrappedIcon) {
       <div
         className="flex items-center mx-1"
         role="img"
-        aria-label="Health icon"
+        aria-label={`${ariaLabel}${staleAt ? ' Stale' : ''}`}
+        {...containerProps}
         {...(staleAt && { 'data-stale': '' })}
       >
         <Tooltip
