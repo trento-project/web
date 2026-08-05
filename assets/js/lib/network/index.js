@@ -1,8 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import axios from 'axios';
-import createAuthRefresh from 'axios-auth-refresh';
+import { createClient } from '@lib/network/http-client';
 import { logError, logWarn } from '@lib/log';
 import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
 
@@ -18,16 +17,10 @@ export const unrecoverableAuthError = Error(
   'could not authenticate the user, session destroyed'
 );
 
-export const networkClient = axios.create({
-  baseURL: '/api/v1',
-});
-
-networkClient.interceptors.request.use((request) => {
-  request.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
-  return request;
-});
-
-const refreshAuthLogic = async (failedRequest) => {
+// Refresh logic: called when networkClient receives a 401.  Exchanges the
+// stored refresh token for a new access token, then updates the request
+// config with the new Bearer token so the retried request carries it.
+const refreshAuthLogic = async (config) => {
   try {
     await refreshAndStoreAccessToken();
   } catch (e) {
@@ -35,19 +28,18 @@ const refreshAuthLogic = async (failedRequest) => {
     throw unrecoverableAuthError;
   }
 
-  failedRequest.response.config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
+  config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
+  return config;
 };
 
-// Even though it looks counter intuitive, we need to add `deduplicateRefresh: false`
-// to enable the retry of all the requests that got 401 at the same time.
-// The functionality of this flag is not properly implemented and it doesn't do what
-// it should. However, setting it to false fixes our problem.
-// Without this change, only the first request with 401 response is retried.
-// What the library docs explain about this field doesn't apply if the requests
-// receive 401 almost at the same time, as the retry is not handled in that case.
-// In any case, the refresh flow is done once
-createAuthRefresh(networkClient, refreshAuthLogic, {
-  deduplicateRefresh: false,
+export const networkClient = createClient({
+  baseURL: '/api/v1',
+  refreshAuthLogic,
+});
+
+networkClient.interceptors.request.use((request) => {
+  request.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
+  return request;
 });
 
 export const handleUnrecoverableAuthError = () => {
