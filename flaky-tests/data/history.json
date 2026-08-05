@@ -1,45 +1,5 @@
 [
   {
-    "timestamp": "2026-06-20T22:21:42Z",
-    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
-    "run_id": "27882197087",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 9
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed::Host Details Deregistration \"Clean up\" button should be visible only for an unhealthy host should show the \"Clean up\" button once heartbeat is lost and debounce period has elapsed",
-        "score": 0.5
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.1891
-      },
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.07153
-      },
-      {
-        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow to deregister a host after clean-up confirmation::Host Details Deregistration \"Clean up\" button should deregister a host should allow to deregister a host after clean-up confirmation",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.03644
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-21T18:39:54Z",
     "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
     "run_id": "27913432015",
@@ -4928,6 +4888,26 @@
       },
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new JAVA instance is added",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-05T19:30:13Z",
+    "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
+    "run_id": "31037729582",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
         "score": 0.02501
       }
     ]
