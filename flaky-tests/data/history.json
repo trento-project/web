@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-21T18:39:54Z",
-    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
-    "run_id": "27913432015",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.08281
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users delete_user/1 deletes user abilities",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-21T18:41:05Z",
     "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
     "run_id": "27913432015",
@@ -4908,6 +4884,26 @@
       },
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_start",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-05T19:31:20Z",
+    "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
+    "run_id": "31037729582",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.5
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
       }
     ]
