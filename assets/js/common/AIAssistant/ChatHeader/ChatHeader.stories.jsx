@@ -13,6 +13,11 @@ export default {
       options: ['connected', 'connecting', 'disconnected'],
       control: { type: 'radio' },
     },
+    isRunning: {
+      description:
+        'Whether a run is in flight — "New chat" is locked until it settles',
+      control: { type: 'boolean' },
+    },
     onNewChat: {
       description: 'Fired when the "New chat" button is clicked',
       type: 'function',
@@ -38,4 +43,8 @@ export const Connecting = {
 
 export const Disconnected = {
   args: { connectionStatus: 'disconnected' },
+};
+
+export const Running = {
+  args: { connectionStatus: 'connected', isRunning: true },
 };
