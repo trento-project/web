@@ -5,7 +5,6 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
   use TrentoWeb.ConnCase, async: true
 
   alias TrentoWeb.V1.HealthOverviewJSON
-  import Trento.Factory
 
   require Trento.Enums.Health, as: Health
 
@@ -13,49 +12,40 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
     test "should render all the fields" do
       sap_system_id = UUID.uuid4()
       sid = UUID.uuid4()
+      database_id = UUID.uuid4()
       database_sid = UUID.uuid4()
       app_cluster_id = UUID.uuid4()
       db_cluster_id = UUID.uuid4()
 
-      application_instances =
-        build_list(1, :application_instance,
-          sap_system_id: sap_system_id,
-          host: build(:host, cluster_id: nil)
-        ) ++
-          build_list(
-            2,
-            :application_instance,
-            sap_system_id: sap_system_id,
-            host: build(:host, cluster_id: app_cluster_id)
-          )
-
-      %{id: database_id} = insert(:database, health: Health.passing())
-
-      database_instances =
-        build_list(
-          2,
-          :database_instance,
-          database_id: database_id,
-          host: build(:host, cluster_id: db_cluster_id)
-        )
+      now = DateTime.utc_now()
+      application_stale_at = DateTime.add(now, -5, :minute)
+      app_cluster_stale_at = DateTime.add(now, -10, :minute)
+      database_stale_at = DateTime.add(now, -15, :minute)
+      db_cluster_stale_at = DateTime.add(now, -20, :minute)
+      hosts_stale_at = DateTime.add(now, -25, :minute)
 
       assert [
                %{
                  id: sap_system_id,
                  sid: sid,
                  sapsystem_health: Health.passing(),
-                 database_id: database_id,
-                 application_health: Health.passing(),
-                 database_health: Health.passing(),
-                 clusters_health: Health.warning(),
-                 application_cluster_health: Health.critical(),
-                 database_cluster_health: Health.warning(),
-                 hosts_health: Health.warning(),
-                 cluster_id: db_cluster_id,
+                 application_health: Health.critical(),
+                 application_stale_at: application_stale_at,
                  application_cluster_id: app_cluster_id,
+                 application_cluster_health: Health.critical(),
+                 application_cluster_stale_at: app_cluster_stale_at,
+                 database_id: database_id,
+                 database_sid: database_sid,
+                 database_health: Health.passing(),
+                 database_stale_at: database_stale_at,
                  database_cluster_id: db_cluster_id,
-                 tenant: database_sid,
-                 database_sid: database_sid
+                 database_cluster_health: Health.warning(),
+                 database_cluster_stale_at: db_cluster_stale_at,
+                 hosts_health: Health.warning(),
+                 hosts_stale_at: hosts_stale_at,
+                 cluster_id: db_cluster_id,
+                 clusters_health: Health.warning(),
+                 tenant: database_sid
                }
              ] ==
                HealthOverviewJSON.overview(%{
@@ -64,72 +54,20 @@ defmodule TrentoWeb.V1.HealthOverviewJSONTest do
                      id: sap_system_id,
                      sid: sid,
                      sapsystem_health: Health.passing(),
-                     application_health: Health.passing(),
-                     application_instances: application_instances,
-                     database_id: database_id,
-                     database_instances: database_instances,
-                     database_health: Health.passing(),
-                     application_cluster_health: Health.critical(),
-                     database_cluster_health: Health.warning(),
-                     hosts_health: Health.warning(),
-                     database_sid: database_sid
-                   }
-                 ]
-               })
-    end
-
-    test "should send empty cluster ids" do
-      sap_system_id = UUID.uuid4()
-
-      database_sid = "HDP"
-
-      application_instances =
-        build_list(
-          2,
-          :application_instance,
-          sap_system_id: sap_system_id,
-          host: build(:host, cluster_id: nil)
-        )
-
-      %{id: database_id} = insert(:database, health: Health.passing())
-
-      database_instances =
-        build_list(
-          2,
-          :database_instance,
-          database_id: database_id,
-          host: build(:host, cluster_id: nil)
-        )
-
-      assert [
-               %{
-                 cluster_id: nil,
-                 clusters_health: Health.unknown(),
-                 application_cluster_id: nil,
-                 database_cluster_id: nil,
-                 application_health: Health.critical(),
-                 database_health: Health.passing(),
-                 application_cluster_health: Health.unknown(),
-                 database_cluster_health: Health.unknown(),
-                 tenant: database_sid,
-                 database_sid: database_sid
-               }
-             ] =
-               HealthOverviewJSON.overview(%{
-                 health_infos: [
-                   %{
-                     id: sap_system_id,
-                     sid: UUID.uuid4(),
-                     sapsystem_health: Health.passing(),
-                     application_instances: application_instances,
                      application_health: Health.critical(),
+                     application_stale_at: application_stale_at,
+                     application_cluster_id: app_cluster_id,
+                     application_cluster_health: Health.critical(),
+                     application_cluster_stale_at: app_cluster_stale_at,
                      database_id: database_id,
-                     database_instances: database_instances,
+                     database_sid: database_sid,
                      database_health: Health.passing(),
-                     application_cluster_health: Health.unknown(),
-                     database_cluster_health: Health.unknown(),
+                     database_stale_at: database_stale_at,
+                     database_cluster_id: db_cluster_id,
+                     database_cluster_health: Health.warning(),
+                     database_cluster_stale_at: db_cluster_stale_at,
                      hosts_health: Health.warning(),
-                     database_sid: database_sid
+                     hosts_stale_at: hosts_stale_at
                    }
                  ]
                })

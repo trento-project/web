@@ -4,6 +4,7 @@
 import { healthSummaryFactory } from '@lib/test-utils/factories';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { faker } from '@faker-js/faker';
 
 import HomeHealthSummary from './HomeHealthSummary';
 
@@ -25,6 +26,13 @@ const unClusteredSummary = healthSummaryFactory.buildList(3, {
   database_health: 'passing',
   hosts_health: 'passing',
   sapsystem_health: 'passing',
+});
+const staleSummary = healthSummaryFactory.buildList(3, {
+  application_stale_at: faker.date.past(),
+  database_stale_at: faker.date.past(),
+  application_cluster_stale_at: faker.date.past(),
+  database_cluster_stale_at: faker.date.past(),
+  hosts_stale_at: faker.date.past(),
 });
 
 function ContainerWrapper({ children }) {
@@ -92,5 +100,12 @@ export const UnClustered = {
   args: {
     ...Random.args,
     sapSystemsHealth: unClusteredSummary,
+  },
+};
+
+export const Stale = {
+  args: {
+    ...Random.args,
+    sapSystemsHealth: staleSummary,
   },
 };
