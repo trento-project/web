@@ -24,6 +24,12 @@ let inflightRefresh = null;
 // Refresh logic: called when networkClient receives a 401.  Exchanges the
 // stored refresh token for a new access token, then updates the request
 // config with the new Bearer token so the retried request carries it.
+//
+// A page typically has several requests in flight (the settings page alone
+// fires four), so they all get a 401 together: the first one starts the
+// exchange and the others await the same promise.  A request that already
+// carries an outdated token compared to the store skips the exchange
+// altogether and just retries with the token another request obtained.
 const refreshAuthLogic = async (config) => {
   try {
     await refreshAndStoreAccessToken();
