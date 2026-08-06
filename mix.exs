@@ -241,13 +241,13 @@ defmodule Trento.MixProject do
     end
   end
 
-# Dependabot's hex file fetcher only pulls mix.exs, mix.lock, subapp mixfiles and paths
-# referenced by Code.eval_file/Code.require_file.
-# get_version_from_file/0 reads VERSION,so the reference below is what makes Dependabot fetch it.
-# Do not delete.
-#
-# Code.eval_file("VERSION")
-defp get_version_from_file do
-  __DIR__ |> Path.join("VERSION") |> File.read!() |> String.trim()
-end
+  # Dependabot's hex file fetcher only pulls mix.exs, mix.lock, subapp mixfiles and paths
+  # referenced by Code.eval_file/Code.require_file.
+  # get_version_from_file/0 reads VERSION,so the reference below is what makes Dependabot fetch it.
+  # Do not delete.
+  #
+  # Code.eval_file("VERSION")
+  defp get_version_from_file do
+    __DIR__ |> Path.join("VERSION") |> File.read!() |> String.trim()
+  end
 end
