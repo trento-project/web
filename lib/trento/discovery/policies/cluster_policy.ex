@@ -940,6 +940,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
   defp parse_resource_status(%{blocked: true}), do: "Blocked"
   defp parse_resource_status(%{failed: true}), do: "Failed"
   defp parse_resource_status(%{failure_ignored: true}), do: "FailureIgnored"
+  defp parse_resource_status(%{removed: true}), do: "Removed"
   defp parse_resource_status(%{orphaned: true}), do: "Orphaned"
   defp parse_resource_status(_), do: ""
 
@@ -1238,6 +1239,8 @@ defmodule Trento.Discovery.Policies.ClusterPolicy do
     MapSet.subset?(sap_resource_ids, constrained_resources)
   end
 
+  # :masters only has entries for CIBs still using the deprecated <master> tag,
+  # modern promotable clones already live in :clones.
   defp sap_clone_master_ids(%{clones: clones, masters: masters}) do
     (clones ++ masters)
     |> Enum.filter(fn %{primitive: %{type: type}} ->
