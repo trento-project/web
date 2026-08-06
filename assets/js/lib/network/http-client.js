@@ -55,7 +55,7 @@ function buildUrl(config) {
   let url = combineUrls(baseURL, config.url || '');
 
   if (config.params) {
-    const search = new URLSearchParams(config.params).toString();
+    const search = buildSearchParams(config.params).toString();
     if (search) {
       url = `${url}?${search}`;
     }
