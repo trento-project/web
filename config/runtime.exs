@@ -15,6 +15,23 @@ if config_env() in [:prod, :demo] do
   config :trento,
     admin_user: admin_user
 
+  log_level =
+    "LOG_LEVEL"
+    |> System.get_env("info")
+    |> Trento.Support.Logger.parse_log_level()
+    |> case do
+      {:ok, level} ->
+        level
+
+      {:error, :invalid_level} ->
+        raise """
+        environment variable LOG_LEVEL is invalid.
+        Valid values are: #{Enum.map_join(Logger.levels(), ", ", &to_string/1)}
+        """
+    end
+
+  config :logger, level: log_level
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
