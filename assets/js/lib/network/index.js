@@ -17,6 +17,10 @@ export const unrecoverableAuthError = Error(
   'could not authenticate the user, session destroyed'
 );
 
+// Holds the refresh currently being performed, so that requests failing with
+// 401 at the same time share a single token exchange.
+let inflightRefresh = null;
+
 // Refresh logic: called when networkClient receives a 401.  Exchanges the
 // stored refresh token for a new access token, then updates the request
 // config with the new Bearer token so the retried request carries it.
