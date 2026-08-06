@@ -7,6 +7,10 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
   import Swoosh.Email
   use TrentoWeb, :html
 
+  alias Trento.Infrastructure.Alerting.Emails.EmailLayout
+
+  alias Trento.Hosts.Projections.HostReadModel
+
   embed_templates "email_templates/*"
 
   def api_key_expired(sender: sender, recipient: recipient) do
@@ -50,6 +54,37 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
     |> from({"Trento Alerts", sender})
     |> to({"Trento Admin", recipient})
     |> subject("Trento Alert: #{component} #{identifier} needs attention.")
+    |> html_body(body)
+  end
+
+  def heartbeat_failed(
+        %HostReadModel{
+          id: host_id,
+          hostname: hostname,
+          cluster: cluster,
+          application_instances: application_instances,
+          database_instances: database_instances
+        },
+        failed_at,
+        sender: sender,
+        recipient: recipient
+      ) do
+    body =
+      %{
+        host_id: host_id,
+        hostname: hostname,
+        failed_at: Calendar.strftime(failed_at, "%Y-%m-%d %H:%M:%S UTC"),
+        cluster: cluster,
+        application_instances: application_instances,
+        database_instances: database_instances
+      }
+      |> heartbeat_failed()
+      |> render_heex_to_string()
+
+    new()
+    |> from({"Trento Alerts", sender})
+    |> to({"Trento Admin", recipient})
+    |> subject("Trento Alert: Host #{hostname} stopped reporting.")
     |> html_body(body)
   end
 

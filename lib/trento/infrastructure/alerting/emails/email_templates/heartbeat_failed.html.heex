@@ -1,0 +1,53 @@
+<!--
+  ~ SPDX-FileCopyrightText: SUSE LLC
+  ~ SPDX-License-Identifier: Apache-2.0
+-->
+<EmailLayout.base_email>
+  <p>Hi there,</p>
+  <p>
+    The Trento Agent running on one of the hosts monitored by Trento stopped reporting.
+    The host data went stale, and so did the data of all its resources.
+  </p>
+  <div>
+    <p>
+      Host: <b>{@hostname}</b>
+      <br /> Host ID: <b>{@host_id}</b>
+      <br /> Stale since: <b>{@failed_at}</b>
+    </p>
+  </div>
+  <%= if @cluster || @application_instances != [] || @database_instances != [] do %>
+    <p>
+      The following resources were running on the host, so their data went stale for this very reason:
+    </p>
+    <%= if @cluster do %>
+      <div>
+        <p>
+          Cluster: <b>{@cluster.name}</b>
+          <br /> Cluster ID: <b>{@cluster.id}</b>
+        </p>
+      </div>
+    <% end %>
+    <div :for={
+      %{sid: sid, instance_number: instance_number, sap_system_id: sap_system_id} <-
+        @application_instances
+    }>
+      <p>
+        SAP application instance: <b>{sid}</b> - instance number <b>{instance_number}</b>
+        <br /> SAP system ID: <b>{sap_system_id}</b>
+      </p>
+    </div>
+    <div :for={
+      %{sid: sid, instance_number: instance_number, database_id: database_id} <-
+        @database_instances
+    }>
+      <p>
+        Database instance: <b>{sid}</b> - instance number <b>{instance_number}</b>
+        <br /> Database ID: <b>{database_id}</b>
+      </p>
+    </div>
+  <% end %>
+  <p>
+    Check that the Trento Agent is running properly on the host.
+  </p>
+  <p>Thanks for your attention.</p>
+</EmailLayout.base_email>
