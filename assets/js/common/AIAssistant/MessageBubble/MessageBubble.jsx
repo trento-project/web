@@ -4,13 +4,20 @@
 import React from 'react';
 import { ErrorPrimitive, MessagePrimitive } from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
-import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
+import CodeBlock from './CodeBlock';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
+
+// `@assistant-ui/react-markdown` renders bare HTML elements with no classes,
+// and tailwind's preflight strips heading sizes, list markers and block
+// margins. `prose` puts them back; `max-w-none` lets it fill the bubble.
+const MARKDOWN_CLASS_NAME = 'aui-md prose max-w-none';
+
+const MARKDOWN_COMPONENTS = { SyntaxHighlighter: CodeBlock };
 
 function MessageBubbleView({ variant, children }) {
   if (variant === 'user') {
@@ -35,7 +42,8 @@ function MarkdownText(props) {
   return (
     <MarkdownTextPrimitive
       remarkPlugins={[remarkGfm]}
-      className="aui-md"
+      className={MARKDOWN_CLASS_NAME}
+      components={MARKDOWN_COMPONENTS}
       {...props}
     />
   );
