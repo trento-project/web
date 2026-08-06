@@ -101,9 +101,8 @@ const resourcesRowCollapsibleCell = `${resourcesTable} td:nth-child(1)`;
 const clusterStateLabel = 'span:contains("State:")';
 const clusterStateBadge = `${clusterStateLabel} svg`;
 
-const pageTitleHealthIcons = 'h1 div svg';
-const staleDataBanner =
-  'span[data-testid="banner"]:contains("An agent in one of the cluster hosts is not reporting since")';
+const stalenessBannerName =
+  /An agent in one of the cluster hosts is not reporting since/;
 
 // UI Interactions
 
@@ -214,11 +213,18 @@ export const validateAvailableHanaClusterCostOptUrl = () =>
 export const expectedClusterNameIsDisplayedInHeader = () =>
   basePage.pageTitleIsCorrectlyDisplayed(availableHanaCluster.name);
 
-export const expectedClusterHealthIsDisplayedInHeader = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed(availableHanaCluster.health);
+export const expectedClusterHealthIsDisplayedInHeader = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed(
+    '@pageHealthIcon',
+    availableHanaCluster.health
+  );
+};
 
-export const criticalClusterHealthIsDisplayedInHeader = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
+export const criticalClusterHealthIsDisplayedInHeader = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', 'critical');
+};
 
 export const expectedProviderIsDisplayed = (clusterType) => {
   const provider = getPropertyFromClusterType(clusterType, 'provider');
@@ -532,17 +538,23 @@ export const notAuthorizedTooltipIsDisplayed = () =>
 export const notAuthorizedTooltipIsNotDisplayed = () =>
   cy.get(actionNotAuthorizedTooltip).should('not.exist');
 
-export const hanaClusterHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
+export const hanaClusterHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
 
-export const hanaClusterHealthIsMarkedInSync = () =>
-  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
+export const hanaClusterHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /cluster health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
 
-export const hanaClusterStaleBannerIsDisplayed = () =>
-  cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
+export const hanaClusterStaleBannerIsDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('be.visible');
 
 export const hanaClusterStaleBannerIsNotDisplayed = () =>
-  cy.get(staleDataBanner).should('not.exist');
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
 
 // API
 

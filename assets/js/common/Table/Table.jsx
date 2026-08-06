@@ -78,6 +78,7 @@ function Table({
   header = null,
   rowKey = defaultRowKey,
   roundedTop = true,
+  ariaLabelledBy,
 }) {
   const {
     columns,
@@ -229,7 +230,10 @@ function Table({
             )}
           >
             {header}
-            <table className="min-w-full leading-normal table-fixed">
+            <table
+              className="min-w-full leading-normal table-fixed"
+              aria-labelledby={ariaLabelledBy}
+            >
               <thead>
                 <tr>
                   {collapsibleDetailRenderer && (

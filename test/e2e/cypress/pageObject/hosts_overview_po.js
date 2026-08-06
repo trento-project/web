@@ -36,13 +36,10 @@ const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
 const nextPageSelector = '[aria-label="next-page"]';
 
-const hostsWithWarning = 'p:contains("Warning") + p';
-const hostsWithCritical = 'p:contains("Critical") + p';
-const hostsWithPassing = 'p:contains("Passing") + p';
+const hostCountWithWarning = 'p:contains("Warning") + p';
+const hostCountWithCritical = 'p:contains("Critical") + p';
+const hostCountWithPassing = 'p:contains("Passing") + p';
 
-const passingHostBadge = 'svg.fill-jungle-green-500';
-const warningHostBadge = 'svg.fill-yellow-500';
-const criticalHostBadge = 'svg.fill-red-500';
 const hostToDeregisterCleanupButton = `tr:contains("${hostToDeregister}") td:contains("Clean up")`;
 const cleanupButtons = 'tbody tr button:contains("Clean up")';
 const heartbeatFailingToaster = `p:contains("The host ${hostToDeregister} heartbeat is failing.")`;
@@ -153,29 +150,53 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
     );
 };
 
-export const expectedWarningHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithWarning).should('have.text', amount);
+export const expectedWarningHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithWarning).should('have.text', amount);
 
-export const expectedCriticalHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
+export const expectedCriticalHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithCritical, { timeout: 20000 }).should('have.text', amount);
 
-export const expectedPassingHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithPassing).should('have.text', amount);
+export const expectedPassingHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithPassing).should('have.text', amount);
 
-export const expectedAmountOfWarningsIsDisplayed = (amount) =>
-  cy.get(warningHostBadge).should('have.length', amount);
+const getHealthIconWithState = (state, name = /health/i) =>
+  cy.findByRole('img', { name: name }).filter(`[data-health-state="${state}"]`);
 
-export const expectedAmountOfCriticalsIsDisplayed = (amount) => {
-  if (amount === 0) return cy.get(criticalHostBadge).should('not.exist');
-  else {
-    return cy
-      .get(criticalHostBadge, { timeout: 20000 })
-      .should('have.length', amount);
-  }
-};
+export const expectedAmountOfCriticalIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('critical')
+    .should('have.text', amount)
+    .should('have.length', amount);
 
-export const expectedAmountOfPassingIsDisplayed = (amount) =>
-  cy.get(passingHostBadge).should('have.length', amount);
+export const expectedAmountOfWarningIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('warning').should('have.length', amount);
+
+export const expectedAmountOfPassingIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('passing').should('have.length', amount);
+
+export const expectedAmountOfStaleIconsIsDisplayed = (
+  amount,
+  timeout = 20000
+) =>
+  cy
+    .findByRole('img', { name: /health/ })
+    .filter('[data-stale]', { timeout })
+    .should('have.length', amount);
+
+export const allVisibleRowsAreMarkedStale = () =>
+  cy
+    .findAllByRole('row', { timeout: 20000 })
+    .filter(':not(:has(th))')
+    .should(($rows) =>
+      $rows.each((index, $row) => expect($row).to.have.class('bg-gray-100'))
+    );
+
+export const allVisibleRowsAreMarkedInSync = () =>
+  cy
+    .findAllByRole('row')
+    .filter(':not(:has(th))')
+    .should(($rows) =>
+      $rows.each((index, $row) => expect($row).not.to.have.class('bg-gray-100'))
+    );
 
 const _hostHasExpectedStatus = (host, status) =>
   cy

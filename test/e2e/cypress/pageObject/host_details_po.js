@@ -29,8 +29,6 @@ const architectureLabel =
   'div[class="font-bold"]:contains("Architecture") + div';
 const ipAddressesLabel =
   'div[class="font-bold"]:contains("IP Addresses") + div';
-const agentReportingLabel = 'span:contains("Agent:Reporting")';
-const agentReportingBadge = `${agentReportingLabel} svg`;
 const nodeExporterLabel = 'span:contains("Node Exporter:Reporting")';
 const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
@@ -207,8 +205,12 @@ export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
 
-export const healthHasExpectedValue = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedHost.health);
+export const pageTitleHealthIsCorrectlyDisplayed = (
+  health = selectedHost.health
+) => {
+  cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
 
 export const clusterNameHasExpectedValue = () =>
   cy.get(clusterNameLabel).should('have.text', selectedHost.clusterName);
@@ -395,13 +397,16 @@ const _getTableHeaders = (tableName) =>
     return cy.wrap(headerTexts);
   });
 
-export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentReportingLabel).should('be.visible');
+export const agentStatusIsCorrectlyDisplayed = (reporting = true) => {
+  const agentLabelSelector = `span:contains("Agent:${reporting ? 'Reporting' : 'Not reporting'}")`;
+  const options = { ...(!reporting && { timeout: 20000 }) };
+
+  cy.get(agentLabelSelector, options).should('be.visible');
   return cy
-    .get(agentReportingBadge)
+    .get(`${agentLabelSelector} svg`)
     .invoke('attr', 'class')
     .then((classAttr) => {
-      expect(classAttr).to.contain('jungle-green');
+      expect(classAttr).to.contain(reporting ? 'jungle-green' : 'red');
     });
 };
 
@@ -472,6 +477,45 @@ export const saveChecksSelectionButtonIsDisabled = () =>
 
 export const saveChecksSelectionButtonIsEnabled = () =>
   cy.get(saveChecksSelectionButton).should('be.enabled');
+
+// export const hostHealthIsMarkedAsStale = () => {
+//   cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
+//   basePage.healthIconIsMarkedStale('@pageHealthIcon');
+// };
+
+// export const hostHealthIsMarkedInSync = () => {
+//   cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
+//   basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+// };
+
+// export const hostStaleBannerIsDisplayed = (displayed = true) => {
+//   const stalenessBannerName = 'The agent in this host is not responding since';
+//   if (displayed)
+//     cy.findByRole('alert', { name: stalenessBannerName, timeout: 20000 }).should('be.visible');
+//   else
+//     cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+// };
+
+// export const databaseInstanceRowIsMarkedAsStale = (expectedStale) => {
+//   cy.findByRole('table', { name: /SAP instances/i }).within(() => {
+//     cy.findAllByRole('row')
+//       .filter(':not(:has(th))')
+//       .should(($rows) =>
+//         $rows.each((index, $row) => {
+//           if (expectedStale)
+//             expect($row).to.have.class('bg-gray-100');
+//           else
+//             expect($row).not.to.have.class('bg-gray-100');
+//         })
+//       );
+//   });
+// };
+
+export const markHdpDatabaseAsPresent = () => {
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
+  );
+};
 
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';

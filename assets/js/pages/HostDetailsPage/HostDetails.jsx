@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { get, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
@@ -109,6 +109,7 @@ function HostDetails({
   const [simpleOperationModalOpen, setSimpleOperationModalOpen] =
     useState(false);
   const [currentOperation, setCurrentOperation] = useState(null);
+  const tableLabelId = useId();
 
   const versionWarningMessage = agentVersionWarning(agentVersion);
 
@@ -426,7 +427,9 @@ function HostDetails({
 
         <div className="mt-8">
           <div>
-            <h2 className="text-2xl font-bold">SAP instances</h2>
+            <h2 id={tableLabelId} className="text-2xl font-bold">
+              SAP instances
+            </h2>
           </div>
           <Table
             className="pt-2"
@@ -434,6 +437,7 @@ function HostDetails({
               userTimezone: timezone,
             })}
             data={sapInstances}
+            ariaLabelledBy={tableLabelId}
           />
         </div>
 

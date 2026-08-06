@@ -360,6 +360,7 @@ export function GenericSystemDetails({
                     size="l"
                     staleAt={system.database_stale_at}
                     timezone={userTimezone}
+                    ariaLabelPrefix="Database"
                   />
                 ),
               },

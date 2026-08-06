@@ -56,7 +56,7 @@ function HealthIcon({
           timezone={timezone}
           tooltipEnabled={!!staleAt}
           ariaLabel={`${ariaLabelPre} Passing`}
-          containerProps={{'data-health-state': health}}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -72,7 +72,7 @@ function HealthIcon({
           timezone={timezone}
           tooltipEnabled={!!staleAt}
           ariaLabel={`${ariaLabelPre} Warning`}
-          containerProps={{'data-health-state': health}}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -88,7 +88,7 @@ function HealthIcon({
           timezone={timezone}
           tooltipEnabled={!!staleAt}
           ariaLabel={`${ariaLabelPre} Critical`}
-          containerProps={{'data-health-state': health}}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -119,7 +119,7 @@ function HealthIcon({
           timezone={timezone}
           tooltipEnabled={!!staleAt}
           ariaLabel={`${ariaLabelPre} Unknown`}
-          containerProps={{'data-health-state': 'unknown'}}
+          containerProps={{ 'data-health-state': 'unknown' }}
         />
       );
     }

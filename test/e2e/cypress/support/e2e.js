@@ -16,6 +16,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Enable Testing Library plugin for Cypress
+import '@testing-library/cypress/add-commands';
+
 // Import commands.js using ES2015 syntax:
 import {
   apiLoginAndCreateSession,
