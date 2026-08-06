@@ -53,14 +53,14 @@ context('Hosts Overview', () => {
       beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
-        hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
-        hostsOverviewPage.expectedWarningHostsAreDisplayed(12);
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
+        hostsOverviewPage.expectedPassingHostCountIsDisplayed(11);
+        hostsOverviewPage.expectedWarningHostCountIsDisplayed(12);
+        hostsOverviewPage.expectedCriticalHostCountIsDisplayed(4);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
-        hostsOverviewPage.expectedAmountOfPassingIsDisplayed(8);
-        hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
+        hostsOverviewPage.expectedAmountOfPassingIconsIsDisplayed(8);
+        hostsOverviewPage.expectedAmountOfWarningIconsIsDisplayed(2);
       });
 
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
@@ -107,22 +107,25 @@ context('Hosts Overview', () => {
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
-    describe('Health is changed to critical when the heartbeat is not sent', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
-
-      it('should show health status of the entire cluster of 27 hosts with critical health', () => {
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
-        hostsOverviewPage.stopAgentsHeartbeat();
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(27);
-      });
-
-      it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(0);
-        hostsOverviewPage.stopAgentsHeartbeat();
-        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
-      });
-
+    describe('Stale', () => {
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+
+      it('should show a stale health on the hosts when agents are not sending heartbeat', () => {
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(0);
+
+        hostsOverviewPage.stopAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(10);
+        hostsOverviewPage.allVisibleRowsAreMarkedStale();
+      });
+
+      it('should mark health in-sync on the hosts when agents start sending heartbeat again', () => {
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(10);
+
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(0);
+        hostsOverviewPage.allVisibleRowsAreMarkedInSync();
+      });
     });
   });
 

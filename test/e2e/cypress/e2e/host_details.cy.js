@@ -5,6 +5,11 @@ import * as hostDetailsPage from '../pageObject/host_details_po';
 
 import { selectedHost } from '../fixtures/host-details/selected_host';
 
+const hostHealthIconName = /host health/i;
+const stalenessBannerName = /The agent in this host is not responding/i;
+const agentStatusReportingLabel = 'span:contains("Agent:Reporting")';
+const agentStatusNotReportingLabel = 'span:contains("Agent:Not reporting")';
+
 context('Host Details', () => {
   before(() => {
     hostDetailsPage.preloadTestData();
@@ -33,7 +38,7 @@ context('Host Details', () => {
     });
 
     it('should show the correct host health', () => {
-      hostDetailsPage.healthHasExpectedValue();
+      hostDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
     });
 
     it('should show the correct cluster', () => {
@@ -194,6 +199,72 @@ context('Host Details', () => {
       hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('compliant');
     });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      hostDetailsPage.startAgentHeartbeat();
+      hostDetailsPage.visitSelectedHost();
+    });
+
+    beforeEach(() => hostDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark host data as stale when its agent stops reporting', () => {
+      // Page health icon should be stale
+      cy.findByRole('img', { name: hostHealthIconName, timeout: 20000 }).should(
+        'have.attr',
+        'data-stale'
+      );
+      // Stale banner should be shown
+      cy.findByRole('alert', { name: stalenessBannerName }).should(
+        'be.visible'
+      );
+      // Agent Pill should be Not reporting and red
+      cy.get(agentStatusNotReportingLabel)
+        .find('svg')
+        .invoke('attr', 'class')
+        .should('match', /red/);
+      // Every row of the Instances table should be marked stale
+      cy.findByRole('table', { name: /SAP instances/i }).within(() => {
+        cy.findAllByRole('row')
+          .filter(':not(:has(th))')
+          .should(($rows) =>
+            $rows.each((index, $row) =>
+              expect($row).to.have.class('bg-gray-100')
+            )
+          );
+      });
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      hostDetailsPage.startAgentHeartbeat();
+
+      // Page health icon should not be stale
+      cy.findByRole('img', { name: hostHealthIconName, timeout: 20000 }).should(
+        'not.have.attr',
+        'data-stale'
+      );
+      // Stale banner should not be shown
+      cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+      // Agent Pill should be reporting and green
+      cy.get(agentStatusReportingLabel)
+        .find('svg')
+        .invoke('attr', 'class')
+        .should('match', /jungle-green/);
+
+      hostDetailsPage.markHdpDatabaseAsPresent();
+
+      // Every row of the Instances table should not be marked stale
+      cy.findByRole('table', { name: /SAP instances/i }).within(() => {
+        cy.findAllByRole('row')
+          .filter(':not(:has(th))')
+          .should(($rows) =>
+            $rows.each((index, $row) =>
+              expect($row).not.to.have.class('bg-gray-100')
+            )
+          );
+      });
+     });
   });
 
   describe('Deregistration', () => {

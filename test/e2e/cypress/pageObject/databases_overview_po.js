@@ -127,21 +127,15 @@ export const cleanUpButtonIsNotDisplayed = () => {
   return cy.get(cleanUpButtonSelector).should('not.exist', { timeout: 15000 });
 };
 
-export const hddDatabaseDataIsMarkedAsStale = () =>
-  basePage.elementIsMarkedStale(hddDatabaseCell);
+export const hddDatabaseDataIsMarkedAsStale = () => basePage.elementIsMarkedStale(hddDatabaseCell);
 
-export const hddDatabaseDataIsMarkedInSync = () =>
-  basePage.elementIsMarkedInSync(hddDatabaseCell);
+export const hddDatabaseDataIsMarkedInSync = () => basePage.elementIsMarkedInSync(hddDatabaseCell);
 
 export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
-  basePage.elementIsMarkedStale(
-    getHddDatabaseInstanceRow(hddDatabase.instance.row)
-  );
+  basePage.elementIsMarkedStale(getHddDatabaseInstanceRow(hddDatabase.instance.row));
 
 export const hddDatabaseInstanceRowIsMarkedInSync = () =>
-  basePage.elementIsMarkedInSync(
-    getHddDatabaseInstanceRow(hddDatabase.instance.row)
-  );
+  basePage.elementIsMarkedInSync(getHddDatabaseInstanceRow(hddDatabase.instance.row));
 
 // UI Interactions
 
