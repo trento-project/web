@@ -25,7 +25,7 @@ if config_env() in [:prod, :demo] do
     """
   end
 
-  config :logger, level: String.to_existing_atom(log_level)
+  config :logger, level: String.to_atom(log_level)
 
   database_url =
     System.get_env("DATABASE_URL") ||
