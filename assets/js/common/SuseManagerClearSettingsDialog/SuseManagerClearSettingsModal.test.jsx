@@ -9,7 +9,7 @@ import '@testing-library/jest-dom';
 import SuseManagerClearSettingsModal from '.';
 
 describe('SuseManagerClearSettingsModal', () => {
-  it("Clicking 'Clear Settings' button clears the SUMA settings", async () => {
+  it("Clicking 'Clear Settings' button clears the SUSE Multi-Linux Manager settings", async () => {
     const user = userEvent.setup();
     const onClearSettings = jest.fn();
 

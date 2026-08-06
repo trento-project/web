@@ -18,11 +18,11 @@ export default {
       control: { type: 'boolean' },
     },
     initialUsername: {
-      description: 'Initial SUSE Manager username',
+      description: 'Initial SUSE Multi-Linux Manager username',
       control: { type: 'text' },
     },
     initialUrl: {
-      description: 'Initial SUSE Manager URL',
+      description: 'Initial SUSE Multi-Linux Manager URL',
       control: { type: 'text' },
     },
     certUploadDate: {

@@ -49,7 +49,7 @@ context('Settings page', () => {
     });
   });
 
-  describe('Suse Manager Settings Management', () => {
+  describe('SUSE Multi-Linux Manager Settings Management', () => {
     beforeEach(() => {
       settingsPage.clearSUMASettings();
       settingsPage.refresh();

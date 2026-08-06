@@ -36,7 +36,7 @@ describe('useSuseManagerSettings', () => {
     axiosMock.onGet('/settings/suse_manager').reply(200, baseSumaSettings);
   });
 
-  it('should fetch suse manager on mount and return the settings', async () => {
+  it('should fetch SUSE Multi-Linux Manager on mount and return the settings', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
@@ -52,7 +52,7 @@ describe('useSuseManagerSettings', () => {
     expect(hookResult.current.suseManagerSettingsfetchError).toEqual(false);
   });
 
-  it('should perform the suse manager settings saving when the hook callback is called', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings saving when the hook callback is called', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
@@ -81,7 +81,7 @@ describe('useSuseManagerSettings', () => {
     expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
   });
 
-  it('should perform the suse manager settings update when the hook callback is called and no errors are returned', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings update when the hook callback is called and no errors are returned', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
@@ -110,7 +110,7 @@ describe('useSuseManagerSettings', () => {
     expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
   });
 
-  it('should not perform the suse manager settings update when the hook callback is called and errors are returned', async () => {
+  it('should not perform the SUSE Multi-Linux Manager settings update when the hook callback is called and errors are returned', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
@@ -141,7 +141,7 @@ describe('useSuseManagerSettings', () => {
     ]);
   });
 
-  it('should perform the suse manager settings delete when the hook callback is called and no errors are returned', async () => {
+  it('should perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and no errors are returned', async () => {
     let hookResult;
     const [hookWrapper, _] = hookWrapperWithState();
 
@@ -162,7 +162,7 @@ describe('useSuseManagerSettings', () => {
     expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
   });
 
-  it('should not perform the suse manager settings delete when the hook callback is called and errors are returned', async () => {
+  it('should not perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and errors are returned', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 
@@ -191,7 +191,7 @@ describe('useSuseManagerSettings', () => {
     ]);
   });
 
-  it('should test the suse manager settings and spawn a toast when the connection succeded', async () => {
+  it('should test the SUSE Multi-Linux Manager settings and spawn a toast when the connection succeded', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 
@@ -219,7 +219,7 @@ describe('useSuseManagerSettings', () => {
     ]);
   });
 
-  it('should test the suse manager settings and spawn a toast when the connection fails', async () => {
+  it('should test the SUSE Multi-Linux Manager settings and spawn a toast when the connection fails', async () => {
     let hookResult;
     const [hookWrapper, store] = hookWrapperWithState();
 

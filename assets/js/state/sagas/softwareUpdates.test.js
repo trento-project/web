@@ -124,7 +124,7 @@ describe('Software Updates saga', () => {
         errors: [
           {
             title: 'Not Found',
-            detail: 'SUSE Manager settings not configured.',
+            detail: 'SUSE Multi-Linux Manager settings not configured.',
           },
         ],
       };
@@ -179,7 +179,7 @@ describe('Software Updates saga', () => {
         errors: [
           {
             title: 'Not Found',
-            detail: 'SUSE Manager settings not configured.',
+            detail: 'SUSE Multi-Linux Manager settings not configured.',
           },
         ],
       };

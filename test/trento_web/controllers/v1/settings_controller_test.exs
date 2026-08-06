@@ -317,9 +317,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
-    test "should not be able to change suse manager settings if none previously saved", %{
-      conn: conn
-    } do
+    test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved",
+         %{
+           conn: conn
+         } do
       submission = %{
         url: "https://validurl.com",
         username: Faker.Internet.user_name(),
@@ -335,7 +336,10 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Not Found"}
+                 %{
+                   "detail" => "SUSE Multi-Linux Manager settings not configured.",
+                   "title" => "Not Found"
+                 }
                ]
              } == resp
     end
@@ -364,7 +368,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
              } == resp
     end
 
-    test "should validate partial changes to suse manager settings", %{conn: conn} do
+    test "should validate partial changes to SUSE Multi-Linux Manager settings", %{conn: conn} do
       insert_software_updates_settings()
 
       change_settings_scenarios = [
@@ -486,7 +490,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       end
     end
 
-    test "should support partial change of suse manager settings", %{conn: conn} do
+    test "should support partial change of SUSE Multi-Linux Manager settings", %{conn: conn} do
       %{
         url: initial_url,
         username: _initial_username,
