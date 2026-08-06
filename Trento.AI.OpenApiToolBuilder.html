@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-92B8DF30.js"></script>
+    <script defer src="dist/sidebar_items-A7D82352.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -119,8 +119,8 @@ Trento Web
 
     <section id="moduledoc">
 <p>Transport-agnostic helpers shared by every <a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> that
-derives <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html"><code class="inline">LangChain.Function</code></a>s from <code class="inline">%OpenApiSpex.Operation{}</code> structs.</p><p>Two distinct concerns live here:</p><ol><li><p><strong>Schema synthesis</strong> — <a href="#description/1"><code class="inline">description/1</code></a> and <a href="#parameters_schema/1"><code class="inline">parameters_schema/1</code></a>
-produce the metadata <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a> consumes. The
+derives <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html"><code class="inline">LangChain.Function</code></a>s from <code class="inline">%OpenApiSpex.Operation{}</code> structs.</p><p>Two distinct concerns live here:</p><ol><li><p><strong>Schema synthesis</strong> — <a href="#description/1"><code class="inline">description/1</code></a> and <a href="#parameters_schema/1"><code class="inline">parameters_schema/1</code></a>
+produce the metadata <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a> consumes. The
 resulting <code class="inline">parameters_schema</code> is the JSON-Schema map a provider
 adapter (Anthropic, Google AI, OpenAI) eventually forwards to the
 model.</p></li><li><p><strong>Arg routing</strong> — <a href="#resolve_path_and_body/3"><code class="inline">resolve_path_and_body/3</code></a> turns the LLM-supplied
@@ -173,7 +173,7 @@ human-readable tool description shown to the LLM.</p></div>
 
       </div>
 
-        <div class="summary-synopsis"><p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p></div>
+        <div class="summary-synopsis"><p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p></div>
 
     </div>
 
@@ -285,7 +285,7 @@ human-readable tool description shown to the LLM.</p>
 
       </div>
 
-<p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.8.13/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p><p>String-keyed throughout to match LangChain convention and the
+<p>JSON-Schema map for <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html#new!/1"><code class="inline">LangChain.Function.new!/1</code></a>'s <code class="inline">:parameters_schema</code>.</p><p>String-keyed throughout to match LangChain convention and the
 <code class="inline">Map.put_new(schema, &quot;additionalProperties&quot;, false)</code> behaviour of
 <code class="inline">ChatAnthropic.get_parameters/1</code>. The <code class="inline">&quot;required&quot;</code> key is omitted when
 empty so parameterless tools pass <code class="inline">ChatGoogleAI.for_api/1</code>'s exact-match
