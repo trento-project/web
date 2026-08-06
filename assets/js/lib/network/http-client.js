@@ -20,6 +20,36 @@ function combineUrls(baseURL, url) {
   return url;
 }
 
+// Serialize a query param value the way axios did: Dates travel as ISO
+// strings, everything else is left to URLSearchParams' own stringification.
+function serializeParamValue(value) {
+  return value instanceof Date ? value.toISOString() : value;
+}
+
+// Build the query string with axios' semantics, which the API depends on:
+// arrays become repeated `key[]=` pairs (Plug only decodes a list from that
+// form, and the activity log declares `type`/`severity`/`actor` as arrays),
+// and `undefined`/`null` are dropped rather than sent as literal strings.
+// Handing the params object straight to URLSearchParams does neither.
+function buildSearchParams(params) {
+  const search = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null) continue;
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (item === undefined || item === null) continue;
+        search.append(`${key}[]`, serializeParamValue(item));
+      }
+    } else {
+      search.append(key, serializeParamValue(value));
+    }
+  }
+
+  return search;
+}
+
 function buildUrl(config) {
   const baseURL = config.baseURL !== undefined ? config.baseURL : '';
   let url = combineUrls(baseURL, config.url || '');
