@@ -15,6 +15,16 @@ const buildConfig = {
   entryPoints: ['js/app.js', 'js/trento.jsx'],
   outdir: resolvePath('../priv/static/assets'),
   bundle: true,
+  // Code splitting turns every `import()` into a chunk fetched on demand
+  // instead of being inlined into the entry. mermaid is the reason: it is
+  // half the bundle and only the AI assistant ever renders a diagram.
+  // Splitting is ESM-only, so both entries load as `<script type="module">` —
+  // see `root.html.heex` and `page_html/index.html.heex`.
+  splitting: true,
+  format: 'esm',
+  // Chunk names carry a content hash, so they cache-bust themselves. Only the
+  // two stable entry names need `mix phx.digest`.
+  chunkNames: 'chunk-[hash]',
   minify: !process.env.ESBUILD_WATCH,
   sourcemap: process.env.ESBUILD_WATCH ? 'inline' : false,
   loader: {

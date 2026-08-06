@@ -116,6 +116,7 @@ module.exports = {
     phoenix: '<rootDir>/mocks/phoenix.js',
     '^react-markdown$': '<rootDir>/mocks/reactMarkdown.js',
     '^remark-gfm$': '<rootDir>/mocks/remarkPlugin.js',
+    '^mermaid$': '<rootDir>/mocks/mermaid.js',
     '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
     '\\.css$': '<rootDir>/mocks/fileMock.js',
   },
@@ -232,12 +233,18 @@ module.exports = {
   // The second group is react-syntax-highlighter's ESM-only transitive tree
   // (refractor and its hast/character-entity helpers). Regenerate it after a
   // bump by walking the dependency graph for packages with `"type": "module"`.
+  //
+  // The third is d3-zoom and everything it pulls in, used by the diagram
+  // viewport. mermaid itself is stubbed (`moduleNameMapper`) because it needs a
+  // layout engine, but d3-zoom runs fine on jsdom and the specs drive the real
+  // thing.
   transformIgnorePatterns: [
     '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store' +
       '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
       '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
       '|character-entities|character-entities-legacy|character-reference-invalid' +
-      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal)/)',
+      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal' +
+      '|d3-zoom|d3-selection|d3-drag|d3-dispatch|d3-transition|d3-interpolate|d3-color|d3-ease|d3-timer)/)',
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them

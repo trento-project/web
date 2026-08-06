@@ -78,6 +78,9 @@ export default defineConfig([
         Request: true,
         Response: true,
         SVGElement: true,
+        DOMParser: true,
+        XMLSerializer: true,
+        WheelEvent: true,
       },
     },
 

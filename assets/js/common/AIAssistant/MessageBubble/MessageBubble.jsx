@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
 import CodeBlock from './CodeBlock';
+import MermaidDiagram from './MermaidDiagram';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -18,6 +19,12 @@ const ROOT_CLASS_NAME =
 const MARKDOWN_CLASS_NAME = 'aui-md prose max-w-none';
 
 const MARKDOWN_COMPONENTS = { SyntaxHighlighter: CodeBlock };
+
+// A ```mermaid fence is a diagram, not source to highlight. Everything else
+// keeps falling through to `CodeBlock`.
+const MARKDOWN_COMPONENTS_BY_LANGUAGE = {
+  mermaid: { SyntaxHighlighter: MermaidDiagram },
+};
 
 function MessageBubbleView({ variant, children }) {
   if (variant === 'user') {
@@ -44,6 +51,7 @@ function MarkdownText(props) {
       remarkPlugins={[remarkGfm]}
       className={MARKDOWN_CLASS_NAME}
       components={MARKDOWN_COMPONENTS}
+      componentsByLanguage={MARKDOWN_COMPONENTS_BY_LANGUAGE}
       {...props}
     />
   );

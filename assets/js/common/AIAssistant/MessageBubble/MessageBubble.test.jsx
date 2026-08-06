@@ -5,7 +5,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
+import CodeBlock from './CodeBlock';
+import MermaidDiagram from './MermaidDiagram';
 import { UserMessage, AssistantMessage } from './MessageBubble';
+
+// Populated by the `MarkdownTextPrimitive` stub below.
+const mockMarkdownProps = {};
 
 jest.mock('@assistant-ui/react', () => ({
   ErrorPrimitive: {
@@ -14,7 +19,14 @@ jest.mock('@assistant-ui/react', () => ({
   },
   MessagePrimitive: {
     Root: ({ children, ...props }) => <div {...props}>{children}</div>,
-    Parts: () => <span>message parts</span>,
+    // Mounts the `Text` renderer it is handed, so the markdown wiring below is
+    // observable. `UserMessage` passes none.
+    Parts: ({ components }) => (
+      <span>
+        message parts
+        {components?.Text ? <components.Text /> : null}
+      </span>
+    ),
     // Real primitive renders its children only when the message carries an
     // error. This stub is unconditional, so the tests below can prove the slot is mounted
     Error: ({ children }) => <div>{children}</div>,
@@ -25,7 +37,11 @@ jest.mock('@assistant-ui/react', () => ({
 }));
 
 jest.mock('@assistant-ui/react-markdown', () => ({
-  MarkdownTextPrimitive: () => null,
+  MarkdownTextPrimitive: (props) => {
+    Object.assign(mockMarkdownProps, props);
+
+    return null;
+  },
 }));
 
 describe('UserMessage', () => {
@@ -62,5 +78,16 @@ describe('AssistantMessage', () => {
   it('shows the agent progress indicator while a run is in flight', () => {
     render(<AssistantMessage isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
+  });
+
+  it('renders mermaid fences as diagrams and every other fence as code', () => {
+    render(<AssistantMessage />);
+
+    expect(mockMarkdownProps.components).toEqual({
+      SyntaxHighlighter: CodeBlock,
+    });
+    expect(mockMarkdownProps.componentsByLanguage).toEqual({
+      mermaid: { SyntaxHighlighter: MermaidDiagram },
+    });
   });
 });
