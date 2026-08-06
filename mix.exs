@@ -58,11 +58,10 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:sagents, "~> 0.7.0"},
-      # temporary override to pull in a couple of relevant fixes
-      # upstream PR here https://github.com/brainlid/langchain/pull/548
+      # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,
        github: "nelsonkopliku/langchain",
-       ref: "a7fd3ec6c755baff382fe79770b076a88b5a81e9",
+       ref: "a4f2439d99747205884a013ffd6f16c2f0a7a32f",
        override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
