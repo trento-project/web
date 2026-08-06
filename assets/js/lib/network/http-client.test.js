@@ -310,4 +310,133 @@ describe('createClient', () => {
       );
     });
   });
+
+  // MockAdapter swaps the client's transport out entirely, so these exercise
+  // the real fetch-backed one: URL building, body encoding and response
+  // parsing are only covered here.
+  describe('fetch transport', () => {
+    let fetchMock;
+    let fetchClient;
+
+    beforeEach(() => {
+      fetchMock = jest.fn().mockResolvedValue({
+        status: 200,
+        statusText: 'OK',
+        headers: new Map([['etag', 'W/"an-etag"']]),
+        text: () => Promise.resolve(JSON.stringify({ ok: 'ok' })),
+      });
+      global.fetch = fetchMock;
+      fetchClient = createClient({ baseURL: '/api/v1' });
+    });
+
+    afterEach(() => {
+      delete global.fetch;
+    });
+
+    const requestedUrl = () => fetchMock.mock.calls[0][0];
+    const requestedOptions = () => fetchMock.mock.calls[0][1];
+
+    it('repeats array params as `key[]` pairs', async () => {
+      await fetchClient.get('/activity_log', {
+        params: { severity: ['info', 'warning', 'critical'] },
+      });
+
+      expect(requestedUrl()).toBe(
+        '/api/v1/activity_log?severity%5B%5D=info&severity%5B%5D=warning&severity%5B%5D=critical'
+      );
+    });
+
+    it('omits undefined and null params, keeping false and 0', async () => {
+      await fetchClient.get('/activity_log', {
+        params: {
+          search: 'foo',
+          after: undefined,
+          to_date: null,
+          first: 0,
+          archived: false,
+        },
+      });
+
+      expect(requestedUrl()).toBe(
+        '/api/v1/activity_log?search=foo&first=0&archived=false'
+      );
+    });
+
+    it('sends dates as ISO strings', async () => {
+      await fetchClient.get('/activity_log', {
+        params: { from_date: new Date('2024-08-13T10:21:00.000Z') },
+      });
+
+      expect(requestedUrl()).toBe(
+        '/api/v1/activity_log?from_date=2024-08-13T10%3A21%3A00.000Z'
+      );
+    });
+
+    it('leaves the url untouched when there is nothing to serialize', async () => {
+      await fetchClient.get('/activity_log', { params: { type: [] } });
+
+      expect(requestedUrl()).toBe('/api/v1/activity_log');
+    });
+
+    it('JSON-encodes the body and sets the content type', async () => {
+      await fetchClient.post('/users', { name: 'alice' });
+
+      expect(requestedOptions().method).toBe('POST');
+      expect(requestedOptions().body).toBe(JSON.stringify({ name: 'alice' }));
+      expect(requestedOptions().headers['Content-Type']).toBe(
+        'application/json'
+      );
+    });
+
+    it('sends no body for a GET', async () => {
+      await fetchClient.get('/users');
+
+      expect(requestedOptions().body).toBeUndefined();
+    });
+
+    it('forwards per-request headers', async () => {
+      await fetchClient.patch(
+        '/users/1',
+        { name: 'alice' },
+        { headers: { 'if-match': 'W/"an-etag"' } }
+      );
+
+      expect(requestedOptions().headers['if-match']).toBe('W/"an-etag"');
+    });
+
+    it('exposes response headers case-insensitively', async () => {
+      const response = await fetchClient.get('/users/1');
+
+      expect(response.headers.etag).toBe('W/"an-etag"');
+      expect(response.headers.get('ETag')).toBe('W/"an-etag"');
+    });
+
+    it('parses a JSON body and returns an axios-shaped response', async () => {
+      const response = await fetchClient.get('/users');
+
+      expect(response.status).toBe(200);
+      expect(response.statusText).toBe('OK');
+      expect(response.data).toEqual({ ok: 'ok' });
+    });
+
+    it('leaves data undefined on an empty body', async () => {
+      fetchMock.mockResolvedValue({
+        status: 204,
+        statusText: 'No Content',
+        headers: new Map(),
+        text: () => Promise.resolve(''),
+      });
+
+      const response = await fetchClient.delete('/users/1');
+
+      expect(response.status).toBe(204);
+      expect(response.data).toBeUndefined();
+    });
+
+    it('throws a Network Error when fetch rejects', async () => {
+      fetchMock.mockRejectedValue(new TypeError('Failed to fetch'));
+
+      await expect(fetchClient.get('/users')).rejects.toThrow('Network Error');
+    });
+  });
 });
