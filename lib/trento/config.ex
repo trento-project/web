@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Support.Logger do
+defmodule Trento.Config do
   @moduledoc """
-  Logging related helper functions
+  Application configuration helper functions
   """
 
   @doc """

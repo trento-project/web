@@ -1,19 +1,19 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Support.LoggerTest do
+defmodule Trento.ConfigTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  alias Trento.Support.Logger
+  alias Trento.Config
 
   describe "parse_log_level/1" do
-    for level <- Elixir.Logger.levels() do
+    for level <- Logger.levels() do
       @level level
 
       test "should parse the #{level} level" do
-        assert {:ok, @level} == Logger.parse_log_level(Atom.to_string(@level))
+        assert {:ok, @level} == Config.parse_log_level(Atom.to_string(@level))
       end
     end
 
@@ -32,7 +32,7 @@ defmodule Trento.Support.LoggerTest do
       test "should not parse an invalid level - #{name}" do
         %{value: value} = @scenario
 
-        assert {:error, :invalid_level} == Logger.parse_log_level(value)
+        assert {:error, :invalid_level} == Config.parse_log_level(value)
       end
     end
   end

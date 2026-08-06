@@ -18,7 +18,7 @@ if config_env() in [:prod, :demo] do
   log_level =
     "LOG_LEVEL"
     |> System.get_env("info")
-    |> Trento.Support.Logger.parse_log_level()
+    |> Trento.Config.parse_log_level()
     |> case do
       {:ok, level} ->
         level
