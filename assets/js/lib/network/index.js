@@ -31,11 +31,18 @@ let inflightRefresh = null;
 // carries an outdated token compared to the store skips the exchange
 // altogether and just retries with the token another request obtained.
 const refreshAuthLogic = async (config) => {
-  try {
-    await refreshAndStoreAccessToken();
-  } catch (e) {
-    logWarn('could not refresh the token, error during the request flow', e);
-    throw unrecoverableAuthError;
+  if (config.headers.Authorization === `Bearer ${getAccessTokenFromStore()}`) {
+    try {
+      if (!inflightRefresh) {
+        inflightRefresh = refreshAndStoreAccessToken().finally(() => {
+          inflightRefresh = null;
+        });
+      }
+      await inflightRefresh;
+    } catch (e) {
+      logWarn('could not refresh the token, error during the request flow', e);
+      throw unrecoverableAuthError;
+    }
   }
 
   config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
