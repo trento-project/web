@@ -196,6 +196,32 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('locks "New chat" for the length of the run', async () => {
+    const { emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const newChat = () => screen.getByRole('button', { name: 'New chat' });
+
+    expect(newChat()).toBeEnabled();
+
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+
+    expect(newChat()).toBeDisabled();
+
+    const messageId = 'asst-1';
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+    await emitAgUi(aguiEvents.textStart({ messageId }));
+    await emitAgUi(aguiEvents.textContent({ messageId, delta: 'half' }));
+
+    expect(newChat()).toBeDisabled();
+
+    await emitAgUi(aguiEvents.textEnd({ messageId }));
+    await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
+
+    await waitFor(() => expect(newChat()).toBeEnabled());
+  });
+
   it('"New chat" starts a new conversation with a new thread ID', async () => {
     const { user, sendUserMessage, streamAssistantTurn } =
       await renderAIAssistant({ open: true });
