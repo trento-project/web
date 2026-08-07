@@ -19,13 +19,18 @@ const CONNECTION_VIEW = {
 
 const stopPointerDown = (e) => e.stopPropagation();
 
-function ChatHeader({ connectionStatus, onNewChat, onClose }) {
+function ChatHeader({
+  connectionStatus,
+  isRunning = false,
+  onNewChat,
+  onClose,
+}) {
   const { text, dot } = get(
     CONNECTION_VIEW,
     connectionStatus,
     CONNECTION_VIEW[CONNECTION_STATUS.DISCONNECTED]
   );
-  const canStartNewChat = isOnline(connectionStatus);
+  const canStartNewChat = isOnline(connectionStatus) && !isRunning;
 
   return (
     <div className="drag-handle flex items-center justify-between bg-[#2fb371] px-5 py-4 text-white cursor-move">
