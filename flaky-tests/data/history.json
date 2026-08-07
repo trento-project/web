@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-06-22T20:44:17Z",
-    "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
-    "run_id": "27981411484",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-06-22T20:45:32Z",
     "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
     "run_id": "27981411484",
@@ -4952,6 +4941,38 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-07T22:23:59Z",
+    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
+    "run_id": "31210654618",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 19
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1606
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.09051
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.09051
+      },
+      {
+        "name": "should not deregister database instances if the SAP system using the database is deregistered::Databases Overview Deregistration should not deregister database instances if the SAP system using the database is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
       }
     ]
   }
