@@ -23,8 +23,20 @@ jest.mock('@assistant-ui/react', () => ({
 
 const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
 
-function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
-  const runtime = { thread: { reset: jest.fn() } };
+// `isRunning` drives what `runtime.thread.getState()` reports, i.e. whether a
+// run is in flight when the thread changes underneath it.
+function renderProvider({
+  socket = makeMockSocket(),
+  isRunning = false,
+  ...props
+} = {}) {
+  const runtime = {
+    thread: {
+      import: jest.fn(),
+      cancelRun: jest.fn(),
+      getState: () => ({ isRunning }),
+    },
+  };
   useAgUiRuntime.mockImplementation(() => runtime);
 
   const initialProps = { userID: 42, threadID: 'thread-1', ...props };
@@ -189,14 +201,62 @@ describe('AssistantChatProvider', () => {
     expect(agent()).toBe(initialAgent);
   });
 
-  it('resets the runtime when threadID changes so prior messages are wiped', async () => {
+  it('clears the runtime when threadID changes so prior messages are wiped', async () => {
     const { rerender, runtime } = renderProvider();
-    expect(runtime.thread.reset).not.toHaveBeenCalled();
+    expect(runtime.thread.import).not.toHaveBeenCalled();
 
     rerender({ threadID: 'thread-2' });
 
     await waitFor(() => {
-      expect(runtime.thread.reset).toHaveBeenCalledTimes(1);
+      expect(runtime.thread.import).toHaveBeenCalledWith({ messages: [] });
     });
+    // Nothing was in flight, so there is no run to cancel.
+    expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
+  });
+
+  it('abandons the previous thread on the transport when nothing is streaming', async () => {
+    const { rerender, channel, agent } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
+
+    rerender({ threadID: 'thread-2' });
+
+    // No run to abort, but the thread's server-side agent still holds the
+    // abandoned conversation — the transport has to say so.
+    await waitFor(() => expect(cancelActiveRun).toHaveBeenCalledTimes(1));
+  });
+
+  it('clears the thread before cancelling a run that is still streaming', async () => {
+    const { rerender, runtime, channel, agent } = renderProvider({
+      isRunning: true,
+    });
+    await waitFor(() => expect(channel()).toBeDefined());
+    const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
+    const callOrder = [];
+    runtime.thread.import.mockImplementation(() => callOrder.push('import'));
+    runtime.thread.cancelRun.mockImplementation(() =>
+      callOrder.push('cancelRun')
+    );
+
+    rerender({ threadID: 'thread-2' });
+
+    // cancelRun re-applies whatever the runtime still holds a macrotask later,
+    // so clearing has to come first or the abandoned thread comes back.
+    await waitFor(() => {
+      expect(callOrder).toEqual(['import', 'cancelRun']);
+    });
+    // The transport is reached through the runtime's onCancel, once the run is
+    // aborted — going straight to it as well would cancel twice.
+    expect(cancelActiveRun).not.toHaveBeenCalled();
+  });
+
+  it('gives the runtime an onCancel that tears the run down on the transport', async () => {
+    const { channel, agent, runtimeOptions } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
+
+    runtimeOptions().onCancel();
+
+    expect(cancelActiveRun).toHaveBeenCalledTimes(1);
   });
 });

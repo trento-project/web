@@ -49,6 +49,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._activeThreadId = null;
     this._getAccessToken = getAccessToken;
     this._refreshToken = refreshToken;
     this._onUnrecoverableAuthError = onUnrecoverableAuthError;
@@ -173,14 +174,27 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.#callbacks.onAIConfigurationCleared();
   }
 
-  _isStaleRunFinished({ type, runId }) {
-    return type === EventType.RUN_FINISHED && runId !== this._activeRunId;
+  // The events the server stamps with a run id — AgUi.Core.Events.RunStarted
+  // and RunFinished both enforce one. RUN_ERROR is deliberately absent:
+  // AgUi.Core.Events.RunError has no run_id field at all, so filtering it on
+  // one would drop every error. Everything else the channel pushes
+  // (TEXT_MESSAGE_*, TOOL_CALL_*) belongs to whichever run is subscribed.
+  static RUN_SCOPED_EVENTS = [EventType.RUN_STARTED, EventType.RUN_FINISHED];
+
+  // A run-scoped event naming a run other than the active one is the tail of a
+  // run that was cancelled or superseded; letting it through would settle — or
+  // restart — the run that replaced it.
+  _isStaleRunEvent({ type, runId }) {
+    return (
+      WebSocketAIAgent.RUN_SCOPED_EVENTS.includes(type) &&
+      runId !== this._activeRunId
+    );
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    if (this._isStaleRunFinished(event)) return;
+    if (this._isStaleRunEvent(event)) return;
 
     subscriber.next(event);
 
@@ -213,6 +227,9 @@ export class WebSocketAIAgent extends AbstractAgent {
       }
 
       this._activeRunId = runId;
+      // Pinned per run: `this.threadId` is mutated the moment the user starts
+      // a new chat, so it no longer names the run being cancelled.
+      this._activeThreadId = threadId;
       this._activeSubscriber = subscriber;
 
       const setupRun = async () => {
@@ -256,6 +273,13 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
+  // Settle the in-flight run, with an error only when the user needs to see one.
+  //
+  // Beware of the error path: @assistant-ui/react-ag-ui turns it into an
+  // unhandled promise rejection. AgUiThreadRuntimeCore.startRun re-throws
+  // whatever the subscriber errored with, and ExternalThread's
+  // `onNew?.(message)` neither awaits nor catches the result. There is no seam
+  // on our side — only pass an error when it is genuinely the user's business.
   _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
@@ -263,9 +287,34 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
+  // Abandon the current thread on both ends: the server cancels whatever is in
+  // flight, tears the thread's agent down and drops the channel's double-send
+  // guard, while locally the run — if there is one — settles like any other
+  // completion.
+  //
+  // The push is unconditional. "New chat" abandons the previous thread whether
+  // or not it was streaming, and the server-side agent outlives the run: an
+  // idle one keeps the whole conversation until sagents' inactivity timeout.
+  // The ids are null when nothing is in flight; they are wire-log correlation
+  // aids, the channel abandons the thread it holds in its own assigns.
+  //
+  // Completes rather than errors — the user asked for this, so there is nothing
+  // to report. Called from the runtime's `onCancel`, i.e. after the run's abort
+  // signal has already fired, which is what keeps a value-less completion from
+  // resurfacing as a run failure.
+  cancelActiveRun() {
+    this.channel?.push('cancel_run', {
+      run_id: this._activeRunId,
+      thread_id: this._activeThreadId,
+    });
+
+    this._settleActiveRun();
+  }
+
   _clearActiveRun() {
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._activeThreadId = null;
   }
 
   _setConnectionStatus(status) {

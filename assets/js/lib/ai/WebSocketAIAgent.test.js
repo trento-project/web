@@ -385,21 +385,46 @@ describe('WebSocketAIAgent', () => {
       await flushMicrotasks();
       const staleRunId = channel.pushed[0].payload.run_id;
 
-      const { complete } = runAgent(agent, {
+      const { complete, next } = runAgent(agent, {
         threadId: 't',
         messages: [userMessage('second')],
       });
       await flushMicrotasks();
 
       // The first run was abandoned when the second replaced it; its late
-      // RUN_FINISHED must not close the run now in flight.
+      // RUN_FINISHED must neither reach the subscriber nor close the run now
+      // in flight.
       channel.emit(
         'ag_ui_event',
         aguiEvents.runFinished({ threadId: 't', runId: staleRunId })
       );
 
+      expect(next).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(agent._activeRunId).not.toBeNull();
+    });
+
+    it('does not forward a RUN_STARTED from a superseded run', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, { threadId: 't', messages: [userMessage('first')] });
+      await flushMicrotasks();
+      const staleRunId = channel.pushed[0].payload.run_id;
+
+      const { next } = runAgent(agent, {
+        threadId: 't',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      // A cancelled run's RUN_STARTED arriving late would open a second run
+      // frame on top of the one the user is waiting for.
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runStarted({ threadId: 't', runId: staleRunId })
+      );
+
+      expect(next).not.toHaveBeenCalled();
     });
 
     it.each([
@@ -498,6 +523,51 @@ describe('WebSocketAIAgent', () => {
 
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+    });
+  });
+
+  describe('cancelActiveRun', () => {
+    it('tells the server to stop and settles the run without an error', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+      const runId = agent._activeRunId;
+
+      // The caller has already moved on to a new thread — the cancel still
+      // names the thread the abandoned run belongs to.
+      agent.threadId = 'thread-10';
+      agent.cancelActiveRun();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({
+          event: 'cancel_run',
+          payload: { run_id: runId, thread_id: 'thread-9' },
+        })
+      );
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(error).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    it('still tells the server when no run is in flight', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.cancelActiveRun();
+
+      // "New chat" abandons the previous thread whether or not it was
+      // streaming — the server-side agent holds the conversation either way.
+      // The ids are null because there is no run left to name; the channel
+      // abandons the thread it holds in its own assigns.
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({
+          event: 'cancel_run',
+          payload: { run_id: null, thread_id: null },
+        })
+      );
     });
   });
 

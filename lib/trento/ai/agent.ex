@@ -80,13 +80,46 @@ defmodule Trento.AI.Agent do
   end
 
   @doc """
-  Stops the running agent for `agent_id`, terminating any in-flight run.
+  Stops the agent for `agent_id`, taking its conversation with it.
 
-  Best-effort — returns the supervisor's result verbatim (`{:error, term()}`
+  Cancels the in-flight run first. Termination goes through
+  `Sagents.AgentServer.terminate/2`, which *waits* for a running task to finish
+  (up to 25s) before the process exits — so stopping a streaming agent would
+  block the caller (the channel process) for as long as the LLM keeps talking.
+  `cancel/1` kills the task with a 2s grace, leaving `terminate/2` nothing to
+  wait for.
+
+  Best-effort — the cancel result is discarded (there is usually no run to
+  cancel) and the supervisor's result is returned verbatim (`{:error, term()}`
   when no agent is running for the id).
   """
   @spec stop(String.t()) :: :ok | {:error, term()}
-  def stop(agent_id), do: AgentSupervisor.stop_agent(agent_id)
+  def stop(agent_id) do
+    cancel(agent_id)
+    AgentSupervisor.stop_agent(agent_id)
+  end
+
+  @doc """
+  Cancels the in-flight run for `agent_id`, keeping the agent process and its
+  conversation state alive.
+
+  It shuts the task down with a 2s grace.
+
+  Best-effort — returns `{:error, reason}` when nothing is running for the id.
+  """
+  @spec cancel(String.t()) :: :ok | {:error, term()}
+  def cancel(agent_id) do
+    AgentServer.cancel(agent_id)
+  catch
+    # `AgentServer.cancel/1` is a `GenServer.call` on a via-registry name, so it
+    # exits rather than returning an error when:
+    #   - nothing is registered for `agent_id` (`:noproc`) — never started, or already stopped
+    #   - the reply outlives the 5s default (`:timeout`) — the server answers only after a 2s task grace
+    #   - the server dies mid-call — a concurrent `stop/1` parks in `terminate/2` for up to 25s
+    # None of these leaves a run worth reporting on, and the exit signal must not
+    # take the caller — the channel process — down with it.
+    :exit, reason -> {:error, reason}
+  end
 
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
