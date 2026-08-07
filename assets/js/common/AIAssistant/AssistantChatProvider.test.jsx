@@ -23,26 +23,33 @@ jest.mock('@assistant-ui/react-ag-ui', () => ({
   useAgUiRuntime: jest.fn(),
 }));
 
+// StoppedRunProvider (our own module, rendered for real below) reads the
+// thread's last message id off this — that is the answer a stop marks.
+// `mock`-prefixed so jest.mock's factory can close over it.
+const mockAuiState = { thread: { messages: [{ id: 'message-1' }] } };
+
 jest.mock('@assistant-ui/react', () => ({
   AssistantRuntimeProvider: ({ children }) => <>{children}</>,
   useAui: () => ({}),
-  // StoppedRunProvider (our own module, rendered for real below) reads
-  // thread.isRunning off this. Nothing in this suite exercises isRunning
-  // transitions — that behaviour belongs to StoppedRunProvider.test.jsx.
-  useAuiState: () => false,
+  useAuiState: (selector) => selector(mockAuiState),
 }));
 
 const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
 
 // Mounted alongside the tree's children so a test can reach the stopRun
 // the provider hands down through StoppedRunProvider, without jest.mock-ing
-// our own module.
+// our own module. The readout makes the other half of the contract visible:
+// whether the stop actually marked the thread's last answer, which is driven
+// by what the provider's stop handler returns from the transport.
 function StopTrigger() {
-  const { stopRun } = useStoppedRun();
+  const { stopRun, isMessageStopped } = useStoppedRun();
   return (
-    <button type="button" onClick={stopRun}>
-      stop
-    </button>
+    <>
+      <button type="button" onClick={stopRun}>
+        stop
+      </button>
+      <span>{isMessageStopped('message-1') ? 'marked' : 'not marked'}</span>
+    </>
   );
 }
 
@@ -263,5 +270,25 @@ describe('AssistantChatProvider', () => {
     fireEvent.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(cancelActiveRun).toHaveBeenCalledTimes(1);
+  });
+
+  it('marks the answer when the transport reports it tore a run down', async () => {
+    const { channel, agent } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    jest.spyOn(agent(), 'cancelActiveRun').mockReturnValue(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
+
+    expect(screen.getByText('marked')).toBeVisible();
+  });
+
+  it('marks nothing when the transport reports no run was in flight', async () => {
+    const { channel, agent } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    jest.spyOn(agent(), 'cancelActiveRun').mockReturnValue(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
+
+    expect(screen.getByText('not marked')).toBeVisible();
   });
 });

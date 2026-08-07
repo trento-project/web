@@ -15,7 +15,7 @@ import { UserMessage, AssistantMessage } from './MessageBubble';
 // close over it. `thread.messages` is what StoppedRunProvider (rendered for
 // real below) reads to decide which message id a stop marks.
 let mockAuiState = {
-  message: { content: [], isLast: true, id: 'message-1' },
+  message: { content: [], id: 'message-1' },
   thread: { messages: [{ id: 'message-1' }] },
 };
 
@@ -40,7 +40,7 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 
 beforeEach(() => {
   mockAuiState = {
-    message: { content: [], isLast: true, id: 'message-1' },
+    message: { content: [], id: 'message-1' },
     thread: { messages: [{ id: 'message-1' }] },
   };
 });
@@ -112,8 +112,20 @@ describe('AssistantMessage', () => {
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
 
-  it('does not mark a message that was never stopped, even mid-run', () => {
-    render(<AssistantMessage isRunning />);
+  it('does not mark this message when the stop landed on a later answer', async () => {
+    const user = userEvent.setup();
+    mockAuiState = {
+      message: { content: [], id: 'message-1' },
+      thread: { messages: [{ id: 'message-1' }, { id: 'message-2' }] },
+    };
+    render(
+      <StoppedRunProvider onStop={() => true}>
+        <StopButton />
+        <AssistantMessage isRunning />
+      </StoppedRunProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
