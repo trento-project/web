@@ -287,28 +287,32 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
-  // Abandon the current thread on both ends: the server cancels whatever is in
-  // flight, tears the thread's agent down and drops the channel's double-send
-  // guard, while locally the run — if there is one — settles like any other
-  // completion.
-  //
-  // The push is unconditional. "New chat" abandons the previous thread whether
-  // or not it was streaming, and the server-side agent outlives the run: an
-  // idle one keeps the whole conversation until sagents' inactivity timeout.
-  // The ids are null when nothing is in flight; they are wire-log correlation
-  // aids, the channel abandons the thread it holds in its own assigns.
-  //
-  // Completes rather than errors — the user asked for this, so there is nothing
-  // to report. Called from the runtime's `onCancel`, i.e. after the run's abort
-  // signal has already fired, which is what keeps a value-less completion from
-  // resurfacing as a run failure.
+  // Stop, from the composer. Reached through the runtime's `onCancel` once the
+  // run's abort signal has fired. The ids are the ones pinned when the run
+  // started, not the live ones.
   cancelActiveRun() {
+    if (!this._activeSubscriber) return;
+
     this.channel?.push('cancel_run', {
       run_id: this._activeRunId,
       thread_id: this._activeThreadId,
     });
 
     this._settleActiveRun();
+  }
+
+  // "New chat". The thread's server-side agent outlives its runs and would
+  // otherwise hold the whole conversation until the sagents inactivity
+  // timeout, so the server has to be told the thread is gone. There is never
+  // a run to settle here — "New chat" is locked while one is in flight.
+  //
+  // The payload is empty because there are no correlation ids worth sending:
+  // `_activeThreadId` is null by construction, and `this.threadId` has already
+  // been mutated to the *new* id (the provider's threadId effect is declared
+  // above the swap effect), so logging it would be actively misleading. The
+  // server abandons the thread in its own assigns.
+  abandonThread() {
+    this.channel?.push('abandon_thread', {});
   }
 
   _clearActiveRun() {

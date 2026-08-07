@@ -231,16 +231,15 @@ describe('AG-UI event flow', () => {
 
     await user.click(screen.getByRole('button', { name: 'New chat' }));
 
-    // Nothing is streaming, but the thread's agent survives the run and holds
-    // the whole conversation, so the server still has to be told. The ids are
-    // null: RUN_FINISHED already cleared them.
+    // Nothing is streaming — "New chat" is locked while a run is in flight —
+    // but the thread's agent survives the run and holds the whole
+    // conversation, so the server still has to be told to let it go.
     await waitFor(() => {
-      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
-        expect.objectContaining({
-          payload: { run_id: null, thread_id: null },
-        }),
-      ]);
+      expect(
+        channel.pushed.filter((p) => p.event === 'abandon_thread')
+      ).toEqual([expect.objectContaining({ payload: {} })]);
     });
+    expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([]);
   });
 
   it('"New chat" starts a new conversation with a new thread ID', async () => {

@@ -553,21 +553,46 @@ describe('WebSocketAIAgent', () => {
       expect(agent._activeRunId).toBeNull();
     });
 
-    it('still tells the server when no run is in flight', async () => {
+    it('does nothing when no run is in flight', async () => {
       const { agent, channel } = await connectedAgent();
 
       agent.cancelActiveRun();
 
-      // "New chat" abandons the previous thread whether or not it was
-      // streaming — the server-side agent holds the conversation either way.
-      // The ids are null because there is no run left to name; the channel
-      // abandons the thread it holds in its own assigns.
-      expect(channel.pushed).toContainEqual(
-        expect.objectContaining({
-          event: 'cancel_run',
-          payload: { run_id: null, thread_id: null },
-        })
+      // Stop is only reachable while a run is in flight. Pushing a cancel for
+      // a run that is already over would cancel whatever the *next* prompt
+      // started on the same thread.
+      expect(channel.pushed).not.toContainEqual(
+        expect.objectContaining({ event: 'cancel_run' })
       );
+    });
+  });
+
+  describe('abandonThread', () => {
+    it('tells the server to let the thread go', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abandonThread();
+
+      // The thread to abandon is the one the channel holds in its own
+      // assigns, so the payload carries nothing.
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'abandon_thread', payload: {} })
+      );
+    });
+
+    it('leaves an in-flight run alone — the channel is what tears it down', async () => {
+      const { agent } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abandonThread();
+
+      expect(complete).not.toHaveBeenCalled();
+      expect(error).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).not.toBeNull();
     });
   });
 
