@@ -222,6 +222,95 @@ describe('AG-UI event flow', () => {
     await waitFor(() => expect(newChat()).toBeEnabled());
   });
 
+  it('stops a streaming run without discarding what is on screen', async () => {
+    const { user, channel, emitAgUi, sendUserMessage } =
+      await renderAIAssistant({
+        open: true,
+      });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+
+    const messageId = 'asst-1';
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+    await emitAgUi(aguiEvents.textStart({ messageId }));
+    await emitAgUi(
+      aguiEvents.textContent({ messageId, delta: 'half an answer' })
+    );
+    await waitFor(() => {
+      expect(assistantBubble()).toHaveTextContent('half an answer');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: runId, thread_id: threadId },
+        }),
+      ]);
+    });
+
+    // Everything the user already saw survives: their prompt, the partial
+    // answer, and a marker saying it was cut short.
+    expect(screen.getByText('hello')).toBeVisible();
+    expect(assistantBubble()).toHaveTextContent('half an answer');
+    expect(await screen.findByText('Response stopped.')).toBeVisible();
+
+    // The composer is promptable again, empty, with nothing left spinning.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.getByLabelText('Message input')).toHaveValue('');
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Stop generating' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('stops a run that has not produced a single token yet', async () => {
+    const { user, channel, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+
+    // No server event at all — the run is stopped between the push and the
+    // first RUN_STARTED.
+    expect(screen.getByText('Thinking...')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: runId, thread_id: threadId },
+        }),
+      ]);
+    });
+
+    expect(screen.getByText('hello')).toBeVisible();
+    expect(await screen.findByText('Response stopped.')).toBeVisible();
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+  });
+
+  it('keeps the thread after a stop — the next prompt is a new run on it', async () => {
+    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+    await screen.findByLabelText('Send message');
+
+    const next = await sendUserMessage('try again');
+
+    // Stop is not "New chat": the conversation, and the server-side agent
+    // holding it, are the same ones.
+    expect(next.thread_id).toBe(threadId);
+    expect(next.run_id).not.toBe(runId);
+  });
+
   it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
     const { user, channel, sendUserMessage, streamAssistantTurn } =
       await renderAIAssistant({ open: true });
