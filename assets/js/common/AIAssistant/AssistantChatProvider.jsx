@@ -75,8 +75,11 @@ function AssistantChatProvider({
   //
   // The server is told separately: the thread's agent outlives its runs and
   // would otherwise hold the whole conversation until the sagents inactivity
-  // timeout. Nothing is ever streaming here — "New chat" is locked for the
-  // length of a run — so there is no run for the runtime to abort.
+  // timeout. The header's "New chat" is locked for the length of a run, but a
+  // cross-tab `ai_configuration_created` can also mint a new threadID while
+  // the launcher is closed, with a run genuinely still streaming — so this
+  // effect never branches on run state itself; the transport (`abandonThread`)
+  // settles any in-flight run on its own.
   const previousThreadIDRef = useRef(threadID);
   useEffect(() => {
     if (previousThreadIDRef.current === threadID) return;
