@@ -7,6 +7,7 @@ import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
+import StoppedNotice from '../StoppedNotice';
 import CodeBlock from './CodeBlock';
 
 const ROOT_CLASS_NAME =
@@ -68,6 +69,7 @@ export function AssistantMessage({ isRunning }) {
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         <AgentProgressIndicator isRunning={isRunning} />
+        <StoppedNotice />
       </MessageBubbleView>
       <MessageError />
     </MessagePrimitive.Root>
