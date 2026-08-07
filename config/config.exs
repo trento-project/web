@@ -13,6 +13,12 @@ import Config
 config :trento,
   ecto_repos: [Trento.Repo]
 
+# Number of rows deleted per individual statement when pruning discovery
+# events. Pruning is performed in batches so that, when a large backlog of
+# historical events has to be pruned, no single DELETE statement runs long
+# enough to exceed the default Ecto checkout timeout.
+config :trento, prune_batch_size: 1_000
+
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
   url: [host: "localhost"],
