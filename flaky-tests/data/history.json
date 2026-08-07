@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-21T22:31:18Z",
-    "commit": "090ed7bb363c95e629f578a985a876103f75fb2e",
-    "run_id": "27915892692",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 17
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.1643
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1280
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.05225
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-22T20:30:17Z",
     "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
     "run_id": "27980879798",
@@ -4954,5 +4930,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-07T18:11:58Z",
+    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
+    "run_id": "31204465308",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
+        "score": 0.05001
+      }
+    ]
   }
 ]
