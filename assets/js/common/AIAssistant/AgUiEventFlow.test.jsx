@@ -331,6 +331,33 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('shows the progress indicator only on the answer in flight, never on an earlier stopped one', async () => {
+    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+    await screen.findByLabelText('Send message');
+
+    // Stopped before a single token, so this bubble holds no text and never
+    // will. `isRunning` is thread-scoped, so the next run turns it back on
+    // for this bubble too — the spinner has to be pinned to the live answer
+    // by something other than the run state.
+    const stoppedBubble = assistantBubble();
+
+    const next = await sendUserMessage('try again');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId: next.run_id }));
+
+    expect(await screen.findByText('Thinking...')).toBeVisible();
+    expect(screen.getAllByText('Thinking...')).toHaveLength(1);
+    expect(
+      within(stoppedBubble).queryByText('Thinking...')
+    ).not.toBeInTheDocument();
+  });
+
   it('recovers the composer when a cross-tab config change abandons a run that was streaming behind a closed launcher', async () => {
     const { user, channel, sendUserMessage } = await renderAIAssistant({
       open: true,
