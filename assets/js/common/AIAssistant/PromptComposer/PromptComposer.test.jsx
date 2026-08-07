@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
@@ -20,7 +21,6 @@ jest.mock('@assistant-ui/react', () => ({
       <textarea disabled={disabled} placeholder={placeholder} {...props} />
     ),
     Send: ({ children }) => children,
-    Cancel: ({ children }) => children,
   },
 }));
 
@@ -133,6 +133,18 @@ describe('PromptComposer', () => {
     expect(
       screen.getByRole('button', { name: 'Stop generating' })
     ).toBeVisible();
+  });
+
+  it('calls onStop when the stop button is clicked', async () => {
+    const user = userEvent.setup();
+    const onStop = jest.fn();
+    render(
+      <PromptComposer connectionStatus={CONNECTED} isRunning onStop={onStop} />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(onStop).toHaveBeenCalledTimes(1);
   });
 
   it('keeps stop clickable and out of the form submit path when the input is disabled', () => {

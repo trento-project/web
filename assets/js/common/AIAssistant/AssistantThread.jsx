@@ -83,6 +83,8 @@ function AssistantThread({
   configurationStatus,
   isEmpty = false,
   isRunning = false,
+  onStop = noop,
+  isStopped = false,
   onNewThread = noop,
   onClose = noop,
   modelNotice = null,
@@ -120,7 +122,12 @@ function AssistantThread({
               case 'user':
                 return <UserMessage />;
               case 'assistant':
-                return <AssistantMessage isRunning={isRunning} />;
+                return (
+                  <AssistantMessage
+                    isRunning={isRunning}
+                    isStopped={isStopped}
+                  />
+                );
               default:
                 return null;
             }
@@ -139,6 +146,7 @@ function AssistantThread({
             connectionStatus={connection}
             configurationStatus={configurationStatus}
             isRunning={isRunning}
+            onStop={onStop}
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>

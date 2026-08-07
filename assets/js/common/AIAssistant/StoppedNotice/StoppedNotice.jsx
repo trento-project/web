@@ -8,20 +8,19 @@ export function StoppedNoticeView({ children }) {
   return <div className="mt-2 text-sm text-gray-400">{children}</div>;
 }
 
-// Reads `s.message` from the per-message scope set up by assistant-ui's
-// MessageByIndexProvider (one per <MessagePrimitive.Root>), the same way
-// AgentProgressIndicator does. The AG-UI run aggregator stamps a cancelled run's
-// message with `{type: 'incomplete', reason: 'cancelled'}` — the only signal
-// distinguishing "the user hit Stop" from "the answer ended".
+// Can't key off `s.message.status`: the AG-UI subscriber dispatches a
+// synthesized RUN_FINISHED whenever the run settles — including on
+// cancel — which overwrites `incomplete/cancelled` with `complete/unknown`
+// before this could ever read it (confirmed @assistant-ui/react-ag-ui
+// defect). `isStopped` instead comes from our own StoppedRunProvider state.
 //
-// `reason: 'error'` is deliberately not covered: MessageError already renders
-// that, and two notices under one answer read as two separate failures.
-function StoppedNotice() {
-  const { status } = useAuiState((s) => s.message);
+// The `isLast` guard is load-bearing: `isStopped` outlives the run it
+// belongs to, so without it every earlier assistant message in the thread
+// would render the marker too.
+function StoppedNotice({ isStopped = false }) {
+  const isLast = useAuiState((s) => s.message.isLast);
 
-  if (status?.type !== 'incomplete' || status?.reason !== 'cancelled') {
-    return null;
-  }
+  if (!isStopped || !isLast) return null;
 
   return <StoppedNoticeView>Response stopped.</StoppedNoticeView>;
 }

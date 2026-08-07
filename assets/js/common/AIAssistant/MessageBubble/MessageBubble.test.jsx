@@ -11,7 +11,7 @@ import { UserMessage, AssistantMessage } from './MessageBubble';
 // with its own useAuiState selector, so the stub has to run the selector
 // against one shared state object. `mock`-prefixed so jest.mock's factory can
 // close over it.
-let mockAuiState = { message: { content: [], status: undefined } };
+let mockAuiState = { message: { content: [], isLast: true } };
 
 jest.mock('@assistant-ui/react', () => ({
   ErrorPrimitive: {
@@ -33,7 +33,7 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 }));
 
 beforeEach(() => {
-  mockAuiState = { message: { content: [], status: undefined } };
+  mockAuiState = { message: { content: [], isLast: true } };
 });
 
 describe('UserMessage', () => {
@@ -73,15 +73,14 @@ describe('AssistantMessage', () => {
   });
 
   it('marks an answer the user stopped', () => {
-    mockAuiState = {
-      message: {
-        content: [],
-        status: { type: 'incomplete', reason: 'cancelled' },
-      },
-    };
-
-    render(<AssistantMessage />);
+    render(<AssistantMessage isStopped />);
 
     expect(screen.getByText('Response stopped.')).toBeVisible();
+  });
+
+  it('does not mark an answer as stopped by default', () => {
+    render(<AssistantMessage />);
+
+    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
 });

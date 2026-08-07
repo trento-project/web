@@ -12,7 +12,10 @@ jest.mock('@assistant-ui/react', () => ({
   useAuiState: jest.fn(),
 }));
 
-const mockMessage = (message) => useAuiState.mockReturnValue(message);
+const mockIsLast = (isLast) =>
+  useAuiState.mockImplementation((selector) =>
+    selector({ message: { isLast } })
+  );
 
 describe('StoppedNoticeView', () => {
   it('renders its label', () => {
@@ -22,31 +25,26 @@ describe('StoppedNoticeView', () => {
 });
 
 describe('StoppedNotice', () => {
-  it('marks a message the user stopped', () => {
-    mockMessage({ status: { type: 'incomplete', reason: 'cancelled' } });
+  it('renders the copy when the run was stopped and this is the last message', () => {
+    mockIsLast(true);
 
-    render(<StoppedNotice />);
+    render(<StoppedNotice isStopped />);
 
     expect(screen.getByText('Response stopped.')).toBeVisible();
   });
 
-  it.each([
-    { label: 'still streaming', status: { type: 'running' } },
-    {
-      label: 'finished normally',
-      status: { type: 'complete', reason: 'stop' },
-    },
-    // The run died on its own — MessageError owns that case, and two notices
-    // under one answer read as two separate failures.
-    {
-      label: 'incomplete for another reason',
-      status: { type: 'incomplete', reason: 'error' },
-    },
-    { label: 'carrying no status at all', status: undefined },
-  ])('renders nothing for a message $label', ({ status }) => {
-    mockMessage({ status });
+  it('renders nothing when stopped but this is not the last message', () => {
+    mockIsLast(false);
 
-    const { container } = render(<StoppedNotice />);
+    const { container } = render(<StoppedNotice isStopped />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('renders nothing when the run was not stopped, even on the last message', () => {
+    mockIsLast(true);
+
+    const { container } = render(<StoppedNotice isStopped={false} />);
 
     expect(container).toBeEmptyDOMElement();
   });
