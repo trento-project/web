@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-22T20:31:55Z",
-    "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
-    "run_id": "27980879798",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.07026
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-22T20:44:17Z",
     "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
     "run_id": "27981411484",
@@ -4951,6 +4935,22 @@
       },
       {
         "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_stop",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-07T18:49:00Z",
+    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
+    "run_id": "31206992810",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.05001
       }
     ]
