@@ -83,4 +83,10 @@ describe('AssistantMessage', () => {
 
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
+
+  it('does not mark the freshly started next run even though isStopped has not cleared yet', () => {
+    render(<AssistantMessage isStopped isRunning />);
+
+    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
+  });
 });

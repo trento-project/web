@@ -304,11 +304,18 @@ describe('AG-UI event flow', () => {
     await screen.findByLabelText('Send message');
 
     const next = await sendUserMessage('try again');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId: next.run_id }));
 
     // Stop is not "New chat": the conversation, and the server-side agent
     // holding it, are the same ones.
     expect(next.thread_id).toBe(threadId);
     expect(next.run_id).not.toBe(runId);
+    // React Testing Library flushes effects, so this settled-state assertion
+    // passes whether the marker is withheld in render or only cleared later
+    // by StoppedRunProvider's effect — it pins the end state, not the
+    // committed frame. MessageBubble.test.jsx is what pins the frame where
+    // the fix actually matters.
+    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
 
   it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
