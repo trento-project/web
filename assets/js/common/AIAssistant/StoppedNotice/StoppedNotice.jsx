@@ -4,6 +4,8 @@
 import React from 'react';
 import { useAuiState } from '@assistant-ui/react';
 
+import { useStoppedRun } from '../StoppedRunProvider';
+
 export function StoppedNoticeView({ children }) {
   return <div className="mt-2 text-sm text-gray-400">{children}</div>;
 }
@@ -12,15 +14,13 @@ export function StoppedNoticeView({ children }) {
 // synthesized RUN_FINISHED whenever the run settles — including on
 // cancel — which overwrites `incomplete/cancelled` with `complete/unknown`
 // before this could ever read it (confirmed @assistant-ui/react-ag-ui
-// defect). `isStopped` instead comes from our own StoppedRunProvider state.
-//
-// The `isLast` guard is load-bearing: `isStopped` outlives the run it
-// belongs to, so without it every earlier assistant message in the thread
-// would render the marker too.
-function StoppedNotice({ isStopped = false }) {
-  const isLast = useAuiState((s) => s.message.isLast);
+// defect). The stopped state instead comes from our own StoppedRunProvider,
+// keyed by this message's own id.
+function StoppedNotice() {
+  const messageId = useAuiState((s) => s.message.id);
+  const { isMessageStopped } = useStoppedRun();
 
-  if (!isStopped || !isLast) return null;
+  if (!isMessageStopped(messageId)) return null;
 
   return <StoppedNoticeView>Response stopped.</StoppedNoticeView>;
 }

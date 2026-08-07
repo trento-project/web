@@ -2,14 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderAIAssistant } from '@lib/test-utils/aiAssistant';
 import { aguiEvents } from '@lib/test-utils/aguiEvents';
 
+const assistantBubbles = () =>
+  Array.from(document.querySelectorAll('[data-role="assistant"]'));
+
 const assistantBubble = () => {
-  const nodes = document.querySelectorAll('[data-role="assistant"]');
+  const nodes = assistantBubbles();
   return nodes[nodes.length - 1] || null;
 };
 
@@ -292,7 +295,7 @@ describe('AG-UI event flow', () => {
     expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
   });
 
-  it('keeps the thread after a stop — the next prompt is a new run on it', async () => {
+  it('keeps the marker on the stopped answer once a follow-up prompt starts a new run', async () => {
     const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
       open: true,
     });
@@ -303,6 +306,12 @@ describe('AG-UI event flow', () => {
     await user.click(screen.getByRole('button', { name: 'Stop generating' }));
     await screen.findByLabelText('Send message');
 
+    // The stopped answer gets its own bubble — pin it before a second one
+    // exists, so scoping later assertions to "the earlier bubble" is
+    // unambiguous.
+    const stoppedBubble = assistantBubble();
+    expect(within(stoppedBubble).getByText('Response stopped.')).toBeVisible();
+
     const next = await sendUserMessage('try again');
     await emitAgUi(aguiEvents.runStarted({ threadId, runId: next.run_id }));
 
@@ -310,12 +319,46 @@ describe('AG-UI event flow', () => {
     // holding it, are the same ones.
     expect(next.thread_id).toBe(threadId);
     expect(next.run_id).not.toBe(runId);
-    // React Testing Library flushes effects, so this settled-state assertion
-    // passes whether the marker is withheld in render or only cleared later
-    // by StoppedRunProvider's effect — it pins the end state, not the
-    // committed frame. MessageBubble.test.jsx is what pins the frame where
-    // the fix actually matters.
-    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
+
+    // The spec clause this whole rework exists for: the marker persists on
+    // the message it belongs to for the rest of the conversation — the new
+    // run must not clear it, and must not carry a marker of its own.
+    expect(within(stoppedBubble).getByText('Response stopped.')).toBeVisible();
+    const newBubble = assistantBubble();
+    expect(newBubble).not.toBe(stoppedBubble);
+    expect(
+      within(newBubble).queryByText('Response stopped.')
+    ).not.toBeInTheDocument();
+  });
+
+  it('recovers the composer when a cross-tab config change abandons a run that was streaming behind a closed launcher', async () => {
+    const { user, channel, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+
+    await sendUserMessage('hello');
+    expect(
+      screen.getByRole('button', { name: 'Stop generating' })
+    ).toBeVisible();
+
+    // Closing the launcher does not tear the run down — only a cross-tab
+    // config change (or a manual "New chat") does.
+    await user.click(screen.getByLabelText('Close'));
+
+    await act(async () => {
+      channel.emit('ai_configuration_created');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Open AI Assistant' }));
+
+    // The abandoned run must have been settled locally — the reopened pane
+    // is promptable again, not still waiting on a run the server already
+    // killed.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Stop generating' })
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'New chat' })).toBeEnabled();
   });
 
   it('abandons the thread on the server when the user starts a new chat after an answer', async () => {

@@ -3,15 +3,21 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { StoppedRunProvider, useStoppedRun } from '../StoppedRunProvider';
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
 // AssistantMessage mounts <AgentProgressIndicator> and <StoppedNotice>, each
 // with its own useAuiState selector, so the stub has to run the selector
 // against one shared state object. `mock`-prefixed so jest.mock's factory can
-// close over it.
-let mockAuiState = { message: { content: [], isLast: true } };
+// close over it. `thread.messages` is what StoppedRunProvider (rendered for
+// real below) reads to decide which message id a stop marks.
+let mockAuiState = {
+  message: { content: [], isLast: true, id: 'message-1' },
+  thread: { messages: [{ id: 'message-1' }] },
+};
 
 jest.mock('@assistant-ui/react', () => ({
   ErrorPrimitive: {
@@ -33,8 +39,22 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 }));
 
 beforeEach(() => {
-  mockAuiState = { message: { content: [], isLast: true } };
+  mockAuiState = {
+    message: { content: [], isLast: true, id: 'message-1' },
+    thread: { messages: [{ id: 'message-1' }] },
+  };
 });
+
+// Stops the thread's last message through the real provider — the same path
+// the composer's Stop button uses. Not a jest.mock of our own module.
+function StopButton() {
+  const { stopRun } = useStoppedRun();
+  return (
+    <button type="button" onClick={stopRun}>
+      stop
+    </button>
+  );
+}
 
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
@@ -72,8 +92,16 @@ describe('AssistantMessage', () => {
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
 
-  it('marks an answer the user stopped', () => {
-    render(<AssistantMessage isStopped />);
+  it('marks an answer the user stopped', async () => {
+    const user = userEvent.setup();
+    render(
+      <StoppedRunProvider onStop={() => true}>
+        <StopButton />
+        <AssistantMessage />
+      </StoppedRunProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(screen.getByText('Response stopped.')).toBeVisible();
   });
@@ -84,8 +112,8 @@ describe('AssistantMessage', () => {
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
 
-  it('does not mark the freshly started next run even though isStopped has not cleared yet', () => {
-    render(<AssistantMessage isStopped isRunning />);
+  it('does not mark a message that was never stopped, even mid-run', () => {
+    render(<AssistantMessage isRunning />);
 
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });

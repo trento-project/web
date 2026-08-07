@@ -30,7 +30,7 @@ function AssistantUI({
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
-  const { stopRun, isStopped } = useStoppedRun();
+  const { stopRun } = useStoppedRun();
 
   return (
     <ModalFrame open={open} onOpenChange={onOpenChange} disabled={disabled}>
@@ -42,7 +42,6 @@ function AssistantUI({
         isEmpty={isEmpty}
         isRunning={isRunning}
         onStop={stopRun}
-        isStopped={isStopped}
         modelNotice={modelNotice}
         onDismissModelNotice={onDismissModelNotice}
       />

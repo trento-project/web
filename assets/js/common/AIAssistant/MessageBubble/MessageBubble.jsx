@@ -63,16 +63,13 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning, isStopped }) {
+export function AssistantMessage({ isRunning }) {
   return (
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         <AgentProgressIndicator isRunning={isRunning} />
-        {/* StoppedRunProvider clears isStopped from a passive effect, which
-            cannot run before the next run's placeholder commits — so the
-            render itself has to withhold the marker while isRunning is true. */}
-        <StoppedNotice isStopped={isStopped && !isRunning} />
+        <StoppedNotice />
       </MessageBubbleView>
       <MessageError />
     </MessagePrimitive.Root>

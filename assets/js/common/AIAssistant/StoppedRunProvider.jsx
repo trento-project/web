@@ -5,9 +5,7 @@ import React, {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 import { noop } from 'lodash';
@@ -15,9 +13,12 @@ import { noop } from 'lodash';
 import { useAuiState } from '@assistant-ui/react';
 
 // Default value lets a consumer render in a per-component unit spec without
-// wrapping it in the provider: stopRun is a no-op and isStopped is always
-// false.
-const StoppedRunContext = createContext({ stopRun: noop, isStopped: false });
+// wrapping it in the provider: stopRun is a no-op and no message is ever
+// reported as stopped.
+const StoppedRunContext = createContext({
+  stopRun: noop,
+  isMessageStopped: () => false,
+});
 
 export function useStoppedRun() {
   return useContext(StoppedRunContext);
@@ -26,24 +27,27 @@ export function useStoppedRun() {
 // Must be rendered inside AssistantRuntimeProvider — it reads thread state
 // via useAuiState.
 export function StoppedRunProvider({ onStop = noop, children }) {
-  const [isStopped, setIsStopped] = useState(false);
-  const isRunning = useAuiState((s) => s.thread.isRunning);
-  const wasRunningRef = useRef(isRunning);
-
-  // A stop belongs to exactly one run. Clear the flag when the next run
-  // starts, not when this one ends — the marker has to outlive its own run.
-  useEffect(() => {
-    const runStarted = isRunning && !wasRunningRef.current;
-    wasRunningRef.current = isRunning;
-    if (runStarted) setIsStopped(false);
-  }, [isRunning]);
+  const [stoppedMessageIds, setStoppedMessageIds] = useState(() => new Set());
+  const lastMessageId = useAuiState((s) => s.thread.messages.at(-1)?.id);
 
   const stopRun = useCallback(() => {
-    onStop();
-    setIsStopped(true);
-  }, [onStop]);
+    // Only mark an answer as stopped if a run was actually there to stop —
+    // a click landing after RUN_FINISHED but before the composer swaps
+    // Stop→Send must not label a completed answer as cut short.
+    if (!onStop()) return;
+    if (!lastMessageId) return;
+    setStoppedMessageIds((previous) => new Set(previous).add(lastMessageId));
+  }, [onStop, lastMessageId]);
 
-  const value = useMemo(() => ({ stopRun, isStopped }), [stopRun, isStopped]);
+  const isMessageStopped = useCallback(
+    (messageId) => stoppedMessageIds.has(messageId),
+    [stoppedMessageIds]
+  );
+
+  const value = useMemo(
+    () => ({ stopRun, isMessageStopped }),
+    [stopRun, isMessageStopped]
+  );
 
   return (
     <StoppedRunContext.Provider value={value}>
