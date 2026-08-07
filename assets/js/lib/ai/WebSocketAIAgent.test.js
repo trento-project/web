@@ -539,7 +539,7 @@ describe('WebSocketAIAgent', () => {
       // The caller has already moved on to a new thread — the cancel still
       // names the thread the abandoned run belongs to.
       agent.threadId = 'thread-10';
-      agent.cancelActiveRun();
+      const result = agent.cancelActiveRun();
 
       expect(channel.pushed).toContainEqual(
         expect.objectContaining({
@@ -551,12 +551,15 @@ describe('WebSocketAIAgent', () => {
       expect(error).not.toHaveBeenCalled();
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+      // StoppedRunProvider gates marking a message stopped on this: a click
+      // that actually settled a run must report so.
+      expect(result).toBe(true);
     });
 
     it('does nothing when no run is in flight', async () => {
       const { agent, channel } = await connectedAgent();
 
-      agent.cancelActiveRun();
+      const result = agent.cancelActiveRun();
 
       // Stop is only reachable while a run is in flight. Pushing a cancel for
       // a run that is already over would cancel whatever the *next* prompt
@@ -564,6 +567,9 @@ describe('WebSocketAIAgent', () => {
       expect(channel.pushed).not.toContainEqual(
         expect.objectContaining({ event: 'cancel_run' })
       );
+      // A completed answer must never be labelled "Response stopped." —
+      // StoppedRunProvider relies on this false to skip marking it.
+      expect(result).toBe(false);
     });
   });
 

@@ -287,11 +287,13 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
-  // Stop, from the composer. Reached through the runtime's `onCancel` once the
-  // run's abort signal has fired. The ids are the ones pinned when the run
-  // started, not the live ones.
+  // Stop, from the composer. Called directly by StoppedRunProvider — there is
+  // no runtime `onCancel` any more. The ids are the ones pinned when the run
+  // started, not the live ones. Returns whether a run was actually settled,
+  // so a click that lands after the run already finished cannot mark a
+  // completed answer as stopped.
   cancelActiveRun() {
-    if (!this._activeSubscriber) return;
+    if (!this._activeSubscriber) return false;
 
     this.channel?.push('cancel_run', {
       run_id: this._activeRunId,
@@ -299,6 +301,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
 
     this._settleActiveRun();
+    return true;
   }
 
   // "New chat". The thread's server-side agent outlives its runs and would

@@ -13,96 +13,146 @@ jest.mock('@assistant-ui/react', () => ({
   useAuiState: jest.fn(),
 }));
 
-let isRunning = false;
+const mockLastMessageId = (...ids) =>
+  useAuiState.mockImplementation((selector) =>
+    selector({ thread: { messages: ids.map((id) => ({ id })) } })
+  );
 
 beforeEach(() => {
-  isRunning = false;
-  useAuiState.mockImplementation((selector) =>
-    selector({ thread: { isRunning } })
-  );
+  mockLastMessageId('m1');
 });
 
-function Consumer() {
-  const { stopRun, isStopped } = useStoppedRun();
+function StopButton() {
+  const { stopRun } = useStoppedRun();
   return (
-    <div>
-      <span data-testid="isStopped">{String(isStopped)}</span>
-      <button type="button" onClick={stopRun}>
-        stop
-      </button>
-    </div>
+    <button type="button" onClick={stopRun}>
+      stop
+    </button>
   );
 }
 
-function renderProvider({ onStop } = {}) {
-  const view = render(
-    <StoppedRunProvider onStop={onStop}>
-      <Consumer />
-    </StoppedRunProvider>
+function Marker({ messageId }) {
+  const { isMessageStopped } = useStoppedRun();
+  return (
+    <span data-testid={`stopped-${messageId}`}>
+      {String(isMessageStopped(messageId))}
+    </span>
   );
-
-  return {
-    ...view,
-    setIsRunning: (value) => {
-      isRunning = value;
-      view.rerender(
-        <StoppedRunProvider onStop={onStop}>
-          <Consumer />
-        </StoppedRunProvider>
-      );
-    },
-  };
 }
 
 describe('useStoppedRun outside a provider', () => {
   it('returns an inert default value', async () => {
     const user = userEvent.setup();
-    render(<Consumer />);
+    render(
+      <>
+        <StopButton />
+        <Marker messageId="m1" />
+      </>
+    );
 
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
     await user.click(screen.getByRole('button', { name: 'stop' }));
-
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
   });
 });
 
 describe('StoppedRunProvider', () => {
-  it('invokes onStop and flips isStopped to true when stopRun is called', async () => {
+  it("marks the last message's id, and only that id, when stopped", async () => {
     const user = userEvent.setup();
-    const onStop = jest.fn();
-    isRunning = true;
-    renderProvider({ onStop });
+    const onStop = jest.fn(() => true);
+
+    render(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+        <Marker messageId="m2" />
+      </StoppedRunProvider>
+    );
+
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(onStop).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-m2')).toHaveTextContent('false');
   });
 
-  it('does not clear isStopped when the stopped run merely ends (running -> not running)', async () => {
+  it('marks a second stopped message in addition to the first', async () => {
     const user = userEvent.setup();
-    isRunning = true;
-    const { setIsRunning } = renderProvider({ onStop: jest.fn() });
+    const onStop = jest.fn(() => true);
+
+    const { rerender } = render(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+        <Marker messageId="m2" />
+      </StoppedRunProvider>
+    );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
 
-    setIsRunning(false);
+    // A follow-up prompt started a second run, whose placeholder is message
+    // m2 — and the user stopped that one too.
+    mockLastMessageId('m1', 'm2');
+    rerender(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+        <Marker messageId="m2" />
+      </StoppedRunProvider>
+    );
 
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('true');
+    await user.click(screen.getByRole('button', { name: 'stop' }));
+
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-m2')).toHaveTextContent('true');
   });
 
-  it('clears isStopped once a new run starts (not running -> running)', async () => {
+  // The spec clause this whole rework exists for: the marker on the earlier,
+  // cut-off message must not be cleared just because a new run has started.
+  it('keeps marking an earlier stopped message after a new run starts on a later one', async () => {
     const user = userEvent.setup();
-    isRunning = true;
-    const { setIsRunning } = renderProvider({ onStop: jest.fn() });
+    const onStop = jest.fn(() => true);
+
+    const { rerender } = render(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+      </StoppedRunProvider>
+    );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
 
-    setIsRunning(false);
-    setIsRunning(true);
+    // A new run starts: the thread now has a fresh last message, but nothing
+    // about that should touch the marker already placed on m1.
+    mockLastMessageId('m1', 'm2');
+    rerender(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+      </StoppedRunProvider>
+    );
 
-    expect(screen.getByTestId('isStopped')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+  });
+
+  it('marks nothing when onStop reports there was no run to stop', async () => {
+    const user = userEvent.setup();
+    const onStop = jest.fn(() => false);
+
+    render(
+      <StoppedRunProvider onStop={onStop}>
+        <StopButton />
+        <Marker messageId="m1" />
+      </StoppedRunProvider>
+    );
+
+    await user.click(screen.getByRole('button', { name: 'stop' }));
+
+    expect(onStop).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
   });
 });
