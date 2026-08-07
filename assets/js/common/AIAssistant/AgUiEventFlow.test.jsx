@@ -196,40 +196,30 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('cancels the streaming run when the user starts a new chat mid-answer', async () => {
-    const { user, channel, emitAgUi, sendUserMessage } =
-      await renderAIAssistant({ open: true });
+  it('locks "New chat" for the length of the run', async () => {
+    const { emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const newChat = () => screen.getByRole('button', { name: 'New chat' });
+
+    expect(newChat()).toBeEnabled();
+
     const { thread_id: threadId, run_id: runId } =
       await sendUserMessage('hello');
+
+    expect(newChat()).toBeDisabled();
 
     const messageId = 'asst-1';
     await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
     await emitAgUi(aguiEvents.textStart({ messageId }));
-    await emitAgUi(
-      aguiEvents.textContent({ messageId, delta: 'half an answer' })
-    );
+    await emitAgUi(aguiEvents.textContent({ messageId, delta: 'half' }));
 
-    // Mid-run the composer hides its send button — nothing can be submitted.
-    await waitFor(() => {
-      expect(assistantBubble()).toHaveTextContent('half an answer');
-    });
-    expect(screen.queryByLabelText('Send message')).not.toBeInTheDocument();
+    expect(newChat()).toBeDisabled();
 
-    await user.click(screen.getByRole('button', { name: 'New chat' }));
+    await emitAgUi(aguiEvents.textEnd({ messageId }));
+    await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
 
-    await waitFor(() => {
-      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
-        expect.objectContaining({
-          payload: { run_id: runId, thread_id: threadId },
-        }),
-      ]);
-    });
-
-    // The new thread is empty and promptable even though the old run never
-    // sent RUN_FINISHED: no leftover answer, no stuck progress indicator.
-    expect(await screen.findByLabelText('Send message')).toBeVisible();
-    expect(screen.queryByText('half an answer')).not.toBeInTheDocument();
-    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+    await waitFor(() => expect(newChat()).toBeEnabled());
   });
 
   it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
