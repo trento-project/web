@@ -580,7 +580,7 @@ describe('WebSocketAIAgent', () => {
       );
     });
 
-    it('leaves an in-flight run alone — the channel is what tears it down', async () => {
+    it('settles an in-flight run instead of leaving it hanging', async () => {
       const { agent } = await connectedAgent();
       const { complete, error } = runAgent(agent, {
         threadId: 'thread-9',
@@ -590,9 +590,12 @@ describe('WebSocketAIAgent', () => {
 
       agent.abandonThread();
 
-      expect(complete).not.toHaveBeenCalled();
+      // The server terminates the agent outright, so no RUN_FINISHED /
+      // RUN_ERROR will ever come back for this run — the client has to settle
+      // it locally, the same contract cancelActiveRun() already honours.
+      expect(complete).toHaveBeenCalledTimes(1);
       expect(error).not.toHaveBeenCalled();
-      expect(agent._activeSubscriber).not.toBeNull();
+      expect(agent._activeSubscriber).toBeNull();
     });
   });
 

@@ -303,16 +303,27 @@ export class WebSocketAIAgent extends AbstractAgent {
 
   // "New chat". The thread's server-side agent outlives its runs and would
   // otherwise hold the whole conversation until the sagents inactivity
-  // timeout, so the server has to be told the thread is gone. There is never
-  // a run to settle here — "New chat" is locked while one is in flight.
+  // timeout, so the server has to be told the thread is gone. "New chat" the
+  // button is locked while a run is in flight, but that is not the only
+  // caller: a cross-tab `ai_configuration_created` can mint a new threadID
+  // while the launcher is closed, with a run genuinely still streaming.
   //
   // The payload is empty because there are no correlation ids worth sending:
   // `_activeThreadId` is null by construction, and `this.threadId` has already
   // been mutated to the *new* id (the provider's threadId effect is declared
   // above the swap effect), so logging it would be actively misleading. The
   // server abandons the thread in its own assigns.
+  //
+  // The server terminates the agent outright (Trento.AI.Agent.stop/1), so no
+  // RUN_FINISHED / RUN_ERROR ever comes back for it — the channel documents
+  // that the resulting `{:status_changed, :cancelled, nil}` is swallowed on
+  // purpose because the client is expected to have already settled locally.
+  // `_settleActiveRun()` is that settle, the same contract `cancelActiveRun()`
+  // honours; it self-guards on `_activeSubscriber`, so this is a no-op on the
+  // ordinary path where nothing was streaming.
   abandonThread() {
     this.channel?.push('abandon_thread', {});
+    this._settleActiveRun();
   }
 
   _clearActiveRun() {
