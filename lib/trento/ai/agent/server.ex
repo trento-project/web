@@ -18,6 +18,7 @@ defmodule Trento.AI.Agent.Server do
 
   @callback subscribe(String.t()) :: :ok | {:error, term()}
   @callback add_message(String.t(), Message.t()) :: :ok | {:error, term()}
+  @callback cancel(String.t()) :: :ok | {:error, term()}
   @callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
   @callback get_info(String.t()) :: %{state: Sagents.State.t()}
   @callback update_agent_and_state(String.t(), Sagents.Agent.t(), Sagents.State.t()) ::
@@ -25,6 +26,7 @@ defmodule Trento.AI.Agent.Server do
 
   def subscribe(agent_id), do: impl().subscribe(agent_id)
   def add_message(agent_id, message), do: impl().add_message(agent_id, message)
+  def cancel(agent_id), do: impl().cancel(agent_id)
   def get_agent(agent_id), do: impl().get_agent(agent_id)
   def get_info(agent_id), do: impl().get_info(agent_id)
 

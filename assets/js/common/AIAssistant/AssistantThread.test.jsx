@@ -130,12 +130,6 @@ describe('AssistantThread', () => {
     expect(newChat()).toBeEnabled();
   });
 
-  it('locks "New chat" while the assistant is answering', () => {
-    renderThread({ isRunning: true });
-
-    expect(newChat()).toBeDisabled();
-  });
-
   it('passes the raw connection status through when the configuration is fine', () => {
     renderThread({ connectionStatus: DISCONNECTED, configurationStatus: OK });
 

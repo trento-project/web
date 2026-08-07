@@ -104,7 +104,6 @@ function AssistantThread({
     >
       <ChatHeader
         connectionStatus={connection}
-        isRunning={isRunning}
         onNewChat={onNewThread}
         onClose={onClose}
       />

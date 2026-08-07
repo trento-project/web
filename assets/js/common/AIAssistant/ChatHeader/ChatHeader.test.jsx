@@ -45,11 +45,6 @@ describe('ChatHeader', () => {
     expect(screen.getByRole('button', { name: 'New chat' })).not.toBeDisabled();
   });
 
-  it('disables the "New chat" button while a run is in flight', () => {
-    render(<ChatHeader {...defaults} connectionStatus={CONNECTED} isRunning />);
-    expect(screen.getByRole('button', { name: 'New chat' })).toBeDisabled();
-  });
-
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
     const user = userEvent.setup();
     const onNewChat = jest.fn();

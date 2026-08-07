@@ -196,30 +196,61 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('locks "New chat" for the length of the run', async () => {
-    const { emitAgUi, sendUserMessage } = await renderAIAssistant({
-      open: true,
-    });
-    const newChat = () => screen.getByRole('button', { name: 'New chat' });
-
-    expect(newChat()).toBeEnabled();
-
+  it('cancels the streaming run when the user starts a new chat mid-answer', async () => {
+    const { user, channel, emitAgUi, sendUserMessage } =
+      await renderAIAssistant({ open: true });
     const { thread_id: threadId, run_id: runId } =
       await sendUserMessage('hello');
-
-    expect(newChat()).toBeDisabled();
 
     const messageId = 'asst-1';
     await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
     await emitAgUi(aguiEvents.textStart({ messageId }));
-    await emitAgUi(aguiEvents.textContent({ messageId, delta: 'half' }));
+    await emitAgUi(
+      aguiEvents.textContent({ messageId, delta: 'half an answer' })
+    );
 
-    expect(newChat()).toBeDisabled();
+    // Mid-run the composer hides its send button — nothing can be submitted.
+    await waitFor(() => {
+      expect(assistantBubble()).toHaveTextContent('half an answer');
+    });
+    expect(screen.queryByLabelText('Send message')).not.toBeInTheDocument();
 
-    await emitAgUi(aguiEvents.textEnd({ messageId }));
-    await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
 
-    await waitFor(() => expect(newChat()).toBeEnabled());
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: runId, thread_id: threadId },
+        }),
+      ]);
+    });
+
+    // The new thread is empty and promptable even though the old run never
+    // sent RUN_FINISHED: no leftover answer, no stuck progress indicator.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.queryByText('half an answer')).not.toBeInTheDocument();
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+  });
+
+  it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
+    const { user, channel, sendUserMessage, streamAssistantTurn } =
+      await renderAIAssistant({ open: true });
+
+    const turn = await sendUserMessage('hello');
+    await streamAssistantTurn(turn, { messageId: 'a', deltas: ['an answer'] });
+
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
+
+    // Nothing is streaming, but the thread's agent survives the run and holds
+    // the whole conversation, so the server still has to be told. The ids are
+    // null: RUN_FINISHED already cleared them.
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: null, thread_id: null },
+        }),
+      ]);
+    });
   });
 
   it('"New chat" starts a new conversation with a new thread ID', async () => {
