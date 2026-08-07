@@ -16,6 +16,30 @@ const assistantBubble = () => {
   return nodes[nodes.length - 1] || null;
 };
 
+// A run stopped once it had begun to answer. Streaming a token first is the
+// load-bearing part of the setup: an answer with text in it survives the stop
+// and keeps its marker, while a run stopped before its first token leaves no
+// bubble at all — see 'hands the prompt back...' below.
+const streamThenStop = async (
+  { user, emitAgUi, sendUserMessage },
+  delta = 'half an answer'
+) => {
+  const { thread_id: threadId, run_id: runId } = await sendUserMessage('hello');
+  const messageId = 'asst-1';
+
+  await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+  await emitAgUi(aguiEvents.textStart({ messageId }));
+  await emitAgUi(aguiEvents.textContent({ messageId, delta }));
+  await waitFor(() => {
+    expect(assistantBubble()).toHaveTextContent(delta);
+  });
+
+  await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+  await screen.findByLabelText('Send message');
+
+  return { threadId, runId };
+};
+
 describe('AG-UI event flow', () => {
   it('clears the empty-thread greeting once the runtime reports a message', async () => {
     const { sendUserMessage } = await renderAIAssistant({ open: true });
@@ -226,32 +250,16 @@ describe('AG-UI event flow', () => {
   });
 
   it('stops a streaming run without discarding what is on screen', async () => {
-    const { user, channel, emitAgUi, sendUserMessage } =
-      await renderAIAssistant({
-        open: true,
-      });
-    const { thread_id: threadId, run_id: runId } =
-      await sendUserMessage('hello');
+    const context = await renderAIAssistant({ open: true });
+    const { threadId, runId } = await streamThenStop(context);
 
-    const messageId = 'asst-1';
-    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
-    await emitAgUi(aguiEvents.textStart({ messageId }));
-    await emitAgUi(
-      aguiEvents.textContent({ messageId, delta: 'half an answer' })
-    );
-    await waitFor(() => {
-      expect(assistantBubble()).toHaveTextContent('half an answer');
-    });
-
-    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
-
-    await waitFor(() => {
-      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
-        expect.objectContaining({
-          payload: { run_id: runId, thread_id: threadId },
-        }),
-      ]);
-    });
+    expect(
+      context.channel.pushed.filter((p) => p.event === 'cancel_run')
+    ).toEqual([
+      expect.objectContaining({
+        payload: { run_id: runId, thread_id: threadId },
+      }),
+    ]);
 
     // Everything the user already saw survives: their prompt, the partial
     // answer, and a marker saying it was cut short.
@@ -268,7 +276,13 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('stops a run that has not produced a single token yet', async () => {
+  // Stopped before a single token, there is no answer worth keeping, so
+  // assistant-ui drops the empty exchange and puts the prompt back in the
+  // composer: the thread returns to exactly where it was before Send, one
+  // keystroke away from asking again. That is the library's own behaviour for
+  // a run cancelled before its first token, and the one we want — nothing is
+  // lost, and no blank bubble is left carrying a marker.
+  it('hands the prompt back when the run is stopped before its first token', async () => {
     const { user, channel, sendUserMessage } = await renderAIAssistant({
       open: true,
     });
@@ -281,30 +295,30 @@ describe('AG-UI event flow', () => {
 
     await user.click(screen.getByRole('button', { name: 'Stop generating' }));
 
-    await waitFor(() => {
-      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
-        expect.objectContaining({
-          payload: { run_id: runId, thread_id: threadId },
-        }),
-      ]);
-    });
+    expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+      expect.objectContaining({
+        payload: { run_id: runId, thread_id: threadId },
+      }),
+    ]);
 
-    expect(screen.getByText('hello')).toBeVisible();
-    expect(await screen.findByText('Response stopped.')).toBeVisible();
+    // Back to the empty thread, greeting and all — the exchange is gone from
+    // the transcript and only the composer still holds the prompt.
+    await waitFor(() => {
+      expect(screen.getByText("Hi, I'm Liz.")).toBeVisible();
+    });
+    expect(assistantBubbles()).toHaveLength(0);
+    expect(screen.getByLabelText('Message input')).toHaveValue('hello');
+    expect(
+      screen.queryByText('hello', { selector: ':not(textarea)' })
+    ).toBeNull();
     expect(await screen.findByLabelText('Send message')).toBeVisible();
     expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
   });
 
   it('keeps the marker on the stopped answer once a follow-up prompt starts a new run', async () => {
-    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
-      open: true,
-    });
-    const { thread_id: threadId, run_id: runId } =
-      await sendUserMessage('hello');
-    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
-
-    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
-    await screen.findByLabelText('Send message');
+    const context = await renderAIAssistant({ open: true });
+    const { emitAgUi, sendUserMessage } = context;
+    const { threadId, runId } = await streamThenStop(context);
 
     // The stopped answer gets its own bubble — pin it before a second one
     // exists, so scoping later assertions to "the earlier bubble" is
@@ -332,20 +346,13 @@ describe('AG-UI event flow', () => {
   });
 
   it('shows the progress indicator only on the answer in flight, never on an earlier stopped one', async () => {
-    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
-      open: true,
-    });
-    const { thread_id: threadId, run_id: runId } =
-      await sendUserMessage('hello');
-    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+    const context = await renderAIAssistant({ open: true });
+    const { emitAgUi, sendUserMessage } = context;
+    const { threadId } = await streamThenStop(context);
 
-    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
-    await screen.findByLabelText('Send message');
-
-    // Stopped before a single token, so this bubble holds no text and never
-    // will. `isRunning` is thread-scoped, so the next run turns it back on
-    // for this bubble too — the spinner has to be pinned to the live answer
-    // by something other than the run state.
+    // `isRunning` is thread-scoped, so the next run turns it back on for this
+    // bubble too — the spinner has to be pinned to the live answer by
+    // something other than the run state.
     const stoppedBubble = assistantBubble();
 
     const next = await sendUserMessage('try again');

@@ -2,13 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import {
-  act,
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-} from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CONNECTING, CONNECTED } from '@lib/ai/connectionStatus';
 
@@ -17,41 +11,17 @@ import { WebSocketAIAgent } from '@lib/ai';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { SocketContext } from '@common/SocketProvider';
 import AssistantChatProvider from './AssistantChatProvider';
-import { useStoppedRun } from './StoppedRunProvider';
 
 jest.mock('@assistant-ui/react-ag-ui', () => ({
   useAgUiRuntime: jest.fn(),
 }));
 
-// StoppedRunProvider (our own module, rendered for real below) reads the
-// thread's last message *position* off this — that is the answer a stop
-// marks. `mock`-prefixed so jest.mock's factory can close over it.
-const mockAuiState = { thread: { messages: [{ id: 'message-1' }] } };
-
 jest.mock('@assistant-ui/react', () => ({
   AssistantRuntimeProvider: ({ children }) => <>{children}</>,
   useAui: () => ({}),
-  useAuiState: (selector) => selector(mockAuiState),
 }));
 
 const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
-
-// Mounted alongside the tree's children so a test can reach the stopRun
-// the provider hands down through StoppedRunProvider, without jest.mock-ing
-// our own module. The readout makes the other half of the contract visible:
-// whether the stop actually marked the thread's last answer, which is driven
-// by what the provider's stop handler returns from the transport.
-function StopTrigger() {
-  const { stopRun, isMessageStopped } = useStoppedRun();
-  return (
-    <>
-      <button type="button" onClick={stopRun}>
-        stop
-      </button>
-      <span>{isMessageStopped(0) ? 'marked' : 'not marked'}</span>
-    </>
-  );
-}
 
 function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
   const runtime = {
@@ -68,7 +38,6 @@ function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
     <SocketContext.Provider value={socket}>
       <AssistantChatProvider {...nextProps}>
         <div>hi</div>
-        <StopTrigger />
       </AssistantChatProvider>
     </SocketContext.Provider>
   );
@@ -238,9 +207,9 @@ describe('AssistantChatProvider', () => {
     await waitFor(() => {
       expect(runtime.thread.import).toHaveBeenCalledWith({ messages: [] });
     });
-    // The provider never reaches for the runtime's cancelRun — that path
-    // deletes the user's prompt and refills the composer with it. Stop goes
-    // through StoppedRunProvider's onStop instead.
+    // A new chat is not a cancelled turn. `cancelRun()` deletes the trailing
+    // user message and refills the composer with its text — that belongs to
+    // Stop, not to starting over.
     expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
   });
 
@@ -248,51 +217,14 @@ describe('AssistantChatProvider', () => {
     const { rerender, channel, agent } = renderProvider();
     await waitFor(() => expect(channel()).toBeDefined());
     const abandonThread = jest.spyOn(agent(), 'abandonThread');
-    const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
+    const abortRun = jest.spyOn(agent(), 'abortRun');
 
     rerender({ threadID: 'thread-2' });
 
-    // "New chat" is locked while a run is in flight, so there is never a run
-    // to cancel here — but the thread's server-side agent still holds the
-    // abandoned conversation, and the transport has to say so.
+    // The server terminates the whole thread agent, so there is no run left to
+    // cancel separately — pushing `cancel_run` too would name a run the server
+    // has already thrown away.
     await waitFor(() => expect(abandonThread).toHaveBeenCalledTimes(1));
-    expect(cancelActiveRun).not.toHaveBeenCalled();
-  });
-
-  it('does not give the runtime an onCancel — Stop must not unwind the turn', async () => {
-    const { channel, runtimeOptions } = renderProvider();
-    await waitFor(() => expect(channel()).toBeDefined());
-
-    expect(runtimeOptions().onCancel).toBeUndefined();
-  });
-
-  it('routes Stop through StoppedRunProvider to tear the run down on the transport', async () => {
-    const { channel, agent } = renderProvider();
-    await waitFor(() => expect(channel()).toBeDefined());
-    const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
-
-    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
-
-    expect(cancelActiveRun).toHaveBeenCalledTimes(1);
-  });
-
-  it('marks the answer when the transport reports it tore a run down', async () => {
-    const { channel, agent } = renderProvider();
-    await waitFor(() => expect(channel()).toBeDefined());
-    jest.spyOn(agent(), 'cancelActiveRun').mockReturnValue(true);
-
-    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
-
-    expect(screen.getByText('marked')).toBeVisible();
-  });
-
-  it('marks nothing when the transport reports no run was in flight', async () => {
-    const { channel, agent } = renderProvider();
-    await waitFor(() => expect(channel()).toBeDefined());
-    jest.spyOn(agent(), 'cancelActiveRun').mockReturnValue(false);
-
-    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
-
-    expect(screen.getByText('not marked')).toBeVisible();
+    expect(abortRun).not.toHaveBeenCalled();
   });
 });

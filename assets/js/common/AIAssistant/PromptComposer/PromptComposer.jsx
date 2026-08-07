@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { get, noop } from 'lodash';
+import { get } from 'lodash';
 import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
@@ -63,24 +63,26 @@ function SendButton({ disabled, reason }) {
   );
 }
 
+// Cancel reaches the runtime's own cancel path, which stops the agent
+// (WebSocketAIAgent.abortRun) and marks the answer as cancelled — the notice
+// under the bubble reads that off the message, so the composer keeps no stop
+// state of its own.
+//
 // Never disabled: a run can outlive the connection or the AI configuration,
 // and whatever put the composer into read-only must not strand the user
-// mid-answer.
-//
-// Not ComposerPrimitive.Cancel: its useComposerCancel calls
-// runtime.thread.cancelRun(), which deletes the user's prompt and refills the
-// composer with it, and is enabled whether or not a run is in flight. A plain
-// button sidesteps that path entirely — see AssistantChatProvider
-function StopButton({ onStop }) {
+// mid-answer. Cancel being enabled regardless is harmless here, because Stop
+// is only rendered while a run is in flight.
+function StopButton() {
   return (
-    <Button
-      type="default-fit"
-      aria-label="Stop generating"
-      title="Stop generating"
-      onClick={onStop}
-    >
-      <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
-    </Button>
+    <ComposerPrimitive.Cancel asChild>
+      <Button
+        type="default-fit"
+        aria-label="Stop generating"
+        title="Stop generating"
+      >
+        <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
+      </Button>
+    </ComposerPrimitive.Cancel>
   );
 }
 
@@ -88,7 +90,6 @@ function PromptComposer({
   connectionStatus,
   configurationStatus = CONFIGURATION_STATUS.OK,
   isRunning = false,
-  onStop = noop,
 }) {
   const inputDisabled = !canSendMessage(connectionStatus, configurationStatus);
   const placeholder = isChatReadOnly(configurationStatus)
@@ -118,7 +119,7 @@ function PromptComposer({
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
         {isRunning ? (
-          <StopButton onStop={onStop} />
+          <StopButton />
         ) : (
           <SendButton disabled={inputDisabled} reason={placeholder} />
         )}

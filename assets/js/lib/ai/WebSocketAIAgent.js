@@ -27,6 +27,16 @@ export const extractMessageText = ({ content } = {}) => {
 
 const isUnauthorized = (error) => error === 'unauthorized';
 
+// The error shape @assistant-ui/react-ag-ui reads as "this run was stopped":
+// its subscriber matches on `name === 'AbortError'` and dispatches
+// RUN_CANCELLED instead of RUN_ERROR, so the message ends up marked as
+// stopped rather than failed.
+const abortedRunError = () => {
+  const error = new Error('AI assistant run stopped');
+  error.name = 'AbortError';
+  return error;
+};
+
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
@@ -287,21 +297,56 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
-  // Stop, from the composer. Called directly by StoppedRunProvider — there is
-  // no runtime `onCancel` any more. The ids are the ones pinned when the run
-  // started, not the live ones. Returns whether a run was actually settled,
-  // so a click that lands after the run already finished cannot mark a
-  // completed answer as stopped.
-  cancelActiveRun() {
-    if (!this._activeSubscriber) return false;
+  // Stop, from the composer. This is AbstractAgent's cancellation seam:
+  // `AgUiThreadRuntimeCore.cancel()` calls it before aborting its own
+  // AbortController, and the base implementation is an empty no-op that only
+  // HttpAgent overrides — a websocket transport has to supply its own. The
+  // ids are the ones pinned when the run started, not the live ones.
+  //
+  // Not `_settleActiveRun()`: completing the subscriber makes the runtime
+  // dispatch RUN_FINISHED, which overwrites the cancelled status its own
+  // abort listener has just written, and the stopped answer reads as
+  // finished. An AbortError is what marks the run as stopped instead.
+  abortRun() {
+    const subscriber = this._activeSubscriber;
 
-    this.channel?.push('cancel_run', {
-      run_id: this._activeRunId,
-      thread_id: this._activeThreadId,
+    if (subscriber) {
+      this.channel?.push('cancel_run', {
+        run_id: this._activeRunId,
+        thread_id: this._activeThreadId,
+      });
+
+      this._clearActiveRun();
+      this._settleAsAborted(subscriber);
+    }
+
+    super.abortRun();
+  }
+
+  // Deferred twice, and both hops are load-bearing.
+  //
+  // The runtime settles a cancelled run over two steps that we have to land
+  // between. `AgUiThreadRuntimeCore.cancel()` calls `abortRun()` and aborts
+  // its own AbortController straight after, in the same synchronous step —
+  // raising the error before that abort lands makes the core treat it as a
+  // real failure, park it in `startRun`'s `pendingError` and re-throw it as
+  // an unhandled rejection (see `_settleActiveRun`). Then the external-store
+  // runtime's `cancelRun()`, which called `cancel()` in the first place,
+  // schedules a `setTimeout(…, 0)` that re-applies the message snapshot it
+  // took before any of this — a snapshot in which the answer is still
+  // running, and which overwrites the cancelled status if it has the last
+  // word.
+  //
+  // So: a microtask to get past the abort and, crucially, past the
+  // synchronous rest of `cancelRun()` — only then is our timer registered,
+  // behind theirs, and the RUN_CANCELLED our error triggers is the last write
+  // to the message. An HTTP agent gets this ordering for free, its abort
+  // error arriving with the network; a websocket that stops instantly has to
+  // ask for it.
+  _settleAsAborted(subscriber) {
+    Promise.resolve().then(() => {
+      setTimeout(() => subscriber.error(abortedRunError()), 0);
     });
-
-    this._settleActiveRun();
-    return true;
   }
 
   // "New chat". The thread's server-side agent outlives its runs and would
@@ -321,7 +366,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // RUN_FINISHED / RUN_ERROR ever comes back for it — the channel documents
   // that the resulting `{:status_changed, :cancelled, nil}` is swallowed on
   // purpose because the client is expected to have already settled locally.
-  // `_settleActiveRun()` is that settle, the same contract `cancelActiveRun()`
+  // `_settleActiveRun()` is that settle, the same contract `abortRun()`
   // honours; it self-guards on `_activeSubscriber`, so this is a no-op on the
   // ordinary path where nothing was streaming.
   abandonThread() {

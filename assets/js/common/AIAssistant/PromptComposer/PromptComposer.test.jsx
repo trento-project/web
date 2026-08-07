@@ -11,18 +11,29 @@ import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
 import { OK, CLEARED, RESTORED } from '../status';
 import PromptComposer from './PromptComposer';
 
-jest.mock('@assistant-ui/react', () => ({
-  ComposerPrimitive: {
-    Root: ({ children, ...props }) => <form {...props}>{children}</form>,
-    AttachmentDropzone: ({ children, ...props }) => (
-      <div {...props}>{children}</div>
-    ),
-    Input: ({ disabled, placeholder, ...props }) => (
-      <textarea disabled={disabled} placeholder={placeholder} {...props} />
-    ),
-    Send: ({ children }) => children,
-  },
-}));
+// `mock`-prefixed so jest.mock's factory can close over it. The real
+// ComposerPrimitive.Cancel with `asChild` clones its child and hands it the
+// runtime's cancel; mirroring that is what lets a test prove Stop goes through
+// the primitive rather than a bare onClick of our own.
+const mockCancel = jest.fn();
+
+jest.mock('@assistant-ui/react', () => {
+  const { cloneElement } = jest.requireActual('react');
+
+  return {
+    ComposerPrimitive: {
+      Root: ({ children, ...props }) => <form {...props}>{children}</form>,
+      AttachmentDropzone: ({ children, ...props }) => (
+        <div {...props}>{children}</div>
+      ),
+      Input: ({ disabled, placeholder, ...props }) => (
+        <textarea disabled={disabled} placeholder={placeholder} {...props} />
+      ),
+      Send: ({ children }) => children,
+      Cancel: ({ children }) => cloneElement(children, { onClick: mockCancel }),
+    },
+  };
+});
 
 describe('PromptComposer', () => {
   it.each([
@@ -135,16 +146,15 @@ describe('PromptComposer', () => {
     ).toBeVisible();
   });
 
-  it('calls onStop when the stop button is clicked', async () => {
+  // The composer owns no stop handler of its own: cancelling is the runtime's
+  // job, and ComposerPrimitive.Cancel is the seam that reaches it.
+  it('routes the stop button through the composer cancel primitive', async () => {
     const user = userEvent.setup();
-    const onStop = jest.fn();
-    render(
-      <PromptComposer connectionStatus={CONNECTED} isRunning onStop={onStop} />
-    );
+    render(<PromptComposer connectionStatus={CONNECTED} isRunning />);
 
     await user.click(screen.getByRole('button', { name: 'Stop generating' }));
 
-    expect(onStop).toHaveBeenCalledTimes(1);
+    expect(mockCancel).toHaveBeenCalledTimes(1);
   });
 
   it('keeps stop clickable and out of the form submit path when the input is disabled', () => {

@@ -83,7 +83,6 @@ function AssistantThread({
   configurationStatus,
   isEmpty = false,
   isRunning = false,
-  onStop = noop,
   onNewThread = noop,
   onClose = noop,
   modelNotice = null,
@@ -140,7 +139,6 @@ function AssistantThread({
             connectionStatus={connection}
             configurationStatus={configurationStatus}
             isRunning={isRunning}
-            onStop={onStop}
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>

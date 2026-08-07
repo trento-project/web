@@ -3,21 +3,22 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { StoppedRunProvider, useStoppedRun } from '../StoppedRunProvider';
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
 // AssistantMessage mounts <AgentProgressIndicator> and <StoppedNotice>, each
 // with its own useAuiState selector, so the stub has to run the selector
 // against one shared state object. `mock`-prefixed so jest.mock's factory can
-// close over it. `thread.messages` is what StoppedRunProvider (rendered for
-// real below) reads to decide which position a stop marks, and
-// `message.index` is this bubble's own position.
+// close over it. `status` is the message's own — `incomplete/cancelled` is
+// what the runtime writes when the user stops the run.
 let mockAuiState = {
-  message: { content: [], id: 'message-1', index: 0, isLast: true },
-  thread: { messages: [{ id: 'message-1' }] },
+  message: {
+    content: [],
+    id: 'message-1',
+    isLast: true,
+    status: { type: 'complete', reason: 'unknown' },
+  },
 };
 
 jest.mock('@assistant-ui/react', () => ({
@@ -41,21 +42,14 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 
 beforeEach(() => {
   mockAuiState = {
-    message: { content: [], id: 'message-1', index: 0, isLast: true },
-    thread: { messages: [{ id: 'message-1' }] },
+    message: {
+      content: [],
+      id: 'message-1',
+      isLast: true,
+      status: { type: 'complete', reason: 'unknown' },
+    },
   };
 });
-
-// Stops the thread's last message through the real provider — the same path
-// the composer's Stop button uses. Not a jest.mock of our own module.
-function StopButton() {
-  const { stopRun } = useStoppedRun();
-  return (
-    <button type="button" onClick={stopRun}>
-      stop
-    </button>
-  );
-}
 
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
@@ -93,40 +87,18 @@ describe('AssistantMessage', () => {
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
 
-  it('marks an answer the user stopped', async () => {
-    const user = userEvent.setup();
-    render(
-      <StoppedRunProvider onStop={() => true}>
-        <StopButton />
-        <AssistantMessage />
-      </StoppedRunProvider>
-    );
+  // The notice is a slot in the bubble; which answers earn it is
+  // StoppedNotice's own spec.
+  it('marks an answer the user stopped', () => {
+    mockAuiState.message.status = { type: 'incomplete', reason: 'cancelled' };
 
-    await user.click(screen.getByRole('button', { name: 'stop' }));
+    render(<AssistantMessage />);
 
     expect(screen.getByText('Response stopped.')).toBeVisible();
   });
 
   it('does not mark an answer as stopped by default', () => {
     render(<AssistantMessage />);
-
-    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
-  });
-
-  it('does not mark this message when the stop landed on a later answer', async () => {
-    const user = userEvent.setup();
-    mockAuiState = {
-      message: { content: [], id: 'message-1', index: 0, isLast: false },
-      thread: { messages: [{ id: 'message-1' }, { id: 'message-2' }] },
-    };
-    render(
-      <StoppedRunProvider onStop={() => true}>
-        <StopButton />
-        <AssistantMessage isRunning />
-      </StoppedRunProvider>
-    );
-
-    await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });

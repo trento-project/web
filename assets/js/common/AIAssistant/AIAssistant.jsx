@@ -10,7 +10,6 @@ import { CONNECTION_STATUS } from '@lib/ai';
 import AssistantChatProvider from './AssistantChatProvider';
 import AssistantThread from './AssistantThread';
 import ModalFrame from './ModalFrame';
-import { useStoppedRun } from './StoppedRunProvider';
 import {
   CONFIGURATION_STATUS,
   isConfigurationCleared,
@@ -30,7 +29,6 @@ function AssistantUI({
 }) {
   const isEmpty = useAuiState((s) => s.thread.isEmpty);
   const isRunning = useAuiState((s) => s.thread.isRunning);
-  const { stopRun } = useStoppedRun();
 
   return (
     <ModalFrame open={open} onOpenChange={onOpenChange} disabled={disabled}>
@@ -41,7 +39,6 @@ function AssistantUI({
         onNewThread={onNewThread}
         isEmpty={isEmpty}
         isRunning={isRunning}
-        onStop={stopRun}
         modelNotice={modelNotice}
         onDismissModelNotice={onDismissModelNotice}
       />

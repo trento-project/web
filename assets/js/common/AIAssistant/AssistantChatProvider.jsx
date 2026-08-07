@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { noop } from 'lodash';
 
 import { AssistantRuntimeProvider, useAui } from '@assistant-ui/react';
@@ -9,8 +9,6 @@ import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 
 import { useSocket } from '@common/SocketProvider';
 import { WebSocketAIAgent } from '@lib/ai';
-
-import { StoppedRunProvider } from './StoppedRunProvider';
 
 // An empty ExportedMessageRepository — what `thread.import()` takes to wipe a
 // thread (equivalent to `ExportedMessageRepository.fromArray([])`).
@@ -62,16 +60,13 @@ function AssistantChatProvider({
     agent.threadId = threadID;
   }, [agent, threadID]);
 
-  // Stop does NOT go through the runtime's cancel path (`onCancel` /
-  // `ComposerPrimitive.Cancel` / `thread.cancelRun()`). That path is an
-  // *undo the turn*: it deletes the user's prompt from the thread and refills
-  // the composer with its text — the opposite of what we specified — and it
-  // reaches the transport through `AbstractAgent.abortRun()`, which is a
-  // no-op, so the server would never be told to stop.
+  // The composer's Stop is `ComposerPrimitive.Cancel`, and this is where it
+  // lands: useAgUiRuntime wires the store's cancel to its own core, which
+  // calls `agent.abortRun()` — our override pushes `cancel_run` — and then
+  // dispatches RUN_CANCELLED so the answer is marked as stopped. Nothing of
+  // ours has to be threaded through for that.
   const runtime = useAgUiRuntime({ agent });
   const aui = useAui();
-
-  const handleStop = useCallback(() => agent.cancelActiveRun(), [agent]);
 
   // useAgUiRuntime keeps its core (and the message store) in a useRef across
   // re-renders. When threadID changes we keep the same agent (above) but the
@@ -100,7 +95,7 @@ function AssistantChatProvider({
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>
-      <StoppedRunProvider onStop={handleStop}>{children}</StoppedRunProvider>
+      {children}
     </AssistantRuntimeProvider>
   );
 }
