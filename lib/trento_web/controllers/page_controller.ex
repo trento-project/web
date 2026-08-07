@@ -85,9 +85,10 @@ defmodule TrentoWeb.PageController do
   end
 
   defp get_normalized_ai_providers do
-    Trento.AI.ApplicationConfigLoader.load()
-    |> Keyword.get(:providers, [])
-    |> Enum.map(fn {provider, config} -> {provider, Keyword.get(config, :models, [])} end)
+    Trento.AI.LLMRegistry.providers()
+    |> Enum.map(fn provider ->
+      {provider, Trento.AI.LLMRegistry.get_provider_models(provider)}
+    end)
     |> Enum.into(%{})
   end
 end
