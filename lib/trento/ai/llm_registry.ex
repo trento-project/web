@@ -6,13 +6,14 @@ defmodule Trento.AI.LLMRegistry do
   This module is responsible for managing the registry of available LLM providers and their models.
   """
 
-  alias Trento.AI.ApplicationConfigLoader
+  alias ReqLLM.ModelHelpers
+  @providers [:openai, :googleai, :anthropic]
 
   @doc """
   Returns the list of configured LLM providers.
   """
   @spec providers :: [atom()]
-  def providers, do: Keyword.keys(get_ai_providers_config())
+  def providers, do: @providers
 
   @doc """
   Returns the list of models for a given provider or all models if `:all` is passed.
@@ -20,14 +21,27 @@ defmodule Trento.AI.LLMRegistry do
   @spec get_provider_models(atom() | :all) :: [bitstring()]
   def get_provider_models(:all),
     do:
-      Enum.flat_map(get_ai_providers_config(), fn {_provider, config} ->
-        Keyword.get(config, :models, [])
-      end)
+      get_provider_models(:googleai) ++
+        get_provider_models(:anthropic) ++ get_provider_models(:openai)
 
-  def get_provider_models(provider) when is_atom(provider) do
-    get_ai_providers_config()
-    |> Keyword.get(provider, [])
-    |> Keyword.get(:models, [])
+  def get_provider_models(provider) when provider in @providers do
+    provider =
+      case provider == :googleai do
+        true ->
+          :google
+
+        _ ->
+          provider
+      end
+
+    models = LLMDB.models(provider)
+
+    models
+    |> Enum.filter(fn m ->
+      ModelHelpers.streaming_tool_calls?(m) && ModelHelpers.reasoning_enabled?(m) &&
+        ModelHelpers.chat?(m)
+    end)
+    |> Enum.map(& &1.id)
   end
 
   def get_provider_models(_), do: []
@@ -53,6 +67,4 @@ defmodule Trento.AI.LLMRegistry do
   def provider_supported?(provider) when is_atom(provider), do: provider in providers()
 
   def provider_supported?(_), do: false
-
-  defp get_ai_providers_config, do: Keyword.get(ApplicationConfigLoader.load(), :providers, [])
 end
