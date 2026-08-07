@@ -47,7 +47,8 @@ export default {
       control: { type: 'radio' },
     },
     isRunning: {
-      description: 'Whether a run is in flight (hides the send button)',
+      description:
+        'Whether a run is in flight — Stop replaces Send until it settles',
       control: { type: 'boolean' },
     },
   },
@@ -69,7 +70,7 @@ export const Disabled = {
   args: { connectionStatus: CONNECTION_STATUS.DISCONNECTED, isRunning: false },
 };
 
-export const Sending = {
+export const Running = {
   args: { connectionStatus: CONNECTION_STATUS.CONNECTED, isRunning: true },
 };
 
