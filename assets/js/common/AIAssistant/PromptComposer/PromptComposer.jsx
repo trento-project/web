@@ -68,9 +68,9 @@ function SendButton({ disabled, reason }) {
 // mid-answer.
 //
 // Not ComposerPrimitive.Cancel: its useComposerCancel calls
-// runtime.thread.cancelRun(), which is a confirmed @assistant-ui/core
-// defect that wedges thread.isRunning permanently (see StoppedRunProvider).
-// A plain button sidesteps that path entirely.
+// runtime.thread.cancelRun(), which deletes the user's prompt and refills the
+// composer with it, and is enabled whether or not a run is in flight. A plain
+// button sidesteps that path entirely — see AssistantChatProvider
 function StopButton({ onStop }) {
   return (
     <Button

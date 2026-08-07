@@ -14,16 +14,16 @@ jest.mock('@assistant-ui/react', () => ({
   useAuiState: jest.fn(),
 }));
 
-// StoppedNotice reads its own message id off `s.message.id`; the provider it
-// is rendered under reads the thread's last message id off
-// `s.thread.messages`. A test drives both through one shared selector so it
-// can say "this component is message X" and "the thread's last message is Y"
-// independently.
-const mockState = (ownMessageId, lastMessageId = ownMessageId) =>
+// StoppedNotice reads its own position off `s.message.index`; the provider it
+// is rendered under derives the thread's last position from
+// `s.thread.messages.length`. A test drives both through one shared selector
+// so it can say "this component is message N" and "the thread's last message
+// is M" independently.
+const mockState = (ownIndex, lastIndex = ownIndex) =>
   useAuiState.mockImplementation((selector) =>
     selector({
-      message: { id: ownMessageId },
-      thread: { messages: lastMessageId ? [{ id: lastMessageId }] : [] },
+      message: { index: ownIndex },
+      thread: { messages: Array.from({ length: lastIndex + 1 }, () => ({})) },
     })
   );
 
@@ -46,9 +46,9 @@ describe('StoppedNoticeView', () => {
 });
 
 describe('StoppedNotice', () => {
-  it('renders the copy when the context reports this message id stopped', async () => {
+  it('renders the copy when the context reports this message stopped', async () => {
     const user = userEvent.setup();
-    mockState('m1');
+    mockState(0);
 
     render(
       <StoppedRunProvider onStop={() => true}>
@@ -64,9 +64,9 @@ describe('StoppedNotice', () => {
 
   it('renders nothing when a different message was stopped', async () => {
     const user = userEvent.setup();
-    // This component is message m2; the thread's last (and stopped) message
-    // is m1 — an earlier turn.
-    mockState('m2', 'm1');
+    // This component is message index 1; the thread's last (and stopped)
+    // message is index 0 — an earlier turn.
+    mockState(1, 0);
 
     render(
       <StoppedRunProvider onStop={() => true}>
@@ -81,7 +81,7 @@ describe('StoppedNotice', () => {
   });
 
   it('renders nothing when nothing has been stopped', () => {
-    mockState('m1');
+    mockState(0);
 
     const { container } = render(
       <StoppedRunProvider onStop={() => true}>
