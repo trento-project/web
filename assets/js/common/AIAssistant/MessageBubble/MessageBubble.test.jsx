@@ -13,9 +13,10 @@ import { UserMessage, AssistantMessage } from './MessageBubble';
 // with its own useAuiState selector, so the stub has to run the selector
 // against one shared state object. `mock`-prefixed so jest.mock's factory can
 // close over it. `thread.messages` is what StoppedRunProvider (rendered for
-// real below) reads to decide which message id a stop marks.
+// real below) reads to decide which position a stop marks, and
+// `message.index` is this bubble's own position.
 let mockAuiState = {
-  message: { content: [], id: 'message-1', isLast: true },
+  message: { content: [], id: 'message-1', index: 0, isLast: true },
   thread: { messages: [{ id: 'message-1' }] },
 };
 
@@ -40,7 +41,7 @@ jest.mock('@assistant-ui/react-markdown', () => ({
 
 beforeEach(() => {
   mockAuiState = {
-    message: { content: [], id: 'message-1', isLast: true },
+    message: { content: [], id: 'message-1', index: 0, isLast: true },
     thread: { messages: [{ id: 'message-1' }] },
   };
 });
@@ -115,7 +116,7 @@ describe('AssistantMessage', () => {
   it('does not mark this message when the stop landed on a later answer', async () => {
     const user = userEvent.setup();
     mockAuiState = {
-      message: { content: [], id: 'message-1', isLast: false },
+      message: { content: [], id: 'message-1', index: 0, isLast: false },
       thread: { messages: [{ id: 'message-1' }, { id: 'message-2' }] },
     };
     render(

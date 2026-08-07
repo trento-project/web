@@ -13,13 +13,14 @@ jest.mock('@assistant-ui/react', () => ({
   useAuiState: jest.fn(),
 }));
 
-const mockLastMessageId = (...ids) =>
+// The provider keys off position, so a thread is just a length here.
+const mockThreadLength = (length) =>
   useAuiState.mockImplementation((selector) =>
-    selector({ thread: { messages: ids.map((id) => ({ id })) } })
+    selector({ thread: { messages: Array.from({ length }, () => ({})) } })
   );
 
 beforeEach(() => {
-  mockLastMessageId('m1');
+  mockThreadLength(1);
 });
 
 function StopButton() {
@@ -31,11 +32,11 @@ function StopButton() {
   );
 }
 
-function Marker({ messageId }) {
+function Marker({ messageIndex }) {
   const { isMessageStopped } = useStoppedRun();
   return (
-    <span data-testid={`stopped-${messageId}`}>
-      {String(isMessageStopped(messageId))}
+    <span data-testid={`stopped-${messageIndex}`}>
+      {String(isMessageStopped(messageIndex))}
     </span>
   );
 }
@@ -46,36 +47,36 @@ describe('useStoppedRun outside a provider', () => {
     render(
       <>
         <StopButton />
-        <Marker messageId="m1" />
+        <Marker messageIndex={0} />
       </>
     );
 
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('false');
     await user.click(screen.getByRole('button', { name: 'stop' }));
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('false');
   });
 });
 
 describe('StoppedRunProvider', () => {
-  it("marks the last message's id, and only that id, when stopped", async () => {
+  it("marks the last message's position, and only that position, when stopped", async () => {
     const user = userEvent.setup();
     const onStop = jest.fn(() => true);
 
     render(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
-        <Marker messageId="m2" />
+        <Marker messageIndex={0} />
+        <Marker messageIndex={1} />
       </StoppedRunProvider>
     );
 
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('false');
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(onStop).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
-    expect(screen.getByTestId('stopped-m2')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-1')).toHaveTextContent('false');
   });
 
   it('marks a second stopped message in addition to the first', async () => {
@@ -85,29 +86,29 @@ describe('StoppedRunProvider', () => {
     const { rerender } = render(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
-        <Marker messageId="m2" />
+        <Marker messageIndex={0} />
+        <Marker messageIndex={1} />
       </StoppedRunProvider>
     );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('true');
 
     // A follow-up prompt started a second run, whose placeholder is message
     // m2 — and the user stopped that one too.
-    mockLastMessageId('m1', 'm2');
+    mockThreadLength(2);
     rerender(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
-        <Marker messageId="m2" />
+        <Marker messageIndex={0} />
+        <Marker messageIndex={1} />
       </StoppedRunProvider>
     );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
 
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
-    expect(screen.getByTestId('stopped-m2')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-1')).toHaveTextContent('true');
   });
 
   // The spec clause this whole rework exists for: the marker on the earlier,
@@ -119,24 +120,24 @@ describe('StoppedRunProvider', () => {
     const { rerender } = render(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
+        <Marker messageIndex={0} />
       </StoppedRunProvider>
     );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('true');
 
     // A new run starts: the thread now has a fresh last message, but nothing
     // about that should touch the marker already placed on m1.
-    mockLastMessageId('m1', 'm2');
+    mockThreadLength(2);
     rerender(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
+        <Marker messageIndex={0} />
       </StoppedRunProvider>
     );
 
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('true');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('true');
   });
 
   it('marks nothing when onStop reports there was no run to stop', async () => {
@@ -146,13 +147,13 @@ describe('StoppedRunProvider', () => {
     render(
       <StoppedRunProvider onStop={onStop}>
         <StopButton />
-        <Marker messageId="m1" />
+        <Marker messageIndex={0} />
       </StoppedRunProvider>
     );
 
     await user.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(onStop).toHaveBeenCalledTimes(1);
-    expect(screen.getByTestId('stopped-m1')).toHaveTextContent('false');
+    expect(screen.getByTestId('stopped-0')).toHaveTextContent('false');
   });
 });

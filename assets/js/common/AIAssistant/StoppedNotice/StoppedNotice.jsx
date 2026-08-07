@@ -10,17 +10,18 @@ export function StoppedNoticeView({ children }) {
   return <div className="mt-2 text-sm text-gray-400">{children}</div>;
 }
 
-// Can't key off `s.message.status`: the AG-UI subscriber dispatches a
-// synthesized RUN_FINISHED whenever the run settles — including on
-// cancel — which overwrites `incomplete/cancelled` with `complete/unknown`
-// before this could ever read it (confirmed @assistant-ui/react-ag-ui
-// defect). The stopped state instead comes from our own StoppedRunProvider,
-// keyed by this message's own id.
+// Can't key off `s.message.status`. The AG-UI subscriber only produces
+// `incomplete/cancelled` when the run's Observable errors with an AbortError;
+// ours completes instead (see `_settleActiveRun`), so its `onRunFinalized`
+// dispatches a synthesized RUN_FINISHED and the status lands on
+// `complete/unknown`. The stopped state instead comes from our own
+// StoppedRunProvider, keyed by this message's position in the thread — see the
+// comment there for why position and not id.
 function StoppedNotice() {
-  const messageId = useAuiState((s) => s.message.id);
+  const messageIndex = useAuiState((s) => s.message.index);
   const { isMessageStopped } = useStoppedRun();
 
-  if (!isMessageStopped(messageId)) return null;
+  if (!isMessageStopped(messageIndex)) return null;
 
   return <StoppedNoticeView>Response stopped.</StoppedNoticeView>;
 }

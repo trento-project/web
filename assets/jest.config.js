@@ -233,7 +233,7 @@ module.exports = {
   // (refractor and its hast/character-entity helpers). Regenerate it after a
   // bump by walking the dependency graph for packages with `"type": "module"`.
   transformIgnorePatterns: [
-    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store' +
+    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|safe-content-frame|nanoid|zustand|use-sync-external-store' +
       '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
       '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
       '|character-entities|character-entities-legacy|character-reference-invalid' +

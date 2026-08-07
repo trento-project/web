@@ -24,8 +24,8 @@ jest.mock('@assistant-ui/react-ag-ui', () => ({
 }));
 
 // StoppedRunProvider (our own module, rendered for real below) reads the
-// thread's last message id off this — that is the answer a stop marks.
-// `mock`-prefixed so jest.mock's factory can close over it.
+// thread's last message *position* off this — that is the answer a stop
+// marks. `mock`-prefixed so jest.mock's factory can close over it.
 const mockAuiState = { thread: { messages: [{ id: 'message-1' }] } };
 
 jest.mock('@assistant-ui/react', () => ({
@@ -48,7 +48,7 @@ function StopTrigger() {
       <button type="button" onClick={stopRun}>
         stop
       </button>
-      <span>{isMessageStopped('message-1') ? 'marked' : 'not marked'}</span>
+      <span>{isMessageStopped(0) ? 'marked' : 'not marked'}</span>
     </>
   );
 }
@@ -98,14 +98,18 @@ describe('AssistantChatProvider', () => {
     expect(screen.getByText('hi')).toBeVisible();
   });
 
-  it('does not create the agent when no socket is available', () => {
+  // The agent itself is always built — the runtime cannot take a null one.
+  // What must not happen without a socket or a userID is a connection.
+  it('opens no channel when no socket is available', () => {
     const { agent } = renderProvider({ socket: null });
-    expect(agent()).toBeNull();
+    expect(agent()).toBeInstanceOf(WebSocketAIAgent);
+    expect(agent().channel).toBeNull();
   });
 
-  it('does not create the agent when no userID is provided', () => {
+  it('opens no channel when no userID is provided', () => {
     const { socket, agent } = renderProvider({ userID: undefined });
-    expect(agent()).toBeNull();
+    expect(agent()).toBeInstanceOf(WebSocketAIAgent);
+    expect(agent().channel).toBeNull();
     expect(socket.channels.size).toBe(0);
   });
 
@@ -234,9 +238,9 @@ describe('AssistantChatProvider', () => {
     await waitFor(() => {
       expect(runtime.thread.import).toHaveBeenCalledWith({ messages: [] });
     });
-    // The provider never reaches for the runtime's cancelRun — that path is
-    // a confirmed library defect (see StoppedRunProvider). Stop goes through
-    // StoppedRunProvider's onStop instead.
+    // The provider never reaches for the runtime's cancelRun — that path
+    // deletes the user's prompt and refills the composer with it. Stop goes
+    // through StoppedRunProvider's onStop instead.
     expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
   });
 
@@ -255,7 +259,7 @@ describe('AssistantChatProvider', () => {
     expect(cancelActiveRun).not.toHaveBeenCalled();
   });
 
-  it('does not give the runtime an onCancel — that path is a confirmed library defect', async () => {
+  it('does not give the runtime an onCancel — Stop must not unwind the turn', async () => {
     const { channel, runtimeOptions } = renderProvider();
     await waitFor(() => expect(channel()).toBeDefined());
 

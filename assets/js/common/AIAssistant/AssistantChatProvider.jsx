@@ -27,13 +27,17 @@ function AssistantChatProvider({
 }) {
   const socket = useSocket();
 
-  const agent = useMemo(() => {
-    if (!socket || !userID) return null;
-    return new WebSocketAIAgent({ socket, userID });
-  }, [socket, userID]);
+  // Built unconditionally, even without a socket or a userID: the AG-UI
+  // runtime dereferences the agent while constructing its core
+  // (`installResumeShim`) and types it as non-nullable, so handing it a null
+  // throws. An agent with no socket is inert anyway — `initialize()` refuses
+  // one, so nothing connects and no channel is ever opened.
+  const agent = useMemo(
+    () => new WebSocketAIAgent({ socket, userID }),
+    [socket, userID]
+  );
 
   useEffect(() => {
-    if (!agent) return;
     agent.withCallbacks({
       onConnectionChange,
       onAIConfigurationCleared,
@@ -43,7 +47,6 @@ function AssistantChatProvider({
   });
 
   useEffect(() => {
-    if (!agent) return undefined;
     // Catch rejections (channel-join error / timeout / missing socket)
     // so they don't bubble up as unhandled promise rejections —
     // onConnectionChange handles flipping the UI to DISCONNECTED
@@ -56,21 +59,19 @@ function AssistantChatProvider({
     // payload (defaults to "main" if unset). Mutate the live agent instead
     // of rebuilding it so the channel + websocket stay alive across thread
     // changes.
-    if (agent) agent.threadId = threadID;
+    agent.threadId = threadID;
   }, [agent, threadID]);
 
   // Stop does NOT go through the runtime's cancel path (`onCancel` /
-  // `ComposerPrimitive.Cancel` / `thread.cancelRun()`): that path resyncs a
-  // stale message snapshot and wedges `thread.isRunning` permanently
-  // (`@assistant-ui/core` external-store defect), and the AG-UI subscriber's
-  // synthesized `RUN_FINISHED` on settle clobbers `incomplete/cancelled`
-  // before anything can read it (`@assistant-ui/react-ag-ui` defect). Both
-  // are confirmed library defects with no supported extension point — see
-  // StoppedRunProvider, which drives Stop from our own state instead.
+  // `ComposerPrimitive.Cancel` / `thread.cancelRun()`). That path is an
+  // *undo the turn*: it deletes the user's prompt from the thread and refills
+  // the composer with its text — the opposite of what we specified — and it
+  // reaches the transport through `AbstractAgent.abortRun()`, which is a
+  // no-op, so the server would never be told to stop.
   const runtime = useAgUiRuntime({ agent });
   const aui = useAui();
 
-  const handleStop = useCallback(() => agent?.cancelActiveRun(), [agent]);
+  const handleStop = useCallback(() => agent.cancelActiveRun(), [agent]);
 
   // useAgUiRuntime keeps its core (and the message store) in a useRef across
   // re-renders. When threadID changes we keep the same agent (above) but the
@@ -94,7 +95,7 @@ function AssistantChatProvider({
     previousThreadIDRef.current = threadID;
 
     runtime.thread.import(EMPTY_THREAD);
-    agent?.abandonThread();
+    agent.abandonThread();
   }, [threadID, runtime, agent]);
 
   return (

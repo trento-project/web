@@ -27,21 +27,31 @@ export function useStoppedRun() {
 // Must be rendered inside AssistantRuntimeProvider — it reads thread state
 // via useAuiState.
 export function StoppedRunProvider({ onStop = noop, children }) {
-  const [stoppedMessageIds, setStoppedMessageIds] = useState(() => new Set());
-  const lastMessageId = useAuiState((s) => s.thread.messages.at(-1)?.id);
+  const [stoppedMessageIndexes, setStoppedMessageIndexes] = useState(
+    () => new Set()
+  );
+  // Keyed by position, NOT by message id. assistant-ui streams the answer
+  // into an optimistic placeholder (`__optimistic__…`) and swaps in a
+  // different, server-generated id once the run settles — so the id read at
+  // click time is already dead by the time StoppedNotice renders, and the
+  // marker would blink on and vanish. The position survives that swap,
+  // because a thread only ever appends.
+  const lastMessageIndex = useAuiState((s) => s.thread.messages.length - 1);
 
   const stopRun = useCallback(() => {
     // Only mark an answer as stopped if a run was actually there to stop —
     // a click landing after RUN_FINISHED but before the composer swaps
     // Stop→Send must not label a completed answer as cut short.
     if (!onStop()) return;
-    if (!lastMessageId) return;
-    setStoppedMessageIds((previous) => new Set(previous).add(lastMessageId));
-  }, [onStop, lastMessageId]);
+    if (lastMessageIndex < 0) return;
+    setStoppedMessageIndexes((previous) =>
+      new Set(previous).add(lastMessageIndex)
+    );
+  }, [onStop, lastMessageIndex]);
 
   const isMessageStopped = useCallback(
-    (messageId) => stoppedMessageIds.has(messageId),
-    [stoppedMessageIds]
+    (messageIndex) => stoppedMessageIndexes.has(messageIndex),
+    [stoppedMessageIndexes]
   );
 
   const value = useMemo(
