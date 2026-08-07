@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { recordSaga } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 

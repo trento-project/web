@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { recordSaga } from '@lib/test-utils';
 import {
   authClient,
@@ -104,6 +104,7 @@ describe('user actions saga', () => {
 describe('user login saga', () => {
   beforeEach(() => {
     axiosMock.reset();
+    networkClientAxiosMock.reset();
     jest.spyOn(console, 'error').mockImplementation(() => null);
   });
 

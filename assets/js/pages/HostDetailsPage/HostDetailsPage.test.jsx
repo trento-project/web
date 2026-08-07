@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import {
   renderWithRouterMatch,

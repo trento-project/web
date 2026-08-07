@@ -14,7 +14,7 @@ import {
 } from '@lib/test-utils';
 
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import { hostFactory, selectableCheckFactory } from '@lib/test-utils/factories';
 

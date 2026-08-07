@@ -7,7 +7,7 @@ import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 import { parseDateTimeLocalToUtc } from '@lib/timezones';
 
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import { networkClient } from '@lib/network';
 import {

@@ -1,8 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import axios from 'axios';
-import createAuthRefresh from 'axios-auth-refresh';
+import { createClient } from '@lib/network/http-client';
 import { logError, logWarn } from '@lib/log';
 import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
 
@@ -18,36 +17,46 @@ export const unrecoverableAuthError = Error(
   'could not authenticate the user, session destroyed'
 );
 
-export const networkClient = axios.create({
+// Holds the refresh currently being performed, so that requests failing with
+// 401 at the same time share a single token exchange.
+let inflightRefresh = null;
+
+// Refresh logic: called when networkClient receives a 401.  Exchanges the
+// stored refresh token for a new access token, then updates the request
+// config with the new Bearer token so the retried request carries it.
+//
+// A page typically has several requests in flight (the settings page alone
+// fires four), so they all get a 401 together: the first one starts the
+// exchange and the others await the same promise.  A request that already
+// carries an outdated token compared to the store skips the exchange
+// altogether and just retries with the token another request obtained.
+const refreshAuthLogic = async (config) => {
+  if (config.headers.Authorization === `Bearer ${getAccessTokenFromStore()}`) {
+    try {
+      if (!inflightRefresh) {
+        inflightRefresh = refreshAndStoreAccessToken().finally(() => {
+          inflightRefresh = null;
+        });
+      }
+      await inflightRefresh;
+    } catch (e) {
+      logWarn('could not refresh the token, error during the request flow', e);
+      throw unrecoverableAuthError;
+    }
+  }
+
+  config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
+  return config;
+};
+
+export const networkClient = createClient({
   baseURL: '/api/v1',
+  refreshAuthLogic,
 });
 
 networkClient.interceptors.request.use((request) => {
   request.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
   return request;
-});
-
-const refreshAuthLogic = async (failedRequest) => {
-  try {
-    await refreshAndStoreAccessToken();
-  } catch (e) {
-    logWarn('could not refresh the token, error during the request flow', e);
-    throw unrecoverableAuthError;
-  }
-
-  failedRequest.response.config.headers.Authorization = `Bearer ${getAccessTokenFromStore()}`;
-};
-
-// Even though it looks counter intuitive, we need to add `deduplicateRefresh: false`
-// to enable the retry of all the requests that got 401 at the same time.
-// The functionality of this flag is not properly implemented and it doesn't do what
-// it should. However, setting it to false fixes our problem.
-// Without this change, only the first request with 401 response is retried.
-// What the library docs explain about this field doesn't apply if the requests
-// receive 401 almost at the same time, as the retry is not handled in that case.
-// In any case, the refresh flow is done once
-createAuthRefresh(networkClient, refreshAuthLogic, {
-  deduplicateRefresh: false,
 });
 
 export const handleUnrecoverableAuthError = () => {

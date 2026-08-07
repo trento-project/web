@@ -7,7 +7,7 @@ import {
   useSuseManagerSettings,
 } from '@pages/SettingsPage/hooks';
 import { networkClient } from '@lib/network';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { flow, pick, set } from 'lodash/fp';
 import { faker } from '@faker-js/faker';
 import { act, renderHook } from '@testing-library/react';

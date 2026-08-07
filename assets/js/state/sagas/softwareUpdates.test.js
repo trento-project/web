@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 
 import { recordSaga } from '@lib/test-utils';
 import { patchForPackageFactory } from '@lib/test-utils/factories';

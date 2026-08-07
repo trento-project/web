@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import axios from 'axios';
+import { createClient } from '@lib/network/http-client';
 import { getFromConfig } from '@lib/config';
 import { logError } from '@lib/log';
 
 const STORAGE_ACCESS_TOKEN_IDENTIFIER = 'access_token';
 const STORAGE_REFRESH_TOKEN_IDENTIFIER = 'refresh_token';
 
-export const authClient = axios.create();
+export const authClient = createClient();
 
 export const login = (credentials) =>
   authClient.post('/api/session', credentials).then((response) => {

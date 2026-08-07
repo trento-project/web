@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { recordSaga } from '@lib/test-utils';
 

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { screen, act } from '@testing-library/react';
-import MockAdapter from 'axios-mock-adapter';
+import MockAdapter from '@lib/test-utils/mockClient';
 import { networkClient } from '@lib/network';
 import '@testing-library/jest-dom';
 
