@@ -160,6 +160,39 @@ describe('AssistantThread', () => {
     expect(onDismissModelNotice).toHaveBeenCalled();
   });
 
+  it('forwards onStop to the composer so Stop tears the run down', async () => {
+    const user = userEvent.setup();
+    const onStop = jest.fn();
+    renderThread({ isRunning: true, onStop });
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it('forwards isStopped to the last assistant message', () => {
+    renderThread({
+      isStopped: true,
+      messages: [
+        { id: 'm1', role: 'user', content: 'ping' },
+        { id: 'm2', role: 'assistant', content: 'pong' },
+      ],
+    });
+
+    expect(screen.getByText('Response stopped.')).toBeVisible();
+  });
+
+  it('does not mark the last assistant message as stopped by default', () => {
+    renderThread({
+      messages: [
+        { id: 'm1', role: 'user', content: 'ping' },
+        { id: 'm2', role: 'assistant', content: 'pong' },
+      ],
+    });
+
+    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
+  });
+
   it('wires the header buttons to the thread callbacks', async () => {
     const user = userEvent.setup();
     const onNewThread = jest.fn();

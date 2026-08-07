@@ -2,7 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { act, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CONNECTING, CONNECTED } from '@lib/ai/connectionStatus';
 
@@ -11,6 +17,7 @@ import { WebSocketAIAgent } from '@lib/ai';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { SocketContext } from '@common/SocketProvider';
 import AssistantChatProvider from './AssistantChatProvider';
+import { useStoppedRun } from './StoppedRunProvider';
 
 jest.mock('@assistant-ui/react-ag-ui', () => ({
   useAgUiRuntime: jest.fn(),
@@ -19,9 +26,25 @@ jest.mock('@assistant-ui/react-ag-ui', () => ({
 jest.mock('@assistant-ui/react', () => ({
   AssistantRuntimeProvider: ({ children }) => <>{children}</>,
   useAui: () => ({}),
+  // StoppedRunProvider (our own module, rendered for real below) reads
+  // thread.isRunning off this. Nothing in this suite exercises isRunning
+  // transitions — that behaviour belongs to StoppedRunProvider.test.jsx.
+  useAuiState: () => false,
 }));
 
 const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
+
+// Mounted alongside the tree's children so a test can reach the stopRun
+// the provider hands down through StoppedRunProvider, without jest.mock-ing
+// our own module.
+function StopTrigger() {
+  const { stopRun } = useStoppedRun();
+  return (
+    <button type="button" onClick={stopRun}>
+      stop
+    </button>
+  );
+}
 
 function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
   const runtime = {
@@ -38,6 +61,7 @@ function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
     <SocketContext.Provider value={socket}>
       <AssistantChatProvider {...nextProps}>
         <div>hi</div>
+        <StopTrigger />
       </AssistantChatProvider>
     </SocketContext.Provider>
   );
@@ -203,8 +227,9 @@ describe('AssistantChatProvider', () => {
     await waitFor(() => {
       expect(runtime.thread.import).toHaveBeenCalledWith({ messages: [] });
     });
-    // The provider never reaches for the runtime's cancelRun. Stop is its only
-    // caller and it comes in through the composer.
+    // The provider never reaches for the runtime's cancelRun — that path is
+    // a confirmed library defect (see StoppedRunProvider). Stop goes through
+    // StoppedRunProvider's onStop instead.
     expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
   });
 
@@ -223,12 +248,19 @@ describe('AssistantChatProvider', () => {
     expect(cancelActiveRun).not.toHaveBeenCalled();
   });
 
-  it('gives the runtime an onCancel that tears the run down on the transport', async () => {
-    const { channel, agent, runtimeOptions } = renderProvider();
+  it('does not give the runtime an onCancel — that path is a confirmed library defect', async () => {
+    const { channel, runtimeOptions } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+
+    expect(runtimeOptions().onCancel).toBeUndefined();
+  });
+
+  it('routes Stop through StoppedRunProvider to tear the run down on the transport', async () => {
+    const { channel, agent } = renderProvider();
     await waitFor(() => expect(channel()).toBeDefined());
     const cancelActiveRun = jest.spyOn(agent(), 'cancelActiveRun');
 
-    runtimeOptions().onCancel();
+    fireEvent.click(screen.getByRole('button', { name: 'stop' }));
 
     expect(cancelActiveRun).toHaveBeenCalledTimes(1);
   });

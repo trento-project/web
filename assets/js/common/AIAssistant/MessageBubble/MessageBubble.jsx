@@ -63,13 +63,13 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning }) {
+export function AssistantMessage({ isRunning, isStopped }) {
   return (
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         <AgentProgressIndicator isRunning={isRunning} />
-        <StoppedNotice />
+        <StoppedNotice isStopped={isStopped} />
       </MessageBubbleView>
       <MessageError />
     </MessagePrimitive.Root>

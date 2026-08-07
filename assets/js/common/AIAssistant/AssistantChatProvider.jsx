@@ -10,6 +10,8 @@ import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import { useSocket } from '@common/SocketProvider';
 import { WebSocketAIAgent } from '@lib/ai';
 
+import { StoppedRunProvider } from './StoppedRunProvider';
+
 // An empty ExportedMessageRepository — what `thread.import()` takes to wipe a
 // thread (equivalent to `ExportedMessageRepository.fromArray([])`).
 const EMPTY_THREAD = { messages: [] };
@@ -57,12 +59,18 @@ function AssistantChatProvider({
     if (agent) agent.threadId = threadID;
   }, [agent, threadID]);
 
-  // Invoked by the runtime once a run's abort signal has fired, so the
-  // transport can tear the run down on the wire too.
-  const handleCancel = useCallback(() => agent?.cancelActiveRun(), [agent]);
-
-  const runtime = useAgUiRuntime({ agent, onCancel: handleCancel });
+  // Stop does NOT go through the runtime's cancel path (`onCancel` /
+  // `ComposerPrimitive.Cancel` / `thread.cancelRun()`): that path resyncs a
+  // stale message snapshot and wedges `thread.isRunning` permanently
+  // (`@assistant-ui/core` external-store defect), and the AG-UI subscriber's
+  // synthesized `RUN_FINISHED` on settle clobbers `incomplete/cancelled`
+  // before anything can read it (`@assistant-ui/react-ag-ui` defect). Both
+  // are confirmed library defects with no supported extension point — see
+  // StoppedRunProvider, which drives Stop from our own state instead.
+  const runtime = useAgUiRuntime({ agent });
   const aui = useAui();
+
+  const handleStop = useCallback(() => agent?.cancelActiveRun(), [agent]);
 
   // useAgUiRuntime keeps its core (and the message store) in a useRef across
   // re-renders. When threadID changes we keep the same agent (above) but the
@@ -91,7 +99,7 @@ function AssistantChatProvider({
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>
-      {children}
+      <StoppedRunProvider onStop={handleStop}>{children}</StoppedRunProvider>
     </AssistantRuntimeProvider>
   );
 }

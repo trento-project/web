@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
@@ -66,17 +66,21 @@ function SendButton({ disabled, reason }) {
 // Never disabled: a run can outlive the connection or the AI configuration,
 // and whatever put the composer into read-only must not strand the user
 // mid-answer.
-function StopButton() {
+//
+// Not ComposerPrimitive.Cancel: its useComposerCancel calls
+// runtime.thread.cancelRun(), which is a confirmed @assistant-ui/core
+// defect that wedges thread.isRunning permanently (see StoppedRunProvider).
+// A plain button sidesteps that path entirely.
+function StopButton({ onStop }) {
   return (
-    <ComposerPrimitive.Cancel asChild>
-      <Button
-        type="default-fit"
-        aria-label="Stop generating"
-        title="Stop generating"
-      >
-        <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
-      </Button>
-    </ComposerPrimitive.Cancel>
+    <Button
+      type="default-fit"
+      aria-label="Stop generating"
+      title="Stop generating"
+      onClick={onStop}
+    >
+      <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
+    </Button>
   );
 }
 
@@ -84,6 +88,7 @@ function PromptComposer({
   connectionStatus,
   configurationStatus = CONFIGURATION_STATUS.OK,
   isRunning = false,
+  onStop = noop,
 }) {
   const inputDisabled = !canSendMessage(connectionStatus, configurationStatus);
   const placeholder = isChatReadOnly(configurationStatus)
@@ -113,7 +118,7 @@ function PromptComposer({
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
         {isRunning ? (
-          <StopButton />
+          <StopButton onStop={onStop} />
         ) : (
           <SendButton disabled={inputDisabled} reason={placeholder} />
         )}
