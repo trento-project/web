@@ -2,14 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { renderAIAssistant } from '@lib/test-utils/aiAssistant';
 import { aguiEvents } from '@lib/test-utils/aguiEvents';
 
+const assistantBubbles = () =>
+  Array.from(document.querySelectorAll('[data-role="assistant"]'));
+
 const assistantBubble = () => {
-  const nodes = document.querySelectorAll('[data-role="assistant"]');
+  const nodes = assistantBubbles();
   return nodes[nodes.length - 1] || null;
 };
 
@@ -220,6 +223,189 @@ describe('AG-UI event flow', () => {
     await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
 
     await waitFor(() => expect(newChat()).toBeEnabled());
+  });
+
+  it('stops a streaming run without discarding what is on screen', async () => {
+    const { user, channel, emitAgUi, sendUserMessage } =
+      await renderAIAssistant({
+        open: true,
+      });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+
+    const messageId = 'asst-1';
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+    await emitAgUi(aguiEvents.textStart({ messageId }));
+    await emitAgUi(
+      aguiEvents.textContent({ messageId, delta: 'half an answer' })
+    );
+    await waitFor(() => {
+      expect(assistantBubble()).toHaveTextContent('half an answer');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: runId, thread_id: threadId },
+        }),
+      ]);
+    });
+
+    // Everything the user already saw survives: their prompt, the partial
+    // answer, and a marker saying it was cut short.
+    expect(screen.getByText('hello')).toBeVisible();
+    expect(assistantBubble()).toHaveTextContent('half an answer');
+    expect(await screen.findByText('Response stopped.')).toBeVisible();
+
+    // The composer is promptable again, empty, with nothing left spinning.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.getByLabelText('Message input')).toHaveValue('');
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Stop generating' })
+    ).not.toBeInTheDocument();
+  });
+
+  it('stops a run that has not produced a single token yet', async () => {
+    const { user, channel, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+
+    // No server event at all — the run is stopped between the push and the
+    // first RUN_STARTED.
+    expect(screen.getByText('Thinking...')).toBeVisible();
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    await waitFor(() => {
+      expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([
+        expect.objectContaining({
+          payload: { run_id: runId, thread_id: threadId },
+        }),
+      ]);
+    });
+
+    expect(screen.getByText('hello')).toBeVisible();
+    expect(await screen.findByText('Response stopped.')).toBeVisible();
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.queryByText('Thinking...')).not.toBeInTheDocument();
+  });
+
+  it('keeps the marker on the stopped answer once a follow-up prompt starts a new run', async () => {
+    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+    await screen.findByLabelText('Send message');
+
+    // The stopped answer gets its own bubble — pin it before a second one
+    // exists, so scoping later assertions to "the earlier bubble" is
+    // unambiguous.
+    const stoppedBubble = assistantBubble();
+    expect(within(stoppedBubble).getByText('Response stopped.')).toBeVisible();
+
+    const next = await sendUserMessage('try again');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId: next.run_id }));
+
+    // Stop is not "New chat": the conversation, and the server-side agent
+    // holding it, are the same ones.
+    expect(next.thread_id).toBe(threadId);
+    expect(next.run_id).not.toBe(runId);
+
+    // The spec clause this whole rework exists for: the marker persists on
+    // the message it belongs to for the rest of the conversation — the new
+    // run must not clear it, and must not carry a marker of its own.
+    expect(within(stoppedBubble).getByText('Response stopped.')).toBeVisible();
+    const newBubble = assistantBubble();
+    expect(newBubble).not.toBe(stoppedBubble);
+    expect(
+      within(newBubble).queryByText('Response stopped.')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the progress indicator only on the answer in flight, never on an earlier stopped one', async () => {
+    const { user, emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } =
+      await sendUserMessage('hello');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+    await screen.findByLabelText('Send message');
+
+    // Stopped before a single token, so this bubble holds no text and never
+    // will. `isRunning` is thread-scoped, so the next run turns it back on
+    // for this bubble too — the spinner has to be pinned to the live answer
+    // by something other than the run state.
+    const stoppedBubble = assistantBubble();
+
+    const next = await sendUserMessage('try again');
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId: next.run_id }));
+
+    expect(await screen.findByText('Thinking...')).toBeVisible();
+    expect(screen.getAllByText('Thinking...')).toHaveLength(1);
+    expect(
+      within(stoppedBubble).queryByText('Thinking...')
+    ).not.toBeInTheDocument();
+  });
+
+  it('recovers the composer when a cross-tab config change abandons a run that was streaming behind a closed launcher', async () => {
+    const { user, channel, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+
+    await sendUserMessage('hello');
+    expect(
+      screen.getByRole('button', { name: 'Stop generating' })
+    ).toBeVisible();
+
+    // Closing the launcher does not tear the run down — only a cross-tab
+    // config change (or a manual "New chat") does.
+    await user.click(screen.getByLabelText('Close'));
+
+    await act(async () => {
+      channel.emit('ai_configuration_created');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Open AI Assistant' }));
+
+    // The abandoned run must have been settled locally — the reopened pane
+    // is promptable again, not still waiting on a run the server already
+    // killed.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Stop generating' })
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'New chat' })).toBeEnabled();
+  });
+
+  it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
+    const { user, channel, sendUserMessage, streamAssistantTurn } =
+      await renderAIAssistant({ open: true });
+
+    const turn = await sendUserMessage('hello');
+    await streamAssistantTurn(turn, { messageId: 'a', deltas: ['an answer'] });
+
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
+
+    // Nothing is streaming — "New chat" is locked while a run is in flight —
+    // but the thread's agent survives the run and holds the whole
+    // conversation, so the server still has to be told to let it go.
+    await waitFor(() => {
+      expect(
+        channel.pushed.filter((p) => p.event === 'abandon_thread')
+      ).toEqual([expect.objectContaining({ payload: {} })]);
+    });
+    expect(channel.pushed.filter((p) => p.event === 'cancel_run')).toEqual([]);
   });
 
   it('"New chat" starts a new conversation with a new thread ID', async () => {

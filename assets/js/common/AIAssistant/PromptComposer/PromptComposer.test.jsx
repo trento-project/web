@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
@@ -125,9 +126,50 @@ describe('PromptComposer', () => {
     }
   );
 
-  it('hides the send button while the thread is running', () => {
+  it('replaces the send button with a stop button while the thread is running', () => {
     render(<PromptComposer connectionStatus={CONNECTED} isRunning />);
+
     expect(screen.queryByRole('button', { name: 'Send message' })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Stop generating' })
+    ).toBeVisible();
+  });
+
+  it('calls onStop when the stop button is clicked', async () => {
+    const user = userEvent.setup();
+    const onStop = jest.fn();
+    render(
+      <PromptComposer connectionStatus={CONNECTED} isRunning onStop={onStop} />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps stop clickable and out of the form submit path when the input is disabled', () => {
+    render(
+      <PromptComposer
+        connectionStatus={DISCONNECTED}
+        configurationStatus={CLEARED}
+        isRunning
+      />
+    );
+
+    const stop = screen.getByRole('button', { name: 'Stop generating' });
+
+    // A run can outlive the connection or the configuration. Whatever put the
+    // input into read-only must not strand the user mid-answer.
+    expect(stop).toBeEnabled();
+    expect(stop).toHaveAttribute('type', 'button');
+  });
+
+  it('explains the stop button on hover', () => {
+    render(<PromptComposer connectionStatus={CONNECTED} isRunning />);
+
+    expect(
+      screen.getByRole('button', { name: 'Stop generating' })
+    ).toHaveAttribute('title', 'Stop generating');
   });
 
   it('renders the footnote with the documentation link', () => {

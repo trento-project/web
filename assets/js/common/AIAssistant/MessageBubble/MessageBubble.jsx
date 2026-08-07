@@ -8,6 +8,7 @@ import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
+import StoppedNotice from '../StoppedNotice';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -67,6 +68,7 @@ export function AssistantMessage({ isRunning }) {
       <MessageBubbleView variant="assistant">
         <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         <AgentProgressIndicator isRunning={isRunning} />
+        <StoppedNotice />
       </MessageBubbleView>
       <MessageError />
     </MessagePrimitive.Root>

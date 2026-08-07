@@ -76,7 +76,7 @@ function ModalFrame({
 
       <AssistantModalPrimitive.Content
         sideOffset={16}
-        className="z-[101] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+        className="z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
       >
         <Rnd
           bounds="window"

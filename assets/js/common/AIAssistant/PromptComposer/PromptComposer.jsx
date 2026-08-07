@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
+import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
@@ -46,8 +47,7 @@ const footnote = (
   </>
 );
 
-function SendButton({ disabled, isRunning, reason }) {
-  if (isRunning) return null;
+function SendButton({ disabled, reason }) {
   return (
     <ComposerPrimitive.Send asChild>
       <Button
@@ -63,10 +63,32 @@ function SendButton({ disabled, isRunning, reason }) {
   );
 }
 
+// Never disabled: a run can outlive the connection or the AI configuration,
+// and whatever put the composer into read-only must not strand the user
+// mid-answer.
+//
+// Not ComposerPrimitive.Cancel: its useComposerCancel calls
+// runtime.thread.cancelRun(), which deletes the user's prompt and refills the
+// composer with it, and is enabled whether or not a run is in flight. A plain
+// button sidesteps that path entirely — see AssistantChatProvider
+function StopButton({ onStop }) {
+  return (
+    <Button
+      type="default-fit"
+      aria-label="Stop generating"
+      title="Stop generating"
+      onClick={onStop}
+    >
+      <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
+    </Button>
+  );
+}
+
 function PromptComposer({
   connectionStatus,
   configurationStatus = CONFIGURATION_STATUS.OK,
   isRunning = false,
+  onStop = noop,
 }) {
   const inputDisabled = !canSendMessage(connectionStatus, configurationStatus);
   const placeholder = isChatReadOnly(configurationStatus)
@@ -95,11 +117,11 @@ function PromptComposer({
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
-        <SendButton
-          disabled={inputDisabled}
-          isRunning={isRunning}
-          reason={placeholder}
-        />
+        {isRunning ? (
+          <StopButton onStop={onStop} />
+        ) : (
+          <SendButton disabled={inputDisabled} reason={placeholder} />
+        )}
       </div>
     </ComposerPrimitive.Root>
   );

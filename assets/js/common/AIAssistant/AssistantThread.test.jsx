@@ -160,6 +160,16 @@ describe('AssistantThread', () => {
     expect(onDismissModelNotice).toHaveBeenCalled();
   });
 
+  it('forwards onStop to the composer so Stop tears the run down', async () => {
+    const user = userEvent.setup();
+    const onStop = jest.fn();
+    renderThread({ isRunning: true, onStop });
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(onStop).toHaveBeenCalledTimes(1);
+  });
+
   it('wires the header buttons to the thread callbacks', async () => {
     const user = userEvent.setup();
     const onNewThread = jest.fn();

@@ -49,6 +49,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._activeThreadId = null;
     this._getAccessToken = getAccessToken;
     this._refreshToken = refreshToken;
     this._onUnrecoverableAuthError = onUnrecoverableAuthError;
@@ -173,14 +174,27 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.#callbacks.onAIConfigurationCleared();
   }
 
-  _isStaleRunFinished({ type, runId }) {
-    return type === EventType.RUN_FINISHED && runId !== this._activeRunId;
+  // The events the server stamps with a run id — AgUi.Core.Events.RunStarted
+  // and RunFinished both enforce one. RUN_ERROR is deliberately absent:
+  // AgUi.Core.Events.RunError has no run_id field at all, so filtering it on
+  // one would drop every error. Everything else the channel pushes
+  // (TEXT_MESSAGE_*, TOOL_CALL_*) belongs to whichever run is subscribed.
+  static RUN_SCOPED_EVENTS = [EventType.RUN_STARTED, EventType.RUN_FINISHED];
+
+  // A run-scoped event naming a run other than the active one is the tail of a
+  // run that was cancelled or superseded; letting it through would settle — or
+  // restart — the run that replaced it.
+  _isStaleRunEvent({ type, runId }) {
+    return (
+      WebSocketAIAgent.RUN_SCOPED_EVENTS.includes(type) &&
+      runId !== this._activeRunId
+    );
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    if (this._isStaleRunFinished(event)) return;
+    if (this._isStaleRunEvent(event)) return;
 
     subscriber.next(event);
 
@@ -213,6 +227,9 @@ export class WebSocketAIAgent extends AbstractAgent {
       }
 
       this._activeRunId = runId;
+      // Pinned per run: `this.threadId` is mutated the moment the user starts
+      // a new chat, so it no longer names the run being cancelled.
+      this._activeThreadId = threadId;
       this._activeSubscriber = subscriber;
 
       const setupRun = async () => {
@@ -256,6 +273,13 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
+  // Settle the in-flight run, with an error only when the user needs to see one.
+  //
+  // Beware of the error path: @assistant-ui/react-ag-ui turns it into an
+  // unhandled promise rejection. AgUiThreadRuntimeCore.startRun re-throws
+  // whatever the subscriber errored with, and ExternalThread's
+  // `onNew?.(message)` neither awaits nor catches the result. There is no seam
+  // on our side — only pass an error when it is genuinely the user's business.
   _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
@@ -263,9 +287,52 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
+  // Stop, from the composer. Called directly by StoppedRunProvider — there is
+  // no runtime `onCancel` any more. The ids are the ones pinned when the run
+  // started, not the live ones. Returns whether a run was actually settled,
+  // so a click that lands after the run already finished cannot mark a
+  // completed answer as stopped.
+  cancelActiveRun() {
+    if (!this._activeSubscriber) return false;
+
+    this.channel?.push('cancel_run', {
+      run_id: this._activeRunId,
+      thread_id: this._activeThreadId,
+    });
+
+    this._settleActiveRun();
+    return true;
+  }
+
+  // "New chat". The thread's server-side agent outlives its runs and would
+  // otherwise hold the whole conversation until the sagents inactivity
+  // timeout, so the server has to be told the thread is gone. "New chat" the
+  // button is locked while a run is in flight, but that is not the only
+  // caller: a cross-tab `ai_configuration_created` can mint a new threadID
+  // while the launcher is closed, with a run genuinely still streaming.
+  //
+  // The payload is empty because there are no correlation ids worth sending:
+  // `_activeThreadId` is null by construction, and `this.threadId` has already
+  // been mutated to the *new* id (the provider's threadId effect is declared
+  // above the swap effect), so logging it would be actively misleading. The
+  // server abandons the thread in its own assigns.
+  //
+  // The server terminates the agent outright (Trento.AI.Agent.stop/1), so no
+  // RUN_FINISHED / RUN_ERROR ever comes back for it — the channel documents
+  // that the resulting `{:status_changed, :cancelled, nil}` is swallowed on
+  // purpose because the client is expected to have already settled locally.
+  // `_settleActiveRun()` is that settle, the same contract `cancelActiveRun()`
+  // honours; it self-guards on `_activeSubscriber`, so this is a no-op on the
+  // ordinary path where nothing was streaming.
+  abandonThread() {
+    this.channel?.push('abandon_thread', {});
+    this._settleActiveRun();
+  }
+
   _clearActiveRun() {
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._activeThreadId = null;
   }
 
   _setConnectionStatus(status) {

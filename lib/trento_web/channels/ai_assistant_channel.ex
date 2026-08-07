@@ -35,7 +35,11 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   - `stash_run_ids/3` — at the head of `handle_in("send_message", ...)`, before validation.
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
-  - `reset_run/1` — on `:idle` (success), `:error`, and `run_agent` failure; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+  - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+
+  The cancelled agent broadcasts `{:status_changed, :cancelled, nil}`, which the
+  catch-all `handle_info/2` swallows on purpose: the client has already settled
+  the run locally, so there is nothing left to tell it.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -101,6 +105,58 @@ defmodule TrentoWeb.AIAssistantChannel do
 
     {:reply, {:error, :invalid_payload}, socket}
   end
+
+  # The user hit Stop in the composer. Cancel the in-flight run and leave the
+  # thread's agent — and its conversation — standing: the next prompt goes to
+  # the same thread.
+  #
+  # Clearing `:loading` is the load-bearing part: it is channel-scoped, not
+  # thread-scoped, so without it the very next `send_message` would hit the
+  # double-send guard and get dropped with no reply at all.
+  #
+  # The payload's `run_id`/`thread_id` are correlation aids for wire logs only:
+  # the thread acted on is the one this channel has in its assigns, never one
+  # the client names.
+  #
+  # No AG-UI event is pushed back — the client settles its own run before it
+  # sends this, and a `RUN_ERROR` would surface a failure the user did not have.
+  def handle_in(
+        "cancel_run",
+        _payload,
+        %{assigns: %{current_thread_id: thread_id}} = socket
+      ) do
+    TrentoAIAgent.cancel(thread_id)
+
+    {:reply, :ok, reset_run(socket)}
+  end
+
+  # No thread was ever stashed, so there is nothing to cancel. `reset_run/1`
+  # anyway — leaving `:loading` set here would wedge the channel for good.
+  def handle_in("cancel_run", _payload, socket), do: {:reply, :ok, reset_run(socket)}
+
+  # The user abandoned the thread by clicking "New chat", which mints a fresh
+  # thread id, so nothing will ever address this one again.
+  #
+  # `stop/1` cancels whatever is in flight *and* terminates the thread's agent,
+  # releasing its conversation now instead of leaving it to the sagents
+  # inactivity timeout. "New chat" is locked while a run is in flight, so in
+  # practice there is nothing to cancel — but `stop/1` cancels first regardless,
+  # because `Sagents.AgentServer.terminate/2` would otherwise wait for a running
+  # task, blocking this channel process.
+  #
+  # Same `:loading` reasoning as `cancel_run`, and the same silence on the wire.
+  def handle_in(
+        "abandon_thread",
+        _payload,
+        %{assigns: %{current_thread_id: thread_id}} = socket
+      ) do
+    TrentoAIAgent.stop(thread_id)
+
+    {:reply, :ok, reset_run(socket)}
+  end
+
+  # No thread was ever stashed, so there is nothing to stop.
+  def handle_in("abandon_thread", _payload, socket), do: {:reply, :ok, reset_run(socket)}
 
   defp check_ai_enabled do
     case AI.enabled?() do
