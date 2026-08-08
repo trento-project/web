@@ -12,6 +12,7 @@ import MockAdapter from 'axios-mock-adapter';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { TUNING_VALUES } from '@lib/test-utils/saptune';
+import { formatDateTime } from '@lib/timezones';
 import {
   hostFactory,
   saptuneStatusFactory,
@@ -51,13 +52,48 @@ describe('HostDetails component', () => {
         />
       );
 
-      const header = screen.getByRole('heading', {
-        name: `Host Details: ${hostname}`,
+      expect(
+        screen.getByRole('heading', {
+          name: `Host Details: ${hostname}`,
+        })
+      ).toBeVisible();
+      expect(screen.getByRole('img', { name: /host health/i })).toBeVisible();
+    });
+  });
+
+  describe('When stale', () => {
+    it('should render stale icon and warning banner', () => {
+      const timezone = 'Etc/UTC';
+      const { hostname, health, heartbeat, staleAt } = hostFactory.build({
+        heartbeat: 'critical',
+        staleAt: faker.date.past(),
       });
 
-      expect(header).toBeInTheDocument();
-      const { getByTestId } = within(header);
-      expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+      renderWithRouter(
+        <HostDetails
+          hostname={hostname}
+          health={health}
+          heartbeat={heartbeat}
+          staleAt={staleAt}
+          agentVersion="1.0.0"
+          userAbilities={userAbilities}
+          timezone={timezone}
+        />
+      );
+
+      expect(
+        screen.getByRole('heading', {
+          name: `Host Details: ${hostname}`,
+        })
+      ).toBeVisible();
+      expect(screen.getByRole('img', { name: /host health/i })).toHaveAttribute(
+        'data-stale'
+      );
+      expect(
+        screen.getByRole('alert', {
+          name: /^The agent in this host is not responding/i,
+        })
+      ).toHaveTextContent(formatDateTime(staleAt, timezone));
     });
   });
 
@@ -502,13 +538,14 @@ describe('HostDetails component', () => {
   });
 
   describe('operations', () => {
-    it('should disable operations button if host heartbeat is not passing', async () => {
+    it('should disable operations button if host data is stale', async () => {
       const user = userEvent.setup();
 
       renderWithRouter(
         <HostDetails
           agentVersion="2.0.0"
           heartbeat="critical"
+          staleAt={faker.date.past()}
           userAbilities={userAbilities}
           operationsEnabled
         />

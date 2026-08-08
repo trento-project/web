@@ -21,13 +21,14 @@ defmodule Trento.Hosts.Host do
   ## Host health
 
   Holds the information about whether the host is in an expected state or not, and if not,
-  what is the roout cause helping identifying possible remediation.
+  what is the root cause helping identifying possible remediation.
   It is composed by sub-health elements:
 
-  - Heartbeat status
   - Checks health
+  - Saptune health
+  - Software Updates Discovery health
 
-  The main host health is computed using these values, meaning the host health is the worst of the two.
+  The main host health is computed using these values, meaning the host health is the worst-case of the the individual values.
 
   ### Heartbeat
 
@@ -422,33 +423,28 @@ defmodule Trento.Hosts.Host do
   end
 
   def execute(
-        %Host{heartbeat: heartbeat} = host,
-        %UpdateHeartbeat{heartbeat: :passing}
-      )
-      when heartbeat != :passing do
-    host
-    |> Multi.new()
-    |> Multi.execute(&%HeartbeatSucceeded{host_id: &1.host_id})
-    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
-  end
+        %Host{heartbeat: heartbeat},
+        %UpdateHeartbeat{heartbeat: heartbeat}
+      ),
+      do: nil
 
   def execute(
-        %Host{heartbeat: heartbeat} = host,
+        %Host{host_id: host_id},
+        %UpdateHeartbeat{heartbeat: :passing}
+      ),
+      do: %HeartbeatSucceeded{host_id: host_id}
+
+  def execute(
+        %Host{host_id: host_id},
         %UpdateHeartbeat{heartbeat: :critical}
-      )
-      when heartbeat != :critical do
-    host
-    |> Multi.new()
-    |> Multi.execute(&%HeartbeatFailed{host_id: &1.host_id})
-    |> Multi.execute(&maybe_emit_host_health_changed_event/1)
-  end
+      ),
+      do: %HeartbeatFailed{host_id: host_id}
 
   def execute(
         %Host{},
         %UpdateHeartbeat{}
-      ) do
-    []
-  end
+      ),
+      do: nil
 
   def execute(
         %Host{provider: provider, provider_data: provider_data},
@@ -959,7 +955,6 @@ defmodule Trento.Hosts.Host do
 
   defp maybe_emit_host_health_changed_event(%Host{
          host_id: host_id,
-         heartbeat: heartbeat,
          health_details: %HealthDetails{
            checks_health: checks_health,
            saptune_health: saptune_health,
@@ -968,7 +963,7 @@ defmodule Trento.Hosts.Host do
          health: current_health
        }) do
     new_health =
-      [heartbeat]
+      []
       |> maybe_add_checks_health(checks_health)
       |> maybe_add_saptune_health(saptune_health)
       |> maybe_add_software_updates_discovery_health(software_updates_discovery_health)
