@@ -1,57 +1,5 @@
 [
   {
-    "timestamp": "2026-06-22T23:42:55Z",
-    "commit": "16c5bc8051fbd897d26c409a5060300ada9a9897",
-    "run_id": "27984423885",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 14
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.07022
-      },
-      {
-        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should configure TOTP and validate login cases, then disable it::Users TOTP authentication should configure TOTP and validate login cases, then disable it",
-        "score": 0.02501
-      },
-      {
-        "name": "should delete the user personal access token and revoke access to guarded resources::Users Edit user personal access tokens should delete the user personal access token and revoke access to guarded resources",
-        "score": 0.02501
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-23T19:29:22Z",
     "commit": "25cbc1d1fcc84f0aa663a5ac3f39590548d08eb4",
     "run_id": "28050613669",
@@ -4976,6 +4924,22 @@
       },
       {
         "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should add an application instance to a non registered SAP system when the instance is ABAP without complete a sap system registration",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-08T17:53:59Z",
+    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
+    "run_id": "31269921208",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
         "score": 0.02501
       }
     ]
