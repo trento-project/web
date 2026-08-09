@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-23T22:48:39Z",
-    "commit": "25cbc1d1fcc84f0aa663a5ac3f39590548d08eb4",
-    "run_id": "28054518423",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 99,
-      "failed_runs": 9
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.1248
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.08646
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-24T19:12:03Z",
     "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
     "run_id": "28122305712",
@@ -4987,6 +4967,17 @@
     "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
     "metrics": {
       "completed_runs": 40,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-09T17:54:13Z",
+    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
+    "run_id": "31326961373",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
       "failed_runs": 0
     },
     "top_flaky_tests": []
