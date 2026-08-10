@@ -228,8 +228,16 @@ module.exports = {
 
   // Allow transforming ESM-only deps (e.g. @faker-js/faker) inside node_modules.
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
+  //
+  // The second group is react-syntax-highlighter's ESM-only transitive tree
+  // (refractor and its hast/character-entity helpers). Regenerate it after a
+  // bump by walking the dependency graph for packages with `"type": "module"`.
   transformIgnorePatterns: [
-    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store)/)',
+    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store' +
+      '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
+      '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
+      '|character-entities|character-entities-legacy|character-reference-invalid' +
+      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal)/)',
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
