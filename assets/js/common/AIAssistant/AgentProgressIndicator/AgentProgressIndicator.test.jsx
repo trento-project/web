@@ -92,8 +92,18 @@ describe('AgentProgressIndicator', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  // `isRunning` is thread-scoped: every assistant bubble gets the same value.
+  // A run the user stopped before its first token leaves a text-less message
+  // in the history forever, so without this guard it claims the spinner again
+  // every time a later run starts.
+  it('renders nothing on an earlier answer once a later one exists', () => {
+    mockMessage({ content: [], isLast: false });
+    const { container } = render(<AgentProgressIndicator isRunning />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
-    mockMessage({ content: [] });
+    mockMessage({ content: [], isLast: true });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
@@ -101,6 +111,7 @@ describe('AgentProgressIndicator', () => {
   it('renders the tool name while a tool call is in flight', () => {
     mockMessage({
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
+      isLast: true,
     });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();

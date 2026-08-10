@@ -55,6 +55,11 @@ function AssistantChatProvider({
     agent.threadId = threadID;
   }, [agent, threadID]);
 
+  // The composer's Stop is `ComposerPrimitive.Cancel`, and this is where it
+  // lands: useAgUiRuntime wires the store's cancel to its own core, which
+  // calls `agent.abortRun()` — our override pushes `cancel_run` — and then
+  // dispatches RUN_CANCELLED so the answer is marked as stopped. Nothing of
+  // ours has to be threaded through for that.
   const runtime = useAgUiRuntime({ agent });
   const aui = useAui();
 

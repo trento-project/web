@@ -5,6 +5,7 @@ import React from 'react';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { noop } from 'lodash';
 
 import {
   AssistantRuntimeProvider,
@@ -19,12 +20,15 @@ import { OK, CLEARED, RESTORED } from './status';
 
 // Drives the real ThreadPrimitive off assistant-ui's external store rather
 // so the viewport, the message render prop and the composer are all the production ones.
-function ThreadWithStubbedProvider({ messages, ...props }) {
+// `onCancel` is what makes the store advertise the cancel capability, which is
+// what enables ComposerPrimitive.Cancel behind the Stop button.
+function ThreadWithStubbedProvider({ messages, onCancel = noop, ...props }) {
   const runtime = useExternalStoreRuntime({
     isRunning: false,
     messages,
     convertMessage: (message) => message,
     onNew: async () => {},
+    onCancel,
   });
 
   return (
@@ -158,6 +162,20 @@ describe('AssistantThread', () => {
     await user.click(screen.getByRole('button', { name: 'Dismiss' }));
 
     expect(onDismissModelNotice).toHaveBeenCalled();
+  });
+
+  // The thread passes no stop handler of its own: the composer's Stop is
+  // ComposerPrimitive.Cancel, so it reaches whatever cancel the runtime
+  // exposes. In production that is the AG-UI runtime's, which aborts the run
+  // on the agent.
+  it('sends Stop to the runtime cancel', async () => {
+    const user = userEvent.setup();
+    const onCancel = jest.fn();
+    renderThread({ isRunning: true, onCancel });
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
   it('wires the header buttons to the thread callbacks', async () => {

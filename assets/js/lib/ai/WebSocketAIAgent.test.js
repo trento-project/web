@@ -27,6 +27,16 @@ const flushMicrotasks = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
 };
 
+// Work the agent parks on a timer rather than a microtask — the deferred
+// settle of a stopped run. The microtask flush comes first because that is
+// where the timer is registered.
+const flushDeferredWork = async () => {
+  await flushMicrotasks();
+  await new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+};
+
 const userMessage = (content = 'hi') => ({ role: 'user', content });
 
 function makeAuthDoubles() {
@@ -523,6 +533,80 @@ describe('WebSocketAIAgent', () => {
 
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+    });
+  });
+
+  // AbstractAgent.abortRun() is an empty no-op that only HttpAgent overrides.
+  // It is the seam AgUiThreadRuntimeCore.cancel() reaches for before aborting
+  // its own controller, so overriding it is what connects the composer's Stop
+  // to our channel.
+  describe('abortRun', () => {
+    it('tells the server to stop and settles the run as aborted', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abortRun();
+      await flushDeferredWork();
+
+      // No correlation ids: the server cancels the thread named in its own
+      // socket assigns, so anything sent from here would be ignored at best.
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'cancel_run', payload: {} })
+      );
+      // Aborted, not completed. A completion makes the runtime dispatch
+      // RUN_FINISHED, which overwrites the cancelled status its own abort
+      // listener just wrote and leaves the answer looking finished. An
+      // AbortError is the shape the runtime reads as "stopped".
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toMatchObject({ name: 'AbortError' });
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    // Timing is the contract here, and both halves of it matter. The caller
+    // aborts its own run right after this returns and then, still
+    // synchronously, schedules the message resync that would overwrite the
+    // cancelled answer — so the error has to arrive later than a microtask
+    // can carry it. Earlier is worse than late: an error raised before the
+    // abort is treated as a genuine failure and re-thrown as an unhandled
+    // rejection.
+    it('raises the abort error only once the caller has settled its own cancel', async () => {
+      const { agent } = await connectedAgent();
+      const { error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abortRun();
+
+      expect(error).not.toHaveBeenCalled();
+
+      await flushMicrotasks();
+
+      expect(error).not.toHaveBeenCalled();
+
+      await flushDeferredWork();
+
+      expect(error).toHaveBeenCalledTimes(1);
+    });
+
+    it('does nothing when no run is in flight', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abortRun();
+
+      // Stop is only reachable while a run is in flight. Pushing a cancel for
+      // a run that is already over would cancel whatever the *next* prompt
+      // started on the same thread.
+      expect(channel.pushed).not.toContainEqual(
+        expect.objectContaining({ event: 'cancel_run' })
+      );
     });
   });
 

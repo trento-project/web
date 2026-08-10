@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { get } from 'lodash';
+import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
@@ -46,8 +47,7 @@ const footnote = (
   </>
 );
 
-function SendButton({ disabled, isRunning, reason }) {
-  if (isRunning) return null;
+function SendButton({ disabled, reason }) {
   return (
     <ComposerPrimitive.Send asChild>
       <Button
@@ -60,6 +60,29 @@ function SendButton({ disabled, isRunning, reason }) {
         Send
       </Button>
     </ComposerPrimitive.Send>
+  );
+}
+
+// Cancel reaches the runtime's own cancel path, which stops the agent
+// (WebSocketAIAgent.abortRun) and marks the answer as cancelled — the notice
+// under the bubble reads that off the message, so the composer keeps no stop
+// state of its own.
+//
+// Never disabled: a run can outlive the connection or the AI configuration,
+// and whatever put the composer into read-only must not strand the user
+// mid-answer. Cancel being enabled regardless is harmless here, because Stop
+// is only rendered while a run is in flight.
+function StopButton() {
+  return (
+    <ComposerPrimitive.Cancel asChild>
+      <Button
+        type="default-fit"
+        aria-label="Stop generating"
+        title="Stop generating"
+      >
+        <EOS_STOP_FILLED className="h-5 w-5 fill-current" />
+      </Button>
+    </ComposerPrimitive.Cancel>
   );
 }
 
@@ -95,11 +118,11 @@ function PromptComposer({
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
-        <SendButton
-          disabled={inputDisabled}
-          isRunning={isRunning}
-          reason={placeholder}
-        />
+        {isRunning ? (
+          <StopButton />
+        ) : (
+          <SendButton disabled={inputDisabled} reason={placeholder} />
+        )}
       </div>
     </ComposerPrimitive.Root>
   );
