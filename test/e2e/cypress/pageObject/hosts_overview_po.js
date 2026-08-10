@@ -160,7 +160,9 @@ export const expectedPassingHostCountIsDisplayed = (amount) =>
   cy.get(hostCountWithPassing).should('have.text', amount);
 
 const getHealthIconWithState = (state, name = /health/i) =>
-  cy.findByRole('img', { name: name }).filter(`[data-health-state="${state}"]`);
+  cy
+    .findAllByRole('img', { name: name })
+    .filter(`[data-health-state="${state}"]`);
 
 export const expectedAmountOfCriticalIconsIsDisplayed = (amount) =>
   getHealthIconWithState('critical')
@@ -178,7 +180,7 @@ export const expectedAmountOfStaleIconsIsDisplayed = (
   timeout = 20000
 ) =>
   cy
-    .findByRole('img', { name: /health/ })
+    .findAllByRole('img', { name: /health/i })
     .filter('[data-stale]', { timeout })
     .should('have.length', amount);
 
