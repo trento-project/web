@@ -57,6 +57,7 @@ const healthSummaryTableConfig = {
             health={content}
             staleAt={item.applicationStaleAt}
             timezone={item.userTimezone}
+            ariaLabelPrefix={'Application'}
             centered
             isLink
           />
@@ -76,6 +77,7 @@ const healthSummaryTableConfig = {
               health={content}
               staleAt={item.applicationClusterStaleAt}
               timezone={item.userTimezone}
+              ariaLabelPrefix={'Application Cluster'}
               centered
               isLink
             />
@@ -97,6 +99,7 @@ const healthSummaryTableConfig = {
               health={content}
               staleAt={item.databaseStaleAt}
               timezone={item.userTimezone}
+              ariaLabelPrefix={'Database'}
               centered
               isLink
             />
@@ -117,6 +120,7 @@ const healthSummaryTableConfig = {
               health={content}
               staleAt={item.databaseClusterStaleAt}
               timezone={item.userTimezone}
+              ariaLabelPrefix={'Database Cluster'}
               centered
               isLink
             />
@@ -138,6 +142,7 @@ const healthSummaryTableConfig = {
               health={content}
               staleAt={item.hostsStaleAt}
               timezone={item.userTimezone}
+              ariaLabelPrefix={'Hosts'}
               centered
               isLink
             />

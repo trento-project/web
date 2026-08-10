@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, within } from '@testing-library/react';
 import 'intersection-observer';
 import '@testing-library/jest-dom';
 
@@ -142,16 +142,19 @@ describe('HomeHealthSummary component', () => {
     const inSyncRow = rows[0];
     const staleRow = rows[4];
 
-    expect(staleRow).toHaveClass('bg-gray-100');
     expect(inSyncRow).not.toHaveClass('bg-gray-100');
+    within(inSyncRow)
+      .getAllByRole('img', { name: /health/i })
+      .forEach((icon) => {
+        expect(icon).not.toHaveAttribute('data-stale');
+      });
 
-    // application, application cluster, database, database cluster and hosts
-    [2, 3, 4, 5, 6].forEach((column) => {
-      const healthCellSelector = `td:nth-child(${column}) [data-testid="eos-svg-component"]`;
-
-      expect(staleRow.querySelectorAll(healthCellSelector)).toHaveLength(2);
-      expect(inSyncRow.querySelectorAll(healthCellSelector)).toHaveLength(1);
-    });
+    expect(staleRow).toHaveClass('bg-gray-100');
+    within(staleRow)
+      .getAllByRole('img', { name: /health/i })
+      .forEach((icon) => {
+        expect(icon).toHaveAttribute('data-stale');
+      });
   });
 
   describe('health box filter behaviour', () => {

@@ -20,10 +20,13 @@ const sapSystemNwp = {
 // Selectors
 const nwpSystemCell = `td:contains("${sapSystemNwp.sid}")`;
 const nwpSystemRow = `tr:has(td:contains("${sapSystemNwp.sid}"))`;
-const nwpSystemHealthIcons = (cellPosition) =>
-  `${nwpSystemRow} td:eq(${cellPosition}) svg`;
 
 // Validations
+const nwpSystemHealthIconIsMarkedStale = (name) => {
+  cy.get(nwpSystemRow).findByRole('img', { name }).as('healthIcon');
+  return basePage.healthIconIsMarkedStale('@healthIcon');
+};
+
 export const nwpSystemShouldBeDisplayed = () =>
   cy.get(nwpSystemCell).should('be.visible');
 
@@ -37,19 +40,19 @@ export const nwpSystemRowIsMarkedInSync = () =>
   basePage.elementIsMarkedInSync(nwpSystemRow);
 
 export const nwpApplicationInstancesHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(nwpSystemHealthIcons(1));
+  nwpSystemHealthIconIsMarkedStale(/^application health/i);
 
 export const nwpApplicationClusterHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(nwpSystemHealthIcons(2));
+  nwpSystemHealthIconIsMarkedStale(/^application cluster health/i);
 
 export const nwpDatabaseHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(nwpSystemHealthIcons(3));
+  nwpSystemHealthIconIsMarkedStale(/^database health/i);
 
 export const nwpDatabaseClusterHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(nwpSystemHealthIcons(4));
+  nwpSystemHealthIconIsMarkedStale(/^database cluster health/i);
 
 export const nwpHostsHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(nwpSystemHealthIcons(5));
+  nwpSystemHealthIconIsMarkedStale(/^hosts health/i);
 
 // API
 export const apiDeregisterSapSystemNwpHost = () =>
