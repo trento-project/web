@@ -73,6 +73,11 @@ const advisoryDetailsCVEs = 'h2:contains("CVEs") + div a';
 const advisoryDetailsAffectedPackages =
   'h2:contains("Affected Packages") + div li:eq(0)';
 const advisoryDetailsAffectedSystems = 'h2:contains("Affected Systems") + div';
+const hostHealthIconName = /host health/i;
+const stalenessBannerName = /The agent in this host is not responding since/;
+const agentStatusReportingLabel = 'span:contains("Agent:Reporting")';
+const agentStatusNotReportingLabel = 'span:contains("Agent:Not reporting")';
+const instancesTableName = /SAP instances/i;
 
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
@@ -208,7 +213,7 @@ export const validateSelectedHostUrl = () =>
 export const pageTitleHealthIsCorrectlyDisplayed = (
   health = selectedHost.health
 ) => {
-  cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
   basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
 };
 
@@ -397,17 +402,24 @@ const _getTableHeaders = (tableName) =>
     return cy.wrap(headerTexts);
   });
 
-export const agentStatusIsCorrectlyDisplayed = (reporting = true) => {
-  const agentLabelSelector = `span:contains("Agent:${reporting ? 'Reporting' : 'Not reporting'}")`;
-  const options = { ...(!reporting && { timeout: 20000 }) };
-
-  cy.get(agentLabelSelector, options).should('be.visible');
+export const agentStatusIsReporting = () => {
+  cy.get(agentStatusReportingLabel).as('agentLabel').should('be.visible');
   return cy
-    .get(`${agentLabelSelector} svg`)
+    .get('@agentLabel')
+    .find('svg')
     .invoke('attr', 'class')
-    .then((classAttr) => {
-      expect(classAttr).to.contain(reporting ? 'jungle-green' : 'red');
-    });
+    .should('match', /jungle-green/);
+};
+
+export const agentStatusIsNotReporting = () => {
+  cy.get(agentStatusNotReportingLabel, { timeout: 20000 })
+    .as('agentLabel')
+    .should('be.visible');
+  return cy
+    .get('@agentLabel')
+    .find('svg')
+    .invoke('attr', 'class')
+    .should('match', /red/);
 };
 
 export const nodeExporterStatusIsCorrectlyDisplayed = () => {
@@ -478,38 +490,49 @@ export const saveChecksSelectionButtonIsDisabled = () =>
 export const saveChecksSelectionButtonIsEnabled = () =>
   cy.get(saveChecksSelectionButton).should('be.enabled');
 
-// export const hostHealthIsMarkedAsStale = () => {
-//   cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
-//   basePage.healthIconIsMarkedStale('@pageHealthIcon');
-// };
+export const hostHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
 
-// export const hostHealthIsMarkedInSync = () => {
-//   cy.findByRole('img', { name: /host health/i }).as('pageHealthIcon');
-//   basePage.healthIconIsMarkedInSync('@pageHealthIcon');
-// };
+export const hostHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
 
-// export const hostStaleBannerIsDisplayed = (displayed = true) => {
-//   const stalenessBannerName = 'The agent in this host is not responding since';
-//   if (displayed)
-//     cy.findByRole('alert', { name: stalenessBannerName, timeout: 20000 }).should('be.visible');
-//   else
-//     cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
-// };
+export const hostStaleBannerIsDisplayed = () => {
+  cy.findByRole('alert', { name: stalenessBannerName, timeout: 20000 }).should(
+    'be.visible'
+  );
+};
 
-// export const databaseInstanceRowIsMarkedAsStale = (expectedStale) => {
-//   cy.findByRole('table', { name: /SAP instances/i }).within(() => {
-//     cy.findAllByRole('row')
-//       .filter(':not(:has(th))')
-//       .should(($rows) =>
-//         $rows.each((index, $row) => {
-//           if (expectedStale)
-//             expect($row).to.have.class('bg-gray-100');
-//           else
-//             expect($row).not.to.have.class('bg-gray-100');
-//         })
-//       );
-//   });
-// };
+export const hostStaleBannerIsNotDisplayed = () => {
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+};
+
+export const databaseInstanceRowIsMarkedAsStale = () => {
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).to.have.class('bg-gray-100');
+        })
+      );
+  });
+};
+
+export const databaseInstanceRowIsMarkedInSync = () => {
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).not.to.have.class('bg-gray-100');
+        })
+      );
+  });
+};
 
 export const markHdpDatabaseAsPresent = () => {
   basePage.loadScenario(
