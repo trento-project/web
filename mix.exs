@@ -22,7 +22,7 @@ defmodule Trento.MixProject do
       docs: docs(),
       test_coverage: [tool: ExCoveralls],
       dialyzer: [
-        plt_add_apps: [:ex_unit, :mix]
+        plt_add_apps: [:ex_unit, :mix, :llm_db]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
       ],
