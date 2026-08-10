@@ -508,7 +508,7 @@ export const hostStaleBannerIsDisplayed = () =>
 export const hostStaleBannerIsNotDisplayed = () =>
   cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
 
-export const databaseInstanceRowIsMarkedAsStale = () =>
+export const sapInstanceRowIsMarkedAsStale = () =>
   cy.findByRole('table', { name: instancesTableName }).within(() => {
     cy.findAllByRole('row')
       .filter(':not(:has(th))')
@@ -519,7 +519,7 @@ export const databaseInstanceRowIsMarkedAsStale = () =>
       );
   });
 
-export const databaseInstanceRowIsMarkedInSync = () =>
+export const sapInstanceRowIsMarkedInSync = () =>
   cy.findByRole('table', { name: instancesTableName }).within(() => {
     cy.findAllByRole('row')
       .filter(':not(:has(th))')

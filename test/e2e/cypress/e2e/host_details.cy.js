@@ -208,7 +208,7 @@ context('Host Details', () => {
       hostDetailsPage.hostHealthIsMarkedAsStale();
       hostDetailsPage.hostStaleBannerIsDisplayed();
       hostDetailsPage.agentStatusIsNotReporting();
-      hostDetailsPage.databaseInstanceRowIsMarkedAsStale();
+      hostDetailsPage.sapInstanceRowIsMarkedAsStale();
     });
 
     it('should mark database data as sync when the agent starts reporting data again', () => {
@@ -220,7 +220,7 @@ context('Host Details', () => {
 
       hostDetailsPage.markHdpDatabaseAsPresent();
 
-      hostDetailsPage.databaseInstanceRowIsMarkedInSync();
+      hostDetailsPage.sapInstanceRowIsMarkedInSync();
     });
   });
 
