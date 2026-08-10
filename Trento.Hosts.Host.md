@@ -19,13 +19,14 @@ heartbeats, checks execution result, saptune status
 ## Host health
 
 Holds the information about whether the host is in an expected state or not, and if not,
-what is the roout cause helping identifying possible remediation.
+what is the root cause helping identifying possible remediation.
 It is composed by sub-health elements:
 
-- Heartbeat status
 - Checks health
+- Saptune health
+- Software Updates Discovery health
 
-The main host health is computed using these values, meaning the host health is the worst of the two.
+The main host health is computed using these values, meaning the host health is the worst-case of the the individual values.
 
 ### Heartbeat
 

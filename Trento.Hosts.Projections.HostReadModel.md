@@ -33,6 +33,7 @@ Host read model
   saptune_status: term(),
   selected_checks: term(),
   sles_subscriptions: term(),
+  stale_at: term(),
   systemd_units: term(),
   tags: term(),
   updated_at: term()

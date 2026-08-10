@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-92B8DF30.js"></script>
+    <script defer src="dist/sidebar_items-51A37CBD.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -123,8 +123,8 @@ Trento Web
 New host discovery messages update the aggregate values if there is some difference.
 The host aggregate stores information such as:</p><ul><li>Host basic information as the hostname and ip addresses</li><li>Hardware specifications</li><li>Platform where the host is running (the cloud provider for instance)</li><li>Registered SLES4SAP subscriptions</li></ul><p>Besides these mostly static values, the aggregate takes care of handling
 heartbeats, checks execution result, saptune status</p><h2 id="module-host-health" class="section-heading"><a href="#module-host-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Host health</span></h2><p>Holds the information about whether the host is in an expected state or not, and if not,
-what is the roout cause helping identifying possible remediation.
-It is composed by sub-health elements:</p><ul><li>Heartbeat status</li><li>Checks health</li></ul><p>The main host health is computed using these values, meaning the host health is the worst of the two.</p><h3 id="module-heartbeat" class="section-heading"><a href="#module-heartbeat" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Heartbeat</span></h3><p>Each host in the targe SAP infrastructure running a Trento agent sends a heartbeat message and
+what is the root cause helping identifying possible remediation.
+It is composed by sub-health elements:</p><ul><li>Checks health</li><li>Saptune health</li><li>Software Updates Discovery health</li></ul><p>The main host health is computed using these values, meaning the host health is the worst-case of the the individual values.</p><h3 id="module-heartbeat" class="section-heading"><a href="#module-heartbeat" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Heartbeat</span></h3><p>Each host in the targe SAP infrastructure running a Trento agent sends a heartbeat message and
 if a heartbeat is not received within a 10 seconds period (configurable),
 a heartbeat failure event is raised changing the health of the host as critical.</p><h3 id="module-checks-health" class="section-heading"><a href="#module-checks-health" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Checks health</span></h3><p>The checks health is obtained from the <a rel="nofollow" href="https://github.com/trento-project/wanda/">Checks Engine executions</a>.
 Every time a checks execution for a host completes the execution's result is taken into account to determine host's health.
@@ -273,7 +273,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">t()</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -340,7 +340,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">apply(host, arg2)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L659" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L655" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -362,7 +362,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -384,7 +384,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">cast_and_validate_required_polymorphic_embed(changeset, field, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -406,7 +406,7 @@ Accepts a map or a list of maps.</p></div>
       <h1 class="signature" translate="no">changeset(struct, params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -429,7 +429,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">execute(snapshot, arg2)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L166" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L167" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -451,7 +451,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">maybe_emit_host_software_updates_discovery_health_changed_event(host, health)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L931" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L927" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -473,7 +473,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">maybe_emit_software_updates_discovery_lifecycle_events(host_id, fqdn, fqdn)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L913" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L909" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -495,7 +495,7 @@ validates the required ones and returns a changeset.</p>
       <h1 class="signature" translate="no">new(structs)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -524,7 +524,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">new!(params)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -552,7 +552,7 @@ Accepts a map or a list of maps.</p>
       <h1 class="signature" translate="no">validate_required_fields(changeset, required_fields)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L123" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/hosts/host.ex#L124" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
