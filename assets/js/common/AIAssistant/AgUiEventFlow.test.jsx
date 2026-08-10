@@ -222,6 +222,51 @@ describe('AG-UI event flow', () => {
     await waitFor(() => expect(newChat()).toBeEnabled());
   });
 
+  it('recovers the composer when a cross-tab config change abandons a run that was streaming behind a closed launcher', async () => {
+    const { user, channel, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+
+    await sendUserMessage('hello');
+    // The run is in flight: the composer has withdrawn Send for its duration.
+    expect(screen.queryByLabelText('Send message')).not.toBeInTheDocument();
+
+    // Closing the launcher does not tear the run down — only a cross-tab
+    // config change (or a manual "New chat") does.
+    await user.click(screen.getByLabelText('Close'));
+
+    await act(async () => {
+      channel.emit('ai_configuration_created');
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Open AI Assistant' }));
+
+    // The abandoned run must have been settled locally — the reopened pane
+    // is promptable again, not still waiting on a run the server already
+    // killed.
+    expect(await screen.findByLabelText('Send message')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'New chat' })).toBeEnabled();
+  });
+
+  it('abandons the thread on the server when the user starts a new chat after an answer', async () => {
+    const { user, channel, sendUserMessage, streamAssistantTurn } =
+      await renderAIAssistant({ open: true });
+
+    const turn = await sendUserMessage('hello');
+    await streamAssistantTurn(turn, { messageId: 'a', deltas: ['an answer'] });
+
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
+
+    // Nothing is streaming — "New chat" is locked while a run is in flight —
+    // but the thread's agent survives the run and holds the whole
+    // conversation, so the server still has to be told to let it go.
+    await waitFor(() => {
+      expect(
+        channel.pushed.filter((p) => p.event === 'abandon_thread')
+      ).toEqual([expect.objectContaining({ payload: {} })]);
+    });
+  });
+
   it('"New chat" starts a new conversation with a new thread ID', async () => {
     const { user, sendUserMessage, streamAssistantTurn } =
       await renderAIAssistant({ open: true });

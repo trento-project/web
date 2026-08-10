@@ -385,21 +385,46 @@ describe('WebSocketAIAgent', () => {
       await flushMicrotasks();
       const staleRunId = channel.pushed[0].payload.run_id;
 
-      const { complete } = runAgent(agent, {
+      const { complete, next } = runAgent(agent, {
         threadId: 't',
         messages: [userMessage('second')],
       });
       await flushMicrotasks();
 
       // The first run was abandoned when the second replaced it; its late
-      // RUN_FINISHED must not close the run now in flight.
+      // RUN_FINISHED must neither reach the subscriber nor close the run now
+      // in flight.
       channel.emit(
         'ag_ui_event',
         aguiEvents.runFinished({ threadId: 't', runId: staleRunId })
       );
 
+      expect(next).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(agent._activeRunId).not.toBeNull();
+    });
+
+    it('does not forward a RUN_STARTED from a superseded run', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, { threadId: 't', messages: [userMessage('first')] });
+      await flushMicrotasks();
+      const staleRunId = channel.pushed[0].payload.run_id;
+
+      const { next } = runAgent(agent, {
+        threadId: 't',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      // A cancelled run's RUN_STARTED arriving late would open a second run
+      // frame on top of the one the user is waiting for.
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runStarted({ threadId: 't', runId: staleRunId })
+      );
+
+      expect(next).not.toHaveBeenCalled();
     });
 
     it.each([
@@ -498,6 +523,39 @@ describe('WebSocketAIAgent', () => {
 
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+    });
+  });
+
+  describe('abandonThread', () => {
+    it('tells the server to let the thread go', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abandonThread();
+
+      // The thread to abandon is the one the channel holds in its own
+      // assigns, so the payload carries nothing.
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'abandon_thread', payload: {} })
+      );
+    });
+
+    it('settles an in-flight run instead of leaving it hanging', async () => {
+      const { agent } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abandonThread();
+
+      // The server terminates the agent outright, so no RUN_FINISHED /
+      // RUN_ERROR will ever come back for this run — the client has to settle
+      // it locally. Completed, not errored: abandoning a thread throws the
+      // conversation away, so there is no message left to mark as stopped.
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(error).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
     });
   });
 

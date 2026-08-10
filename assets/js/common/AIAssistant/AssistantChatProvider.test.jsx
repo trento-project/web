@@ -24,7 +24,12 @@ jest.mock('@assistant-ui/react', () => ({
 const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
 
 function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
-  const runtime = { thread: { reset: jest.fn() } };
+  const runtime = {
+    thread: {
+      import: jest.fn(),
+      cancelRun: jest.fn(),
+    },
+  };
   useAgUiRuntime.mockImplementation(() => runtime);
 
   const initialProps = { userID: 42, threadID: 'thread-1', ...props };
@@ -191,14 +196,28 @@ describe('AssistantChatProvider', () => {
     expect(agent()).toBe(initialAgent);
   });
 
-  it('resets the runtime when threadID changes so prior messages are wiped', async () => {
+  it('clears the runtime when threadID changes so prior messages are wiped', async () => {
     const { rerender, runtime } = renderProvider();
-    expect(runtime.thread.reset).not.toHaveBeenCalled();
+    expect(runtime.thread.import).not.toHaveBeenCalled();
 
     rerender({ threadID: 'thread-2' });
 
     await waitFor(() => {
-      expect(runtime.thread.reset).toHaveBeenCalledTimes(1);
+      expect(runtime.thread.import).toHaveBeenCalledWith({ messages: [] });
     });
+    // A new chat is not a cancelled turn. `cancelRun()` deletes the trailing
+    // user message and refills the composer with its text — that belongs to
+    // Stop, not to starting over.
+    expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
+  });
+
+  it('abandons the previous thread on the transport', async () => {
+    const { rerender, channel, agent } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    const abandonThread = jest.spyOn(agent(), 'abandonThread');
+
+    rerender({ threadID: 'thread-2' });
+
+    await waitFor(() => expect(abandonThread).toHaveBeenCalledTimes(1));
   });
 });
