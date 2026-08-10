@@ -29,6 +29,7 @@ import {
   getFilesystemType,
   getEnsaVersion,
   MIXED_VERSIONS,
+  UNKNOWN_ENSA_VERSION,
 } from './cluster';
 
 describe('Cluster selector', () => {
@@ -276,6 +277,31 @@ describe('Cluster selector', () => {
     };
 
     expect(getEnsaVersion(state, clusterID)).toEqual('ensa1');
+  });
+
+  it('should return an unknown ENSA version if the SAP system is not registered', () => {
+    const clusterID = faker.string.uuid();
+    const cluster = clusterFactory.build({ id: clusterID });
+
+    const state = {
+      hostsList: {
+        hosts: hostFactory.buildList(2, { cluster_id: clusterID }),
+      },
+      databasesList: {
+        databases: [],
+        databaseInstances: [],
+      },
+      sapSystemsList: {
+        sapSystems: [],
+        applicationInstances: [],
+        databaseInstances: [],
+      },
+      clustersList: {
+        clusters: [cluster],
+      },
+    };
+
+    expect(getEnsaVersion(state, clusterID)).toEqual(UNKNOWN_ENSA_VERSION);
   });
 
   it('should return mixed ENSA versions', () => {
