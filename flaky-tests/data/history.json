@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-06-25T19:25:33Z",
-    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
-    "run_id": "28194160477",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 47,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-06-25T19:26:31Z",
     "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
     "run_id": "28194160477",
@@ -5061,6 +5050,50 @@
       },
       {
         "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-10T18:51:23Z",
+    "commit": "19ad9d99fd6a93ecff63b0cc6cb793f6abdf4269",
+    "run_id": "31419339405",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 12
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.08395
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
+        "score": 0.06744
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
+        "score": 0.05158
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show system/database operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show system/database operation sap_system_stop in running state",
         "score": 0.02501
       }
     ]
