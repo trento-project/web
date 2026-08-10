@@ -1,3 +1,4 @@
+LOG_LEVEL=info
 AMQP_URL=amqp://trento_user:trento_user_password@rabbitmq-host/vhost
 DATABASE_URL=ecto://trento_user:web_password@postgres-host/trento
 EVENTSTORE_URL=ecto://trento_user:web_password@postgres-host/trento_event_store

@@ -1233,6 +1233,7 @@ jobs:
             --set trento-mcp-server.image.tag="rolling" \
             --set prometheus.server.auth.type=none \
             --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
+            --set global.logLevel="debug" \
             --set prometheus.enabled=false \
             -f helm-charts/hack/cert-manager/override-values.yaml
 
