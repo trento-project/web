@@ -598,6 +598,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       provider2 = build(:random_ai_provider)
       model1 = build(:random_ai_model, %{provider: provider1})
       model2 = build(:random_ai_model, %{provider: provider2})
+
       insert(:ai_user_configuration,
         user_id: user_id,
         provider: provider1,
@@ -607,11 +608,12 @@ defmodule Trento.Ai.ConfigurationsTest do
       Events.subscribe(user_id)
 
       assert {:ok, %UserConfiguration{}} =
-               Configurations.update_user_configuration(user, %{provider: provider2, model: model2})
+               Configurations.update_user_configuration(user, %{
+                 provider: provider2,
+                 model: model2
+               })
 
       assert_receive {:ai_configuration, :updated, %{provider: ^provider2, model: ^model2}}
-
-
 
       assert {:ok, %UserConfiguration{}} =
                Configurations.update_user_configuration(user, %{
