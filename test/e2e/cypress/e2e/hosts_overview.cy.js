@@ -67,7 +67,7 @@ context('Hosts Overview', () => {
     });
 
     describe('Health is changed based on saptune status', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+      before(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         hostsOverviewPage.loadHostWithoutSaptune();
@@ -103,13 +103,9 @@ context('Hosts Overview', () => {
         hostsOverviewPage.loadHostWithSaptuneScenario('compliant');
         hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
       });
-
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Stale', () => {
-      beforeEach(() => hostsOverviewPage.stopAgentsHeartbeat());
-
       it('should show a stale health on the hosts when agents are not sending heartbeat', () => {
         hostsOverviewPage.startAgentsHeartbeat();
         hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(0);
@@ -120,6 +116,7 @@ context('Hosts Overview', () => {
       });
 
       it('should mark health in-sync on the hosts when agents start sending heartbeat again', () => {
+        hostsOverviewPage.stopAgentsHeartbeat();
         hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(10);
 
         hostsOverviewPage.startAgentsHeartbeat();
