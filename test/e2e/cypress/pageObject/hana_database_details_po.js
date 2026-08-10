@@ -24,9 +24,8 @@ const databaseTypeLabel =
 const systemReplicationLabel =
   'div[class*="grid-flow-row"]:contains("System Replication") div:nth-child(2)';
 const pageNotFoundLabel = 'div:contains("Not Found")';
-const pageTitleHealthIcons = 'h1 div svg';
-const staleDataBanner =
-  'span[data-testid="banner"]:contains("An agent in one of the database hosts is not reporting since")';
+const stalenessBannerName =
+  /An agent in one of the database hosts is not reporting since/;
 const attachedHostsTableRows = 'div[class="mt-16"]:contains("Layout") tbody tr';
 const newRegisteredHost = `div[class="mt-8"]:contains("Hosts") td:contains("${attachedHosts[0].Name}")`;
 const layoutTableHostNameCell = (hostName) =>
@@ -56,8 +55,13 @@ export const validatePageUrl = () =>
 export const validateNonExistentDatabaseUrl = () =>
   basePage.validateUrl(`${url}/other`);
 
-export const pageTitleHealthIsCorrectlyDisplayed = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedDatabase.Health);
+export const pageTitleHealthIsCorrectlyDisplayed = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed(
+    '@pageHealthIcon',
+    selectedDatabase.Health
+  );
+};
 
 export const databaseHasExpectedName = () =>
   cy.get(databaseNameLabel).should('have.text', selectedDatabase.Sid);
@@ -307,17 +311,23 @@ export const deregisteredHostIsNotDisplayed = () =>
 export const deregisteredHostIsDisplayed = () =>
   cy.get(newRegisteredHost, { timeout: 20000 }).should('be.visible');
 
-export const databaseHealthIsMarkedAsStale = () =>
-  basePage.healthIconIsMarkedStale(pageTitleHealthIcons);
+export const databaseHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
 
-export const databaseHealthIsMarkedInSync = () =>
-  basePage.healthIconIsMarkedInSync(pageTitleHealthIcons);
+export const databaseHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
 
-export const databaseStaleBannerIsDisplayed = () =>
-  cy.get(staleDataBanner, { timeout: 20000 }).should('be.visible');
+export const databaseStaleBannerIsDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('be.visible');
 
 export const databaseStaleBannerIsNotDisplayed = () =>
-  cy.get(staleDataBanner).should('not.exist');
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
 
 export const databaseSiteIsMarkedAsStale = () =>
   basePage.elementIsMarkedStale(

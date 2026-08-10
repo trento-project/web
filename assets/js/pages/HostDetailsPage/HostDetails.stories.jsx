@@ -74,6 +74,12 @@ export default {
       options: ['passing', 'critical'],
       description: 'Host heartbeat state',
     },
+    staleAt: {
+      description: 'Timestamp when the host became stale (null if not stale)',
+      control: {
+        type: 'text',
+      },
+    },
     health: {
       control: { type: 'radio' },
       options: ['passing', 'warning', 'critical', 'unknown'],
@@ -237,6 +243,7 @@ export const Default = {
     deregistering: false,
     exportersStatus: {},
     heartbeat: host.heartbeat,
+    staleAt: null,
     health: host.health,
     hostID: host.id,
     hostname: host.hostname,
@@ -272,6 +279,7 @@ export const Default = {
     userAbilities: [allAbility],
     operationsEnabled: true,
     runningOperations: {},
+    timezone: 'Etc/UTC',
   },
 };
 
@@ -279,6 +287,14 @@ export const Loading = {
   args: {
     ...Default.args,
     catalog: { loading: true },
+  },
+};
+
+export const Stale = {
+  args: {
+    ...Default.args,
+    staleAt: faker.date.past(),
+    heartbeat: 'critical',
   },
 };
 

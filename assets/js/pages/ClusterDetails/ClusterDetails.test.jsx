@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { formatDateTime } from '@lib/timezones';
 
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
@@ -45,13 +46,14 @@ describe('ClusterDetails ClusterDetails component', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: `Pacemaker Cluster Details: ${name}`,
-    });
-
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('img', { name: /cluster health/i })
+    ).toBeInTheDocument();
   });
 
   it('should render a stale cluster', () => {
@@ -77,15 +79,18 @@ describe('ClusterDetails ClusterDetails component', () => {
     );
 
     expect(
-      screen.getByText(
-        /An agent in one of the cluster hosts is not reporting since 15 Jun 2026, 06:30:00/
-      )
-    ).toBeInTheDocument();
-
-    const header = screen.getByRole('heading', {
-      name: `Pacemaker Cluster Details: ${name}`,
-    });
-    expect(within(header).getAllByTestId('eos-svg-component')).toHaveLength(2);
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('img', { name: /cluster health/i })
+    ).toHaveAttribute('data-stale');
+    expect(
+      screen.getByRole('alert', {
+        name: /An agent in one of the cluster hosts is not reporting/i,
+      })
+    ).toHaveTextContent(formatDateTime(staleAt, userTimezone));
   });
 
   it.each([

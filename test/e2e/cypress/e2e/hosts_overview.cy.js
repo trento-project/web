@@ -53,21 +53,21 @@ context('Hosts Overview', () => {
       beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should show health status of the entire cluster of 27 hosts with partial pagination', () => {
-        hostsOverviewPage.expectedPassingHostsAreDisplayed(11);
-        hostsOverviewPage.expectedWarningHostsAreDisplayed(12);
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
+        hostsOverviewPage.expectedPassingHostCountIsDisplayed(11);
+        hostsOverviewPage.expectedWarningHostCountIsDisplayed(12);
+        hostsOverviewPage.expectedCriticalHostCountIsDisplayed(4);
       });
 
       it('should show the correct health on the hosts when the agents are sending the heartbeat', () => {
-        hostsOverviewPage.expectedAmountOfPassingIsDisplayed(8);
-        hostsOverviewPage.expectedAmountOfWarningsIsDisplayed(2);
+        hostsOverviewPage.expectedAmountOfPassingIconsIsDisplayed(8);
+        hostsOverviewPage.expectedAmountOfWarningIconsIsDisplayed(2);
       });
 
       afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Health is changed based on saptune status', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+      before(() => hostsOverviewPage.startAgentsHeartbeat());
 
       it('should not change the health if saptune is not installed and a SAP workload is not running', () => {
         hostsOverviewPage.loadHostWithoutSaptune();
@@ -103,33 +103,35 @@ context('Hosts Overview', () => {
         hostsOverviewPage.loadHostWithSaptuneScenario('compliant');
         hostsOverviewPage.hostWithSaptuneCompliantHasExpectedStatus();
       });
-
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
-    describe('Health is changed to critical when the heartbeat is not sent', () => {
-      beforeEach(() => hostsOverviewPage.startAgentsHeartbeat());
+    describe('Stale', () => {
+      it('should show a stale health on the hosts when agents are not sending heartbeat', () => {
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(0);
 
-      it('should show health status of the entire cluster of 27 hosts with critical health', () => {
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(4);
         hostsOverviewPage.stopAgentsHeartbeat();
-        hostsOverviewPage.expectedCriticalHostsAreDisplayed(27);
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(10);
+        hostsOverviewPage.allVisibleRowsAreMarkedStale();
       });
 
-      it('should show a critical health on the hosts when the agents are not sending the heartbeat', () => {
-        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(0);
+      it('should mark health in-sync on the hosts when agents start sending heartbeat again', () => {
         hostsOverviewPage.stopAgentsHeartbeat();
-        hostsOverviewPage.expectedAmountOfCriticalsIsDisplayed(10);
-      });
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(10);
 
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+        hostsOverviewPage.startAgentsHeartbeat();
+        hostsOverviewPage.expectedAmountOfStaleIconsIsDisplayed(0);
+        hostsOverviewPage.allVisibleRowsAreMarkedInSync();
+      });
     });
   });
 
   describe('Deregistration', () => {
     describe('Clean-up buttons should be visible only when needed', () => {
+      beforeEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+
       it('should not display a clean-up button when heartbeat is sent', () => {
-        hostsOverviewPage.cleanupButtonIsDisplayedForHostSendingHeartbeat();
+        hostsOverviewPage.cleanupButtonIsDisplayedForHostNotSendingHeartbeat();
         hostsOverviewPage.startAgentHeartbeat();
         hostsOverviewPage.cleanupButtonIsNotDisplayedForHostSendingHeartbeat();
       });
@@ -139,8 +141,6 @@ context('Hosts Overview', () => {
         hostsOverviewPage.startAgentHeartbeat();
         hostsOverviewPage.expectedAmountOfCleanupButtonsIsDisplayed(9);
       });
-
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Clean-up button should deregister a host', () => {

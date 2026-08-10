@@ -28,7 +28,6 @@ const user = createUserRequestFactory.build({
 
 // Selectors
 const pageTitle = 'h1';
-const pageTitleHealth = 'h1 div svg';
 const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
 const accessForbiddenMessage =
@@ -143,8 +142,8 @@ export const userDropdownMenuButtonHasTheExpectedText = (username) =>
 export const pageTitleIsCorrectlyDisplayed = (title) =>
   cy.get(pageTitle).should('contain', title);
 
-export const pageTitleHealthIsCorrectlyDisplayed = (health) =>
-  cy.get(pageTitleHealth).should('have.class', health);
+export const healthIconIsCorrectlyDisplayed = (icon, health) =>
+  cy.get(icon).should('have.attr', 'data-health-state', health);
 
 export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');
@@ -176,10 +175,10 @@ export const elementIsMarkedInSync = (element) =>
   cy.get(element).should('not.have.class', 'bg-gray-100');
 
 export const healthIconIsMarkedStale = (icon, timeout = 20000) =>
-  cy.get(icon, { timeout }).should('have.length', 2);
+  cy.get(icon, { timeout }).should('have.attr', 'data-stale');
 
 export const healthIconIsMarkedInSync = (icon) =>
-  cy.get(icon).should('have.length', 1);
+  cy.get(icon).should('not.have.attr', 'data-stale');
 
 // API Interactions & Validations
 

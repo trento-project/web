@@ -33,7 +33,7 @@ context('Host Details', () => {
     });
 
     it('should show the correct host health', () => {
-      hostDetailsPage.healthHasExpectedValue();
+      hostDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
     });
 
     it('should show the correct cluster', () => {
@@ -161,7 +161,7 @@ context('Host Details', () => {
     beforeEach(() => hostDetailsPage.visitSelectedHost());
 
     it("should show the status as 'Reporting'", () => {
-      hostDetailsPage.agentStatusIsCorrectlyDisplayed();
+      hostDetailsPage.agentStatusIsReporting();
     });
   });
 
@@ -193,6 +193,34 @@ context('Host Details', () => {
       hostDetailsPage.loadSaptuneScenario('compliant');
       hostDetailsPage.visitSelectedHost();
       hostDetailsPage.validateSaptuneStatus('compliant');
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      hostDetailsPage.startAgentHeartbeat();
+      hostDetailsPage.visitSelectedHost();
+    });
+
+    beforeEach(() => hostDetailsPage.stopAgentsHeartbeat());
+
+    it('should mark host data as stale when its agent stops reporting', () => {
+      hostDetailsPage.hostHealthIsMarkedAsStale();
+      hostDetailsPage.hostStaleBannerIsDisplayed();
+      hostDetailsPage.agentStatusIsNotReporting();
+      hostDetailsPage.sapInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      hostDetailsPage.startAgentHeartbeat();
+
+      hostDetailsPage.hostHealthIsMarkedInSync();
+      hostDetailsPage.hostStaleBannerIsNotDisplayed();
+      hostDetailsPage.agentStatusIsReporting();
+
+      hostDetailsPage.markHdpDatabaseAsPresent();
+
+      hostDetailsPage.sapInstanceRowIsMarkedInSync();
     });
   });
 

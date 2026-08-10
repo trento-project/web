@@ -10,12 +10,12 @@ export const healthMap = {
 
 export const selectedSystem = {
   Id: '67b247e4-ab5b-5094-993a-a4fd70d0e8d1',
-  Health: 'fill-jungle-green-500',
+  Health: 'passing',
   Sid: 'NWD',
   Type: 'ABAP',
   EnsaVersion: 'ENSA1',
   Database: 'HDD',
-  DatabaseHealth: 'fill-jungle-green-500',
+  DatabaseHealth: 'passing',
   DatabaseTenant: 'HDD',
   Hosts: [
     {

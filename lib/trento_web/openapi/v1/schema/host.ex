@@ -154,6 +154,13 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
               "Indicates the last heartbeat status received from the host, supporting health monitoring and alerting.",
             enum: [:critical, :passing, :unknown]
           },
+          stale_at: %Schema{
+            description: "Timestamp when the host data was marked as stale.",
+            type: :string,
+            format: :datetime,
+            nullable: true,
+            example: "2026-01-16T08:00:00Z"
+          },
           provider: Provider.SupportedProviders,
           provider_data: Provider.ProviderData,
           tags: Tags,
@@ -211,6 +218,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
           cluster_id: "123e4567-e89b-12d3-a456-426614174000",
           cluster_host_status: "online",
           heartbeat: "passing",
+          stale_at: nil,
           provider: "azure",
           provider_data: %{
             resource_group: "sap-production-rg",
@@ -258,6 +266,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Host do
             agent_version: "1.0.0",
             cluster_id: "6c76eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
             health: "passing",
+            stale_at: nil,
             selected_checks: [],
             tags: [],
             inserted_at: "2024-01-15T10:30:00Z",
