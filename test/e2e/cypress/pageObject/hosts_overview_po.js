@@ -221,10 +221,12 @@ export const hostWithSaptuneCompliantHasExpectedStatus = () =>
   _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
 
 export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () =>
-  cy.get(hostToDeregisterCleanupButton, { timeout: 20000 }).should('not.exist');
+  cy.get(hostToDeregisterCleanupButton).should('not.exist');
 
-export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
-  cy.get(hostToDeregisterCleanupButton).should('be.visible');
+export const cleanupButtonIsDisplayedForHostNotSendingHeartbeat = () =>
+  cy
+    .get(hostToDeregisterCleanupButton, { timeout: 20000 })
+    .should('be.visible');
 
 export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
   cy

@@ -108,7 +108,7 @@ context('Hosts Overview', () => {
     });
 
     describe('Stale', () => {
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+      beforeEach(() => hostsOverviewPage.stopAgentsHeartbeat());
 
       it('should show a stale health on the hosts when agents are not sending heartbeat', () => {
         hostsOverviewPage.startAgentsHeartbeat();
@@ -131,8 +131,10 @@ context('Hosts Overview', () => {
 
   describe('Deregistration', () => {
     describe('Clean-up buttons should be visible only when needed', () => {
+      beforeEach(() => hostsOverviewPage.stopAgentsHeartbeat());
+
       it('should not display a clean-up button when heartbeat is sent', () => {
-        hostsOverviewPage.cleanupButtonIsDisplayedForHostSendingHeartbeat();
+        hostsOverviewPage.cleanupButtonIsDisplayedForHostNotSendingHeartbeat();
         hostsOverviewPage.startAgentHeartbeat();
         hostsOverviewPage.cleanupButtonIsNotDisplayedForHostSendingHeartbeat();
       });
@@ -142,8 +144,6 @@ context('Hosts Overview', () => {
         hostsOverviewPage.startAgentHeartbeat();
         hostsOverviewPage.expectedAmountOfCleanupButtonsIsDisplayed(9);
       });
-
-      afterEach(() => hostsOverviewPage.stopAgentsHeartbeat());
     });
 
     describe('Clean-up button should deregister a host', () => {
