@@ -492,25 +492,23 @@ export const saveChecksSelectionButtonIsEnabled = () =>
 
 export const hostHealthIsMarkedAsStale = () => {
   cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
-  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+  return basePage.healthIconIsMarkedStale('@pageHealthIcon');
 };
 
 export const hostHealthIsMarkedInSync = () => {
   cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
-  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+  return basePage.healthIconIsMarkedInSync('@pageHealthIcon');
 };
 
-export const hostStaleBannerIsDisplayed = () => {
-  cy.findByRole('alert', { name: stalenessBannerName, timeout: 20000 }).should(
-    'be.visible'
-  );
-};
+export const hostStaleBannerIsDisplayed = () =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout: 20000 })
+    .should('be.visible');
 
-export const hostStaleBannerIsNotDisplayed = () => {
+export const hostStaleBannerIsNotDisplayed = () =>
   cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
-};
 
-export const databaseInstanceRowIsMarkedAsStale = () => {
+export const databaseInstanceRowIsMarkedAsStale = () =>
   cy.findByRole('table', { name: instancesTableName }).within(() => {
     cy.findAllByRole('row')
       .filter(':not(:has(th))')
@@ -520,9 +518,8 @@ export const databaseInstanceRowIsMarkedAsStale = () => {
         })
       );
   });
-};
 
-export const databaseInstanceRowIsMarkedInSync = () => {
+export const databaseInstanceRowIsMarkedInSync = () =>
   cy.findByRole('table', { name: instancesTableName }).within(() => {
     cy.findAllByRole('row')
       .filter(':not(:has(th))')
@@ -532,13 +529,6 @@ export const databaseInstanceRowIsMarkedInSync = () => {
         })
       );
   });
-};
-
-export const markHdpDatabaseAsPresent = () => {
-  basePage.loadScenario(
-    `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
-  );
-};
 
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
@@ -650,16 +640,18 @@ export const interceptNodeExporterStatusMockedForProdInstance = () => {
   }
 };
 
+export const startAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
   return basePage.loadScenario(`host-${hostName}-saptune-${state}`);
 };
 
-export const loadAwsHostDetails = () =>
-  basePage.loadScenario('host-details-aws');
-
-export const startAgentHeartbeat = () =>
-  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+export const markHdpDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
+  );
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);
