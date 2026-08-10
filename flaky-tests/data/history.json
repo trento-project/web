@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-25T19:48:09Z",
-    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
-    "run_id": "28195195139",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-25T19:49:07Z",
     "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
     "run_id": "28195195139",
@@ -5090,6 +5074,62 @@
     "top_flaky_tests": [
       {
         "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-10T22:26:03Z",
+    "commit": "19ad9d99fd6a93ecff63b0cc6cb793f6abdf4269",
+    "run_id": "31423308307",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 13
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
+        "score": 0.25
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1668
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
+        "score": 0.02501
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.02501
       }
     ]
