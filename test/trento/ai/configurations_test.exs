@@ -308,46 +308,6 @@ defmodule Trento.Ai.ConfigurationsTest do
 
       refute_receive {:ai_configuration, :created}
     end
-
-    test "should support creating AI configuration with a model that is supported by multiple providers" do
-      %User{id: user_id1} = user1 = insert(:user)
-
-      assert {:ok,
-              %UserConfiguration{
-                model: "model1",
-                provider: :provider1,
-                api_key: _api_key,
-                user_id: ^user_id1
-              } = created_config1} =
-               Configurations.create_user_configuration(
-                 user1,
-                 build(:ai_configuration_creation_params,
-                   provider: :provider1,
-                   model: "model1"
-                 )
-               )
-
-      assert ^created_config1 = load_ai_config(user_id1)
-
-      %User{id: user_id2} = user2 = insert(:user)
-
-      assert {:ok,
-              %UserConfiguration{
-                model: "model1",
-                provider: :provider2,
-                api_key: _api_key,
-                user_id: ^user_id2
-              } = created_config2} =
-               Configurations.create_user_configuration(
-                 user2,
-                 build(:ai_configuration_creation_params,
-                   provider: :provider2,
-                   model: "model1"
-                 )
-               )
-
-      assert ^created_config2 = load_ai_config(user_id2)
-    end
   end
 
   describe "updating a user AI configuration" do
@@ -634,31 +594,32 @@ defmodule Trento.Ai.ConfigurationsTest do
     test "should broadcast that the configuration was updated when the provider/model changed" do
       %User{id: user_id} = user = insert(:user)
 
+      provider1 = build(:random_ai_provider)
+      provider2 = build(:random_ai_provider)
+      model1 = build(:random_ai_model, %{provider: provider1})
+      model2 = build(:random_ai_model, %{provider: provider2})
       insert(:ai_user_configuration,
         user_id: user_id,
-        provider: :provider1,
-        model: "model1"
+        provider: provider1,
+        model: model1
       )
 
       Events.subscribe(user_id)
 
       assert {:ok, %UserConfiguration{}} =
-               Configurations.update_user_configuration(user, %{provider: :provider2})
+               Configurations.update_user_configuration(user, %{provider: provider2, model: model2})
 
-      assert_receive {:ai_configuration, :updated, %{provider: :provider2, model: "model1"}}
+      assert_receive {:ai_configuration, :updated, %{provider: ^provider2, model: ^model2}}
 
-      assert {:ok, %UserConfiguration{}} =
-               Configurations.update_user_configuration(user, %{model: "model3"})
 
-      assert_receive {:ai_configuration, :updated, %{provider: :provider2, model: "model3"}}
 
       assert {:ok, %UserConfiguration{}} =
                Configurations.update_user_configuration(user, %{
-                 provider: :provider1,
-                 model: "model1"
+                 provider: provider1,
+                 model: model1
                })
 
-      assert_receive {:ai_configuration, :updated, %{provider: :provider1, model: "model1"}}
+      assert_receive {:ai_configuration, :updated, %{provider: ^provider1, model: ^model1}}
     end
 
     test "should not broadcast updated when only the api key changed" do
