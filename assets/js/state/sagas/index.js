@@ -171,10 +171,10 @@ function* watchResetState() {
 function* refreshHealthSummaryOnComponentsHealthChange() {
   const debounceDuration = 5000;
 
-  yield all(
-    HEALTH_SUMMARY_REFRESH_EVENTS.map((event) =>
-      debounce(debounceDuration, event, loadSapSystemsHealthSummary)
-    )
+  yield debounce(
+    debounceDuration,
+    HEALTH_SUMMARY_REFRESH_EVENTS,
+    loadSapSystemsHealthSummary
   );
 }
 
