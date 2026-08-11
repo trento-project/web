@@ -84,28 +84,28 @@ export const Random = {
 
 export const Empty = {
   args: {
-    ...Random.args,
     sapSystemsHealth: [],
+    loading: false,
   },
 };
 
 export const Healthy = {
   args: {
-    ...Random.args,
     sapSystemsHealth: healthySummary,
+    loading: false,
   },
 };
 
 export const UnClustered = {
   args: {
-    ...Random.args,
     sapSystemsHealth: unClusteredSummary,
+    loading: false,
   },
 };
 
 export const Stale = {
   args: {
-    ...Random.args,
     sapSystemsHealth: staleSummary,
+    loading: false,
   },
 };

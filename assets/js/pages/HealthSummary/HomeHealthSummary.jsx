@@ -26,12 +26,13 @@ const healthSummaryTableConfig = {
     hostsStaleAt,
   }) =>
     classNames({
-      [STALE_ROW]:
-        !!applicationStaleAt ||
-        !!applicationClusterStaleAt ||
-        !!databaseStaleAt ||
-        !!databaseClusterStaleAt ||
-        !!hostsStaleAt,
+      [STALE_ROW]: [
+        applicationStaleAt,
+        applicationClusterStaleAt,
+        databaseStaleAt,
+        databaseClusterStaleAt,
+        hostsStaleAt,
+      ].some(Boolean),
     }),
   columns: [
     {
