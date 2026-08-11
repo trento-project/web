@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-25T19:49:07Z",
-    "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
-    "run_id": "28195195139",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.08349
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-25T22:48:47Z",
     "commit": "b90955b8c26be1647f4eb430fdd784158a2fe4fc",
     "run_id": "28198127822",
@@ -5130,6 +5110,30 @@
       },
       {
         "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-11T18:15:41Z",
+    "commit": "28d08483378ae9a2aceacd7395fa263986293c62",
+    "run_id": "31520501248",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request saptune discovery request when 'pacemaker_disable' operation is completed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added",
         "score": 0.02501
       }
     ]
