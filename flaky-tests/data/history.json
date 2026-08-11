@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-06-26T19:13:25Z",
-    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
-    "run_id": "28259027220",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-26T19:14:29Z",
     "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
     "run_id": "28259027220",
@@ -5118,6 +5086,42 @@
     "top_flaky_tests": [
       {
         "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-11T18:52:14Z",
+    "commit": "28d08483378ae9a2aceacd7395fa263986293c62",
+    "run_id": "31523119309",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 6
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show system/database operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
+        "score": 0.02501
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.02501
       }
     ]
