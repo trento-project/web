@@ -31,8 +31,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     |> Repo.all()
     |> Repo.preload([
       :database,
-      {:application_instances, host: :cluster},
-      {:database_instances, host: :cluster}
+      [application_instances: [host: :cluster]],
+      [database_instances: [host: :cluster]]
     ])
     |> Enum.map(&summary_from_sap_system/1)
   end
