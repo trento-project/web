@@ -12,7 +12,7 @@ context('Homepage', () => {
   });
 
   describe('Stale data', () => {
-    before(() => {
+    beforeEach(() => {
       homePage.startNwpSystemAgentsHeartbeat();
     });
 
@@ -29,6 +29,7 @@ context('Homepage', () => {
       homePage.stopNwpClusteredApplicationInstanceAgentHeartbeat();
       homePage.nwpSystemRowIsMarkedStale();
       homePage.nwpApplicationClusterHealthIsMarkedAsStale();
+      homePage.nwpHostsHealthIsMarkedAsStale();
     });
 
     it('should mark the database and database cluster health as stale when a clustered database instance agent stops reporting', () => {
@@ -36,6 +37,7 @@ context('Homepage', () => {
       homePage.nwpSystemRowIsMarkedStale();
       homePage.nwpDatabaseHealthIsMarkedAsStale();
       homePage.nwpDatabaseClusterHealthIsMarkedAsStale();
+      homePage.nwpHostsHealthIsMarkedAsStale();
     });
 
     it('should mark system as in sync when all agents start reporting again', () => {
@@ -50,8 +52,6 @@ context('Homepage', () => {
       homePage.visit();
       homePage.validateUrl();
     });
-
-    after(() => homePage.restoreNwpSystemData());
 
     it('should not display SAP System NWP after it is deregistered', () => {
       homePage.nwpSystemShouldBeDisplayed();
