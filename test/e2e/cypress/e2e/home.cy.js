@@ -55,6 +55,7 @@ context('Homepage', () => {
 
     it('should not display SAP System NWP after it is deregistered', () => {
       homePage.nwpSystemShouldBeDisplayed();
+      homePage.nwpSystemRowIsMarkedStale();
       homePage.apiDeregisterSapSystemNwpHost();
       homePage.nwpSystemShouldNotBeDisplayed();
     });
