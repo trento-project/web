@@ -13,8 +13,10 @@ defmodule Trento.AI.AgentTest do
   alias Sagents.AgentSupervisor
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent, as: TrentoAIAgent
+  alias Trento.AI.Agent.Server, as: TrentoAIAgentServer
   alias Trento.AI.Agent.Supervisor, as: TrentoAIAgentSupervisor
-  alias Trento.Infrastructure.AI.SagentsDynamicSupervisor
+  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel}
+  alias Trento.Infrastructure.AI.{SagentsAgentServer, SagentsDynamicSupervisor}
   alias Trento.Users.User
 
   setup :verify_on_exit!
@@ -65,7 +67,7 @@ defmodule Trento.AI.AgentTest do
       model = build(:random_langchain_model)
       scope = build(:user)
 
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn ->
+      expect(ApplicationConfigLoader.Mock, :load_config, fn ->
         [base_system_prompt: "priv/ai/does_not_exist.md"]
       end)
 
@@ -78,7 +80,7 @@ defmodule Trento.AI.AgentTest do
       model = build(:random_langchain_model)
       scope = build(:user)
 
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [] end)
+      expect(ApplicationConfigLoader.Mock, :load_config, fn -> [] end)
 
       assert_raise KeyError, fn ->
         TrentoAIAgent.new!(agent_id: "thread-1", model: model, scope: scope)
@@ -227,8 +229,21 @@ defmodule Trento.AI.AgentTest do
   end
 
   describe "stop/1" do
-    test "delegates to the supervisor's stop_agent/1" do
+    test "cancels the in-flight run, then delegates to the supervisor's stop_agent/1" do
       agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id -> :ok end)
+
+      assert :ok = TrentoAIAgent.stop(agent_id)
+    end
+
+    test "terminates anyway when there was no run to cancel" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id ->
+        {:error, "Cannot cancel, server is not running (status: idle)"}
+      end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id -> :ok end)
 
@@ -237,6 +252,9 @@ defmodule Trento.AI.AgentTest do
 
     test "propagates the supervisor's error verbatim (nothing running)" do
       agent_id = "thread-#{Faker.UUID.v4()}"
+      reason = {:noproc, {GenServer, :call, [agent_id, :cancel, 5000]}}
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> exit(reason) end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id ->
         {:error, :not_found}
@@ -246,26 +264,44 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  describe "cancel/1" do
+    test "delegates to the agent server's cancel/1" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> :ok end)
+
+      assert :ok = TrentoAIAgent.cancel(agent_id)
+    end
+
+    test "propagates the server's error verbatim (nothing running)" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id ->
+        {:error, :not_found}
+      end)
+
+      assert {:error, :not_found} = TrentoAIAgent.cancel(agent_id)
+    end
+
+    test "returns an error instead of exiting when the agent process is gone" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+      reason = {:noproc, {GenServer, :call, [agent_id, :cancel, 5000]}}
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> exit(reason) end)
+
+      assert {:error, ^reason} = TrentoAIAgent.cancel(agent_id)
+    end
+  end
+
   # Exercises the real Sagents supervisor tree through the public API,
   # proving that a genuinely running agent process is actually terminated
   # the mock tests above only prove the call is wired.
   #
-  # The test adapters are mocks (see test_helper.exs), so this describe swaps the
-  # supervisor adapter for the real SagentsDynamicSupervisor for its duration.
-  describe "stop/1 — integration (real supervisor)" do
+  # A fake model (see Trento.AI.FakeChatModel) holds a run in flight.
+  describe "stop/1 — integration (real supervisor + server)" do
     @describetag :integration
 
-    setup do
-      ai = Application.get_env(:trento, :ai)
-
-      Application.put_env(
-        :trento,
-        :ai,
-        Keyword.put(ai, :agent_supervisor_adapter, SagentsDynamicSupervisor)
-      )
-
-      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
-    end
+    setup :real_sagents_adapters
 
     test "terminates the running agent's process tree" do
       agent_id = "thread-#{Faker.UUID.v4()}"
@@ -301,6 +337,207 @@ defmodule Trento.AI.AgentTest do
     test "returns {:error, :not_found} when no agent is running for the id" do
       assert {:error, :not_found} = TrentoAIAgent.stop("thread-#{Faker.UUID.v4()}")
     end
+
+    test "kills the in-flight run instead of waiting it out" do
+      %{agent_id: agent_id, pid: pid, task_pid: task_pid} =
+        start_running_agent(block_for: :timer.minutes(1))
+
+      server_ref = Process.monitor(pid)
+      task_ref = Process.monitor(task_pid)
+
+      stopping = Task.async(fn -> TrentoAIAgent.stop(agent_id) end)
+
+      # Nobody releases the pending model, so the run can only end by being killed.
+      # `Sagents.AgentServer.terminate/2` waits up to 25s for a running task,
+      # so a `stop` that did not cancel first would wait for 25s.
+      assert :ok = Task.await(stopping, 3_000)
+
+      assert_receive {:DOWN, ^task_ref, :process, ^task_pid, _reason}, 1_000
+      assert_receive {:DOWN, ^server_ref, :process, ^pid, _reason}, 1_000
+    end
+  end
+
+  describe "cancel/1 — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup :real_sagents_adapters
+
+    test "kills the in-flight run, keeping the agent process and its conversation" do
+      initial_user_prompt = Faker.Lorem.sentence()
+
+      %{agent_id: agent_id, pid: pid} =
+        start_running_agent(initial_user_prompt: initial_user_prompt)
+
+      assert :ok = TrentoAIAgent.cancel(agent_id)
+
+      assert_receive {:agent, {:status_changed, :cancelled, nil}}, 5_000
+      assert Process.alive?(pid)
+
+      assert %{status: :cancelled, state: %{messages: messages}} =
+               TrentoAIAgentServer.get_info(agent_id)
+
+      assert Enum.any?(
+               messages,
+               &match?(
+                 %Message{
+                   role: :user,
+                   content: [%Message.ContentPart{content: ^initial_user_prompt}]
+                 },
+                 &1
+               )
+             )
+    end
+
+    test "leaves the thread usable — the next prompt starts a new run" do
+      %{agent: agent, agent_id: agent_id} = start_running_agent()
+
+      assert :ok = TrentoAIAgent.cancel(agent_id)
+      assert_receive {:agent, {:status_changed, :cancelled, nil}}, 5_000
+
+      assert :ok = TrentoAIAgent.run(agent, "second prompt")
+
+      assert_receive {:llm_called, _task_pid}, 5_000
+      assert_receive {:agent, {:status_changed, :running, nil}}, 5_000
+    end
+
+    test "the cancelled agent can still be stopped afterwards" do
+      %{agent_id: agent_id, pid: pid} = start_running_agent()
+
+      assert :ok = TrentoAIAgent.cancel(agent_id)
+      assert_receive {:agent, {:status_changed, :cancelled, nil}}, 5_000
+
+      ref = Process.monitor(pid)
+
+      # stop/1 cancels again an already cancelled agent
+      # error is discarded, and termination succeeds
+      assert :ok = TrentoAIAgent.stop(agent_id)
+      assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, 5_000
+    end
+
+    test "does not cancel — nor kill — an agent that is sitting idle" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      agent =
+        TrentoAIAgent.new!(
+          agent_id: agent_id,
+          model: %FakeChatModel{notify: self()},
+          scope: build(:user)
+        )
+
+      assert {:ok, _sup} =
+               TrentoAIAgentSupervisor.start_agent_sync(
+                 agent_id: agent_id,
+                 agent: agent,
+                 pubsub: {Phoenix.PubSub, Trento.PubSub}
+               )
+
+      assert {:ok, pid} = AgentSupervisor.get_pid(agent_id)
+      on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+
+      # the error sagents returns
+      assert {:error, "Cannot cancel, server is not running (status: idle)"} =
+               TrentoAIAgent.cancel(agent_id)
+
+      assert Process.alive?(pid)
+    end
+
+    # Counterproof about the functioning of the FakeChatModel.
+    # When the run is released, it completes successfully and the agent goes back to idle.
+    test "a released run finishes successfully" do
+      %{agent_id: agent_id, task_pid: task_pid} =
+        start_running_agent(
+          block_for: :timer.minutes(1),
+          reply: "You are absolutely right, I am a fake model."
+        )
+
+      send(task_pid, :release)
+
+      assert_receive {:agent, {:status_changed, :idle, nil}}, 5_000
+
+      assert %{status: :idle, state: %{messages: messages}} =
+               TrentoAIAgentServer.get_info(agent_id)
+
+      assert Enum.any?(
+               messages,
+               &match?(
+                 %Message{
+                   role: :assistant,
+                   content: [
+                     %Message.ContentPart{content: "You are absolutely right, I am a fake model."}
+                   ]
+                 },
+                 &1
+               )
+             )
+    end
+
+    test "returns an error instead of exiting when no agent is registered for the id" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      assert {:error, {:noproc, {GenServer, :call, [_name, :cancel, _timeout]}}} =
+               TrentoAIAgent.cancel(agent_id)
+    end
+  end
+
+  # Swaps the whole AI config over to the real implementations for the duration
+  # of the test, so `Trento.AI.Agent` drives the actual sagents tree.
+  #
+  # `:application_config_loader` goes back to the real module too, and that is
+  # what lets teardown call `Trento.AI.Agent.stop/1`: the Mox mock is `:private`
+  # and stubbed for the *test* process, while `on_exit` runs in a process of its
+  # own. Semantically it changes nothing — `Trento.AI.AICase` stubs the mock
+  # with `Mox.stub_with(…, ApplicationConfigLoader)`, so it only ever delegated
+  # to this same module.
+  defp real_sagents_adapters(_ctx) do
+    ai = Application.get_env(:trento, :ai)
+
+    Application.put_env(
+      :trento,
+      :ai,
+      ai
+      |> Keyword.put(:application_config_loader, ApplicationConfigLoader)
+      |> Keyword.put(:agent_supervisor_adapter, SagentsDynamicSupervisor)
+      |> Keyword.put(:agent_server_adapter, SagentsAgentServer)
+    )
+
+    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+  end
+
+  # Boots a real agent through the public API and blocks until its run is
+  # actually inside the model call, so that a following cancel/1 or stop/1 has
+  # a live run to act on. Subscribes the *test* process to the agent's event
+  # stream (`run/3` does that for its caller).
+  #
+  # `:task_pid` is the parked run task: `send(task_pid, :release)` makes the
+  # fake model answer and the run complete.
+  #
+  # `:block_for` overrides how long the fake model parks, for the one test that
+  # has to rule the park's own timeout out as the thing that ended the run. It
+  # defaults to the fake model's own default rather than restating it.
+  defp start_running_agent(opts \\ []) do
+    agent_id = "thread-#{Faker.UUID.v4()}"
+    model = %FakeChatModel{notify: self()}
+
+    block_for = Keyword.get(opts, :block_for, model.block_for)
+    reply = Keyword.get(opts, :reply, model.reply)
+    initial_user_prompt = Keyword.get(opts, :initial_user_prompt, "hello")
+
+    agent =
+      TrentoAIAgent.new!(
+        agent_id: agent_id,
+        model: %FakeChatModel{model | block_for: block_for, reply: reply},
+        scope: build(:user)
+      )
+
+    assert :ok = TrentoAIAgent.run(agent, initial_user_prompt)
+    assert {:ok, pid} = AgentSupervisor.get_pid(agent_id)
+
+    assert_receive {:agent, {:status_changed, :running, nil}}, 5_000
+    assert_receive {:llm_called, task_pid}, 5_000
+
+    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+
+    %{agent: agent, agent_id: agent_id, pid: pid, task_pid: task_pid}
   end
 
   defp run_opts(_ctx) do
