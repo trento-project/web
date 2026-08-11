@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-47667B83.js"></script>
+    <script defer src="dist/sidebar_items-61674FFA.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -138,7 +138,7 @@ hydrates the credentials map into a <code class="inline">%Trento.Users.User{}</c
 against the loaded user. ControllerTool itself owns no auth logic.</p><p>Args are routed by the operation's declared <code class="inline">:in</code> field
 (<code class="inline">:path</code> / <code class="inline">:query</code> / body) via <a href="Trento.AI.OpenApiToolBuilder.html"><code class="inline">Trento.AI.OpenApiToolBuilder</code></a>.
 Query-tagged args are appended to the request URL, not passed via
-<a href="https://hexdocs.pm/plug/1.19.2/Plug.Test.html#conn/3"><code class="inline">Plug.Test.conn/3</code></a>'s <code class="inline">params_or_body</code> argument — that argument is a
+<a href="https://hexdocs.pm/plug/1.20.3/Plug.Test.html#conn/3"><code class="inline">Plug.Test.conn/3</code></a>'s <code class="inline">params_or_body</code> argument — that argument is a
 single bucket routed by verb (GET → <code class="inline">query_string</code>, non-GET →
 <code class="inline">body_params</code>) and cannot carry both query and body simultaneously.
 Appending the query string to the URL is the only mechanism that
