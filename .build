@@ -323,6 +323,7 @@ Trento.Infrastructure.AI.PubSubConfigurationEvents.html
 Trento.Infrastructure.AI.SagentsAgentServer.html
 Trento.Infrastructure.AI.SagentsDynamicSupervisor.html
 Trento.Infrastructure.Alerting.Alerting.html
+Trento.Infrastructure.Alerting.Emails.EmailLayout.html
 Trento.Infrastructure.Catalog.AMQP.Consumer.html
 Trento.Infrastructure.Catalog.AMQP.Processor.html
 Trento.Infrastructure.Checks.AMQP.Consumer.html
@@ -606,7 +607,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-534ECAA0.js
-dist/sidebar_items-51A37CBD.js
+dist/search_data-47754790.js
+dist/sidebar_items-47667B83.js
 index.html
 search.html

@@ -322,6 +322,7 @@ Trento.Infrastructure.AI.PubSubConfigurationEvents.md
 Trento.Infrastructure.AI.SagentsAgentServer.md
 Trento.Infrastructure.AI.SagentsDynamicSupervisor.md
 Trento.Infrastructure.Alerting.Alerting.md
+Trento.Infrastructure.Alerting.Emails.EmailLayout.md
 Trento.Infrastructure.Catalog.AMQP.Consumer.md
 Trento.Infrastructure.Catalog.AMQP.Processor.md
 Trento.Infrastructure.Checks.AMQP.Consumer.md

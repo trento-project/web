@@ -736,6 +736,7 @@ delegates to `Sagents.AgentsDynamicSupervisor`.
 
   - [Trento.Infrastructure.Alerting.Alerting](Trento.Infrastructure.Alerting.Alerting.md): Provides a set of functions of Alerting related usecases.
 
+  - [Trento.Infrastructure.Alerting.Emails.EmailLayout](Trento.Infrastructure.Alerting.Emails.EmailLayout.md): Common layout of the Trento alerting emails.
   - [Trento.Infrastructure.Catalog.AMQP.Consumer](Trento.Infrastructure.Catalog.AMQP.Consumer.md): AMQP catalog consumer.
 
   - [Trento.Infrastructure.Catalog.AMQP.Processor](Trento.Infrastructure.Catalog.AMQP.Processor.md): AMQP processor for the operations events
