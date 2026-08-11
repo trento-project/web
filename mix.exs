@@ -118,7 +118,7 @@ defmodule Trento.MixProject do
       {:unplug, "~> 1.1.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 5.0"},
-      {:joken, "~> 2.5.0"},
+      {:joken, "~> 2.6.2"},
       {:ecto, "~> 3.14"},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
