@@ -39,7 +39,7 @@
     "jest-environment-jsdom": "^30.3.0",
     "jest-junit": "^16.0.0",
     "jsdom-testing-mocks": "^1.16.0",
-    "postcss": "^8.5.12",
+    "postcss": "^8.5.26",
     "postcss-import": "^16.1.1",
     "prettier": "^3.8.5",
     "redux-mock-store": "^1.5.5",
