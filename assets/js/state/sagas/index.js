@@ -31,6 +31,7 @@ import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
   CLUSTER_HEALTH_CHANGED,
+  CLUSTER_STALE_CHANGED,
   setClusters,
   startClustersLoading,
   stopClustersLoading,
@@ -41,6 +42,7 @@ import {
   SAP_SYSTEM_HEALTH_CHANGED,
   SAP_SYSTEM_DEREGISTERED,
   SAP_SYSTEM_RESTORED,
+  SAP_SYSTEM_STALE_CHANGED,
   startSapSystemsLoading,
   stopSapSystemsLoading,
   setSapSystems,
@@ -56,6 +58,7 @@ import {
   DATABASE_REGISTERED,
   DATABASE_RESTORED,
   DATABASE_HEALTH_CHANGED,
+  DATABASE_STALE_CHANGED,
   setDatabases,
   startDatabasesLoading,
   stopDatabasesLoading,
@@ -86,6 +89,29 @@ import { checkApiKeyExpiration } from '@state/sagas/settings';
 import { watchOperationEvents } from '@state/sagas/operations';
 
 const RESET_STATE = 'RESET_STATE';
+
+const HEALTH_SUMMARY_REFRESH_EVENTS = [
+  HOST_REGISTERED,
+  CLUSTER_REGISTERED,
+  DATABASE_REGISTERED,
+  SAP_SYSTEM_REGISTERED,
+  HEARTBEAT_FAILED,
+  HEARTBEAT_SUCCEDED,
+  DATABASE_HEALTH_CHANGED,
+  SAP_SYSTEM_HEALTH_CHANGED,
+  CLUSTER_HEALTH_CHANGED,
+  SAP_SYSTEM_DEREGISTERED,
+  CLUSTER_DEREGISTERED,
+  HOST_HEALTH_CHANGED,
+  HOST_DEREGISTERED,
+  HOST_RESTORED,
+  DATABASE_RESTORED,
+  CLUSTER_RESTORED,
+  SAP_SYSTEM_RESTORED,
+  DATABASE_STALE_CHANGED,
+  CLUSTER_STALE_CHANGED,
+  SAP_SYSTEM_STALE_CHANGED,
+];
 
 function* loadSapSystemsHealthSummary() {
   yield put(startHealthSummaryLoading());
@@ -147,83 +173,7 @@ function* refreshHealthSummaryOnComponentsHealthChange() {
 
   yield debounce(
     debounceDuration,
-    HOST_REGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    CLUSTER_REGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    DATABASE_REGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    SAP_SYSTEM_REGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    HEARTBEAT_FAILED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    HEARTBEAT_SUCCEDED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    DATABASE_HEALTH_CHANGED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    SAP_SYSTEM_HEALTH_CHANGED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    CLUSTER_HEALTH_CHANGED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    SAP_SYSTEM_DEREGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    CLUSTER_DEREGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    HOST_HEALTH_CHANGED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    HOST_DEREGISTERED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(debounceDuration, HOST_RESTORED, loadSapSystemsHealthSummary);
-  yield debounce(
-    debounceDuration,
-    DATABASE_RESTORED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    CLUSTER_RESTORED,
-    loadSapSystemsHealthSummary
-  );
-  yield debounce(
-    debounceDuration,
-    SAP_SYSTEM_RESTORED,
+    HEALTH_SUMMARY_REFRESH_EVENTS,
     loadSapSystemsHealthSummary
   );
 }
