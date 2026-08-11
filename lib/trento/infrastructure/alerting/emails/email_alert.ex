@@ -78,7 +78,7 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
         application_instances: application_instances,
         database_instances: database_instances
       }
-      |> heartbeat_failed()
+      |> heartbeat_failure()
       |> render_heex_to_string()
 
     new()
