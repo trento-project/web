@@ -26,7 +26,7 @@ defmodule Trento.Support.StructHelperTest do
       }
 
       assert %{
-               "not_existing_atom" => "some-value",
+               :not_existing_atom => "some-value",
                id: "some-id",
                list: [
                  datetime,
