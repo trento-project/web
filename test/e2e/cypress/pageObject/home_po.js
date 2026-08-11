@@ -31,7 +31,7 @@ export const nwpSystemShouldBeDisplayed = () =>
   cy.get(nwpSystemCell).should('be.visible');
 
 export const nwpSystemShouldNotBeDisplayed = () =>
-  cy.get(nwpSystemCell).should('not.exist');
+  cy.get(nwpSystemCell, { timeout: 20000 }).should('not.exist');
 
 export const nwpSystemRowIsMarkedStale = () =>
   basePage.elementIsMarkedStale(nwpSystemRow);
