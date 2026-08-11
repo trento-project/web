@@ -33,8 +33,10 @@ export const nwpSystemShouldBeDisplayed = () =>
 export const nwpSystemShouldNotBeDisplayed = () =>
   cy.get(nwpSystemCell, { timeout: 20000 }).should('not.exist');
 
+// Timeout is 25 seconds to cover time for heartbeat failure event
+// and home page refresh after debounce time
 export const nwpSystemRowIsMarkedStale = () =>
-  basePage.elementIsMarkedStale(nwpSystemRow);
+  basePage.elementIsMarkedStale(nwpSystemRow, 25000);
 
 export const nwpSystemRowIsMarkedInSync = () =>
   basePage.elementIsMarkedInSync(nwpSystemRow);
