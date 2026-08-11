@@ -1064,6 +1064,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         run_has_started: true
       })
 
+      # stop/1 cancels the in-flight run before terminating the agent.
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-live" -> :ok end)
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
 
       Trento.AI.Configurations.Events.broadcast_cleared(user_id)
@@ -1079,6 +1081,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         loading: true,
         run_has_started: true
       })
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-live" -> {:error, :not_found} end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" ->
         {:error, :not_found}
