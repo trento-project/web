@@ -50,7 +50,8 @@ defmodule Trento.SapSystems.Services.HealthSummaryService do
     hosts =
       application_instances
       |> Enum.concat(database_instances)
-      |> Enum.flat_map(fn %{host: host} -> List.wrap(host) end)
+      |> Enum.map(fn %{host: host} -> host end)
+      |> Enum.reject(&is_nil/1)
 
     application_cluster = get_cluster_from_instances(application_instances)
     database_cluster = get_cluster_from_instances(database_instances)
