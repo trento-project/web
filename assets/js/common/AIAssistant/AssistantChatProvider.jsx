@@ -21,13 +21,12 @@ function AssistantChatProvider({
 }) {
   const socket = useSocket();
 
-  const agent = useMemo(() => {
-    if (!socket || !userID) return null;
-    return new WebSocketAIAgent({ socket, userID });
-  }, [socket, userID]);
+  const agent = useMemo(
+    () => new WebSocketAIAgent({ socket, userID }),
+    [socket, userID]
+  );
 
   useEffect(() => {
-    if (!agent) return;
     agent.withCallbacks({
       onConnectionChange,
       onAIConfigurationCleared,
@@ -37,7 +36,6 @@ function AssistantChatProvider({
   });
 
   useEffect(() => {
-    if (!agent) return undefined;
     // Catch rejections (channel-join error / timeout / missing socket)
     // so they don't bubble up as unhandled promise rejections —
     // onConnectionChange handles flipping the UI to DISCONNECTED
@@ -50,7 +48,7 @@ function AssistantChatProvider({
     // payload (defaults to "main" if unset). Mutate the live agent instead
     // of rebuilding it so the channel + websocket stay alive across thread
     // changes.
-    if (agent) agent.threadId = threadID;
+    agent.threadId = threadID;
   }, [agent, threadID]);
 
   const runtime = useAgUiRuntime({ agent });

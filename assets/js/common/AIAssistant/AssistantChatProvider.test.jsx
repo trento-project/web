@@ -62,14 +62,16 @@ describe('AssistantChatProvider', () => {
     expect(screen.getByText('hi')).toBeVisible();
   });
 
-  it('does not create the agent when no socket is available', () => {
+  it('opens no channel when no socket is available', () => {
     const { agent } = renderProvider({ socket: null });
-    expect(agent()).toBeNull();
+    expect(agent()).toBeInstanceOf(WebSocketAIAgent);
+    expect(agent().channel).toBeNull();
   });
 
-  it('does not create the agent when no userID is provided', () => {
+  it('opens no channel when no userID is provided', () => {
     const { socket, agent } = renderProvider({ userID: undefined });
-    expect(agent()).toBeNull();
+    expect(agent()).toBeInstanceOf(WebSocketAIAgent);
+    expect(agent().channel).toBeNull();
     expect(socket.channels.size).toBe(0);
   });
 
