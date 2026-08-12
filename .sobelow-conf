@@ -1,0 +1,6 @@
+[
+  # Honour `# sobelow_skip ["Module.Check"]` comments in source.
+  skip: true,
+  # Findings intentionally accepted. Every entry needs a reason in the PR that adds it.
+  ignore: []
+]

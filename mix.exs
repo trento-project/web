@@ -135,7 +135,8 @@ defmodule Trento.MixProject do
       # server-side. Re-bump only after page_controller/session_controller
       # are reworked to thread session_params through Plug.Session.
       {:assent, "== 0.2.10", override: true},
-      {:samly, "~> 1.0"}
+      {:samly, "~> 1.0"},
+      {:sobelow, "~> 0.14", only: [:dev, :test], runtime: false}
     ]
   end
 
