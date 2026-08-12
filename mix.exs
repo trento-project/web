@@ -104,7 +104,7 @@ defmodule Trento.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.39"},
-      {:process_tree, "~> 0.2.1", only: [:dev, :test]},
+      {:process_tree, "~> 0.3.0", only: [:dev, :test]},
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.24"},
       {:telemetry_metrics, "~> 1.0"},
