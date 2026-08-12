@@ -161,7 +161,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -257,7 +257,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
@@ -338,7 +338,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -409,7 +409,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -475,7 +475,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -528,7 +528,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
@@ -610,7 +610,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
@@ -712,7 +712,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
@@ -872,7 +872,7 @@ jobs:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
@@ -967,7 +967,7 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -1009,7 +1009,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
@@ -1066,7 +1066,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
