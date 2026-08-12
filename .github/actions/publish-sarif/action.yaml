@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Publish SARIF
+description: >-
+  Upload a SARIF report as a workflow artifact and, when the token allows it,
+  to GitHub code scanning.
+
+inputs:
+  name:
+    description: Artifact name suffix. Must be unique within a workflow run.
+    required: true
+  path:
+    description: Path to the SARIF file.
+    required: true
+  category:
+    description: Code scanning category. Must be unique per tool.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    # Nuclei writes no file at all when there are no findings. Treat a missing
+    # report as "nothing to publish" rather than as a failure.
+    - name: Check whether a report was produced
+      id: check
+      shell: bash
+      env:
+        SARIF_PATH: ${{ inputs.path }}
+        SARIF_NAME: ${{ inputs.name }}
+      run: |
+        set -euo pipefail
+        if [[ -f "$SARIF_PATH" ]]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+          echo "::notice title=publish-sarif::No SARIF file at ${SARIF_PATH} for ${SARIF_NAME}; nothing to publish"
+        fi
+
+    - name: Upload SARIF artifact
+      if: steps.check.outputs.exists == 'true'
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+      with:
+        name: sarif-${{ inputs.name }}
+        path: ${{ inputs.path }}
+        retention-days: 30
+
+    # Pull requests from forks receive a read-only GITHUB_TOKEN and cannot write
+    # to code scanning. They fall through to artifact-only rather than failing.
+    - name: Upload SARIF to code scanning
+      if: >-
+        steps.check.outputs.exists == 'true' &&
+        (github.event_name != 'pull_request' ||
+         github.event.pull_request.head.repo.full_name == github.repository)
+      uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+      with:
+        sarif_file: ${{ inputs.path }}
+        category: ${{ inputs.category }}
