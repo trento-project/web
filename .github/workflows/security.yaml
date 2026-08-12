@@ -153,3 +153,65 @@ jobs:
           name: eslint-security
           path: sarif/eslint.sarif
           category: eslint-security
+
+  sast-js:
+    name: SAST ${{ matrix.language }} (CodeQL)
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: javascript-typescript
+            category: codeql-javascript
+          - language: actions
+            category: codeql-actions
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          config-file: ./.github/codeql/config.yml
+
+      - name: Create report directory
+        run: mkdir -p sarif
+
+      - name: Analyze
+        continue-on-error: true
+        uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        with:
+          category: ${{ matrix.category }}
+          output: sarif
+          upload: never
+
+      # CodeQL names its output after the database language, which does not always
+      # match the `languages:` input, so normalise to a deterministic filename.
+      - name: Normalise the SARIF filename
+        if: always()
+        env:
+          TARGET: sarif/${{ matrix.category }}.sarif
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          produced=(sarif/*.sarif)
+          if [ ${#produced[@]} -eq 0 ]; then
+            echo "::warning::CodeQL produced no SARIF file"
+            exit 0
+          fi
+          if [ ${#produced[@]} -gt 1 ]; then
+            printf '%s\n' "${produced[@]}"
+            echo "::error::expected exactly one SARIF file, found ${#produced[@]}"
+            exit 1
+          fi
+          [ "${produced[0]}" = "$TARGET" ] || mv "${produced[0]}" "$TARGET"
+
+      - name: Publish SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: ${{ matrix.category }}
+          path: sarif/${{ matrix.category }}.sarif
+          category: ${{ matrix.category }}

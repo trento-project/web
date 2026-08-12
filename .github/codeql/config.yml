@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Trento CodeQL configuration
+
+paths-ignore:
+  - assets/node_modules
+  - assets/vendor
+  - priv/static
+  - test/e2e/node_modules
+  - "**/*.test.js"
+  - "**/*.test.jsx"
+  - "**/*.stories.js"
+  - "**/*.stories.jsx"
