@@ -45,7 +45,7 @@
   "expo": {:hex, :expo, "0.5.2", "beba786aab8e3c5431813d7a44b828e7b922bfa431d6bfbada0904535342efe2", [:mix], [], "hexpm", "8c9bfa06ca017c9cb4020fabe980bc7fdb1aaec059fd004c2ab3bff03b1c599c"},
   "faker": {:hex, :faker, "0.18.0", "943e479319a22ea4e8e39e8e076b81c02827d9302f3d32726c5bf82f430e6e14", [:mix], [], "hexpm", "bfbdd83958d78e2788e99ec9317c4816e651ad05e24cfd1196ce5db5b3e81797"},
   "file_system": {:hex, :file_system, "1.1.1", "31864f4685b0148f25bd3fbef2b1228457c0c89024ad67f7a81a3ffbc0bbad3a", [:mix], [], "hexpm", "7a15ff97dfe526aeefb090a7a9d3d03aa907e100e262a0f8f7746b78f8f87a5d"},
-  "floki": {:hex, :floki, "0.38.1", "f002ccac94b3bcb21d40d9b34cc2cc9fd88a8311879120330075b5dde657ebee", [:mix], [], "hexpm", "e744bf0db7ee34b2c8b62767f04071107af0516a81144b9a2f73fe0494200e5b"},
+  "floki": {:hex, :floki, "0.38.4", "10f98971e892aed2c2f1b3a0f928e488e3797e1c6dd3dfd98db40b14e9a78bcf", [:mix], [], "hexpm", "bdb34645eee8e79845c7edaca2d4099a52804ee4d4a3ecc683a69451f0244973"},
   "flop": {:hex, :flop, "0.25.0", "0667f3c65f140b2ed7d64dad01b8e0e3dcc071addf8a556d11b36cad1619a6c1", [:mix], [{:ecto, "~> 3.11", [hex: :ecto, repo: "hexpm", optional: false]}, {:nimble_options, "~> 1.0", [hex: :nimble_options, repo: "hexpm", optional: false]}], "hexpm", "7e4b01b76412c77691e9aaea6903c5a8212fb7243198e1d2ba74fa15f2aec34c"},
   "fsm": {:hex, :fsm, "0.3.1", "087aa9b02779a84320dc7a2d8464452b5308e29877921b2bde81cdba32a12390", [:mix], [], "hexpm", "fbf0d53f89e9082b326b0b5828b94b4c549ff9d1452bbfd00b4d1ac082208e96"},
   "gen_rmq": {:git, "https://github.com/trento-project/trnt_gen_rmq.git", "b8041734b4e0af61a851087652cb005e0bdec63e", [ref: "v5.0.1"]},
