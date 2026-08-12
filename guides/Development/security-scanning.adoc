@@ -33,6 +33,38 @@ docker run --rm -v "$PWD:/src" -w /src ghcr.io/google/osv-scanner:v2.5.0 \
   scan source --lockfile mix.lock --lockfile assets/package-lock.json
 ----
 
+=== ESLint security rules (JavaScript)
+
+The security rules live in `assets/eslint.security.config.mjs`, a separate flat
+config that layers `eslint-plugin-security` and `eslint-plugin-no-unsanitized`
+over the base config. Keeping them out of `eslint.config.mjs` means the
+`npm run lint` gate in `ci.yaml` does not start failing on pre-existing findings.
+
+[source,bash]
+----
+cd assets && npm run lint:security
+----
+
+To reproduce exactly what CI publishes, including the suppression filter:
+
+[source,bash]
+----
+cd assets && SARIF_ESLINT_IGNORE_SUPPRESSED=true npx eslint . \
+  --config eslint.security.config.mjs \
+  -f @microsoft/eslint-formatter-sarif \
+  -o /tmp/eslint.sarif
+----
+
+=== CodeQL (JavaScript and GitHub Actions)
+
+CodeQL runs in CI only; it needs the CodeQL CLI and a downloaded query pack, so
+there is no lightweight local equivalent. Two packs run as a matrix:
+`javascript-typescript` and `actions`. Paths excluded from analysis are listed
+in `.github/codeql/config.yml`.
+
+The `actions` pack is included because several workflows use labeled triggers
+and consume secrets, which is the pattern that pack detects.
+
 == Suppressing a finding
 
 Every suppression needs a stated reason in the pull request that adds it.
@@ -44,6 +76,15 @@ project-wide.
 OSV-Scanner:: There is no in-repo suppression. Either upgrade the dependency or
 dismiss the alert in the Security tab with a reason.
 
+ESLint:: Add an `// eslint-disable-next-line <rule>` comment with the reason on
+the line above. The CI job sets `SARIF_ESLINT_IGNORE_SUPPRESSED=true`, so
+suppressed findings are never uploaded. Note that this stops the finding being
+reported on future runs; it does not dismiss an alert already filed. Dismiss
+that one in the Security tab.
+
+CodeQL:: Dismiss the alert in the Security tab. Inline suppression comments are
+not supported for the query packs in use here.
+
 Code scanning generally:: Dismissing an alert in the Security tab records the
 reason and applies to future runs.
 
@@ -53,4 +94,7 @@ reason and applies to future runs.
   `trento_contracts`) resolve to commit SHAs in `mix.lock`, so they are not
   matched against Hex advisories.
 * Container base images are not scanned.
-* Secrets and GitHub Actions workflows are not scanned.
+* Secrets are not scanned.
+* The ESLint security rules apply to `.js` and `.jsx` only, and
+  `assets/vendor/topbar.js` carries a blanket `eslint-disable`, so it is not
+  covered.
