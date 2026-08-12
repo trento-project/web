@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-27T19:08:08Z",
-    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
-    "run_id": "28298471371",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-27T19:09:04Z",
     "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
     "run_id": "28298471371",
@@ -5170,6 +5154,54 @@
       {
         "name": "Label Component::should display an info tooltip if specified",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-12T22:43:56Z",
+    "commit": "2267c2693c6aa2aa2ab973331ff0c69bafbff7bf",
+    "run_id": "31632612926",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1196
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
+        "score": 0.02501
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.02501
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
       }
     ]
   }
