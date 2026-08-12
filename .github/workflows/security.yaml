@@ -176,9 +176,6 @@ jobs:
           build-mode: none
           config-file: ./.github/codeql/config.yml
 
-      - name: Create report directory
-        run: mkdir -p sarif
-
       - name: Analyze
         continue-on-error: true
         uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
@@ -186,24 +183,22 @@ jobs:
           category: ${{ matrix.category }}
           output: sarif
           upload: never
+          upload-database: false
 
       # CodeQL names its output after the database language, which does not always
       # match the `languages:` input, so normalise to a deterministic filename.
       - name: Normalise the SARIF filename
         if: always()
+        shell: bash
         env:
           TARGET: sarif/${{ matrix.category }}.sarif
         run: |
           set -euo pipefail
           shopt -s nullglob
           produced=(sarif/*.sarif)
-          if [ ${#produced[@]} -eq 0 ]; then
-            echo "::warning::CodeQL produced no SARIF file"
-            exit 0
-          fi
-          if [ ${#produced[@]} -gt 1 ]; then
+          if [ ${#produced[@]} -ne 1 ]; then
             printf '%s\n' "${produced[@]}"
-            echo "::error::expected exactly one SARIF file, found ${#produced[@]}"
+            echo "::error::expected exactly one SARIF file in sarif/, found ${#produced[@]}"
             exit 1
           fi
           [ "${produced[0]}" = "$TARGET" ] || mv "${produced[0]}" "$TARGET"
