@@ -652,7 +652,7 @@ describe('Users', () => {
         usersPage.aiConfigurationApiKeyShouldBe('••••••••');
 
         const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+        const newModel = 'gpt-5';
 
         usersPage.clickEditAIConfigurationButton();
         usersPage.selectAIProvider(newProvider);
@@ -688,7 +688,7 @@ describe('Users', () => {
         usersPage.aiConfigurationApiKeyShouldBe('••••••••');
 
         const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+        const newModel = 'gpt-5';
 
         usersPage.clickEditAIConfigurationButton();
         usersPage.selectAIProvider(newProvider);
@@ -722,7 +722,7 @@ describe('Users', () => {
         usersPage.aiConfigurationApiKeyShouldBe('••••••••');
 
         const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+        const newModel = 'gpt-5';
 
         usersPage.clickEditAIConfigurationButton();
         usersPage.selectAIProvider(newProvider);
