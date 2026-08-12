@@ -1,6 +1,6 @@
 # SAST, DAST and SCA scanning
 
-Status: approved, not yet implemented
+Status: approved; PR 1 implemented, PRs 2 and 3 not yet implemented
 Date: 2026-08-12
 
 ## Problem
@@ -25,7 +25,7 @@ for the Elixir backend and the JavaScript frontend.
 
 | Concern | Tool | Licence | Native SARIF |
 | --- | --- | --- | --- |
-| SAST Elixir | Sobelow 0.14 | Apache-2.0 | yes (`--format sarif --out`) |
+| SAST Elixir | Sobelow 0.15 | Apache-2.0 | yes (`--format sarif --out`) |
 | SAST JavaScript | CodeQL (`javascript-typescript`) | free for public repos, not OSS | yes |
 | SAST GitHub Actions | CodeQL (`actions`) | free for public repos, not OSS | yes |
 | SAST JavaScript (lint) | `eslint-plugin-security`, `eslint-plugin-no-unsanitized` | MIT | via `@microsoft/eslint-formatter-sarif` (MIT) |
@@ -327,14 +327,14 @@ Branch `security-scanning`, shipped as three sequential pull requests.
 
 | PR | Contents |
 | --- | --- |
-| 1 | `security.yaml` skeleton, `permissions`, `publish-sarif` composite action, Sobelow (`mix.exs`, `.sobelow-conf`), OSV-Scanner, SPDX headers, `guides/Development/security-scanning.md` |
+| 1 | `security.yaml` skeleton, `permissions`, `publish-sarif` composite action, Sobelow (`mix.exs`, `.sobelow-conf`), OSV-Scanner, SPDX headers, `guides/Development/security-scanning.adoc` |
 | 2 | CodeQL (`.github/codeql/config.yml`, two categories), ESLint security (`eslint.security.config.mjs`, three devDependencies, `lint:security` script) |
 | 3 | `dast` job, `.github/zap/trento-api.yaml`, Nuclei, readiness and JWT gates, `dast` label |
 
 PR 1 carries the shared scaffolding, so PRs 2 and 3 are each a configuration file plus a
 job.
 
-`guides/Development/security-scanning.md` documents how to run each scanner locally, how to
+`guides/Development/security-scanning.adoc` documents how to run each scanner locally, how to
 suppress a finding per tool, and where reports land. Without it a report-only rollout
 becomes folklore.
 
