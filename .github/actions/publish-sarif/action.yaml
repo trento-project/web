@@ -11,30 +11,42 @@ inputs:
     description: Artifact name suffix. Must be unique within a workflow run.
     required: true
   path:
-    description: Path to the SARIF file.
+    description: Path to the SARIF file, relative to the workspace.
     required: true
   category:
     description: Code scanning category. Must be unique per tool.
     required: true
+  optional:
+    description: >-
+      Whether a missing report is an expected outcome. Only true for scanners
+      that write no file when they find nothing.
+    required: false
+    default: 'false'
 
 runs:
   using: composite
   steps:
-    # Nuclei writes no file at all when there are no findings. Treat a missing
-    # report as "nothing to publish" rather than as a failure.
+    # A missing report is only expected for scanners like Nuclei, which write
+    # no file at all when there are no findings. For everything else, a
+    # missing file means the scan died before writing anything, which must
+    # not go unnoticed.
     - name: Check whether a report was produced
       id: check
       shell: bash
       env:
         SARIF_PATH: ${{ inputs.path }}
         SARIF_NAME: ${{ inputs.name }}
+        OPTIONAL: ${{ inputs.optional }}
       run: |
         set -euo pipefail
         if [[ -f "$SARIF_PATH" ]]; then
           echo "exists=true" >> "$GITHUB_OUTPUT"
-        else
+        elif [[ "$OPTIONAL" == "true" ]]; then
           echo "exists=false" >> "$GITHUB_OUTPUT"
           echo "::notice title=publish-sarif::No SARIF file at ${SARIF_PATH} for ${SARIF_NAME}; nothing to publish"
+        else
+          echo "::error title=publish-sarif::No SARIF file at ${SARIF_PATH} for ${SARIF_NAME}; the scan did not produce a report"
+          exit 1
         fi
 
     - name: Upload SARIF artifact
