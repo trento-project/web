@@ -25,6 +25,7 @@ concurrency:
 
 env:
   MIX_ENV: test
+  OSV_SCANNER_VERSION: "v2.5.0" # https://github.com/google/osv-scanner/releases
 
 jobs:
   sast-elixir:
@@ -70,3 +71,35 @@ jobs:
           name: sobelow
           path: sarif/sobelow.sarif
           category: sobelow
+
+  sca:
+    name: Dependency scanning (OSV-Scanner)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Create report directory
+        run: mkdir -p sarif
+
+      # Git-sourced deps (langchain, gen_rmq, trento_contracts) resolve to commit
+      # SHAs in mix.lock, so Hex advisory matching does not cover them.
+      - name: Run OSV-Scanner
+        continue-on-error: true
+        env:
+          OSV_IMAGE: ghcr.io/google/osv-scanner:${{ env.OSV_SCANNER_VERSION }}
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/src" -w /src "$OSV_IMAGE" \
+            scan source \
+            --lockfile mix.lock \
+            --lockfile assets/package-lock.json \
+            --format sarif --output /src/sarif/osv.sarif
+
+      - name: Publish SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: osv
+          path: sarif/osv.sarif
+          category: osv
