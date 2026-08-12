@@ -62,8 +62,10 @@ there is no lightweight local equivalent. Two packs run as a matrix:
 `javascript-typescript` and `actions`. Paths excluded from analysis are listed
 in `.github/codeql/config.yml`.
 
-The `actions` pack is included because several workflows use labeled triggers
-and consume secrets, which is the pattern that pack detects.
+The `actions` pack is included because the workflows here use labeled triggers
+and consume secrets. It flags missing workflow `permissions:` blocks, untrusted
+checkout, cache poisoning and secret exposure. Every one of the 52 findings it
+reports today is `actions/missing-workflow-permissions`.
 
 On a pull request CodeQL runs in diff-informed mode: it builds the full
 database but only reports alerts for code the pull request changes, so a pull
@@ -107,6 +109,12 @@ reason and applies to future runs.
   matched against Hex advisories.
 * Container base images are not scanned.
 * Secrets are not scanned.
-* The ESLint security rules apply to `.js` and `.jsx` only, and
-  `assets/vendor/topbar.js` carries a blanket `eslint-disable`, so it is not
-  covered.
+* The ESLint security rules apply to `.js` and `.jsx` only, and cover `assets/`
+  alone, since the job runs `eslint` from that directory. `test/e2e` is
+  therefore CodeQL-only.
+* `assets/vendor` is excluded from both scanners: CodeQL skips it via
+  `paths-ignore`, and `assets/vendor/topbar.js` carries a blanket
+  `eslint-disable`. Nothing scans it.
+* CodeQL's `paths-ignore` excludes `*.test.js`, `*.test.jsx`, `*.stories.js`
+  and `*.stories.jsx`, but not `*.spec.*`, `__tests__/`, `test-utils/` or
+  `test/e2e/cypress/**`, so most test code is still analysed.
