@@ -65,6 +65,18 @@ in `.github/codeql/config.yml`.
 The `actions` pack is included because several workflows use labeled triggers
 and consume secrets, which is the pattern that pack detects.
 
+On a pull request CodeQL runs in diff-informed mode: it builds the full
+database but only reports alerts for code the pull request changes, so a pull
+request that touches no JavaScript shows a CodeQL count of zero even when the
+codebase has findings. The complete set appears on the nightly run and on
+pushes to `main`. To see it for a branch before merging, dispatch the workflow
+manually, which is not a pull request event and so analyses everything:
+
+[source,bash]
+----
+gh workflow run security.yaml --ref "$(git branch --show-current)"
+----
+
 == Suppressing a finding
 
 Every suppression needs a stated reason in the pull request that adds it.
