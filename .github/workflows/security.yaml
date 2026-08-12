@@ -122,6 +122,7 @@ jobs:
 
       # Same key shape as ci.yaml's npm-cache steps, so this restores that cache.
       - name: Retrieve NPM cached dependencies
+        id: npm-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
@@ -129,6 +130,7 @@ jobs:
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
 
       - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
         run: cd assets && npm ci
 
       - name: Create report directory
@@ -136,6 +138,8 @@ jobs:
 
       - name: Run ESLint security rules
         continue-on-error: true
+        env:
+          SARIF_ESLINT_IGNORE_SUPPRESSED: 'true'
         run: |
           cd assets && npx eslint . \
             --config eslint.security.config.mjs \
