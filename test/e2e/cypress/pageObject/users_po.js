@@ -104,7 +104,7 @@ const aiSelectModelDropdown = basePage.getSelectControlValue(
 );
 const aiApiKeyInputField = 'input[aria-label="ai-api-key-input"]';
 
-const saveAIConfigurationButton = 'button[aria-label="Save AI Configuration"]';
+const saveAIConfigurationButton = 'div[id*="headlessui-dialog-panel"] button:contains("Save")';
 
 const aiConfigurationClearButton =
   'button[aria-label="ai-configuration-clear-button"]:contains("Clear Settings")';
