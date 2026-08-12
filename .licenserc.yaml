@@ -22,6 +22,7 @@ header:
     - "**/*.txt"
     - ".github/CODEOWNERS"
     - ".github/dependabot.yml"
+    - ".sobelow-conf"
     - ".tool-versions"
     - "LICENSE"
     - "VERSION"
