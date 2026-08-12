@@ -1,0 +1,56 @@
+= Security scanning
+
+Trento runs static analysis and dependency scanning in the
+`Security Scanning` workflow (`.github/workflows/security.yaml`). Reports are
+published as SARIF, both as workflow artifacts and to the repository's
+Security -> Code scanning tab.
+
+None of these checks block a merge. They establish a baseline that is triaged
+before any single tool is switched to blocking.
+
+== Running the scanners locally
+
+=== Sobelow (Elixir static analysis)
+
+[source,bash]
+----
+mix sobelow --format sarif --out /tmp/sobelow.sarif
+jq '.runs[0].results | length' /tmp/sobelow.sarif
+----
+
+For readable output while working, drop the SARIF flags:
+
+[source,bash]
+----
+mix sobelow
+----
+
+=== OSV-Scanner (dependency vulnerabilities)
+
+[source,bash]
+----
+docker run --rm -v "$PWD:/src" -w /src ghcr.io/google/osv-scanner:v2.5.0 \
+  scan source --lockfile mix.lock --lockfile assets/package-lock.json
+----
+
+== Suppressing a finding
+
+Every suppression needs a stated reason in the pull request that adds it.
+
+Sobelow:: Add `# sobelow_skip ["Module.Check"]` immediately above the function,
+or add the finding to the `ignore` list in `.sobelow-conf` when it applies
+project-wide.
+
+OSV-Scanner:: There is no in-repo suppression. Either upgrade the dependency or
+dismiss the alert in the Security tab with a reason.
+
+Code scanning generally:: Dismissing an alert in the Security tab records the
+reason and applies to future runs.
+
+== Known gaps
+
+* Dependencies sourced from git rather than Hex (`langchain`, `gen_rmq`,
+  `trento_contracts`) resolve to commit SHAs in `mix.lock`, so they are not
+  matched against Hex advisories.
+* Container base images are not scanned.
+* Secrets and GitHub Actions workflows are not scanned.
