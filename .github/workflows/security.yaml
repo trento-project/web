@@ -103,3 +103,49 @@ jobs:
           name: osv
           path: sarif/osv.sarif
           category: osv
+
+  sast-js-lint:
+    name: SAST JS (ESLint security rules)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Gather toolchain versions
+        uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
+
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+
+      # Same key shape as ci.yaml's npm-cache steps, so this restores that cache.
+      - name: Retrieve NPM cached dependencies
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+
+      - name: Install dependencies
+        run: cd assets && npm ci
+
+      - name: Create report directory
+        run: mkdir -p sarif
+
+      - name: Run ESLint security rules
+        continue-on-error: true
+        run: |
+          cd assets && npx eslint . \
+            --config eslint.security.config.mjs \
+            -f @microsoft/eslint-formatter-sarif \
+            -o ../sarif/eslint.sarif
+
+      - name: Publish SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: eslint-security
+          path: sarif/eslint.sarif
+          category: eslint-security
