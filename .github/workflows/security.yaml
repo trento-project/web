@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+name: Security Scanning
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+  schedule:
+    # Nightly, so DAST has a regular unattended run without costing every PR.
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+# Deliberately no cancel-in-progress: a cancelled run uploads no SARIF, which
+# code scanning interprets as the findings having been resolved.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  MIX_ENV: test
+
+jobs:
+  sast-elixir:
+    name: SAST Elixir (Sobelow)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Gather toolchain versions
+        uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
+
+      - name: Setup Elixir
+        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        with:
+          otp-version: ${{ env.ERLANG_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+
+      # Same key shape as ci.yaml's elixir-deps job, so this restores that cache.
+      - name: Retrieve Elixir cached dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ env.ERLANG_VERSION }}-elixir-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Create report directory
+        run: mkdir -p sarif
+
+      - name: Run Sobelow
+        continue-on-error: true
+        run: mix sobelow --format sarif --out sarif/sobelow.sarif
+
+      - name: Publish SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: sobelow
+          path: sarif/sobelow.sarif
+          category: sobelow
