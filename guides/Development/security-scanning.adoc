@@ -226,8 +226,17 @@ Dynamic analysis has no source location to report — it knows a URL, not the
 handler behind it. `.github/scripts/anchor-dast-sarif.sh` therefore rewrites
 every URL location to the file that configures the scan and moves the scanned
 URL to the front of the alert message, where the triager reads it first. The
-full URL and ZAP's evidence string also stay in the result's `properties`, so
-the uploaded artifact remains machine-readable.
+full URL is also kept in the location's `properties`, so the uploaded artifact
+stays machine-readable.
+
+ZAP's evidence string is not kept. It is a verbatim fragment of the scanned
+response, so it is deleted along with the whole requests and responses by the
+workflow's redaction step, and the anchoring script does not copy it anywhere.
+The passive cookie rules alone set the evidence to the entire `Set-Cookie`
+header, which against a Phoenix application is the signed session cookie; no
+list of known secrets could be a dependable gate on that, so the field goes
+rather than being scrubbed. To see the evidence for a finding, reproduce the
+scan locally, where the report is not redacted.
 
 The script runs over Nuclei's report too, but changes nothing there: Nuclei
 already reports `.` as its location and names the target in the message. It is

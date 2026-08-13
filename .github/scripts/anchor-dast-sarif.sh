@@ -14,6 +14,11 @@
 # which is where a reader needs it anyway. The original URL is also kept in the
 # location's properties so the artifact stays machine-readable.
 #
+# The scanner's evidence snippet is discarded rather than carried over. It is a
+# verbatim fragment of the scanned response, which is the class of content the
+# workflow's redaction step deletes before this script runs; nothing here may
+# put it back.
+#
 # Anchoring collapses every location onto one line, which would otherwise let
 # code scanning treat two findings of the same rule as one alert. An explicit
 # partialFingerprints entry, built from the rule, the URL, the attack string
@@ -60,17 +65,16 @@ jq --arg anchor "$ANCHOR_PATH" '
 
   # The region is replaced rather than kept: code scanning renders the real
   # content of the anchor file at the reported line, so a scanner snippet left
-  # in place would be displayed as if it were text from that file. Keep it as a
-  # property instead, where it stays available without being rendered as source.
+  # in place would be displayed as if it were text from that file. It is
+  # dropped, not moved into a property — see the note on evidence above. Only
+  # the scanned URL is kept.
   def anchor_location:
     ((.physicalLocation.artifactLocation.uri // "") as $url
-     | (.physicalLocation.region.snippet.text // "") as $evidence
      | if ($url | is_url)
        then .physicalLocation.artifactLocation.uri = $anchor
           | del(.physicalLocation.artifactLocation.uriBaseId)
           | .physicalLocation.region = {"startLine": 1}
           | .properties = ((.properties // {}) + {"scannedUrl": $url})
-          | if $evidence == "" then . else .properties.evidence = $evidence end
        else . end);
 
   .runs[]?.results[]? |= (

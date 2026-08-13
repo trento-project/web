@@ -434,6 +434,14 @@ jobs:
       # scanning and kept as an artifact for thirty days. ::add-mask:: only
       # redacts log output, it does not touch file contents.
       #
+      # Requests, responses and the per-alert evidence snippet are removed
+      # structurally, not searched for secrets. All three are verbatim
+      # fragments of a scanned request or response, so no list of known strings
+      # can be a reliable gate on what they contain: the passive cookie rules
+      # alone quote whole Set-Cookie headers, which on a Phoenix application is
+      # the signed session cookie. The token walk that follows is a backstop
+      # for the token appearing anywhere else in the file, not the gate.
+      #
       # An unredacted report must never reach the publish step, so the redacted
       # copy is built in /tmp and only moved into the published path once every
       # check has passed. Any failure discards both copies.
@@ -448,7 +456,9 @@ jobs:
           fi
           if ! jq --arg token "$TRENTO_JWT" '
                  del(.runs[]?.results[]?.webRequest, .runs[]?.results[]?.webResponse)
-                 | walk(if type == "string"
+                 | walk(if type == "object" and has("snippet")
+                        then del(.snippet)
+                        elif type == "string"
                         then (split($token) | join("REDACTED"))
                         else . end)
                ' /tmp/zap-raw.json > /tmp/zap-redacted.json; then
