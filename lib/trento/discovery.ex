@@ -32,6 +32,20 @@ defmodule Trento.Discovery do
 
   @type command :: struct
 
+  # Number of rows deleted per individual statement. Pruning is performed in
+  # batches so that, when a large backlog of historical events has to be pruned,
+  # no single DELETE statement runs long enough to exceed the default
+  # DBConnection/Ecto checkout timeout (15s) and get cancelled (ERROR 57014).
+  @default_prune_batch_size 1_000
+
+  # Upper bound on the number of delete batches a single prune run may perform.
+  # It caps the bounded iteration in delete_in_batches/3 so pruning never runs
+  # unbounded; in practice the iteration halts earlier, as soon as a batch
+  # deletes fewer rows than the batch size (meaning no more matching rows are
+  # left). The bound is deliberately high (10_000 batches * 1_000 rows = 10M
+  # rows per run) to stay well above any realistic backlog.
+  @default_max_prune_batches 10_000
+
   @doc """
   Transform a discovery in a list of commands event by using the appropriate policy.
   Store the event in the discovery events log for auditing purposes and dispatch the commands.
@@ -105,24 +119,71 @@ defmodule Trento.Discovery do
   defp prune_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
 
-    {events_number, nil} =
-      DiscoveryEvent
-      |> where([d], d.inserted_at <= ^end_datetime)
-      |> Repo.delete_all()
-
-    events_number
+    delete_in_batches(
+      DiscoveryEvent,
+      dynamic([d], d.inserted_at <= ^end_datetime),
+      prune_batch_size()
+    )
   end
 
   @spec prune_discarded_discovery_events(number) :: non_neg_integer()
   defp prune_discarded_discovery_events(days) do
     end_datetime = Timex.shift(DateTime.utc_now(), days: -days)
 
-    {discarded_events_number, nil} =
-      DiscardedDiscoveryEvent
-      |> where([d], d.inserted_at <= ^end_datetime)
-      |> Repo.delete_all()
+    delete_in_batches(
+      DiscardedDiscoveryEvent,
+      dynamic([d], d.inserted_at <= ^end_datetime),
+      prune_batch_size()
+    )
+  end
 
-    discarded_events_number
+  @spec delete_in_batches(
+          module(),
+          Ecto.Query.dynamic_expr(),
+          non_neg_integer()
+        ) ::
+          non_neg_integer()
+  defp delete_in_batches(schema, condition, batch_size) do
+    max_batches = max_prune_batches()
+
+    Enum.reduce_while(1..max_batches, 0, fn batch, acc ->
+      ids_subquery =
+        from d in schema,
+          where: ^condition,
+          select: d.id,
+          limit: ^batch_size
+
+      delete_query =
+        from(d in schema,
+          where: d.id in subquery(ids_subquery)
+        )
+
+      {deleted, _} = Repo.delete_all(delete_query)
+
+      next = acc + deleted
+
+      Logger.info(
+        "Pruned #{deleted} #{inspect(schema)} events in this batch " <>
+          "(#{next} deleted so far)"
+      )
+
+      cond do
+        deleted < batch_size ->
+          {:halt, next}
+
+        batch >= max_batches ->
+          Logger.warning(
+            "Pruning of #{inspect(schema)} reached the max batches limit " <>
+              "(#{max_batches}); some events may still be pending and will be " <>
+              "pruned on the next run"
+          )
+
+          {:halt, next}
+
+        true ->
+          {:cont, next}
+      end
+    end)
   end
 
   @doc """
@@ -259,4 +320,10 @@ defmodule Trento.Discovery do
 
   defp commanded,
     do: Application.fetch_env!(:trento, Trento.Commanded)[:adapter]
+
+  defp prune_batch_size,
+    do: Application.get_env(:trento, :prune_batch_size, @default_prune_batch_size)
+
+  defp max_prune_batches,
+    do: Application.get_env(:trento, :max_prune_batches, @default_max_prune_batches)
 end
