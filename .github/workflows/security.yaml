@@ -524,8 +524,14 @@ jobs:
             SARIF_PATH="$report" .github/scripts/anchor-dast-sarif.sh
           done
 
+      # Gated on the token step rather than plain always(): both publish steps
+      # are strict about a missing report, and bring-up runs before them, so a
+      # compose, mix setup, readiness or token failure would otherwise be
+      # announced as "No SARIF file at sarif/zap.sarif" and blame the publish
+      # step for a fault that happened well upstream. Minting the token is the
+      # last bring-up step, so its outcome stands for all of them.
       - name: Publish SARIF
-        if: always()
+        if: always() && steps.token.outcome == 'success'
         uses: ./.github/actions/publish-sarif
         with:
           name: zap
@@ -536,7 +542,7 @@ jobs:
       # has an empty report synthesised for it above, so a missing file here
       # means Nuclei died before writing anything.
       - name: Publish Nuclei SARIF
-        if: always()
+        if: always() && steps.token.outcome == 'success'
         uses: ./.github/actions/publish-sarif
         with:
           name: nuclei
