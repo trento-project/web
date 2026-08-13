@@ -472,13 +472,19 @@ jobs:
       # report template's naming. Were a future ZAP to stop appending `.json`,
       # it would write the unredacted report straight into the published path,
       # and the `always()` publish step would upload it.
+      #
+      # RUNNER_TEMP, not /tmp. ZAP runs as root and its report is root-owned;
+      # /tmp is sticky, so the runner user cannot unlink a root-owned file it
+      # put there, and the later discard fails with EPERM. RUNNER_TEMP belongs
+      # to the runner user, is outside the workspace, and is wiped between
+      # jobs.
       - name: Set the raw ZAP report aside
         run: |
           set -euo pipefail
           if [[ -f sarif/zap.sarif.json ]]; then
-            mv sarif/zap.sarif.json /tmp/zap-raw.json
+            mv sarif/zap.sarif.json "$RUNNER_TEMP/zap-raw.json"
           elif [[ -f sarif/zap.sarif ]]; then
-            mv sarif/zap.sarif /tmp/zap-raw.json
+            mv sarif/zap.sarif "$RUNNER_TEMP/zap-raw.json"
           fi
           rm -f sarif/zap.sarif
 
@@ -497,14 +503,29 @@ jobs:
       # for the token appearing anywhere else in the file, not the gate.
       #
       # An unredacted report must never reach the publish step, so the redacted
-      # copy is built in /tmp and only moved into the published path once every
-      # check has passed. Any failure discards both copies.
+      # copy is built outside the workspace and only moved into the published
+      # path once every check has passed. Any failure discards both copies.
       - name: Redact credentials from the SARIF
         env:
           TRENTO_JWT: ${{ steps.token.outputs.token }}
         run: |
           set -euo pipefail
-          if [[ ! -f /tmp/zap-raw.json ]]; then
+          raw="$RUNNER_TEMP/zap-raw.json"
+          redacted="$RUNNER_TEMP/zap-redacted.json"
+
+          # The raw report is root-owned, so its deletion is the one part of
+          # this step that can fail for a reason unrelated to the report's
+          # contents. Neither copy is inside the workspace and no step uploads
+          # a directory, so a file left behind is not a disclosure: say so and
+          # carry on rather than failing the job over a stale temporary file.
+          discard() {
+            rm -f "$raw" "$redacted" 2>/dev/null || true
+            if [[ -e "$raw" || -e "$redacted" ]]; then
+              echo "::warning::a temporary copy of the raw ZAP report could not be deleted; it stays in RUNNER_TEMP, outside the workspace, and is never published"
+            fi
+          }
+
+          if [[ ! -f "$raw" ]]; then
             echo "No report to redact"
             exit 0
           fi
@@ -515,23 +536,23 @@ jobs:
                         elif type == "string"
                         then (split($token) | join("REDACTED"))
                         else . end)
-               ' /tmp/zap-raw.json > /tmp/zap-redacted.json; then
-            rm -f /tmp/zap-raw.json /tmp/zap-redacted.json
-            echo "::error::could not redact the ZAP report; the unredacted report was discarded"
+               ' "$raw" > "$redacted"; then
+            discard
+            echo "::error::could not redact the ZAP report; nothing was published"
             exit 1
           fi
           # grep answers 1 for "no match" and 2 for an error such as a file it
           # could not read. Only 1 means the report is clean, so anything else
           # discards it: this is the last gate on a credential.
           rc=0
-          grep -qF -- "$TRENTO_JWT" /tmp/zap-redacted.json || rc=$?
+          grep -qF -- "$TRENTO_JWT" "$redacted" || rc=$?
           if [[ "$rc" -ne 1 ]]; then
-            rm -f /tmp/zap-raw.json /tmp/zap-redacted.json
-            echo "::error::redaction could not be confirmed (grep exited ${rc}); the report was discarded"
+            discard
+            echo "::error::redaction could not be confirmed (grep exited ${rc}); nothing was published"
             exit 1
           fi
-          mv /tmp/zap-redacted.json sarif/zap.sarif
-          rm -f /tmp/zap-raw.json
+          mv "$redacted" sarif/zap.sarif
+          discard
 
       # Code scanning resolves every result location against the checked-out
       # tree and rejects the entire file when one carries a URL instead of a
