@@ -84,14 +84,21 @@ if config_env() in [:prod, :demo] do
       For example: yourdomain.example.com
       """
 
-  # Returns an IP address to bind the HTTP server, based on IPv6 support.
-  # This prevents startup failures on systems without IPv6 where the app would crash
-  # Falls back to IPv4 `{0, 0, 0, 0}` if IPv6 is not available.
+  # We test IPv6 support by actually attempting to open a listener socket.
+  # This prevents startup crashes with `:eafnosupport` on systems where IPv6
+  # is disabled at the OS level (e.g., via GRUB), but `localhost` still
+  # resolves to an IPv6 address in `/etc/hosts`.
   ip =
-    case :inet.getaddr(~c"localhost", :inet6) do
-      {:ok, _addr} -> {0, 0, 0, 0, 0, 0, 0, 0}
-      {:error, _} -> {0, 0, 0, 0}
-    end
+    case :gen_tcp.listen(0, [:inet6]) do
+      {:ok, socket} ->
+      # IPv6 is supported by the kernel, close the test socket and return the IPv6 "any" address.
+      :gen_tcp.close(socket)
+      {0, 0, 0, 0, 0, 0, 0, 0}
+
+    {:error, _reason} ->
+          # IPv6 is not supported (e.g., :eafnosupport), fall back to IPv4
+          {0, 0, 0, 0}
+      end
 
   config :trento, TrentoWeb.Endpoint,
     http: [
