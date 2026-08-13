@@ -398,6 +398,7 @@ jobs:
       # Nuclei writes no file at all when it finds nothing, which the next step
       # turns into an empty report rather than a missing one.
       - name: Run Nuclei
+        id: nuclei
         continue-on-error: true
         env:
           NUCLEI_IMAGE: projectdiscovery/nuclei:${{ env.NUCLEI_VERSION }}
@@ -418,11 +419,18 @@ jobs:
       # lifecycle working, and lets the publish step keep the strict
       # missing-file check every other scanner gets.
       #
+      # Only for a scan that ran to completion. `outcome` is the step's real
+      # result, which continue-on-error hides from `conclusion`; a Nuclei that
+      # died also writes no file, and standing in an empty report for it would
+      # close alerts on the word of a scanner that never ran. Left missing, the
+      # strict publish step below fails the job instead.
+      #
       # The driver name is spelled the way Nuclei spells it in its own reports,
       # so the empty analysis is not attributed to a different tool.
       # NUCLEI_VERSION comes from the workflow env; the tag carries a leading
       # "v" that the SARIF version field should not.
       - name: Ensure Nuclei produced a report
+        if: steps.nuclei.outcome == 'success'
         run: |
           set -euo pipefail
           if [[ ! -f sarif/nuclei.sarif ]]; then

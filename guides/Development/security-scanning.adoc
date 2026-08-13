@@ -233,7 +233,9 @@ Nuclei writes no report file at all when it finds nothing, which is the common
 case and not a failure. CI does not skip the upload in that case: the
 `Ensure Nuclei produced a report` step writes a valid SARIF file with an empty
 `results` array, and `Publish Nuclei SARIF` uploads it under the `nuclei`
-category like any other report.
+category like any other report. That step runs only when the scan itself
+succeeded — a Nuclei that crashed also writes no file, and it must not be
+mistaken for one that found nothing.
 
 That step exists for the alert lifecycle. Code scanning moves an alert to
 "fixed" only when a later analysis for the same category no longer reports it.
