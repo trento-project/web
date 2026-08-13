@@ -411,15 +411,21 @@ jobs:
             -sarif-export /sarif/nuclei.sarif
 
       # The sarif-json template appends its own extension to reportFile, so the
-      # plan's `zap.sarif` lands as `zap.sarif.json`. Rename only when the file
-      # is there: if the scan produced no report at all, publish-sarif is the
-      # step that should say so, rather than this one failing first and pointing
-      # at the wrong component.
-      - name: Normalise the SARIF filename
+      # plan's `zap.sarif` lands as `zap.sarif.json`. Move it out of the
+      # workspace rather than renaming it in place: `sarif/zap.sarif` is the
+      # path the publish step reads, both publish steps are `if: always()` and
+      # so also run on a cancellation or a job timeout, and the report is not
+      # fit to publish until the next step has redacted it. Only that step may
+      # create `sarif/zap.sarif`.
+      #
+      # Move only when the file is there: if the scan produced no report at
+      # all, publish-sarif is the step that should say so, rather than this one
+      # failing first and pointing at the wrong component.
+      - name: Set the raw ZAP report aside
         run: |
           set -euo pipefail
           if [[ -f sarif/zap.sarif.json ]]; then
-            mv sarif/zap.sarif.json sarif/zap.sarif
+            mv sarif/zap.sarif.json /tmp/zap-raw.json
           fi
 
       # ZAP embeds whole requests and responses in the report, and Phoenix debug
@@ -428,14 +434,15 @@ jobs:
       # scanning and kept as an artifact for thirty days. ::add-mask:: only
       # redacts log output, it does not touch file contents.
       #
-      # An unredacted report must never reach the publish step, so any failure
-      # here deletes the report before exiting.
+      # An unredacted report must never reach the publish step, so the redacted
+      # copy is built in /tmp and only moved into the published path once every
+      # check has passed. Any failure discards both copies.
       - name: Redact credentials from the SARIF
         env:
           TRENTO_JWT: ${{ steps.token.outputs.token }}
         run: |
           set -euo pipefail
-          if [[ ! -f sarif/zap.sarif ]]; then
+          if [[ ! -f /tmp/zap-raw.json ]]; then
             echo "No report to redact"
             exit 0
           fi
@@ -444,17 +451,23 @@ jobs:
                  | walk(if type == "string"
                         then (split($token) | join("REDACTED"))
                         else . end)
-               ' sarif/zap.sarif > /tmp/zap-redacted.json; then
-            rm -f sarif/zap.sarif
+               ' /tmp/zap-raw.json > /tmp/zap-redacted.json; then
+            rm -f /tmp/zap-raw.json /tmp/zap-redacted.json
             echo "::error::could not redact the ZAP report; the unredacted report was discarded"
             exit 1
           fi
-          mv /tmp/zap-redacted.json sarif/zap.sarif
-          if grep -qF -- "$TRENTO_JWT" sarif/zap.sarif; then
-            rm -f sarif/zap.sarif
-            echo "::error::the access token survived redaction; the report was discarded"
+          # grep answers 1 for "no match" and 2 for an error such as a file it
+          # could not read. Only 1 means the report is clean, so anything else
+          # discards it: this is the last gate on a credential.
+          rc=0
+          grep -qF -- "$TRENTO_JWT" /tmp/zap-redacted.json || rc=$?
+          if [[ "$rc" -ne 1 ]]; then
+            rm -f /tmp/zap-raw.json /tmp/zap-redacted.json
+            echo "::error::redaction could not be confirmed (grep exited ${rc}); the report was discarded"
             exit 1
           fi
+          mv /tmp/zap-redacted.json sarif/zap.sarif
+          rm -f /tmp/zap-raw.json
 
       # Code scanning resolves every result location against the checked-out
       # tree and rejects the entire file when one carries a URL instead of a

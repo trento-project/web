@@ -164,7 +164,10 @@ docker run --rm --network host \
 
 The plan's `sarif-json` template appends its own extension to the report
 file, so the report lands at `sarif/zap.sarif.json`, not `sarif/zap.sarif`.
-CI renames it with a dedicated step; locally, use the `.json` name directly.
+CI moves that file out of the workspace and writes `sarif/zap.sarif` only once
+its redaction step has finished, so the publish steps can never pick up an
+unredacted report. Locally there is no redaction step at all: use the `.json`
+name directly and treat the file as containing the bearer token.
 
 Check that the scan was authenticated. If every reported URL is a login or
 static asset path, the token was not applied and the results are meaningless:
