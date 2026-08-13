@@ -176,8 +176,10 @@ jobs:
           build-mode: none
           config-file: ./.github/codeql/config.yml
 
+      # No continue-on-error here, unlike the other scanners: CodeQL exits
+      # non-zero only on an infrastructure fault, never on findings, so
+      # tolerating a failure would hide a scanner that stopped running.
       - name: Analyze
-        continue-on-error: true
         uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
         with:
           category: ${{ matrix.category }}
