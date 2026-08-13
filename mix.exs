@@ -88,7 +88,7 @@ defmodule Trento.MixProject do
       # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
       {:ranch, "~> 2.2.0", override: true},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
-      {:httpoison, "== 2.2.3"},
+      {:httpoison, "== 2.3.0"},
       {:jason, "~> 1.4"},
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
