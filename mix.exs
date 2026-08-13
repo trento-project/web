@@ -134,7 +134,7 @@ defmodule Trento.MixProject do
       # crashes the SSO callback because session_params is never persisted
       # server-side. Re-bump only after page_controller/session_controller
       # are reworked to thread session_params through Plug.Session.
-      {:assent, "== 0.2.10", override: true},
+      {:assent, "== 0.3.1", override: true},
       {:samly, "~> 1.0"}
     ]
   end
