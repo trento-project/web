@@ -29,6 +29,9 @@ env:
   # Only stable tags: the w2026-* weekly builds report themselves as "Dev Build",
   # which the SARIF upload validator rejects.
   ZAP_VERSION: "2.17.0" # https://github.com/zaproxy/zaproxy/releases
+  # Unlike ZAP_VERSION, this tag needs its leading "v": nuclei's own release
+  # tags are versioned that way and the bare digits are not a real tag.
+  NUCLEI_VERSION: "v3.11.1" # https://github.com/projectdiscovery/nuclei/releases
 
 jobs:
   sast-elixir:
@@ -373,6 +376,40 @@ jobs:
             "$ZAP_IMAGE" \
             zap.sh -cmd -autorun /zap/wrk/plan.yaml
 
+      # Runs after ZAP so a ZAP failure never costs the Nuclei results. Unlike
+      # ZAP, Nuclei is not given the bearer token: it runs unauthenticated
+      # against the same target, which is enough for its template-based checks
+      # and means its SARIF needs no redaction pass.
+      #
+      # -ni (no-interactsh) turns off the out-of-band templates, which rely on
+      # the target reaching back out to a public interactsh server. This
+      # target is only reachable on the runner's own network, so those
+      # templates could never produce a real match; left on, every one of them
+      # still pays the interaction poll and cooldown wait for nothing.
+      #
+      # The image has no bundled templates and runs as root (unlike ZAP's uid
+      # 1000), so it fetches nuclei-templates fresh on every run and writes
+      # into the sarif/ directory the previous step already made
+      # world-writable without needing that permission itself. -duc
+      # (disable-update-check) was considered to pin this down further, but it
+      # disables that initial template fetch too, not just the version-check
+      # log line, and the scan then fails outright with no templates loaded.
+      #
+      # Nuclei writes no file at all when it finds nothing, which the publish
+      # step below is told to treat as success rather than a missing report.
+      - name: Run Nuclei
+        continue-on-error: true
+        env:
+          NUCLEI_IMAGE: projectdiscovery/nuclei:${{ env.NUCLEI_VERSION }}
+        run: |
+          set -euo pipefail
+          docker run --rm --network host \
+            -v "$PWD/sarif:/sarif:rw" \
+            "$NUCLEI_IMAGE" \
+            -target http://localhost:4000 \
+            -ni \
+            -sarif-export /sarif/nuclei.sarif
+
       # The sarif-json template appends its own extension to reportFile, so the
       # plan's `zap.sarif` lands as `zap.sarif.json`. Rename only when the file
       # is there: if the scan produced no report at all, publish-sarif is the
@@ -426,3 +463,16 @@ jobs:
           name: zap
           path: sarif/zap.sarif
           category: zap
+
+      # optional: true because Nuclei writes no report at all on a clean scan,
+      # which is the common case, not an error. Every other publish step in
+      # this workflow keeps the strict check: a missing file from any of them
+      # means the scan died before writing anything.
+      - name: Publish Nuclei SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: nuclei
+          path: sarif/nuclei.sarif
+          category: nuclei
+          optional: true
