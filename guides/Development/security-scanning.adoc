@@ -179,7 +179,7 @@ response status ZAP recorded for each alert instead:
 ----
 jq -r '[.runs[0].results[]
         | {status: .webResponse.statusCode,
-           url: .locations[0].physicalLocation.artifactLocation.uri}]
+           url: (.locations[0].physicalLocation.artifactLocation.uri // "")}]
        | map(select(.url | test("/api/v[0-9]")))
        | group_by(.status)
        | map("\(.[0].status): \(length)")[]' sarif/zap.sarif.json
@@ -307,7 +307,7 @@ resurrect alerts that had already been dismissed.
 * CodeQL's `paths-ignore` excludes `*.test.js`, `*.test.jsx`, `*.stories.js`
   and `*.stories.jsx`, but not `*.spec.*`, `__tests__/`, `test-utils/` or
   `test/e2e/cypress/**`, so most test code is still analysed.
-* Nuclei's rules are not pinned. The image is
+* Nuclei's rules are not pinned. The image is pinned
   (`projectdiscovery/nuclei:v3.11.1`), but it ships no templates, so every run
   fetches `nuclei-templates` from the network at scan time. `-duc`
   (disable-update-check) would stop that, but it disables the initial fetch as

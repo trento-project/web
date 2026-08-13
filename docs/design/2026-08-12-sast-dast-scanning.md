@@ -257,6 +257,11 @@ Report-only means findings do not block. It must not mean a broken tool goes unn
 | the scan invocation | `continue-on-error: true` |
 | `publish-sarif` | `if: always()` |
 
+In the DAST job the publish steps carry `always() && steps.token.outcome == 'success'` instead.
+Every step that can produce a report runs after the token is minted, so a bring-up failure
+leaves no report to publish, and the plain `always()` form would have `publish-sarif` announce
+a missing file — blaming the upload for a failure that happened three steps earlier.
+
 ### DAST failure modes
 
 The dangerous DAST failures are silent false negatives — the scan reports clean because it
