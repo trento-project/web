@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+env:
+  contexts:
+    - name: trento
+      urls:
+        - http://localhost:4000
+      includePaths:
+        - "http://localhost:4000.*"
+      excludePaths:
+        # Logging the scanner out mid-scan would silently degrade coverage.
+        - "http://localhost:4000/api/session/.*/callback.*"
+        - "http://localhost:4000/logout.*"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # Injects the bearer token on every request. TRENTO_JWT is substituted before
+  # ZAP starts; see the workflow's envsubst step.
+  - type: replacer
+    parameters:
+      deleteAllRules: true
+    rules:
+      - description: trento-bearer-token
+        matchType: req_header
+        matchString: Authorization
+        matchRegex: false
+        replacementString: "Bearer ${TRENTO_JWT}"
+        tokenProcessing: false
+
+  - type: openapi
+    parameters:
+      apiFile: /zap/wrk/openapi.json
+      targetUrl: http://localhost:4000
+      context: trento
+
+  - type: spider
+    parameters:
+      context: trento
+      url: http://localhost:4000
+      maxDuration: 5
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: activeScan
+    parameters:
+      context: trento
+      maxRuleDurationInMins: 2
+      maxScanDurationInMins: 20
+
+  - type: report
+    parameters:
+      template: sarif-json
+      reportDir: /zap/wrk/sarif
+      reportFile: zap.sarif
