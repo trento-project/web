@@ -169,14 +169,44 @@ its redaction step has finished, so the publish steps can never pick up an
 unredacted report. Locally there is no redaction step at all: use the `.json`
 name directly and treat the file as containing the bearer token.
 
-Check that the scan was authenticated. If every reported URL is a login or
-static asset path, the token was not applied and the results are meaningless:
+Check that the scan was authenticated. The list of reported URLs is not
+evidence of it: the plan's `openapi` job seeds every path in the spec into
+ZAP's site tree before a single request is sent, so a scan that was answered
+401 everywhere still reports a healthy-looking set of URLs. Look at the
+response status ZAP recorded for each alert instead:
 
 [source,bash]
 ----
-jq -r '[.runs[0].results[].locations[0].physicalLocation.artifactLocation.uri] \
-  | unique | .[]' sarif/zap.sarif.json | head -30
+jq -r '[.runs[0].results[]
+        | {status: .webResponse.statusCode,
+           url: .locations[0].physicalLocation.artifactLocation.uri}]
+       | map(select(.url | test("/api/v[0-9]")))
+       | group_by(.status)
+       | map("\(.[0].status): \(length)")[]' sarif/zap.sarif.json
 ----
+
+A `401` against `/api/v1` or `/api/v2` means the token was not applied, or
+expired part-way through the scan. This works on the local report
+(`sarif/zap.sarif.json`) only, because nothing redacts it: in CI the redaction
+step deletes `webRequest` and `webResponse` from every result, so the published
+`sarif-zap` artifact cannot be checked this way.
+
+The report only carries the one request per alert that ZAP chose to file, so
+for a definitive answer use the application's own log, which has every request
+the scan made. Start the server with
+`mix phx.server 2>&1 | tee /tmp/trento-dast.log` and, after the scan, pair each
+401 with the request that produced it:
+
+[source,bash]
+----
+awk '$4 ~ /^(GET|POST|PUT|PATCH|DELETE)$/ {p[$2]=$4" "$5} /Sent 401 /{print p[$2]}' \
+  /tmp/trento-dast.log | sort | uniq -c | sort -rn
+----
+
+An authenticated scan answers 401 to `POST /api/session` and
+`POST /api/session/refresh` and nothing else — that is the scanner attacking
+the login endpoint with bad credentials, which is what it should be doing.
+Anything else in that list is a protected endpoint the scan never reached.
 
 Do not commit `sarif/` or `openapi.json`.
 
