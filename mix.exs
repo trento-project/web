@@ -76,7 +76,7 @@ defmodule Trento.MixProject do
       {:faker, "~> 0.17", only: [:dev, :test]},
       {:flop, "~> 0.25.0"},
       {:floki, ">= 0.36.2", only: :test},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.2.0"},
       # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
       {:ranch, "~> 1.8.0", override: true},
