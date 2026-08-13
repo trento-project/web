@@ -88,8 +88,8 @@ if config_env() in [:prod, :demo] do
   # This prevents startup failures on systems without IPv6 where the app would crash
   # upon start up.
   # Exposed as a deployment environment variable.
-  # If the environment variable is not set it defaults to ipv4
-  # if it is set, it goes
+  # If the environment variable is not set it defaults to ipv4.
+  # Accepts either ipv4 and ipv6 as possible values. (Case-insenstive)
   ip =
     case System.get_env("IPV4_OR_IPV6", "IPV4") |> String.downcase() do
       "ipv4" -> {0, 0, 0, 0}
