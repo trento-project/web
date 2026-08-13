@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-06-27T19:09:04Z",
-    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
-    "run_id": "28298471371",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1061
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-27T22:12:39Z",
     "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
     "run_id": "28299843503",
@@ -5202,6 +5186,22 @@
       {
         "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-13T18:15:14Z",
+    "commit": "662f853983cb7736031c9f8481b58d255d1acd97",
+    "run_id": "31728583995",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 1
       }
     ]
   }
