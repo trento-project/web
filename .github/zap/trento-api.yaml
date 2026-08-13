@@ -9,9 +9,16 @@ env:
       includePaths:
         - "http://localhost:4000.*"
       excludePaths:
-        # Logging the scanner out mid-scan would silently degrade coverage.
+        # The identity-provider callback answers a handshake the scanner cannot
+        # complete, so attacking it buys noise and no coverage. Nothing here is
+        # about staying logged in: the token is a stateless JWT re-injected on
+        # every request by the replacer rule below, so no endpoint can revoke
+        # it for the duration of the scan.
+        #
+        # This matches POST /api/session/:provider/callback. The SAML route,
+        # GET /api/session/:provider/saml_callback, has no /callback segment
+        # and is still scanned.
         - "http://localhost:4000/api/session/.*/callback.*"
-        - "http://localhost:4000/logout.*"
   parameters:
     failOnError: true
     failOnWarning: false
