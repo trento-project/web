@@ -458,9 +458,11 @@ jobs:
 
       # Code scanning resolves every result location against the checked-out
       # tree and rejects the entire file when one carries a URL instead of a
-      # path. Both scanners report URLs, so both reports are rewritten to point
-      # at the plan file that configures the scan, with the scanned URL moved
-      # into the alert message. See the script for the full rationale.
+      # path. ZAP reports URLs, so its results are rewritten to point at the
+      # plan file that configures the scan, with the scanned URL moved into the
+      # alert message. Nuclei already reports a repo-relative path and passes
+      # through untouched; it is included so that a future version emitting
+      # URLs does not silently break the upload. Rationale is in the script.
       - name: Anchor the DAST findings to a repository file
         env:
           ANCHOR_PATH: .github/zap/trento-api.yaml

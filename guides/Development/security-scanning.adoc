@@ -205,9 +205,9 @@ Every other publish step in this workflow keeps that strict check — do not
 add `optional: true` anywhere else without the same "writes nothing on a
 clean run" guarantee.
 
-=== Why DAST alerts point at the ZAP plan file
+=== Why ZAP alerts point at the ZAP plan file
 
-Every DAST alert in the Security tab is reported against line 1 of
+Every ZAP alert in the Security tab is reported against line 1 of
 `.github/zap/trento-api.yaml`, whichever URL it was actually found on. That is
 not a mistake, and the plan file is not the vulnerable code.
 
@@ -221,17 +221,23 @@ SARIF URI scheme "http" did not match the checkout URI scheme "file"
 
 Dynamic analysis has no source location to report — it knows a URL, not the
 handler behind it. `.github/scripts/anchor-dast-sarif.sh` therefore rewrites
-every location to the file that configures the scan and moves the scanned URL
-to the front of the alert message, where the triager reads it first. The full
-URL and ZAP's evidence string also stay in the result's `properties`, so the
-uploaded artifact remains machine-readable.
+every URL location to the file that configures the scan and moves the scanned
+URL to the front of the alert message, where the triager reads it first. The
+full URL and ZAP's evidence string also stay in the result's `properties`, so
+the uploaded artifact remains machine-readable.
 
-Anchoring puts every finding on one line, which would let code scanning merge
-two findings of the same rule into a single alert. The script prevents that by
-writing an explicit `partialFingerprints` entry per result. Digits are stripped
-from the message before it enters the fingerprint: ZAP embeds timestamps and
-occurrence counts in its wording, and a fingerprint that changed on every run
-would resurrect alerts that had already been dismissed.
+The script runs over Nuclei's report too, but changes nothing there: Nuclei
+already reports `.` as its location and names the target in the message. It is
+included so that a future version emitting URLs does not silently break the
+upload.
+
+Anchoring puts every ZAP finding on the same line, which leaves code scanning
+nothing to tell two findings of one rule apart by when it decides whether an
+alert it sees today is the one it saw yesterday. The script therefore writes an
+explicit `partialFingerprints` entry per result. Digits are stripped from the
+message before it enters the fingerprint: ZAP embeds timestamps and occurrence
+counts in its wording, and a fingerprint that changed on every run would
+resurrect alerts that had already been dismissed.
 
 == Known gaps
 

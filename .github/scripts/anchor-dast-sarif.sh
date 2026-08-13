@@ -22,8 +22,14 @@
 # Digits are stripped from the message before it enters the fingerprint. ZAP
 # embeds timestamps and occurrence counts in its wording, so a fingerprint
 # carrying them would change on every run and resurrect alerts that had already
-# been dismissed. Stripping them merges the same finding across runs while
-# still separating, say, two different patterns matched on one page.
+# been dismissed. Stripping them keeps a finding identified as the same one
+# across runs while still separating, say, two different patterns matched on
+# one page.
+#
+# Locations that are already repo-relative are left alone. Nuclei, for one,
+# reports "." and puts the target in the message, so its report passes through
+# untouched; the pass is still run over it so that a future version emitting
+# URLs does not silently break the upload.
 #
 # Usage: SARIF_PATH=... ANCHOR_PATH=... anchor-dast-sarif.sh
 
@@ -36,6 +42,15 @@ if [[ ! -f "$SARIF_PATH" ]]; then
   echo "No SARIF file at ${SARIF_PATH}; nothing to anchor"
   exit 0
 fi
+
+# Only location URIs are resolved against the checkout, so only those can
+# trigger the rejection. A URL anywhere else in the file is legitimate.
+count_urls() {
+  jq '[.runs[]?.results[]?.locations[]?.physicalLocation.artifactLocation.uri // empty
+       | select(test("^[a-z][a-z0-9+.-]*://"))] | length' "$1"
+}
+
+before="$(count_urls "$SARIF_PATH")"
 
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
@@ -79,13 +94,15 @@ jq --arg anchor "$ANCHOR_PATH" '
 mv "$tmp" "$SARIF_PATH"
 trap - EXIT
 
-# Only location URIs are resolved against the checkout, so only those can
-# trigger the rejection. A URL anywhere else in the file is legitimate.
-remaining="$(jq '[.runs[]?.results[]?.locations[]?.physicalLocation.artifactLocation.uri // empty
-                 | select(test("^[a-z][a-z0-9+.-]*://"))] | length' "$SARIF_PATH")"
+remaining="$(count_urls "$SARIF_PATH")"
 if [[ "$remaining" != "0" ]]; then
   echo "::error::${remaining} location URIs are still URLs; code scanning would reject this file"
   exit 1
 fi
 
-echo "Anchored $(jq '[.runs[]?.results[]?] | length' "$SARIF_PATH") findings to ${ANCHOR_PATH}"
+total="$(jq '[.runs[]?.results[]?] | length' "$SARIF_PATH")"
+if [[ "$before" == "0" ]]; then
+  echo "${SARIF_PATH}: ${total} findings, none reported against a URL; left unchanged"
+else
+  echo "${SARIF_PATH}: anchored ${before} of ${total} locations to ${ANCHOR_PATH}"
+fi
