@@ -48,6 +48,15 @@ if [[ ! -f "$SARIF_PATH" ]]; then
   exit 0
 fi
 
+# A zero-byte file is not a parse error for jq: it reads no input, writes no
+# output and exits 0, which would leave the counts below empty rather than 0
+# and end the run on a diagnostic about URL locations that says nothing about
+# the real cause. Establish that there is a JSON object here first.
+if ! jq -e 'type == "object"' "$SARIF_PATH" > /dev/null; then
+  echo "::error::${SARIF_PATH} is not a SARIF document; nothing was anchored"
+  exit 1
+fi
+
 # Only location URIs are resolved against the checkout, so only those can
 # trigger the rejection. A URL anywhere else in the file is legitimate.
 count_urls() {
