@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-27T22:12:39Z",
-    "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
-    "run_id": "28299843503",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 12
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should fail if required fields are missing::Users Create user should fail if required fields are missing",
-        "score": 0.1540
-      },
-      {
-        "name": "should have a correct link to the host::SAP system details The hosts table shows the attached hosts to this SAP system should have a correct link to the host",
-        "score": 0.03696
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-28T18:28:33Z",
     "commit": "a96ffb4334e4762a395351a6b39e2ff74cfd1427",
     "run_id": "28331435291",
@@ -5202,6 +5178,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 1
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-13T18:16:27Z",
+    "commit": "662f853983cb7736031c9f8481b58d255d1acd97",
+    "run_id": "31728583995",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.02501
       }
     ]
   }
