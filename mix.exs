@@ -99,7 +99,7 @@ defmodule Trento.MixProject do
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
-      {:phoenix_live_reload, "~> 1.6.2", only: [:dev, :wanda]},
+      {:phoenix_live_reload, "~> 1.7.0", only: [:dev, :wanda]},
       {:phoenix_live_view, "~> 1.1.28"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
