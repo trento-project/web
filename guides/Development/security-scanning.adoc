@@ -1,6 +1,6 @@
 = Security scanning
 
-Trento runs static analysis and dependency scanning in the
+Trento runs static analysis, dependency scanning and dynamic analysis in the
 `Security Scanning` workflow (`.github/workflows/security.yaml`). Reports are
 published as SARIF, both as workflow artifacts and to the repository's
 Security -> Code scanning tab.
@@ -101,6 +101,109 @@ not supported for the query packs in use here.
 
 Code scanning generally:: Dismissing an alert in the Security tab records the
 reason and applies to future runs.
+
+== Dynamic analysis (DAST)
+
+DAST does not run on every pull request. It runs nightly, on manual dispatch,
+and on any pull request labelled `dast`:
+
+[source,bash]
+----
+gh pr edit --add-label dast
+gh workflow run "Security Scanning" --ref <your-branch>
+----
+
+=== Running ZAP locally
+
+Bring the stack up, seed the database and start the application:
+
+[source,bash]
+----
+docker compose --profile wanda up -d
+mix setup
+mix phx.server
+----
+
+Mint a token for the seeded admin (`sub` 1) and generate the API spec:
+
+[source,bash]
+----
+mix run --no-start -e '
+  File.write!("/tmp/trento-jwt.txt",
+    TrentoWeb.Auth.AccessToken.generate_access_token!(%{
+      "sub" => 1,
+      "exp" => System.system_time(:second) + 3600
+    }))'
+export TRENTO_JWT=$(cat /tmp/trento-jwt.txt)
+
+mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.All.ApiSpec
+----
+
+`POST /api/session` looks like the obvious way to mint this token, but its
+token's TTL is 180 seconds (`access_token_expiration` in
+`config/config.exs`), read through `compile_env`, so no environment variable
+can extend it. That token dies well before a twenty-minute active scan
+finishes, and the rest of the run bounces off 401s while still reporting a
+clean, green-looking scan. CI signs a token directly for that reason; this
+mirrors what CI does. `--no-start` matters too: without it, `mix run` boots a
+second copy of the application on top of the one already serving `:4000`.
+
+Resolve the plan and run the scan:
+
+[source,bash]
+----
+mkdir -p sarif
+envsubst '${TRENTO_JWT}' < .github/zap/trento-api.yaml > /tmp/zap-plan.yaml
+
+docker run --rm --network host \
+  -v "$PWD:/zap/wrk:rw" \
+  -v /tmp/zap-plan.yaml:/zap/wrk/plan.yaml:ro \
+  ghcr.io/zaproxy/zaproxy:2.17.0 \
+  zap.sh -cmd -autorun /zap/wrk/plan.yaml
+----
+
+The plan's `sarif-json` template appends its own extension to the report
+file, so the report lands at `sarif/zap.sarif.json`, not `sarif/zap.sarif`.
+CI renames it with a dedicated step; locally, use the `.json` name directly.
+
+Check that the scan was authenticated. If every reported URL is a login or
+static asset path, the token was not applied and the results are meaningless:
+
+[source,bash]
+----
+jq -r '[.runs[0].results[].locations[0].physicalLocation.artifactLocation.uri] \
+  | unique | .[]' sarif/zap.sarif.json | head -30
+----
+
+Do not commit `sarif/` or `openapi.json`.
+
+=== Nuclei
+
+Nuclei runs against the same target immediately after ZAP, unauthenticated:
+
+[source,bash]
+----
+docker run --rm --network host \
+  -v "$PWD/sarif:/sarif:rw" \
+  projectdiscovery/nuclei:v3.11.1 \
+  -target http://localhost:4000 \
+  -ni \
+  -sarif-export /sarif/nuclei.sarif
+----
+
+`-ni` (no-interactsh) disables the out-of-band templates: they rely on the
+scanned target reaching back out to a public interactsh server, which
+`localhost:4000` never can, so leaving them enabled would only spend the
+interaction poll and cooldown wait on matches that can never happen.
+
+Nuclei writes no report file at all when it finds nothing, which is the
+common case and not a failure. That is why, uniquely among the publish steps
+in this workflow, `Publish Nuclei SARIF` passes `optional: true` to
+`publish-sarif`: without it, the action's existence check treats a missing
+file as the scan having died before writing anything, and fails the job.
+Every other publish step in this workflow keeps that strict check — do not
+add `optional: true` anywhere else without the same "writes nothing on a
+clean run" guarantee.
 
 == Known gaps
 
