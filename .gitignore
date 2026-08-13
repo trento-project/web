@@ -51,3 +51,9 @@ storybook-static
 .DS_Store
 
 /.claude/
+
+# Security scan reports, and the OpenAPI spec the local DAST flow generates
+# into the repository root. The local flow has no redaction step, so
+# sarif/zap.sarif.json holds a live bearer token.
+/sarif/
+/openapi.json
