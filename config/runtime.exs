@@ -89,7 +89,7 @@ if config_env() in [:prod, :demo] do
   # upon start up.
   # Exposed as a deployment environment variable.
   # If the environment variable is not set it defaults to ipv4.
-  # Accepts either ipv4 and ipv6 as possible values. (Case-insenstive)
+  # Accepts either ipv4 and ipv6 as possible values. (Case-insensitive)
   ip =
     case System.get_env("IPV4_OR_IPV6", "IPV4") |> String.downcase() do
       "ipv4" -> {0, 0, 0, 0}
