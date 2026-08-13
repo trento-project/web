@@ -26,6 +26,9 @@ concurrency:
 env:
   MIX_ENV: test
   OSV_SCANNER_VERSION: "v2.5.0" # https://github.com/google/osv-scanner/releases
+  # Only stable tags: the w2026-* weekly builds report themselves as "Dev Build",
+  # which the SARIF upload validator rejects.
+  ZAP_VERSION: "2.17.0" # https://github.com/zaproxy/zaproxy/releases
 
 jobs:
   sast-elixir:
@@ -212,3 +215,214 @@ jobs:
           name: ${{ matrix.category }}
           path: sarif/${{ matrix.category }}.sarif
           category: ${{ matrix.category }}
+
+  dast:
+    name: DAST (ZAP)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.labels.*.name, 'dast'))
+    # Overrides the workflow default. The application is started and exercised
+    # here, matching the E2E job in ci.yaml. The active scan mutates the target,
+    # so this must only ever run against a throwaway instance.
+    env:
+      MIX_ENV: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Gather toolchain versions
+        uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
+
+      - name: Setup Elixir
+        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        with:
+          otp-version: ${{ env.ERLANG_VERSION }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODEJS_VERSION }}
+
+      # Same key shape as ci.yaml's dev-mode jobs, so this restores their cache.
+      # Restore only, deliberately: a read-write cache action here would save
+      # under a key that ci.yaml owns.
+      - name: Retrieve Elixir cached dependencies
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            deps
+            _build/${{ env.MIX_ENV }}
+            priv/plts
+          key: erlang-${{ env.ERLANG_VERSION }}-elixir-${{ env.ELIXIR_VERSION }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+
+      - name: Retrieve NPM cached dependencies
+        id: npm-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            assets/node_modules
+          key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
+
+      # The dev endpoint's watchers run `node build.js` and `npx tailwindcss`
+      # from assets/, so a cache miss would otherwise leave the application
+      # serving no assets and ZAP spidering a broken page.
+      - name: Install dependencies
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: cd assets && npm ci
+
+      - name: Docker compose dependencies
+        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        with:
+          compose-file: "./docker-compose.yaml"
+          compose-flags: "--profile wanda"
+          down-flags: "--volumes"
+
+      - name: Mix setup
+        run: mix setup
+
+      - name: Generate OpenAPI spec
+        run: mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.All.ApiSpec
+
+      - name: Run trento detached
+        run: mix phx.server &
+
+      # A dead target makes ZAP report a clean scan. That is the worst possible
+      # outcome, so readiness is a hard failure rather than report-only.
+      - name: Wait for the application to become ready
+        run: |
+          set -euo pipefail
+          for _ in $(seq 1 60); do
+            if curl -sf http://localhost:4000/api/readyz > /dev/null; then
+              echo "Application is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Application did not become ready within 120s"
+          exit 1
+
+      # An unauthenticated scan reaches almost nothing and still reports green,
+      # so assert the token works before handing it to ZAP.
+      #
+      # The token is signed directly rather than obtained from POST /api/session
+      # because access_token_expiration is 180 seconds and is read through
+      # compile_env, so no environment variable can extend it: a session token
+      # dies three minutes into a twenty minute scan and the rest of the run
+      # bounces off 401s. --no-start is required, otherwise mix boots a second
+      # copy of the application against the one already serving port 4000.
+      # sub 1 is the seeded admin.
+      - name: Mint and verify an API token
+        id: token
+        run: |
+          set -euo pipefail
+          mix run --no-start -e '
+            File.write!("/tmp/trento-jwt.txt",
+              TrentoWeb.Auth.AccessToken.generate_access_token!(%{
+                "sub" => 1,
+                "exp" => System.system_time(:second) + 3600
+              }))'
+          token="$(cat /tmp/trento-jwt.txt)"
+          if [[ -z "$token" ]]; then
+            echo "Failed to mint an access token"
+            exit 1
+          fi
+          echo "::add-mask::$token"
+          # -L because /api/hosts is the unversioned redirector and answers 307.
+          status="$(curl -sL -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer $token" http://localhost:4000/api/hosts)"
+          if [[ "$status" != "200" ]]; then
+            echo "Token did not authenticate: GET /api/hosts returned $status"
+            exit 1
+          fi
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+
+      # ZAP runs as uid 1000 inside its image while the workspace belongs to the
+      # runner user, so the report directory has to be writable by both for the
+      # report job to write through the bind mount.
+      - name: Create report directory
+        run: |
+          set -euo pipefail
+          mkdir -p sarif
+          chmod 0777 sarif
+
+      - name: Resolve the ZAP plan
+        env:
+          TRENTO_JWT: ${{ steps.token.outputs.token }}
+        run: |
+          set -euo pipefail
+          # The single quotes are deliberate: envsubst takes the list of names
+          # to substitute as a literal shell-format string.
+          # shellcheck disable=SC2016
+          envsubst '${TRENTO_JWT}' < .github/zap/trento-api.yaml > /tmp/zap-plan.yaml
+
+      - name: Run ZAP
+        continue-on-error: true
+        env:
+          ZAP_IMAGE: ghcr.io/zaproxy/zaproxy:${{ env.ZAP_VERSION }}
+        run: |
+          set -euo pipefail
+          docker run --rm --network host \
+            -v "$PWD:/zap/wrk:rw" \
+            -v /tmp/zap-plan.yaml:/zap/wrk/plan.yaml:ro \
+            "$ZAP_IMAGE" \
+            zap.sh -cmd -autorun /zap/wrk/plan.yaml
+
+      # The sarif-json template appends its own extension to reportFile, so the
+      # plan's `zap.sarif` lands as `zap.sarif.json`. Rename only when the file
+      # is there: if the scan produced no report at all, publish-sarif is the
+      # step that should say so, rather than this one failing first and pointing
+      # at the wrong component.
+      - name: Normalise the SARIF filename
+        run: |
+          set -euo pipefail
+          if [[ -f sarif/zap.sarif.json ]]; then
+            mv sarif/zap.sarif.json sarif/zap.sarif
+          fi
+
+      # ZAP embeds whole requests and responses in the report, and Phoenix debug
+      # error pages echo the Authorization header back, so the bearer token and
+      # freshly generated API keys end up in a file that is uploaded to code
+      # scanning and kept as an artifact for thirty days. ::add-mask:: only
+      # redacts log output, it does not touch file contents.
+      #
+      # An unredacted report must never reach the publish step, so any failure
+      # here deletes the report before exiting.
+      - name: Redact credentials from the SARIF
+        env:
+          TRENTO_JWT: ${{ steps.token.outputs.token }}
+        run: |
+          set -euo pipefail
+          if [[ ! -f sarif/zap.sarif ]]; then
+            echo "No report to redact"
+            exit 0
+          fi
+          if ! jq --arg token "$TRENTO_JWT" '
+                 del(.runs[]?.results[]?.webRequest, .runs[]?.results[]?.webResponse)
+                 | walk(if type == "string"
+                        then (split($token) | join("REDACTED"))
+                        else . end)
+               ' sarif/zap.sarif > /tmp/zap-redacted.json; then
+            rm -f sarif/zap.sarif
+            echo "::error::could not redact the ZAP report; the unredacted report was discarded"
+            exit 1
+          fi
+          mv /tmp/zap-redacted.json sarif/zap.sarif
+          if grep -qF -- "$TRENTO_JWT" sarif/zap.sarif; then
+            rm -f sarif/zap.sarif
+            echo "::error::the access token survived redaction; the report was discarded"
+            exit 1
+          fi
+
+      - name: Publish SARIF
+        if: always()
+        uses: ./.github/actions/publish-sarif
+        with:
+          name: zap
+          path: sarif/zap.sarif
+          category: zap
