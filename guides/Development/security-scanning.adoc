@@ -229,14 +229,22 @@ scanned target reaching back out to a public interactsh server, which
 `localhost:4000` never can, so leaving them enabled would only spend the
 interaction poll and cooldown wait on matches that can never happen.
 
-Nuclei writes no report file at all when it finds nothing, which is the
-common case and not a failure. That is why, uniquely among the publish steps
-in this workflow, `Publish Nuclei SARIF` passes `optional: true` to
-`publish-sarif`: without it, the action's existence check treats a missing
-file as the scan having died before writing anything, and fails the job.
-Every other publish step in this workflow keeps that strict check — do not
-add `optional: true` anywhere else without the same "writes nothing on a
-clean run" guarantee.
+Nuclei writes no report file at all when it finds nothing, which is the common
+case and not a failure. CI does not skip the upload in that case: the
+`Ensure Nuclei produced a report` step writes a valid SARIF file with an empty
+`results` array, and `Publish Nuclei SARIF` uploads it under the `nuclei`
+category like any other report.
+
+That step exists for the alert lifecycle. Code scanning moves an alert to
+"fixed" only when a later analysis for the same category no longer reports it.
+A run that uploads nothing submits no analysis, so it closes nothing: the first
+alert Nuclei ever filed would stay open even after the underlying issue was
+fixed, and could only be cleared by hand. Uploading an empty result set closes
+it instead.
+
+Every publish step in this workflow therefore keeps `publish-sarif`'s strict
+missing-file check. A missing report means the scanner died before writing
+anything, and that must fail the job rather than pass quietly.
 
 === Why ZAP alerts point at the ZAP plan file
 

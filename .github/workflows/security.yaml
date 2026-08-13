@@ -395,8 +395,8 @@ jobs:
       # disables that initial template fetch too, not just the version-check
       # log line, and the scan then fails outright with no templates loaded.
       #
-      # Nuclei writes no file at all when it finds nothing, which the publish
-      # step below is told to treat as success rather than a missing report.
+      # Nuclei writes no file at all when it finds nothing, which the next step
+      # turns into an empty report rather than a missing one.
       - name: Run Nuclei
         continue-on-error: true
         env:
@@ -409,6 +409,35 @@ jobs:
             -target http://localhost:4000 \
             -ni \
             -sarif-export /sarif/nuclei.sarif
+
+      # Uploading nothing is not the same as uploading no findings. Code
+      # scanning moves an alert to "fixed" only when a later analysis for the
+      # same category leaves it out, so a clean run that publishes no file at
+      # all leaves every Nuclei alert ever filed open, with no way for the
+      # automation to close it. Synthesising the empty report keeps that
+      # lifecycle working, and lets the publish step keep the strict
+      # missing-file check every other scanner gets.
+      #
+      # The driver name is spelled the way Nuclei spells it in its own reports,
+      # so the empty analysis is not attributed to a different tool.
+      # NUCLEI_VERSION comes from the workflow env; the tag carries a leading
+      # "v" that the SARIF version field should not.
+      - name: Ensure Nuclei produced a report
+        run: |
+          set -euo pipefail
+          if [[ ! -f sarif/nuclei.sarif ]]; then
+            jq -n --arg version "${NUCLEI_VERSION#v}" '{
+              "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+              "version": "2.1.0",
+              "runs": [
+                {
+                  "tool": {"driver": {"name": "Nuclei", "version": $version}},
+                  "results": []
+                }
+              ]
+            }' > sarif/nuclei.sarif
+            echo "Nuclei reported nothing; published an empty report instead"
+          fi
 
       # The sarif-json template appends its own extension to reportFile, so the
       # plan's `zap.sarif` lands as `zap.sarif.json`. Move it out of the
@@ -503,10 +532,9 @@ jobs:
           path: sarif/zap.sarif
           category: zap
 
-      # optional: true because Nuclei writes no report at all on a clean scan,
-      # which is the common case, not an error. Every other publish step in
-      # this workflow keeps the strict check: a missing file from any of them
-      # means the scan died before writing anything.
+      # Strict, like every other publish step in this workflow: a clean scan
+      # has an empty report synthesised for it above, so a missing file here
+      # means Nuclei died before writing anything.
       - name: Publish Nuclei SARIF
         if: always()
         uses: ./.github/actions/publish-sarif
@@ -514,4 +542,3 @@ jobs:
           name: nuclei
           path: sarif/nuclei.sarif
           category: nuclei
-          optional: true
