@@ -456,6 +456,20 @@ jobs:
             exit 1
           fi
 
+      # Code scanning resolves every result location against the checked-out
+      # tree and rejects the entire file when one carries a URL instead of a
+      # path. Both scanners report URLs, so both reports are rewritten to point
+      # at the plan file that configures the scan, with the scanned URL moved
+      # into the alert message. See the script for the full rationale.
+      - name: Anchor the DAST findings to a repository file
+        env:
+          ANCHOR_PATH: .github/zap/trento-api.yaml
+        run: |
+          set -euo pipefail
+          for report in sarif/zap.sarif sarif/nuclei.sarif; do
+            SARIF_PATH="$report" .github/scripts/anchor-dast-sarif.sh
+          done
+
       - name: Publish SARIF
         if: always()
         uses: ./.github/actions/publish-sarif
