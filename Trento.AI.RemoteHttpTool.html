@@ -125,7 +125,7 @@ share <a href="Trento.AI.OpenApiToolBuilder.html"><code class="inline">Trento.AI
 pieces (description, parameters_schema, arg routing, path templating,
 query encoding). Only the actual dispatch differs — <code class="inline">ControllerTool</code>
 re-enters <a href="TrentoWeb.Endpoint.html#call/2"><code class="inline">TrentoWeb.Endpoint.call/2</code></a> via <a href="https://hexdocs.pm/plug/1.20.3/Plug.Test.html"><code class="inline">Plug.Test</code></a>; this module
-performs an outbound HTTP request via <a href="https://hexdocs.pm/httpoison/2.2.3/HTTPoison.html"><code class="inline">HTTPoison</code></a>.</p><p>The JWT used to authenticate the websocket conversation is forwarded
+performs an outbound HTTP request via <a href="https://hexdocs.pm/httpoison/2.3.0/HTTPoison.html"><code class="inline">HTTPoison</code></a>.</p><p>The JWT used to authenticate the websocket conversation is forwarded
 to the remote service as an <code class="inline">Authorization: Bearer &lt;token&gt;</code> header.
 Remote services that share an introspection endpoint with trento web
 (e.g. wanda's <code class="inline">WandaWeb.Auth.AuthPlug</code>) authenticate the request as
