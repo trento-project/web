@@ -93,8 +93,8 @@ if config_env() in [:prod, :demo] do
   ip =
     case System.get_env("IPV4_OR_IPV6", "IPV4") |> String.downcase() do
       "ipv4" -> {0, 0, 0, 0}
-       "ipv6" -> {0, 0, 0, 0, 0, 0, 0, 0}
-        _ -> raise "Invalid value set for environment variable IPV4_OR_IPV6"
+      "ipv6" -> {0, 0, 0, 0, 0, 0, 0, 0}
+      _ -> raise "Invalid value set for environment variable IPV4_OR_IPV6"
     end
 
   config :trento, TrentoWeb.Endpoint,
