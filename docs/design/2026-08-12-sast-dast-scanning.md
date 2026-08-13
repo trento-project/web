@@ -1,6 +1,6 @@
 # SAST, DAST and SCA scanning
 
-Status: approved; PR 1 implemented, PRs 2 and 3 not yet implemented
+Status: approved; all three pull requests implemented
 Date: 2026-08-12
 
 ## Problem
@@ -200,11 +200,13 @@ Nuclei then runs against the same target with `-sarif-export sarif/nuclei.sarif`
 
 ### `.github/actions/publish-sarif` — local composite action
 
-Inputs: `name`, `path`, `category`.
+Inputs: `name`, `path`, `category`, `optional`.
 
 Responsibilities:
 
-1. Exit cleanly when the file is absent. Nuclei writes no file when there are no findings.
+1. Fail the job when the file is absent, since a missing report means the scan died before
+   writing anything. `optional: true` downgrades that to a notice, for a scanner whose clean
+   run legitimately writes no file; no caller passes it today.
 2. Upload the file as a workflow artifact, unconditionally.
 3. Upload to code scanning, only when the token permits it.
 
@@ -267,8 +269,10 @@ never reached the application. These fail hard rather than reporting:
    `GET /api/hosts` returns 200 before handing the token to ZAP.
 3. **Active scan hangs.** `timeout-minutes: 45` on the job.
 
-Nuclei writing no file on zero findings is handled inside `publish-sarif`, not at each call
-site.
+Nuclei writes no file on zero findings. The DAST job synthesises an empty report in that
+case rather than skipping the upload, so a clean run still submits an analysis under the
+`nuclei` category — which is the only thing that lets code scanning close an alert it filed
+earlier.
 
 ## Baseline and ratchet
 
@@ -301,9 +305,13 @@ ZAP `Dev Build` version-string problem is exactly that class of failure.
 The ZAP plan is testable locally against a running application:
 
 ```
-docker run --network host zaproxy/zap-stable \
-  zap.sh -cmd -autorun .github/zap/trento-api.yaml
+docker run --rm --network host ghcr.io/zaproxy/zaproxy:2.17.0 \
+  zap.sh -cmd -autorun /zap/wrk/plan.yaml
 ```
+
+Container images are tag-pinned everywhere, local runs included. The full command, with the
+workspace mount and the token substituted into the plan, is in
+`guides/Development/security-scanning.adoc`.
 
 Workflow YAML is checked locally with `actionlint`.
 
