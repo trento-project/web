@@ -84,13 +84,17 @@ if config_env() in [:prod, :demo] do
       For example: yourdomain.example.com
       """
 
-  # Returns an IP address to bind the HTTP server, based on IPv6 support.
+  # Returns an IP address to bind the HTTP server, based on explicit operator choice
   # This prevents startup failures on systems without IPv6 where the app would crash
-  # Falls back to IPv4 `{0, 0, 0, 0}` if IPv6 is not available.
+  # upon start up.
+  # Exposed as a deployment environment variable.
+  # If the environment variable is not set it defaults to ipv4
+  # if it is set, it goes
   ip =
-    case :inet.getaddr(~c"localhost", :inet6) do
-      {:ok, _addr} -> {0, 0, 0, 0, 0, 0, 0, 0}
-      {:error, _} -> {0, 0, 0, 0}
+    case System.get_env("IPV4_OR_IPV6", "IPV4") |> String.downcase() do
+      "ipv4" -> {0, 0, 0, 0}
+       "ipv6" -> {0, 0, 0, 0, 0, 0, 0, 0}
+        _ -> raise "Invalid value set for environment variable IPV4_OR_IPV6"
     end
 
   config :trento, TrentoWeb.Endpoint,
