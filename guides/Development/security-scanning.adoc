@@ -305,3 +305,10 @@ resurrect alerts that had already been dismissed.
 * CodeQL's `paths-ignore` excludes `*.test.js`, `*.test.jsx`, `*.stories.js`
   and `*.stories.jsx`, but not `*.spec.*`, `__tests__/`, `test-utils/` or
   `test/e2e/cypress/**`, so most test code is still analysed.
+* Nuclei's rules are not pinned. The image is
+  (`projectdiscovery/nuclei:v3.11.1`), but it ships no templates, so every run
+  fetches `nuclei-templates` from the network at scan time. `-duc`
+  (disable-update-check) would stop that, but it disables the initial fetch as
+  well as the version check and the scan then runs with nothing loaded. Two
+  consequences: a Nuclei run is not reproducible, and whatever the template
+  repository serves that day executes inside the job.
