@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-06-29T19:24:37Z",
-    "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
-    "run_id": "28396203958",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
-        "score": 1
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.2605
-      },
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-29T19:27:27Z",
     "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
     "run_id": "28396203958",
@@ -5255,6 +5231,50 @@
       {
         "name": "Elixir.Trento.ClustersTest::test checks execution with wanda adapter should request checks execution for all relevant registered clusters",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-14T18:50:56Z",
+    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
+    "run_id": "31828904787",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › forbidden actions::should disable Saptune change solution operation button based on user abilities",
+        "score": 0.07251
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Host reboot operation running",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
+        "score": 0.02501
       }
     ]
   }
