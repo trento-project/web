@@ -94,7 +94,7 @@ defmodule Trento.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
       {:open_api_spex, "~> 3.21"},
-      {:pegasus, "~> 0.2.5"},
+      {:pegasus, "~> 1.0.0"},
       {:phoenix, "~> 1.7.23"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
