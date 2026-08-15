@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-30T19:42:31Z",
-    "commit": "cd78f75f64e12065bf07107d88962417443884cf",
-    "run_id": "28470141834",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      },
-      {
-        "name": "search::should not match not included words",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-30T19:43:23Z",
     "commit": "cd78f75f64e12065bf07107d88962417443884cf",
     "run_id": "28470141834",
@@ -5316,6 +5296,62 @@
       {
         "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
         "score": 0.25
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-15T22:02:27Z",
+    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
+    "run_id": "31902086563",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1946
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1946
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1771
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1158
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1136
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1136
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1136
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1136
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.02501
       }
     ]
   }
