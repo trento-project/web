@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-06-30T19:17:52Z",
-    "commit": "cd78f75f64e12065bf07107d88962417443884cf",
-    "run_id": "28468938681",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 48,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-06-30T19:18:40Z",
     "commit": "cd78f75f64e12065bf07107d88962417443884cf",
     "run_id": "28468938681",
@@ -5291,6 +5280,46 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.04653
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-15T18:14:53Z",
+    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
+    "run_id": "31899638184",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 7
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a system operation is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_stop",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation database_stop",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operations",
+        "score": 0.02501
       }
     ]
   }
