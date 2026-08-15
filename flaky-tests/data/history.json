@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-06-29T19:43:59Z",
-    "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
-    "run_id": "28397002224",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.07026
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-06-29T22:43:21Z",
     "commit": "3266f0e9cd40c1bcb095134f147eef40c33d4b83",
     "run_id": "28399866416",
@@ -5303,6 +5283,22 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-15T17:43:31Z",
+    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
+    "run_id": "31898407546",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
