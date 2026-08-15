@@ -135,7 +135,7 @@ jobs:
           working-directory: test/e2e
           spec: cypress/e2e/hana_scale_up_checks.cy.js
       - name: Destroy
-        uses: dflook/terraform-destroy-workspace@fb0d0809a9f25427f61a9a242b68970952e2287b # v2
+        uses: dflook/terraform-destroy-workspace@d227855b94a97dccfb4994a0b738dcbd56e3595e # v3.0.0
         continue-on-error: true
         with:
           path: terraform/deployments/aws/hana_ha_enabled
