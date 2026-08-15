@@ -57,7 +57,7 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:sagents, "~> 0.7.0"},
+      {:sagents, "~> 0.11.0"},
       # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,
        github: "nelsonkopliku/langchain",
