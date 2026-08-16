@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-07-01T19:19:58Z",
-    "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
-    "run_id": "28541099113",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.DatabaseDeregistrationEventHandlerTest::test should dispatch DeregisterSapSystem commands when a tenant is removed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-01T19:20:54Z",
     "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
     "run_id": "28541099113",
@@ -5343,6 +5319,58 @@
       {
         "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-16T18:13:49Z",
+    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
+    "run_id": "31962917319",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 11
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
+        "score": 0.07658
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_start",
+        "score": 0.07501
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a an operation in the same host is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should disable instance operations if a system operation is running",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
+        "score": 0.02501
       }
     ]
   }
