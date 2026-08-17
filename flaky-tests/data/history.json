@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-02T18:57:31Z",
-    "commit": "4491f9334b03f970f4f76e774825419b7180d669",
-    "run_id": "28613523226",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when an ABAP instance is already present and a new MESSAGESERVER instance is added",
-        "score": 0.07026
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-02T18:58:29Z",
     "commit": "4491f9334b03f970f4f76e774825419b7180d669",
     "run_id": "28613523226",
@@ -5396,6 +5380,66 @@
       {
         "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-17T18:22:21Z",
+    "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
+    "run_id": "32052826110",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 10
+    },
+    "top_flaky_tests": [
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › forbidden actions::should enable Saptune change solution operation button based on user abilities",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.05001
+      },
+      {
+        "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
+        "score": 0.02501
       }
     ]
   }
