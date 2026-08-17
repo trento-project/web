@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-01T19:42:46Z",
-    "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
-    "run_id": "28542105656",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-01T22:44:16Z",
     "commit": "5893f47fa6e130cd21185a5a4156ca202a24135b",
     "run_id": "28544969929",
@@ -5392,6 +5376,26 @@
       {
         "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-17T17:50:14Z",
+    "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
+    "run_id": "32051035485",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.ActivityLogTest::test Activity Log types inclusion should exclude user management activities by default",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.02501
       }
     ]
   }
