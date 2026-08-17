@@ -601,7 +601,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -660,7 +660,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -701,7 +701,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -738,7 +738,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -762,7 +762,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -802,7 +802,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -856,7 +856,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -900,7 +900,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -924,7 +924,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _msg -> :ok end)
 
       run_id = "run-#{System.unique_integer([:positive])}"

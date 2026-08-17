@@ -5,12 +5,15 @@ defmodule Trento.AI.Agent do
   @moduledoc """
   Factory + lifecycle entrypoint for the Trento AI Assistant agent.
 
-  `run/1` is the single side-effecting entrypoint: it builds the agent,
+  `run/3` is the single side-effecting entrypoint: it builds the agent,
   ensures the per-thread `Sagents.AgentServer` is running, subscribes the
-  **calling process** to the agent's `{:agent, ...}` PubSub stream, and
-  sends the user prompt. Callers (the Phoenix channel) only deal with
-  trento-domain arguments + the AG-UI events that arrive in their mailbox;
-  `Sagents` and `LangChain` are implementation details of this module.
+  **calling process** to the agent's `{:agent, ...}` event stream, and
+  sends the user prompt. Since sagents 0.8.0 those events are delivered by
+  monitored direct `send/2` from the AgentServer rather than broadcast over
+  `Phoenix.PubSub`; the payload shapes are unchanged. Callers (the Phoenix
+  channel) only deal with trento-domain arguments + the AG-UI events that
+  arrive in their mailbox; `Sagents` and `LangChain` are implementation
+  details of this module.
 
   `new!/1` is the pure factory (no side effects). Useful for tests that
   want to inspect the configured agent.
@@ -74,7 +77,7 @@ defmodule Trento.AI.Agent do
            |> start_opts(maybe_new_agent)
            |> AgentSupervisor.start_agent_sync(),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
-         :ok <- AgentServer.subscribe(agent_id) do
+         {:ok, _server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id) do
       AgentServer.add_message(agent_id, Message.new_user!(prompt))
     end
   end
@@ -111,6 +114,11 @@ defmodule Trento.AI.Agent do
     [
       agent_id: agent_id,
       agent: agent,
+      # Presence wiring only: sagents keeps just the name half of this tuple
+      # (as `pubsub_name`) and reads it at a single call site, to subscribe the
+      # AgentServer to `Phoenix.Presence` diffs — and only when the separate
+      # `:presence_tracking` option is also set. Trento sets no presence options,
+      # so this is inert today. Agent events reach subscribers via direct `send/2`.
       pubsub: {Phoenix.PubSub, Trento.PubSub}
     ]
   end
