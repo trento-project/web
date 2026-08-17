@@ -45,7 +45,7 @@ jobs:
           repository: trento-project/trento-e2e
           path: terraform
       - name: Use branch workspace
-        uses: dflook/terraform-new-workspace@ac5eff4d33ad43d8b9c45bcaf4c58cae69313b13 # v2
+        uses: dflook/terraform-new-workspace@86deb4080bba711a41d9ec7bc815a9be62e22384 # v3.0.0
         with:
           path: terraform/deployments/aws/hana_ha_enabled
           workspace: "trentoe2e"
