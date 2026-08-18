@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import SuseManagerConfig from './SuseManagerConfig';
+import SuseMultiLinuxManagerConfig from './SuseManagerConfig';
 
-export default SuseManagerConfig;
+export default SuseMultiLinuxManagerConfig;

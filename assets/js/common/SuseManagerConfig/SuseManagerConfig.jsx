@@ -9,12 +9,12 @@ import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
 import Button from '@common/Button';
 
 import DisabledGuard from '@common/DisabledGuard';
-import SuseManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
+import SuseMultiLinuxManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
 const smlmSettingsPermittedFor = ['all:suma_settings'];
 
-function SuseManagerConfig({
+function SuseMultiLinuxManagerConfig({
   url = 'https://',
   username,
   certUploadDate,
@@ -30,7 +30,7 @@ function SuseManagerConfig({
 }) {
   return (
     <>
-      <SuseManagerClearSettingsModal
+      <SuseMultiLinuxManagerClearSettingsModal
         open={clearSettingsDialogOpen}
         onClearSettings={onClearSettings}
         onCancel={onCancel}
@@ -114,4 +114,4 @@ function SuseManagerConfig({
   );
 }
 
-export default SuseManagerConfig;
+export default SuseMultiLinuxManagerConfig;

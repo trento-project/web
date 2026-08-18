@@ -7,13 +7,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import SuseManagerConfig from '.';
+import SuseMultiLinuxManagerConfig from '.';
 
 const adminUser = [{ name: 'all', resource: 'all' }];
 
-describe('SuseManagerConfig', () => {
+describe('SuseMultiLinuxManagerConfig', () => {
   it('renders a default state', () => {
-    render(<SuseManagerConfig userAbilities={adminUser} />);
+    render(<SuseMultiLinuxManagerConfig userAbilities={adminUser} />);
 
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
@@ -30,7 +30,7 @@ describe('SuseManagerConfig', () => {
     const onEditClick = jest.fn();
 
     render(
-      <SuseManagerConfig
+      <SuseMultiLinuxManagerConfig
         url={url}
         username={username}
         certUploadDate={certUploadDate}
@@ -54,7 +54,7 @@ describe('SuseManagerConfig', () => {
     const timezone = 'Pacific/Kiritimati';
 
     render(
-      <SuseManagerConfig
+      <SuseMultiLinuxManagerConfig
         url={faker.internet.url()}
         username={faker.animal.cat()}
         certUploadDate={certUploadDate}
@@ -72,7 +72,7 @@ describe('SuseManagerConfig', () => {
     const onTestConnection = jest.fn();
 
     render(
-      <SuseManagerConfig
+      <SuseMultiLinuxManagerConfig
         url={faker.internet.url()}
         username={faker.animal.cat()}
         certUploadDate={faker.date.anytime()}
@@ -94,7 +94,7 @@ describe('SuseManagerConfig', () => {
     const onEditClick = jest.fn();
     const onClearClick = jest.fn();
     render(
-      <SuseManagerConfig
+      <SuseMultiLinuxManagerConfig
         userAbilities={userWithoutPermission}
         onEditClick={onEditClick}
         onClearClick={onClearClick}

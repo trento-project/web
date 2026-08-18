@@ -3,11 +3,11 @@
 
 import { action } from 'storybook/actions';
 
-import SuseManagerSettingsModal from './SuseManagerSettingsModal';
+import SuseMultiLinuxManagerSettingsModal from './SuseManagerSettingsModal';
 
 export default {
-  title: 'Components/SuseManagerSettingsModal',
-  component: SuseManagerSettingsModal,
+  title: 'Components/SuseMultiLinuxManagerSettingsModal',
+  component: SuseMultiLinuxManagerSettingsModal,
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',

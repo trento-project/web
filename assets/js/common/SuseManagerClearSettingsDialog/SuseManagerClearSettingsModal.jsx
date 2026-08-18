@@ -9,7 +9,7 @@ import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
 import Button from '@common/Button';
 import Modal from '@common/Modal';
 
-function SuseManagerClearSettingsModal({
+function SuseMultiLinuxManagerClearSettingsModal({
   open = false,
   onClearSettings = noop,
   onCancel = noop,
@@ -44,4 +44,4 @@ function SuseManagerClearSettingsModal({
   );
 }
 
-export default SuseManagerClearSettingsModal;
+export default SuseMultiLinuxManagerClearSettingsModal;

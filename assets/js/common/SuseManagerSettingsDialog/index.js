@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import SuseManagerSettingsModal from './SuseManagerSettingsModal';
+import SuseMultiLinuxManagerSettingsModal from './SuseManagerSettingsModal';
 
-export default SuseManagerSettingsModal;
+export default SuseMultiLinuxManagerSettingsModal;

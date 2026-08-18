@@ -36,7 +36,7 @@ const getCertificatePayload = (
   };
 };
 
-function SuseManagerSettingsModal({
+function SuseMultiLinuxManagerSettingsModal({
   open = false,
   loading = false,
   initialUsername,
@@ -224,4 +224,4 @@ function SuseManagerSettingsModal({
   );
 }
 
-export default SuseManagerSettingsModal;
+export default SuseMultiLinuxManagerSettingsModal;
