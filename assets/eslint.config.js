@@ -100,10 +100,7 @@ export default defineConfig([
       'react-hooks': reactHooksPlugin,
       'jsx-a11y-x': jsxA11yX,
     },
-    extends: [
-      eslintReact.configs.recommended,
-      'jsx-a11y-x/recommended'
-    ],
+    extends: [eslintReact.configs.recommended, 'jsx-a11y-x/recommended'],
     settings: {
       react: {
         version: 'detect',
