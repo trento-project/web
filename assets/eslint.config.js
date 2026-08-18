@@ -4,8 +4,8 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import js from '@eslint/js';
 import globals from 'globals';
-import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import eslintReact from '@eslint-react/eslint-plugin';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import { importX } from 'eslint-plugin-import-x';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
@@ -97,14 +97,12 @@ export default defineConfig([
       },
     },
     plugins: {
-      react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       'jsx-a11y-x': jsxA11yX,
     },
     extends: [
-      reactPlugin.configs.flat.recommended,
-      reactPlugin.configs.flat['jsx-runtime'],
-      'jsx-a11y-x/recommended',
+      eslintReact.configs.recommended,
+      'jsx-a11y-x/recommended'
     ],
     settings: {
       react: {
@@ -113,15 +111,18 @@ export default defineConfig([
     },
 
     rules: {
-      'react/prop-types': 'off',
-      'react/jsx-props-no-spreading': 'off',
-      'react/jsx-filename-extension': [
-        'error',
-        { extensions: ['.jsx', '.js'] },
-      ],
-      'react/function-component-definition': 'error',
-      'react/react-in-jsx-scope': 'off',
+      // 'react/function-component-definition': 'error',
 
+      // We should enable these! Right now they cause around 100 warnings!
+      // These are the new names of the same rules in the newer
+      // version of @eslint-react. Stay commented until update.
+      // '@eslint-react/use-state': 'off',
+      // '@eslint-react/set-state-in-effect': 'off',
+      '@eslint-react/naming-convention/use-state': 'off',
+      '@eslint-react/hooks-extra/no-direct-set-state-in-use-effect': 'off',
+
+      // `react-hooks` should be removed once we update eslint-react
+      // to v3 and above. It covers for these rules.
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
