@@ -4,7 +4,7 @@
 import React from 'react';
 import { defaultTo, noop } from 'lodash';
 
-import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 import Button from '@common/Button';
 
@@ -38,7 +38,7 @@ function SuseManagerConfig({
       <div className="container max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 rounded-lg">
         <div>
           <h2 className="text-2xl font-bold inline-block">
-            {SUMA_PRODUCT_LABEL} Config
+            {SMLM_PRODUCT_LABEL} Config
           </h2>
           <span className="float-right">
             <Button
@@ -80,12 +80,12 @@ function SuseManagerConfig({
           </span>
         </div>
         <p className="mt-3 mb-3 text-gray-500">
-          {SUMA_PRODUCT_LABEL} integration will unlock additional features
+          {SMLM_PRODUCT_LABEL} integration will unlock additional features
           throughout the Trento application
         </p>
 
         <div className="grid grid-cols-6 mt-5 items-center">
-          <div className="font-bold mb-3">{SUMA_PRODUCT_LABEL} URL</div>
+          <div className="font-bold mb-3">{SMLM_PRODUCT_LABEL} URL</div>
           <div
             aria-label="suma-url"
             className="col-span-2 text-gray-500 mb-3 truncate pr-12"
