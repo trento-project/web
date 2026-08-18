@@ -6,15 +6,12 @@ import js from '@eslint/js';
 import globals from 'globals';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
-import importPlugin from 'eslint-plugin-import';
-// import { importX } from 'eslint-plugin-import-x';
+import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
+import { importX } from 'eslint-plugin-import-x';
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import storybookPlugin from 'eslint-plugin-storybook';
 import jestPlugin from 'eslint-plugin-jest';
 import prettierConfig from 'eslint-config-prettier';
-import path from 'path';
-
-const resolvePath = (p) => path.resolve(path.resolve(path.dirname('')), p);
 
 export default defineConfig([
   globalIgnores([
@@ -36,37 +33,22 @@ export default defineConfig([
     },
     plugins: {
       js,
-      import: importPlugin,
+      'import-x': importX,
     },
-    extends: ['js/recommended'],
+    extends: ['js/recommended', 'import-x/flat/recommended'],
     settings: {
-      'import/resolver': {
-        node: {
-          extensions: ['.js', '.jsx'],
-          paths: [resolvePath('./js'), resolvePath('./')],
-          moduleDirectory: ['node_modules', './'],
-        },
-      },
+      'import-x/resolver-next': [
+        // We're using a TypeScript resolver because it has support
+        // for `jsconfig.json`.
+        createTypeScriptImportResolver({ extensions: ['.js', '.jsx'] }),
+      ],
     },
     rules: {
       // Disable import/no-unresolved since alias paths won't resolve properly with node resolver
-      'import/no-unresolved': [
-        'error',
-        {
-          ignore: [
-            '^@common',
-            '^@hooks',
-            '^@lib',
-            '^@pages',
-            '^@state',
-            '^@static',
-          ],
-        },
-      ],
-      'import/named': 'error',
-      'import/default': 'error',
-      'import/no-cycle': 'off',
-      'import/prefer-default-export': 'off',
+      'import-x/named': 'error',
+      'import-x/default': 'error',
+      'import-x/no-cycle': 'off',
+      'import-x/prefer-default-export': 'off',
       'no-console': 'error',
       'no-unused-vars': [
         'error',
@@ -117,12 +99,12 @@ export default defineConfig([
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
-      'jsx-a11y': jsxA11yPlugin,
+      'jsx-a11y-x': jsxA11yX,
     },
     extends: [
-      // 'react/recommended',
-      // 'react/jsx-runtime',
-      // 'jsx-a11y/recommended',
+      reactPlugin.configs.flat.recommended,
+      reactPlugin.configs.flat['jsx-runtime'],
+      'jsx-a11y-x/recommended',
     ],
     settings: {
       react: {
@@ -131,9 +113,6 @@ export default defineConfig([
     },
 
     rules: {
-      ...reactPlugin.configs.recommended.rules,
-      ...reactPlugin.configs['jsx-runtime'].rules,
-      ...jsxA11yPlugin.configs.recommended.rules,
       'react/prop-types': 'off',
       'react/jsx-props-no-spreading': 'off',
       'react/jsx-filename-extension': [
@@ -146,7 +125,7 @@ export default defineConfig([
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
-      'jsx-a11y/label-has-associated-control': [
+      'jsx-a11y-x/label-has-associated-control': [
         'error',
         {
           controlComponents: ['Input', 'Password', 'TextArea'],
@@ -176,7 +155,7 @@ export default defineConfig([
     extends: ['jest/recommended'],
     rules: {
       'jest/no-conditional-expect': 'off',
-      'import/no-extraneous-dependencies': [
+      'import-x/no-extraneous-dependencies': [
         'error',
         {
           devDependencies: true, // Allow all devDependencies
@@ -198,7 +177,7 @@ export default defineConfig([
       },
     },
     rules: {
-      'import/no-extraneous-dependencies': [
+      'import-x/no-extraneous-dependencies': [
         'error',
         {
           devDependencies: true, // Allow all devDependencies
@@ -216,7 +195,7 @@ export default defineConfig([
     extends: ['storybook/recommended'],
     rules: {
       'react-hooks/rules-of-hooks': 'off',
-      'import/no-unresolved': [
+      'import-x/no-unresolved': [
         'error',
         {
           ignore: [
