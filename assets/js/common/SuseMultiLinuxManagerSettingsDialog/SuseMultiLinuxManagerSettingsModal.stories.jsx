@@ -3,7 +3,7 @@
 
 import { action } from 'storybook/actions';
 
-import SuseMultiLinuxManagerSettingsModal from './SuseManagerSettingsModal';
+import SuseMultiLinuxManagerSettingsModal from './SuseMultiLinuxManagerSettingsModal';
 
 export default {
   title: 'Components/SuseMultiLinuxManagerSettingsModal',

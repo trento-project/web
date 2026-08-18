@@ -7,14 +7,14 @@ import { Transition } from '@headlessui/react';
 import { isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 
-import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
 import { formatDateOnly } from '@lib/timezones';
 
 import DisabledGuard from '@common/DisabledGuard';
 import PageHeader from '@common/PageHeader';
 import Button from '@common/Button';
-import SuseMultiLinuxManagerConfig from '@common/SuseManagerConfig';
-import SuseMultiLinuxManagerSettingsModal from '@common/SuseManagerSettingsDialog';
+import SuseMultiLinuxManagerConfig from '@common/SuseMultiLinuxManagerConfig';
+import SuseMultiLinuxManagerSettingsModal from '@common/SuseMultiLinuxManagerSettingsDialog';
 import ApiKeySettingsModal from '@common/ApiKeySettingsModal';
 import ApiKeyBox from '@common/ApiKeyBox';
 import CopyButton from '@common/CopyButton';
