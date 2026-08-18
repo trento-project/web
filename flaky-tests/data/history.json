@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-03T18:35:27Z",
-    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
-    "run_id": "28677192881",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 49,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-03T18:36:46Z",
     "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
     "run_id": "28677192881",
@@ -5514,5 +5494,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-18T18:22:25Z",
+    "commit": "98cab90a5ecfd75fd698cbe3b31cbd1dce3fa370",
+    "run_id": "32168478210",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
+        "score": 0.25
+      },
+      {
+        "name": "GenericSystemDetails::should show database operation Stop database with enabled state as false",
+        "score": 0.05001
+      },
+      {
+        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_start",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show database site operation database_stop in running state",
+        "score": 0.02501
+      },
+      {
+        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
+        "score": 0.02501
+      }
+    ]
   }
 ]
