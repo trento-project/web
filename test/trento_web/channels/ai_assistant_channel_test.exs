@@ -956,6 +956,92 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  # Since sagents 0.8.0 the event stream is a monitored direct `send/2` bound to
+  # the subscriber pid, not a Phoenix.PubSub topic. An AgentServer crash therefore
+  # detaches the channel silently: the restarted process has a new pid and never
+  # publishes to us again. The channel monitors the server so a death surfaces as
+  # RUN_ERROR instead of leaving the UI spinning forever.
+  describe "handle_info {:DOWN, ...} — agent server death" do
+    setup :join_socket_with_ai_config
+
+    test "emits RUN_ERROR and clears loading when the agent server dies mid-run",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+      assert %{loading: true} = wait_assigns(socket)
+
+      Process.exit(server_pid, :kill)
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Agent stopped unexpectedly: :killed"
+      })
+
+      assert %{loading: false} = wait_assigns(socket)
+    end
+
+    test "stays quiet when the agent server dies with no run in flight",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
+      send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
+
+      # Inactivity shutdown of an idle AgentServer is normal, not a failed run.
+      Process.exit(server_pid, :kill)
+
+      refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    test "does not accumulate monitors across runs on the same agent server",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      for run_id <- ["r1", "r2"] do
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => run_id,
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_STARTED", "runId" => ^run_id})
+
+        send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
+        send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
+        assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => ^run_id})
+      end
+
+      {:monitors, monitors} = Process.info(socket.channel_pid, :monitors)
+
+      assert Enum.count(monitors, &(&1 == {:process, server_pid})) == 1
+    end
+  end
+
   describe "handle_in send_message/3 — error paths" do
     test "emits verbatim RUN_ERROR when user has no AI configuration" do
       %{id: user_id} = insert(:user)
@@ -1161,6 +1247,24 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       access_token: jwt,
       request_origin: request_origin
     }
+  end
+
+  # A live, inert process standing in for the sagents AgentServer: the channel
+  # only ever monitors it, so identity and liveness are all it needs.
+  defp spawn_fake_agent_server do
+    pid = spawn(fn -> Process.sleep(:infinity) end)
+    on_exit(fn -> Process.exit(pid, :kill) end)
+
+    pid
+  end
+
+  # Stubs the whole Agent.run/3 adapter chain so that it reports `server_pid`
+  # as the process backing the agent, for any number of runs.
+  defp stub_agent_run(server_pid) do
+    stub(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, server_pid} end)
+    stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+    stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, server_pid, make_ref()} end)
+    stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})
