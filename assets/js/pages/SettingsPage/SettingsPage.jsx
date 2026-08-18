@@ -7,7 +7,7 @@ import { Transition } from '@headlessui/react';
 import { isBefore, parseISO } from 'date-fns';
 import { EOS_INFO_OUTLINED } from 'eos-icons-react';
 
-import { SUMA_PRODUCT_LABEL_SHORT } from '@lib/model/suse_manager';
+import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
 import { formatDateOnly } from '@lib/timezones';
 
 import DisabledGuard from '@common/DisabledGuard';
@@ -272,7 +272,7 @@ function SettingsPage() {
       <section>
         <div className="py-4">
           <SettingsLoader
-            sectionName={SUMA_PRODUCT_LABEL_SHORT}
+            sectionName={SUMA_PRODUCT_LABEL}
             status={calculateSettingsLoaderStatus(
               suseManagerSettingsLoading,
               suseManagerSettingsfetchError

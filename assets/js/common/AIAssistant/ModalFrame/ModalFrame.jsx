@@ -24,9 +24,6 @@ const ChatboxTrigger = forwardRef(({ disabled = false, ...props }, ref) => (
     size="none"
     className="size-full"
     disabled={disabled}
-    data-testid={
-      disabled ? 'ai-assistant-trigger-disabled' : 'ai-assistant-trigger'
-    }
     aria-label={disabled ? 'AI Assistant is disabled' : 'Open AI Assistant'}
   >
     <EOS_CHAT_BUBBLE_OUTLINED className="fill-white" />
@@ -79,7 +76,7 @@ function ModalFrame({
 
       <AssistantModalPrimitive.Content
         sideOffset={16}
-        className="z-[101] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+        className="z-40 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=open]:fade-in data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
       >
         <Rnd
           bounds="window"

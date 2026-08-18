@@ -36,11 +36,13 @@ function HealthIcon({
   isLink = false,
   staleAt = null,
   timezone = 'Etc/UTC',
+  ariaLabelPrefix = '',
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
+  const ariaLabelPre = `${ariaLabelPrefix ? `${ariaLabelPrefix} ` : ''}Health:`;
 
   switch (health) {
     case 'passing': {
@@ -53,6 +55,8 @@ function HealthIcon({
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Passing`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -67,6 +71,8 @@ function HealthIcon({
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Warning`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -81,6 +87,8 @@ function HealthIcon({
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Critical`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -110,6 +118,8 @@ function HealthIcon({
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Unknown`}
+          containerProps={{ 'data-health-state': 'unknown' }}
         />
       );
     }

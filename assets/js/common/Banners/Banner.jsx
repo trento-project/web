@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useId } from 'react';
 import classNames from 'classnames';
 
 import {
@@ -29,8 +29,12 @@ const getIcon = (type, size) => {
 };
 
 function Banner({ type = INFO, iconSize = 'm', truncate = true, children }) {
+  const labelId = useId();
+
   return (
     <div
+      role="alert"
+      aria-labelledby={labelId}
       className={classNames('rounded-lg mt-2 mb-2 p-3 border', {
         'bg-gray-50 border-gray-500': type === INFO,
         'bg-green-50 border-green-500': type === SUCCESS,
@@ -43,7 +47,7 @@ function Banner({ type = INFO, iconSize = 'm', truncate = true, children }) {
           {getIcon(type, iconSize)}
           <p className={classNames('ml-3 font-medium', { truncate })}>
             <span
-              data-testid="banner"
+              id={labelId}
               className={classNames('md:inline', {
                 'text-gray-500': type === INFO,
                 'text-green-500': type === SUCCESS,

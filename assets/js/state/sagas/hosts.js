@@ -37,6 +37,7 @@ import {
   setHeartbeatPassing,
   setHeartbeatCritical,
   setHostNotDeregisterable,
+  setStaleAt,
   checkHostIsDeregisterable,
   cancelCheckHostIsDeregisterable,
 } from '@state/hosts';
@@ -61,6 +62,7 @@ function* hostDetailsUpdated({ payload }) {
 
 function* heartbeatSucceded({ payload }) {
   yield put(setHeartbeatPassing(payload));
+  yield put(setStaleAt(payload));
   yield put(setHostNotDeregisterable(payload));
   yield put(cancelCheckHostIsDeregisterable(payload));
   yield put(
@@ -73,6 +75,7 @@ function* heartbeatSucceded({ payload }) {
 
 function* heartbeatFailed({ payload }) {
   yield put(setHeartbeatCritical(payload));
+  yield put(setStaleAt(payload));
   yield put(
     checkHostIsDeregisterable({ ...payload, debounce: DEREGISTRATION_DEBOUNCE })
   );

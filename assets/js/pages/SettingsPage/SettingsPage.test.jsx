@@ -116,11 +116,11 @@ describe('Settings Page', () => {
       });
 
       expect(
-        screen.getByText('Loading SUSE Manager Settings...')
+        screen.getByText('Loading SUSE Multi-Linux Manager Settings...')
       ).toBeVisible();
     });
 
-    it('should render an empty SUSE Manager Config Section', async () => {
+    it('should render an empty SUSE Multi-Linux Manager Config Section', async () => {
       const [StatefulSettings] = withState(<SettingsPage />, {
         ...defaultInitialState,
       });
@@ -131,7 +131,7 @@ describe('Settings Page', () => {
         renderWithRouter(StatefulSettings);
       });
 
-      expect(screen.getByText('SUSE Manager URL')).toBeVisible();
+      expect(screen.getByText('SUSE Multi-Linux Manager URL')).toBeVisible();
       expect(screen.getByText('https://')).toBeVisible();
 
       expect(screen.getByText('CA Certificate')).toBeVisible();
@@ -146,7 +146,7 @@ describe('Settings Page', () => {
       expect(sumaPassword).toHaveTextContent('.....');
     });
 
-    it('should render SUSE Manager Config Section with configured settings', async () => {
+    it('should render SUSE Multi-Linux Manager Config Section with configured settings', async () => {
       const settings = softwareUpdatesSettingsFactory.build();
 
       const [StatefulSettings] = withState(<SettingsPage />, {
@@ -160,7 +160,7 @@ describe('Settings Page', () => {
       await act(async () => {
         renderWithRouter(StatefulSettings);
       });
-      expect(screen.getByText('SUSE Manager URL')).toBeVisible();
+      expect(screen.getByText('SUSE Multi-Linux Manager URL')).toBeVisible();
       expect(screen.getByText(url)).toBeVisible();
 
       expect(screen.getByText('CA Certificate')).toBeVisible();

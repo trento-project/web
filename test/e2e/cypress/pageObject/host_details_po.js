@@ -29,8 +29,6 @@ const architectureLabel =
   'div[class="font-bold"]:contains("Architecture") + div';
 const ipAddressesLabel =
   'div[class="font-bold"]:contains("IP Addresses") + div';
-const agentReportingLabel = 'span:contains("Agent:Reporting")';
-const agentReportingBadge = `${agentReportingLabel} svg`;
 const nodeExporterLabel = 'span:contains("Node Exporter:Reporting")';
 const nodeExporterBadge = `${nodeExporterLabel} svg`;
 const providerDetailsBox = 'div[class="mt-16"]:contains("Provider details")';
@@ -75,6 +73,11 @@ const advisoryDetailsCVEs = 'h2:contains("CVEs") + div a';
 const advisoryDetailsAffectedPackages =
   'h2:contains("Affected Packages") + div li:eq(0)';
 const advisoryDetailsAffectedSystems = 'h2:contains("Affected Systems") + div';
+const hostHealthIconName = /host health/i;
+const stalenessBannerName = /The agent in this host is not responding since/;
+const agentStatusReportingLabel = 'span:contains("Agent:Reporting")';
+const agentStatusNotReportingLabel = 'span:contains("Agent:Not reporting")';
+const instancesTableName = /SAP instances/i;
 
 const providerDetails = {
   provider: `${providerDetailsBox} div[class*="flow-row"]:contains("Provider") span`,
@@ -207,8 +210,12 @@ export const expectedRelevantPatchesAreDisplayed = (expectedValue) =>
 export const validateSelectedHostUrl = () =>
   basePage.validateUrl(`${url}/${selectedHost.agentId}`);
 
-export const healthHasExpectedValue = () =>
-  basePage.pageTitleHealthIsCorrectlyDisplayed(selectedHost.health);
+export const pageTitleHealthIsCorrectlyDisplayed = (
+  health = selectedHost.health
+) => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
 
 export const clusterNameHasExpectedValue = () =>
   cy.get(clusterNameLabel).should('have.text', selectedHost.clusterName);
@@ -395,14 +402,24 @@ const _getTableHeaders = (tableName) =>
     return cy.wrap(headerTexts);
   });
 
-export const agentStatusIsCorrectlyDisplayed = () => {
-  cy.get(agentReportingLabel).should('be.visible');
+export const agentStatusIsReporting = () => {
+  cy.get(agentStatusReportingLabel).as('agentLabel').should('be.visible');
   return cy
-    .get(agentReportingBadge)
+    .get('@agentLabel')
+    .find('svg')
     .invoke('attr', 'class')
-    .then((classAttr) => {
-      expect(classAttr).to.contain('jungle-green');
-    });
+    .should('match', /jungle-green/);
+};
+
+export const agentStatusIsNotReporting = () => {
+  cy.get(agentStatusNotReportingLabel, { timeout: 20000 })
+    .as('agentLabel')
+    .should('be.visible');
+  return cy
+    .get('@agentLabel')
+    .find('svg')
+    .invoke('attr', 'class')
+    .should('match', /red/);
 };
 
 export const nodeExporterStatusIsCorrectlyDisplayed = () => {
@@ -472,6 +489,46 @@ export const saveChecksSelectionButtonIsDisabled = () =>
 
 export const saveChecksSelectionButtonIsEnabled = () =>
   cy.get(saveChecksSelectionButton).should('be.enabled');
+
+export const hostHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  return basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const hostHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: hostHealthIconName }).as('pageHealthIcon');
+  return basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
+
+export const hostStaleBannerIsDisplayed = () =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout: 20000 })
+    .should('be.visible');
+
+export const hostStaleBannerIsNotDisplayed = () =>
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+
+export const sapInstanceRowIsMarkedAsStale = () =>
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).to.have.class('bg-gray-100');
+        })
+      );
+  });
+
+export const sapInstanceRowIsMarkedInSync = () =>
+  cy.findByRole('table', { name: instancesTableName }).within(() => {
+    cy.findAllByRole('row')
+      .filter(':not(:has(th))')
+      .should(($rows) =>
+        $rows.each((index, $row) => {
+          expect($row).not.to.have.class('bg-gray-100');
+        })
+      );
+  });
 
 const _getExpectedValuesObjectName = (tableName) => {
   if (tableName === 'SAP instances') return 'sapInstance';
@@ -583,16 +640,18 @@ export const interceptNodeExporterStatusMockedForProdInstance = () => {
   }
 };
 
+export const startAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+
 export const loadSaptuneScenario = (state) => {
   const { hostName } = selectedHost;
   return basePage.loadScenario(`host-${hostName}-saptune-${state}`);
 };
 
-export const loadAwsHostDetails = () =>
-  basePage.loadScenario('host-details-aws');
-
-export const startAgentHeartbeat = () =>
-  basePage.startAgentsHeartbeat([selectedHost.agentId]);
+export const markHdpDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedHost.sapInstance.sid}-${selectedHost.sapInstance.instanceNumber}-present`
+  );
 
 export const restoreHost = () =>
   basePage.loadScenario(`host-details-${selectedHost.hostName}`);

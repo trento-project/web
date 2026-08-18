@@ -27,7 +27,7 @@ describe('HostDetailsPage', () => {
     axiosMock.onGet(/\/api\/v1\/hosts.*/gm).reply(200, {});
   });
 
-  it('Renders SUSE Manager unknown status', async () => {
+  it('Renders SUSE Multi-Linux Manager unknown status', async () => {
     const user = userEvent.setup();
 
     const host = hostFactory.build();
@@ -79,7 +79,7 @@ describe('HostDetailsPage', () => {
     ).toBeVisible();
   });
 
-  it('Renders SUSE Manager error for host not found', async () => {
+  it('Renders SUSE Multi-Linux Manager error for host not found', async () => {
     const user = userEvent.setup();
 
     const host = hostFactory.build();
@@ -119,21 +119,21 @@ describe('HostDetailsPage', () => {
       .closest('div');
 
     expect(relevantPatchesElement).toHaveTextContent(
-      'Relevant Patches Host not found in SUSE Manager'
+      'Relevant Patches Host not found in SUSE Multi-Linux Manager'
     );
     expect(upgradablePackagesElement).toHaveTextContent(
-      'Upgradable Packages Host not found in SUSE Manager'
+      'Upgradable Packages Host not found in SUSE Multi-Linux Manager'
     );
 
     await user.hover(relevantPatchesElement);
     expect(
       screen.queryByText(
-        'Contact your SUSE Manager admin to ensure the host is managed by SUSE Manager'
+        'Contact your SUSE Multi-Linux Manager admin to ensure the host is managed by SUSE Multi-Linux Manager'
       )
     ).toBeVisible();
   });
 
-  it('Renders SUSE Manager error for connection not working', async () => {
+  it('Renders SUSE Multi-Linux Manager error for connection not working', async () => {
     const user = userEvent.setup();
 
     const host = hostFactory.build();
@@ -173,15 +173,15 @@ describe('HostDetailsPage', () => {
       .closest('div');
 
     expect(relevantPatchesElement).toHaveTextContent(
-      'Relevant Patches Connection to SUSE Manager not working'
+      'Relevant Patches Connection to SUSE Multi-Linux Manager not working'
     );
     expect(upgradablePackagesElement).toHaveTextContent(
-      'Upgradable Packages Connection to SUSE Manager not working'
+      'Upgradable Packages Connection to SUSE Multi-Linux Manager not working'
     );
 
     await user.hover(relevantPatchesElement);
     expect(
-      screen.queryByText('Please review SUSE Manager settings')
+      screen.queryByText('Please review SUSE Multi-Linux Manager settings')
     ).toBeVisible();
   });
 

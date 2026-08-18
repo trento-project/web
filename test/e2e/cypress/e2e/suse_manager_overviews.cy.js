@@ -3,7 +3,7 @@
 
 import * as hostDetailsPage from '../pageObject/host_details_po.js';
 
-context('SUSE Manager overviews', () => {
+context('SUSE Multi-Linux Manager overviews', () => {
   before(() => hostDetailsPage.preloadTestData());
 
   beforeEach(() => {
@@ -11,8 +11,8 @@ context('SUSE Manager overviews', () => {
     hostDetailsPage.saveSUMASettingsForAdmin();
   });
 
-  describe('navigates and display SUSE Manager based infos', () => {
-    it('host is found on SUSE Manager and has vulnerabilities', () => {
+  describe('navigates and display SUSE Multi-Linux Manager based infos', () => {
+    it('host is found on SUSE Multi-Linux Manager and has vulnerabilities', () => {
       hostDetailsPage.interceptSumaRequestsMockedForProdInstance();
 
       hostDetailsPage.visitVmdrbddev01Host();
@@ -48,15 +48,15 @@ context('SUSE Manager overviews', () => {
       hostDetailsPage.advisoryDetailsAffectedSystemsAreTheExpected();
     });
 
-    it('host is not found on SUSE Manager', () => {
+    it('host is not found on SUSE Multi-Linux Manager', () => {
       hostDetailsPage.interceptSoftwareUpdatesRequestsMockedForProdInstance();
 
       hostDetailsPage.visitVmdrbddev02Host();
       hostDetailsPage.expectedRelevantPatchesAreDisplayed(
-        ' Host not found in SUSE Manager'
+        ' Host not found in SUSE Multi-Linux Manager'
       );
       hostDetailsPage.upgradablePackagesAmountIsTheExpected(
-        ' Host not found in SUSE Manager'
+        ' Host not found in SUSE Multi-Linux Manager'
       );
     });
   });

@@ -19,13 +19,13 @@ describe('SuseManagerSettingsModal component', () => {
       )
     );
 
-    expect(screen.getByText('SUSE Manager URL')).toBeVisible();
+    expect(screen.getByText('SUSE Multi-Linux Manager URL')).toBeVisible();
     expect(screen.getByText('Username')).toBeVisible();
     expect(screen.getByText('Password')).toBeVisible();
     expect(screen.getAllByRole('textbox').length).toBe(3);
 
     expect(
-      screen.getByPlaceholderText('Enter a SUSE Manager password')
+      screen.getByPlaceholderText('Enter a SUSE Multi-Linux Manager password')
     ).toBeVisible();
   });
 
@@ -50,7 +50,7 @@ describe('SuseManagerSettingsModal component', () => {
     expect(screen.getByText('Certificate Uploaded')).toBeVisible();
     expect(screen.getByText('•••••')).toBeVisible();
     expect(
-      screen.queryByPlaceholderText('Enter a SUSE Manager password')
+      screen.queryByPlaceholderText('Enter a SUSE Multi-Linux Manager password')
     ).not.toBeInTheDocument();
   });
 
@@ -70,10 +70,10 @@ describe('SuseManagerSettingsModal component', () => {
 
     const urlInput = screen.getByPlaceholderText('Enter a URL');
     const passwordInput = screen.getByPlaceholderText(
-      'Enter a SUSE Manager password'
+      'Enter a SUSE Multi-Linux Manager password'
     );
     const userInput = screen.getByPlaceholderText(
-      'Enter a SUSE Manager username'
+      'Enter a SUSE Multi-Linux Manager username'
     );
     const certificateInput = screen.getByPlaceholderText(
       'Starts with -----BEGIN CERTIFICATE-----'
@@ -115,7 +115,7 @@ describe('SuseManagerSettingsModal component', () => {
 
     const urlInput = screen.getByPlaceholderText('Enter a URL');
     const userInput = screen.getByPlaceholderText(
-      'Enter a SUSE Manager username'
+      'Enter a SUSE Multi-Linux Manager username'
     );
 
     await user.clear(urlInput);

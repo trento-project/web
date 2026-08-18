@@ -198,6 +198,7 @@ function ClusterDetails({
             health={health}
             staleAt={staleAt}
             timezone={userTimezone}
+            healthAriaLabelPrefix="Cluster"
           >
             Pacemaker Cluster Details:{' '}
             <span className="font-bold">{clusterName}</span>

@@ -103,7 +103,8 @@ const mockData = {
     host_not_found: {
       errors: [
         {
-          detail: 'No system ID was found on SUSE Manager for this host.',
+          detail:
+            'No system ID was found on SUSE Multi-Linux Manager for this host.',
           title: 'Unprocessable Entity',
         },
       ],

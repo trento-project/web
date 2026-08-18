@@ -134,6 +134,7 @@ function HostDetailsPage() {
       deregistering={host.deregistering}
       exportersStatus={exportersStatus}
       heartbeat={host.heartbeat}
+      staleAt={host.stale_at}
       health={host.health}
       hostID={host.id}
       hostname={host.hostname}

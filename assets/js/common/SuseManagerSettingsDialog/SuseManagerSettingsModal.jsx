@@ -6,10 +6,7 @@ import { capitalize, noop } from 'lodash';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
 import { formatDateOnly } from '@lib/timezones';
 
-import {
-  SUMA_PRODUCT_LABEL,
-  SUMA_PRODUCT_LABEL_SHORT,
-} from '@lib/model/suse_manager';
+import { SUMA_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';
@@ -69,7 +66,7 @@ function SuseManagerSettingsModal({
     >
       <div className="grid grid-cols-6 my-5 gap-6">
         <Label className="col-span-2" required>
-          {SUMA_PRODUCT_LABEL_SHORT} URL
+          {SUMA_PRODUCT_LABEL} URL
         </Label>
         <div className="col-span-4">
           <Input
@@ -142,7 +139,7 @@ function SuseManagerSettingsModal({
           <Input
             value={username}
             name="suma-username-input"
-            placeholder={`Enter a ${SUMA_PRODUCT_LABEL_SHORT} username`}
+            placeholder={`Enter a ${SUMA_PRODUCT_LABEL} username`}
             error={hasError('username', errors)}
             onChange={({ target: { value } }) => {
               setUsername(value);
@@ -166,7 +163,7 @@ function SuseManagerSettingsModal({
             <Password
               initialValue={password}
               name="suma-password-input"
-              placeholder={`Enter a ${SUMA_PRODUCT_LABEL_SHORT} password`}
+              placeholder={`Enter a ${SUMA_PRODUCT_LABEL} password`}
               error={hasError('password', errors)}
               onChange={({ target: { value } }) => {
                 setPassword(value);
