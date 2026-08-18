@@ -96,7 +96,7 @@ export const Error = {
   args: {
     ...Default.args,
     settingsConfigured: true,
-    errorMessage: 'Connection to SUMA not working',
-    tooltip: 'Please review SUSE Manager settings',
+    errorMessage: 'Connection to SUSE Multi-Linux Manager not working',
+    tooltip: 'Please review SUSE Multi-Linux Manager settings',
   },
 };

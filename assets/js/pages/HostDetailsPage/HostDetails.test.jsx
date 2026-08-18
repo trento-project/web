@@ -423,8 +423,8 @@ describe('HostDetails component', () => {
     });
   });
 
-  describe('SUSE Manager', () => {
-    it('should show the summary of SUMA software updates', () => {
+  describe('SUSE Multi-Linux Manager', () => {
+    it('should show the summary of SUSE Multi-Linux Manager software updates', () => {
       const relevantPatches = faker.number.int(100);
       const upgradablePackages = faker.number.int(100);
 
@@ -453,7 +453,7 @@ describe('HostDetails component', () => {
       );
     });
 
-    it('should display software updates showing an error message when no SUMA updates data is available', () => {
+    it('should display software updates showing an error message when no SUSE Multi-Linux Manager updates data is available', () => {
       const relevantPatches = undefined;
       const upgradablePackages = undefined;
 
@@ -479,7 +479,7 @@ describe('HostDetails component', () => {
       expect(upgradablePackagesElement).toHaveTextContent('An error message');
     });
 
-    it('should show the summary of SUMA software updates in a loading state', () => {
+    it('should show the summary of SUSE Multi-Linux Manager software updates in a loading state', () => {
       const relevantPatches = faker.number.int(100);
       const upgradablePackages = faker.number.int(100);
 
