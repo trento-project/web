@@ -32,7 +32,7 @@ import 'phoenix_html';
 import { Socket } from 'phoenix';
 import { LiveSocket } from 'phoenix_live_view';
 /* eslint-enable import-x/no-unresolved */
-import topbar from '../vendor/topbar';
+import topbar from 'topbar';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
