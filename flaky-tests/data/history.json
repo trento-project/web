@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-02T19:22:15Z",
-    "commit": "4491f9334b03f970f4f76e774825419b7180d669",
-    "run_id": "28614680862",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.06551
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-02T22:21:55Z",
     "commit": "4491f9334b03f970f4f76e774825419b7180d669",
     "run_id": "28617503817",
@@ -5512,6 +5496,26 @@
       },
       {
         "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-18T17:57:57Z",
+    "commit": "98cab90a5ecfd75fd698cbe3b31cbd1dce3fa370",
+    "run_id": "32166408979",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 47,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.02501
       }
     ]
