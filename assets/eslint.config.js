@@ -15,11 +15,11 @@ import prettierConfig from 'eslint-config-prettier';
 
 export default defineConfig([
   globalIgnores([
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
-      '.storybook/public/**',
-      '../priv/static/**',
+    '**/node_modules/**',
+    '**/dist/**',
+    '**/build/**',
+    '.storybook/public/**',
+    '../priv/static/**',
   ]),
 
   // First config object is global for all JS files.
@@ -29,7 +29,7 @@ export default defineConfig([
       sourceType: 'module',
       globals: {
         ...globals.browser,
-      }
+      },
     },
     plugins: {
       js,
@@ -166,11 +166,7 @@ export default defineConfig([
 
   // Allow devDependencies for development files
   {
-    files: [
-      '*.js',
-      '*.config.js',
-      '*.config.cjs',
-    ],
+    files: ['*.js', '*.config.js', '*.config.cjs'],
     languageOptions: {
       globals: {
         ...globals.node,
