@@ -270,17 +270,17 @@ export const ACTIVITY_TYPES_CONFIG = {
   },
   [SAVING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Saved',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was saved',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were saved',
     resource: smlmSettingsResourceType,
   },
   [CHANGING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Changed',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was changed',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were changed',
     resource: smlmSettingsResourceType,
   },
   [CLEARING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Cleared',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was cleared',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were cleared',
     resource: smlmSettingsResourceType,
   },
   [SAVING_ALERTING_SETTINGS]: {

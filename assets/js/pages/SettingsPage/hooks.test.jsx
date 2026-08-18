@@ -4,7 +4,7 @@
 import {
   useAlertingSettings,
   useApiKeySettings,
-  useSuseMultiLinuxManagerSettings as useSuseMultiLinuxManagerSettings,
+  useSuseMultiLinuxManagerSettings,
 } from '@pages/SettingsPage/hooks';
 import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';

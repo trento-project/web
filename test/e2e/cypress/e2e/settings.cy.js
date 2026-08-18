@@ -107,7 +107,7 @@ context('Settings page', () => {
 
     describe('Clearing Settings', () => {
       it('should clear existing settings', () => {
-        settingsPage.saveDefaultSMLMsettings();
+        settingsPage.saveDefaultSMLMSettings();
         settingsPage.refresh();
         settingsPage.waitForRequest('smlmSettingsEndpoint');
 
@@ -155,7 +155,7 @@ context('Settings page', () => {
 
       describe('Testing against saved settings', () => {
         beforeEach(() => {
-          settingsPage.saveDefaultSMLMsettings();
+          settingsPage.saveDefaultSMLMSettings();
           settingsPage.refresh();
         });
 
@@ -244,13 +244,13 @@ context('Settings page', () => {
 
   describe('Forbidden actions', () => {
     beforeEach(() => {
-      settingsPage.saveDefaultSMLMsettings();
+      settingsPage.saveDefaultSMLMSettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
     });
 
     it('should enable settings buttons if the user has the correct abilities', () => {
-      settingsPage.saveDefaultSMLMsettings();
+      settingsPage.saveDefaultSMLMSettings();
       settingsPage.apiCreateUserWithSettingsAbilities();
       settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();

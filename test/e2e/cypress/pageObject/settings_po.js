@@ -990,7 +990,7 @@ export const alertingEditFormDisplaysInitialSettings = () =>
 
 // API
 
-export const saveDefaultSMLMsettings = () => {
+export const saveDefaultSMLMSettings = () => {
   const defaultSmlmSettings = {
     ...baseInitialSettings,
     ca_cert: validCertificate,
