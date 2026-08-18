@@ -7,13 +7,13 @@ context('SUSE Multi-Linux Manager overviews', () => {
   before(() => hostDetailsPage.preloadTestData());
 
   beforeEach(() => {
-    hostDetailsPage.clearSUMASettings();
-    hostDetailsPage.saveSUMASettingsForAdmin();
+    hostDetailsPage.clearSMLMSettings();
+    hostDetailsPage.saveSMLMSettingsForAdmin();
   });
 
   describe('navigates and display SUSE Multi-Linux Manager based infos', () => {
     it('host is found on SUSE Multi-Linux Manager and has vulnerabilities', () => {
-      hostDetailsPage.interceptSumaRequestsMockedForProdInstance();
+      hostDetailsPage.interceptSmlmRequestsMockedForProdInstance();
 
       hostDetailsPage.visitVmdrbddev01Host();
       hostDetailsPage.expectedRelevantPatchesAreDisplayed(' 2');

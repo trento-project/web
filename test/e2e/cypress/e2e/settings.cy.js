@@ -51,26 +51,26 @@ context('Settings page', () => {
 
   describe('SUSE Multi-Linux Manager Settings Management', () => {
     beforeEach(() => {
-      settingsPage.clearSUMASettings();
+      settingsPage.clearSMLMSettings();
       settingsPage.refresh();
     });
 
     it('should show empty settings', () => {
-      settingsPage.sumaUrlHasExpectedValue('https://');
-      settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
-      settingsPage.sumaUsernameHasExpectedValue('.....');
-      settingsPage.sumaPasswordHasExpectedValue('.....');
+      settingsPage.smlmUrlHasExpectedValue('https://');
+      settingsPage.smlmCaCertUploadDateHasExpectedValue('-');
+      settingsPage.smlmUsernameHasExpectedValue('.....');
+      settingsPage.smlmPasswordHasExpectedValue('.....');
     });
 
     describe('Saving Settings', () => {
       it('should show empty settings edit form', () => {
-        settingsPage.clickSumaEditSettingsButton();
-        settingsPage.sumaUrlInputIsEmpty();
-        settingsPage.sumaCaCertIsEmpty();
-        settingsPage.sumaRemoveCaCertButtonIsNotDisplayed();
-        settingsPage.sumaUsernameInputIsEmpty();
-        settingsPage.sumaPasswordInputIsEmpty();
-        settingsPage.sumaRemovePasswordButtonIsNotDisplayed();
+        settingsPage.clickSmlmEditSettingsButton();
+        settingsPage.smlmUrlInputIsEmpty();
+        settingsPage.smlmCaCertIsEmpty();
+        settingsPage.smlmRemoveCaCertButtonIsNotDisplayed();
+        settingsPage.smlmUsernameInputIsEmpty();
+        settingsPage.smlmPasswordInputIsEmpty();
+        settingsPage.smlmRemovePasswordButtonIsNotDisplayed();
         settingsPage.clickModalCancelButton();
       });
 
@@ -100,75 +100,75 @@ context('Settings page', () => {
 
       describe('Successfully Changing Settings', () => {
         it('should change settings', () => {
-          settingsPage.sumaSettingsAreCorrectlyChanged();
+          settingsPage.smlmSettingsAreCorrectlyChanged();
         });
       });
     });
 
     describe('Clearing Settings', () => {
       it('should clear existing settings', () => {
-        settingsPage.saveDefaultSUMAsettings();
+        settingsPage.saveDefaultSMLMsettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('sumaSettingsEndpoint');
+        settingsPage.waitForRequest('smlmSettingsEndpoint');
 
-        settingsPage.sumaUrlHasExpectedValue();
-        settingsPage.sumaCaCertUploadDateHasExpectedValue();
-        settingsPage.sumaUsernameHasExpectedValue();
-        settingsPage.sumaPasswordHasExpectedValue('•••••');
+        settingsPage.smlmUrlHasExpectedValue();
+        settingsPage.smlmCaCertUploadDateHasExpectedValue();
+        settingsPage.smlmUsernameHasExpectedValue();
+        settingsPage.smlmPasswordHasExpectedValue('•••••');
 
-        settingsPage.clearSumaSettings();
-        settingsPage.waitForRequest('sumaSettingsEndpoint');
+        settingsPage.clearSmlmSettings();
+        settingsPage.waitForRequest('smlmSettingsEndpoint');
 
-        settingsPage.sumaUrlHasExpectedValue('https://');
-        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
-        settingsPage.sumaUsernameHasExpectedValue('.....');
-        settingsPage.sumaPasswordHasExpectedValue('.....');
+        settingsPage.smlmUrlHasExpectedValue('https://');
+        settingsPage.smlmCaCertUploadDateHasExpectedValue('-');
+        settingsPage.smlmUsernameHasExpectedValue('.....');
+        settingsPage.smlmPasswordHasExpectedValue('.....');
       });
 
       it('should succeed even though settings do not exist', () => {
-        settingsPage.clearSUMASettings();
+        settingsPage.clearSMLMSettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('sumaSettingsEndpoint');
+        settingsPage.waitForRequest('smlmSettingsEndpoint');
 
-        settingsPage.sumaUrlHasExpectedValue('https://');
-        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
-        settingsPage.sumaUsernameHasExpectedValue('.....');
-        settingsPage.sumaPasswordHasExpectedValue('.....');
+        settingsPage.smlmUrlHasExpectedValue('https://');
+        settingsPage.smlmCaCertUploadDateHasExpectedValue('-');
+        settingsPage.smlmUsernameHasExpectedValue('.....');
+        settingsPage.smlmPasswordHasExpectedValue('.....');
 
-        settingsPage.clearSumaSettings();
-        settingsPage.waitForRequest('sumaSettingsEndpoint');
+        settingsPage.clearSmlmSettings();
+        settingsPage.waitForRequest('smlmSettingsEndpoint');
 
-        settingsPage.sumaUrlHasExpectedValue('https://');
-        settingsPage.sumaCaCertUploadDateHasExpectedValue('-');
-        settingsPage.sumaUsernameHasExpectedValue('.....');
-        settingsPage.sumaPasswordHasExpectedValue('.....');
+        settingsPage.smlmUrlHasExpectedValue('https://');
+        settingsPage.smlmCaCertUploadDateHasExpectedValue('-');
+        settingsPage.smlmUsernameHasExpectedValue('.....');
+        settingsPage.smlmPasswordHasExpectedValue('.....');
       });
     });
 
     describe('Testing Connection', () => {
       it('should be disabled when there are no settings', () => {
-        settingsPage.clearSUMASettings();
+        settingsPage.clearSMLMSettings();
         settingsPage.refresh();
-        settingsPage.waitForRequest('sumaSettingsEndpoint');
-        settingsPage.sumaConnectionButtonIsDisabled();
+        settingsPage.waitForRequest('smlmSettingsEndpoint');
+        settingsPage.smlmConnectionButtonIsDisabled();
       });
 
       describe('Testing against saved settings', () => {
         beforeEach(() => {
-          settingsPage.saveDefaultSUMAsettings();
+          settingsPage.saveDefaultSMLMsettings();
           settingsPage.refresh();
         });
 
         it('should succeed', () => {
-          settingsPage.interceptTestSUMASettingsRequest(200);
-          settingsPage.clickSumaConnectionTestButton();
-          settingsPage.showExpectedToasterAfterTestingSUMA('succeeded');
+          settingsPage.interceptTestSMLMSettingsRequest(200);
+          settingsPage.clickSmlmConnectionTestButton();
+          settingsPage.showExpectedToasterAfterTestingSMLM('succeeded');
         });
 
         it('should fail', () => {
-          settingsPage.interceptTestSUMASettingsRequest(422);
-          settingsPage.clickSumaConnectionTestButton();
-          settingsPage.showExpectedToasterAfterTestingSUMA('failed');
+          settingsPage.interceptTestSMLMSettingsRequest(422);
+          settingsPage.clickSmlmConnectionTestButton();
+          settingsPage.showExpectedToasterAfterTestingSMLM('failed');
         });
       });
     });
@@ -244,21 +244,21 @@ context('Settings page', () => {
 
   describe('Forbidden actions', () => {
     beforeEach(() => {
-      settingsPage.saveDefaultSUMAsettings();
+      settingsPage.saveDefaultSMLMsettings();
       settingsPage.apiDeleteAllUsers();
       settingsPage.logout();
     });
 
     it('should enable settings buttons if the user has the correct abilities', () => {
-      settingsPage.saveDefaultSUMAsettings();
+      settingsPage.saveDefaultSMLMsettings();
       settingsPage.apiCreateUserWithSettingsAbilities();
       settingsPage.apiAcceptAnalyticsEula();
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.generateApiKeyButtonIsEnabled();
-      settingsPage.sumaConnectionTestButtonIsEnabled();
-      settingsPage.sumaEditSettingsButtonIsEnabled();
-      settingsPage.sumaClearSettingsButtonIsEnabled();
+      settingsPage.smlmConnectionTestButtonIsEnabled();
+      settingsPage.smlmEditSettingsButtonIsEnabled();
+      settingsPage.smlmClearSettingsButtonIsEnabled();
       settingsPage.activityLogsEditButtonIsEnabled();
     });
 
@@ -268,9 +268,9 @@ context('Settings page', () => {
       settingsPage.loginWithAbilities();
       settingsPage.visit();
       settingsPage.generateApiKeyButtonIsDisabled();
-      settingsPage.sumaConnectionTestButtonIsEnabled();
-      settingsPage.sumaEditSettingsButtonIsDisabled();
-      settingsPage.sumaClearSettingsButtonIsDisabled();
+      settingsPage.smlmConnectionTestButtonIsEnabled();
+      settingsPage.smlmEditSettingsButtonIsDisabled();
+      settingsPage.smlmClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();
     });
   });
