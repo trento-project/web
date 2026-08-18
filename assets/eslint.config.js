@@ -1,13 +1,15 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { defineConfig } from 'eslint/config';
+import { defineConfig, globalIgnores } from 'eslint/config';
 import js from '@eslint/js';
+import globals from 'globals';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
-import * as storybookPlugin from 'eslint-plugin-storybook';
+// import { importX } from 'eslint-plugin-import-x';
+import storybookPlugin from 'eslint-plugin-storybook';
 import jestPlugin from 'eslint-plugin-jest';
 import prettierConfig from 'eslint-config-prettier';
 import path from 'path';
@@ -15,85 +17,29 @@ import path from 'path';
 const resolvePath = (p) => path.resolve(path.resolve(path.dirname('')), p);
 
 export default defineConfig([
-  {
-    ignores: [
+  globalIgnores([
       '**/node_modules/**',
       '**/dist/**',
       '**/build/**',
-      '**/.storybook/public/**',
+      '.storybook/public/**',
       '../priv/static/**',
-    ],
-  },
+  ]),
 
-  js.configs.recommended,
-
+  // First config object is global for all JS files.
   {
-    files: ['**/*.{js,jsx}'],
-
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
       globals: {
-        process: true,
-        console: true,
-        window: true,
-        document: true,
-        navigator: true,
-        fetch: true,
-        localStorage: true,
-        sessionStorage: true,
-        alert: true,
-        confirm: true,
-        prompt: true,
-        setTimeout: true,
-        setInterval: true,
-        clearTimeout: true,
-        clearInterval: true,
-        $: false,
-        jQuery: false,
-        CustomEvent: true,
-        // Jest globals
-        describe: true,
-        test: true,
-        it: true,
-        expect: true,
-        beforeEach: true,
-        afterEach: true,
-        beforeAll: true,
-        afterAll: true,
-        jest: true,
-        // browser globals
-        crypto: true,
-        URL: true,
-        URLSearchParams: true,
-        File: true,
-        Blob: true,
-        FormData: true,
-        Headers: true,
-        Request: true,
-        Response: true,
-        SVGElement: true,
-      },
+        ...globals.browser,
+      }
     },
-
     plugins: {
-      react: reactPlugin,
-      'react-hooks': reactHooksPlugin,
-      'jsx-a11y': jsxA11yPlugin,
+      js,
       import: importPlugin,
-      jest: jestPlugin,
-      storybook: storybookPlugin,
     },
-
+    extends: ['js/recommended'],
     settings: {
-      react: {
-        version: 'detect',
-      },
       'import/resolver': {
         node: {
           extensions: ['.js', '.jsx'],
@@ -102,31 +48,7 @@ export default defineConfig([
         },
       },
     },
-
     rules: {
-      ...reactPlugin.configs.recommended.rules,
-      ...reactPlugin.configs['jsx-runtime'].rules,
-      'react/prop-types': 'off',
-      'react/jsx-props-no-spreading': 'off',
-      'react/jsx-filename-extension': [
-        'error',
-        { extensions: ['.jsx', '.js'] },
-      ],
-      'react/function-component-definition': 'error',
-      'react/react-in-jsx-scope': 'off',
-
-      'react-hooks/rules-of-hooks': 'error',
-      'react-hooks/exhaustive-deps': 'warn',
-
-      ...jsxA11yPlugin.configs.recommended.rules,
-      'jsx-a11y/label-has-associated-control': [
-        'error',
-        {
-          controlComponents: ['Input', 'Password', 'TextArea'],
-          depth: 3,
-        },
-      ],
-
       // Disable import/no-unresolved since alias paths won't resolve properly with node resolver
       'import/no-unresolved': [
         'error',
@@ -145,21 +67,6 @@ export default defineConfig([
       'import/default': 'error',
       'import/no-cycle': 'off',
       'import/prefer-default-export': 'off',
-      'import/no-extraneous-dependencies': [
-        'error',
-        {
-          devDependencies: [
-            '**/*.stories.*',
-            '**/.storybook/**/*',
-            '**/*{.,_}{test,spec}.{js,jsx}',
-            '**/test-utils/factories/*',
-          ],
-        },
-      ],
-
-      ...jestPlugin.configs.recommended.rules,
-      ...storybookPlugin.configs.recommended.rules,
-
       'no-console': 'error',
       'no-unused-vars': [
         'error',
@@ -198,24 +105,83 @@ export default defineConfig([
     },
   },
 
+  {
+    files: ['**/*.jsx'],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
+      'jsx-a11y': jsxA11yPlugin,
+    },
+    extends: [
+      // 'react/recommended',
+      // 'react/jsx-runtime',
+      // 'jsx-a11y/recommended',
+    ],
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+
+    rules: {
+      ...reactPlugin.configs.recommended.rules,
+      ...reactPlugin.configs['jsx-runtime'].rules,
+      ...jsxA11yPlugin.configs.recommended.rules,
+      'react/prop-types': 'off',
+      'react/jsx-props-no-spreading': 'off',
+      'react/jsx-filename-extension': [
+        'error',
+        { extensions: ['.jsx', '.js'] },
+      ],
+      'react/function-component-definition': 'error',
+      'react/react-in-jsx-scope': 'off',
+
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+
+      'jsx-a11y/label-has-associated-control': [
+        'error',
+        {
+          controlComponents: ['Input', 'Password', 'TextArea'],
+          depth: 3,
+        },
+      ],
+    },
+  },
+
   // Specific settings for test files
   {
     files: [
       '**/*.test.{js,jsx}',
       '**/*.spec.{js,jsx}',
       '**/setupTests.js',
-      '**/__tests__/**/*.{js,jsx}',
       '**/test-utils/**/*.{js,jsx}',
     ],
     languageOptions: {
       globals: {
-        global: true,
-        require: true,
-        __dirname: true,
+        ...globals.node,
+        ...globals.jest,
       },
     },
+    plugins: {
+      jest: jestPlugin,
+    },
+    extends: ['jest/recommended'],
     rules: {
       'jest/no-conditional-expect': 'off',
+      'import/no-extraneous-dependencies': [
+        'error',
+        {
+          devDependencies: true, // Allow all devDependencies
+        },
+      ],
     },
   },
 
@@ -223,15 +189,12 @@ export default defineConfig([
   {
     files: [
       '*.js',
-      '**/test-utils/**/*.{js,jsx}',
-      '**/*.stories.{js,jsx}',
-      '**/.storybook/**/*.{js,jsx}',
+      '*.config.js',
+      '*.config.cjs',
     ],
     languageOptions: {
       globals: {
-        module: true,
-        require: true,
-        __dirname: true,
+        ...globals.node,
       },
     },
     rules: {
@@ -247,11 +210,10 @@ export default defineConfig([
   // storybook files
   {
     files: ['**/*.stories.{js,jsx}', '**/.storybook/**/*.{js,jsx}'],
-    languageOptions: {
-      globals: {
-        __dirname: true,
-      },
+    plugins: {
+      storybook: storybookPlugin,
     },
+    extends: ['storybook/recommended'],
     rules: {
       'react-hooks/rules-of-hooks': 'off',
       'import/no-unresolved': [
