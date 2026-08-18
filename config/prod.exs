@@ -15,4 +15,9 @@ config :trento, Trento.SoftwareUpdates.Discovery,
 config :trento,
   operations_enabled: true
 
+config :llm_db,
+  filter: %{
+    deny: %{google: ["*-preview*"]}
+  }
+
 config :trento, :ai, enabled: true
