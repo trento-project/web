@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import { jsx as _jsx } from 'react/jsx-runtime';
 import { withState } from '@lib/test-utils';
 
 import '../../priv/static/assets/app.css';
@@ -20,11 +20,11 @@ export default {
   decorators: [
     (Story, { parameters }) => {
       if (!parameters.storeState) {
-        return <Story />;
+        return _jsx(Story, {});
       }
 
       const [StoryWithState] = withState(
-        <Story />,
+        _jsx(Story, {}),
         parameters.storeState,
         true
       );

@@ -6,8 +6,9 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 import { withState } from '@lib/test-utils';
-import * as analyticsService from './index';
-import { PostHogInit, PostHogIdentify } from './effects';
+import * as analyticsService from '@lib/analytics';
+
+import { PostHogInit, PostHogIdentify } from './Analytics';
 
 describe('analytics effect', () => {
   beforeEach(() => {
