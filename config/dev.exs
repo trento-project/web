@@ -255,6 +255,11 @@ config :samly, Samly.Provider,
     }
   ]
 
+config :llm_db,
+  filter: %{
+    allow: %{openai: "gpt-5.4", google: :all, anthropic: :all}
+  }
+
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
   import_config "dev.local.exs"
