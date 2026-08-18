@@ -7,7 +7,7 @@ import { EOS_HEALING, EOS_PACKAGE_UPGRADE_OUTLINED } from 'eos-icons-react';
 import { noop, gt, gte } from 'lodash';
 
 import Loading from './Loading';
-import SmlmNotConfigured from './SumaNotConfigured';
+import SmlmNotConfigured from './SuseMultiLinuxManagerNotConfigured';
 import Indicator from './Indicator';
 
 const containerClassNames = classNames(
