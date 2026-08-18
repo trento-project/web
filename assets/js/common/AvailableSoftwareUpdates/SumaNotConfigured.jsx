@@ -10,7 +10,7 @@ import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 import Button from '@common/Button';
 
-function SumaNotConfigured({ className, onBackToSettings = noop }) {
+function SmlmNotConfigured({ className, onBackToSettings = noop }) {
   return (
     <div
       className={classNames(
@@ -41,4 +41,4 @@ function SumaNotConfigured({ className, onBackToSettings = noop }) {
   );
 }
 
-export default SumaNotConfigured;
+export default SmlmNotConfigured;

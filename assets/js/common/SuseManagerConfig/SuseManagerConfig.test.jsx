@@ -18,7 +18,7 @@ describe('SuseManagerConfig', () => {
     expect(screen.getByText('https://')).toBeInTheDocument();
     expect(screen.getAllByText('-')).toHaveLength(1);
     expect(screen.getAllByText('.....')).toHaveLength(2);
-    expect(screen.getByLabelText('test-suma-connection')).toBeDisabled();
+    expect(screen.getByLabelText('test-smlm-connection')).toBeDisabled();
   });
 
   it('renders settings', async () => {
@@ -81,7 +81,7 @@ describe('SuseManagerConfig', () => {
         userAbilities={adminUser}
       />
     );
-    expect(screen.getByLabelText('test-suma-connection')).toBeEnabled();
+    expect(screen.getByLabelText('test-smlm-connection')).toBeEnabled();
 
     const testConnectionButton = screen.getByText('Test Connection');
     await user.click(testConnectionButton);

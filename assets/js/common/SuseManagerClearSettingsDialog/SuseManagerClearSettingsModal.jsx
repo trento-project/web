@@ -29,7 +29,7 @@ function SuseManagerClearSettingsModal({
       </div>
       <span className="flex w-1/3">
         <Button
-          aria-label="confirm-clear-suma-settings"
+          aria-label="confirm-clear-smlm-settings"
           type="danger-bold"
           className="mr-5"
           onClick={onClearSettings}

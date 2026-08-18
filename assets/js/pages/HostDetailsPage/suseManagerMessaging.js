@@ -4,7 +4,7 @@
 import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
 
 export const getSoftwareUpdatesErrorMessage = (errors) => {
-  const hostNotFoundInSUMA = errors.some(
+  const hostNotFoundInSMLM = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
       detail ===
@@ -15,7 +15,7 @@ export const getSoftwareUpdatesErrorMessage = (errors) => {
     ({ detail }) => detail === 'Something went wrong.'
   );
 
-  if (hostNotFoundInSUMA) {
+  if (hostNotFoundInSMLM) {
     return `Host not found in ${SMLM_PRODUCT_LABEL}`;
   }
 
@@ -27,7 +27,7 @@ export const getSoftwareUpdatesErrorMessage = (errors) => {
 };
 
 export const getSoftwareUpdatesErrorTooltip = (errors) => {
-  const hostNotFoundInSUMA = errors.some(
+  const hostNotFoundInSMLM = errors.some(
     ({ detail }) =>
       detail === 'The requested resource cannot be found.' ||
       detail ===
@@ -38,7 +38,7 @@ export const getSoftwareUpdatesErrorTooltip = (errors) => {
     ({ detail }) => detail === 'Something went wrong.'
   );
 
-  if (hostNotFoundInSUMA) {
+  if (hostNotFoundInSMLM) {
     return `Contact your ${SMLM_PRODUCT_LABEL} admin to ensure the host is managed by ${SMLM_PRODUCT_LABEL}`;
   }
 

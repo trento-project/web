@@ -7,7 +7,7 @@ import * as basePage from './base_po';
 import { capitalize } from 'lodash';
 
 // Test Data
-import * as sumaMocks from '../fixtures/suma-software-updates/software_updates.js';
+import * as sumaMocks from '../fixtures/smlm-software-updates/software_updates.js';
 import {
   selectedHost,
   attachedSapInstance,

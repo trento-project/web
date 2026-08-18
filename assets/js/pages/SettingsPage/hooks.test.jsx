@@ -22,9 +22,9 @@ import {
 const axiosMock = new MockAdapter(networkClient);
 
 describe('useSuseManagerSettings', () => {
-  const baseSumaSettings = {
-    username: 'testsuma',
-    ca_upload_at: null,
+  const baseSmlmSettings = {
+    username: 'testsmlm',
+    ca_uploaded_at: null,
     url: 'http://localhost:8080',
   };
 
@@ -33,7 +33,7 @@ describe('useSuseManagerSettings', () => {
   });
 
   beforeEach(() => {
-    axiosMock.onGet('/settings/suse_manager').reply(200, baseSumaSettings);
+    axiosMock.onGet('/settings/suse_manager').reply(200, baseSmlmSettings);
   });
 
   it('should fetch SUSE Multi-Linux Manager on mount and return the settings', async () => {
@@ -47,7 +47,7 @@ describe('useSuseManagerSettings', () => {
       hookResult = result;
     });
     expect(hookResult.current.suseManagerSettingsLoading).toBe(false);
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseManagerSettings).toEqual(baseSmlmSettings);
     expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
     expect(hookResult.current.suseManagerSettingsfetchError).toEqual(false);
   });
@@ -135,7 +135,7 @@ describe('useSuseManagerSettings', () => {
       hookResult.current.updateSuseManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseManagerSettings).toEqual(baseSmlmSettings);
     expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([
       { error: 'error' },
     ]);
@@ -181,7 +181,7 @@ describe('useSuseManagerSettings', () => {
       hookResult.current.deleteSuseManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseManagerSettings).toEqual(baseSmlmSettings);
 
     expect(store.getActions()).toEqual([
       {
@@ -208,7 +208,7 @@ describe('useSuseManagerSettings', () => {
       hookResult.current.testSuseManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseManagerSettings).toEqual(baseSmlmSettings);
     expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
 
     expect(store.getActions()).toEqual([
@@ -236,7 +236,7 @@ describe('useSuseManagerSettings', () => {
       hookResult.current.testSuseManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseManagerSettings).toEqual(baseSmlmSettings);
     expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
 
     expect(store.getActions()).toEqual([

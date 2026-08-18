@@ -12,7 +12,7 @@ import DisabledGuard from '@common/DisabledGuard';
 import SuseManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
-const sumaSettingsPermittedFor = ['all:suma_settings'];
+const smlmSettingsPermittedFor = ['all:suma_settings'];
 
 function SuseManagerConfig({
   url = 'https://',
@@ -42,7 +42,7 @@ function SuseManagerConfig({
           </h2>
           <span className="float-right">
             <Button
-              aria-label="test-suma-connection"
+              aria-label="test-smlm-connection"
               className="mr-2"
               type="default-fit"
               size="small"
@@ -53,7 +53,7 @@ function SuseManagerConfig({
             </Button>
             <DisabledGuard
               userAbilities={userAbilities}
-              permitted={sumaSettingsPermittedFor}
+              permitted={smlmSettingsPermittedFor}
             >
               <Button
                 className="mr-2"
@@ -66,10 +66,10 @@ function SuseManagerConfig({
             </DisabledGuard>
             <DisabledGuard
               userAbilities={userAbilities}
-              permitted={sumaSettingsPermittedFor}
+              permitted={smlmSettingsPermittedFor}
             >
               <Button
-                aria-label="clear-suma-settings"
+                aria-label="clear-smlm-settings"
                 type="danger"
                 size="small"
                 onClick={onClearClick}
@@ -87,25 +87,25 @@ function SuseManagerConfig({
         <div className="grid grid-cols-6 mt-5 items-center">
           <div className="font-bold mb-3">{SMLM_PRODUCT_LABEL} URL</div>
           <div
-            aria-label="suma-url"
+            aria-label="smlm-url"
             className="col-span-2 text-gray-500 mb-3 truncate pr-12"
           >
             {url}
           </div>
           <div className="font-bold mb-3">CA Certificate</div>
           <div
-            aria-label="suma-cacert-upload-date"
+            aria-label="smlm-cacert-upload-date"
             className="col-span-2 text-gray-500 mb-3"
           >
             <CertificateUploadDate date={certUploadDate} timezone={timezone} />
           </div>
 
           <div className="font-bold">Username</div>
-          <div aria-label="suma-username" className="col-span-2 text-gray-500">
+          <div aria-label="smlm-username" className="col-span-2 text-gray-500">
             {defaultTo(username, '.....')}
           </div>
           <div className="font-bold">Password</div>
-          <div aria-label="suma-password" className="col-span-2 text-gray-500">
+          <div aria-label="smlm-password" className="col-span-2 text-gray-500">
             {username ? '•••••' : '.....'}
           </div>
         </div>

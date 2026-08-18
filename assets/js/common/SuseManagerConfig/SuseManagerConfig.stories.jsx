@@ -82,7 +82,7 @@ export const Default = {
   },
 };
 
-export const WithVeryLongSUMAUrl = {
+export const WithVeryLongSMLMUrl = {
   args: {
     ...Default.args,
     url: 'https://this.is-a-very.long.url-that-will-be-truncated.trento-project.io/suse-manager',
