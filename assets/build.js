@@ -3,10 +3,10 @@
 
 /* eslint-disable no-console */
 
-const path = require('path');
-const esbuild = require('esbuild');
+import path from 'path';
+import esbuild from 'esbuild';
 
-const resolvePath = (p) => path.resolve(__dirname, p);
+const resolvePath = (p) => path.resolve(import.meta.dirname, p);
 
 const watching = Boolean(process.env.ESBUILD_WATCH);
 
