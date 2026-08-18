@@ -120,7 +120,7 @@ export const useSuseMultiLinuxManagerSettings = () => {
     suseMultiLinuxManagerSettingsLoading: loading,
     suseMultiLinuxManagerSettings: settings,
     suseMultiLinuxManagerSettingsEntityErrors: entityErrors,
-    suseMultiLinuxManagerSettingsfetchError: fetchError,
+    suseMultiLinuxManagerSettingsFetchError: fetchError,
     suseMultiLinuxManagerSettingsTesting: testingSettings,
   };
 };
