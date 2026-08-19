@@ -9,7 +9,7 @@ import { EOS_ACCOUNT_CIRCLE_OUTLINED } from 'eos-icons-react';
 
 function ProfileMenu({ username, email, logout }) {
   return (
-    <Menu as="div" className="relative inline-block text-left z-[100]">
+    <Menu as="div" className="relative inline-block text-left">
       <Menu.Button as="button" className="group">
         <span className="flex items-center">
           <EOS_ACCOUNT_CIRCLE_OUTLINED
@@ -38,7 +38,8 @@ function ProfileMenu({ username, email, logout }) {
 
       <Menu.Items
         as="div"
-        className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+        anchor={{ to: 'bottom end', gap: 8 }}
+        className="origin-top-right w-56 z-[100] rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
       >
         <Menu.Item>
           <span className="text-gray-700 block px-4 py-2 text-sm border-b border-gray-300">
