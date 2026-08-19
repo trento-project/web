@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-07-03T22:14:52Z",
-    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
-    "run_id": "28680614714",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-04T18:25:32Z",
     "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
     "run_id": "28715142446",
@@ -5577,6 +5541,26 @@
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-19T17:50:47Z",
+    "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
+    "run_id": "32282352086",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 38,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
+        "score": 0.05001
       }
     ]
   }
