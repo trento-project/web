@@ -4,7 +4,6 @@
 import React from 'react';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
