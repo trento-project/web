@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-03T19:08:43Z",
-    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
-    "run_id": "28678315266",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.06077
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-03T22:14:52Z",
     "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
     "run_id": "28680614714",
@@ -5569,6 +5553,30 @@
       {
         "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
         "score": 0.03577
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-19T17:49:54Z",
+    "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
+    "run_id": "32282352086",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.07001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.02501
       }
     ]
   }
