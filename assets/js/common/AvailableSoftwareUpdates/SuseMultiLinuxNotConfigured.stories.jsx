@@ -3,11 +3,11 @@
 
 import { action } from 'storybook/actions';
 
-import SmlmNotConfigured from './SumaNotConfigured';
+import SuseMultiLinuxManagerNotConfigured from './SuseMultiLinuxManagerNotConfigured';
 
 export default {
-  title: 'Components/SmlmNotConfigured',
-  component: SmlmNotConfigured,
+  title: 'Components/SuseMultiLinuxManagerNotConfigured',
+  component: SuseMultiLinuxManagerNotConfigured,
   argTypes: {
     className: {
       description: 'Additional CSS classes for the container.',

@@ -4,7 +4,7 @@
 import React from 'react';
 import { noop } from 'lodash';
 
-import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';

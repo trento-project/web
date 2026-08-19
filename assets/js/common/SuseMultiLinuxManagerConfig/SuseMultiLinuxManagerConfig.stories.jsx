@@ -4,7 +4,7 @@
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 
-import SuseMultiLinuxManagerConfig from './SuseManagerConfig';
+import SuseMultiLinuxManagerConfig from './SuseMultiLinuxManagerConfig';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const user = userFactory.build();
@@ -70,7 +70,7 @@ export default {
 
 export const Default = {
   args: {
-    url: 'https://trento-project.io/suse-manager',
+    url: 'https://trento-project.io/suse-multi-linux-manager',
     username: user.username,
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     userAbilities: [allAbility],
@@ -85,7 +85,7 @@ export const Default = {
 export const WithVeryLongSMLMUrl = {
   args: {
     ...Default.args,
-    url: 'https://this.is-a-very.long.url-that-will-be-truncated.trento-project.io/suse-manager',
+    url: 'https://this.is-a-very.long.url-that-will-be-truncated.trento-project.io/suse-multi-linux-manager',
   },
 };
 

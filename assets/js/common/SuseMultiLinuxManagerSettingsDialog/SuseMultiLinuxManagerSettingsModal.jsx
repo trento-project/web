@@ -6,7 +6,7 @@ import { capitalize, noop } from 'lodash';
 import { EOS_LOCK_OUTLINED } from 'eos-icons-react';
 import { formatDateOnly } from '@lib/timezones';
 
-import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
 
 import Button from '@common/Button';
 import Modal from '@common/Modal';

@@ -6,11 +6,14 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import { EOS_SETTINGS } from 'eos-icons-react';
 
-import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
 
 import Button from '@common/Button';
 
-function SmlmNotConfigured({ className, onBackToSettings = noop }) {
+function SuseMultiLinuxManagerNotConfigured({
+  className,
+  onBackToSettings = noop,
+}) {
   return (
     <div
       className={classNames(
@@ -41,4 +44,4 @@ function SmlmNotConfigured({ className, onBackToSettings = noop }) {
   );
 }
 
-export default SmlmNotConfigured;
+export default SuseMultiLinuxManagerNotConfigured;

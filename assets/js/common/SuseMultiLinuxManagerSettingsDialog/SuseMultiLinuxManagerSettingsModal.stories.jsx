@@ -3,7 +3,7 @@
 
 import { action } from 'storybook/actions';
 
-import SuseMultiLinuxManagerSettingsModal from './SuseManagerSettingsModal';
+import SuseMultiLinuxManagerSettingsModal from './SuseMultiLinuxManagerSettingsModal';
 
 export default {
   title: 'Components/SuseMultiLinuxManagerSettingsModal',
@@ -68,7 +68,7 @@ export const WithPreviousSettings = {
   args: {
     ...Default.args,
     open: false,
-    initialUrl: 'https://demo.trento-project.io/suse_manager',
+    initialUrl: 'https://demo.trento-project.io/suse_multilinux_manager',
     initialUsername: 'trentorulez',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
   },
@@ -78,7 +78,7 @@ export const WithErrors = {
   args: {
     ...Default.args,
     open: false,
-    initialUrl: 'https://demo.trento-project.io/suse_manager',
+    initialUrl: 'https://demo.trento-project.io/suse_multilinux_manager',
     initialUsername: 'trentorulez',
     certUploadDate: '2024-01-29T08:41:47.291734Z',
     errors: [

@@ -10,7 +10,7 @@ import {
   validCertificate,
   anotherValidCertificate,
   expiredCertificate,
-} from '../fixtures/suma_credentials/certificates';
+} from '../fixtures/smlm_credentials/certificates';
 
 // Selectors
 

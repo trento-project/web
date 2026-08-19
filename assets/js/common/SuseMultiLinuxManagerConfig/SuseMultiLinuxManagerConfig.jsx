@@ -4,12 +4,12 @@
 import React from 'react';
 import { defaultTo, noop } from 'lodash';
 
-import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_manager';
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
 
 import Button from '@common/Button';
 
 import DisabledGuard from '@common/DisabledGuard';
-import SuseMultiLinuxManagerClearSettingsModal from '@common/SuseManagerClearSettingsDialog';
+import SuseMultiLinuxManagerClearSettingsModal from '@common/SuseMultiLinuxManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
 const smlmSettingsPermittedFor = ['all:suma_settings'];

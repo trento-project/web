@@ -16,7 +16,7 @@ import {
   updateSettings,
   clearSettings,
   testConnection,
-} from '@lib/api/suseManagerSettings';
+} from '@lib/api/suseMultiLinuxManagerSettings';
 import {
   getSettings as getAlertingSettings,
   saveSettings as saveAlertingSettings,
