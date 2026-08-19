@@ -4,7 +4,7 @@
 import {
   useAlertingSettings,
   useApiKeySettings,
-  useSuseManagerSettings,
+  useSuseMultiLinuxManagerSettings,
 } from '@pages/SettingsPage/hooks';
 import { networkClient } from '@lib/network';
 import MockAdapter from 'axios-mock-adapter';
@@ -21,10 +21,10 @@ import {
 
 const axiosMock = new MockAdapter(networkClient);
 
-describe('useSuseManagerSettings', () => {
-  const baseSumaSettings = {
-    username: 'testsuma',
-    ca_upload_at: null,
+describe('useSuseMultiLinuxManagerSettings', () => {
+  const baseSmlmSettings = {
+    username: 'testsmlm',
+    ca_uploaded_at: null,
     url: 'http://localhost:8080',
   };
 
@@ -33,7 +33,7 @@ describe('useSuseManagerSettings', () => {
   });
 
   beforeEach(() => {
-    axiosMock.onGet('/settings/suse_manager').reply(200, baseSumaSettings);
+    axiosMock.onGet('/settings/suse_manager').reply(200, baseSmlmSettings);
   });
 
   it('should fetch SUSE Multi-Linux Manager on mount and return the settings', async () => {
@@ -41,15 +41,21 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
     });
-    expect(hookResult.current.suseManagerSettingsLoading).toBe(false);
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
-    expect(hookResult.current.suseManagerSettingsfetchError).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettingsLoading).toBe(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettingsFetchError).toEqual(
+      false
+    );
   });
 
   it('should perform the SUSE Multi-Linux Manager settings saving when the hook callback is called', async () => {
@@ -57,7 +63,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -74,11 +80,15 @@ describe('useSuseManagerSettings', () => {
       .reply(200, newSettings);
 
     await act(() => {
-      hookResult.current.saveSuseManagerSettings(newSettings);
+      hookResult.current.saveSuseMultiLinuxManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(newSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      newSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
   });
 
   it('should perform the SUSE Multi-Linux Manager settings update when the hook callback is called and no errors are returned', async () => {
@@ -86,7 +96,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -103,11 +113,15 @@ describe('useSuseManagerSettings', () => {
       .reply(200, newSettings);
 
     await act(() => {
-      hookResult.current.updateSuseManagerSettings(newSettings);
+      hookResult.current.updateSuseMultiLinuxManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(newSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      newSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
   });
 
   it('should not perform the SUSE Multi-Linux Manager settings update when the hook callback is called and errors are returned', async () => {
@@ -115,7 +129,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -132,13 +146,15 @@ describe('useSuseManagerSettings', () => {
     });
 
     await act(() => {
-      hookResult.current.updateSuseManagerSettings(newSettings);
+      hookResult.current.updateSuseMultiLinuxManagerSettings(newSettings);
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([
-      { error: 'error' },
-    ]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([{ error: 'error' }]);
   });
 
   it('should perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and no errors are returned', async () => {
@@ -146,7 +162,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, _] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -155,11 +171,13 @@ describe('useSuseManagerSettings', () => {
     axiosMock.onDelete('/api/v1/settings/suse_manager').reply(204, {});
 
     await act(() => {
-      hookResult.current.deleteSuseManagerSettings();
+      hookResult.current.deleteSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual({});
-    expect(hookResult.current.suseManagerSettingsEntityErrors).toEqual([]);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual({});
+    expect(
+      hookResult.current.suseMultiLinuxManagerSettingsEntityErrors
+    ).toEqual([]);
   });
 
   it('should not perform the SUSE Multi-Linux Manager settings delete when the hook callback is called and errors are returned', async () => {
@@ -167,7 +185,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -178,10 +196,12 @@ describe('useSuseManagerSettings', () => {
     });
 
     await act(() => {
-      hookResult.current.deleteSuseManagerSettings();
+      hookResult.current.deleteSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
 
     expect(store.getActions()).toEqual([
       {
@@ -196,7 +216,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -205,11 +225,15 @@ describe('useSuseManagerSettings', () => {
     axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(200);
 
     await act(() => {
-      hookResult.current.testSuseManagerSettings();
+      hookResult.current.testSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(hookResult.current.suseMultiLinuxManagerSettingsTesting).toEqual(
+      false
+    );
 
     expect(store.getActions()).toEqual([
       {
@@ -224,7 +248,7 @@ describe('useSuseManagerSettings', () => {
     const [hookWrapper, store] = hookWrapperWithState();
 
     await act(() => {
-      const { result } = renderHook(() => useSuseManagerSettings(), {
+      const { result } = renderHook(() => useSuseMultiLinuxManagerSettings(), {
         wrapper: hookWrapper,
       });
       hookResult = result;
@@ -233,11 +257,15 @@ describe('useSuseManagerSettings', () => {
     axiosMock.onPost('/api/v1/settings/suse_manager/test').reply(500);
 
     await act(() => {
-      hookResult.current.testSuseManagerSettings();
+      hookResult.current.testSuseMultiLinuxManagerSettings();
     });
 
-    expect(hookResult.current.suseManagerSettings).toEqual(baseSumaSettings);
-    expect(hookResult.current.suseManagerSettingsTesting).toEqual(false);
+    expect(hookResult.current.suseMultiLinuxManagerSettings).toEqual(
+      baseSmlmSettings
+    );
+    expect(hookResult.current.suseMultiLinuxManagerSettingsTesting).toEqual(
+      false
+    );
 
     expect(store.getActions()).toEqual([
       {

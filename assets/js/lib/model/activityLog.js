@@ -23,9 +23,9 @@ export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
 export const RESOURCE_UNTAGGING = 'resource_untagging';
 export const API_KEY_GENERATION = 'api_key_generation';
-export const SAVING_SUMA_SETTINGS = 'saving_suma_settings';
-export const CHANGING_SUMA_SETTINGS = 'changing_suma_settings';
-export const CLEARING_SUMA_SETTINGS = 'clearing_suma_settings';
+export const SAVING_SMLM_SETTINGS = 'saving_suma_settings';
+export const CHANGING_SMLM_SETTINGS = 'changing_suma_settings';
+export const CLEARING_SMLM_SETTINGS = 'clearing_suma_settings';
 export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
 export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
 export const USER_CREATION = 'user_creation';
@@ -186,7 +186,7 @@ export const availableResourceNameKeys = pipe(
   uniq
 )(resourceTypesToNameKeyMap);
 
-const sumaSettingsResourceType = (_entry) =>
+const smlmSettingsResourceType = (_entry) =>
   'SUSE Multi-Linux Manager Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
@@ -268,20 +268,20 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => 'API Key was generated',
     resource: (_entry) => 'API Key',
   },
-  [SAVING_SUMA_SETTINGS]: {
+  [SAVING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Saved',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was saved',
-    resource: sumaSettingsResourceType,
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were saved',
+    resource: smlmSettingsResourceType,
   },
-  [CHANGING_SUMA_SETTINGS]: {
+  [CHANGING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Changed',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was changed',
-    resource: sumaSettingsResourceType,
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were changed',
+    resource: smlmSettingsResourceType,
   },
-  [CLEARING_SUMA_SETTINGS]: {
+  [CLEARING_SMLM_SETTINGS]: {
     label: 'SUSE Multi-Linux Manager Settings Cleared',
-    message: (_entry) => 'SUSE Multi-Linux Manager Settings was cleared',
-    resource: sumaSettingsResourceType,
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were cleared',
+    resource: smlmSettingsResourceType,
   },
   [SAVING_ALERTING_SETTINGS]: {
     label: 'Alerting Settings Saved',

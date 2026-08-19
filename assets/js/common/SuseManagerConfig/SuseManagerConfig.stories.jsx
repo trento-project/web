@@ -4,14 +4,14 @@
 import { abilityFactory, userFactory } from '@lib/test-utils/factories';
 import { action } from 'storybook/actions';
 
-import SuseManagerConfig from './SuseManagerConfig';
+import SuseMultiLinuxManagerConfig from './SuseManagerConfig';
 
 const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
 const user = userFactory.build();
 
 export default {
-  title: 'Components/SuseManagerConfig',
-  component: SuseManagerConfig,
+  title: 'Components/SuseMultiLinuxManagerConfig',
+  component: SuseMultiLinuxManagerConfig,
   argTypes: {
     username: {
       description: 'SUSE Multi-Linux Manager username',
@@ -82,7 +82,7 @@ export const Default = {
   },
 };
 
-export const WithVeryLongSUMAUrl = {
+export const WithVeryLongSMLMUrl = {
   args: {
     ...Default.args,
     url: 'https://this.is-a-very.long.url-that-will-be-truncated.trento-project.io/suse-manager',

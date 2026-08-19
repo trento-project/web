@@ -3,11 +3,11 @@
 
 import { action } from 'storybook/actions';
 
-import SuseManagerClearSettingsModal from './SuseManagerClearSettingsModal';
+import SuseMultiLinuxManagerClearSettingsModal from './SuseManagerClearSettingsModal';
 
 export default {
-  title: 'Components/SuseManagerClearSettingsModal',
-  component: SuseManagerClearSettingsModal,
+  title: 'Components/SuseMultiLinuxManagerClearSettingsModal',
+  component: SuseMultiLinuxManagerClearSettingsModal,
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
