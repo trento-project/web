@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "baseUrl": ".",
     "paths": {
       "phoenix": ["../deps/phoenix/priv/static/phoenix.mjs"],
