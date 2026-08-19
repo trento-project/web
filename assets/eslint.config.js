@@ -39,7 +39,7 @@ export default defineConfig([
     settings: {
       'import-x/resolver-next': [
         // We're using a TypeScript resolver because it has support
-        // for `jsconfig.json`.
+        // for `tsconfig.json`.
         createTypeScriptImportResolver({ extensions: ['.js', '.jsx'] }),
       ],
     },
