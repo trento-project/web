@@ -536,6 +536,9 @@ describe('Users', () => {
   });
 
   describe('AI Configuration', () => {
+    const GOOGLE_AI = 'googleai';
+    const OPEN_AI = 'openai';
+
     beforeEach(() => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
@@ -558,29 +561,25 @@ describe('Users', () => {
       });
 
       it('should display AI Configuration section in user profile', () => {
-        const provider = 'googleai';
-        const model = 'gemini-2.5-pro';
-
-        usersPage.apiCreateAIConfiguration(provider, model, 'test-api-key');
-
-        usersPage.refresh();
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(provider)
-        );
-        usersPage.aiConfigurationModelShouldBe(model);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
-        usersPage.clearAIConfigurationButtonIsEnabled();
+        usersPage
+          .apiCreateAIConfigurationWithFirstModel(GOOGLE_AI, 'test-api-key')
+          .then((model) => {
+            usersPage.refresh();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(model);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+            usersPage.clearAIConfigurationButtonIsEnabled();
+          });
       });
     });
 
     describe('Creating AI Configuration', () => {
       it('should not allow user to create an AI configuration if the api key is not set', () => {
-        const provider = 'Google Gemini';
-        const model = 'gemini-2.5-pro';
-
         usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(provider);
-        usersPage.selectAIModel(model);
+        usersPage.selectAIProvider(getProviderLabel(GOOGLE_AI));
+        usersPage.selectFirstAIModel();
 
         const shouldWaitForRequest = false;
         usersPage.clickModalSaveAIConfigurationButton(shouldWaitForRequest);
@@ -593,12 +592,9 @@ describe('Users', () => {
       });
 
       it('should not allow user to create an AI configuration if the api key is an empty content', () => {
-        const provider = 'Google Gemini';
-        const model = 'gemini-2.5-pro';
-
         usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(provider);
-        usersPage.selectAIModel(model);
+        usersPage.selectAIProvider(getProviderLabel(GOOGLE_AI));
+        usersPage.selectFirstAIModel();
         usersPage.typeAIConfigurationApiKey('   ');
 
         usersPage.clickModalSaveAIConfigurationButton();
@@ -611,159 +607,134 @@ describe('Users', () => {
       });
 
       it('should allow user to create an AI configuration', () => {
-        const provider = 'Google Gemini';
-        const model = 'gemini-2.5-pro';
-
         usersPage.aiConfigurationModelProviderShouldBe('None');
         usersPage.aiConfigurationModelShouldBe('None');
         usersPage.aiConfigurationApiKeyShouldBe('Not set');
 
         usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(provider);
-        usersPage.selectAIModel(model);
-        usersPage.typeAIConfigurationApiKey('test-api-key');
+        usersPage.selectAIProvider(getProviderLabel(GOOGLE_AI));
+        usersPage.selectFirstAIModel().then((model) => {
+          usersPage.typeAIConfigurationApiKey('test-api-key');
 
-        usersPage.clickModalSaveAIConfigurationButton();
+          usersPage.clickModalSaveAIConfigurationButton();
 
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(provider)
-        );
-        usersPage.aiConfigurationModelShouldBe(model);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          usersPage.aiConfigurationModelProviderShouldBe(
+            getProviderLabel(GOOGLE_AI)
+          );
+          usersPage.aiConfigurationModelShouldBe(model);
+          usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+        });
       });
     });
 
     describe('Updating AI Configuration', () => {
       it('should not allow user to update an AI configuration if the api key is an empty content', () => {
-        const initialProvider = 'googleai';
-        const initialModel = 'gemini-2.5-pro';
+        usersPage
+          .apiCreateAIConfigurationWithFirstModel(GOOGLE_AI, 'test-api-key')
+          .then((initialModel) => {
+            usersPage.refresh();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(initialModel);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
 
-        usersPage.apiCreateAIConfiguration(
-          initialProvider,
-          initialModel,
-          'test-api-key'
-        );
+            usersPage.clickEditAIConfigurationButton();
+            usersPage.selectAIProvider(getProviderLabel(OPEN_AI));
+            usersPage.selectAnotherAIModel();
+            usersPage.typeAIConfigurationApiKey('  ');
 
-        usersPage.refresh();
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(initialProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(initialModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+            usersPage.clickModalUpdateAIConfigurationButton();
 
-        const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+            usersPage.requiredAPIKeyErrorIsDisplayed("Can't be blank");
 
-        usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(newProvider);
-        usersPage.selectAIModel(newModel);
-        usersPage.typeAIConfigurationApiKey('  ');
-
-        usersPage.clickModalUpdateAIConfigurationButton();
-
-        usersPage.requiredAPIKeyErrorIsDisplayed("Can't be blank");
-
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(initialProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(initialModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(initialModel);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
       });
 
       it('should allow user to update AI configuration', () => {
-        const initialProvider = 'googleai';
-        const initialModel = 'gemini-2.5-pro';
-
-        usersPage.apiCreateAIConfiguration(
-          initialProvider,
-          initialModel,
-          'test-api-key'
-        );
-
-        usersPage.refresh();
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(initialProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(initialModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
-
-        const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+        usersPage
+          .apiCreateAIConfigurationWithFirstModel(GOOGLE_AI, 'test-api-key')
+          .then((initialModel) => {
+            usersPage.refresh();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(initialModel);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
 
         usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(newProvider);
-        usersPage.selectAIModel(newModel);
-        usersPage.typeAIConfigurationApiKey('test-api-key');
+        usersPage.selectAIProvider(getProviderLabel(OPEN_AI));
+        usersPage.selectAnotherAIModel().then((newModel) => {
+          usersPage.typeAIConfigurationApiKey('test-api-key');
 
-        usersPage.clickModalUpdateAIConfigurationButton();
+          usersPage.clickModalUpdateAIConfigurationButton();
 
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(newProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(newModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          usersPage.aiConfigurationModelProviderShouldBe(
+            getProviderLabel(OPEN_AI)
+          );
+          usersPage.aiConfigurationModelShouldBe(newModel);
+          usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+        });
       });
 
       it('should allow user to partially update AI configuration', () => {
-        const initialProvider = 'googleai';
-        const initialModel = 'gemini-2.5-pro';
-
-        usersPage.apiCreateAIConfiguration(
-          initialProvider,
-          initialModel,
-          'test-api-key'
-        );
-
-        usersPage.refresh();
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(initialProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(initialModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
-
-        const newProvider = 'OpenAI GPT';
-        const newModel = 'gpt-5.4';
+        usersPage
+          .apiCreateAIConfigurationWithFirstModel(GOOGLE_AI, 'test-api-key')
+          .then((initialModel) => {
+            usersPage.refresh();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(initialModel);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
 
         usersPage.clickEditAIConfigurationButton();
-        usersPage.selectAIProvider(newProvider);
-        usersPage.selectAIModel(newModel);
-        // api key is unchanged
+        usersPage.selectAIProvider(getProviderLabel(OPEN_AI));
+        usersPage.selectAnotherAIModel().then((newModel) => {
+          // api key is unchanged
 
-        usersPage.clickModalUpdateAIConfigurationButton();
+          usersPage.clickModalUpdateAIConfigurationButton();
 
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(newProvider)
-        );
-        usersPage.aiConfigurationModelShouldBe(newModel);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          usersPage.aiConfigurationModelProviderShouldBe(
+            getProviderLabel(OPEN_AI)
+          );
+          usersPage.aiConfigurationModelShouldBe(newModel);
+          usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+        });
       });
     });
 
     describe('Clearing AI Configuration', () => {
       it('should keep configuration when clear modal is dismissed', () => {
-        const provider = 'googleai';
-        const model = 'gemini-2.5-pro';
-
-        usersPage.apiCreateAIConfiguration(provider, model, 'test-api-key');
-
-        usersPage.refresh();
-        usersPage.clearAIConfigurationButtonIsEnabled();
-        usersPage.clickClearAIConfigurationButton();
-        usersPage.clearAIConfigurationModalIsDisplayed();
-        usersPage.clickCancelClearAIConfiguration();
-        usersPage.clearAIConfigurationModalIsNotDisplayed();
-        usersPage.aiConfigurationModelProviderShouldBe(
-          getProviderLabel(provider)
-        );
-        usersPage.aiConfigurationModelShouldBe(model);
-        usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+        usersPage
+          .apiCreateAIConfigurationWithFirstModel(GOOGLE_AI, 'test-api-key')
+          .then((model) => {
+            usersPage.refresh();
+            usersPage.clearAIConfigurationButtonIsEnabled();
+            usersPage.clickClearAIConfigurationButton();
+            usersPage.clearAIConfigurationModalIsDisplayed();
+            usersPage.clickCancelClearAIConfiguration();
+            usersPage.clearAIConfigurationModalIsNotDisplayed();
+            usersPage.aiConfigurationModelProviderShouldBe(
+              getProviderLabel(GOOGLE_AI)
+            );
+            usersPage.aiConfigurationModelShouldBe(model);
+            usersPage.aiConfigurationApiKeyShouldBe('••••••••');
+          });
       });
 
       it('should clear the AI configuration on confirm', () => {
-        const provider = 'googleai';
-        const model = 'gemini-2.5-pro';
-
-        usersPage.apiCreateAIConfiguration(provider, model, 'test-api-key');
+        usersPage.apiCreateAIConfigurationWithFirstModel(
+          GOOGLE_AI,
+          'test-api-key'
+        );
 
         usersPage.refresh();
         usersPage.clickClearAIConfigurationButton();
