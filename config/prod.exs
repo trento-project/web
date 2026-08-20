@@ -17,7 +17,7 @@ config :trento,
 
 config :llm_db,
   filter: %{
-    deny: %{google: ["*-preview*"]}
+    deny: %{google: ["*-preview*", "*-image*"]}
   }
 
 config :trento, :ai, enabled: true

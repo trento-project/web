@@ -258,7 +258,7 @@ config :samly, Samly.Provider,
 config :llm_db,
   filter: %{
     allow: %{openai: "gpt-5.4", google: :all, anthropic: :all},
-    deny: %{google: ["*-preview*"]}
+    deny: %{google: ["*-preview*", "*-image*"]}
   }
 
 # Override with local dev.local.exs file
