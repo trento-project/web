@@ -1711,7 +1711,7 @@ defmodule Trento.Factory do
 
   def random_ai_model_factory(attrs) do
     attrs
-    |> Map.get(:provider, :all)
+    |> Map.get(:provider, build(:random_ai_provider))
     |> LLMRegistry.get_provider_models()
     |> Enum.random()
   end
