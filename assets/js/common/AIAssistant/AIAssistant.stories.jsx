@@ -61,7 +61,7 @@ function useConfigurationEvents(socket, events) {
     );
     return () => timers.forEach(clearTimeout);
     // The event list is captured at mount, as with useSimulatedTurn.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [socket]);
 }
 
@@ -141,7 +141,7 @@ function useSimulatedTurn(socket, turn) {
     };
     // The turn config is captured at mount; restarting on field changes is
     // never what we want here.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [socket]);
 }
 
