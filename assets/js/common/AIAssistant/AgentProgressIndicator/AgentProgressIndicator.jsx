@@ -31,6 +31,12 @@ function AgentProgressIndicator({ isRunning }) {
   const message = useAuiState((s) => s.message);
 
   if (!isRunning) return null;
+  // `isRunning` describes the thread, not this message, so every assistant
+  // bubble sees the same value. A run the user stopped before its first token
+  // leaves a text-less message in the history permanently, and the emptiness
+  // check below cannot tell it apart from the live placeholder — so it would
+  // light up again on every later run.
+  if (!message.isLast) return null;
   if (
     message.content.some(
       (part) => part.type === 'text' && part.text?.trim().length > 0

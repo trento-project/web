@@ -7,6 +7,20 @@ import '@testing-library/jest-dom';
 
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
+// AssistantMessage mounts <AgentProgressIndicator> and <StoppedNotice>, each
+// with its own useAuiState selector, so the stub has to run the selector
+// against one shared state object. `mock`-prefixed so jest.mock's factory can
+// close over it. `status` is the message's own — `incomplete/cancelled` is
+// what the runtime writes when the user stops the run.
+let mockAuiState = {
+  message: {
+    content: [],
+    id: 'message-1',
+    isLast: true,
+    status: { type: 'complete', reason: 'unknown' },
+  },
+};
+
 jest.mock('@assistant-ui/react', () => ({
   ErrorPrimitive: {
     Root: ({ children }) => <div>{children}</div>,
@@ -19,14 +33,23 @@ jest.mock('@assistant-ui/react', () => ({
     // error. This stub is unconditional, so the tests below can prove the slot is mounted
     Error: ({ children }) => <div>{children}</div>,
   },
-  // AssistantMessage renders <AgentProgressIndicator> which subscribes via
-  // useAuiState((s) => s.message). Default: empty content + no run in flight.
-  useAuiState: () => ({ content: [] }),
+  useAuiState: (selector) => selector(mockAuiState),
 }));
 
 jest.mock('@assistant-ui/react-markdown', () => ({
   MarkdownTextPrimitive: () => null,
 }));
+
+beforeEach(() => {
+  mockAuiState = {
+    message: {
+      content: [],
+      id: 'message-1',
+      isLast: true,
+      status: { type: 'complete', reason: 'unknown' },
+    },
+  };
+});
 
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
@@ -62,5 +85,21 @@ describe('AssistantMessage', () => {
   it('shows the agent progress indicator while a run is in flight', () => {
     render(<AssistantMessage isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
+  });
+
+  // The notice is a slot in the bubble; which answers earn it is
+  // StoppedNotice's own spec.
+  it('marks an answer the user stopped', () => {
+    mockAuiState.message.status = { type: 'incomplete', reason: 'cancelled' };
+
+    render(<AssistantMessage />);
+
+    expect(screen.getByText('Response stopped.')).toBeVisible();
+  });
+
+  it('does not mark an answer as stopped by default', () => {
+    render(<AssistantMessage />);
+
+    expect(screen.queryByText('Response stopped.')).not.toBeInTheDocument();
   });
 });
