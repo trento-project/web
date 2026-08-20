@@ -6,8 +6,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   Phoenix Channel for the AI Assistant.
 
   Bridges the React assistant-ui client (AG-UI protocol over WebSocket) to a
-  `Sagents.AgentServer` keyed on the JS-supplied `thread_id`. State lives in
-  the AgentServer until inactivity timeout.
+  `Sagents.AgentServer` keyed on the socket's user id plus the JS-supplied
+  `thread_id`. State lives in the AgentServer until inactivity timeout.
 
   AG-UI wire emission lives in `TrentoWeb.AIAssistant.AgUi`.
 
@@ -24,7 +24,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:current_scope` | `%Trento.Users.User{id: id}` | from `join/3` | passed to `Sagents.Agent.new!` as `:scope` so tool callbacks see `context.scope.id` |
   | `:loading` | boolean | toggled per run | double-send guard — prevents race conditions |
   | `:current_run_id` | UUID string | set at each `send_message` | echoed in `RUN_STARTED` + `RUN_FINISHED` AG-UI events for client-side correlation |
-  | `:current_thread_id` | UUID string | set at each `send_message` | used as the sagents `agent_id` + echoed in run events |
+  | `:current_thread_id` | UUID string | set at each `send_message` | namespaced with the user id to build the sagents `agent_id` (see `agent_id/2`) + echoed in run events |
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
   | `:run_has_started` | boolean | per run | stale-`:idle` guard. `Sagents.AgentServer.init/1` broadcasts `{:status_changed, :idle, nil}` at boot and on Horde `node_transferred`; this flag is only set on the `:running` event for THIS run, so we ignore stray initial idles |
@@ -193,7 +193,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          prompt
        ) do
     [
-      agent_id: thread_id,
+      agent_id: agent_id(scope, thread_id),
       model: model_config,
       scope: scope,
       tool_context: %{
@@ -219,6 +219,12 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
     |> then(&{:noreply, &1})
   end
+
+  # The sagents registry is keyed on the agent id alone, with no user in it, and
+  # the thread id arrives from the client. Prefixing the owner server-side is
+  # what keeps one user's `send_message` from naming — and then joining,
+  # re-scoping and reading — another user's live conversation.
+  defp agent_id(%{id: user_id}, thread_id), do: "#{user_id}:#{thread_id}"
 
   # Hot-swap the running agent when either the access_token OR the effective model config changed.
   defp agent_config_changed(
@@ -315,7 +321,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     # Stop any in-flight agent for this thread and notify the client
     case socket.assigns[:current_thread_id] do
       nil -> :ok
-      thread_id -> TrentoAIAgent.stop(thread_id)
+      thread_id -> TrentoAIAgent.stop(agent_id(socket.assigns.current_scope, thread_id))
     end
 
     push(socket, "ai_configuration_cleared", %{})

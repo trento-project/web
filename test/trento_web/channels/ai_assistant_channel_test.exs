@@ -952,6 +952,34 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "handle_in send_message/3 — agent id scoping" do
+    setup :join_socket_with_ai_config
+
+    test "names the sagents agent after the socket's user, not the client's thread id",
+         %{socket: socket, user_id: user_id, access_token: jwt} do
+      test_pid = self()
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn opts ->
+        send(test_pid, {:started, Keyword.fetch!(opts, :agent_id)})
+        {:ok, self()}
+      end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _msg -> :ok end)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t-1",
+        "access_token" => jwt
+      })
+
+      assert_receive {:started, agent_id}, @push_timeout
+      assert agent_id == "#{user_id}:t-1"
+    end
+  end
+
   describe "handle_in send_message/3 — error paths" do
     test "emits verbatim RUN_ERROR when user has no AI configuration" do
       %{id: user_id} = insert(:user)
@@ -1064,7 +1092,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         run_has_started: true
       })
 
-      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
+      agent_id = "#{user_id}:t-live"
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id -> :ok end)
 
       Trento.AI.Configurations.Events.broadcast_cleared(user_id)
 
@@ -1080,7 +1109,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         run_has_started: true
       })
 
-      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" ->
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn _agent_id ->
         {:error, :not_found}
       end)
 
