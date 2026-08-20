@@ -63,7 +63,6 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:llm_db, "~> 2026.7", runtime: false},
-      {:req_llm, "~> 1.6"},
       {:sagents, "~> 0.7.0"},
       # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,
