@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-04T22:04:52Z",
-    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
-    "run_id": "28717395532",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show the expected cluster stopped state::HANA cluster details Cluster state should show the expected cluster stopped state",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-05T18:26:42Z",
     "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
     "run_id": "28750150969",
@@ -5592,6 +5576,22 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.07026
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-20T17:53:35Z",
+    "commit": "ed55dcd050877897da47c914e8cac0aa1da45dc0",
+    "run_id": "32398691722",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
       }
     ]
   }
