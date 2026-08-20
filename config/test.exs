@@ -167,17 +167,10 @@ config :trento,
 config :trento, :ai,
   # Avoid the live Wanda fetch during tests. Individual tests opt in by
   # overriding :tool_sources via ApplicationConfigLoader.Mock.
-  tool_sources: [TrentoWeb.AI.ControllerToolSource],
-  providers: [
-    provider1: [
-      models: [
-        "model1"
-      ]
-    ],
-    provider2: [
-      models: [
-        "model1",
-        "model3"
-      ]
-    ]
-  ]
+  tool_sources: [TrentoWeb.AI.ControllerToolSource]
+
+config :llm_db,
+  filter: %{
+    allow: %{openai: :all, google: :all, anthropic: :all},
+    deny: %{google: ["*-preview*"]}
+  }

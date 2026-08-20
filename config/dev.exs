@@ -257,7 +257,7 @@ config :samly, Samly.Provider,
 
 config :llm_db,
   filter: %{
-    allow: %{openai: "gpt-5.4", google: :all, anthropic: :all},
+    allow: %{openai: :all, google: :all, anthropic: :all},
     deny: %{google: ["*-preview*"]}
   }
 

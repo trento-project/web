@@ -6,8 +6,15 @@ defmodule Trento.AI.LLMRegistry do
   This module is responsible for managing the registry of available LLM providers and their models.
   """
 
-  alias ReqLLM.ModelHelpers
   @providers [:openai, :googleai, :anthropic]
+
+  # Only chat models able to call tools while streaming, and to reason, are usable by the agent.
+  @required_capabilities [
+    chat: true,
+    reasoning: true,
+    tools: true,
+    streaming_tool_calls: true
+  ]
 
   @doc """
   Returns the list of configured LLM providers.
@@ -19,29 +26,15 @@ defmodule Trento.AI.LLMRegistry do
   Returns the list of models for a given provider or all models if `:all` is passed.
   """
   @spec get_provider_models(atom() | :all) :: [bitstring()]
-  def get_provider_models(:all),
-    do:
-      get_provider_models(:googleai) ++
-        get_provider_models(:anthropic) ++ get_provider_models(:openai)
+  def get_provider_models(:all), do: Enum.flat_map(@providers, &get_provider_models/1)
 
   def get_provider_models(provider) when provider in @providers do
-    provider =
-      case provider == :googleai do
-        true ->
-          :google
+    scope = Map.get(%{googleai: :google}, provider, provider)
 
-        _ ->
-          provider
-      end
-
-    models = LLMDB.models(provider)
-
-    models
-    |> Enum.filter(fn m ->
-      ModelHelpers.streaming_tool_calls?(m) && ModelHelpers.reasoning_enabled?(m) &&
-        ModelHelpers.chat?(m)
-    end)
-    |> Enum.map(& &1.id)
+    [scope: scope, require: @required_capabilities]
+    |> LLMDB.candidates()
+    |> Enum.map(fn {_provider, model_id} -> model_id end)
+    |> Enum.sort()
   end
 
   def get_provider_models(_), do: []

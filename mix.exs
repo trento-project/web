@@ -25,11 +25,6 @@ defmodule Trento.MixProject do
         plt_add_apps: [:ex_unit, :mix, :llm_db]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
-      ],
-      releases: [
-        trento: [
-          applications: [llm_db: :load]
-        ]
       ]
     ]
   end
@@ -62,8 +57,7 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:llm_db, "~> 2026.7", runtime: false},
-      {:req_llm, "~> 1.6"},
+      {:llm_db, "~> 2026.7"},
       {:sagents, "~> 0.7.0"},
       # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,

@@ -14,7 +14,7 @@ defmodule Trento.Support.StructHelperTest do
 
       initial_map = %{
         "id" => "some-id",
-        "not_existing_atom" => "some-value",
+        "not_existing_atomzz" => "some-value",
         "not_loaded" => %Ecto.Association.NotLoaded{},
         __meta__: nil,
         __struct__: nil,
@@ -26,7 +26,7 @@ defmodule Trento.Support.StructHelperTest do
       }
 
       assert %{
-               :not_existing_atom => "some-value",
+               "not_existing_atomzz" => "some-value",
                id: "some-id",
                list: [
                  datetime,
