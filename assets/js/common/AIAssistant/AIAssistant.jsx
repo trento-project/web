@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 
 import { useAuiState } from '@assistant-ui/react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { CONNECTION_STATUS } from '@lib/ai';
 
@@ -49,7 +50,7 @@ function AssistantUI({
 function AIAssistant({ userID, aiConfigured = true, open = false }) {
   const [isOpen, setIsOpen] = useState(open);
   const handleClose = () => setIsOpen(false);
-  const [threadID, setThreadID] = useState(() => crypto.randomUUID());
+  const [threadID, setThreadID] = useState(() => uuidv4());
   const [connectionStatus, setConnectionStatus] = useState(
     CONNECTION_STATUS.DISCONNECTED
   );
@@ -60,7 +61,7 @@ function AIAssistant({ userID, aiConfigured = true, open = false }) {
 
   // The channel stays mounted even when the launcher is disabled, so a "created" event can re-enable this tab
   const startNewThread = () => {
-    setThreadID(crypto.randomUUID());
+    setThreadID(uuidv4());
     setConfigurationStatus(CONFIGURATION_STATUS.OK);
     setModelNotice(null);
   };
