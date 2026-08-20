@@ -4,6 +4,7 @@
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
 import { isArray, isString, last, noop, each } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { EventType } from '@ag-ui/core';
 
@@ -202,7 +203,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // The send itself is deferred by at most one microtask via `await initialize()`.
   run({ messages, threadId }) {
     return new Observable((subscriber) => {
-      const runId = crypto.randomUUID();
+      const runId = uuidv4();
       const lastMessage = last(messages);
 
       if (!lastMessage || lastMessage.role !== 'user') {
