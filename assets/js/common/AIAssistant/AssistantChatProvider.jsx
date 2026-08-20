@@ -10,6 +10,10 @@ import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
 import { useSocket } from '@common/SocketProvider';
 import { WebSocketAIAgent } from '@lib/ai';
 
+// An empty ExportedMessageRepository — what `thread.import()` takes to wipe a
+// thread (equivalent to `ExportedMessageRepository.fromArray([])`).
+const EMPTY_THREAD = { messages: [] };
+
 function AssistantChatProvider({
   userID,
   threadID,
@@ -58,12 +62,26 @@ function AssistantChatProvider({
   // re-renders. When threadID changes we keep the same agent (above) but the
   // UI must drop the prior thread's messages explicitly; the first mount is
   // a no-op.
+  //
+  // `import()`, not `reset()`. The external-store runtime's `reset()` only
+  // pushes an empty message list to the store; its own message repository
+  // keeps the old thread. `import()` clears that repository synchronously.
+  //
+  // The server is told separately: the thread's agent outlives its runs and
+  // would otherwise hold the whole conversation until the sagents inactivity
+  // timeout. The header's "New chat" is locked for the length of a run, but a
+  // cross-tab `ai_configuration_created` can also mint a new threadID while
+  // the launcher is closed, with a run genuinely still streaming — so this
+  // effect never branches on run state itself; the transport (`abandonThread`)
+  // settles any in-flight run on its own.
   const previousThreadIDRef = useRef(threadID);
   useEffect(() => {
     if (previousThreadIDRef.current === threadID) return;
     previousThreadIDRef.current = threadID;
-    runtime.thread.reset();
-  }, [threadID, runtime]);
+
+    runtime.thread.import(EMPTY_THREAD);
+    agent.abandonThread();
+  }, [threadID, runtime, agent]);
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>
