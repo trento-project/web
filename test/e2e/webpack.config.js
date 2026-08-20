@@ -10,6 +10,16 @@ module.exports = {
       '@lib': path.resolve(__dirname, '../../assets/js/lib'),
     },
   },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+    ],
+  },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(
       /\.(png|jpe?g|gif|svg|ico)$/,
