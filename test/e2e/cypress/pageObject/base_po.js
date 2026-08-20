@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { escapeRegExp } from 'lodash';
 import { TOTP } from 'totp-generator';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
@@ -117,7 +118,9 @@ export const selectOptions = '[role="listbox"] [role="option"]';
 
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();
-  return cy.get(`${selectOptions}:contains("${choice}")`).click();
+  return cy
+    .contains(selectOptions, new RegExp(`^${escapeRegExp(choice)}$`))
+    .click();
 };
 
 export const getSelectControlValue = (ariaLabel) =>
