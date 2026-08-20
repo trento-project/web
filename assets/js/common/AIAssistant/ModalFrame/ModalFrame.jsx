@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import { Rnd } from 'react-rnd';
 import { Link } from 'react-router';
 import { EOS_CHAT_BUBBLE_OUTLINED } from 'eos-icons-react';
@@ -10,25 +10,24 @@ import { AssistantModalPrimitive } from '@assistant-ui/react';
 import Button from '@common/Button';
 import Tooltip from '@common/Tooltip';
 
-// forwardRef + `{...props}` spread are required so the
-// enabled instance works inside `AssistantModalPrimitive.Trigger asChild`
-// (which injects onClick / data-state / aria-expanded + a ref).
-const ChatboxTrigger = forwardRef(({ disabled = false, ...props }, ref) => (
+function ChatboxTrigger({ ref, disabled = false, ...props }) {
   // `{...props}` first so injected behavior (onClick / data-state / aria-expanded)
   // is kept, but the presentational props below win — notably `type="fab"`, which
   // `Trigger asChild` would otherwise overwrite with the HTML `type="button"`.
-  <Button
-    ref={ref}
-    {...props}
-    type="fab"
-    size="none"
-    className="size-full"
-    disabled={disabled}
-    aria-label={disabled ? 'AI Assistant is disabled' : 'Open AI Assistant'}
-  >
-    <EOS_CHAT_BUBBLE_OUTLINED className="fill-white" />
-  </Button>
-));
+  return (
+    <Button
+      ref={ref}
+      {...props}
+      type="fab"
+      size="none"
+      className="size-full"
+      disabled={disabled}
+      aria-label={disabled ? 'AI Assistant is disabled' : 'Open AI Assistant'}
+    >
+      <EOS_CHAT_BUBBLE_OUTLINED className="fill-white" />
+    </Button>
+  );
+}
 
 ChatboxTrigger.displayName = 'ChatboxTrigger';
 

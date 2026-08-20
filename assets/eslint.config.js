@@ -5,12 +5,19 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 import js from '@eslint/js';
 import globals from 'globals';
 import eslintReact from '@eslint-react/eslint-plugin';
+import eslintReactKit from '@eslint-react/kit';
 import jsxA11yX from 'eslint-plugin-jsx-a11y-x';
 import { importX } from 'eslint-plugin-import-x';
 import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import storybookPlugin from 'eslint-plugin-storybook';
 import jestPlugin from 'eslint-plugin-jest';
 import prettierConfig from 'eslint-config-prettier';
+
+import {
+  functionComponentDefinition,
+  jsxNoDuplicateProps,
+  noStringRefs,
+} from './tools/eslint-rules/index.js';
 
 export default defineConfig([
   globalIgnores([
@@ -98,7 +105,15 @@ export default defineConfig([
     plugins: {
       'jsx-a11y-x': jsxA11yX,
     },
-    extends: [eslintReact.configs.recommended, 'jsx-a11y-x/recommended'],
+    extends: [
+      eslintReact.configs.recommended,
+      'jsx-a11y-x/recommended',
+      eslintReactKit()
+        .use(functionComponentDefinition)
+        .use(jsxNoDuplicateProps)
+        .use(noStringRefs)
+        .getConfig(),
+    ],
     settings: {
       react: {
         version: 'detect',
