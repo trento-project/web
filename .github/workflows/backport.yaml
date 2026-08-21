@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 ---
-name: Backport a Pull Request
+name: Backport PR
 
 # Backport the changes made in an origin PR to the `release` branch of
 # a repository by creating new backport PR. The backported commit is
