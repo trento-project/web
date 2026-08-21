@@ -10,6 +10,23 @@ defmodule Trento.AI.LLMBuilderTest do
 
   import Trento.Factory
 
+  # What production code calls. It is `build_for_user/1` unless a test swapped
+  # `:llm_builder_adapter` — that path is exercised by `Trento.AI.AICase.fake_llm/1`,
+  # since swapping it means touching global application env.
+  describe "build/1" do
+    test "builds the user's model through the default adapter" do
+      %{id: user_id} = insert(:user)
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: :google,
+        model: "gemini-2.5-flash"
+      )
+
+      assert {:ok, %ChatGoogleAI{model: "gemini-2.5-flash"}} = LLMBuilder.build(user_id)
+    end
+  end
+
   describe "build_for_user/1" do
     test "returns {:error, :user_not_found} when user does not exist" do
       assert {:error, :user_not_found} = LLMBuilder.build_for_user(999_999_999)

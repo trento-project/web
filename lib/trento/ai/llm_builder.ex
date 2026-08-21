@@ -4,6 +4,9 @@
 defmodule Trento.AI.LLMBuilder do
   @moduledoc """
   Builds a LangChain chat-model struct for a given User.
+
+  `build/1` is the entry point, routed through `:llm_builder_adapter` so that a
+  chat model can be substituted without reaching the provider over the network.
   """
 
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
@@ -11,9 +14,18 @@ defmodule Trento.AI.LLMBuilder do
   alias Trento.Users
   alias Trento.Users.User
 
-  @spec build_for_user(non_neg_integer()) ::
+  @behaviour Trento.AI.LLMBuilder
+
+  @callback build_for_user(non_neg_integer()) ::
+              {:ok, struct()}
+              | {:error, :user_not_found | :no_ai_configuration}
+
+  @spec build(non_neg_integer()) ::
           {:ok, struct()}
           | {:error, :user_not_found | :no_ai_configuration}
+  def build(user_id), do: impl().build_for_user(user_id)
+
+  @impl true
   def build_for_user(user_id) do
     case Users.get_user(user_id) do
       {:error, :not_found} ->
@@ -45,4 +57,10 @@ defmodule Trento.AI.LLMBuilder do
         stream: true,
         thinking: %{type: "enabled"}
       })
+
+  defp impl,
+    do:
+      :trento
+      |> Application.get_env(:ai, [])
+      |> Keyword.get(:llm_builder_adapter, __MODULE__)
 end

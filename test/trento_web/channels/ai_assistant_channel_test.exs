@@ -1163,16 +1163,16 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # Every describe above stops at the Mox adapter boundary: they prove the
   # channel calls `stop/1`, not that a real agent dies. This one drives the
   # whole stack — channel → Trento.AI.Agent → real Sagents supervisor + server
-  # → LangChain → the model LLMBuilder builds from the user's configuration —
-  # with only the HTTP hop replaced (see `parked_llm_transport/1`).
+  # → LangChain — with only the model swapped for one that answers in process
+  # (see `fake_llm/1`).
   describe "handle_in abandon_thread/3 — integration (real supervisor + server)" do
     @describetag :integration
 
-    setup [:join_socket_with_ai_config, :real_sagents_adapters, :parked_llm_transport]
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
 
     test "tears down the thread's agent mid-run, pushing nothing back",
          %{socket: socket, access_token: jwt} do
-      thread_id = start_run!(socket, jwt, run_id: "r1")
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
 
       pid = agent_pid!(thread_id)
       monitor = Process.monitor(pid)
@@ -1190,18 +1190,18 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert %{loading: false} = wait_assigns(socket)
     end
 
-    # The park is short enough for the run to end on its own: the model answers
-    # `{}`, which LangChain rejects, so the agent goes back to resting with its
+    # The run is let finish first: the agent goes back to resting with its
     # conversation still in memory — the state "New chat" leaves behind when
     # the user reads an answer before starting over.
-    @tag park_for: 50
     test "tears down a thread that is no longer streaming",
          %{socket: socket, access_token: jwt} do
-      thread_id = start_run!(socket, jwt, run_id: "r1")
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      send(task_pid, :release)
 
       Phoenix.ChannelTest.assert_push(
         "ag_ui_event",
-        %{"type" => "RUN_ERROR"},
+        %{"type" => "RUN_FINISHED"},
         @integration_timeout
       )
 
@@ -1239,7 +1239,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         @integration_timeout
       )
 
-      assert_receive {:llm_request, _task_pid}, @integration_timeout
+      assert_receive {:llm_called, _task_pid}, @integration_timeout
     end
   end
 
@@ -1248,11 +1248,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in cancel_run/3 — integration (real supervisor + server)" do
     @describetag :integration
 
-    setup [:join_socket_with_ai_config, :real_sagents_adapters, :parked_llm_transport]
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
 
     test "cancels the run without killing the thread's agent",
          %{socket: socket, access_token: jwt} do
-      thread_id = start_run!(socket, jwt, run_id: "r1")
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
 
       pid = agent_pid!(thread_id)
       monitor = Process.monitor(pid)
@@ -1275,7 +1275,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     test "lets the same thread be prompted again after the cancel",
          %{socket: socket, access_token: jwt} do
-      thread_id = start_run!(socket, jwt, run_id: "r1")
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
 
       ref = push(socket, "cancel_run", %{"run_id" => "r1", "thread_id" => thread_id})
       assert_reply ref, :ok, %{}, 1_000
@@ -1293,7 +1293,31 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         @integration_timeout
       )
 
-      assert_receive {:llm_request, _task_pid}, @integration_timeout
+      assert_receive {:llm_called, _task_pid}, @integration_timeout
+    end
+  end
+
+  # Counterproof to both describes above: left to its own devices, the same
+  # stack takes a run all the way to the end.
+  describe "handle_in send_message/3 — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    test "settles the run on the client and on the agent once the model answers",
+         %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      send(task_pid, :release)
+
+      Phoenix.ChannelTest.assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_FINISHED", "runId" => "r1", "threadId" => ^thread_id},
+        @integration_timeout
+      )
+
+      assert %{status: :idle} = TrentoAIAgentServer.get_info(thread_id)
+      assert %{loading: false} = wait_assigns(socket)
     end
   end
 
@@ -1302,15 +1326,12 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # what `stop/1` actually costs the channel is visible here.
   describe "handle_info ai_configuration cleared — integration (real supervisor + server)" do
     @describetag :integration
-    # Long enough that anything waiting for the run to end would blow the
-    # sub-second deadlines below.
-    @describetag park_for: 3_000
 
-    setup [:join_socket_with_ai_config, :real_sagents_adapters, :parked_llm_transport]
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
 
     test "tears down the agent of the thread that is mid-run",
          %{socket: socket, access_token: jwt, user_id: user_id} do
-      thread_id = start_run!(socket, jwt, run_id: "r1")
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
 
       pid = agent_pid!(thread_id)
       ref = Process.monitor(pid)
@@ -1441,6 +1462,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
     Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
+    Mox.allow(Trento.AI.LLMBuilder.Mock, self(), socket.channel_pid)
 
     %{
       socket: socket,
@@ -1450,8 +1472,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     }
   end
 
-  # Pushes a prompt and blocks until the run is really on the wire, so a
-  # following `cancel_run` has something to cancel. Returns the thread id.
+  # Pushes a prompt and blocks until the run is really inside the model call, so
+  # a following `cancel_run` has something to cancel.
+  #
+  # `:task_pid` is the parked run task: `send(task_pid, :release)` makes the
+  # fake model answer and the run complete.
   defp start_run!(socket, jwt, opts) do
     run_id = Keyword.fetch!(opts, :run_id)
     thread_id = "thread-#{Faker.UUID.v4()}"
@@ -1469,11 +1494,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       @integration_timeout
     )
 
-    assert_receive {:llm_request, _task_pid}, @integration_timeout
+    assert_receive {:llm_called, task_pid}, @integration_timeout
 
     on_exit(fn -> TrentoAIAgent.stop(thread_id) end)
 
-    thread_id
+    %{thread_id: thread_id, task_pid: task_pid}
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})

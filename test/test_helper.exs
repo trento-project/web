@@ -82,6 +82,14 @@ Mox.defmock(Trento.AI.Configurations.Events.Mock,
   for: Trento.AI.Configurations.Events
 )
 
+# Also deliberately NOT wired into `test_ai_config` below: every test that is
+# not about the chat model itself wants the real builder. Integration tests opt
+# in through `Trento.AI.AICase.fake_llm/1` to get a model that answers in
+# process instead of over the network.
+Mox.defmock(Trento.AI.LLMBuilder.Mock,
+  for: Trento.AI.LLMBuilder
+)
+
 default_ai_config = Application.get_env(:trento, :ai, [])
 
 test_ai_config = [

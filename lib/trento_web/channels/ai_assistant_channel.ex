@@ -191,7 +191,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          run_id,
          thread_id
        ) do
-    case LLMBuilder.build_for_user(current_user_id) do
+    case LLMBuilder.build(current_user_id) do
       {:ok, model_config} ->
         socket
         |> stash_run_ids(run_id, thread_id)

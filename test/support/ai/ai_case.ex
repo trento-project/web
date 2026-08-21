@@ -6,16 +6,12 @@ defmodule Trento.AI.AICase do
 
   use ExUnit.CaseTemplate
 
-  alias Trento.AI.ApplicationConfigLoader
+  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel, LLMBuilder}
   alias Trento.Infrastructure.AI.{SagentsAgentServer, SagentsDynamicSupervisor}
 
   # Booting a real sagents process tree and reaching the model call is slower
   # than any mocked round-trip, so integration tests wait longer.
   @integration_timeout 5_000
-
-  # How long `parked_llm_transport/1` keeps a request in flight, unless the test
-  # overrides it with a `:park_for` tag.
-  @park_for 5_000
 
   using do
     quote do
@@ -51,48 +47,36 @@ defmodule Trento.AI.AICase do
   this same module.
   """
   def real_sagents_adapters(_context) do
-    ai = Application.get_env(:trento, :ai)
-
-    Application.put_env(
-      :trento,
-      :ai,
-      ai
-      |> Keyword.put(:application_config_loader, ApplicationConfigLoader)
-      |> Keyword.put(:agent_supervisor_adapter, SagentsDynamicSupervisor)
-      |> Keyword.put(:agent_server_adapter, SagentsAgentServer)
+    put_ai_env(
+      application_config_loader: ApplicationConfigLoader,
+      agent_supervisor_adapter: SagentsDynamicSupervisor,
+      agent_server_adapter: SagentsAgentServer
     )
-
-    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
   end
 
   @doc """
-  Replaces the LLM's HTTP hop with a plug that parks, keeping a run genuinely in
-  flight until something cancels it.
+  Makes `Trento.AI.LLMBuilder.build/1` hand out a `Trento.AI.FakeChatModel`,
+  so a run driven by the real sagents stack never leaves the VM.
 
-  Callers that build their model through `Trento.AI.LLMBuilder` have no seam to
-  hand a fake ChatModel to (see `Trento.AI.FakeChatModel` for the ones that do),
-  so the seam sits one layer lower: a global Req default `:plug`, blocking in
-  the calling process — the agent's run task.
+  The model answers in the agent's run task and parks there, which is what lets
+  an integration test hold a run genuinely in flight — the only state in which
+  `Trento.AI.Agent.cancel/1` does anything — and then end it on demand with
+  `send(task_pid, :release)`. `{:llm_called, task_pid}` lands in the process
+  that ran this setup.
 
-  The park is bounded, so a cancel that fails to kill the task fails the test's
-  own assertions instead of hanging CI; `:park_for` in the context overrides how
-  long. Setting a global Req option is safe as long as the case is synchronous —
-  ExUnit then never overlaps it with another test.
+  A `Mox.stub` — not an expect — and always the same struct: the channel
+  rebuilds the model on every prompt and compares it with the running agent's,
+  so handing back an equal one is what keeps a re-prompt from swapping the
+  agent's model.
   """
-  def parked_llm_transport(context) do
-    test_pid = self()
-    park_for = Map.get(context, :park_for, @park_for)
-    previous_options = Req.default_options()
+  def fake_llm(_context) do
+    model = %FakeChatModel{notify: self()}
 
-    Req.default_options(
-      plug: fn conn ->
-        send(test_pid, {:llm_request, self()})
-        Process.sleep(park_for)
-        Req.Test.json(conn, %{})
-      end
-    )
+    put_ai_env(llm_builder_adapter: LLMBuilder.Mock)
 
-    on_exit(fn -> Req.default_options(previous_options) end)
+    Mox.stub(LLMBuilder.Mock, :build_for_user, fn _user_id -> {:ok, model} end)
+
+    :ok
   end
 
   @doc """
@@ -132,5 +116,13 @@ defmodule Trento.AI.AICase do
     assert {:ok, pid} = Sagents.AgentSupervisor.get_pid(agent_id)
 
     pid
+  end
+
+  defp put_ai_env(overrides) do
+    ai = Application.get_env(:trento, :ai)
+
+    Application.put_env(:trento, :ai, Keyword.merge(ai, overrides))
+
+    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
   end
 end
