@@ -104,28 +104,11 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_in(
-        "cancel_run",
-        _payload,
-        socket
-      ) do
-    case socket.assigns[:current_thread_id] do
-      nil -> :ok
-      thread_id -> TrentoAIAgent.cancel(thread_id)
-    end
-
-    {:reply, :ok, reset_run(socket)}
-  end
-
-  @impl true
-  def handle_in(
-        "abandon_thread",
-        _payload,
-        socket
-      ) do
-    case socket.assigns[:current_thread_id] do
-      nil -> :ok
-      thread_id -> TrentoAIAgent.stop(thread_id)
+  def handle_in(action, _payload, socket) when action in ["cancel_run", "abandon_thread"] do
+    case {socket.assigns[:current_thread_id], action} do
+      {nil, _} -> :ok
+      {thread_id, "cancel_run"} -> TrentoAIAgent.cancel(thread_id)
+      {thread_id, "abandon_thread"} -> TrentoAIAgent.stop(thread_id)
     end
 
     {:reply, :ok, reset_run(socket)}

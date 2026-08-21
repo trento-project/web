@@ -22,87 +22,66 @@ defmodule Trento.AI.AICase do
   end
 
   setup _ do
-    stub_config_loader()
-
-    :ok
-  end
-
-  def stub_config_loader do
     Mox.stub_with(
       Trento.AI.ApplicationConfigLoader.Mock,
       Trento.AI.ApplicationConfigLoader
     )
-  end
-
-  @doc """
-  Swaps the whole AI config over to the real implementations for the duration
-  of the test, so `Trento.AI.Agent` drives the actual sagents tree instead of
-  the Mox doubles wired in `config/test.exs`.
-
-  `:application_config_loader` goes back to the real module too, and that is
-  what lets teardown call `Trento.AI.Agent.stop/1`: the Mox mock is `:private`
-  and stubbed for the *test* process, while `on_exit` runs in a process of its
-  own. Semantically it changes nothing — the mock is stubbed with
-  `Mox.stub_with(…, ApplicationConfigLoader)`, so it only ever delegated to
-  this same module.
-  """
-  def real_sagents_adapters(_context) do
-    put_ai_env(
-      application_config_loader: ApplicationConfigLoader,
-      agent_supervisor_adapter: SagentsDynamicSupervisor,
-      agent_server_adapter: SagentsAgentServer
-    )
-  end
-
-  @doc """
-  Makes `Trento.AI.LLMBuilder.build/1` hand out a `Trento.AI.FakeChatModel`,
-  so a run driven by the real sagents stack never leaves the VM.
-
-  The model answers in the agent's run task and parks there, which is what lets
-  an integration test hold a run genuinely in flight — the only state in which
-  `Trento.AI.Agent.cancel/1` does anything — and then end it on demand with
-  `send(task_pid, :release)`. `{:llm_called, task_pid}` lands in the process
-  that ran this setup.
-
-  A `Mox.stub` — not an expect — and always the same struct: the channel
-  rebuilds the model on every prompt and compares it with the running agent's,
-  so handing back an equal one is what keeps a re-prompt from swapping the
-  agent's model.
-  """
-  def fake_llm(_context) do
-    model = %FakeChatModel{notify: self()}
-
-    put_ai_env(llm_builder_adapter: LLMBuilder.Mock)
-
-    Mox.stub(LLMBuilder.Mock, :build_for_user, fn _user_id -> {:ok, model} end)
 
     :ok
   end
 
   @doc """
-  Expects the pair of `Trento.AI.Agent.Server` calls that every successful
-  `Trento.AI.Agent.run/3` ends with.
+  Swaps the AI config over to the real implementations for the duration of the
+  test, so `Trento.AI.Agent` drives the actual sagents tree instead of the Mox
+  doubles wired in `config/test.exs`.
 
-  Kept in one place because it is the sagents-facing part of the contract: a
-  change in what `subscribe/1` returns is a change here, not in every test that
-  merely needs a run to start.
+  `:application_config_loader` goes back to the real module too, and that is
+  what lets teardown call `Trento.AI.Agent.stop/1`: the Mox mock is `:private`
+  and stubbed for the *test* process, while `on_exit` runs in a process of its own.
   """
-  def expect_agent_subscription do
-    Mox.expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
-    Mox.expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _message -> :ok end)
+  def real_sagents_adapters(_context) do
+    ai = Application.get_env(:trento, :ai)
+
+    Application.put_env(
+      :trento,
+      :ai,
+      Keyword.merge(ai,
+        application_config_loader: ApplicationConfigLoader,
+        agent_supervisor_adapter: SagentsDynamicSupervisor,
+        agent_server_adapter: SagentsAgentServer
+      )
+    )
+
+    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
   end
 
   @doc """
-  Lets `Trento.AI.Agent.run/3` reach `add_message/2` against a *fresh* agent:
-  nothing is running yet, so `refresh_when` never fires.
+  Makes `Trento.AI.LLMBuilder.build/1` return a `Trento.AI.FakeChatModel`.
 
-  For tests about what a run does once started, not about the start itself —
-  those expect `start_agent_sync/1` and `get_agent/1` themselves.
+  The model answers in the agent's run task and waits.
+
+  - `{:llm_called, task_pid}` is emitted and the process that ran this setup can listen for it to know the run is genuinely in flight.
+  - When released with a `send(task_pid, :release)`, the model returns whatever is in its `:reply` field.
+
+  `@tag fake_llm: [reply: ["foo", "bar"]]` returns the stream of deltas
+  `@tag fake_llm: [reply: {:error, reason}]` fails the run
   """
-  def stub_agent_run do
-    Mox.stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _agent_id -> {:error, :not_found} end)
+  def fake_llm(context) do
+    model =
+      context
+      |> Map.get(:fake_llm, [])
+      |> Keyword.put(:notify, self())
+      |> then(&struct!(FakeChatModel, &1))
 
-    expect_agent_subscription()
+    ai = Application.get_env(:trento, :ai)
+
+    Application.put_env(:trento, :ai, Keyword.put(ai, :llm_builder_adapter, LLMBuilder.Mock))
+
+    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+
+    Mox.stub(LLMBuilder.Mock, :build_for_user, fn _user_id -> {:ok, model} end)
+
+    :ok
   end
 
   @doc """
@@ -116,13 +95,5 @@ defmodule Trento.AI.AICase do
     assert {:ok, pid} = Sagents.AgentSupervisor.get_pid(agent_id)
 
     pid
-  end
-
-  defp put_ai_env(overrides) do
-    ai = Application.get_env(:trento, :ai)
-
-    Application.put_env(:trento, :ai, Keyword.merge(ai, overrides))
-
-    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
   end
 end

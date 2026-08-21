@@ -441,32 +441,52 @@ defmodule Trento.AI.AgentTest do
 
     # Counterproof about the functioning of the FakeChatModel.
     # When the run is released, it completes successfully and the agent goes back to idle.
-    test "a released run finishes successfully" do
-      %{agent_id: agent_id, task_pid: task_pid} =
-        start_running_agent(
-          block_for: :timer.minutes(1),
-          reply: "You are absolutely right, I am a fake model."
-        )
+    scenarios = [
+      %{
+        name: "a released run finishes successfully",
+        reply: "You are absolutely right, I am a fake model.",
+        expected_content: "You are absolutely right, I am a fake model."
+      },
+      %{
+        name: "a run answered in several chunks lands as one assistant content part",
+        reply: ["You are ", "absolutely ", "right,", " I am a fake", " model."],
+        expected_content: "You are absolutely right, I am a fake model."
+      }
+    ]
 
-      send(task_pid, :release)
+    for %{name: name, reply: reply} = scenario <- scenarios do
+      @scenario scenario
+      @reply reply
+      @tag fake_llm: [reply: @reply]
+      test name do
+        %{agent_id: agent_id, task_pid: task_pid} =
+          start_running_agent(
+            block_for: :timer.minutes(1),
+            reply: @reply
+          )
 
-      assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
+        send(task_pid, :release)
 
-      assert %{status: :idle, state: %{messages: messages}} =
-               TrentoAIAgentServer.get_info(agent_id)
+        assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
 
-      assert Enum.any?(
-               messages,
-               &match?(
-                 %Message{
-                   role: :assistant,
-                   content: [
-                     %Message.ContentPart{content: "You are absolutely right, I am a fake model."}
-                   ]
-                 },
-                 &1
+        assert %{status: :idle, state: %{messages: messages}} =
+                 TrentoAIAgentServer.get_info(agent_id)
+
+        expected_content = Map.fetch!(@scenario, :expected_content)
+
+        assert Enum.any?(
+                 messages,
+                 &match?(
+                   %Message{
+                     role: :assistant,
+                     content: [
+                       %Message.ContentPart{content: ^expected_content}
+                     ]
+                   },
+                   &1
+                 )
                )
-             )
+      end
     end
 
     test "returns an error instead of exiting when no agent is registered for the id" do

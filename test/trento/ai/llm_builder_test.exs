@@ -10,9 +10,6 @@ defmodule Trento.AI.LLMBuilderTest do
 
   import Trento.Factory
 
-  # What production code calls. It is `build_for_user/1` unless a test swapped
-  # `:llm_builder_adapter` — that path is exercised by `Trento.AI.AICase.fake_llm/1`,
-  # since swapping it means touching global application env.
   describe "build/1" do
     test "builds the user's model through the default adapter" do
       %{id: user_id} = insert(:user)
