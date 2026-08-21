@@ -598,7 +598,7 @@ describe('WebSocketAIAgent', () => {
   });
 
   describe('configuration changes callbacks', () => {
-    const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
+    const modelPayload = { provider: 'google', model: 'gemini-2.5-pro' };
 
     const forwardedEvents = [
       {

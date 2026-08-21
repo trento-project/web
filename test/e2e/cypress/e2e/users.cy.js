@@ -536,7 +536,7 @@ describe('Users', () => {
   });
 
   describe('AI Configuration', () => {
-    const GOOGLE_AI = 'googleai';
+    const GOOGLE_AI = 'google';
     const OPEN_AI = 'openai';
 
     beforeEach(() => {

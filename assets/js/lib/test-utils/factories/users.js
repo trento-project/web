@@ -13,7 +13,7 @@ export const fakeAppTimezone = () =>
   faker.helpers.arrayElement(timezones).value;
 
 export const aiConfigurationFactory = Factory.define(() => ({
-  provider: 'googleai',
+  provider: 'google',
   model: 'gemini-2.5-pro',
 }));
 

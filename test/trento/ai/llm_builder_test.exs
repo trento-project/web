@@ -21,13 +21,13 @@ defmodule Trento.AI.LLMBuilderTest do
       assert {:error, :no_ai_configuration} = LLMBuilder.build_for_user(user_id)
     end
 
-    test "builds a streaming ChatGoogleAI for the :googleai provider" do
+    test "builds a streaming ChatGoogleAI for the :google provider" do
       %{id: user_id} = insert(:user)
 
       %{api_key: api_key} =
         insert(:ai_user_configuration,
           user_id: user_id,
-          provider: :googleai,
+          provider: :google,
           model: "gemini-2.5-flash"
         )
 

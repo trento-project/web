@@ -31,7 +31,7 @@ defmodule Trento.AI.LLMBuilder do
     end
   end
 
-  defp do_build(:googleai, model, api_key),
+  defp do_build(:google, model, api_key),
     do: ChatGoogleAI.new!(%{model: model, api_key: api_key, stream: true})
 
   defp do_build(:openai, model, api_key),

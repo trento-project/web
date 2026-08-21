@@ -8,7 +8,7 @@ import OpenAIIcon from '@static/openai-logo.svg';
 import AnthropicIcon from '@static/anthropic-logo.svg';
 
 const providerRenderingConfig = {
-  googleai: {
+  google: {
     icon: GeminiIcon,
     label: 'Google Gemini',
   },

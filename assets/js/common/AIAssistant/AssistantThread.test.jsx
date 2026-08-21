@@ -147,7 +147,7 @@ describe('AssistantThread', () => {
     const user = userEvent.setup();
     const onDismissModelNotice = jest.fn();
     renderThread({
-      modelNotice: { provider: 'googleai', model: 'gemini-2.5-pro' },
+      modelNotice: { provider: 'google', model: 'gemini-2.5-pro' },
       onDismissModelNotice,
     });
 

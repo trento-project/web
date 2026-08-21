@@ -21,7 +21,7 @@ jest.mock('@assistant-ui/react', () => ({
   useAui: () => ({}),
 }));
 
-const modelPayload = { provider: 'googleai', model: 'gemini-2.5-pro' };
+const modelPayload = { provider: 'google', model: 'gemini-2.5-pro' };
 
 function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
   const runtime = { thread: { reset: jest.fn() } };

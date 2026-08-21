@@ -1014,7 +1014,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       insert(:ai_user_configuration,
         user_id: user_id,
-        provider: :googleai,
+        provider: :google,
         model: "gemini-2.5-flash"
       )
 
@@ -1108,11 +1108,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     test "pushes model_changed when the provider/model is updated", %{user_id: user_id} do
       AIConfigurationsEvents.broadcast_updated(user_id, %{
-        provider: :googleai,
+        provider: :google,
         model: "gemini-2.5-pro"
       })
 
-      assert_push("model_changed", %{provider: :googleai, model: "gemini-2.5-pro"})
+      assert_push("model_changed", %{provider: :google, model: "gemini-2.5-pro"})
     end
   end
 
@@ -1137,7 +1137,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     insert(:ai_user_configuration,
       user_id: user_id,
-      provider: :googleai,
+      provider: :google,
       model: "gemini-2.5-flash"
     )
 
