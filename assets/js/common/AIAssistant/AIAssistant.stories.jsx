@@ -264,7 +264,7 @@ export const OpenModelChanged = {
       events: [
         {
           event: 'model_changed',
-          payload: { provider: 'googleai', model: 'gemini-2.5-pro' },
+          payload: { provider: 'google', model: 'gemini-2.5-pro' },
         },
       ],
     },

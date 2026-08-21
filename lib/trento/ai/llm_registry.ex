@@ -6,7 +6,7 @@ defmodule Trento.AI.LLMRegistry do
   This module is responsible for managing the registry of available LLM providers and their models.
   """
 
-  @providers [:openai, :googleai, :anthropic]
+  @providers [:openai, :google, :anthropic]
 
   @required_capabilities [
     chat: true,
@@ -25,15 +25,6 @@ defmodule Trento.AI.LLMRegistry do
   Returns the list of models for a given provider.
   """
   def get_provider_models(provider) when provider in @providers do
-    provider =
-      case provider == :googleai do
-        true ->
-          :google
-
-        _ ->
-          provider
-      end
-
     [scope: provider, require: @required_capabilities]
     |> LLMDB.candidates()
     |> Enum.map(fn {_provider, model_id} -> model_id end)

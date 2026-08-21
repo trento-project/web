@@ -122,7 +122,7 @@ describe('AG-UI event flow', () => {
   const emitModelChange = (channel) =>
     act(async () => {
       channel.emit('model_changed', {
-        provider: 'googleai',
+        provider: 'google',
         model: 'gemini-2.5-pro',
       });
     });

@@ -141,7 +141,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "model unsupported by the specified provider",
         attrs: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4",
           api_key: Faker.String.base64()
         },
@@ -154,8 +154,8 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "missing api key",
         attrs: %{
-          provider: :googleai,
-          model: build(:random_ai_model, provider: :googleai)
+          provider: :google,
+          model: build(:random_ai_model, provider: :google)
         },
         expected_errors: [
           api_key: {"can't be blank", [validation: :required]}
@@ -227,7 +227,7 @@ defmodule Trento.Ai.ConfigurationsTest do
                        [
                          type: _,
                          validation: :inclusion,
-                         enum: ["anthropic", "googleai", "openai" | _]
+                         enum: ["anthropic", "google", "openai" | _]
                        ]}
                   ]
                 }} =
@@ -389,7 +389,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "model unsupported by the specified provider",
         attrs: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4"
         },
         expected_errors: [
@@ -488,8 +488,8 @@ defmodule Trento.Ai.ConfigurationsTest do
       } =
         insert(:ai_user_configuration,
           user_id: user_id,
-          provider: :googleai,
-          model: build(:random_ai_model, provider: :googleai)
+          provider: :google,
+          model: build(:random_ai_model, provider: :google)
         )
 
       new_provider = :openai
