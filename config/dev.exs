@@ -255,11 +255,6 @@ config :samly, Samly.Provider,
     }
   ]
 
-config :llm_db,
-  filter: %{
-    deny: %{google: ["*-preview*", "*-image*"]}
-  }
-
 # Override with local dev.local.exs file
 if File.exists?("#{__DIR__}/dev.local.exs") do
   import_config "dev.local.exs"
