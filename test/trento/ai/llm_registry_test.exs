@@ -7,15 +7,15 @@ defmodule Trento.AI.LLMRegistryTest do
   alias Trento.AI.LLMRegistry
 
   describe "providers/0" do
-    test "returns the supported providers" do
-      assert length(LLMRegistry.providers()) > 0
+    test "returns a non-empty list of the supported providers" do
+      refute [] == LLMRegistry.providers()
     end
   end
 
   describe "get_provider_models/1" do
     test "returns a non-empty model list for every supported provider" do
       for provider <- LLMRegistry.providers() do
-        assert length(LLMRegistry.get_provider_models(provider)) > 0,
+        refute [] == LLMRegistry.get_provider_models(provider),
                "#{provider} resolved to no models, its catalog id is likely wrong"
       end
     end
