@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-24.04
     if: >
       github.event.pull_request.merged && (
-        (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'backport') ||
+        (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'backport')) ||
         (github.event.action == 'labelled' && github.event.label.name == 'backport' && !contains(github.event.pull_request.labels.*.name, 'released-as-hotfix'))
       )
     steps:
