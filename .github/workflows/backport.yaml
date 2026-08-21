@@ -1,0 +1,64 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: Backport a Pull Request
+
+# Backport the changes made in an origin PR to the `release` branch of
+# a repository by creating new backport PR. The backported commit is
+# signed.
+#
+# We're reacting on two triggers for executing a backport:
+# 1. Merge a PR that has a label `backport`.
+# 2. Label an already merged PR with `backport` label.
+#
+# System of two labels is used to prevent accidental duplicate
+# backport -- 'backport' is the command label, while
+# `released-as-hotfix` is the protection label.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed, labelled]
+
+jobs:
+  backport:
+    name: Backport a pull request
+    runs-on: ubuntu-24.04
+    if: >
+      github.event.pull_request.merged && (
+        (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'backport') ||
+        (github.event.action == 'labelled' && github.event.label.name == 'backport' && !contains(github.event.pull_request.labels.*.name, 'released-as-hotfix'))
+      )
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ssh-key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+
+      - name: Import GPG key
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0
+        with:
+          gpg_private_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Create backport Pull Request
+        id: backport
+        uses: korthout/backport-action@2e830a1d0b8269505846ddd407a70876913ad1f8 # v4.6.0
+        with:
+          target_branches: 'release'
+          # Copy every label except the trigger `backport` one.
+          copy_labels_pattern: '^(?!backport$).*'
+          add_labels: 'released-as-hotfix'
+          git_committer_name: ${{ steps.import-gpg.outputs.name }}
+          git_committer_email: ${{ steps.import-gpg.outputs.email }}
+          pull_title: '${pull_title}'
+          conflict_resolution: 'draft_commit_conflicts'
+          github_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+
+      - name: Add label to origin PR
+        env:
+          GH_TOKEN: ${{ secrets.TRENTOBOT_GH_PAT }}
+        run: gh pr edit "${{ github.event.pull_request.number }}" --add-label "released-as-hotfix"
