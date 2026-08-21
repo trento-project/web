@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-07-05T19:02:15Z",
-    "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
-    "run_id": "28750983577",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-07-05T22:08:30Z",
     "commit": "1a58ec758b41648e37c90bb77756f7e24dfc1e4d",
     "run_id": "28752607591",
@@ -5639,6 +5628,38 @@
       },
       {
         "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-21T17:50:34Z",
+    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
+    "run_id": "32509073986",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 36,
+      "failed_runs": 5
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Ai.ConfigurationsTest::test updating a user AI configuration should broadcast that the configuration was updated when the provider/model changed",
+        "score": 0.05781
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.02501
       }
     ]
