@@ -39,7 +39,7 @@ defmodule Trento.AI.UserConfiguration do
   end
 
   defp validate_provider(_provider_field_atom, provider) do
-    if LLMRegistry.provider_supported?(provider) do
+    if provider in LLMRegistry.providers() do
       []
     else
       [provider: {"is not supported", validation: :ai_provider_validity}]
@@ -56,8 +56,10 @@ defmodule Trento.AI.UserConfiguration do
     |> force_change(:model, model)
     |> force_change(:provider, provider)
     |> validate_change(:model, fn _model_atom, _model ->
-      model_supported? = LLMRegistry.model_supported?(model)
-      model_supported_by_provider? = LLMRegistry.model_supported_by_provider?(model, provider)
+      model_supported? =
+        model in Enum.flat_map(LLMRegistry.providers(), &LLMRegistry.get_provider_models/1)
+
+      model_supported_by_provider? = model in LLMRegistry.get_provider_models(provider)
 
       case {model_supported?, model_supported_by_provider?} do
         {true, true} ->

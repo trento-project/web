@@ -205,8 +205,6 @@ defmodule Trento.Factory do
   alias OpenApiSpex.Operation
   alias Trento.AI.{LLMRegistry, OperationEntry, UserConfiguration}
 
-  alias Trento.AI.AICase
-
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
   use ExMachina.Ecto, repo: Trento.Repo
@@ -1708,16 +1706,12 @@ defmodule Trento.Factory do
   end
 
   def random_ai_provider_factory(_) do
-    AICase.stub_config_loader()
-
     Enum.random(LLMRegistry.providers())
   end
 
   def random_ai_model_factory(attrs) do
-    AICase.stub_config_loader()
-
     attrs
-    |> Map.get(:provider, :all)
+    |> Map.get(:provider, build(:random_ai_provider))
     |> LLMRegistry.get_provider_models()
     |> Enum.random()
   end
