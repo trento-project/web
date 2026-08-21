@@ -9,12 +9,13 @@ defmodule Trento.AI.AgentTest do
 
   import Trento.Factory
 
+  alias LangChain.ChatModels.ChatOpenAI
   alias LangChain.Message
   alias Sagents.AgentSupervisor
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.Agent.Supervisor, as: TrentoAIAgentSupervisor
-  alias Trento.Infrastructure.AI.SagentsDynamicSupervisor
+  alias Trento.Infrastructure.AI.{SagentsAgentServer, SagentsDynamicSupervisor}
   alias Trento.Users.User
 
   setup :verify_on_exit!
@@ -89,9 +90,13 @@ defmodule Trento.AI.AgentTest do
   describe "run/2" do
     setup :run_opts
 
-    test "returns :ok when start_agent_sync, subscribe, and add_message all succeed",
+    test "returns the AgentServer pid when start_agent_sync, subscribe, and add_message all succeed",
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
       test_pid = self()
+      # Distinct from the supervisor's pid, so the assertion below can only pass
+      # if run/3 hands back the process subscribe/1 named - the one the caller
+      # has to monitor.
+      server_pid = spawn_idle_process()
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn start_opts ->
         send(test_pid, {:start_agent_sync, start_opts})
@@ -99,7 +104,10 @@ defmodule Trento.AI.AgentTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, server_pid, make_ref()}
+      end)
 
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id,
                                                            %Message{role: :user} = msg ->
@@ -107,7 +115,7 @@ defmodule Trento.AI.AgentTest do
         :ok
       end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt)
+      assert {:ok, ^server_pid} = TrentoAIAgent.run(agent, prompt)
 
       assert_received {:start_agent_sync, start_opts}
       assert Keyword.fetch!(start_opts, :agent_id) == agent_id
@@ -137,7 +145,7 @@ defmodule Trento.AI.AgentTest do
     test "surfaces an add_message failure", %{agent: agent, prompt: prompt} do
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
 
       assert {:error, :timeout} = TrentoAIAgent.run(agent, prompt)
@@ -169,10 +177,13 @@ defmodule Trento.AI.AgentTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
 
       assert_received {:refresh_when, ^current_agent, ^agent}
     end
@@ -189,10 +200,13 @@ defmodule Trento.AI.AgentTest do
 
       # No get_info / update_agent_and_state expectations —
       # verify_on_exit! catches strays.
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
     end
 
     test "does not invoke refresh_when when AgentServer is not yet running",
@@ -203,10 +217,14 @@ defmodule Trento.AI.AgentTest do
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
     end
 
     test "default refresh_when (no opt) never triggers update_agent_and_state",
@@ -219,10 +237,13 @@ defmodule Trento.AI.AgentTest do
 
       # default_refresh_when/2 returns :noop unconditionally;
       # no get_info / update_agent_and_state expectations.
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt)
     end
   end
 
@@ -303,6 +324,73 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  # The mocked run/2 tests above can only prove that run/3 handles whatever the
+  # mocks return. This drives the same code path with both adapters real, so a
+  # sagents bump that changes what start_agent_sync/1 or subscribe/1 hand back
+  # fails here instead of in production.
+  describe "run/3 — integration (real supervisor + agent server)" do
+    @describetag :integration
+    # The run is expected to die on the unreachable endpoint; keep its
+    # transport error and the shutdown-while-running warning out of the output.
+    @describetag :capture_log
+
+    setup do
+      ai = Application.get_env(:trento, :ai)
+
+      Application.put_env(
+        :trento,
+        :ai,
+        ai
+        |> Keyword.put(:agent_supervisor_adapter, SagentsDynamicSupervisor)
+        |> Keyword.put(:agent_server_adapter, SagentsAgentServer)
+      )
+
+      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+    end
+
+    test "subscribes the calling process and sends the prompt through the real sagents stack" do
+      agent_id = "thread-#{Faker.UUID.v4()}"
+
+      agent =
+        TrentoAIAgent.new!(
+          agent_id: agent_id,
+          model: unreachable_llm(),
+          scope: build(:user)
+        )
+
+      assert {:ok, server_pid} = TrentoAIAgent.run(agent, "hello")
+
+      # The pid run/3 hands back is the one callers monitor to notice the agent
+      # dying under them, so it has to be the live AgentServer process.
+      assert Process.alive?(server_pid)
+      monitor_ref = Process.monitor(server_pid)
+
+      # Only reachable if the *real* subscribe/1 is correctly handled
+      assert_receive {:agent, {:status_changed, :running, nil}}, 5_000
+
+      # Let the failing run settle before tearing down, so its transport error
+      # lands inside the capture_log window instead of the suite output and
+      # the server isn't terminated mid-run.
+      assert_receive {:agent, {:status_changed, :error, _reason}}, 5_000
+
+      # Teardown lives in the test body rather than on_exit: the dispatcher
+      # resolves its adapter through the config loader mock, which Mox releases
+      # as soon as the test process exits.
+      assert :ok = TrentoAIAgentSupervisor.stop_agent(agent_id)
+
+      assert_receive {:DOWN, ^monitor_ref, :process, ^server_pid, _reason}, 5_000
+    end
+  end
+
+  # A live, inert process to stand in for the AgentServer where only its
+  # identity matters.
+  defp spawn_idle_process do
+    pid = spawn(fn -> Process.sleep(:infinity) end)
+    on_exit(fn -> Process.exit(pid, :kill) end)
+
+    pid
+  end
+
   defp run_opts(_ctx) do
     agent_id = "thread-#{Faker.UUID.v4()}"
     model = build(:random_langchain_model)
@@ -310,5 +398,16 @@ defmodule Trento.AI.AgentTest do
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: scope)
 
     %{agent: agent, agent_id: agent_id, prompt: "hello"}
+  end
+
+  # Points the LLM at a closed local port so the run starts  and then fails fast
+  # with a connection error instead of reaching the network.
+  defp unreachable_llm do
+    ChatOpenAI.new!(%{
+      model: "gpt-4o",
+      api_key: "test",
+      stream: true,
+      endpoint: "http://localhost:1/v1/chat/completions"
+    })
   end
 end
