@@ -13,6 +13,10 @@ defmodule Trento.AI.AICase do
   # than any mocked round-trip, so integration tests wait longer.
   @integration_timeout 5_000
 
+  # How long `parked_llm_transport/1` keeps a request in flight, unless the test
+  # overrides it with a `:park_for` tag.
+  @park_for 5_000
+
   using do
     quote do
       import Trento.AI.AICase
@@ -59,6 +63,62 @@ defmodule Trento.AI.AICase do
     )
 
     on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+  end
+
+  @doc """
+  Replaces the LLM's HTTP hop with a plug that parks, keeping a run genuinely in
+  flight until something cancels it.
+
+  Callers that build their model through `Trento.AI.LLMBuilder` have no seam to
+  hand a fake ChatModel to (see `Trento.AI.FakeChatModel` for the ones that do),
+  so the seam sits one layer lower: a global Req default `:plug`, blocking in
+  the calling process — the agent's run task.
+
+  The park is bounded, so a cancel that fails to kill the task fails the test's
+  own assertions instead of hanging CI; `:park_for` in the context overrides how
+  long. Setting a global Req option is safe as long as the case is synchronous —
+  ExUnit then never overlaps it with another test.
+  """
+  def parked_llm_transport(context) do
+    test_pid = self()
+    park_for = Map.get(context, :park_for, @park_for)
+    previous_options = Req.default_options()
+
+    Req.default_options(
+      plug: fn conn ->
+        send(test_pid, {:llm_request, self()})
+        Process.sleep(park_for)
+        Req.Test.json(conn, %{})
+      end
+    )
+
+    on_exit(fn -> Req.default_options(previous_options) end)
+  end
+
+  @doc """
+  Expects the pair of `Trento.AI.Agent.Server` calls that every successful
+  `Trento.AI.Agent.run/3` ends with.
+
+  Kept in one place because it is the sagents-facing part of the contract: a
+  change in what `subscribe/1` returns is a change here, not in every test that
+  merely needs a run to start.
+  """
+  def expect_agent_subscription do
+    Mox.expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
+    Mox.expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _message -> :ok end)
+  end
+
+  @doc """
+  Lets `Trento.AI.Agent.run/3` reach `add_message/2` against a *fresh* agent:
+  nothing is running yet, so `refresh_when` never fires.
+
+  For tests about what a run does once started, not about the start itself —
+  those expect `start_agent_sync/1` and `get_agent/1` themselves.
+  """
+  def stub_agent_run do
+    Mox.stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _agent_id -> {:error, :not_found} end)
+
+    expect_agent_subscription()
   end
 
   @doc """
