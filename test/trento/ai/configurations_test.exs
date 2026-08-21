@@ -7,7 +7,7 @@ defmodule Trento.Ai.ConfigurationsTest do
 
   alias Trento.Users.User
 
-  alias Trento.AI.{Configurations, UserConfiguration}
+  alias Trento.AI.{Configurations, LLMRegistry, UserConfiguration}
 
   alias Trento.AI.Configurations.Events
 
@@ -594,10 +594,15 @@ defmodule Trento.Ai.ConfigurationsTest do
     test "should broadcast that the configuration was updated when the provider/model changed" do
       %User{id: user_id} = user = insert(:user)
 
-      provider1 = build(:random_ai_provider)
-      provider2 = build(:random_ai_provider)
-      model1 = build(:random_ai_model, %{provider: provider1})
-      model2 = build(:random_ai_model, %{provider: provider2})
+      [{provider1, model1}, {provider2, model2}] =
+        LLMRegistry.providers()
+        |> Enum.take_random(2)
+        |> Enum.map(&{&1, build(:random_ai_model, provider: &1)})
+
+      another_model_for_provider1 =
+        LLMRegistry.get_provider_models(provider1)
+        |> Kernel.--([model1])
+        |> Enum.random()
 
       insert(:ai_user_configuration,
         user_id: user_id,
@@ -607,6 +612,16 @@ defmodule Trento.Ai.ConfigurationsTest do
 
       Events.subscribe(user_id)
 
+      # Updating the model should trigger a broadcast, even if the provider remains the same.
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{
+                 model: another_model_for_provider1
+               })
+
+      assert_receive {:ai_configuration, :updated,
+                      %{provider: ^provider1, model: ^another_model_for_provider1}}
+
+      # Updating the provider and model should also trigger a broadcast.
       assert {:ok, %UserConfiguration{}} =
                Configurations.update_user_configuration(user, %{
                  provider: provider2,
@@ -614,14 +629,6 @@ defmodule Trento.Ai.ConfigurationsTest do
                })
 
       assert_receive {:ai_configuration, :updated, %{provider: ^provider2, model: ^model2}}
-
-      assert {:ok, %UserConfiguration{}} =
-               Configurations.update_user_configuration(user, %{
-                 provider: provider1,
-                 model: model1
-               })
-
-      assert_receive {:ai_configuration, :updated, %{provider: ^provider1, model: ^model1}}
     end
 
     test "should not broadcast updated when only the api key changed" do
