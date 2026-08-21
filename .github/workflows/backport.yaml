@@ -19,7 +19,7 @@ name: Backport PR
 on:
   pull_request:
     branches: [main]
-    types: [closed, labelled]
+    types: [closed, labeled]
 
 jobs:
   backport:
@@ -28,7 +28,7 @@ jobs:
     if: >
       github.event.pull_request.merged && (
         (github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'backport')) ||
-        (github.event.action == 'labelled' && github.event.label.name == 'backport' && !contains(github.event.pull_request.labels.*.name, 'released-as-hotfix'))
+        (github.event.action == 'labeled' && github.event.label.name == 'backport' && !contains(github.event.pull_request.labels.*.name, 'released-as-hotfix'))
       )
     steps:
       - name: Check out the repository
@@ -58,7 +58,9 @@ jobs:
           conflict_resolution: 'draft_commit_conflicts'
           github_token: ${{ secrets.TRENTOBOT_GH_PAT }}
 
-      - name: Add label to origin PR
+      - name: Add label to source PR
+        if: >-
+          steps.backport.was_successful
         env:
           GH_TOKEN: ${{ secrets.TRENTOBOT_GH_PAT }}
         run: gh pr edit "${{ github.event.pull_request.number }}" --add-label "released-as-hotfix"
