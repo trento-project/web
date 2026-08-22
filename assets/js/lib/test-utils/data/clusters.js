@@ -131,7 +131,7 @@ export default [
         {
           fail_count: 0,
           id: 'rsc_SAPHana_HDD_HDB10',
-          role: 'Master',
+          role: 'Promoted',
           status: 'Active',
           type: 'ocf::suse:SAPHana',
           managed: true,
@@ -261,7 +261,7 @@ export default [
         {
           fail_count: 0,
           id: 'rsc_SAPHana_HDQ_HDB10',
-          role: 'Master',
+          role: 'Promoted',
           status: 'Active',
           type: 'ocf::suse:SAPHana',
           managed: true,
@@ -301,7 +301,7 @@ export default [
         {
           fail_count: 0,
           id: 'rsc_SAPHana_HDQ_HDB10',
-          role: 'Slave',
+          role: 'Unpromoted',
           status: 'Active',
           type: 'ocf::suse:SAPHana',
           managed: true,
@@ -412,7 +412,7 @@ export default [
         {
           fail_count: 0,
           id: 'rsc_SAPHana_HDP_HDB10',
-          role: 'Master',
+          role: 'Promoted',
           status: 'Active',
           type: 'ocf::suse:SAPHana',
           managed: true,
@@ -452,7 +452,7 @@ export default [
         {
           fail_count: 0,
           id: 'rsc_SAPHana_HDP_HDB10',
-          role: 'Slave',
+          role: 'Unpromoted',
           status: 'Active',
           type: 'ocf::suse:SAPHana',
           managed: true,
