@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-06T19:42:04Z",
-    "commit": "af7bc77da4bc0477b27ebd094fefd0c939938d14",
-    "run_id": "28817221560",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      },
-      {
-        "name": "UpgradablePackagesPage::should render correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-06T22:41:46Z",
     "commit": "af7bc77da4bc0477b27ebd094fefd0c939938d14",
     "run_id": "28820254734",
@@ -5690,6 +5670,30 @@
       },
       {
         "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-22T17:45:15Z",
+    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
+    "run_id": "32587848811",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.V1.ProfileControllerTest::test should confirm a totp enrollment if totp is valid for the enrollment",
         "score": 0.02501
       }
     ]
