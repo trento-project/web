@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-07T19:44:10Z",
-    "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
-    "run_id": "28892625140",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.2335
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-07T19:45:05Z",
     "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
     "run_id": "28892625140",
@@ -5683,5 +5667,33 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-22T22:02:16Z",
+    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
+    "run_id": "32591852188",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 99,
+      "failed_runs": 10
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.09659
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should update system and database health icons when database health is changed::SAP system details SAP system details page is available should update system and database health icons when database health is changed",
+        "score": 0.02501
+      }
+    ]
   }
 ]
