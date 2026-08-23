@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-07-07T22:43:16Z",
-    "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
-    "run_id": "28895634571",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-07-08T18:40:47Z",
     "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
     "run_id": "28965952946",
@@ -5690,5 +5679,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-23T17:43:12Z",
+    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
+    "run_id": "32654910084",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB return error when trying to update with wrong value for field invalid smtp server",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.02501
+      }
+    ]
   }
 ]
