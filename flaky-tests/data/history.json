@@ -1,97 +1,5 @@
 [
   {
-    "timestamp": "2026-07-08T22:29:09Z",
-    "commit": "a5a402cd589a7cd78d80246bddbba24d83e53be7",
-    "run_id": "28971466062",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05158
-      },
-      {
-        "name": "should navigate to the selected host::Host Details Navigation to the selected host should navigate to the selected host",
-        "score": 0.05001
-      },
-      {
-        "name": "should not display SAP System NWP after it is deregistered::Homepage Deregistration should not display SAP System NWP after it is deregistered",
-        "score": 0.05001
-      },
-      {
-        "name": "should not display eula once it is accepted::Users Analytics eula should not display eula once it is accepted",
-        "score": 0.05001
-      },
-      {
-        "name": "should show a link to the cluster details view for hana_cluster_3::Host Details Cluster details for this host should be displayed should show a link to the cluster details view for hana_cluster_3",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the correct IP addresses::Host Details Detailed view for a specific host should be available should show the correct IP addresses",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the correct agent version::Host Details Detailed view for a specific host should be available should show the correct agent version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the correct architecture::Host Details Detailed view for a specific host should be available should show the correct architecture",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the correct cluster::Host Details Detailed view for a specific host should be available should show the correct cluster",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the correct host health::Host Details Detailed view for a specific host should be available should show the correct host health",
-        "score": 0.05001
-      },
-      {
-        "name": "should display provider not recognized message::Host Details Cloud details for this host should be displayed should display provider not recognized message",
-        "score": 0.02501
-      },
-      {
-        "name": "should have a correct link to the SAP system::Host Details SAP instances for this host should be displayed should have a correct link to the SAP system",
-        "score": 0.02501
-      },
-      {
-        "name": "should show AWS cloud details correctly when no metadata are available::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly when no metadata are available",
-        "score": 0.02501
-      },
-      {
-        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "should show Azure cloud details correctly::Host Details Cloud details for this host should be displayed should show Azure cloud details correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "should show GCP cloud details correctly::Host Details Cloud details for this host should be displayed should show GCP cloud details correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "should show KVM cloud details correctly::Host Details Cloud details for this host should be displayed should show KVM cloud details correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "should show Nutanix cloud details correctly::Host Details Cloud details for this host should be displayed should show Nutanix cloud details correctly",
-        "score": 0.02501
-      },
-      {
-        "name": "should show SAP instance data::Host Details SAP instances for this host should be displayed should show SAP instance data",
-        "score": 0.02501
-      },
-      {
-        "name": "should show vmware cloud details correctly::Host Details Cloud details for this host should be displayed should show vmware cloud details correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-09T19:10:44Z",
     "commit": "a60bbd9e9e2a2d4fecf7220f6dd15e1bfa47b66a",
     "run_id": "29042434372",
@@ -5722,5 +5630,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-24T17:56:01Z",
+    "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
+    "run_id": "32757746775",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.02501
+      }
+    ]
   }
 ]
