@@ -229,7 +229,15 @@ describe('AG-UI event flow', () => {
     const first = await sendUserMessage('first');
     await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
 
+    expect(screen.getByText('first')).toBeVisible();
+    expect(await screen.findByText('one')).toBeVisible();
+
     await user.click(screen.getByRole('button', { name: 'New chat' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('first')).not.toBeInTheDocument();
+      expect(screen.queryByText('one')).not.toBeInTheDocument();
+    });
 
     const second = await sendUserMessage('second');
 
