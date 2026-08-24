@@ -35,7 +35,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   - `stash_run_ids/3` — at the head of `handle_in("send_message", ...)`, before validation.
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
-  - `reset_run/1` — on `:idle` (success), `:error`, and `run_agent` failure; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+  - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -94,12 +94,25 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 
+  @impl true
   def handle_in("send_message", payload, socket) do
     payload
     |> redact_payload()
     |> then(&Logger.warning("Received invalid send_message payload: #{inspect(&1)}"))
 
     {:reply, {:error, :invalid_payload}, socket}
+  end
+
+  @impl true
+  def handle_in(action, _payload, socket)
+      when action in ["cancel_run", "abandon_thread"] do
+    case {socket.assigns[:current_thread_id], action} do
+      {nil, _} -> :ok
+      {thread_id, "cancel_run"} -> TrentoAIAgent.cancel(thread_id)
+      {thread_id, "abandon_thread"} -> TrentoAIAgent.stop(thread_id)
+    end
+
+    {:reply, :ok, reset_run(socket)}
   end
 
   defp check_ai_enabled do
@@ -162,7 +175,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          run_id,
          thread_id
        ) do
-    case LLMBuilder.build_for_user(current_user_id) do
+    case LLMBuilder.build(current_user_id) do
       {:ok, model_config} ->
         socket
         |> stash_run_ids(run_id, thread_id)
