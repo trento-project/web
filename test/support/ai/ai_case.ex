@@ -62,15 +62,19 @@ defmodule Trento.AI.AICase do
   end
 
   @doc """
-  Returns the pid of the running agent process for `agent_id`, failing the test
-  when nothing is registered.
+  Returns the pid of the running agent process for `agent_id`, raising when
+  nothing is registered.
 
   The registry is the one piece of sagents with no `Trento.AI` port in front of
-  it, so it is reached here once instead of at every assertion site.
+  it, so it is reached here once instead of at every call site.
   """
   def agent_pid!(agent_id) do
-    assert {:ok, pid} = Sagents.AgentSupervisor.get_pid(agent_id)
+    case Sagents.AgentSupervisor.get_pid(agent_id) do
+      {:ok, pid} ->
+        pid
 
-    pid
+      {:error, reason} ->
+        raise "no agent process registered for #{inspect(agent_id)}: #{inspect(reason)}"
+    end
   end
 end

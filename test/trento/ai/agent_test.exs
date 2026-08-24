@@ -337,15 +337,15 @@ defmodule Trento.AI.AgentTest do
     end
 
     test "kills the in-flight run instead of waiting it out" do
-      %{agent_id: agent_id, pid: pid, task_pid: task_pid} =
-        start_running_agent(block_for: :timer.minutes(1))
+      %{agent_id: agent_id, pid: pid} = start_running_agent(block_for: :timer.minutes(1))
+      task_pid = await_in_flight_run()
 
       server_ref = Process.monitor(pid)
       task_ref = Process.monitor(task_pid)
 
       stopping = Task.async(fn -> TrentoAIAgent.stop(agent_id) end)
 
-      # Nobody releases the pending model, so the run can only end by being killed.
+      # Nothing releases the pending model, so the run can only end by being killed.
       # `Sagents.AgentServer.terminate/2` waits up to 25s for a running task,
       # so a `stop` that did not cancel first would wait for 25s.
       assert :ok = Task.await(stopping, 3_000)
@@ -365,6 +365,8 @@ defmodule Trento.AI.AgentTest do
 
       %{agent_id: agent_id, pid: pid} =
         start_running_agent(initial_user_prompt: initial_user_prompt)
+
+      await_in_flight_run()
 
       assert :ok = TrentoAIAgent.cancel(agent_id)
 
@@ -388,6 +390,7 @@ defmodule Trento.AI.AgentTest do
 
     test "leaves the thread usable — the next prompt starts a new run" do
       %{agent: agent, agent_id: agent_id} = start_running_agent()
+      await_in_flight_run()
 
       assert :ok = TrentoAIAgent.cancel(agent_id)
       assert_receive {:agent, {:status_changed, :cancelled, nil}}, @integration_timeout
@@ -400,6 +403,7 @@ defmodule Trento.AI.AgentTest do
 
     test "the cancelled agent can still be stopped afterwards" do
       %{agent_id: agent_id, pid: pid} = start_running_agent()
+      await_in_flight_run()
 
       assert :ok = TrentoAIAgent.cancel(agent_id)
       assert_receive {:agent, {:status_changed, :cancelled, nil}}, @integration_timeout
@@ -442,11 +446,13 @@ defmodule Trento.AI.AgentTest do
     # Counterproof about the functioning of the FakeChatModel.
     # When the run is released, it completes successfully and the agent goes back to idle.
     test "a released run finishes successfully" do
-      %{agent_id: agent_id, task_pid: task_pid} =
+      %{agent_id: agent_id} =
         start_running_agent(
           block_for: :timer.minutes(1),
           reply: "You are absolutely right, I am a fake model."
         )
+
+      task_pid = await_in_flight_run()
 
       send(task_pid, :release)
 
@@ -482,36 +488,35 @@ defmodule Trento.AI.AgentTest do
   # a live run to act on. Subscribes the *test* process to the agent's event
   # stream (`run/3` does that for its caller).
   #
-  # `:task_pid` is the parked run task: `send(task_pid, :release)` makes the
-  # fake model answer and the run complete.
-  #
-  # `:block_for` overrides how long the fake model parks, for the one test that
-  # has to rule the park's own timeout out as the thing that ended the run. It
+  # `:block_for` overrides how long the fake model parks, for the tests that
+  # have to rule the park's own timeout out as the thing that ended the run. It
   # defaults to the fake model's own default rather than restating it.
   defp start_running_agent(opts \\ []) do
     agent_id = "thread-#{Faker.UUID.v4()}"
-    model = %FakeChatModel{notify: self()}
+    defaults = %FakeChatModel{notify: self()}
 
-    block_for = Keyword.get(opts, :block_for, model.block_for)
-    reply = Keyword.get(opts, :reply, model.reply)
-    initial_user_prompt = Keyword.get(opts, :initial_user_prompt, "hello")
+    model = %FakeChatModel{
+      defaults
+      | block_for: Keyword.get(opts, :block_for, defaults.block_for),
+        reply: Keyword.get(opts, :reply, defaults.reply)
+    }
 
-    agent =
-      TrentoAIAgent.new!(
-        agent_id: agent_id,
-        model: %FakeChatModel{model | block_for: block_for, reply: reply},
-        scope: build(:user)
-      )
+    agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: build(:user))
 
-    assert :ok = TrentoAIAgent.run(agent, initial_user_prompt)
-    pid = agent_pid!(agent_id)
+    :ok = TrentoAIAgent.run(agent, Keyword.get(opts, :initial_user_prompt, "hello"))
+    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
 
+    %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id)}
+  end
+
+  # Blocks until the run started by `start_agent/1` is actually inside the model call.
+  #
+  # Returns the parked run task: `send(task_pid, :release)` makes the fake model answer and the run complete.
+  defp await_in_flight_run do
     assert_receive {:agent, {:status_changed, :running, nil}}, @integration_timeout
     assert_receive {:llm_called, task_pid}, @integration_timeout
 
-    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
-
-    %{agent: agent, agent_id: agent_id, pid: pid, task_pid: task_pid}
+    task_pid
   end
 
   defp run_opts(_ctx) do
