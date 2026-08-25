@@ -11,6 +11,8 @@ defmodule TrentoWeb.AI.ControllerToolTest do
   alias TrentoWeb.AI.{ControllerTool, McpRouteIndex}
   alias TrentoWeb.V1
 
+  setup :verify_on_exit!
+
   defp entry_for({controller, action}) do
     Enum.find(McpRouteIndex.entries(), fn e ->
       e.controller == controller and e.action == action
