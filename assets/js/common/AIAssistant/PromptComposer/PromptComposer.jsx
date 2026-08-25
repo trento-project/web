@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { get } from 'lodash';
+import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
@@ -16,6 +17,9 @@ import {
 
 const COMPOSER_INPUT_CLASS_NAME =
   'w-full border border-gray-300 rounded-lg p-4 text-gray-700 resize-none h-[130px] focus:outline-none focus:border-[#2fb371] focus:ring-1 focus:ring-[#2fb371] placeholder-gray-400 text-lg font-medium bg-white shadow-sm disabled:bg-gray-50 disabled:cursor-not-allowed';
+
+const ACTION_BUTTON_CLASS_NAME =
+  'min-w-20 inline-flex items-center justify-center';
 
 const PLACEHOLDERS = {
   [CONNECTION_STATUS.CONNECTED]: 'How can I help you?',
@@ -46,13 +50,13 @@ const footnote = (
   </>
 );
 
-function SendButton({ disabled, isRunning, reason }) {
-  if (isRunning) return null;
+function SendButton({ disabled, reason }) {
   return (
     <ComposerPrimitive.Send asChild>
       <Button
         asSubmit
         type="default-fit"
+        className={ACTION_BUTTON_CLASS_NAME}
         disabled={disabled}
         aria-label="Send message"
         title={disabled ? reason : 'Send message'}
@@ -60,6 +64,21 @@ function SendButton({ disabled, isRunning, reason }) {
         Send
       </Button>
     </ComposerPrimitive.Send>
+  );
+}
+
+function StopButton() {
+  return (
+    <ComposerPrimitive.Cancel asChild>
+      <Button
+        type="danger-bold"
+        className={ACTION_BUTTON_CLASS_NAME}
+        aria-label="Stop generating"
+        title="Stop generating"
+      >
+        <EOS_STOP_FILLED className="h-6 w-6 fill-current" />
+      </Button>
+    </ComposerPrimitive.Cancel>
   );
 }
 
@@ -95,11 +114,11 @@ function PromptComposer({
       </div>
       <div className="flex justify-between items-center w-full mt-4">
         <div className="text-sm text-gray-400 leading-tight">{footnote}</div>
-        <SendButton
-          disabled={inputDisabled}
-          isRunning={isRunning}
-          reason={placeholder}
-        />
+        {isRunning ? (
+          <StopButton />
+        ) : (
+          <SendButton disabled={inputDisabled} reason={placeholder} />
+        )}
       </div>
     </ComposerPrimitive.Root>
   );
