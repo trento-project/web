@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.AI.ControllerToolTest do
-  use Trento.DataCase
+  use Trento.DataCase, async: true
 
   import Mox
   import Trento.Factory
