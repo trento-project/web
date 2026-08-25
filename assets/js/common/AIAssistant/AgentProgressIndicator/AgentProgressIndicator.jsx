@@ -29,8 +29,9 @@ export function AgentProgressIndicatorView({ children }) {
 // updates
 function AgentProgressIndicator({ isRunning }) {
   const message = useAuiState((s) => s.message);
+  const canShowIndicator = isRunning && message.isLast;
 
-  if (!isRunning) return null;
+  if (!canShowIndicator) return null;
   if (
     message.content.some(
       (part) => part.type === 'text' && part.text?.trim().length > 0

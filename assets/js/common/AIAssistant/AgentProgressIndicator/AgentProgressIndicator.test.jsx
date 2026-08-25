@@ -79,7 +79,7 @@ describe('deriveProgressLabel', () => {
 
 describe('AgentProgressIndicator', () => {
   it('renders nothing when the thread is not running', () => {
-    mockMessage({ content: [] });
+    mockMessage({ content: [], isLast: true });
     const { container } = render(<AgentProgressIndicator isRunning={false} />);
     expect(container).toBeEmptyDOMElement();
   });
@@ -87,13 +87,20 @@ describe('AgentProgressIndicator', () => {
   it('renders nothing when the assistant has already produced text', () => {
     mockMessage({
       content: [{ type: 'text', text: 'partial answer' }],
+      isLast: true,
     });
     const { container } = render(<AgentProgressIndicator isRunning />);
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('renders nothing on an earlier answer once a later one exists', () => {
+    mockMessage({ content: [], isLast: false });
+    const { container } = render(<AgentProgressIndicator isRunning />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
-    mockMessage({ content: [] });
+    mockMessage({ content: [], isLast: true });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
@@ -101,6 +108,7 @@ describe('AgentProgressIndicator', () => {
   it('renders the tool name while a tool call is in flight', () => {
     mockMessage({
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
+      isLast: true,
     });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
