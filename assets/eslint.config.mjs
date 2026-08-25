@@ -54,6 +54,7 @@ export default defineConfig([
         setInterval: true,
         clearTimeout: true,
         clearInterval: true,
+        queueMicrotask: true,
         $: false,
         jQuery: false,
         CustomEvent: true,
