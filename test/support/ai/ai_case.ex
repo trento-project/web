@@ -6,6 +6,7 @@ defmodule Trento.AI.AICase do
 
   use ExUnit.CaseTemplate
 
+  alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.{ApplicationConfigLoader, FakeChatModel, LLMBuilder}
   alias Trento.Infrastructure.AI.{SagentsAgentServer, SagentsDynamicSupervisor}
 
@@ -34,25 +35,12 @@ defmodule Trento.AI.AICase do
   Swaps the AI config over to the real implementations for the duration of the
   test, so `Trento.AI.Agent` drives the actual sagents tree instead of the Mox
   doubles wired in `config/test.exs`.
-
-  `:application_config_loader` goes back to the real module too, and that is
-  what lets teardown call `Trento.AI.Agent.stop/1`: the Mox mock is `:private`
-  and stubbed for the *test* process, while `on_exit` runs in a process of its own.
   """
-  def real_sagents_adapters(_context) do
-    ai = Application.get_env(:trento, :ai)
-
-    Application.put_env(
-      :trento,
-      :ai,
-      Keyword.merge(ai,
-        application_config_loader: ApplicationConfigLoader,
-        agent_supervisor_adapter: SagentsDynamicSupervisor,
-        agent_server_adapter: SagentsAgentServer
-      )
+  def real_sagents_adapters(context) do
+    stub_ai_config(context,
+      agent_supervisor_adapter: SagentsDynamicSupervisor,
+      agent_server_adapter: SagentsAgentServer
     )
-
-    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
   end
 
   @doc """
@@ -73,15 +61,30 @@ defmodule Trento.AI.AICase do
       |> Keyword.put(:notify, self())
       |> then(&struct!(FakeChatModel, &1))
 
-    ai = Application.get_env(:trento, :ai)
-
-    Application.put_env(:trento, :ai, Keyword.put(ai, :llm_builder_adapter, LLMBuilder.Mock))
-
-    on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
-
     Mox.stub(LLMBuilder.Mock, :build_for_user, fn _user_id -> {:ok, model} end)
 
-    :ok
+    stub_ai_config(context, llm_builder_adapter: LLMBuilder.Mock)
+  end
+
+  @doc """
+  Tears the thread's agent down once the test is over, through `Trento.AI.Agent.stop/1`.
+
+  We need to re-stub the `ApplicationConfigLoader` mock in the teardown process because
+  `Trento.AI.Agent.stop/1` calls both of its adapters, which are resolved through the config loader.
+
+  Not doing so raises `Mox.UnexpectedCallError` because the teardown process is not the owner of the stub prepared in the test process.
+
+  The config is therefore read in the test process, where the stub still answers,
+  and carried into the exit closure which then owns it for the one call it makes.
+  """
+  def stop_agent_on_exit(agent_id) do
+    config = ApplicationConfigLoader.load()
+
+    on_exit(fn ->
+      Mox.stub(ApplicationConfigLoader.Mock, :load_config, fn -> config end)
+
+      TrentoAIAgent.stop(agent_id)
+    end)
   end
 
   @doc """
@@ -99,5 +102,15 @@ defmodule Trento.AI.AICase do
       {:error, reason} ->
         raise "no agent process registered for #{inspect(agent_id)}: #{inspect(reason)}"
     end
+  end
+
+  defp stub_ai_config(context, overrides) do
+    merged = Keyword.merge(Map.get(context, :ai_config_overrides, []), overrides)
+
+    Mox.stub(ApplicationConfigLoader.Mock, :load_config, fn ->
+      Keyword.merge(Application.get_env(:trento, :ai, []), merged)
+    end)
+
+    {:ok, ai_config_overrides: merged}
   end
 end

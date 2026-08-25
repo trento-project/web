@@ -24,7 +24,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   the model → AG-UI chain is pinned end to end.
   """
 
-  use TrentoWeb.ChannelCase
+  use TrentoWeb.ChannelCase, async: true
   use Trento.AI.AICase
 
   import Phoenix.ChannelTest, except: [assert_push: 2, assert_push: 3]
@@ -34,8 +34,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   import Trento.Factory
 
   alias LangChain.ChatModels.ChatGoogleAI
-  alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.Agent.Server, as: TrentoAIAgentServer
+  alias Trento.AI.ApplicationConfigLoader
   alias Trento.AI.LLMBuilder
   alias TrentoWeb.Auth.AccessToken
 
@@ -129,7 +129,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "rejects with :ai_assistant_disabled when AI features are disabled" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+      expect(ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       assert {:error, :ai_assistant_disabled} =
                UserSocket
@@ -140,7 +140,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "prefers :ai_assistant_disabled over :unauthorized when AI is disabled with mismatched user_id" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+      expect(ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       assert {:error, :ai_assistant_disabled} =
                UserSocket
@@ -182,15 +182,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "rejects the join when subscribing to AI configuration events fails" do
-      ai = Application.get_env(:trento, :ai)
-
-      Application.put_env(
-        :trento,
-        :ai,
-        Keyword.put(ai, :ai_configuration_events_adapter, AIConfigurationsEvents.Mock)
-      )
-
-      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+      stub(ApplicationConfigLoader.Mock, :load_config, fn ->
+        :trento
+        |> Application.get_env(:ai, [])
+        |> Keyword.put(:ai_configuration_events_adapter, AIConfigurationsEvents.Mock)
+      end)
 
       expect(AIConfigurationsEvents.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
 
@@ -1305,7 +1301,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       # A new chat means a new thread id, hence a brand new agent behind it.
       new_thread_id = "thread-#{Faker.UUID.v4()}"
-      on_exit(fn -> TrentoAIAgent.stop(new_thread_id) end)
+      stop_agent_on_exit(new_thread_id)
 
       push(socket, "send_message", %{
         "message" => "first prompt of the new chat",
@@ -1503,7 +1499,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     assert_receive {:llm_called, task_pid}, @integration_timeout
 
-    on_exit(fn -> TrentoAIAgent.stop(thread_id) end)
+    stop_agent_on_exit(thread_id)
 
     %{thread_id: thread_id, task_pid: task_pid}
   end

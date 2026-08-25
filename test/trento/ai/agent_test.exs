@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule Trento.AI.AgentTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   use Trento.AI.AICase
 
   import Mox
@@ -481,7 +481,7 @@ defmodule Trento.AI.AgentTest do
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: build(:user))
 
     :ok = TrentoAIAgent.run(agent, prompt)
-    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+    stop_agent_on_exit(agent_id)
 
     %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id), prompt: prompt}
   end
@@ -507,7 +507,7 @@ defmodule Trento.AI.AgentTest do
         pubsub: {Phoenix.PubSub, Trento.PubSub}
       )
 
-    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+    stop_agent_on_exit(agent_id)
 
     %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id)}
   end
