@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-07-09T22:36:05Z",
-    "commit": "a60bbd9e9e2a2d4fecf7220f6dd15e1bfa47b66a",
-    "run_id": "29046575899",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-10T18:53:39Z",
     "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
     "run_id": "29115234112",
@@ -5687,6 +5655,22 @@
       {
         "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-25T17:57:41Z",
+    "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
+    "run_id": "32879069801",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.05001
       }
     ]
   }
