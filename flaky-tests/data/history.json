@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-07-10T22:23:02Z",
-    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
-    "run_id": "29119450631",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.05001
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-11T18:15:54Z",
     "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
     "run_id": "29162640565",
@@ -5715,6 +5683,22 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-26T19:36:45Z",
+    "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
+    "run_id": "33004011811",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.02501
       }
     ]
   }
