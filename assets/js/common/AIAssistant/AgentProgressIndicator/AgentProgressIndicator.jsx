@@ -14,14 +14,31 @@ export function deriveProgressLabel(content) {
   return 'Thinking...';
 }
 
-export function AgentProgressIndicatorView({ children }) {
+export function AgentProgressIndicatorView({ spinner = true, children }) {
   return (
-    <div className="flex items-center gap-2 text-muted-foreground mt-2">
-      <Spinner />
+    <div role="status" className="flex items-center gap-2 text-gray-600 mt-2">
+      {spinner && <Spinner />}
       <span className="text-sm">{children}</span>
     </div>
   );
 }
+
+const wasStopped = (status) =>
+  status?.type === 'incomplete' && status.reason === 'cancelled';
+
+const hasStreamedText = (content) =>
+  content.some((part) => part.type === 'text' && part.text?.trim().length > 0);
+
+const deriveNotice = ({ isRunning, message }) => {
+  const { status, content, isLast } = message;
+
+  if (wasStopped(status)) return { label: 'Response stopped.', spinner: false };
+
+  if (isRunning && isLast && !hasStreamedText(content))
+    return { label: deriveProgressLabel(content), spinner: true };
+
+  return null;
+};
 
 // Reads `s.message` from the per-message scope set up by assistant-ui's
 // MessageByIndexProvider (one per <MessagePrimitive.Root>). Subscribing
@@ -29,20 +46,13 @@ export function AgentProgressIndicatorView({ children }) {
 // updates
 function AgentProgressIndicator({ isRunning }) {
   const message = useAuiState((s) => s.message);
-  const canShowIndicator = isRunning && message.isLast;
+  const notice = deriveNotice({ isRunning, message });
 
-  if (!canShowIndicator) return null;
-  if (
-    message.content.some(
-      (part) => part.type === 'text' && part.text?.trim().length > 0
-    )
-  ) {
-    return null;
-  }
+  if (!notice) return null;
 
   return (
-    <AgentProgressIndicatorView>
-      {deriveProgressLabel(message.content)}
+    <AgentProgressIndicatorView spinner={notice.spinner}>
+      {notice.label}
     </AgentProgressIndicatorView>
   );
 }

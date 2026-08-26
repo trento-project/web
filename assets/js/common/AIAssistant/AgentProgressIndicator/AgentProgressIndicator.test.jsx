@@ -32,6 +32,15 @@ describe('AgentProgressIndicatorView', () => {
     );
     expect(screen.getByRole('alert', { name: 'Loading' })).toBeVisible();
   });
+
+  it('renders no spinner when the answer is not in progress', () => {
+    render(
+      <AgentProgressIndicatorView spinner={false}>
+        Response stopped.
+      </AgentProgressIndicatorView>
+    );
+    expect(screen.queryByRole('alert', { name: 'Loading' })).toBeNull();
+  });
 });
 
 describe('deriveProgressLabel', () => {
@@ -93,7 +102,7 @@ describe('AgentProgressIndicator', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders nothing on an earlier answer once a later one exists', () => {
+  it('renders nothing on an earlier answer', () => {
     mockMessage({ content: [], isLast: false });
     const { container } = render(<AgentProgressIndicator isRunning />);
     expect(container).toBeEmptyDOMElement();
@@ -112,5 +121,60 @@ describe('AgentProgressIndicator', () => {
     });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
+  });
+
+  describe('once the user has stopped the answer', () => {
+    const cancelled = (overrides = {}) => ({
+      content: [],
+      isLast: true,
+      status: { type: 'incomplete', reason: 'cancelled' },
+      ...overrides,
+    });
+
+    it('says the response was stopped, without a spinner', () => {
+      mockMessage(cancelled());
+
+      render(<AgentProgressIndicator isRunning={false} />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+      expect(screen.queryByRole('alert', { name: 'Loading' })).toBeNull();
+    });
+
+    it.each([
+      { label: 'a later answer exists', overrides: { isLast: false } },
+      {
+        label: 'the answer got some text out',
+        overrides: { content: [{ type: 'text', text: 'half an answer' }] },
+      },
+    ])('keeps the mark when $label', ({ overrides }) => {
+      mockMessage(cancelled(overrides));
+
+      render(<AgentProgressIndicator isRunning={false} />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+    });
+
+    it('stopped mark takes precedence over thinking', () => {
+      mockMessage(cancelled());
+
+      render(<AgentProgressIndicator isRunning />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+      expect(screen.queryByText('Thinking...')).toBeNull();
+    });
+  });
+
+  it.each([
+    { label: 'the answer completed', status: { type: 'complete' } },
+    {
+      label: 'the answer failed',
+      status: { type: 'incomplete', reason: 'error', error: 'boom' },
+    },
+  ])('renders nothing when $label', ({ status }) => {
+    mockMessage({ content: [], isLast: true, status });
+
+    const { container } = render(<AgentProgressIndicator isRunning={false} />);
+
+    expect(container).toBeEmptyDOMElement();
   });
 });

@@ -5,6 +5,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
+import { useAuiState } from '@assistant-ui/react';
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
 jest.mock('@assistant-ui/react', () => ({
@@ -19,14 +20,23 @@ jest.mock('@assistant-ui/react', () => ({
     // error. This stub is unconditional, so the tests below can prove the slot is mounted
     Error: ({ children }) => <div>{children}</div>,
   },
-  // AssistantMessage renders <AgentProgressIndicator> which subscribes via
-  // useAuiState((s) => s.message). Default: empty content + no run in flight.
-  useAuiState: () => ({ content: [] }),
+  useAuiState: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/react-markdown', () => ({
   MarkdownTextPrimitive: () => null,
 }));
+
+const mockAssistantMessage = (overrides = {}) => {
+  const message = {
+    content: [],
+    id: 'message-1',
+    isLast: true,
+    status: { type: 'complete', reason: 'unknown' },
+    ...overrides,
+  };
+  useAuiState.mockImplementation((selector) => selector({ message }));
+};
 
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
@@ -44,6 +54,8 @@ describe('UserMessage', () => {
 });
 
 describe('AssistantMessage', () => {
+  beforeEach(() => mockAssistantMessage());
+
   it('renders the assistant message bubble with the parts and error slots', () => {
     const { container } = render(<AssistantMessage />);
 
@@ -52,6 +64,7 @@ describe('AssistantMessage', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('message parts')).toBeVisible();
     expect(screen.getByText('Error message')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   it('omits the user-only "You" label', () => {
@@ -61,6 +74,28 @@ describe('AssistantMessage', () => {
 
   it('shows the agent progress indicator while a run is in flight', () => {
     render(<AssistantMessage isRunning />);
-    expect(screen.getByText('Thinking...')).toBeVisible();
+    expect(screen.getByRole('status')).toHaveTextContent('Thinking...');
+  });
+
+  it('names the tool the agent is calling', () => {
+    mockAssistantMessage({
+      content: [{ type: 'tool-call', toolName: 'get_hosts' }],
+    });
+
+    render(<AssistantMessage isRunning />);
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Calling get_hosts...'
+    );
+  });
+
+  it('marks an answer the user stopped', () => {
+    mockAssistantMessage({
+      status: { type: 'incomplete', reason: 'cancelled' },
+    });
+
+    render(<AssistantMessage />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('Response stopped.');
   });
 });
