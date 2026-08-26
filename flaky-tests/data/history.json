@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-11T18:51:31Z",
-    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
-    "run_id": "29163636991",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-11T18:52:42Z",
     "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
     "run_id": "29163636991",
@@ -5708,6 +5692,62 @@
       {
         "name": "search::should not match not included words",
         "score": 0.09051
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-26T23:16:26Z",
+    "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
+    "run_id": "33008359833",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 14
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1405
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1234
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1234
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.07251
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.07251
+      },
+      {
+        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.02501
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark health in-sync on the hosts when agents start sending heartbeat again::Hosts Overview Health Detection Stale should mark health in-sync on the hosts when agents start sending heartbeat again",
+        "score": 0.02501
+      },
+      {
+        "name": "should show a stale health on the hosts when agents are not sending heartbeat::Hosts Overview Health Detection Stale should show a stale health on the hosts when agents are not sending heartbeat",
+        "score": 0.02501
       }
     ]
   }
