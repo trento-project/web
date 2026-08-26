@@ -208,9 +208,11 @@ describe('AssistantChatProvider', () => {
     const { rerender, channel, agent } = renderProvider();
     await waitFor(() => expect(channel()).toBeDefined());
     const abandonThread = jest.spyOn(agent(), 'abandonThread');
+    const abortRun = jest.spyOn(agent(), 'abortRun');
 
     rerender({ threadID: 'thread-2' });
 
     await waitFor(() => expect(abandonThread).toHaveBeenCalledTimes(1));
+    expect(abortRun).not.toHaveBeenCalled();
   });
 });
