@@ -27,6 +27,11 @@ const flushMicrotasks = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
 };
 
+const flushDeferredWork = async () => {
+  await flushMicrotasks();
+  await new Promise((resolve) => setTimeout(resolve, 0));
+};
+
 const userMessage = (content = 'hi') => ({ role: 'user', content });
 
 function makeAuthDoubles() {
@@ -512,6 +517,39 @@ describe('WebSocketAIAgent', () => {
     });
   });
 
+  describe('abortRun', () => {
+    it('tells the server to stop and settles the run as aborted', async () => {
+      const { agent, channel } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abortRun();
+      await flushDeferredWork();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'cancel_run', payload: {} })
+      );
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toMatchObject({ name: 'AbortError' });
+      expect(complete).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
+      expect(agent._activeRunId).toBeNull();
+    });
+
+    it('does nothing when no run is in flight', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abortRun();
+
+      expect(channel.pushed).not.toContainEqual(
+        expect.objectContaining({ event: 'cancel_run' })
+      );
+    });
+  });
+
   describe('abandonThread', () => {
     it('tells the server to let the thread go', async () => {
       const { agent, channel } = await connectedAgent();
@@ -671,15 +709,16 @@ describe('WebSocketAIAgent', () => {
       }
     );
 
-    it('settles the active run on ai_configuration_cleared', async () => {
+    it('settles the active run as stopped on ai_configuration_cleared', async () => {
       const { channel, agent } = await connectedAgent();
       const { error, complete } = runAgent(agent);
       await flushMicrotasks();
 
       channel.emit('ai_configuration_cleared');
 
-      expect(complete).toHaveBeenCalledTimes(1);
-      expect(error).not.toHaveBeenCalled();
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(error.mock.calls[0][0]).toMatchObject({ name: 'AbortError' });
+      expect(complete).not.toHaveBeenCalled();
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
     });

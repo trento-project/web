@@ -28,6 +28,15 @@ export const extractMessageText = ({ content } = {}) => {
 
 const isUnauthorized = (error) => error === 'unauthorized';
 
+// The error shape @assistant-ui/react-ag-ui reads as "this run was stopped".
+// RUN_CANCELLED is dispatched instead of RUN_ERROR, so the message ends up marked as
+// stopped rather than failed.
+const abortedRunError = () => {
+  const error = new Error('AI assistant run stopped');
+  error.name = 'AbortError';
+  return error;
+};
+
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
@@ -166,11 +175,8 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.channel.onClose(dropConnection);
   }
 
-  // User's AI configuration was cleared server-side.
-  // Settle any in-flight run without surfacing an error
-  // and let the UI switch to its read-only / disabled state via the callback.
   _handleAIConfigurationCleared() {
-    this._settleActiveRun();
+    this._settleActiveRun(abortedRunError());
     this.#callbacks.onAIConfigurationCleared();
   }
 
@@ -274,10 +280,40 @@ export class WebSocketAIAgent extends AbstractAgent {
     this._clearActiveRun();
   }
 
-  // Triggered on "New chat". Tells the server to stop the related Agent
-  // instead of waiting sagents inactivity timeout.
+  // Our AbortError has to land last after library's cancellation steps.
   //
-  // The payload is empty because the server abandons the thread in its own assigns.
+  // Cancelling has ag ui runtime write to the message twice:
+  // - `cancel()` aborts its controller, which marks the run cancelled and turns any later error into a stop rather than a failure
+  // - `cancelRun()` then schedules a timer re-applying a snapshot it took while the answer still looked alive.
+  //
+  // The microtask waits out that whole synchronous turn, making sure the state of the message is properly marked as stopped
+  _settleAsAborted(subscriber) {
+    queueMicrotask(() =>
+      setTimeout(() => subscriber.error(abortedRunError()), 0)
+    );
+  }
+
+  // Stop, from the composer.
+  // `AgUiThreadRuntimeCore.cancel()` calls it before aborting its own AbortController.
+  //
+  // The payload is empty because the server cancels the thread named in its
+  // own socket assigns.
+  abortRun() {
+    const subscriber = this._activeSubscriber;
+
+    if (subscriber) {
+      this.channel?.push('cancel_run', {});
+
+      this._clearActiveRun();
+      this._settleAsAborted(subscriber);
+    }
+
+    super.abortRun();
+  }
+
+  // "New chat". Tells the server the thread is gone so the running agent process can be killed.
+  //
+  // The payload is empty for the same reason as `abortRun`'s.
   abandonThread() {
     this.channel?.push('abandon_thread', {});
     this._settleActiveRun();

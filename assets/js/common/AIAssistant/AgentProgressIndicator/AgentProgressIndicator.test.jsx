@@ -23,6 +23,7 @@ describe('AgentProgressIndicatorView', () => {
     (label) => {
       render(<AgentProgressIndicatorView>{label}</AgentProgressIndicatorView>);
       expect(screen.getByText(label)).toBeVisible();
+      expect(screen.getByRole('status')).toHaveTextContent(label);
     }
   );
 
@@ -30,7 +31,21 @@ describe('AgentProgressIndicatorView', () => {
     render(
       <AgentProgressIndicatorView>Thinking...</AgentProgressIndicatorView>
     );
-    expect(screen.getByRole('alert', { name: 'Loading' })).toBeVisible();
+
+    const spinner = screen.getByLabelText('Loading');
+
+    expect(spinner).toBeVisible();
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(spinner).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('renders no spinner when the answer is not in progress', () => {
+    render(
+      <AgentProgressIndicatorView spinner={false}>
+        Response stopped.
+      </AgentProgressIndicatorView>
+    );
+    expect(screen.queryByLabelText('Loading')).toBeNull();
   });
 });
 
@@ -79,7 +94,7 @@ describe('deriveProgressLabel', () => {
 
 describe('AgentProgressIndicator', () => {
   it('renders nothing when the thread is not running', () => {
-    mockMessage({ content: [] });
+    mockMessage({ content: [], isLast: true });
     const { container } = render(<AgentProgressIndicator isRunning={false} />);
     expect(container).toBeEmptyDOMElement();
   });
@@ -87,13 +102,20 @@ describe('AgentProgressIndicator', () => {
   it('renders nothing when the assistant has already produced text', () => {
     mockMessage({
       content: [{ type: 'text', text: 'partial answer' }],
+      isLast: true,
     });
     const { container } = render(<AgentProgressIndicator isRunning />);
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('renders nothing on an earlier answer', () => {
+    mockMessage({ content: [], isLast: false });
+    const { container } = render(<AgentProgressIndicator isRunning />);
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
-    mockMessage({ content: [] });
+    mockMessage({ content: [], isLast: true });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
@@ -101,8 +123,64 @@ describe('AgentProgressIndicator', () => {
   it('renders the tool name while a tool call is in flight', () => {
     mockMessage({
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
+      isLast: true,
     });
     render(<AgentProgressIndicator isRunning />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
+  });
+
+  describe('once the user has stopped the answer', () => {
+    const cancelled = (overrides = {}) => ({
+      content: [],
+      isLast: true,
+      status: { type: 'incomplete', reason: 'cancelled' },
+      ...overrides,
+    });
+
+    it('says the response was stopped, without a spinner', () => {
+      mockMessage(cancelled());
+
+      render(<AgentProgressIndicator isRunning={false} />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+      expect(screen.queryByLabelText('Loading')).toBeNull();
+    });
+
+    it.each([
+      { label: 'a later answer exists', overrides: { isLast: false } },
+      {
+        label: 'the answer got some text out',
+        overrides: { content: [{ type: 'text', text: 'half an answer' }] },
+      },
+    ])('keeps the mark when $label', ({ overrides }) => {
+      mockMessage(cancelled(overrides));
+
+      render(<AgentProgressIndicator isRunning={false} />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+    });
+
+    it('stopped mark takes precedence over thinking', () => {
+      mockMessage(cancelled());
+
+      render(<AgentProgressIndicator isRunning />);
+
+      expect(screen.getByText('Response stopped.')).toBeVisible();
+      expect(screen.queryByText('Thinking...')).toBeNull();
+    });
+  });
+
+  it.each([
+    { label: 'the answer completed', status: { type: 'complete' } },
+    {
+      label: 'the answer failed',
+      status: { type: 'incomplete', reason: 'error', error: 'boom' },
+    },
+  ])('renders nothing when $label', ({ status }) => {
+    mockMessage({ content: [], isLast: true, status });
+
+    const { container } = render(<AgentProgressIndicator isRunning={false} />);
+
+    expect(container).toBeEmptyDOMElement();
   });
 });
