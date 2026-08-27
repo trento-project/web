@@ -62,8 +62,10 @@ function AssistantChatProvider({
   useEffect(() => {
     if (previousThreadIDRef.current === threadID) return;
     previousThreadIDRef.current = threadID;
+
     runtime.thread.reset();
-  }, [threadID, runtime]);
+    agent.abandonThread();
+  }, [threadID, runtime, agent]);
 
   return (
     <AssistantRuntimeProvider aui={aui} runtime={runtime}>

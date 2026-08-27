@@ -385,7 +385,7 @@ describe('WebSocketAIAgent', () => {
       await flushMicrotasks();
       const staleRunId = channel.pushed[0].payload.run_id;
 
-      const { complete } = runAgent(agent, {
+      const { complete, next } = runAgent(agent, {
         threadId: 't',
         messages: [userMessage('second')],
       });
@@ -398,10 +398,35 @@ describe('WebSocketAIAgent', () => {
         aguiEvents.runFinished({ threadId: 't', runId: staleRunId })
       );
 
+      expect(next).not.toHaveBeenCalled();
       expect(complete).not.toHaveBeenCalled();
       expect(agent._activeRunId).not.toBeNull();
     });
 
+    it('does not forward a RUN_STARTED from a superseded run', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      runAgent(agent, { threadId: 't', messages: [userMessage('first')] });
+      await flushMicrotasks();
+      const staleRunId = channel.pushed[0].payload.run_id;
+
+      const { next } = runAgent(agent, {
+        threadId: 't',
+        messages: [userMessage('second')],
+      });
+      await flushMicrotasks();
+
+      channel.emit(
+        'ag_ui_event',
+        aguiEvents.runStarted({ threadId: 't', runId: staleRunId })
+      );
+
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    // RunError has no run_id field (deps/ag_ui_ex/lib/ag_ui/core/events.ex:138),
+    // so these events reach the client unstamped and must never be filtered as
+    // stale the way an unstamped RUN_FINISHED is.
     it.each([
       {
         scenario: 'with explicit message',
@@ -427,20 +452,6 @@ describe('WebSocketAIAgent', () => {
         expect(agent._activeSubscriber).toBeNull();
       }
     );
-
-    it('errors the observable on a RUN_ERROR that names no run', async () => {
-      const { agent, channel } = await connectedAgent();
-      const { error } = runAgent(agent);
-
-      // AgUi.Core.Events.RunError has no run_id field: the server cannot stamp
-      // one, so a RUN_ERROR must never be filtered out for lacking it.
-      channel.emit('ag_ui_event', aguiEvents.runError({ message: 'oops' }));
-
-      expect(error).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'oops' })
-      );
-      expect(agent._activeSubscriber).toBeNull();
-    });
 
     it('errors when there is no new user message to start the run with', async () => {
       const { agent } = await connectedAgent();
@@ -498,6 +509,35 @@ describe('WebSocketAIAgent', () => {
 
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+    });
+  });
+
+  describe('abandonThread', () => {
+    it('tells the server to let the thread go', async () => {
+      const { agent, channel } = await connectedAgent();
+
+      agent.abandonThread();
+
+      expect(channel.pushed).toContainEqual(
+        expect.objectContaining({ event: 'abandon_thread', payload: {} })
+      );
+    });
+
+    it('settles an in-flight run instead of leaving it hanging', async () => {
+      const { agent } = await connectedAgent();
+      const { complete, error } = runAgent(agent, {
+        threadId: 'thread-9',
+        messages: [userMessage()],
+      });
+      await flushMicrotasks();
+
+      agent.abandonThread();
+
+      // The server terminates the agent and no RUN_FINISHED/RUN_ERROR will ever come back.
+      // The client has to settle it locally.
+      expect(complete).toHaveBeenCalledTimes(1);
+      expect(error).not.toHaveBeenCalled();
+      expect(agent._activeSubscriber).toBeNull();
     });
   });
 

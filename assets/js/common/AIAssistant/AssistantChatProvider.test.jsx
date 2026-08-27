@@ -24,7 +24,7 @@ jest.mock('@assistant-ui/react', () => ({
 const modelPayload = { provider: 'google', model: 'gemini-2.5-pro' };
 
 function renderProvider({ socket = makeMockSocket(), ...props } = {}) {
-  const runtime = { thread: { reset: jest.fn() } };
+  const runtime = { thread: { reset: jest.fn(), cancelRun: jest.fn() } };
   useAgUiRuntime.mockImplementation(() => runtime);
 
   const initialProps = { userID: 42, threadID: 'thread-1', ...props };
@@ -200,5 +200,17 @@ describe('AssistantChatProvider', () => {
     await waitFor(() => {
       expect(runtime.thread.reset).toHaveBeenCalledTimes(1);
     });
+    // A new chat is not a cancelled turn. `cancelRun()` not called here
+    expect(runtime.thread.cancelRun).not.toHaveBeenCalled();
+  });
+
+  it('abandons the previous thread on the transport', async () => {
+    const { rerender, channel, agent } = renderProvider();
+    await waitFor(() => expect(channel()).toBeDefined());
+    const abandonThread = jest.spyOn(agent(), 'abandonThread');
+
+    rerender({ threadID: 'thread-2' });
+
+    await waitFor(() => expect(abandonThread).toHaveBeenCalledTimes(1));
   });
 });

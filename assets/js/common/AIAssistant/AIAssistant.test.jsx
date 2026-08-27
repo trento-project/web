@@ -88,6 +88,31 @@ describe('AIAssistant', () => {
         screen.queryByText(/new AI configuration is available/i)
       ).not.toBeInTheDocument();
     });
+
+    it('starts a fresh thread so the next open is a clean conversation', async () => {
+      const { user, channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('hello');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['hi'] });
+      expect(screen.getByText('hello')).toBeVisible();
+
+      await user.click(screen.getByLabelText('Close'));
+
+      await act(async () => {
+        channel.emit('ai_configuration_created');
+      });
+
+      await user.click(await findEnabledTrigger());
+
+      await waitFor(() => {
+        expect(screen.queryByText('hello')).not.toBeInTheDocument();
+      });
+
+      const second = await sendUserMessage('after');
+
+      expect(second.thread_id).not.toBe(first.thread_id);
+    });
   });
 
   describe('when the configuration changes after the launcher was opened', () => {

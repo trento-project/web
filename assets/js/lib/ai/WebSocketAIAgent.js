@@ -174,14 +174,23 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.#callbacks.onAIConfigurationCleared();
   }
 
-  _isStaleRunFinished({ type, runId }) {
-    return type === EventType.RUN_FINISHED && runId !== this._activeRunId;
+  // The events the server stamps with a run id. RunStarted and RunFinished both enforce one.
+  // RUN_ERROR is deliberately absent: RunError has no run_id field at all, so filtering it on
+  // one would drop every error. Everything else the channel pushes
+  // (TEXT_MESSAGE_*, TOOL_CALL_*) belongs to whichever run is subscribed.
+  static RUN_SCOPED_EVENTS = [EventType.RUN_STARTED, EventType.RUN_FINISHED];
+
+  _isStaleRunEvent({ type, runId }) {
+    return (
+      WebSocketAIAgent.RUN_SCOPED_EVENTS.includes(type) &&
+      runId !== this._activeRunId
+    );
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    if (this._isStaleRunFinished(event)) return;
+    if (this._isStaleRunEvent(event)) return;
 
     subscriber.next(event);
 
@@ -257,11 +266,21 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
+  // Settle the in-flight run, with an error only when the user needs to see one.
   _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
     maybeError ? subscriber.error(maybeError) : subscriber.complete();
     this._clearActiveRun();
+  }
+
+  // Triggered on "New chat". Tells the server to stop the related Agent
+  // instead of waiting sagents inactivity timeout.
+  //
+  // The payload is empty because the server abandons the thread in its own assigns.
+  abandonThread() {
+    this.channel?.push('abandon_thread', {});
+    this._settleActiveRun();
   }
 
   _clearActiveRun() {
