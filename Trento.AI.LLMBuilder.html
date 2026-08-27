@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
 
-    <script defer src="dist/sidebar_items-C12904A5.js"></script>
+    <script defer src="dist/sidebar_items-53BAA366.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-Y2MUTVIN.js"></script>
 
@@ -51,7 +51,7 @@ Trento Web
 
 <output role="status" id="toast"></output>
 
-<main class="content page-module" id="main" data-type="modules">
+<main class="content page-behaviour" id="main" data-type="modules">
   <div id="content" class="content-inner">
     <div class="top-search">
       <div class="search-settings">
@@ -97,7 +97,7 @@ Trento Web
 <div id="top-content">
   <div class="heading-with-actions top-heading">
     <h1>
-      <span translate="no">Trento.<wbr />AI.<wbr />LLMBuilder</span> 
+      <span translate="no">Trento.<wbr />AI.<wbr />LLMBuilder</span> <small>behaviour</small>
       <small class="app-vsn" translate="no">(Trento Web v3.1.5)</small>
 
     </h1>
@@ -130,6 +130,20 @@ Trento Web
       </a>
       <span class="text">Summary</span>
     </h2>
+<div class="summary-callbacks summary">
+  <h3>
+    <a href="#callbacks">Callbacks</a>
+  </h3>
+
+    <div class="summary-row">
+      <div class="summary-signature">
+        <a href="#c:build_for_user/1" data-no-tooltip="" translate="no">build_for_user(non_neg_integer)</a>
+
+      </div>
+
+    </div>
+
+</div>
 <div class="summary-functions summary">
   <h3>
     <a href="#functions">Functions</a>
@@ -137,7 +151,7 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#build_for_user/1" data-no-tooltip="" translate="no">build_for_user(user_id)</a>
+        <a href="#build/1" data-no-tooltip="" translate="no">build(user_id)</a>
 
       </div>
 
@@ -148,23 +162,23 @@ Trento Web
   </section>
 
 
-  <section id="functions" class="details-list">
+  <section id="callbacks" class="details-list">
     <h2 class="section-heading">
-      <a class="hover-link" href="#functions">
+      <a class="hover-link" href="#callbacks">
         <i class="ri-link-m" aria-hidden="true"></i>
       </a>
-      <span class="text">Functions</span>
+      <span class="text">Callbacks</span>
     </h2>
 
-    <div class="functions-list">
-<section class="detail" id="build_for_user/1">
+    <div class="callbacks-list">
+<section class="detail" id="c:build_for_user/1">
 
   <div class="detail-header">
-    <a href="#build_for_user/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#c:build_for_user/1" class="detail-link" data-no-tooltip="" aria-label="Link to this callback">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">build_for_user(user_id)</h1>
+      <h1 class="signature" translate="no">build_for_user(non_neg_integer)</h1>
 
 
         <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_builder.ex#L17" class="icon-action" rel="help nofollow" aria-label="View Source">
@@ -178,7 +192,49 @@ Trento Web
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> build_for_user(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) ::
+          <pre translate="no"><span class="attribute">@callback</span> build_for_user(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) ::
+  {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()} | {:error, :user_not_found | :no_ai_configuration}</pre>
+
+      </div>
+
+
+  </section>
+</section>
+
+    </div>
+  </section>
+
+  <section id="functions" class="details-list">
+    <h2 class="section-heading">
+      <a class="hover-link" href="#functions">
+        <i class="ri-link-m" aria-hidden="true"></i>
+      </a>
+      <span class="text">Functions</span>
+    </h2>
+
+    <div class="functions-list">
+<section class="detail" id="build/1">
+
+  <div class="detail-header">
+    <a href="#build/1" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">build(user_id)</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/llm_builder.ex#L24" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> build(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">non_neg_integer</a>()) ::
   {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">struct</a>()} | {:error, :user_not_found | :no_ai_configuration}</pre>
 
       </div>

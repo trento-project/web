@@ -6,7 +6,14 @@ Builds a LangChain chat-model struct for a given User.
 # `build_for_user`
 
 ```elixir
-@spec build_for_user(non_neg_integer()) ::
+@callback build_for_user(non_neg_integer()) ::
+  {:ok, struct()} | {:error, :user_not_found | :no_ai_configuration}
+```
+
+# `build`
+
+```elixir
+@spec build(non_neg_integer()) ::
   {:ok, struct()} | {:error, :user_not_found | :no_ai_configuration}
 ```
 

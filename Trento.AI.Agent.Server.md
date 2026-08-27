@@ -15,6 +15,12 @@ a Mox mock without booting the real sagents stack.
 @callback add_message(String.t(), LangChain.Message.t()) :: :ok | {:error, term()}
 ```
 
+# `cancel`
+
+```elixir
+@callback cancel(String.t()) :: :ok | {:error, term()}
+```
+
 # `get_agent`
 
 ```elixir
@@ -41,6 +47,8 @@ a Mox mock without booting the real sagents stack.
 ```
 
 # `add_message`
+
+# `cancel`
 
 # `get_agent`
 

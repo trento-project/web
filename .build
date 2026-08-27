@@ -12,6 +12,7 @@ Trento.AI.ApplicationConfigLoader.html
 Trento.AI.Configurations.Events.html
 Trento.AI.Configurations.html
 Trento.AI.ControllerSpecs.html
+Trento.AI.FakeChatModel.html
 Trento.AI.LLMBuilder.html
 Trento.AI.LLMRegistry.html
 Trento.AI.OpenApiToolBuilder.html
@@ -607,7 +608,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-2F54F2AA.js
-dist/sidebar_items-C12904A5.js
+dist/search_data-ED9BAD50.js
+dist/sidebar_items-53BAA366.js
 index.html
 search.html

@@ -33,7 +33,7 @@ All run-state mutations go through three private helpers:
 
 - `stash_run_ids/3` — at the head of `handle_in("send_message", ...)`, before validation.
 - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
-- `reset_run/1` — on `:idle` (success), `:error`, and `run_agent` failure; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+- `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
 
 `:running` and `:llm_deltas` perform single-flag flips inline
 (`run_has_started`, `message_started`).

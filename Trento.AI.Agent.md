@@ -13,6 +13,17 @@ trento-domain arguments + the AG-UI events that arrive in their mailbox;
 `new!/1` is the pure factory (no side effects). Useful for tests that
 want to inspect the configured agent.
 
+# `cancel`
+
+```elixir
+@spec cancel(String.t()) :: :ok | {:error, term()}
+```
+
+Cancels the in-flight run for `agent_id`, keeping the agent process and its
+conversation state alive.
+
+Best-effort — returns `{:error, reason}` when nothing is running for the id.
+
 # `new!`
 
 ```elixir
@@ -48,8 +59,13 @@ or the first `{:error, reason}` from the start/subscribe/send chain.
 
 Stops the running agent for `agent_id`, terminating any in-flight run.
 
-Best-effort — returns the supervisor's result verbatim (`{:error, term()}`
-when no agent is running for the id).
+It cancels in-flight runs first, then stops the agent process.
+
+This is faster than only stopping the agent, because `Sagents.AgentServer.terminate/2`
+waits for the running task to finish (up to 25s) before the process exits.
+
+Best-effort — the cancel result is discarded and the supervisor's result is
+returned verbatim (`{:error, term()}` when no agent is running for the id).
 
 ---
 
