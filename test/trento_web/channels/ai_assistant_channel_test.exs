@@ -6,7 +6,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   Channel tests covering:
 
   - `join/3` — happy path + auth rejections
-  - `handle_in/3` for `send_message` payload contract + `new_thread`
+  - `handle_in/3` for `send_message` payload contract, `cancel_run` and
+    `abandon_thread`
   - `handle_info/2` translation of `{:agent, ...}` PubSub events into AG-UI
     wire events (the bug-prone surface)
 
@@ -16,21 +17,25 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   JS-driven assigns chain to exercise the individual handlers in
   isolation.
 
-  Happy-path `send_message` coverage uses Mox doubles for the sagents
-  adapter boundary (`Trento.AI.Agent.{Server, Supervisor}`,
-  routed via `config/test.exs`). See
-  `describe "handle_in send_message/3 — happy path"`.
+  Most `send_message` coverage stops at the Mox doubles for the sagents adapter
+  boundary (`Trento.AI.Agent.{Server, Supervisor}`, routed via
+  `config/test.exs`). The describes tagged `:integration` go past it: they run
+  the real supervisor and server with only the chat model faked, which is where
+  the model → AG-UI chain is pinned end to end.
   """
 
-  use TrentoWeb.ChannelCase
+  use TrentoWeb.ChannelCase, async: true
   use Trento.AI.AICase
 
-  import Phoenix.ChannelTest, except: [assert_push: 2]
+  import Phoenix.ChannelTest, except: [assert_push: 2, assert_push: 3]
 
+  import ExUnit.CaptureLog
   import Mox
   import Trento.Factory
 
   alias LangChain.ChatModels.ChatGoogleAI
+  alias Trento.AI.Agent.Server, as: TrentoAIAgentServer
+  alias Trento.AI.ApplicationConfigLoader
   alias Trento.AI.LLMBuilder
   alias TrentoWeb.Auth.AccessToken
 
@@ -44,11 +49,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # Why it needs widening:
   # because the first `send_message` pays a one-time warm-up cost about tool generation
   # and so we mitigate possible timing out if resources are constrained.
+  #
+  # Integration tests pass `@integration_timeout` instead: booting the real
+  # sagents tree costs more than the warm-up alone.
   @push_timeout 500
 
-  defmacrop assert_push(event, payload) do
+  defmacrop assert_push(event, payload, timeout \\ @push_timeout) do
     quote do
-      Phoenix.ChannelTest.assert_push(unquote(event), unquote(payload), @push_timeout)
+      Phoenix.ChannelTest.assert_push(unquote(event), unquote(payload), unquote(timeout))
     end
   end
 
@@ -59,8 +67,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     :ok
   end
 
-  describe "join/3 — access_token validation" do
-    test "accepts valid token, updates :access_token assign, and joins" do
+  describe "join/3" do
+    test "successfully joins and seeds the assigns when the token is valid" do
       jwt = generate_jwt(42)
 
       assert {:ok, _, socket} =
@@ -72,6 +80,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert socket.assigns.access_token == jwt
       assert socket.assigns.current_scope == %Trento.Users.User{id: 42}
+      assert socket.assigns.loading == false
     end
 
     test "rejects with :unauthorized for an invalid token" do
@@ -92,22 +101,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42", %{
                  "access_token" => jwt_for_other_user
                })
-    end
-  end
-
-  describe "join/3" do
-    test "joins ai_assistant:<user_id> when current_user_id matches" do
-      jwt = generate_jwt(42)
-
-      assert {:ok, _, socket} =
-               UserSocket
-               |> socket("user_id", %{current_user_id: 42})
-               |> subscribe_and_join(AIAssistantChannel, "ai_assistant:42", %{
-                 "access_token" => jwt
-               })
-
-      assert socket.assigns.current_scope == %Trento.Users.User{id: 42}
-      assert socket.assigns.loading == false
     end
 
     test "rejects with :unauthorized when current_user_id does not match topic" do
@@ -136,7 +129,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "rejects with :ai_assistant_disabled when AI features are disabled" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+      expect(ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       assert {:error, :ai_assistant_disabled} =
                UserSocket
@@ -147,7 +140,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "prefers :ai_assistant_disabled over :unauthorized when AI is disabled with mismatched user_id" do
-      expect(Trento.AI.ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
+      expect(ApplicationConfigLoader.Mock, :load_config, fn -> [enabled: false] end)
 
       assert {:error, :ai_assistant_disabled} =
                UserSocket
@@ -189,15 +182,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "rejects the join when subscribing to AI configuration events fails" do
-      ai = Application.get_env(:trento, :ai)
-
-      Application.put_env(
-        :trento,
-        :ai,
-        Keyword.put(ai, :ai_configuration_events_adapter, AIConfigurationsEvents.Mock)
-      )
-
-      on_exit(fn -> Application.put_env(:trento, :ai, ai) end)
+      stub(ApplicationConfigLoader.Mock, :load_config, fn ->
+        :trento
+        |> Application.get_env(:ai, [])
+        |> Keyword.put(:ai_configuration_events_adapter, AIConfigurationsEvents.Mock)
+      end)
 
       expect(AIConfigurationsEvents.Mock, :subscribe, fn _ -> {:error, :no_pubsub} end)
 
@@ -248,6 +237,25 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         })
 
       assert_reply(ref, :error, :invalid_payload)
+    end
+
+    test "redacts the access token from the rejected payload it logs",
+         %{socket: socket, access_token: jwt} do
+      log =
+        capture_log(fn ->
+          ref =
+            push(socket, "send_message", %{
+              "run_id" => "r1",
+              "thread_id" => "t1",
+              "access_token" => jwt
+            })
+
+          assert_reply(ref, :error, :invalid_payload)
+        end)
+
+      assert log =~ "Received invalid send_message payload:"
+      assert log =~ "<REDACTED>"
+      refute log =~ jwt
     end
 
     test "rejects payload missing :run_id", %{socket: socket, access_token: jwt} do
@@ -952,21 +960,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  describe "handle_in send_message/3 — error paths" do
-    test "emits verbatim RUN_ERROR when user has no AI configuration" do
-      %{id: user_id} = insert(:user)
-      jwt = generate_jwt(user_id)
+  describe "handle_in send_message/3 — error paths before the agent starts" do
+    setup :join_socket_without_ai_config
 
-      {:ok, _, socket} =
-        UserSocket
-        |> socket("user_id", %{
-          current_user_id: user_id,
-          request_origin: "https://trento.test"
-        })
-        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
-          "access_token" => jwt
-        })
-
+    test "emits verbatim RUN_ERROR when user has no AI configuration",
+         %{socket: socket, access_token: jwt} do
       push(socket, "send_message", %{
         "message" => "hi",
         "run_id" => "r1",
@@ -980,20 +978,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       })
     end
 
-    test "does NOT stash run_id/thread_id when LLMBuilder errors out" do
-      %{id: user_id} = insert(:user)
-      jwt = generate_jwt(user_id)
-
-      {:ok, _, socket} =
-        UserSocket
-        |> socket("user_id", %{
-          current_user_id: user_id,
-          request_origin: "https://trento.test"
-        })
-        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
-          "access_token" => jwt
-        })
-
+    test "does NOT stash run_id/thread_id when LLMBuilder errors out",
+         %{socket: socket, access_token: jwt} do
       push(socket, "send_message", %{
         "message" => "hi",
         "run_id" => "should-not-stash",
@@ -1007,30 +993,13 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       refute Map.has_key?(assigns, :current_run_id)
       refute Map.has_key?(assigns, :current_thread_id)
     end
+  end
 
-    test "emits verbatim RUN_ERROR when sagents start_agent_sync fails" do
-      %{id: user_id} = insert(:user)
-      jwt = generate_jwt(user_id)
+  describe "handle_in send_message/3 — error paths while the agent starts" do
+    setup :join_socket_with_ai_config
 
-      insert(:ai_user_configuration,
-        user_id: user_id,
-        provider: :google,
-        model: "gemini-2.5-flash"
-      )
-
-      {:ok, _, socket} =
-        UserSocket
-        |> socket("user_id", %{
-          current_user_id: user_id,
-          request_origin: "https://trento.test"
-        })
-        |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
-          "access_token" => jwt
-        })
-
-      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
-      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
-
+    test "emits verbatim RUN_ERROR when sagents start_agent_sync fails",
+         %{socket: socket, access_token: jwt} do
       # run_agent probes the running agent (for model-drift detection) before
       # starting it — brand-new thread here, so :not_found.
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
@@ -1053,6 +1022,101 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "handle_in cancel_run/3" do
+    setup :join_socket_with_ai_config
+
+    test "cancels the in-flight run", %{socket: socket} do
+      seed_assigns(socket, %{loading: true, current_thread_id: "t-live"})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-live" -> :ok end)
+
+      ref = push(socket, "cancel_run", %{"run_id" => "r1", "thread_id" => "t-live"})
+      assert_reply ref, :ok
+
+      assert %{loading: false} = wait_assigns(socket)
+
+      # the client settles its own run
+      refute_push("ag_ui_event", _payload)
+    end
+
+    test "passes through cancelling a run where there's nothing running",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: false, current_thread_id: "t-idle"})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-idle" ->
+        {:error, "Cannot cancel, server is not running (status: idle)"}
+      end)
+
+      ref = push(socket, "cancel_run", %{})
+      assert_reply ref, :ok
+    end
+
+    test "clears :loading and reaches no agent when no thread was ever stashed to cancel",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: true})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, 0, fn _ ->
+        :unreachable
+      end)
+
+      ref = push(socket, "cancel_run", %{})
+      assert_reply ref, :ok
+
+      assert %{loading: false} = wait_assigns(socket)
+    end
+  end
+
+  describe "handle_in abandon_thread/3" do
+    setup :join_socket_with_ai_config
+
+    test "abandons the thread of the in-flight run", %{socket: socket} do
+      seed_assigns(socket, %{loading: true, current_thread_id: "t-live"})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-live" -> :ok end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
+
+      ref = push(socket, "abandon_thread", %{})
+      assert_reply ref, :ok
+
+      assert %{loading: false} = wait_assigns(socket)
+
+      # the client settles its own run
+      refute_push("ag_ui_event", _payload)
+    end
+
+    test "abandons the thread where there's nothing running",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: false, current_thread_id: "t-idle"})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-idle" ->
+        {:error, "Cannot cancel, server is not running (status: idle)"}
+      end)
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-idle" -> :ok end)
+
+      ref = push(socket, "abandon_thread", %{})
+      assert_reply ref, :ok
+    end
+
+    test "clears :loading and reaches no agent when no thread was ever stashed to abandon",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: true})
+
+      expect(Trento.AI.Agent.Server.Mock, :cancel, 0, fn _ ->
+        :unreachable
+      end)
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, 0, fn _ ->
+        :unreachable
+      end)
+
+      ref = push(socket, "abandon_thread", %{})
+      assert_reply ref, :ok
+
+      assert %{loading: false} = wait_assigns(socket)
+    end
+  end
+
   describe "handle_info — listening on ai configuration events" do
     setup :join_socket_with_ai_config
 
@@ -1068,7 +1132,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t-live" -> :ok end)
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t-live" -> :ok end)
 
-      Trento.AI.Configurations.Events.broadcast_cleared(user_id)
+      AIConfigurationsEvents.broadcast_cleared(user_id)
 
       assert_push("ai_configuration_cleared", %{})
       assert %{loading: false} = wait_assigns(socket)
@@ -1097,7 +1161,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     test "pushes ai_configuration_cleared without stopping any agent when no thread is active",
          %{user_id: user_id} do
       # No current_thread_id seeded → no stop_agent expectation.
-      # verify_on_exit! catches a stray stop_agent call.
+      # Mox raises on a stray stop_agent call.
       AIConfigurationsEvents.broadcast_cleared(user_id)
 
       assert_push("ai_configuration_cleared", %{})
@@ -1120,6 +1184,242 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  # Every describe above stops at the Mox adapter boundary proving the
+  # channel calls relevant downstream functions.
+  # These integration tests go all the way down the whole stack by swapping in a fake LLM implementation
+
+  describe "Agent run cancellation — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    test "cancels the run without killing the thread's agent", %{
+      socket: socket,
+      access_token: jwt
+    } do
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
+
+      pid = agent_pid!(thread_id)
+      monitor = Process.monitor(pid)
+
+      ref = push(socket, "cancel_run", %{"run_id" => "r1", "thread_id" => thread_id})
+
+      assert_reply ref, :ok, %{}, 1_000
+
+      refute_push("ag_ui_event", _payload, @push_timeout)
+
+      refute_receive {:DOWN, ^monitor, :process, ^pid, _reason}, @push_timeout
+      assert Process.alive?(pid)
+    end
+
+    test "lets the same thread be prompted again after the cancel", %{
+      socket: socket,
+      access_token: jwt
+    } do
+      %{thread_id: thread_id} = start_run!(socket, jwt, run_id: "r1")
+
+      ref = push(socket, "cancel_run", %{"run_id" => "r1", "thread_id" => thread_id})
+      assert_reply ref, :ok, %{}, 1_000
+
+      push(socket, "send_message", %{
+        "message" => "a follow-up prompt",
+        "run_id" => "r2",
+        "thread_id" => thread_id,
+        "access_token" => jwt
+      })
+
+      assert_receive {:llm_called, _task_pid}, @integration_timeout
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_STARTED", "runId" => "r2", "threadId" => ^thread_id},
+        @integration_timeout
+      )
+    end
+  end
+
+  describe "Thread abandonment/agent stopping — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    # Nobody releases the parked model, so the run task can only end by being
+    # killed: a teardown that waited the run out would blow the timeouts below
+    # rather than pass.
+    @tag fake_llm: [block_for: :timer.minutes(1)]
+    test "tears down the thread's agent mid-run", %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      pid = agent_pid!(thread_id)
+      monitor = Process.monitor(pid)
+      task_monitor = Process.monitor(task_pid)
+
+      ref = push(socket, "abandon_thread", %{})
+
+      assert_reply ref, :ok, %{}, 1_000
+
+      refute_push("ag_ui_event", _payload, @push_timeout)
+
+      # Run *and* conversation are gone — nothing addresses this thread again.
+      assert_receive {:DOWN, ^task_monitor, :process, ^task_pid, _reason}, @integration_timeout
+      assert_receive {:DOWN, ^monitor, :process, ^pid, _reason}, @integration_timeout
+    end
+
+    # The run is let finish first: the agent goes back to resting with its
+    # conversation still in memory — the state "New chat" leaves behind when
+    # the user reads an answer before starting over.
+    test "tears down a thread that is no longer streaming", %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      task_monitor = Process.monitor(task_pid)
+
+      send(task_pid, :release)
+
+      pid = agent_pid!(thread_id)
+      assert Process.alive?(pid)
+      monitor = Process.monitor(pid)
+
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"}, @integration_timeout)
+
+      # The run task is gone by answering, not by being killed.
+      assert_receive {:DOWN, ^task_monitor, :process, ^task_pid, :normal}, @integration_timeout
+
+      ref = push(socket, "abandon_thread", %{})
+      assert_reply ref, :ok
+
+      assert_receive {:DOWN, ^monitor, :process, ^pid, _reason}, @integration_timeout
+    end
+
+    test "lets the next prompt through - a new run starts on the same socket", %{
+      socket: socket,
+      access_token: jwt
+    } do
+      start_run!(socket, jwt, run_id: "r1")
+
+      ref = push(socket, "abandon_thread", %{})
+      assert_reply ref, :ok
+
+      # A new chat means a new thread id, hence a brand new agent behind it.
+      new_thread_id = "thread-#{Faker.UUID.v4()}"
+      stop_agent_on_exit(new_thread_id)
+
+      push(socket, "send_message", %{
+        "message" => "first prompt of the new chat",
+        "run_id" => "r2",
+        "thread_id" => new_thread_id,
+        "access_token" => jwt
+      })
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_STARTED", "runId" => "r2", "threadId" => ^new_thread_id},
+        @integration_timeout
+      )
+
+      assert_receive {:llm_called, _task_pid}, @integration_timeout
+    end
+  end
+
+  describe "Prompt processing — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    test "settles the run on the client and on the agent once the model answers",
+         %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      send(task_pid, :release)
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_FINISHED", "runId" => "r1", "threadId" => ^thread_id},
+        @integration_timeout
+      )
+
+      assert %{status: :idle} = TrentoAIAgentServer.get_info(thread_id)
+    end
+
+    @tag fake_llm: [reply: ["Hello", " world"]]
+    test "streams the model's deltas to the client as AG-UI text events", %{
+      socket: socket,
+      access_token: jwt
+    } do
+      %{task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      send(task_pid, :release)
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "TEXT_MESSAGE_START", "messageId" => "r1", "role" => "assistant"},
+        @integration_timeout
+      )
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "TEXT_MESSAGE_CONTENT", "messageId" => "r1", "delta" => "Hello"},
+        @integration_timeout
+      )
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "TEXT_MESSAGE_CONTENT", "messageId" => "r1", "delta" => " world"},
+        @integration_timeout
+      )
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "TEXT_MESSAGE_END", "messageId" => "r1"},
+        @integration_timeout
+      )
+    end
+
+    @tag fake_llm: [reply: {:error, "the provider said no"}]
+    test "surfaces a model failure to the client as RUN_ERROR", %{
+      socket: socket,
+      access_token: jwt
+    } do
+      %{task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      send(task_pid, :release)
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_ERROR", "message" => message},
+        @integration_timeout
+      )
+
+      assert message =~ "the provider said no"
+    end
+  end
+
+  describe "Agent stopping on ai_configuration cleared — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    # Nobody releases the parked model, so the run task can only end by being killed
+    @tag fake_llm: [block_for: :timer.minutes(1)]
+    test "tears down the agent of the thread that is mid-run", %{
+      socket: socket,
+      access_token: jwt,
+      user_id: user_id
+    } do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      pid = agent_pid!(thread_id)
+      ref = Process.monitor(pid)
+      task_monitor = Process.monitor(task_pid)
+
+      AIConfigurationsEvents.broadcast_cleared(user_id)
+
+      assert_receive {:DOWN, ^task_monitor, :process, ^task_pid, _reason}, @integration_timeout
+      assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, @integration_timeout
+
+      assert_push("ai_configuration_cleared", %{}, @integration_timeout)
+    end
+  end
+
   defp join_socket(_context) do
     jwt = generate_jwt(7)
     request_origin = "https://trento.test"
@@ -1136,14 +1436,25 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
   defp join_socket_with_ai_config(_context) do
     %{id: user_id} = insert(:user)
-    jwt = generate_jwt(user_id)
-    request_origin = "https://trento.test"
 
     insert(:ai_user_configuration,
       user_id: user_id,
       provider: :google,
       model: "gemini-2.5-flash"
     )
+
+    join_as_persisted_user(user_id)
+  end
+
+  defp join_socket_without_ai_config(_context) do
+    %{id: user_id} = insert(:user)
+
+    join_as_persisted_user(user_id)
+  end
+
+  defp join_as_persisted_user(user_id) do
+    jwt = generate_jwt(user_id)
+    request_origin = "https://trento.test"
 
     {:ok, _, socket} =
       UserSocket
@@ -1154,6 +1465,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
     Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
+    Mox.allow(Trento.AI.LLMBuilder.Mock, self(), socket.channel_pid)
 
     %{
       socket: socket,
@@ -1161,6 +1473,35 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       access_token: jwt,
       request_origin: request_origin
     }
+  end
+
+  # Pushes a prompt and blocks until the run is really inside the model call, so
+  # a following `cancel_run` has something to cancel.
+  #
+  # `:task_pid` is the parked run task: `send(task_pid, :release)` makes the
+  # fake model answer and the run complete.
+  defp start_run!(socket, jwt, opts) do
+    run_id = Keyword.fetch!(opts, :run_id)
+    thread_id = "thread-#{Faker.UUID.v4()}"
+
+    push(socket, "send_message", %{
+      "message" => "hello",
+      "run_id" => run_id,
+      "thread_id" => thread_id,
+      "access_token" => jwt
+    })
+
+    assert_push(
+      "ag_ui_event",
+      %{"type" => "RUN_STARTED", "runId" => ^run_id, "threadId" => ^thread_id},
+      @integration_timeout
+    )
+
+    assert_receive {:llm_called, task_pid}, @integration_timeout
+
+    stop_agent_on_exit(thread_id)
+
+    %{thread_id: thread_id, task_pid: task_pid}
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})

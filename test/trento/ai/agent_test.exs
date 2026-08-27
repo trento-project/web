@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule Trento.AI.AgentTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   use Trento.AI.AICase
 
   import Mox
@@ -412,27 +412,45 @@ defmodule Trento.AI.AgentTest do
 
     # Counterproof about the functioning of the FakeChatModel.
     # When the run is released, it completes successfully and the agent goes back to idle.
-    @tag running_agent: [block_for: :timer.minutes(1), reply: @fake_reply]
-    test "a released run finishes successfully", %{agent_id: agent_id} do
-      task_pid = await_in_flight_run()
+    scenarios = [
+      %{
+        name: "a released run finishes successfully",
+        reply: @fake_reply,
+        expected_content: @fake_reply
+      },
+      %{
+        name: "a run answered in several chunks lands as one assistant content part",
+        reply: ["You are ", "absolutely ", "right,", " I am a fake", " model."],
+        expected_content: @fake_reply
+      }
+    ]
 
-      send(task_pid, :release)
+    for %{name: name, reply: reply} = scenario <- scenarios do
+      @scenario scenario
+      @tag running_agent: [block_for: :timer.minutes(1), reply: reply]
+      test name, %{agent_id: agent_id} do
+        task_pid = await_in_flight_run()
 
-      assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
+        send(task_pid, :release)
 
-      assert %{status: :idle, state: %{messages: messages}} =
-               TrentoAIAgentServer.get_info(agent_id)
+        assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
 
-      assert Enum.any?(
-               messages,
-               &match?(
-                 %Message{
-                   role: :assistant,
-                   content: [%Message.ContentPart{content: @fake_reply}]
-                 },
-                 &1
+        assert %{status: :idle, state: %{messages: messages}} =
+                 TrentoAIAgentServer.get_info(agent_id)
+
+        expected_content = Map.fetch!(@scenario, :expected_content)
+
+        assert Enum.any?(
+                 messages,
+                 &match?(
+                   %Message{
+                     role: :assistant,
+                     content: [%Message.ContentPart{content: ^expected_content}]
+                   },
+                   &1
+                 )
                )
-             )
+      end
     end
 
     test "returns an error instead of exiting when no agent is registered for the id" do
@@ -463,7 +481,7 @@ defmodule Trento.AI.AgentTest do
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: build(:user))
 
     :ok = TrentoAIAgent.run(agent, prompt)
-    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+    stop_agent_on_exit(agent_id)
 
     %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id), prompt: prompt}
   end
@@ -489,7 +507,7 @@ defmodule Trento.AI.AgentTest do
         pubsub: {Phoenix.PubSub, Trento.PubSub}
       )
 
-    on_exit(fn -> TrentoAIAgent.stop(agent_id) end)
+    stop_agent_on_exit(agent_id)
 
     %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id)}
   end

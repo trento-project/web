@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.V1.AIConfigurationJSONTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   import Trento.Factory
 
