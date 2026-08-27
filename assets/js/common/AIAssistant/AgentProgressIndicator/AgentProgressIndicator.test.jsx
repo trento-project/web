@@ -23,6 +23,7 @@ describe('AgentProgressIndicatorView', () => {
     (label) => {
       render(<AgentProgressIndicatorView>{label}</AgentProgressIndicatorView>);
       expect(screen.getByText(label)).toBeVisible();
+      expect(screen.getByRole('status')).toHaveTextContent(label);
     }
   );
 
@@ -30,7 +31,12 @@ describe('AgentProgressIndicatorView', () => {
     render(
       <AgentProgressIndicatorView>Thinking...</AgentProgressIndicatorView>
     );
-    expect(screen.getByRole('alert', { name: 'Loading' })).toBeVisible();
+
+    const spinner = screen.getByLabelText('Loading');
+
+    expect(spinner).toBeVisible();
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(spinner).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('renders no spinner when the answer is not in progress', () => {
@@ -39,7 +45,7 @@ describe('AgentProgressIndicatorView', () => {
         Response stopped.
       </AgentProgressIndicatorView>
     );
-    expect(screen.queryByRole('alert', { name: 'Loading' })).toBeNull();
+    expect(screen.queryByLabelText('Loading')).toBeNull();
   });
 });
 
@@ -137,7 +143,7 @@ describe('AgentProgressIndicator', () => {
       render(<AgentProgressIndicator isRunning={false} />);
 
       expect(screen.getByText('Response stopped.')).toBeVisible();
-      expect(screen.queryByRole('alert', { name: 'Loading' })).toBeNull();
+      expect(screen.queryByLabelText('Loading')).toBeNull();
     });
 
     it.each([

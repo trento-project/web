@@ -17,7 +17,7 @@ export function deriveProgressLabel(content) {
 export function AgentProgressIndicatorView({ spinner = true, children }) {
   return (
     <div role="status" className="flex items-center gap-2 text-gray-600 mt-2">
-      {spinner && <Spinner />}
+      {spinner && <Spinner aria-hidden="true" />}
       <span className="text-sm">{children}</span>
     </div>
   );
