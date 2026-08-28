@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-12T18:52:24Z",
-    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
-    "run_id": "29204082804",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.5
-      },
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-12T18:53:13Z",
     "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
     "run_id": "29204082804",
@@ -5739,6 +5719,66 @@
       {
         "name": "Deregistration Modal component::should render a host deregistration modal correctly",
         "score": 0.09501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-28T05:07:11Z",
+    "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
+    "run_id": "33135121612",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 20
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.2163
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.2163
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.2087
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1946
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1946
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1946
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1938
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.1838
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark the application cluster health as stale when a clustered application instance agent stops reporting::Homepage Stale data should mark the application cluster health as stale when a clustered application instance agent stops reporting",
+        "score": 0.02501
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.02501
       }
     ]
   }
