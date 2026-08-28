@@ -36,7 +36,14 @@ function MarkdownText(props) {
     <MarkdownTextPrimitive
       remarkPlugins={[remarkGfm]}
       className="aui-md prose max-w-none"
-      components={{ SyntaxHighlighter: CodeBlock }}
+      components={{
+        SyntaxHighlighter: CodeBlock,
+        table: ({ node, ...tableProps }) => (
+          <div className="overflow-x-auto">
+            <table {...tableProps} />
+          </div>
+        ),
+      }}
       {...props}
     />
   );
