@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-11T22:00:43Z",
-    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
-    "run_id": "29165425930",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-12T18:19:39Z",
     "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
     "run_id": "29203170404",
@@ -5740,6 +5724,30 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-28T01:43:34Z",
+    "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
+    "run_id": "33132806221",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 39,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.07501
+      },
+      {
+        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — AI settings drift swaps the running agent silently when only the api key changed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
       }
     ]
   }
