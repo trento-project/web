@@ -387,7 +387,7 @@ describe('AG-UI event flow', () => {
     await user.click(screen.getByRole('button', { name: 'Open AI Assistant' }));
 
     // after opening again the chat modal, we start from a clean state
-    expect(screen.getByText("Hi, I'm Liz.")).toBeVisible();
+    expect(await screen.findByText("Hi, I'm Liz.")).toBeVisible();
     expect(await screen.findByLabelText('Send message')).toBeVisible();
     expect(screen.getByRole('button', { name: 'New chat' })).toBeEnabled();
     expect(
