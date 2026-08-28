@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: SUSE LLC
+# SPDX-License-Identifier: Apache-2.0
+
+---
+name: Backport PR
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed, labeled]
+
+jobs:
+  backport:
+    name: Backport
+    uses: trento-project/.github/.github/workflows/backport-pr.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
+    secrets:
+      gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
+      ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
+      gpg_key: ${{ secrets.TRENTOBOT_GPG_KEY }}
