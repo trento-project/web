@@ -19,6 +19,8 @@
  * @type {Cypress.PluginConfig}
  */
 
+const http = require('http');
+const https = require('https');
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
 let heartbeatsIntervals = {};
@@ -27,25 +29,43 @@ module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
+  const url = new URL(config.baseUrl);
+  const isHttps = url.protocol === 'https:';
+  const transport = isHttps ? https : http;
+  // Heartbeats are sent for every agent on every interval. Against a remote
+  // target that is a TLS handshake per request unless connections are reused.
+  const heartbeatAgent = new transport.Agent({ keepAlive: true });
+
   cypressSplit(on, config);
   on('task', {
     searchEmailInMailpit,
     deleteAllEmailsFromMailpit,
     startAgentHeartbeat({ agents, apiKey }) {
-      const url = new URL(config.baseUrl);
-      const isHttps = url.protocol === 'https:';
-      const transport = isHttps ? require('https') : require('http');
-
       const heartbeat = (agentId) => {
-        transport
-          .request({
+        const request = transport.request(
+          {
             host: url.hostname,
             path: `/api/v1/hosts/${agentId}/heartbeat`,
             port: url.port || (isHttps ? 443 : 80),
             method: 'POST',
             headers: apiKey ? { 'X-Trento-ApiKey': apiKey } : {},
-          })
-          .end();
+            agent: heartbeatAgent,
+          },
+          // The response must be drained for the socket to be released back
+          // to the keep-alive pool.
+          (response) => response.resume()
+        );
+
+        // Without a listener, a transient network error on the request emits
+        // an uncaught exception and takes the plugin process down.
+        request.on('error', (error) =>
+          // eslint-disable-next-line no-console
+          console.error(
+            `Heartbeat for agent ${agentId} failed: ${error.message}`
+          )
+        );
+
+        request.end();
       };
 
       agents.forEach((agentId) => {

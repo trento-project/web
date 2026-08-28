@@ -33,10 +33,15 @@ export const nwpSystemShouldBeDisplayed = () =>
 export const nwpSystemShouldNotBeDisplayed = () =>
   cy.get(nwpSystemCell, { timeout: 20000 }).should('not.exist');
 
-// Timeout is 25 seconds to cover time for heartbeat failure event
-// and home page refresh after debounce time
+// The home page refreshes after a debounce, so it needs more time than the
+// usual stale timeout to reflect the heartbeat failure event.
+const HOME_PAGE_DEBOUNCE_MARGIN = 5000;
+
 export const nwpSystemRowIsMarkedStale = () =>
-  basePage.elementIsMarkedStale(nwpSystemRow, 25000);
+  basePage.elementIsMarkedStale(
+    nwpSystemRow,
+    basePage.staleTimeout() + HOME_PAGE_DEBOUNCE_MARGIN
+  );
 
 export const nwpSystemRowIsMarkedInSync = () =>
   basePage.elementIsMarkedInSync(nwpSystemRow);

@@ -43,6 +43,13 @@ const removeEnv1TagButton = 'span span:contains("env1") span';
 export const addTagButtons = 'span span:contains("Add Tag")';
 const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.username}")`;
 
+// Capabilities
+// Derived in cypress.config.js from `web_mode`. A remote target is an instance
+// reached over a network with real latency, as opposed to a local dev instance,
+// and every timing in this suite that is comfortable against localhost needs
+// more slack there.
+const isRemoteTarget = () => Cypress.expose('remote_target');
+
 // UI Interactions
 export const visit = (url = '/') => cy.visit(url);
 
@@ -171,13 +178,24 @@ export const removeTagButtonIsDisabled = () =>
 export const removeTagButtonIsEnabled = () =>
   cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
 
-export const elementIsMarkedStale = (element, timeout = 20000) =>
+// A host is marked stale once its heartbeat expires, but the expiry is only
+// noticed by a scheduled job that runs every 10 seconds. On top of that window
+// a remote target adds network latency, so the wait has to be generous. It
+// costs nothing when the test passes: the assertion resolves as soon as the
+// class appears.
+const LOCAL_STALE_TIMEOUT = 20000;
+const REMOTE_STALE_TIMEOUT = 40000;
+
+export const staleTimeout = () =>
+  isRemoteTarget() ? REMOTE_STALE_TIMEOUT : LOCAL_STALE_TIMEOUT;
+
+export const elementIsMarkedStale = (element, timeout = staleTimeout()) =>
   cy.get(element, { timeout }).should('have.class', 'bg-gray-100');
 
 export const elementIsMarkedInSync = (element) =>
   cy.get(element).should('not.have.class', 'bg-gray-100');
 
-export const healthIconIsMarkedStale = (icon, timeout = 20000) =>
+export const healthIconIsMarkedStale = (icon, timeout = staleTimeout()) =>
   cy.get(icon, { timeout }).should('have.attr', 'data-stale');
 
 export const healthIconIsMarkedInSync = (icon) =>
@@ -295,8 +313,7 @@ export const loadScenario = (scenario) => {
     Cypress.expose('project_root'),
     Cypress.expose('photofinish_binary'),
   ];
-  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
-  const photofinishExecTimeout = isTrentoProdInstance ? 180000 : 60000;
+  const photofinishExecTimeout = isRemoteTarget() ? 180000 : 60000;
 
   const baseUrl = Cypress.config().baseUrl;
 

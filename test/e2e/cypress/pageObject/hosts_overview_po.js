@@ -181,7 +181,7 @@ export const expectedAmountOfPassingIconsIsDisplayed = (amount) =>
 
 export const expectedAmountOfStaleIconsIsDisplayed = (
   amount,
-  timeout = 20000
+  timeout = basePage.staleTimeout()
 ) =>
   cy
     .findAllByRole('img', { name: /health/i })
@@ -190,7 +190,7 @@ export const expectedAmountOfStaleIconsIsDisplayed = (
 
 export const allVisibleRowsAreMarkedStale = () =>
   cy
-    .findAllByRole('row', { timeout: 20000 })
+    .findAllByRole('row', { timeout: basePage.staleTimeout() })
     .filter(':not(:has(th))')
     .should(($rows) =>
       $rows.each((index, $row) => expect($row).to.have.class('bg-gray-100'))
