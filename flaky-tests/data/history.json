@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-07-13T19:20:47Z",
-    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
-    "run_id": "29276854378",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Label Component::should display an info tooltip if specified",
-        "score": 0.09051
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.07501
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_start",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-13T19:21:42Z",
     "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
     "run_id": "29276854378",
@@ -5767,5 +5739,57 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-29T04:29:14Z",
+    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
+    "run_id": "33227228770",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 100
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1952
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1952
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1952
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1832
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1832
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1832
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1832
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.05001
+      },
+      {
+        "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.05001
+      }
+    ]
   }
 ]
