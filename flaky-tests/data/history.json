@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-07-13T22:44:16Z",
-    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
-    "run_id": "29279927838",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 20
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1855
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1360
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.05158
-      },
-      {
-        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.04751
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-14T18:26:18Z",
     "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
     "run_id": "29356858409",
@@ -5787,5 +5755,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-08-29T19:57:17Z",
+    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
+    "run_id": "33271477372",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
