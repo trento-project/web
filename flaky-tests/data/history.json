@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-12T22:04:29Z",
-    "commit": "b2e58205a7a5aa8ed887281e19e97cd7efe710f3",
-    "run_id": "29205955152",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-13T19:01:58Z",
     "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
     "run_id": "29275877830",
@@ -5772,5 +5756,25 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-29T01:14:17Z",
+    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
+    "run_id": "33224984428",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.9501
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.09051
+      }
+    ]
   }
 ]
