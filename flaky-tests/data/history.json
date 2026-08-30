@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-07-14T22:41:58Z",
-    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
-    "run_id": "29362839807",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 99,
-      "failed_runs": 17
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.2303
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1092
-      },
-      {
-        "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
-        "score": 0.05001
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-15T18:29:33Z",
     "commit": "43e5c106312b7d437ff820d666c6a3b72b6f76c3",
     "run_id": "29439777030",
@@ -5841,6 +5813,22 @@
       },
       {
         "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — access_token validation replies {-error, -unauthorized} when token sub does not match the socket user",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-30T20:00:35Z",
+    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
+    "run_id": "33331698017",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.05001
       }
     ]
