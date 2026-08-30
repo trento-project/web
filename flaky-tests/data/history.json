@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-14T19:05:52Z",
-    "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
-    "run_id": "29359119355",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails::should show instance operations",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-14T22:41:58Z",
     "commit": "bdae63daef5c57981f174bd4ac5ec5fc7b46188e",
     "run_id": "29362839807",
@@ -5838,6 +5822,26 @@
       {
         "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-08-30T19:59:30Z",
+    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
+    "run_id": "33331698017",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 39,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — access_token validation replies {-error, -unauthorized} when token sub does not match the socket user",
+        "score": 0.05001
       }
     ]
   }
