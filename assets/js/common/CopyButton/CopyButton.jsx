@@ -47,7 +47,7 @@ function CopyButton({
   };
 
   return (
-    <Tooltip content="Copied to clipboard" visible={contentCopied}>
+    <Tooltip content="Copied to clipboard" visible={contentCopied} wrap={false}>
       <button
         type="button"
         onClick={() => copyText()}
