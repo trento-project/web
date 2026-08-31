@@ -1,57 +1,5 @@
 [
   {
-    "timestamp": "2026-07-16T22:29:49Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29528501766",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 18
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.2286
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1380
-      },
-      {
-        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
-        "score": 0.05001
-      },
-      {
-        "name": "should show the expected cluster stopped state::HANA cluster details Cluster state should show the expected cluster stopped state",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-17T18:27:11Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29602974177",
@@ -5853,6 +5801,17 @@
     "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
     "run_id": "33444220097",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-08-31T22:27:20Z",
+    "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
+    "run_id": "33444220097",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
