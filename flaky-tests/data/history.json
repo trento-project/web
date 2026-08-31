@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-16T18:29:29Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29523074065",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-16T19:04:29Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29525188684",
@@ -5859,5 +5843,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-08-31T22:08:26Z",
+    "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
+    "run_id": "33443488590",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
