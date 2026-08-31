@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { faker } from '@faker-js/faker';
-import { screen, fireEvent, within } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
