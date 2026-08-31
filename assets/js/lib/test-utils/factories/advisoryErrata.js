@@ -31,11 +31,11 @@ const fixMapFactory = Factory.define(({ transientParams }) => {
 });
 
 export const cveFactory = Factory.define(
-  () =>
-    `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${faker.number.int({
-      min: 0,
-      max: 9999,
-    })}`
+  ({ sequence }) =>
+    `CVE-${faker.number.int({ min: 1991, max: 2024 })}-${`${sequence}`.padStart(
+      4,
+      '0'
+    )}`
 );
 
 export const advisoryErrataFactory = Factory.define(({ params }) => ({

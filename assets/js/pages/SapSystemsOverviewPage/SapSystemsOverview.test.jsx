@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';

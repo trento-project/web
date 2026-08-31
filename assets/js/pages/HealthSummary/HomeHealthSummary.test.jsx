@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';

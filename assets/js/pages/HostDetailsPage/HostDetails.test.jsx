@@ -4,7 +4,6 @@
 import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
 import { networkClient } from '@lib/network';
@@ -441,9 +440,9 @@ describe('HostDetails component', () => {
 
   describe('last execution overview', () => {
     it('should be displayed when lastExecution has data inside', () => {
-      const passingCount = faker.number.int(100);
-      const warningCount = faker.number.int(100);
-      const criticalCount = faker.number.int(100);
+      const passingCount = faker.number.int({ min: 1, max: 99 });
+      const warningCount = passingCount + 100;
+      const criticalCount = passingCount + 200;
 
       const lastExecution = {
         data: {
