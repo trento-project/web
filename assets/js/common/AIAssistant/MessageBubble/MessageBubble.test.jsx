@@ -6,7 +6,10 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { useAuiState } from '@assistant-ui/react';
+import { useActionBarCopy } from '@assistant-ui/core/react';
 import { UserMessage, AssistantMessage } from './MessageBubble';
+
+jest.mock('copy-to-clipboard', () => jest.fn());
 
 jest.mock('@assistant-ui/react', () => ({
   ErrorPrimitive: {
@@ -20,7 +23,14 @@ jest.mock('@assistant-ui/react', () => ({
     // error. This stub is unconditional, so the tests below can prove the slot is mounted
     Error: ({ children }) => <div>{children}</div>,
   },
+  ActionBarPrimitive: {
+    Root: ({ children, ...props }) => <div {...props}>{children}</div>,
+  },
   useAuiState: jest.fn(),
+}));
+
+jest.mock('@assistant-ui/core/react', () => ({
+  useActionBarCopy: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/react-markdown', () => ({
@@ -38,6 +48,19 @@ const mockAssistantMessage = (overrides = {}) => {
   useAuiState.mockImplementation((selector) => selector({ message }));
 };
 
+const mockCopyableReply = (copyable) => {
+  useActionBarCopy.mockReturnValue({
+    copy: jest.fn(),
+    disabled: !copyable,
+    isCopied: false,
+  });
+};
+
+const copyButton = () =>
+  screen.queryByRole('button', { name: 'copy to clipboard' });
+
+beforeEach(() => mockCopyableReply(false));
+
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
     const { container } = render(<UserMessage />);
@@ -50,6 +73,14 @@ describe('UserMessage', () => {
   it('does not render the assistant-only error slot', () => {
     render(<UserMessage />);
     expect(screen.queryByText('Error message')).not.toBeInTheDocument();
+  });
+
+  it('does not allow copying user messages', () => {
+    mockCopyableReply(true);
+
+    render(<UserMessage />);
+
+    expect(copyButton()).not.toBeInTheDocument();
   });
 });
 
@@ -97,5 +128,19 @@ describe('AssistantMessage', () => {
     render(<AssistantMessage />);
 
     expect(screen.getByRole('status')).toHaveTextContent('Response stopped.');
+  });
+
+  it('allows copying an assistant reply', () => {
+    mockCopyableReply(true);
+
+    render(<AssistantMessage />);
+
+    expect(copyButton()).toBeVisible();
+  });
+
+  it('keeps the copy action out of the way while the reply is still coming', () => {
+    render(<AssistantMessage isRunning />);
+
+    expect(copyButton()).not.toBeInTheDocument();
   });
 });

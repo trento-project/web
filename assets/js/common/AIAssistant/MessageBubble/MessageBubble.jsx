@@ -1,13 +1,18 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { ErrorPrimitive, MessagePrimitive } from '@assistant-ui/react';
+import React, { useRef } from 'react';
+import {
+  ActionBarPrimitive,
+  ErrorPrimitive,
+  MessagePrimitive,
+} from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
 import CodeBlock from './CodeBlock';
+import CopyReplyButton from './CopyReplyButton';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -44,6 +49,7 @@ function MarkdownText(props) {
           </div>
         ),
       }}
+      smooth={false}
       {...props}
     />
   );
@@ -70,11 +76,19 @@ export function UserMessage() {
 }
 
 export function AssistantMessage({ isRunning }) {
+  // `CopyReplyButton` copies this subtree's HTML
+  const replyRef = useRef(null);
+
   return (
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
-        <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
+        <div ref={replyRef} data-testid="assistant-reply">
+          <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
+        </div>
         <AgentProgressIndicator isRunning={isRunning} />
+        <ActionBarPrimitive.Root className="mt-1 flex">
+          <CopyReplyButton contentRef={replyRef} />
+        </ActionBarPrimitive.Root>
       </MessageBubbleView>
       <MessageError />
     </MessagePrimitive.Root>
