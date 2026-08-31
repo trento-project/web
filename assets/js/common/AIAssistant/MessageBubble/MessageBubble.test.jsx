@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { useAuiState } from '@assistant-ui/react';
-import { useActionBarCopy } from '@assistant-ui/core/react';
+import { useActionBarCopy, useActionBarReload } from '@assistant-ui/core/react';
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
 jest.mock('copy-to-clipboard', () => jest.fn());
@@ -25,12 +25,14 @@ jest.mock('@assistant-ui/react', () => ({
   },
   ActionBarPrimitive: {
     Root: ({ children, ...props }) => <div {...props}>{children}</div>,
+    Reload: ({ children }) => children,
   },
   useAuiState: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/core/react', () => ({
   useActionBarCopy: jest.fn(),
+  useActionBarReload: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/react-markdown', () => ({
@@ -59,7 +61,19 @@ const mockCopyableReply = (copyable) => {
 const copyButton = () =>
   screen.queryByRole('button', { name: 'copy to clipboard' });
 
-beforeEach(() => mockCopyableReply(false));
+const retryButton = () => screen.queryByRole('button', { name: 'retry' });
+
+const mockReloadableReply = (reloadable) => {
+  useActionBarReload.mockReturnValue({
+    reload: jest.fn(),
+    disabled: !reloadable,
+  });
+};
+
+beforeEach(() => {
+  mockCopyableReply(false);
+  mockReloadableReply(true);
+});
 
 describe('UserMessage', () => {
   it('renders the user message bubble with the "You" label and parts slot', () => {
@@ -142,5 +156,19 @@ describe('AssistantMessage', () => {
     render(<AssistantMessage isRunning />);
 
     expect(copyButton()).not.toBeInTheDocument();
+  });
+
+  it('allows retrying the latest assistant reply', () => {
+    render(<AssistantMessage />);
+
+    expect(retryButton()).toBeVisible();
+  });
+
+  it('does not allow retrying an earlier reply', () => {
+    mockAssistantMessage({ isLast: false });
+
+    render(<AssistantMessage />);
+
+    expect(retryButton()).not.toBeInTheDocument();
   });
 });

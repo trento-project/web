@@ -13,6 +13,7 @@ import remarkGfm from 'remark-gfm';
 import AgentProgressIndicator from '../AgentProgressIndicator';
 import CodeBlock from './CodeBlock';
 import CopyReplyButton from './CopyReplyButton';
+import RetryReplyButton from './RetryReplyButton';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -88,6 +89,7 @@ export function AssistantMessage({ isRunning }) {
         <AgentProgressIndicator isRunning={isRunning} />
         <ActionBarPrimitive.Root className="mt-1 flex">
           <CopyReplyButton contentRef={replyRef} />
+          <RetryReplyButton />
         </ActionBarPrimitive.Root>
       </MessageBubbleView>
       <MessageError />
