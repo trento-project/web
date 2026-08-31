@@ -2,13 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-<<<<<<< HEAD
-import { screen, fireEvent } from '@testing-library/react';
-import 'intersection-observer';
-=======
 import { faker } from '@faker-js/faker';
 import { screen, fireEvent, within } from '@testing-library/react';
->>>>>>> 1093a75 (Reduce jest flakiness (#4647))
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
