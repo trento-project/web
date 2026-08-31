@@ -396,6 +396,34 @@ describe('AG-UI event flow', () => {
     expect(screen.queryByText('hello')).not.toBeInTheDocument();
   });
 
+  it('allows copying the reply only once the run has finished', async () => {
+    const { emitAgUi, sendUserMessage } = await renderAIAssistant({
+      open: true,
+    });
+    const { thread_id: threadId, run_id: runId } = await sendUserMessage(
+      'how many hosts are healthy?'
+    );
+
+    const messageId = 'asst-1';
+    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+    await emitAgUi(aguiEvents.textStart({ messageId }));
+    await emitAgUi(aguiEvents.textContent({ messageId, delta: 'All **3** ' }));
+
+    const copyReplyButton = () =>
+      screen.queryByRole('button', { name: 'copy to clipboard' });
+
+    await waitFor(() => expect(assistantBubble()).toHaveTextContent('All'));
+    expect(copyReplyButton()).not.toBeInTheDocument();
+
+    await emitAgUi(
+      aguiEvents.textContent({ messageId, delta: 'are healthy.' })
+    );
+    await emitAgUi(aguiEvents.textEnd({ messageId }));
+    await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
+
+    await waitFor(() => expect(copyReplyButton()).toBeVisible());
+  });
+
   it('"New chat" starts a new conversation with a new thread ID', async () => {
     const { user, sendUserMessage, streamAssistantTurn } =
       await renderAIAssistant({ open: true });
