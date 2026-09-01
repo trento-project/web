@@ -11,7 +11,7 @@ on:
       - "VERSION"
       - "CHANGELOG.md"
   pull_request:
-    types: [opened, synchronize, labeled]
+    types: [opened, synchronize]
     paths-ignore:
       - "VERSION"
   workflow_dispatch:
