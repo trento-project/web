@@ -111,7 +111,7 @@ defmodule Trento.MixProject do
       {:unplug, "~> 1.0.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 5.0"},
-      {:joken, "~> 2.5.0"},
+      {:joken, "~> 2.6.2"},
       # required overrides to upgrade to elixir 1.15.7 and erlang otp 26
       # https://stackoverflow.com/questions/76562092/hi-i-had-created-elixir-project-with-phoenix-framework-there-is-yaml-file-when
       {:ecto, "~> 3.13"},
