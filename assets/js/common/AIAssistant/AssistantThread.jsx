@@ -15,6 +15,7 @@ import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
 import {
+  canSendMessage,
   effectiveConnectionStatus,
   isConfigurationCleared,
   isConfigurationRestored,
@@ -93,7 +94,7 @@ export function ThreadContainer({ children }) {
   );
 }
 
-export function ThreadMessages({ isRunning = false }) {
+export function ThreadMessages({ isRunning = false, isChatActive = false }) {
   return (
     <ThreadPrimitive.Messages>
       {({ message }) => {
@@ -101,7 +102,13 @@ export function ThreadMessages({ isRunning = false }) {
           case 'user':
             return <UserMessage />;
           case 'assistant':
-            return <AssistantMessage isRunning={isRunning} message={message} />;
+            return (
+              <AssistantMessage
+                isChatActive={isChatActive}
+                isRunning={isRunning}
+                message={message}
+              />
+            );
           default:
             return null;
         }
@@ -125,6 +132,8 @@ function AssistantThread({
     configurationStatus
   );
 
+  const isChatActive = canSendMessage(connection, configurationStatus);
+
   return (
     <ThreadContainer>
       <ChatHeader
@@ -139,7 +148,7 @@ function AssistantThread({
       >
         {isEmpty && <ThreadWelcome />}
 
-        <ThreadMessages isRunning={isRunning} />
+        <ThreadMessages isChatActive={isChatActive} isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
           {isConfigurationRestored(configurationStatus) && <RestoredBanner />}

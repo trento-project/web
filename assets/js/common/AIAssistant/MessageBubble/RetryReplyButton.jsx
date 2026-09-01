@@ -6,13 +6,14 @@ import { ActionBarPrimitive } from '@assistant-ui/react';
 import { useActionBarReload } from '@assistant-ui/core/react';
 import { EOS_REFRESH_FILLED } from 'eos-icons-react';
 
-// Re-runs the last prompt. Only the last can be retried.
-//
-// Current response for the last prompts goes away from screen
-function RetryReplyButton({ isLast = false }) {
+// Re-runs the last prompt.
+// - Only the last reply can be retried
+// - current response to the last prompt goes away from the screen
+// - retrial is available only on active chats
+function RetryReplyButton({ isLast = false, isChatActive = false }) {
   const { disabled } = useActionBarReload();
 
-  if (disabled || !isLast) return null;
+  if (disabled || !isLast || !isChatActive) return null;
 
   return (
     <ActionBarPrimitive.Reload asChild>

@@ -45,10 +45,15 @@ const assistantMessage = (overrides = {}) => ({
   ...overrides,
 });
 
-const renderAssistant = ({ isRunning = false, ...overrides } = {}) =>
+const renderAssistant = ({
+  isRunning = false,
+  isChatActive = true,
+  ...overrides
+} = {}) =>
   render(
     <AssistantMessage
       isRunning={isRunning}
+      isChatActive={isChatActive}
       message={assistantMessage(overrides)}
     />
   );

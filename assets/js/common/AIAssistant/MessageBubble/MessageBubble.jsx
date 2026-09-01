@@ -76,7 +76,7 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning, message }) {
+export function AssistantMessage({ isRunning, message, isChatActive = false }) {
   // `CopyReplyButton` copies this subtree's HTML
   const replyRef = useRef(null);
 
@@ -89,7 +89,10 @@ export function AssistantMessage({ isRunning, message }) {
         <AgentProgressIndicator isRunning={isRunning} message={message} />
         <ActionBarPrimitive.Root className="mt-1 flex">
           <CopyReplyButton contentRef={replyRef} />
-          <RetryReplyButton isLast={message.isLast} />
+          <RetryReplyButton
+            isLast={message.isLast}
+            isChatActive={isChatActive}
+          />
         </ActionBarPrimitive.Root>
       </MessageBubbleView>
       <MessageError />

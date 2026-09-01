@@ -15,7 +15,11 @@ jest.mock('@assistant-ui/core/react', () => ({
 
 const retryButton = () => screen.queryByRole('button', { name: 'retry' });
 
-const renderRetryButton = ({ isLast = true, ...reloadState } = {}) => {
+const renderRetryButton = ({
+  isLast = true,
+  isChatActive = true,
+  ...reloadState
+} = {}) => {
   const reload = jest.fn();
   useActionBarReload.mockReturnValue({
     reload,
@@ -23,7 +27,7 @@ const renderRetryButton = ({ isLast = true, ...reloadState } = {}) => {
     ...reloadState,
   });
 
-  render(<RetryReplyButton isLast={isLast} />);
+  render(<RetryReplyButton isChatActive={isChatActive} isLast={isLast} />);
 
   return { reload };
 };
@@ -37,6 +41,12 @@ describe('RetryReplyButton', () => {
 
   it('does not allow retrying previous replies', () => {
     renderRetryButton({ isLast: false });
+
+    expect(retryButton()).not.toBeInTheDocument();
+  });
+
+  it('cannot retry while the chat is read-only', () => {
+    renderRetryButton({ isChatActive: false });
 
     expect(retryButton()).not.toBeInTheDocument();
   });
