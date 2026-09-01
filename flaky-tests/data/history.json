@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-17T18:28:26Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29602974177",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-17T18:57:51Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29604569272",
@@ -5880,6 +5864,22 @@
       {
         "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-01T20:05:49Z",
+    "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
+    "run_id": "33551910892",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
