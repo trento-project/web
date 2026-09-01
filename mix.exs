@@ -91,8 +91,7 @@ defmodule Trento.MixProject do
       {:floki, ">= 0.36.2", only: :test},
       {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.3.0"},
-      # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
-      {:ranch, "~> 2.2.0", override: true},
+      {:ranch, "~> 2.2.0"},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
       {:httpoison, "== 2.3.0"},
       {:jason, "~> 1.4"},
