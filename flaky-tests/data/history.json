@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-07-17T22:32:50Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29607916916",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 23
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.2383
-      },
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1966
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1909
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.05001
-      },
-      {
-        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-18T18:16:02Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29655052291",
@@ -5867,6 +5831,17 @@
     "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
     "run_id": "33553541522",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-01T20:30:37Z",
+    "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
+    "run_id": "33553541522",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
