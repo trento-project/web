@@ -5,8 +5,11 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import copy from 'copy-to-clipboard';
 import { renderAIAssistant } from '@lib/test-utils/aiAssistant';
 import { aguiEvents } from '@lib/test-utils/aguiEvents';
+
+jest.mock('copy-to-clipboard', () => jest.fn(() => true));
 
 const assistantBubbles = () =>
   Array.from(document.querySelectorAll('[data-role="assistant"]'));
@@ -396,32 +399,100 @@ describe('AG-UI event flow', () => {
     expect(screen.queryByText('hello')).not.toBeInTheDocument();
   });
 
-  it('allows copying the reply only once the run has finished', async () => {
-    const { emitAgUi, sendUserMessage } = await renderAIAssistant({
-      open: true,
+  describe('Copying replies', () => {
+    it('allows copying the last reply only once the run has finished', async () => {
+      const { emitAgUi, sendUserMessage } = await renderAIAssistant({
+        open: true,
+      });
+      const { thread_id: threadId, run_id: runId } = await sendUserMessage(
+        'how many hosts are healthy?'
+      );
+
+      const messageId = 'asst-1';
+      await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
+      await emitAgUi(aguiEvents.textStart({ messageId }));
+      await emitAgUi(
+        aguiEvents.textContent({ messageId, delta: 'All **3** ' })
+      );
+
+      const copyReplyButton = () =>
+        screen.queryByRole('button', { name: 'copy to clipboard' });
+
+      await waitFor(() => expect(assistantBubble()).toHaveTextContent('All'));
+      expect(copyReplyButton()).not.toBeInTheDocument();
+
+      await emitAgUi(
+        aguiEvents.textContent({ messageId, delta: 'are healthy.' })
+      );
+      await emitAgUi(aguiEvents.textEnd({ messageId }));
+      await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
+
+      await waitFor(() => expect(copyReplyButton()).toBeVisible());
     });
-    const { thread_id: threadId, run_id: runId } = await sendUserMessage(
-      'how many hosts are healthy?'
-    );
 
-    const messageId = 'asst-1';
-    await emitAgUi(aguiEvents.runStarted({ threadId, runId }));
-    await emitAgUi(aguiEvents.textStart({ messageId }));
-    await emitAgUi(aguiEvents.textContent({ messageId, delta: 'All **3** ' }));
+    it('allows copying the answer the user stopped', async () => {
+      const context = await renderAIAssistant({ open: true });
+      const { user } = context;
+      await streamThenStop(context);
 
-    const copyReplyButton = () =>
-      screen.queryByRole('button', { name: 'copy to clipboard' });
+      const stoppedBubble = assistantBubble();
+      const copyReplyButton = await within(stoppedBubble).findByRole('button', {
+        name: 'copy to clipboard',
+      });
 
-    await waitFor(() => expect(assistantBubble()).toHaveTextContent('All'));
-    expect(copyReplyButton()).not.toBeInTheDocument();
+      await user.click(copyReplyButton);
 
-    await emitAgUi(
-      aguiEvents.textContent({ messageId, delta: 'are healthy.' })
-    );
-    await emitAgUi(aguiEvents.textEnd({ messageId }));
-    await emitAgUi(aguiEvents.runFinished({ threadId, runId }));
+      expect(copy).toHaveBeenCalledWith('half an answer', expect.anything());
+    });
 
-    await waitFor(() => expect(copyReplyButton()).toBeVisible());
+    it('allows copying an earlier reply while a new run is streaming', async () => {
+      const { user, emitAgUi, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      const earlierReplyCopyButton = () =>
+        within(assistantBubbles()[0]).queryByRole('button', {
+          name: 'copy to clipboard',
+        });
+
+      await waitFor(() => expect(earlierReplyCopyButton()).toBeVisible());
+
+      const second = await sendUserMessage('second');
+      await emitAgUi(
+        aguiEvents.runStarted({
+          threadId: second.thread_id,
+          runId: second.run_id,
+        })
+      );
+
+      expect(await screen.findByText('Thinking...')).toBeVisible();
+      expect(earlierReplyCopyButton()).toBeVisible();
+
+      await user.click(earlierReplyCopyButton());
+
+      expect(copy).toHaveBeenCalledWith('one', expect.anything());
+    });
+
+    it('copies a specific reply in the conversation', async () => {
+      const { user, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+      const second = await sendUserMessage('second');
+      await streamAssistantTurn(second, { messageId: 'b', deltas: ['two'] });
+
+      await waitFor(() => expect(assistantBubbles()).toHaveLength(2));
+
+      const earlierReply = assistantBubbles()[0];
+      await user.click(
+        within(earlierReply).getByRole('button', { name: 'copy to clipboard' })
+      );
+
+      expect(copy).toHaveBeenCalledWith('one', expect.anything());
+    });
   });
 
   it('"New chat" starts a new conversation with a new thread ID', async () => {
