@@ -78,6 +78,38 @@ function ModelChangeBanner({ provider, model, onDismiss = noop }) {
   );
 }
 
+export function ThreadContainer({ children }) {
+  return (
+    <ThreadPrimitive.Root
+      className="relative flex h-full flex-col bg-white text-sm"
+      style={{
+        '--thread-max-width': '44rem',
+        '--accent-color': '#2fb371',
+        '--accent-foreground': '#ffffff',
+      }}
+    >
+      {children}
+    </ThreadPrimitive.Root>
+  );
+}
+
+export function ThreadMessages({ isRunning = false }) {
+  return (
+    <ThreadPrimitive.Messages>
+      {({ message }) => {
+        switch (message.role) {
+          case 'user':
+            return <UserMessage />;
+          case 'assistant':
+            return <AssistantMessage isRunning={isRunning} message={message} />;
+          default:
+            return null;
+        }
+      }}
+    </ThreadPrimitive.Messages>
+  );
+}
+
 function AssistantThread({
   connectionStatus,
   configurationStatus,
@@ -94,14 +126,7 @@ function AssistantThread({
   );
 
   return (
-    <ThreadPrimitive.Root
-      className="relative flex h-full flex-col bg-white text-sm"
-      style={{
-        '--thread-max-width': '44rem',
-        '--accent-color': '#2fb371',
-        '--accent-foreground': '#ffffff',
-      }}
-    >
+    <ThreadContainer>
       <ChatHeader
         connectionStatus={connection}
         isRunning={isRunning}
@@ -114,20 +139,7 @@ function AssistantThread({
       >
         {isEmpty && <ThreadWelcome />}
 
-        <ThreadPrimitive.Messages>
-          {({ message }) => {
-            switch (message.role) {
-              case 'user':
-                return <UserMessage />;
-              case 'assistant':
-                return (
-                  <AssistantMessage isRunning={isRunning} message={message} />
-                );
-              default:
-                return null;
-            }
-          }}
-        </ThreadPrimitive.Messages>
+        <ThreadMessages isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
           {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
@@ -144,7 +156,7 @@ function AssistantThread({
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>
-    </ThreadPrimitive.Root>
+    </ThreadContainer>
   );
 }
 
