@@ -70,6 +70,7 @@ jobs:
                 ansible_python_interpreter: /usr/bin/python3
 
                 trento_server_name: '${{ env.PR_BASE_URL }}'
+                trento_log_level: 'debug'
                 trento_web_admin_password: 'adminpassword'
                 trento_web_postgres_username: '${{ env.PR_NUMBER }}web'
                 trento_web_postgres_password: 'trento'
