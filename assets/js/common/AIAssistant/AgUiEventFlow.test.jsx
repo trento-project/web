@@ -495,26 +495,129 @@ describe('AG-UI event flow', () => {
     });
   });
 
-  it('allows retrying the last reply only', async () => {
-    const { sendUserMessage, streamAssistantTurn } = await renderAIAssistant({
-      open: true,
+  describe('Retrying behavior', () => {
+    it('allows retrying the last reply only', async () => {
+      const { sendUserMessage, streamAssistantTurn } = await renderAIAssistant({
+        open: true,
+      });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      const second = await sendUserMessage('second');
+      await streamAssistantTurn(second, { messageId: 'b', deltas: ['two'] });
+
+      await waitFor(() =>
+        expect(screen.getAllByRole('button', { name: 'retry' })).toHaveLength(1)
+      );
+
+      const [earlier, latest] = assistantBubbles();
+      expect(
+        within(earlier).queryByRole('button', { name: 'retry' })
+      ).not.toBeInTheDocument();
+      expect(
+        within(latest).getByRole('button', { name: 'retry' })
+      ).toBeVisible();
     });
 
-    const first = await sendUserMessage('first');
-    await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+    it('retrying a reply re-sends its prompt on the same thread under a new run', async () => {
+      const { user, channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
 
-    const second = await sendUserMessage('second');
-    await streamAssistantTurn(second, { messageId: 'b', deltas: ['two'] });
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
 
-    await waitFor(() =>
-      expect(screen.getAllByRole('button', { name: 'retry' })).toHaveLength(1)
-    );
+      expect(await screen.findByText('one')).toBeVisible();
 
-    const [earlier, latest] = assistantBubbles();
-    expect(
-      within(earlier).queryByRole('button', { name: 'retry' })
-    ).not.toBeInTheDocument();
-    expect(within(latest).getByRole('button', { name: 'retry' })).toBeVisible();
+      await user.click(await screen.findByRole('button', { name: 'retry' }));
+
+      const sends = () =>
+        channel.pushed
+          .filter(({ event }) => event === 'send_message')
+          .map(({ payload }) => payload);
+
+      await waitFor(() => expect(sends()).toHaveLength(2));
+
+      const [original, retried] = sends();
+      expect(retried.message).toBe('first');
+      expect(retried.thread_id).toBe(original.thread_id);
+      expect(retried.run_id).not.toBe(original.run_id);
+
+      await streamAssistantTurn(retried, { messageId: 'b', deltas: ['two'] });
+
+      expect(await screen.findByText('two')).toBeVisible();
+      expect(screen.queryByText('one')).not.toBeInTheDocument();
+    });
+
+    it('cannot retry when the AI configuration is cleared', async () => {
+      const { channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      expect(
+        await screen.findByRole('button', { name: 'retry' })
+      ).toBeVisible();
+
+      await act(async () => {
+        channel.emit('ai_configuration_cleared');
+      });
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', { name: 'retry' })
+        ).not.toBeInTheDocument()
+      );
+    });
+
+    it('cannot retry after the configuration has been restored. a new chat must be started', async () => {
+      const { channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      expect(
+        await screen.findByRole('button', { name: 'retry' })
+      ).toBeVisible();
+
+      await act(async () => {
+        channel.emit('ai_configuration_cleared');
+      });
+      await act(async () => {
+        channel.emit('ai_configuration_created');
+      });
+
+      expect(
+        await screen.findByText(/Start a new chat to continue/)
+      ).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: 'retry' })
+      ).not.toBeInTheDocument();
+    });
+
+    it('cannot retry while the channel is down', async () => {
+      const { channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      expect(
+        await screen.findByRole('button', { name: 'retry' })
+      ).toBeVisible();
+
+      await act(async () => {
+        channel.triggerError();
+      });
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', { name: 'retry' })
+        ).not.toBeInTheDocument()
+      );
+    });
   });
 
   it('"New chat" starts a new conversation with a new thread ID', async () => {
@@ -535,8 +638,10 @@ describe('AG-UI event flow', () => {
     });
 
     const second = await sendUserMessage('second');
+    await streamAssistantTurn(second, { messageId: 'b', deltas: ['two'] });
 
     expect(second.thread_id).not.toBe(first.thread_id);
+    expect(await screen.findByText('two')).toBeVisible();
   });
 
   it('handles a follow-up turn after the previous one finishes', async () => {
