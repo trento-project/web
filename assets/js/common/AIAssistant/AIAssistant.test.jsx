@@ -110,8 +110,10 @@ describe('AIAssistant', () => {
       });
 
       const second = await sendUserMessage('after');
+      await streamAssistantTurn(second, { messageId: 'b', deltas: ['sure'] });
 
       expect(second.thread_id).not.toBe(first.thread_id);
+      expect(await screen.findByText('sure')).toBeVisible();
     });
   });
 
