@@ -36,9 +36,15 @@ function StubRuntime({ messages, children }) {
 function SeededThread({ messages }) {
   return (
     <StubRuntime messages={messages}>
-      <ThreadPrimitive.Messages
-        components={{ UserMessage, AssistantMessage }}
-      />
+      <ThreadPrimitive.Messages>
+        {({ message }) =>
+          message.role === 'user' ? (
+            <UserMessage />
+          ) : (
+            <AssistantMessage message={message} />
+          )
+        }
+      </ThreadPrimitive.Messages>
     </StubRuntime>
   );
 }

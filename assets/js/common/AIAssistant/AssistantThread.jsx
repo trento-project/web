@@ -120,7 +120,9 @@ function AssistantThread({
               case 'user':
                 return <UserMessage />;
               case 'assistant':
-                return <AssistantMessage isRunning={isRunning} />;
+                return (
+                  <AssistantMessage isRunning={isRunning} message={message} />
+                );
               default:
                 return null;
             }

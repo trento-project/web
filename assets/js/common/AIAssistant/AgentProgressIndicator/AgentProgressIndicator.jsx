@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { useAuiState } from '@assistant-ui/react';
 import { filter, isUndefined, last } from 'lodash';
 
 import Spinner from '@common/Spinner';
@@ -40,12 +39,7 @@ const deriveNotice = ({ isRunning, message }) => {
   return null;
 };
 
-// Reads `s.message` from the per-message scope set up by assistant-ui's
-// MessageByIndexProvider (one per <MessagePrimitive.Root>). Subscribing
-// directly here keeps the indicator reactive to streaming tool-call
-// updates
-function AgentProgressIndicator({ isRunning }) {
-  const message = useAuiState((s) => s.message);
+function AgentProgressIndicator({ isRunning, message }) {
   const notice = deriveNotice({ isRunning, message });
 
   if (!notice) return null;

@@ -2,24 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { ActionBarPrimitive, useAuiState } from '@assistant-ui/react';
+import { ActionBarPrimitive } from '@assistant-ui/react';
 import { useActionBarReload } from '@assistant-ui/core/react';
 import { EOS_REFRESH_FILLED } from 'eos-icons-react';
 
-// Re-runs the prompt this reply answered.
+// Re-runs the last prompt. Only the last can be retried.
 //
-// Offered on the newest reply only: the server keeps the conversation of its
-// own, keyed by thread, so re-asking an older question would append it after
-// everything that has been said since.
-//
-// `ActionBarPrimitive.Reload` would render itself disabled while the thread is
-// busy. We drop it from the bar instead, the way `CopyReplyButton` does, so
-// each action owns when it is offered and the bar never holds a dead button.
-function RetryReplyButton() {
-  const isLast = useAuiState((s) => s.message.isLast);
+// Current response for the last prompts goes away from screen
+function RetryReplyButton({ isLast = false }) {
   const { disabled } = useActionBarReload();
 
-  if (!isLast || disabled) return null;
+  if (disabled || !isLast) return null;
 
   return (
     <ActionBarPrimitive.Reload asChild>

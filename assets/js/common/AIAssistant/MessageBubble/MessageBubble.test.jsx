@@ -5,7 +5,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { useAuiState } from '@assistant-ui/react';
 import { useActionBarCopy, useActionBarReload } from '@assistant-ui/core/react';
 import { UserMessage, AssistantMessage } from './MessageBubble';
 
@@ -27,7 +26,6 @@ jest.mock('@assistant-ui/react', () => ({
     Root: ({ children, ...props }) => <div {...props}>{children}</div>,
     Reload: ({ children }) => children,
   },
-  useAuiState: jest.fn(),
 }));
 
 jest.mock('@assistant-ui/core/react', () => ({
@@ -39,16 +37,21 @@ jest.mock('@assistant-ui/react-markdown', () => ({
   MarkdownTextPrimitive: () => null,
 }));
 
-const mockAssistantMessage = (overrides = {}) => {
-  const message = {
-    content: [],
-    id: 'message-1',
-    isLast: true,
-    status: { type: 'complete', reason: 'unknown' },
-    ...overrides,
-  };
-  useAuiState.mockImplementation((selector) => selector({ message }));
-};
+const assistantMessage = (overrides = {}) => ({
+  content: [],
+  id: 'message-1',
+  isLast: true,
+  status: { type: 'complete', reason: 'unknown' },
+  ...overrides,
+});
+
+const renderAssistant = ({ isRunning = false, ...overrides } = {}) =>
+  render(
+    <AssistantMessage
+      isRunning={isRunning}
+      message={assistantMessage(overrides)}
+    />
+  );
 
 const mockCopyableReply = (copyable) => {
   useActionBarCopy.mockReturnValue({
@@ -99,10 +102,8 @@ describe('UserMessage', () => {
 });
 
 describe('AssistantMessage', () => {
-  beforeEach(() => mockAssistantMessage());
-
   it('renders the assistant message bubble with the parts and error slots', () => {
-    const { container } = render(<AssistantMessage />);
+    const { container } = renderAssistant();
 
     expect(
       container.querySelector('[data-role="assistant"]')
@@ -113,21 +114,20 @@ describe('AssistantMessage', () => {
   });
 
   it('omits the user-only "You" label', () => {
-    render(<AssistantMessage />);
+    renderAssistant();
     expect(screen.queryByText('You')).toBeNull();
   });
 
   it('shows the agent progress indicator while a run is in flight', () => {
-    render(<AssistantMessage isRunning />);
+    renderAssistant({ isRunning: true });
     expect(screen.getByRole('status')).toHaveTextContent('Thinking...');
   });
 
   it('names the tool the agent is calling', () => {
-    mockAssistantMessage({
+    renderAssistant({
+      isRunning: true,
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
     });
-
-    render(<AssistantMessage isRunning />);
 
     expect(screen.getByRole('status')).toHaveTextContent(
       'Calling get_hosts...'
@@ -135,11 +135,7 @@ describe('AssistantMessage', () => {
   });
 
   it('marks an answer the user stopped', () => {
-    mockAssistantMessage({
-      status: { type: 'incomplete', reason: 'cancelled' },
-    });
-
-    render(<AssistantMessage />);
+    renderAssistant({ status: { type: 'incomplete', reason: 'cancelled' } });
 
     expect(screen.getByRole('status')).toHaveTextContent('Response stopped.');
   });
@@ -147,27 +143,25 @@ describe('AssistantMessage', () => {
   it('allows copying an assistant reply', () => {
     mockCopyableReply(true);
 
-    render(<AssistantMessage />);
+    renderAssistant();
 
     expect(copyButton()).toBeVisible();
   });
 
   it('keeps the copy action out of the way while the reply is still coming', () => {
-    render(<AssistantMessage isRunning />);
+    renderAssistant({ isRunning: true });
 
     expect(copyButton()).not.toBeInTheDocument();
   });
 
   it('allows retrying the latest assistant reply', () => {
-    render(<AssistantMessage />);
+    renderAssistant();
 
     expect(retryButton()).toBeVisible();
   });
 
   it('does not allow retrying an earlier reply', () => {
-    mockAssistantMessage({ isLast: false });
-
-    render(<AssistantMessage />);
+    renderAssistant({ isLast: false });
 
     expect(retryButton()).not.toBeInTheDocument();
   });

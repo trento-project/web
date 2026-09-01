@@ -495,6 +495,28 @@ describe('AG-UI event flow', () => {
     });
   });
 
+  it('allows retrying the last reply only', async () => {
+    const { sendUserMessage, streamAssistantTurn } = await renderAIAssistant({
+      open: true,
+    });
+
+    const first = await sendUserMessage('first');
+    await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+    const second = await sendUserMessage('second');
+    await streamAssistantTurn(second, { messageId: 'b', deltas: ['two'] });
+
+    await waitFor(() =>
+      expect(screen.getAllByRole('button', { name: 'retry' })).toHaveLength(1)
+    );
+
+    const [earlier, latest] = assistantBubbles();
+    expect(
+      within(earlier).queryByRole('button', { name: 'retry' })
+    ).not.toBeInTheDocument();
+    expect(within(latest).getByRole('button', { name: 'retry' })).toBeVisible();
+  });
+
   it('"New chat" starts a new conversation with a new thread ID', async () => {
     const { user, sendUserMessage, streamAssistantTurn } =
       await renderAIAssistant({ open: true });

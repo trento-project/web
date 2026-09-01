@@ -76,7 +76,7 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning }) {
+export function AssistantMessage({ isRunning, message }) {
   // `CopyReplyButton` copies this subtree's HTML
   const replyRef = useRef(null);
 
@@ -86,10 +86,10 @@ export function AssistantMessage({ isRunning }) {
         <div ref={replyRef} data-testid="assistant-reply">
           <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         </div>
-        <AgentProgressIndicator isRunning={isRunning} />
+        <AgentProgressIndicator isRunning={isRunning} message={message} />
         <ActionBarPrimitive.Root className="mt-1 flex">
           <CopyReplyButton contentRef={replyRef} />
-          <RetryReplyButton />
+          <RetryReplyButton isLast={message.isLast} />
         </ActionBarPrimitive.Root>
       </MessageBubbleView>
       <MessageError />
