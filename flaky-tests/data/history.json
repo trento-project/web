@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-18T18:16:02Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29655052291",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 42,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-18T18:16:50Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29655052291",
@@ -5847,5 +5831,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-02T00:17:59Z",
+    "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
+    "run_id": "33558822932",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1078
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark an instance as absent and restore it as present on received respective discovery messages::SAP Systems Overview Instance deregistration should mark an instance as absent and restore it as present on received respective discovery messages",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as stale when an agent composing the database stops reporting::Databases Overview Stale data should mark database data as stale when an agent composing the database stops reporting",
+        "score": 0.05001
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
   }
 ]
