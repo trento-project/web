@@ -139,6 +139,7 @@ export default defineConfig([
             '^@pages',
             '^@state',
             '^@static',
+            '^@assistant-ui/core/react$',
           ],
         },
       ],

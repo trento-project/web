@@ -84,6 +84,27 @@ describe('AssistantThread', () => {
     expect(assistantBubble.queryByText('You')).not.toBeInTheDocument();
   });
 
+  it('allows copying the assistant turn only', () => {
+    renderThread({
+      messages: [
+        { id: 'm1', role: 'user', content: 'ping' },
+        { id: 'm2', role: 'assistant', content: 'pong' },
+      ],
+    });
+
+    const userBubble = within(document.querySelector('[data-role="user"]'));
+    const assistantBubble = within(
+      document.querySelector('[data-role="assistant"]')
+    );
+
+    expect(
+      assistantBubble.getByRole('button', { name: 'copy to clipboard' })
+    ).toBeVisible();
+    expect(
+      userBubble.queryByRole('button', { name: 'copy to clipboard' })
+    ).not.toBeInTheDocument();
+  });
+
   it('shows no banner while the configuration is intact', () => {
     renderThread({ configurationStatus: OK });
 
