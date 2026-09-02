@@ -81,7 +81,6 @@ defmodule Trento.MixProject do
       {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.14"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:eventstore, "~> 1.4", [env: :prod]},
       # {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.8.0", only: :test},
