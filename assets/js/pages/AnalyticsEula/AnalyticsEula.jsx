@@ -9,6 +9,7 @@ import { editUserProfile } from '@lib/api/users';
 import { getFromConfig } from '@lib/config/config';
 import { setUser } from '@state/user';
 import { getUserProfile } from '@state/selectors/user';
+import { captureWithTemporaryOptIn } from '@lib/analytics';
 import AnalyticsEulaModal from './AnalyticsEulaModal';
 
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
@@ -46,6 +47,8 @@ export default function AnalyticsEula() {
         });
       }}
       onCancel={(checked) => {
+        captureWithTemporaryOptIn('analytics_eula_rejected', user.id);
+
         setAnalyticsEulaModalOpen(false);
         if (checked) {
           updateAnalyticsEula({
