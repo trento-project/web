@@ -6,5 +6,5 @@ defmodule Trento.Clusters.Enums.ClusterEnsaVersion do
   Type that represents the ENSA version info for a cluster.
   """
 
-  use Trento.Support.Enum, values: [:mixed_versions, :ensa1, :ensa2]
+  use Trento.Support.Enum, values: [:mixed_versions, :ensa1, :ensa2, :unknown]
 end

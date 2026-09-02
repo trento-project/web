@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { get, find, uniq, has } from 'lodash';
+import { get, find, map, uniq, has } from 'lodash';
 import { createSelector } from '@reduxjs/toolkit';
 
 import {
@@ -88,20 +88,18 @@ export const getClusterSapApplicationInstances = createSelector(
 );
 
 export const MIXED_VERSIONS = 'mixed_versions';
+export const UNKNOWN_ENSA_VERSION = 'unknown';
 
 export const getEnsaVersion = createSelector(
   [getClusterSapApplicationInstances],
   (sapSystems) => {
-    const ensaVersions = new Set();
-    sapSystems.forEach(({ ensa_version }) => {
-      ensaVersions.add(ensa_version);
-    });
+    const ensaVersions = uniq(map(sapSystems, 'ensa_version'));
 
-    const firstEnsaVersion = [...ensaVersions.values()][0];
+    if (ensaVersions.length > 1) {
+      return MIXED_VERSIONS;
+    }
 
-    return firstEnsaVersion && ensaVersions.size === 1
-      ? firstEnsaVersion
-      : MIXED_VERSIONS;
+    return ensaVersions[0] || UNKNOWN_ENSA_VERSION;
   }
 );
 

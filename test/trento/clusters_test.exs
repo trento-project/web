@@ -813,7 +813,7 @@ defmodule Trento.ClustersTest do
                                                                         "executions",
                                                                         message ->
         assert message.group_id == cluster_id
-        assert length(message.targets) == 2
+        assert length(message.targets) == 3
 
         assert message.env == %{
                  "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
@@ -911,7 +911,7 @@ defmodule Trento.ClustersTest do
                                                                         "executions",
                                                                         message ->
         assert message.group_id == cluster_id
-        assert length(message.targets) == 2
+        assert length(message.targets) == 3
 
         assert message.env == %{
                  "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
@@ -1009,7 +1009,7 @@ defmodule Trento.ClustersTest do
                                                                         "executions",
                                                                         message ->
         assert message.group_id == cluster_id
-        assert length(message.targets) == 2
+        assert length(message.targets) == 3
 
         assert message.env == %{
                  "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
@@ -1090,6 +1090,60 @@ defmodule Trento.ClustersTest do
                                                                         "executions",
                                                                         message ->
         assert length(message.targets) == 2
+
+        :ok
+      end)
+
+      assert :ok = Clusters.request_checks_execution(cluster_id)
+    end
+
+    test "should start a checks execution on demand for ascs_ers clusters with an unknown ENSA version when the SAP system is not registered" do
+      sid = "ASD"
+
+      %{id: cluster_id, provider: provider, type: cluster_type} =
+        insert(:cluster,
+          type: ClusterType.ascs_ers(),
+          sap_instances:
+            build_list(1, :clustered_sap_instance,
+              sid: sid,
+              resource_type: SapInstanceResourceType.sap_instance()
+            ),
+          details:
+            build(:ascs_ers_cluster_details,
+              sap_systems:
+                build_list(1, :ascs_ers_cluster_sap_system,
+                  sid: sid,
+                  filesystem_resource_based: true
+                )
+            )
+        )
+
+      insert(:host, deregistered_at: DateTime.utc_now(), cluster_id: cluster_id)
+      hosts = insert_list(2, :host, cluster_id: cluster_id)
+      expected_agent_ids = hosts |> Enum.map(& &1.id) |> Enum.sort()
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, fn Publisher,
+                                                                        "executions",
+                                                                        message ->
+        assert message.group_id == cluster_id
+
+        assert expected_agent_ids ==
+                 message.targets |> Enum.map(& &1.agent_id) |> Enum.sort()
+
+        assert message.env == %{
+                 "provider" => %ProtobufValue{kind: {:string_value, Atom.to_string(provider)}},
+                 "cluster_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(cluster_type)}
+                 },
+                 "filesystem_type" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(:resource_managed)}
+                 },
+                 "ensa_version" => %ProtobufValue{
+                   kind: {:string_value, Atom.to_string(ClusterEnsaVersion.unknown())}
+                 }
+               }
+
+        assert message.target_type == "cluster"
 
         :ok
       end)
