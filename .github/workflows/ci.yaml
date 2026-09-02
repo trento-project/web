@@ -132,6 +132,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - mix_env: dev
@@ -192,6 +193,7 @@ jobs:
     if: needs.detect-changes.outputs.assets-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
@@ -366,6 +368,7 @@ jobs:
     if: needs.detect-changes.outputs.assets-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
@@ -396,6 +399,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -460,6 +464,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -694,6 +699,7 @@ jobs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - test: sap_system_split
@@ -805,6 +811,7 @@ jobs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - test: oidc
@@ -953,6 +960,7 @@ jobs:
     needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -996,6 +1004,7 @@ jobs:
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -1041,6 +1050,7 @@ jobs:
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - version: Unversioned
