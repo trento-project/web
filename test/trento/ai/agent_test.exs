@@ -401,7 +401,7 @@ defmodule Trento.AI.AgentTest do
       assert :ok = TrentoAIAgent.cancel(agent_id)
       assert_receive {:agent, {:status_changed, :cancelled, nil}}, @integration_timeout
 
-      assert :ok = TrentoAIAgent.run(agent, "second prompt")
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, "second prompt")
 
       assert_receive {:llm_called, _task_pid}, @integration_timeout
       assert_receive {:agent, {:status_changed, :running, nil}}, @integration_timeout
@@ -478,8 +478,7 @@ defmodule Trento.AI.AgentTest do
     test "returns an error instead of exiting when no agent is registered for the id" do
       agent_id = "thread-#{Faker.UUID.v4()}"
 
-      assert {:error, {:noproc, {GenServer, :call, [_name, :cancel, _timeout]}}} =
-               TrentoAIAgent.cancel(agent_id)
+      assert {:error, :agent_not_running} = TrentoAIAgent.cancel(agent_id)
     end
   end
 
@@ -502,7 +501,7 @@ defmodule Trento.AI.AgentTest do
     model = struct!(FakeChatModel, Keyword.put(model_opts, :notify, self()))
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: build(:user))
 
-    :ok = TrentoAIAgent.run(agent, prompt)
+    {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt)
     stop_agent_on_exit(agent_id)
 
     %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id), prompt: prompt}
@@ -543,7 +542,25 @@ defmodule Trento.AI.AgentTest do
     assert_receive {:agent, {:status_changed, :running, nil}}, @integration_timeout
     assert_receive {:llm_called, task_pid}, @integration_timeout
 
+    discard_subscribe_snapshot()
+
     task_pid
+  end
+
+  # `Sagents.AgentServer.subscribe/1` answers a new subscriber with a snapshot of
+  # the agent's status before it replies, so every `run/3` caller is handed a
+  # `{:status_changed, :idle, nil}` for the state the agent was in *before* the
+  # prompt. sagents guarantees it lands ahead of any later event, so by the time
+  # `:running` is in hand the snapshot is already in the mailbox.
+  #
+  # Left there, the tests below waiting for the run to finish would match it
+  # instead of the run's own `:idle` and read the agent mid-run.
+  defp discard_subscribe_snapshot do
+    receive do
+      {:agent, {:status_changed, :idle, nil}} -> :ok
+    after
+      0 -> :ok
+    end
   end
 
   # The mocked run/2 tests above can only prove that run/3 handles whatever the
