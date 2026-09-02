@@ -65,6 +65,19 @@ function useConfigurationEvents(socket, events) {
   }, [socket]);
 }
 
+// Polls until `probe` returns something truthy.
+// The chat frame measures itself before the composer mounts, so we wait.
+const waitUntil = async (probe, timeoutMs = 2000) => {
+  const deadline = Date.now() + timeoutMs;
+
+  for (;;) {
+    const found = probe();
+    if (found) return found;
+    if (Date.now() >= deadline) return null;
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  }
+};
+
 // Types the user's prompt into the composer, hits send, then plays an
 // assistant turn back through the channel. Assumes useChannelScript has
 // already brought the channel up. `turn.stepDelayMs > 0` reveals deltas
@@ -90,25 +103,20 @@ function useSimulatedTurn(socket, turn) {
     };
 
     const run = async () => {
-      // Wait one paint so composer + send have mounted.
-      await new Promise((resolve) => window.requestAnimationFrame(resolve));
-      if (cancelled) return;
-
-      const composer = document.querySelector('[aria-label="Message input"]');
+      const composer = await waitUntil(() =>
+        document.querySelector('[aria-label="Message input"]')
+      );
       const send = document.querySelector('[aria-label="Send message"]');
-      if (!composer || !send) return;
+      if (cancelled || !composer || !send) return;
 
       setNativeValue(composer, turn.userText);
       send.click();
 
       // Wait for WebSocketAIAgent to push send_message back to the channel.
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      if (cancelled) return;
-
-      const sent = channel.pushed
-        .filter((p) => p.event === 'send_message')
-        .at(-1);
-      if (!sent) return;
+      const sent = await waitUntil(() =>
+        channel.pushed.filter((p) => p.event === 'send_message').at(-1)
+      );
+      if (cancelled || !sent) return;
 
       const { thread_id: threadId, run_id: runId } = sent.payload;
       const events = buildAssistantTurn({

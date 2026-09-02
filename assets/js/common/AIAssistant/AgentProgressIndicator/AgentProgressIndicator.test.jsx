@@ -5,17 +5,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import { useAuiState } from '@assistant-ui/react';
 import AgentProgressIndicator, {
   AgentProgressIndicatorView,
   deriveProgressLabel,
 } from './AgentProgressIndicator';
-
-jest.mock('@assistant-ui/react', () => ({
-  useAuiState: jest.fn(),
-}));
-
-const mockMessage = (message) => useAuiState.mockReturnValue(message);
 
 describe('AgentProgressIndicatorView', () => {
   it.each(['Thinking...', 'Calling get_hosts...'])(
@@ -94,38 +87,44 @@ describe('deriveProgressLabel', () => {
 
 describe('AgentProgressIndicator', () => {
   it('renders nothing when the thread is not running', () => {
-    mockMessage({ content: [], isLast: true });
-    const { container } = render(<AgentProgressIndicator isRunning={false} />);
+    const message = { content: [], isLast: true };
+    const { container } = render(
+      <AgentProgressIndicator isRunning={false} message={message} />
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders nothing when the assistant has already produced text', () => {
-    mockMessage({
+    const message = {
       content: [{ type: 'text', text: 'partial answer' }],
       isLast: true,
-    });
-    const { container } = render(<AgentProgressIndicator isRunning />);
+    };
+    const { container } = render(
+      <AgentProgressIndicator isRunning={true} message={message} />
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders nothing on an earlier answer', () => {
-    mockMessage({ content: [], isLast: false });
-    const { container } = render(<AgentProgressIndicator isRunning />);
+    const message = { content: [], isLast: false };
+    const { container } = render(
+      <AgentProgressIndicator isRunning={true} message={message} />
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
   it('renders "Thinking..." while the thread is running and no content has streamed', () => {
-    mockMessage({ content: [], isLast: true });
-    render(<AgentProgressIndicator isRunning />);
+    const message = { content: [], isLast: true };
+    render(<AgentProgressIndicator isRunning={true} message={message} />);
     expect(screen.getByText('Thinking...')).toBeVisible();
   });
 
   it('renders the tool name while a tool call is in flight', () => {
-    mockMessage({
+    const message = {
       content: [{ type: 'tool-call', toolName: 'get_hosts' }],
       isLast: true,
-    });
-    render(<AgentProgressIndicator isRunning />);
+    };
+    render(<AgentProgressIndicator isRunning={true} message={message} />);
     expect(screen.getByText('Calling get_hosts...')).toBeVisible();
   });
 
@@ -138,9 +137,8 @@ describe('AgentProgressIndicator', () => {
     });
 
     it('says the response was stopped, without a spinner', () => {
-      mockMessage(cancelled());
-
-      render(<AgentProgressIndicator isRunning={false} />);
+      const message = cancelled();
+      render(<AgentProgressIndicator isRunning={false} message={message} />);
 
       expect(screen.getByText('Response stopped.')).toBeVisible();
       expect(screen.queryByLabelText('Loading')).toBeNull();
@@ -153,17 +151,15 @@ describe('AgentProgressIndicator', () => {
         overrides: { content: [{ type: 'text', text: 'half an answer' }] },
       },
     ])('keeps the mark when $label', ({ overrides }) => {
-      mockMessage(cancelled(overrides));
-
-      render(<AgentProgressIndicator isRunning={false} />);
+      const message = cancelled(overrides);
+      render(<AgentProgressIndicator isRunning={false} message={message} />);
 
       expect(screen.getByText('Response stopped.')).toBeVisible();
     });
 
     it('stopped mark takes precedence over thinking', () => {
-      mockMessage(cancelled());
-
-      render(<AgentProgressIndicator isRunning />);
+      const message = cancelled();
+      render(<AgentProgressIndicator isRunning={true} message={message} />);
 
       expect(screen.getByText('Response stopped.')).toBeVisible();
       expect(screen.queryByText('Thinking...')).toBeNull();
@@ -177,9 +173,14 @@ describe('AgentProgressIndicator', () => {
       status: { type: 'incomplete', reason: 'error', error: 'boom' },
     },
   ])('renders nothing when $label', ({ status }) => {
-    mockMessage({ content: [], isLast: true, status });
-
-    const { container } = render(<AgentProgressIndicator isRunning={false} />);
+    const message = {
+      content: [],
+      isLast: true,
+      status,
+    };
+    const { container } = render(
+      <AgentProgressIndicator isRunning={false} message={message} />
+    );
 
     expect(container).toBeEmptyDOMElement();
   });

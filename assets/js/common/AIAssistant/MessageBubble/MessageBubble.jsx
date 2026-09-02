@@ -13,6 +13,7 @@ import remarkGfm from 'remark-gfm';
 import AgentProgressIndicator from '../AgentProgressIndicator';
 import CodeBlock from './CodeBlock';
 import CopyReplyButton from './CopyReplyButton';
+import RetryReplyButton from './RetryReplyButton';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -75,7 +76,7 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning }) {
+export function AssistantMessage({ isRunning, message, isChatActive = false }) {
   // `CopyReplyButton` copies this subtree's HTML
   const replyRef = useRef(null);
 
@@ -85,9 +86,13 @@ export function AssistantMessage({ isRunning }) {
         <div ref={replyRef} data-testid="assistant-reply">
           <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
         </div>
-        <AgentProgressIndicator isRunning={isRunning} />
+        <AgentProgressIndicator isRunning={isRunning} message={message} />
         <ActionBarPrimitive.Root className="mt-1 flex">
           <CopyReplyButton contentRef={replyRef} />
+          <RetryReplyButton
+            isLast={message.isLast}
+            isChatActive={isChatActive}
+          />
         </ActionBarPrimitive.Root>
       </MessageBubbleView>
       <MessageError />
