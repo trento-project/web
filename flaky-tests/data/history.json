@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-19T18:17:49Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29698008149",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 42,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.ClustersTest::test request_operation/3 should request cluster_maintenance_change operation on online and heartbeat passing nodes",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-19T18:54:03Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29698958207",
@@ -5916,6 +5896,22 @@
       {
         "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-03T20:05:10Z",
+    "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
+    "run_id": "33798088719",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 43,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
