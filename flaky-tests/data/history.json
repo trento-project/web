@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-19T18:17:00Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29698008149",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-19T18:17:49Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29698008149",
@@ -5843,6 +5827,94 @@
     "top_flaky_tests": [
       {
         "name": "search::should not match not included words",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-03T00:34:21Z",
+    "commit": "4d0d3a90478f07f0be4489c76266c1b2ca01d6ed",
+    "run_id": "33682992971",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 15
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.08788
+      },
+      {
+        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.05001
+      },
+      {
+        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.05001
+      },
+      {
+        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Checks version::About page should show the Checks version",
+        "score": 0.05001
+      },
+      {
+        "name": "should show the Wanda version::About page should show the Wanda version",
+        "score": 0.05001
+      },
+      {
+        "name": "should deregister an application instance::SAP Systems Overview Instance deregistration should deregister an application instance",
+        "score": 0.04323
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.03207
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
+        "score": 0.02501
+      },
+      {
+        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::Clusters Overview Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
+        "score": 0.02501
+      },
+      {
+        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.02501
       }
     ]
