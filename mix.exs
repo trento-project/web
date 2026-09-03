@@ -22,9 +22,14 @@ defmodule Trento.MixProject do
       docs: docs(),
       test_coverage: [tool: ExCoveralls],
       dialyzer: [
-        plt_add_apps: [:ex_unit, :mix]
+        plt_add_apps: [:ex_unit, :mix, :llm_db]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
+      ],
+      releases: [
+        trento: [
+          applications: [llm_db: :load]
+        ]
       ]
     ]
   end
@@ -57,12 +62,12 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:llm_db, "~> 2026.7", runtime: false},
       {:sagents, "~> 0.7.0"},
-      # temporary override to pull in a couple of relevant fixes
-      # upstream PR here https://github.com/brainlid/langchain/pull/548
+      # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,
        github: "nelsonkopliku/langchain",
-       ref: "a7fd3ec6c755baff382fe79770b076a88b5a81e9",
+       ref: "a4f2439d99747205884a013ffd6f16c2f0a7a32f",
        override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
@@ -71,41 +76,39 @@ defmodule Trento.MixProject do
       {:commanded_ecto_projections, "~> 1.4"},
       {:commanded_eventstore_adapter, "~> 1.4"},
       {:cloak, "~> 1.1.2"},
-      {:cloak_ecto, "~> 1.2.0"},
+      {:cloak_ecto, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.14"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:eventstore, "~> 1.4", [env: :prod]},
+      {:eventstore, "~> 1.4"},
       # {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:flop, "~> 0.25.0"},
+      {:flop, "~> 0.26.5"},
       {:floki, ">= 0.36.2", only: :test},
       {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.3.0"},
-      # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
-      {:ranch, "~> 2.2.0", override: true},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
-      {:httpoison, "== 2.2.3"},
+      {:httpoison, "== 2.3.0"},
       {:jason, "~> 1.4"},
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
       {:open_api_spex, "~> 3.21"},
-      {:pegasus, "~> 0.2.5"},
+      {:pegasus, "~> 1.0.0"},
       {:phoenix, "~> 1.7.23"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
-      {:phoenix_live_reload, "~> 1.6.2", only: [:dev, :wanda]},
+      {:phoenix_live_reload, "~> 1.7.0", only: [:dev, :wanda]},
       {:phoenix_live_view, "~> 1.1.28"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.39"},
-      {:process_tree, "~> 0.2.1", only: [:dev, :test]},
+      {:process_tree, "~> 0.3.0", only: [:dev, :test]},
       {:quantum, ">= 1.8.0"},
       {:swoosh, "~> 1.24"},
       {:telemetry_metrics, "~> 1.0"},
@@ -119,7 +122,7 @@ defmodule Trento.MixProject do
       {:unplug, "~> 1.1.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 5.0"},
-      {:joken, "~> 2.5.0"},
+      {:joken, "~> 2.6.2"},
       {:ecto, "~> 3.14"},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},
@@ -241,6 +244,12 @@ defmodule Trento.MixProject do
     end
   end
 
+  # Dependabot's hex file fetcher only pulls mix.exs, mix.lock, subapp mixfiles and paths
+  # referenced by Code.eval_file/Code.require_file.
+  # get_version_from_file/0 reads VERSION, so the reference below is what makes Dependabot fetch it.
+  # Do not delete.
+  #
+  # Code.eval_file("VERSION")
   defp get_version_from_file do
     __DIR__ |> Path.join("VERSION") |> File.read!() |> String.trim()
   end

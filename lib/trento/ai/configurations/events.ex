@@ -27,11 +27,19 @@ defmodule Trento.AI.Configurations.Events do
   """
   @callback broadcast_cleared(non_neg_integer()) :: :ok
 
+  @doc """
+  Broadcasts that the given user's AI provider/model changed.
+  """
+  @callback broadcast_updated(non_neg_integer(), %{provider: atom(), model: String.t()}) ::
+              :ok
+
   def subscribe(user_id), do: impl().subscribe(user_id)
 
   def broadcast_created(user_id), do: impl().broadcast_created(user_id)
 
   def broadcast_cleared(user_id), do: impl().broadcast_cleared(user_id)
+
+  def broadcast_updated(user_id, payload), do: impl().broadcast_updated(user_id, payload)
 
   defp impl,
     do: Keyword.get(ApplicationConfigLoader.load(), :ai_configuration_events_adapter)

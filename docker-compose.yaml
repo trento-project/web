@@ -95,7 +95,7 @@ services:
 
   checks:
     profiles: [wanda]
-    image: ghcr.io/trento-project/checks:rolling # https://github.com/trento-project/checks/pkgs/container/checks
+    image: ghcr.io/trento-project/trento-checks:rolling # https://github.com/trento-project/checks/pkgs/container/trento-checks
     volumes:
       - trento-checks:/usr/share/trento/checks
 

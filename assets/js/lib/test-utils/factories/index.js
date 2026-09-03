@@ -51,8 +51,17 @@ export const randomObjectFactory = Factory.define(({ transientParams }) => {
     );
 });
 
-export const generateSid = () =>
-  faker.string.alphanumeric({ casing: 'upper', length: 3 });
+// Sequential so that generated SIDs never repeat, base 36 to stay 3 characters
+// long, and `S` prefixed so they never collide with the SIDs that tests
+// hardcode as filter values.
+// Output: S01 S02 … S0A … S0Z S10 … SZZ — 1295 distinct 3-char SIDs.
+// Overflow past 1295 is harmless anyway:
+// sequence 1296 renders S100 — 4 chars, still unique.
+const sidFactory = Factory.define(
+  ({ sequence }) => `S${sequence.toString(36).toUpperCase().padStart(2, '0')}`
+);
+
+export const generateSid = () => sidFactory.build();
 
 const executionStateEnum = () =>
   faker.helpers.arrayElement(['requested', 'running', 'not_running']);
@@ -70,12 +79,17 @@ export const checkFactory = Factory.define(() => ({
 export const healthSummaryFactory = Factory.define(() => ({
   application_cluster_id: faker.string.uuid(),
   application_cluster_health: healthEnum(),
+  application_cluster_stale_at: null,
   application_health: healthEnum(),
+  application_stale_at: null,
   database_health: healthEnum(),
   database_id: faker.string.uuid(),
+  database_stale_at: null,
   database_cluster_id: faker.string.uuid(),
   database_cluster_health: healthEnum(),
+  database_cluster_stale_at: null,
   hosts_health: healthEnum(),
+  hosts_stale_at: null,
   id: faker.string.uuid(),
   sapsystem_health: healthEnum(),
   sid: generateSid(),

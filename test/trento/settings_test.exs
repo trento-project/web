@@ -188,7 +188,7 @@ defmodule Trento.SettingsTest do
                 }} = Settings.get_suse_manager_settings()
       end
 
-      test "should not save invalid suse manager settings" do
+      test "should not save invalid SUSE Multi-Linux Manager settings" do
         submission = %{
           url: "https://valid.com",
           username: Faker.Internet.user_name(),
@@ -246,7 +246,7 @@ defmodule Trento.SettingsTest do
         end
       end
 
-      test "should save suse manager settings without ca cert" do
+      test "should save SUSE Multi-Linux Manager settings without ca cert" do
         settings = %{
           url: url = "https://valid.com",
           username: username = Faker.Internet.user_name(),
@@ -263,7 +263,7 @@ defmodule Trento.SettingsTest do
                 }} = Settings.save_suse_manager_settings(settings)
       end
 
-      test "should save suse manager settings with a nil ca cert" do
+      test "should save SUSE Multi-Linux Manager settings with a nil ca cert" do
         settings = %{
           url: url = "https://valid.com",
           username: username = Faker.Internet.user_name(),
@@ -281,7 +281,7 @@ defmodule Trento.SettingsTest do
                 }} = Settings.save_suse_manager_settings(settings)
       end
 
-      test "should save suse manager settings with ca cert" do
+      test "should save SUSE Multi-Linux Manager settings with ca cert" do
         now = DateTime.utc_now()
 
         expect(
@@ -308,7 +308,7 @@ defmodule Trento.SettingsTest do
                  Settings.save_suse_manager_settings(settings, Trento.Support.DateService.Mock)
       end
 
-      test "should not save suse manager settings if already saved" do
+      test "should not save SUSE Multi-Linux Manager settings if already saved" do
         settings = %{
           url: "https://valid.com",
           username: Faker.Internet.user_name(),
@@ -379,7 +379,7 @@ defmodule Trento.SettingsTest do
         end
       end
 
-      test "should not be able to change suse manager settings if none previously saved" do
+      test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved" do
         submission = %{
           url: "https://valid.com",
           username: Faker.Internet.user_name(),
@@ -391,7 +391,7 @@ defmodule Trento.SettingsTest do
                  Settings.change_suse_manager_settings(submission)
       end
 
-      test "should validate partial changes to suse manager settings" do
+      test "should validate partial changes to SUSE Multi-Linux Manager settings" do
         insert_software_updates_settings()
 
         change_settings_scenarios = [
@@ -455,7 +455,7 @@ defmodule Trento.SettingsTest do
         end
       end
 
-      test "should support partial change of suse manager settings" do
+      test "should support partial change of SUSE Multi-Linux Manager settings" do
         %{
           url: initial_url,
           username: _initial_username,

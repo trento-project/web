@@ -92,7 +92,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SoftwareUpdatesDiscovery
         assert :ok = SoftwareUpdatesDiscoveryEventHandler.handle(event, %{})
       end
 
-      test "should discover data about hosts just when SUSE Manager's settings are set" do
+      test "should discover data about hosts just when SUSE Multi-Linux Manager's settings are set" do
         event = build(:software_updates_discovery_requested_event)
 
         expect(

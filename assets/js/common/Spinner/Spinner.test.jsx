@@ -23,4 +23,14 @@ describe('Spinner', () => {
     expect(spinnerElement).toHaveClass('pt-12');
     expect(spinnerElement.firstChild).toHaveAttribute('width', '32');
   });
+
+  it('lets the caller hide the spinner from assistive technology', () => {
+    render(<Spinner aria-hidden="true" />);
+
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole('alert', { hidden: true })).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
+  });
 });

@@ -220,7 +220,7 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
       %{
         name: "model unsupported by the specified provider",
         request_body: %{
-          model: build(:random_ai_model, provider: :googleai),
+          model: build(:random_ai_model, provider: :google),
           provider: :openai,
           api_key: Faker.String.base64()
         },
@@ -573,7 +573,7 @@ defmodule TrentoWeb.V1.AIConfigurationControllerTest do
       %{
         name: "model unsupported by the specified provider",
         request_body: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4",
           api_key: Faker.String.base64()
         },

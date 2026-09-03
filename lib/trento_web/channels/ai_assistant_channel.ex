@@ -35,7 +35,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   - `stash_run_ids/3` — at the head of `handle_in("send_message", ...)`, before validation.
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
-  - `reset_run/1` — on `:idle` (success), `:error`, and `run_agent` failure; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+  - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -94,12 +94,25 @@ defmodule TrentoWeb.AIAssistantChannel do
     end
   end
 
+  @impl true
   def handle_in("send_message", payload, socket) do
     payload
     |> redact_payload()
     |> then(&Logger.warning("Received invalid send_message payload: #{inspect(&1)}"))
 
     {:reply, {:error, :invalid_payload}, socket}
+  end
+
+  @impl true
+  def handle_in(action, _payload, socket)
+      when action in ["cancel_run", "abandon_thread"] do
+    case {socket.assigns[:current_thread_id], action} do
+      {nil, _} -> :ok
+      {thread_id, "cancel_run"} -> TrentoAIAgent.cancel(thread_id)
+      {thread_id, "abandon_thread"} -> TrentoAIAgent.stop(thread_id)
+    end
+
+    {:reply, :ok, reset_run(socket)}
   end
 
   defp check_ai_enabled do
@@ -162,7 +175,7 @@ defmodule TrentoWeb.AIAssistantChannel do
          run_id,
          thread_id
        ) do
-    case LLMBuilder.build_for_user(current_user_id) do
+    case LLMBuilder.build(current_user_id) do
       {:ok, model_config} ->
         socket
         |> stash_run_ids(run_id, thread_id)
@@ -202,7 +215,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       }
     ]
     |> TrentoAIAgent.new!()
-    |> TrentoAIAgent.run(prompt, refresh_when: &access_token_changed/2)
+    |> TrentoAIAgent.run(prompt, refresh_when: &agent_config_changed/2)
     |> case do
       :ok ->
         socket
@@ -220,18 +233,14 @@ defmodule TrentoWeb.AIAssistantChannel do
     |> then(&{:noreply, &1})
   end
 
-  defp access_token_changed(
-         %{tool_context: %{access_token: token}} = _current_agent,
-         %{tool_context: %{access_token: token}} = _new_agent
-       ) do
-    # IO.inspect("access token unchanged - no agent update needed")
-    :noop
-  end
+  # Hot-swap the running agent when either the access_token OR the effective model config changed.
+  defp agent_config_changed(
+         %{model: model, tool_context: %{access_token: token}} = _current_agent,
+         %{model: model, tool_context: %{access_token: token}} = _new_agent
+       ),
+       do: :noop
 
-  defp access_token_changed(_current_agent, new_agent) do
-    # IO.inspect("access token changed - refreshing agent with new token")
-    {:ok, new_agent}
-  end
+  defp agent_config_changed(_current_agent, new_agent), do: {:ok, new_agent}
 
   @impl true
   def handle_info({:agent, {:status_changed, :running, nil}}, socket),
@@ -307,7 +316,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info({:ai_configuration, :created}, socket) do
     # The user's AI configuration was (re)created.
-    # Tell the client it can re-enable the assistant.
+    # Tell the client so it can re-enable the assistant.
     push(socket, "ai_configuration_created", %{})
 
     {:noreply, socket}
@@ -325,6 +334,15 @@ defmodule TrentoWeb.AIAssistantChannel do
     push(socket, "ai_configuration_cleared", %{})
 
     {:noreply, reset_run(socket)}
+  end
+
+  @impl true
+  def handle_info({:ai_configuration, :updated, payload}, socket) do
+    # The user's AI provider/model changed.
+    # Tell the client so it can notify the user.
+    push(socket, "model_changed", payload)
+
+    {:noreply, socket}
   end
 
   @impl true

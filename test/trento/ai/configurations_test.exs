@@ -7,7 +7,7 @@ defmodule Trento.Ai.ConfigurationsTest do
 
   alias Trento.Users.User
 
-  alias Trento.AI.{Configurations, UserConfiguration}
+  alias Trento.AI.{Configurations, LLMRegistry, UserConfiguration}
 
   alias Trento.AI.Configurations.Events
 
@@ -141,7 +141,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "model unsupported by the specified provider",
         attrs: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4",
           api_key: Faker.String.base64()
         },
@@ -154,8 +154,8 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "missing api key",
         attrs: %{
-          provider: :googleai,
-          model: build(:random_ai_model, provider: :googleai)
+          provider: :google,
+          model: build(:random_ai_model, provider: :google)
         },
         expected_errors: [
           api_key: {"can't be blank", [validation: :required]}
@@ -227,7 +227,7 @@ defmodule Trento.Ai.ConfigurationsTest do
                        [
                          type: _,
                          validation: :inclusion,
-                         enum: ["anthropic", "googleai", "openai" | _]
+                         enum: ["anthropic", "google", "openai" | _]
                        ]}
                   ]
                 }} =
@@ -307,46 +307,6 @@ defmodule Trento.Ai.ConfigurationsTest do
                Configurations.create_user_configuration(user, %{})
 
       refute_receive {:ai_configuration, :created}
-    end
-
-    test "should support creating AI configuration with a model that is supported by multiple providers" do
-      %User{id: user_id1} = user1 = insert(:user)
-
-      assert {:ok,
-              %UserConfiguration{
-                model: "model1",
-                provider: :provider1,
-                api_key: _api_key,
-                user_id: ^user_id1
-              } = created_config1} =
-               Configurations.create_user_configuration(
-                 user1,
-                 build(:ai_configuration_creation_params,
-                   provider: :provider1,
-                   model: "model1"
-                 )
-               )
-
-      assert ^created_config1 = load_ai_config(user_id1)
-
-      %User{id: user_id2} = user2 = insert(:user)
-
-      assert {:ok,
-              %UserConfiguration{
-                model: "model1",
-                provider: :provider2,
-                api_key: _api_key,
-                user_id: ^user_id2
-              } = created_config2} =
-               Configurations.create_user_configuration(
-                 user2,
-                 build(:ai_configuration_creation_params,
-                   provider: :provider2,
-                   model: "model1"
-                 )
-               )
-
-      assert ^created_config2 = load_ai_config(user_id2)
     end
   end
 
@@ -429,7 +389,7 @@ defmodule Trento.Ai.ConfigurationsTest do
       %{
         name: "model unsupported by the specified provider",
         attrs: %{
-          provider: :googleai,
+          provider: :google,
           model: "gpt-5.4"
         },
         expected_errors: [
@@ -528,8 +488,8 @@ defmodule Trento.Ai.ConfigurationsTest do
       } =
         insert(:ai_user_configuration,
           user_id: user_id,
-          provider: :googleai,
-          model: build(:random_ai_model, provider: :googleai)
+          provider: :google,
+          model: build(:random_ai_model, provider: :google)
         )
 
       new_provider = :openai
@@ -629,6 +589,74 @@ defmodule Trento.Ai.ConfigurationsTest do
                )
 
       assert ^updated_config = load_ai_config(user_id)
+    end
+
+    test "should broadcast that the configuration was updated when the provider/model changed" do
+      %User{id: user_id} = user = insert(:user)
+
+      [{provider1, model1}, {provider2, model2}] =
+        LLMRegistry.providers()
+        |> Enum.take_random(2)
+        |> Enum.map(&{&1, build(:random_ai_model, provider: &1)})
+
+      another_model_for_provider1 =
+        LLMRegistry.get_provider_models(provider1)
+        |> Kernel.--([model1])
+        |> Enum.random()
+
+      insert(:ai_user_configuration,
+        user_id: user_id,
+        provider: provider1,
+        model: model1
+      )
+
+      Events.subscribe(user_id)
+
+      # Updating the model should trigger a broadcast, even if the provider remains the same.
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{
+                 model: another_model_for_provider1
+               })
+
+      assert_receive {:ai_configuration, :updated,
+                      %{provider: ^provider1, model: ^another_model_for_provider1}}
+
+      # Updating the provider and model should also trigger a broadcast.
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{
+                 provider: provider2,
+                 model: model2
+               })
+
+      assert_receive {:ai_configuration, :updated, %{provider: ^provider2, model: ^model2}}
+    end
+
+    test "should not broadcast updated when only the api key changed" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration, user_id: user_id)
+
+      Events.subscribe(user_id)
+
+      assert {:ok, %UserConfiguration{}} =
+               Configurations.update_user_configuration(user, %{
+                 api_key: Faker.String.base64()
+               })
+
+      refute_receive {:ai_configuration, :updated, _}
+    end
+
+    test "should not broadcast updated when the update fails" do
+      %User{id: user_id} = user = insert(:user)
+
+      insert(:ai_user_configuration, user_id: user_id)
+
+      Events.subscribe(user_id)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Configurations.update_user_configuration(user, %{model: Faker.Lorem.word()})
+
+      refute_receive {:ai_configuration, :updated, _}
     end
   end
 

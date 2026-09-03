@@ -38,8 +38,8 @@ context('SAP system details', () => {
       sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed();
       sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth();
       sapSystemDetailsPage.loadScenario('hana-database-detail-RED');
-      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth('fill-red-500');
-      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed('fill-red-500');
+      sapSystemDetailsPage.sapSystemHasExpectedDatabaseHealth('critical');
+      sapSystemDetailsPage.pageTitleHealthIsCorrectlyDisplayed('critical');
     });
   });
 

@@ -1,13 +1,19 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { ErrorPrimitive, MessagePrimitive } from '@assistant-ui/react';
+import React, { useRef } from 'react';
+import {
+  ActionBarPrimitive,
+  ErrorPrimitive,
+  MessagePrimitive,
+} from '@assistant-ui/react';
 import { MarkdownTextPrimitive } from '@assistant-ui/react-markdown';
-import '@assistant-ui/react-markdown/styles/dot.css';
 import remarkGfm from 'remark-gfm';
 
 import AgentProgressIndicator from '../AgentProgressIndicator';
+import CodeBlock from './CodeBlock';
+import CopyReplyButton from './CopyReplyButton';
+import RetryReplyButton from './RetryReplyButton';
 
 const ROOT_CLASS_NAME =
   'mx-auto w-full max-w-[var(--thread-max-width)] py-2 fade-in slide-in-from-bottom-1 animate-in duration-150';
@@ -35,7 +41,16 @@ function MarkdownText(props) {
   return (
     <MarkdownTextPrimitive
       remarkPlugins={[remarkGfm]}
-      className="aui-md"
+      className="aui-md prose max-w-none"
+      components={{
+        SyntaxHighlighter: CodeBlock,
+        table: ({ node, ...tableProps }) => (
+          <div className="overflow-x-auto">
+            <table {...tableProps} />
+          </div>
+        ),
+      }}
+      smooth={false}
       {...props}
     />
   );
@@ -44,7 +59,7 @@ function MarkdownText(props) {
 function MessageError() {
   return (
     <MessagePrimitive.Error>
-      <ErrorPrimitive.Root className="mt-2 rounded-md border border-destructive bg-destructive/10 p-3 text-destructive text-sm dark:bg-destructive/5 dark:text-red-200">
+      <ErrorPrimitive.Root className="mt-2 rounded-md bg-red-50 p-3 text-red-500 text-sm">
         <ErrorPrimitive.Message className="line-clamp-2" />
       </ErrorPrimitive.Root>
     </MessagePrimitive.Error>
@@ -61,14 +76,26 @@ export function UserMessage() {
   );
 }
 
-export function AssistantMessage({ isRunning }) {
+export function AssistantMessage({ isRunning, message, isChatActive = false }) {
+  // `CopyReplyButton` copies this subtree's HTML
+  const replyRef = useRef(null);
+
   return (
     <MessagePrimitive.Root className={ROOT_CLASS_NAME} data-role="assistant">
       <MessageBubbleView variant="assistant">
-        <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
-        <MessageError />
-        <AgentProgressIndicator isRunning={isRunning} />
+        <div ref={replyRef} data-testid="assistant-reply">
+          <MessagePrimitive.Parts components={{ Text: MarkdownText }} />
+        </div>
+        <AgentProgressIndicator isRunning={isRunning} message={message} />
+        <ActionBarPrimitive.Root className="mt-1 flex">
+          <CopyReplyButton contentRef={replyRef} />
+          <RetryReplyButton
+            isLast={message.isLast}
+            isChatActive={isChatActive}
+          />
+        </ActionBarPrimitive.Root>
       </MessageBubbleView>
+      <MessageError />
     </MessagePrimitive.Root>
   );
 }

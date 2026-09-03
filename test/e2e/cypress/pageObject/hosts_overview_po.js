@@ -36,13 +36,10 @@ const currentPaginationDetails =
   'div[data-testid="pagination"] span:contains("Showing")';
 const nextPageSelector = '[aria-label="next-page"]';
 
-const hostsWithWarning = 'p:contains("Warning") + p';
-const hostsWithCritical = 'p:contains("Critical") + p';
-const hostsWithPassing = 'p:contains("Passing") + p';
+const hostCountWithWarning = 'p:contains("Warning") + p';
+const hostCountWithCritical = 'p:contains("Critical") + p';
+const hostCountWithPassing = 'p:contains("Passing") + p';
 
-const passingHostBadge = 'svg.fill-jungle-green-500';
-const warningHostBadge = 'svg.fill-yellow-500';
-const criticalHostBadge = 'svg.fill-red-500';
 const hostToDeregisterCleanupButton = `tr:contains("${hostToDeregister}") td:contains("Clean up")`;
 const cleanupButtons = 'tbody tr button:contains("Clean up")';
 const heartbeatFailingToaster = `p:contains("The host ${hostToDeregister} heartbeat is failing.")`;
@@ -125,7 +122,9 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
     .then((clusterColumnIndex) =>
       cy.wrap(hostsWithCluster).each(({ host, rowIndex }) => {
         const expectedHref = `/clusters/${host.clusterId}`;
-        const clusterLinkSelector = `tbody tr:nth-child(${rowIndex + 1}) td:nth-child(${clusterColumnIndex + 1}) a[href="${expectedHref}"]`;
+        const clusterLinkSelector = `tbody tr:nth-child(${
+          rowIndex + 1
+        }) td:nth-child(${clusterColumnIndex + 1}) a[href="${expectedHref}"]`;
         cy.get(clusterLinkSelector).click();
         basePage.validateUrl(expectedHref);
         return basePage.goBack().then(() => basePage.validateUrl(url));
@@ -145,7 +144,9 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
     .then((sidColumnIndex) =>
       cy.wrap(hostsWithSapSystem).each(({ host, rowIndex }) => {
         const expectedHref = `/databases/${host.sapSystemId}`;
-        const sapSystemLinkSelector = `${tableRow}:nth-child(${rowIndex + 1}) td:nth-child(${sidColumnIndex + 1}) a[href="${expectedHref}"]`;
+        const sapSystemLinkSelector = `${tableRow}:nth-child(${
+          rowIndex + 1
+        }) td:nth-child(${sidColumnIndex + 1}) a[href="${expectedHref}"]`;
         cy.get(sapSystemLinkSelector).click();
         basePage.validateUrl(expectedHref);
         return basePage.goBack().then(() => basePage.validateUrl(url));
@@ -153,29 +154,55 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
     );
 };
 
-export const expectedWarningHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithWarning).should('have.text', amount);
+export const expectedWarningHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithWarning).should('have.text', amount);
 
-export const expectedCriticalHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithCritical, { timeout: 20000 }).should('have.text', amount);
+export const expectedCriticalHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithCritical, { timeout: 20000 }).should('have.text', amount);
 
-export const expectedPassingHostsAreDisplayed = (amount) =>
-  cy.get(hostsWithPassing).should('have.text', amount);
+export const expectedPassingHostCountIsDisplayed = (amount) =>
+  cy.get(hostCountWithPassing).should('have.text', amount);
 
-export const expectedAmountOfWarningsIsDisplayed = (amount) =>
-  cy.get(warningHostBadge).should('have.length', amount);
+const getHealthIconWithState = (state, name = /health/i) =>
+  cy
+    .findAllByRole('img', { name: name })
+    .filter(`[data-health-state="${state}"]`);
 
-export const expectedAmountOfCriticalsIsDisplayed = (amount) => {
-  if (amount === 0) return cy.get(criticalHostBadge).should('not.exist');
-  else {
-    return cy
-      .get(criticalHostBadge, { timeout: 20000 })
-      .should('have.length', amount);
-  }
-};
+export const expectedAmountOfCriticalIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('critical')
+    .should('have.text', amount)
+    .should('have.length', amount);
 
-export const expectedAmountOfPassingIsDisplayed = (amount) =>
-  cy.get(passingHostBadge).should('have.length', amount);
+export const expectedAmountOfWarningIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('warning').should('have.length', amount);
+
+export const expectedAmountOfPassingIconsIsDisplayed = (amount) =>
+  getHealthIconWithState('passing').should('have.length', amount);
+
+export const expectedAmountOfStaleIconsIsDisplayed = (
+  amount,
+  timeout = 20000
+) =>
+  cy
+    .findAllByRole('img', { name: /health/i })
+    .filter('[data-stale]', { timeout })
+    .should('have.length', amount);
+
+export const allVisibleRowsAreMarkedStale = () =>
+  cy
+    .findAllByRole('row', { timeout: 20000 })
+    .filter(':not(:has(th))')
+    .should(($rows) =>
+      $rows.each((index, $row) => expect($row).to.have.class('bg-gray-100'))
+    );
+
+export const allVisibleRowsAreMarkedInSync = () =>
+  cy
+    .findAllByRole('row')
+    .filter(':not(:has(th))')
+    .should(($rows) =>
+      $rows.each((index, $row) => expect($row).not.to.have.class('bg-gray-100'))
+    );
 
 const _hostHasExpectedStatus = (host, status) =>
   cy
@@ -198,10 +225,12 @@ export const hostWithSaptuneCompliantHasExpectedStatus = () =>
   _hostHasExpectedStatus(hostWithSap, 'fill-jungle-green-500');
 
 export const cleanupButtonIsNotDisplayedForHostSendingHeartbeat = () =>
-  cy.get(hostToDeregisterCleanupButton, { timeout: 20000 }).should('not.exist');
+  cy.get(hostToDeregisterCleanupButton).should('not.exist');
 
-export const cleanupButtonIsDisplayedForHostSendingHeartbeat = () =>
-  cy.get(hostToDeregisterCleanupButton).should('be.visible');
+export const cleanupButtonIsDisplayedForHostNotSendingHeartbeat = () =>
+  cy
+    .get(hostToDeregisterCleanupButton, { timeout: 20000 })
+    .should('be.visible');
 
 export const expectedAmountOfCleanupButtonsIsDisplayed = (amount) =>
   cy

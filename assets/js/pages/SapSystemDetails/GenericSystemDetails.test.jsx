@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import 'intersection-observer';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -125,13 +124,12 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: title,
-    });
-
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: title,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toBeVisible();
 
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
@@ -511,16 +509,16 @@ describe('GenericSystemDetails', () => {
     );
 
     expect(
-      screen.getByText(
-        /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/
-      )
-    ).toBeInTheDocument();
-
+      screen.getByRole('heading', { name: 'SAP System Details' })
+    ).toBeVisible();
     expect(
-      within(
-        screen.getByText('SAP System Details').previousSibling
-      ).getAllByTestId('eos-svg-component')
-    ).toHaveLength(2);
+      screen.getByRole('alert', {
+        name: /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toHaveAttribute(
+      'data-stale'
+    );
 
     const [layoutTable, _] = screen.getAllByRole('table');
     const rows = layoutTable.querySelectorAll('tbody > tr');

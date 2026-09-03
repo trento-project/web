@@ -13,6 +13,12 @@ import Config
 config :trento,
   ecto_repos: [Trento.Repo]
 
+# Number of rows deleted per individual statement when pruning discovery
+# events. Pruning is performed in batches so that, when a large backlog of
+# historical events has to be pruned, no single DELETE statement runs long
+# enough to exceed the default Ecto checkout timeout.
+config :trento, prune_batch_size: 1_000
+
 # Configures the endpoint
 config :trento, TrentoWeb.Endpoint,
   url: [host: "localhost"],
@@ -292,38 +298,10 @@ config :trento, correlations: Trento.ActivityLog.Correlations.UnscopedCorrelatio
 config :trento, :ai,
   enabled: true,
   base_system_prompt: "priv/ai/BASE_SYSTEM_PROMPT.md",
-  providers: [
-    googleai: [
-      models: [
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-3.1-flash-preview",
-        "gemini-3.1-flash-lite-preview",
-        "gemini-3.1-pro-preview"
-      ]
-    ],
-    openai: [
-      models: [
-        "o3-mini",
-        "o3",
-        "gpt-4.1",
-        "gpt-4",
-        "gpt-5-mini",
-        "gpt-5.4"
-      ]
-    ],
-    anthropic: [
-      models: [
-        "claude-opus-4-6",
-        "claude-sonnet-4-6",
-        "claude-haiku-4-5"
-      ]
-    ]
-  ],
   agent_server_adapter: Trento.Infrastructure.AI.SagentsAgentServer,
   agent_supervisor_adapter: Trento.Infrastructure.AI.SagentsDynamicSupervisor,
   ai_configuration_events_adapter: Trento.Infrastructure.AI.PubSubConfigurationEvents,
+  llm_builder_adapter: Trento.AI.LLMBuilder,
   tool_sources: [
     TrentoWeb.AI.ControllerToolSource,
     {Trento.AI.RemoteOpenApiToolSource,

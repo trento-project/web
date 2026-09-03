@@ -4,7 +4,6 @@
 import React, { act } from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import { Route, Routes } from 'react-router';

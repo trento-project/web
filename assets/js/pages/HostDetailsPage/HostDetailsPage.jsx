@@ -43,7 +43,7 @@ import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import {
   getSoftwareUpdatesErrorMessage,
   getSoftwareUpdatesErrorTooltip,
-} from './suseManagerMessaging';
+} from './suseMultiLinuxManagerMessaging';
 import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
@@ -134,6 +134,7 @@ function HostDetailsPage() {
       deregistering={host.deregistering}
       exportersStatus={exportersStatus}
       heartbeat={host.heartbeat}
+      staleAt={host.stale_at}
       health={host.health}
       hostID={host.id}
       hostname={host.hostname}

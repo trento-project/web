@@ -6,19 +6,21 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
+import { CONNECTING, CONNECTED, DISCONNECTED } from '@lib/ai';
+
 import ChatHeader from './ChatHeader';
 
 const defaults = {
-  connectionStatus: 'connected',
+  connectionStatus: CONNECTED,
   onNewChat: () => {},
   onClose: () => {},
 };
 
 describe('ChatHeader', () => {
   it.each([
-    { status: 'connected', text: 'Online' },
-    { status: 'connecting', text: 'Connecting...' },
-    { status: 'disconnected', text: 'Offline' },
+    { status: CONNECTED, text: 'Online' },
+    { status: CONNECTING, text: 'Connecting...' },
+    { status: DISCONNECTED, text: 'Offline' },
   ])('renders the $text label for $status', ({ status, text }) => {
     render(<ChatHeader {...defaults} connectionStatus={status} />);
     expect(screen.getByText(text)).toBeVisible();
@@ -28,6 +30,24 @@ describe('ChatHeader', () => {
   it('falls back to the disconnected label for an unknown status', () => {
     render(<ChatHeader {...defaults} connectionStatus="unknown" />);
     expect(screen.getByText('Offline')).toBeVisible();
+  });
+
+  it.each([CONNECTING, DISCONNECTED, 'unknown'])(
+    'disables the "New chat" button when %s',
+    (connectionStatus) => {
+      render(<ChatHeader {...defaults} connectionStatus={connectionStatus} />);
+      expect(screen.getByRole('button', { name: 'New chat' })).toBeDisabled();
+    }
+  );
+
+  it('enables the "New chat" button when connected', () => {
+    render(<ChatHeader {...defaults} connectionStatus={CONNECTED} />);
+    expect(screen.getByRole('button', { name: 'New chat' })).not.toBeDisabled();
+  });
+
+  it('disables the "New chat" button while a run is in flight', () => {
+    render(<ChatHeader {...defaults} connectionStatus={CONNECTED} isRunning />);
+    expect(screen.getByRole('button', { name: 'New chat' })).toBeDisabled();
   });
 
   it('invokes onNewChat when the "New chat" button is clicked', async () => {
@@ -50,7 +70,7 @@ describe('ChatHeader', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('stops pointer-down propagation on the buttons so the drag handle does not trigger', () => {
+  it('stops pointer-down propagation on the buttons so the drag handle does not trigger', async () => {
     const user = userEvent.setup();
     const parentPointerDown = jest.fn();
     render(
@@ -59,8 +79,8 @@ describe('ChatHeader', () => {
       </div>
     );
 
-    user.click(screen.getByRole('button', { name: 'New chat' }));
-    user.click(screen.getByRole('button', { name: 'Close' }));
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
+    await user.click(screen.getByRole('button', { name: 'Close' }));
 
     expect(parentPointerDown).not.toHaveBeenCalled();
   });

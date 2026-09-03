@@ -12,7 +12,10 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
 
   alias Trento.Clusters.Events.ClusterHealthChanged
 
-  alias Trento.Hosts.Events.HostHealthChanged
+  alias Trento.Hosts.Events.{
+    HeartbeatFailed,
+    HostHealthChanged
+  }
 
   alias Trento.Databases.Events.DatabaseHealthChanged
 
@@ -50,5 +53,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.AlertsEventHandler do
       )
       when health == :critical do
     Alerting.notify_critical_sap_system_health(sap_system_id)
+  end
+
+  def handle(
+        %HeartbeatFailed{host_id: host_id},
+        %{created_at: failed_at}
+      ) do
+    Alerting.notify_heartbeat_failed(host_id, failed_at)
   end
 end
