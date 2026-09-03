@@ -40,6 +40,7 @@ BuildRequires:  npm >= 20
 %if !0%{?is_opensuse} && 0%{?suse_version} < 1600
 BuildRequires:  erlang26
 BuildConflicts: erlang27
+BuildConflicts: erlang27-providers
 BuildRequires:  elixir115
 BuildConflicts: elixir119
 %else
