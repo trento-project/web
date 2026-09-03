@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-19T18:55:01Z",
-    "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
-    "run_id": "29698958207",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HanaClusterDetails component::should display a host link in the site details if the host is registered",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-19T22:31:55Z",
     "commit": "7b5482649a26ab71f1c565d7815039495a106ce4",
     "run_id": "29700805585",
@@ -5922,5 +5906,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-09-03T20:28:46Z",
+    "commit": "2d284c8dacc320256cc6e96e5b9d045d2e7046db",
+    "run_id": "33800345068",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 49,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
