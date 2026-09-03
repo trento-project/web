@@ -212,7 +212,8 @@ if config_env() in [:prod, :demo] do
       # runtime and would be derived from values
       # specified in the :alerting key.
       depth: 99
-    ]
+    ],
+    no_mx_lookups: true
 
   config :trento, Trento.Scheduler,
     jobs: [
