@@ -3,7 +3,8 @@
 
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
-import { isArray, isString, last } from 'lodash';
+import { isArray, isString, last, noop, each } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { EventType } from '@ag-ui/core';
 
@@ -25,53 +26,58 @@ export const extractMessageText = ({ content } = {}) => {
   return '';
 };
 
-class AbortError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = 'AbortError';
-  }
-}
-
 const isUnauthorized = (error) => error === 'unauthorized';
 
-// Refresh the access token; on failure, kick off the global "session expired"
-// redirect and re-throw
-const refreshOrAbort = async () => {
-  try {
-    await refreshAndStoreAccessToken();
-  } catch {
-    handleUnrecoverableAuthError();
-    throw new Error('Session expired — please log in again');
-  }
-};
-
-// Run `operation` and, if it rejects with an "unauthorized" wire payload,
-// refresh the access token once and retry. Any other rejection from
-// `operation` propagates verbatim.
-const withRefreshTokenOnUnauthorized = async (operation) => {
-  try {
-    return await operation();
-  } catch (error) {
-    if (!isUnauthorized(error)) throw error;
-  }
-  await refreshOrAbort();
-  return operation();
+// The error shape @assistant-ui/react-ag-ui reads as "this run was stopped".
+// RUN_CANCELLED is dispatched instead of RUN_ERROR, so the message ends up marked as
+// stopped rather than failed.
+const abortedRunError = () => {
+  const error = new Error('AI assistant run stopped');
+  error.name = 'AbortError';
+  return error;
 };
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
 // topic.
 export class WebSocketAIAgent extends AbstractAgent {
-  constructor({ socket, userID, onConnectionChange, ...options }) {
+  #callbacks = {};
+
+  constructor({
+    socket,
+    userID,
+    getAccessToken = getAccessTokenFromStore,
+    refreshToken = refreshAndStoreAccessToken,
+    onUnrecoverableAuthError = handleUnrecoverableAuthError,
+    ...options
+  }) {
     super(options);
 
     this.socket = socket;
     this.userID = userID;
     this.channel = null;
-    this.onConnectionChange = onConnectionChange;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
     this._activeSubscriber = null;
     this._activeRunId = null;
+    this._getAccessToken = getAccessToken;
+    this._refreshToken = refreshToken;
+    this._onUnrecoverableAuthError = onUnrecoverableAuthError;
+    this.withCallbacks();
+  }
+
+  withCallbacks({
+    onConnectionChange = noop,
+    onAIConfigurationCleared = noop,
+    onAIConfigurationCreated = noop,
+    onModelChanged = noop,
+  } = {}) {
+    this.#callbacks = {
+      onConnectionChange,
+      onAIConfigurationCleared,
+      onAIConfigurationCreated,
+      onModelChanged,
+    };
+    return this;
   }
 
   // Idempotent async initializer for the channel connection
@@ -82,7 +88,7 @@ export class WebSocketAIAgent extends AbstractAgent {
 
     this._setConnectionStatus(CONNECTION_STATUS.CONNECTING);
     try {
-      await this._join();
+      await this._withRefreshTokenOnUnauthorized(() => this._join());
     } catch (error) {
       this._teardown();
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
@@ -90,18 +96,36 @@ export class WebSocketAIAgent extends AbstractAgent {
     }
   }
 
-  // Join the channel, refreshing the access token + retrying once if the
-  // server replies 'unauthorized'.
-  _join() {
-    return withRefreshTokenOnUnauthorized(() => this._doJoin());
+  // Run `operation` and, if it rejects with an "unauthorized" wire payload,
+  // refresh the access token once and retry. Any other rejection from
+  // `operation` propagates verbatim.
+  async _withRefreshTokenOnUnauthorized(operation) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (!isUnauthorized(error)) throw error;
+    }
+    await this._refreshOrAbort();
+    return operation();
+  }
+
+  // Refresh the access token; on failure, kick off the global "session expired"
+  // redirect and re-throw
+  async _refreshOrAbort() {
+    try {
+      await this._refreshToken();
+    } catch {
+      this._onUnrecoverableAuthError();
+      throw new Error('Session expired — please log in again');
+    }
   }
 
   // Build a fresh channel and await its join.
   // On 'unauthorized' the channel reference is dropped so the helper's retry rebuilds
   // with the just-refreshed token in the params callback.
-  _doJoin() {
+  _join() {
     this.channel = this.socket.channel(`ai_assistant:${this.userID}`, () => ({
-      access_token: getAccessTokenFromStore(),
+      access_token: this._getAccessToken(),
     }));
     this._setupChannelHandlers();
     return new Promise((resolve, reject) => {
@@ -131,17 +155,48 @@ export class WebSocketAIAgent extends AbstractAgent {
     // sequence Just Work.
     const dropConnection = () => {
       this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
-      this._failActiveRun(new Error('AI assistant connection lost'));
+      this._settleActiveRun(new Error('AI assistant connection lost'));
     };
 
-    this.channel.on('ag_ui_event', (event) => this._handleAgUiEvent(event));
+    const messageHandlerMap = [
+      ['ag_ui_event', (event) => this._handleAgUiEvent(event)],
+      ['ai_configuration_cleared', () => this._handleAIConfigurationCleared()],
+      [
+        'ai_configuration_created',
+        () => this.#callbacks.onAIConfigurationCreated(),
+      ],
+      ['model_changed', (payload) => this.#callbacks.onModelChanged(payload)],
+    ];
+
+    each(messageHandlerMap, ([eventName, handler]) =>
+      this.channel.on(eventName, handler)
+    );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
+  }
+
+  _handleAIConfigurationCleared() {
+    this._settleActiveRun(abortedRunError());
+    this.#callbacks.onAIConfigurationCleared();
+  }
+
+  // The events the server stamps with a run id. RunStarted and RunFinished both enforce one.
+  // RUN_ERROR is deliberately absent: RunError has no run_id field at all, so filtering it on
+  // one would drop every error. Everything else the channel pushes
+  // (TEXT_MESSAGE_*, TOOL_CALL_*) belongs to whichever run is subscribed.
+  static RUN_SCOPED_EVENTS = [EventType.RUN_STARTED, EventType.RUN_FINISHED];
+
+  _isStaleRunEvent({ type, runId }) {
+    return (
+      WebSocketAIAgent.RUN_SCOPED_EVENTS.includes(type) &&
+      runId !== this._activeRunId
+    );
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
+    if (this._isStaleRunEvent(event)) return;
 
     subscriber.next(event);
 
@@ -163,7 +218,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // The send itself is deferred by at most one microtask via `await initialize()`.
   run({ messages, threadId }) {
     return new Observable((subscriber) => {
-      const runId = crypto.randomUUID();
+      const runId = uuidv4();
       const lastMessage = last(messages);
 
       if (!lastMessage || lastMessage.role !== 'user') {
@@ -179,11 +234,13 @@ export class WebSocketAIAgent extends AbstractAgent {
       const setupRun = async () => {
         try {
           await this.initialize();
-          await this._sendMessage({
-            message: extractMessageText(lastMessage),
-            thread_id: threadId,
-            run_id: runId,
-          });
+          await this._withRefreshTokenOnUnauthorized(() =>
+            this._sendMessage({
+              message: extractMessageText(lastMessage),
+              thread_id: threadId,
+              run_id: runId,
+            })
+          );
         } catch (error) {
           if (this._activeRunId === runId) this._clearActiveRun();
           subscriber.error(error);
@@ -200,32 +257,66 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
-  // Send the message, refreshing the access token + retrying once if the
-  // server replies 'unauthorized'.
-  _sendMessage(payload) {
-    return withRefreshTokenOnUnauthorized(() => this._doSendMessage(payload));
-  }
-
   // Raw send: one push, resolves on 'ok', rejects on 'error'. Reads the
   // access token fresh from storage so a retry after refresh naturally picks
   // up the new value.
-  _doSendMessage(payload) {
+  _sendMessage(payload) {
     return new Promise((resolve, reject) => {
       this.channel
         .push('send_message', {
           ...payload,
-          access_token: getAccessTokenFromStore(),
+          access_token: this._getAccessToken(),
         })
         .receive('ok', resolve)
         .receive('error', reject);
     });
   }
 
-  _failActiveRun(error) {
+  // Settle the in-flight run, with an error only when the user needs to see one.
+  _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    subscriber.error(error);
+    maybeError ? subscriber.error(maybeError) : subscriber.complete();
     this._clearActiveRun();
+  }
+
+  // Our AbortError has to land last after library's cancellation steps.
+  //
+  // Cancelling has ag ui runtime write to the message twice:
+  // - `cancel()` aborts its controller, which marks the run cancelled and turns any later error into a stop rather than a failure
+  // - `cancelRun()` then schedules a timer re-applying a snapshot it took while the answer still looked alive.
+  //
+  // The microtask waits out that whole synchronous turn, making sure the state of the message is properly marked as stopped
+  _settleAsAborted(subscriber) {
+    queueMicrotask(() =>
+      setTimeout(() => subscriber.error(abortedRunError()), 0)
+    );
+  }
+
+  // Stop, from the composer.
+  // `AgUiThreadRuntimeCore.cancel()` calls it before aborting its own AbortController.
+  //
+  // The payload is empty because the server cancels the thread named in its
+  // own socket assigns.
+  abortRun() {
+    const subscriber = this._activeSubscriber;
+
+    if (subscriber) {
+      this.channel?.push('cancel_run', {});
+
+      this._clearActiveRun();
+      this._settleAsAborted(subscriber);
+    }
+
+    super.abortRun();
+  }
+
+  // "New chat". Tells the server the thread is gone so the running agent process can be killed.
+  //
+  // The payload is empty for the same reason as `abortRun`'s.
+  abandonThread() {
+    this.channel?.push('abandon_thread', {});
+    this._settleActiveRun();
   }
 
   _clearActiveRun() {
@@ -236,17 +327,13 @@ export class WebSocketAIAgent extends AbstractAgent {
   _setConnectionStatus(status) {
     if (this._connectionStatus === status) return;
     this._connectionStatus = status;
-    this.onConnectionChange?.(status);
+    this.#callbacks.onConnectionChange(status);
   }
 
   disconnect() {
     if (!this.channel) return;
     this._teardown();
-    // Tag the teardown error as an AbortError so AbstractAgent's `onError`
-    // treats it as an expected unmount/cancel.
-    //
-    // (See AbstractAgent.onError's allowlist in @ag-ui/client.)
-    this._failActiveRun(new AbortError('AI assistant disconnected'));
+    this._settleActiveRun();
     this._setConnectionStatus(CONNECTION_STATUS.DISCONNECTED);
   }
 

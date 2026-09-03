@@ -36,6 +36,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  @hosts_topic "monitoring:hosts"
+
   project(
     %HostRegistered{
       host_id: id,
@@ -233,7 +235,8 @@ defmodule Trento.Hosts.Projections.HostProjector do
         HostReadModel
         |> Repo.get!(id)
         |> HostReadModel.changeset(%{
-          heartbeat: :passing
+          heartbeat: :passing,
+          stale_at: nil
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -242,12 +245,14 @@ defmodule Trento.Hosts.Projections.HostProjector do
 
   project(
     %HeartbeatFailed{host_id: id},
+    %{created_at: created_at},
     fn multi ->
       changeset =
         HostReadModel
         |> Repo.get!(id)
         |> HostReadModel.changeset(%{
-          heartbeat: :critical
+          heartbeat: :critical,
+          stale_at: created_at
         })
 
       Ecto.Multi.update(multi, :host, changeset)
@@ -303,7 +308,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         %{host: %HostReadModel{} = host}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_registered",
       HostJSON.host_registered(%{host: host})
     )
@@ -320,7 +325,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       |> Repo.preload([:sles_subscriptions, :tags])
 
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_restored",
       HostJSON.host_restored(%{host: host})
     )
@@ -332,7 +337,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         %{host: %HostReadModel{hostname: hostname}}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_deregistered",
       %{
         id: id,
@@ -356,7 +361,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_details_updated",
       %{
         id: id,
@@ -372,7 +377,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_details_updated",
       %{
         id: id,
@@ -386,7 +391,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _,
         %{host: %HostReadModel{cluster_id: nil}}
       ) do
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_details_updated", %{
       id: host_id,
       cluster_id: nil,
       cluster_host_status: nil
@@ -399,43 +404,33 @@ defmodule Trento.Hosts.Projections.HostProjector do
         %{host: %HostReadModel{} = host}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "host_details_updated",
       HostJSON.host_details_updated(%{host: host})
     )
   end
 
   def after_update(
-        %HeartbeatSucceeded{host_id: id},
+        %HeartbeatSucceeded{},
         _,
-        %{host: %HostReadModel{hostname: hostname}}
+        %{host: host}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "heartbeat_succeded",
-      HostJSON.heartbeat_result(%{
-        host: %{
-          id: id,
-          hostname: hostname
-        }
-      })
+      HostJSON.heartbeat_result(%{host: host})
     )
   end
 
   def after_update(
-        %HeartbeatFailed{host_id: id},
+        %HeartbeatFailed{},
         _,
-        %{host: %HostReadModel{hostname: hostname}}
+        %{host: host}
       ) do
     TrentoWeb.Endpoint.broadcast(
-      "monitoring:hosts",
+      @hosts_topic,
       "heartbeat_failed",
-      HostJSON.heartbeat_result(%{
-        host: %{
-          id: id,
-          hostname: hostname
-        }
-      })
+      HostJSON.heartbeat_result(%{host: host})
     )
   end
 
@@ -444,7 +439,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
         _,
         %{host: %HostReadModel{id: id, provider: provider, provider_data: provider_data}}
       ) do
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", %{
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_details_updated", %{
       id: id,
       provider: provider,
       provider_data: provider_data
@@ -459,7 +454,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
     message =
       HostJSON.host_details_updated(%{host: host})
 
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_details_updated", message)
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_details_updated", message)
   end
 
   def after_update(
@@ -469,7 +464,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ) do
     message = HostJSON.saptune_status_updated(%{host: host})
 
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "saptune_status_updated", message)
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "saptune_status_updated", message)
   end
 
   def after_update(
@@ -479,7 +474,7 @@ defmodule Trento.Hosts.Projections.HostProjector do
       ) do
     message = HostJSON.host_health_changed(%{host: host})
 
-    TrentoWeb.Endpoint.broadcast("monitoring:hosts", "host_health_changed", message)
+    TrentoWeb.Endpoint.broadcast(@hosts_topic, "host_health_changed", message)
   end
 
   def after_update(_, _, _), do: :ok

@@ -126,11 +126,13 @@ export function ClusterDetailsPage() {
       hosts={clusterHosts}
       health={cluster.health}
       state={cluster.state}
+      staleAt={cluster.stale_at}
       lastExecution={lastExecution}
       operationsEnabled={operationsEnabled}
       runningOperation={runningOperation}
       selectedChecks={cluster.selected_checks}
       userAbilities={abilities}
+      userTimezone={timezone}
       onStartExecution={(_, hostList, checks) =>
         dispatch(executionRequested(clusterID, hostList, checks))
       }

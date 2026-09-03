@@ -5,9 +5,9 @@ import React from 'react';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 import {
+  adminUser,
   databaseInstanceFactory,
   hostFactory,
   sapSystemApplicationInstanceFactory,
@@ -156,6 +156,35 @@ describe('HostsLists component', () => {
       const [StatefulHostsList] = withState(<HostsList />, state);
       renderWithRouter(StatefulHostsList);
       expect(screen.getAllByText(duplicatedSID).length).toBe(1);
+    });
+
+    it('should show stale hosts with correct styling', async () => {
+      const staleDate = faker.date.past();
+      const state = {
+        user: adminUser.build(),
+        hostsList: {
+          hosts: [
+            hostFactory.build({ heartbeat: 'critical', stale_at: staleDate }),
+            hostFactory.build({ heartbeat: 'passing', stale_at: null }),
+          ],
+        },
+      };
+
+      const [HostsListWithState] = withState(<HostsList />, state, true);
+
+      renderWithRouter(HostsListWithState);
+
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0]).toHaveClass('bg-gray-100');
+      expect(rows[1]).not.toHaveClass('bg-gray-100');
+
+      expect(
+        within(rows[0]).getByRole('img', { name: /health/i })
+      ).toHaveAttribute('data-stale');
+
+      expect(
+        within(rows[1]).getByRole('img', { name: /health/i })
+      ).not.toHaveAttribute('data-stale');
     });
   });
 
@@ -349,14 +378,20 @@ describe('HostsLists component', () => {
           },
           sapSystemsList: {
             applicationInstances: [
-              { sid: 'PRD', host_id: 'host1' },
-              { sid: 'QAS', host_id: 'host3' },
+              sapSystemApplicationInstanceFactory.build({
+                sid: 'PRD',
+                host_id: 'host1',
+              }),
+              sapSystemApplicationInstanceFactory.build({
+                sid: 'QAS',
+                host_id: 'host3',
+              }),
             ],
           },
           databasesList: {
             databaseInstances: [
-              { sid: 'PRD', host_id: 'host2' },
-              { sid: 'QAS', host_id: 'host4' },
+              databaseInstanceFactory.build({ sid: 'PRD', host_id: 'host2' }),
+              databaseInstanceFactory.build({ sid: 'QAS', host_id: 'host4' }),
             ],
           },
         },
@@ -462,7 +497,10 @@ describe('HostsLists component', () => {
           hosts,
         },
         sapSystemsList: {
-          applicationInstances: [{ sid, host_id: 'host1' }],
+          applicationInstances: sapSystemApplicationInstanceFactory.buildList(
+            1,
+            { sid, host_id: 'host1' }
+          ),
           databaseInstances: [],
         },
       };

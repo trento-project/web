@@ -4,7 +4,6 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 import {
   clusterFactory,
@@ -359,5 +358,38 @@ describe('ClustersList component', () => {
         await expect(screen.getByText(tooltip)).toBeInTheDocument();
       }
     );
+  });
+
+  describe('stale clusters', () => {
+    it('should display stale clusters with gray background and stale icon', () => {
+      const staleDate = '2024-01-01T00:00:00.000Z';
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: [
+            clusterFactory.build({ health: 'passing', stale_at: staleDate }),
+            clusterFactory.build({ health: 'passing', stale_at: null }),
+          ],
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+
+      renderWithRouter(StatefulClustersList);
+
+      const rows = screen.getByRole('table').querySelectorAll('tbody > tr');
+      expect(rows[0]).toHaveClass('bg-gray-100');
+      expect(rows[1]).not.toHaveClass('bg-gray-100');
+
+      const staleHealthCell = rows[0].querySelector('td:nth-child(1)');
+      expect(
+        staleHealthCell.querySelectorAll('[data-testid="eos-svg-component"]')
+      ).toHaveLength(2);
+
+      const inSyncHealthCell = rows[1].querySelector('td:nth-child(1)');
+      expect(
+        inSyncHealthCell.querySelectorAll('[data-testid="eos-svg-component"]')
+      ).toHaveLength(1);
+    });
   });
 });

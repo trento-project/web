@@ -9,6 +9,7 @@ import * as basePage from './base_po.js';
 import {
   selectedSystem,
   attachedHosts,
+  attachedDatabaseInstances,
   healthMap,
 } from '../fixtures/sap-system-details/selected_system';
 
@@ -25,8 +26,6 @@ const sapSystemType = 'div[class="font-bold"]:contains("Type") + div';
 const sapSystemEnsaVersion =
   'div[class="font-bold"]:contains("ENSA version") + div';
 const sapSystemDatabase = 'div[class="font-bold"]:contains("Database") + div';
-const sapSystemDatabaseHealth =
-  'div[class="font-bold"]:contains("Database health") + div svg';
 const sapSystemDatabaseTenant =
   'div[class="font-bold"]:contains("Tenant") + div';
 const notFoundLabel = 'div:contains("Not Found")';
@@ -36,6 +35,12 @@ const hostToDeregisterName = `td a:contains("${hostToDeregister.name}")`;
 const hostToDeregisterFeatures = `td:contains("${hostToDeregister.features}")`;
 const cleanUpButton = 'button:contains("Clean up")';
 const sapSystemsRows = 'div[class="mt-16"]:contains("Layout") table tbody tr';
+const layoutTableHostRow = (hostName) =>
+  `div[class="mt-16"]:contains("Layout") tr:has(td:contains("${hostName}"))`;
+const hostsTableHostRow = (hostName) =>
+  `div[class="mt-8"]:contains("Hosts") tr:has(td:contains("${hostName}"))`;
+const stalenessBannerName =
+  /An agent in one of the SAP system hosts is not reporting since/;
 
 // UI Interactions
 
@@ -54,7 +59,10 @@ export const validatePageUrl = (systemId = selectedSystem.Id) =>
 
 export const pageTitleHealthIsCorrectlyDisplayed = (
   health = selectedSystem.Health
-) => basePage.pageTitleHealthIsCorrectlyDisplayed(health);
+) => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@pageHealthIcon', health);
+};
 
 export const sapSystemHasExpectedName = () =>
   cy.get(sapSystemName).should('have.text', selectedSystem.Sid);
@@ -70,7 +78,10 @@ export const sapSystemHasExpectedDatabase = () =>
 
 export const sapSystemHasExpectedDatabaseHealth = (
   health = selectedSystem.DatabaseHealth
-) => cy.get(sapSystemDatabaseHealth).should('have.class', health);
+) => {
+  cy.findByRole('img', { name: /database health/i }).as('healthIcon');
+  basePage.healthIconIsCorrectlyDisplayed('@healthIcon', health);
+};
 
 export const sapSystemHasExpectedDatabaseTenant = () =>
   cy
@@ -169,6 +180,50 @@ export const newSapSystemIsDisplayed = () => {
   return cy.get('div:contains("99")').should('be.visible');
 };
 
+export const sapSystemHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const sapSystemHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /system health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedInSync('@pageHealthIcon');
+};
+
+export const sapSystemDatabaseHealthIsMarkedAsStale = () => {
+  cy.findByRole('img', { name: /database health/i }).as('pageHealthIcon');
+  basePage.healthIconIsMarkedStale('@pageHealthIcon');
+};
+
+export const sapSystemDatabaseHealthIsMarkedInSync = () => {
+  cy.findByRole('img', { name: /database health/i }).as('healthIcon');
+  basePage.healthIconIsMarkedInSync('@healthIcon');
+};
+
+export const sapSystemStaleBannerIsDisplayed = (timeout = 20000) =>
+  cy
+    .findByRole('alert', { name: stalenessBannerName, timeout })
+    .should('be.visible');
+
+export const sapSystemStaleBannerIsNotDisplayed = () =>
+  cy.findByRole('alert', { name: stalenessBannerName }).should('not.exist');
+
+export const sapSystemInstanceRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
+
+export const sapSystemInstanceRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(
+    layoutTableHostRow(selectedSystem.Hosts[1].Hostname)
+  );
+
+export const hostRowIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(hostsTableHostRow(attachedHosts[1].Name));
+
+export const hostRowIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(hostsTableHostRow(attachedHosts[1].Name));
+
 // API
 
 export const restoreInstanceHealth = () =>
@@ -193,3 +248,31 @@ export const apiCreateUserWithApplicationCleanupAbility = () =>
 
 export const loadNewSapSystem = () =>
   basePage.loadScenario('sap-system-detail-NEW');
+
+export const startSapSystemAgentsHeartbeat = () =>
+  basePage.startAgentsHeartbeat([
+    ...attachedHosts.map((host) => host.AgentId),
+    ...attachedDatabaseInstances.map((instance) => instance.AgentId),
+  ]);
+
+export const startSapSystemAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([attachedHosts[1].AgentId]);
+
+export const stopSapSystemAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([attachedHosts[1].AgentId]);
+
+export const startDatabaseAgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([attachedDatabaseInstances[0].AgentId]);
+
+export const stopDatabaseAgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([attachedDatabaseInstances[0].AgentId]);
+
+export const markSapSystemAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedSystem.Sid}-${selectedSystem.Hosts[1].Instance}-present`
+  );
+
+export const markDatabaseAsPresent = () =>
+  basePage.loadScenario(
+    `sap-systems-overview-${selectedSystem.Database}-${attachedDatabaseInstances[0].Instance}-present`
+  );

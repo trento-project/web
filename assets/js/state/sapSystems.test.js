@@ -8,6 +8,7 @@ import sapSystemsReducer, {
   updateApplicationInstanceStatus,
   updateApplicationInstanceAbsentAt,
   updateApplicationInstanceStaleAt,
+  updateSapSystemStaleAt,
   removeApplicationInstance,
   updateSAPSystem,
   setApplicationInstanceDeregistering,
@@ -177,6 +178,34 @@ describe('SAP Systems reducer', () => {
           ...instance,
           stale_at: staleAt,
         },
+      ],
+    };
+
+    expect(sapSystemsReducer(initialState, action)).toEqual(expectedState);
+  });
+
+  it('should update the stale_at field of a SAP system', () => {
+    const [sapSystem1, sapSystem2] = sapSystemFactory.buildList(2);
+    const staleAt = Date.now();
+
+    const initialState = {
+      sapSystems: [sapSystem1, sapSystem2],
+    };
+
+    const systemToUpdate = {
+      id: sapSystem1.id,
+      stale_at: staleAt,
+    };
+
+    const action = updateSapSystemStaleAt(systemToUpdate);
+
+    const expectedState = {
+      sapSystems: [
+        {
+          ...sapSystem1,
+          stale_at: staleAt,
+        },
+        sapSystem2,
       ],
     };
 

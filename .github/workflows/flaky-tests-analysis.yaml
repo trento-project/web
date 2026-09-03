@@ -40,7 +40,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Download JUnit reports artifacts
         id: download-reports
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
@@ -211,7 +211,7 @@ jobs:
 
       - name: Send Slack alert
         if: github.event_name == 'schedule' && fromJson(steps.analyze.outputs.failure-rate-exceeded)
-        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           webhook: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -291,7 +291,7 @@ jobs:
 
       - name: Checkout gh-pages for update
         if: github.event_name == 'schedule'
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: gh-pages
           path: dashboard-site
@@ -319,7 +319,7 @@ jobs:
 
       - name: Commit and push changes
         if: github.event_name == 'schedule'
-        uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7
         with:
           branch: gh-pages
           repository: dashboard-site

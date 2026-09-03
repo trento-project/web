@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
+import { MemoryRouter } from 'react-router';
 
 import { SocketContext } from '@common/SocketProvider';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
@@ -47,6 +48,36 @@ function useChannelScript(socket, script) {
   }, [socket, script]);
 }
 
+// Since ai configuration events are pushed by the server, we need a way to simulate them in stories.
+function useConfigurationEvents(socket, events) {
+  useEffect(() => {
+    if (!events?.length) return undefined;
+
+    const channel = socket.channels.get(TOPIC);
+    if (!channel) return undefined;
+
+    const timers = events.map(({ event, payload }, i) =>
+      setTimeout(() => channel.emit(event, payload), 50 + i * 50)
+    );
+    return () => timers.forEach(clearTimeout);
+    // The event list is captured at mount, as with useSimulatedTurn.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket]);
+}
+
+// Polls until `probe` returns something truthy.
+// The chat frame measures itself before the composer mounts, so we wait.
+const waitUntil = async (probe, timeoutMs = 2000) => {
+  const deadline = Date.now() + timeoutMs;
+
+  for (;;) {
+    const found = probe();
+    if (found) return found;
+    if (Date.now() >= deadline) return null;
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  }
+};
+
 // Types the user's prompt into the composer, hits send, then plays an
 // assistant turn back through the channel. Assumes useChannelScript has
 // already brought the channel up. `turn.stepDelayMs > 0` reveals deltas
@@ -72,25 +103,20 @@ function useSimulatedTurn(socket, turn) {
     };
 
     const run = async () => {
-      // Wait one paint so composer + send have mounted.
-      await new Promise((resolve) => window.requestAnimationFrame(resolve));
-      if (cancelled) return;
-
-      const composer = document.querySelector('[aria-label="Message input"]');
+      const composer = await waitUntil(() =>
+        document.querySelector('[aria-label="Message input"]')
+      );
       const send = document.querySelector('[aria-label="Send message"]');
-      if (!composer || !send) return;
+      if (cancelled || !composer || !send) return;
 
       setNativeValue(composer, turn.userText);
       send.click();
 
       // Wait for WebSocketAIAgent to push send_message back to the channel.
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      if (cancelled) return;
-
-      const sent = channel.pushed
-        .filter((p) => p.event === 'send_message')
-        .at(-1);
-      if (!sent) return;
+      const sent = await waitUntil(() =>
+        channel.pushed.filter((p) => p.event === 'send_message').at(-1)
+      );
+      if (cancelled || !sent) return;
 
       const { thread_id: threadId, run_id: runId } = sent.payload;
       const events = buildAssistantTurn({
@@ -138,19 +164,40 @@ export default {
     aiAssistant: {
       script: 'fireOk',
       turn: null,
+      events: null,
     },
   },
   args: { userID: USER_ID },
+  argTypes: {
+    userID: {
+      description: 'User ID for the AI assistant session',
+      control: { type: 'text' },
+    },
+    open: {
+      description: 'Whether the assistant is open',
+      control: { type: 'boolean' },
+    },
+    initialConnectionStatus: {
+      description: 'Initial connection status',
+      options: ['connected', 'connecting', 'disconnected'],
+      control: { type: 'radio' },
+    },
+  },
   decorators: [
     (Story, context) => {
       const socket = useFreshSocket();
-      const { script, turn } = context.parameters.aiAssistant ?? {};
+      const { script, turn, events } = context.parameters.aiAssistant ?? {};
       useChannelScript(socket, script);
       useSimulatedTurn(socket, turn);
+      useConfigurationEvents(socket, events);
+      // Router needed by the Profile links in the disabled launcher tooltip
+      // and the cleared-configuration banner.
       return (
-        <StoryProviders socket={socket}>
-          <Story />
-        </StoryProviders>
+        <MemoryRouter>
+          <StoryProviders socket={socket}>
+            <Story />
+          </StoryProviders>
+        </MemoryRouter>
       );
     },
   ],
@@ -159,6 +206,11 @@ export default {
 export const Closed = {
   name: 'Closed (FAB only)',
   args: { open: false },
+};
+
+export const Disabled = {
+  name: 'Disabled — no AI configuration',
+  args: { open: false, aiConfigured: false },
 };
 
 export const OpenEmpty = {
@@ -188,6 +240,42 @@ export const OpenDisconnected = {
   args: { open: true },
   parameters: {
     aiAssistant: { script: 'dropAfterConnect' },
+  },
+};
+
+export const OpenConfigurationCleared = {
+  name: 'Open — AI settings cleared (read-only)',
+  args: { open: true },
+  parameters: {
+    aiAssistant: { events: [{ event: 'ai_configuration_cleared' }] },
+  },
+};
+
+export const OpenConfigurationRestored = {
+  name: 'Open — new configuration, awaiting a new chat',
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      events: [
+        { event: 'ai_configuration_cleared' },
+        { event: 'ai_configuration_created' },
+      ],
+    },
+  },
+};
+
+export const OpenModelChanged = {
+  name: 'Open — model changed notice',
+  args: { open: true },
+  parameters: {
+    aiAssistant: {
+      events: [
+        {
+          event: 'model_changed',
+          payload: { provider: 'google', model: 'gemini-2.5-pro' },
+        },
+      ],
+    },
   },
 };
 

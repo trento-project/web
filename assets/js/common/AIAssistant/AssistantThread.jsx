@@ -3,20 +3,83 @@
 
 import React from 'react';
 import { noop } from 'lodash';
+import { Link } from 'react-router';
 import { ThreadPrimitive } from '@assistant-ui/react';
+import { EOS_CLOSE } from 'eos-icons-react';
+
+import Button from '@common/Button';
+import { getProviderLabel } from '@lib/ai';
 
 import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
+import {
+  canSendMessage,
+  effectiveConnectionStatus,
+  isConfigurationCleared,
+  isConfigurationRestored,
+} from './status';
 
-function AssistantThread({
-  connectionStatus,
-  isEmpty = false,
-  isRunning = false,
-  onNewThread = noop,
-  onClose = noop,
-}) {
+function ThreadBanner({ children }) {
+  return (
+    <div
+      className="mb-3 rounded-md border border-yellow-300 bg-yellow-50 px-4 py-3 text-sm text-yellow-800"
+      role="alert"
+    >
+      {children}
+    </div>
+  );
+}
+
+function ClearedBanner() {
+  return (
+    <ThreadBanner>
+      Your AI settings were cleared. This conversation is now read-only.
+      Configure AI in your{' '}
+      <Link
+        to="/profile"
+        className="underline hover:opacity-75 text-jungle-green-500"
+      >
+        Profile
+      </Link>{' '}
+      to continue.
+    </ThreadBanner>
+  );
+}
+
+function RestoredBanner() {
+  return (
+    <ThreadBanner>
+      A new AI configuration is available. Start a new chat to continue.
+    </ThreadBanner>
+  );
+}
+
+function ModelChangeBanner({ provider, model, onDismiss = noop }) {
+  return (
+    <ThreadBanner>
+      <div className="flex items-start justify-between gap-2">
+        <span>
+          AI model changed to{' '}
+          <span className="font-semibold">{getProviderLabel(provider)}</span> (
+          {model}) for this conversation.
+        </span>
+        <Button
+          type="icon"
+          size="none"
+          onClick={onDismiss}
+          aria-label="Dismiss"
+          className="!text-yellow-800 hover:opacity-75"
+        >
+          <EOS_CLOSE className="h-5 w-5 fill-current" />
+        </Button>
+      </div>
+    </ThreadBanner>
+  );
+}
+
+export function ThreadContainer({ children }) {
   return (
     <ThreadPrimitive.Root
       className="relative flex h-full flex-col bg-white text-sm"
@@ -26,8 +89,56 @@ function AssistantThread({
         '--accent-foreground': '#ffffff',
       }}
     >
+      {children}
+    </ThreadPrimitive.Root>
+  );
+}
+
+export function ThreadMessages({ isRunning = false, isChatActive = false }) {
+  return (
+    <ThreadPrimitive.Messages>
+      {({ message }) => {
+        switch (message.role) {
+          case 'user':
+            return <UserMessage />;
+          case 'assistant':
+            return (
+              <AssistantMessage
+                isChatActive={isChatActive}
+                isRunning={isRunning}
+                message={message}
+              />
+            );
+          default:
+            return null;
+        }
+      }}
+    </ThreadPrimitive.Messages>
+  );
+}
+
+function AssistantThread({
+  connectionStatus,
+  configurationStatus,
+  isEmpty = false,
+  isRunning = false,
+  onNewThread = noop,
+  onClose = noop,
+  modelNotice = null,
+  onDismissModelNotice = noop,
+}) {
+  const connection = effectiveConnectionStatus(
+    connectionStatus,
+    configurationStatus
+  );
+
+  const isChatActive = canSendMessage(connection, configurationStatus);
+
+  return (
+    <ThreadContainer>
       <ChatHeader
-        connectionStatus={connectionStatus}
+        connectionStatus={connection}
+        isRunning={isRunning}
         onNewChat={onNewThread}
         onClose={onClose}
       />
@@ -37,26 +148,24 @@ function AssistantThread({
       >
         {isEmpty && <ThreadWelcome />}
 
-        <ThreadPrimitive.Messages>
-          {({ message }) => {
-            switch (message.role) {
-              case 'user':
-                return <UserMessage />;
-              case 'assistant':
-                return <AssistantMessage isRunning={isRunning} />;
-              default:
-                return null;
-            }
-          }}
-        </ThreadPrimitive.Messages>
+        <ThreadMessages isChatActive={isChatActive} isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
+          {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
+          {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
+          {modelNotice && (
+            <ModelChangeBanner
+              {...modelNotice}
+              onDismiss={onDismissModelNotice}
+            />
+          )}
           <PromptComposer
-            connectionStatus={connectionStatus}
+            connectionStatus={connection}
+            configurationStatus={configurationStatus}
             isRunning={isRunning}
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>
-    </ThreadPrimitive.Root>
+    </ThreadContainer>
   );
 }
 

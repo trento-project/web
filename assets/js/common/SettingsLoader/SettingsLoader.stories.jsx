@@ -4,7 +4,7 @@
 import React from 'react';
 import { action } from 'storybook/actions';
 
-import SettingsLoader, { Status as SettingsLoaderStatus } from '.';
+import SettingsLoader, { Status } from './SettingsLoader';
 
 export default {
   title: 'Components/SettingsLoader',
@@ -12,24 +12,23 @@ export default {
   argTypes: {
     status: {
       description: 'Settings Loader status',
-      options: Object.keys(SettingsLoaderStatus),
-      mapping: SettingsLoaderStatus,
-      control: {
-        type: 'select',
-      },
+      options: Object.keys(Status),
+      mapping: Status,
+      control: { type: 'select' },
     },
     sectionName: {
       description: 'Name of the setting section',
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
     },
     onRetry: {
       description:
         "Callback used to close the 'Edit Settings' and 'Clear Settings' dialogs",
-      control: {
-        type: 'function',
-      },
+      action: 'onRetry',
+    },
+    children: {
+      description:
+        'React elements or content displayed when the settings loader status is READY',
+      control: { type: 'text' },
     },
   },
   render: (args) => (
@@ -42,8 +41,8 @@ export default {
 
 export const Default = {
   args: {
-    status: SettingsLoaderStatus.READY,
+    status: Status.READY,
     sectionName: 'Trento',
-    onRetry: action('retry!'),
+    onRetry: action('onRetry'),
   },
 };

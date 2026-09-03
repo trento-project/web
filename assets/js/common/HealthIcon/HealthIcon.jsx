@@ -36,25 +36,27 @@ function HealthIcon({
   isLink = false,
   staleAt = null,
   timezone = 'Etc/UTC',
+  ariaLabelPrefix = '',
 }) {
   const hoverOpacityClass = {
     'hover:opacity-75': hoverOpacity,
     'hover:opacity-100': !hoverOpacity,
   };
+  const ariaLabelPre = `${ariaLabelPrefix ? `${ariaLabelPrefix} ` : ''}Health:`;
 
   switch (health) {
     case 'passing': {
       const PassingIcon = isLink ? PassingIconLink : PassingIconBlank;
       return (
         <PassingIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-jungle-green-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-jungle-green-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Passing`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -63,14 +65,14 @@ function HealthIcon({
       const WarningIcon = isLink ? WarningIconLink : WarningIconBlank;
       return (
         <WarningIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-yellow-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-yellow-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Warning`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -79,14 +81,14 @@ function HealthIcon({
       const CriticalIcon = isLink ? CriticalIconLink : CriticalIconBlank;
       return (
         <CriticalIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-red-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-red-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Critical`}
+          containerProps={{ 'data-health-state': health }}
         />
       );
     }
@@ -110,14 +112,14 @@ function HealthIcon({
     default: {
       return (
         <UnknownIcon
-          className={classNames(
-            hoverOpacityClass,
-            computedIconCssClass('fill-gray-500', centered)
-          )}
+          centered={centered}
+          className={classNames(hoverOpacityClass, 'fill-gray-500')}
           size={size}
           staleAt={staleAt}
           timezone={timezone}
           tooltipEnabled={!!staleAt}
+          ariaLabel={`${ariaLabelPre} Unknown`}
+          containerProps={{ 'data-health-state': 'unknown' }}
         />
       );
     }

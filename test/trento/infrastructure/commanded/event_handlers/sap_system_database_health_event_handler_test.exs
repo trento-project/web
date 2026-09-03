@@ -40,16 +40,14 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.SapSystemDatabaseHealthE
     expect(Trento.Commanded.Mock, :dispatch, fn %UpdateDatabaseHealth{
                                                   sap_system_id: ^first_sap_system_id,
                                                   database_health: :critical
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 
     expect(Trento.Commanded.Mock, :dispatch, fn %UpdateDatabaseHealth{
                                                   sap_system_id: ^second_sap_system_id,
                                                   database_health: :critical
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 

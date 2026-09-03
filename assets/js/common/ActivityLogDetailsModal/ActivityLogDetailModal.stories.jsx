@@ -1,14 +1,15 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { action } from 'storybook/actions';
+import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
+import { RESOURCE_TAGGING } from '@lib/model/activityLog';
 import {
   activityLogEntryFactory,
   taggingMetadataFactory,
 } from '@lib/test-utils/factories/activityLog';
-import { RESOURCE_TAGGING } from '@lib/model/activityLog';
-import { toRenderedEntry } from '@common/ActivityLogOverview/ActivityLogOverview';
-import ActivityLogDetailModal from '.';
+import { action } from 'storybook/actions';
+
+import ActivityLogDetailModal from './ActivityLogDetailModal';
 
 export default {
   title: 'Components/ActivityLogDetailModal',
@@ -16,19 +17,15 @@ export default {
   argTypes: {
     open: {
       description: 'Whether the dialog is open or not',
-      control: {
-        type: 'boolean',
-      },
+      control: { type: 'boolean' },
     },
     entry: {
-      description: 'An Avtivity Log entry.',
-      control: {
-        type: 'object',
-      },
+      description: 'An Activity Log entry.',
+      control: { type: 'object' },
     },
     onClose: {
       description: 'Callback when the Cancel button is clicked',
-      control: { type: 'function' },
+      action: 'onClose',
     },
   },
 };
@@ -37,18 +34,18 @@ export const Default = {
   args: {
     open: false,
     entry: toRenderedEntry(activityLogEntryFactory.build()),
-    onClose: action('cancel clicked'),
+    onClose: action('onClose'),
   },
 };
 
-export const UnknwonActivityType = {
+export const UnknownActivityType = {
   args: {
     ...Default.args,
     entry: toRenderedEntry(activityLogEntryFactory.build({ type: 'foo_bar' })),
   },
 };
 
-export const UnknwonResourceType = {
+export const UnknownResourceType = {
   args: {
     ...Default.args,
     entry: toRenderedEntry(

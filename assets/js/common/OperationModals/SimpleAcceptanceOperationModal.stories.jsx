@@ -2,20 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import {
-  SAP_INSTANCE_START,
-  SAP_INSTANCE_STOP,
-  PACEMAKER_ENABLE,
-  PACEMAKER_DISABLE,
   CLUSTER_HOST_START,
   CLUSTER_HOST_STOP,
   CLUSTER_MAINTENANCE_CHANGE,
   CLUSTER_RESOURCE_REFRESH,
+  PACEMAKER_DISABLE,
+  PACEMAKER_ENABLE,
+  SAP_INSTANCE_START,
+  SAP_INSTANCE_STOP,
 } from '@lib/operations';
-
 import {
   hostFactory,
   sapSystemApplicationInstanceFactory,
 } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import SimpleAcceptanceOperationModal from './SimpleAcceptanceOperationModal';
 
@@ -40,21 +40,20 @@ export default {
     descriptionResolverArgs: {
       description:
         'Arguments for the description resolver function to generate the operation description',
-      control: 'object',
+      control: { type: 'object' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onRequest: {
       description: 'Request saptune solution apply operation',
+      action: 'onRequest',
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
-  },
-  args: {
-    isOpen: true,
   },
 };
 
@@ -63,8 +62,19 @@ const { instance_number: instanceNumber, sid } =
 
 const { hostname: hostName } = hostFactory.build();
 
+export const Default = {
+  args: {
+    operation: SAP_INSTANCE_START,
+    descriptionResolverArgs: { instanceNumber, sid },
+    isOpen: true,
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
+  },
+};
+
 export const StartInstance = {
   args: {
+    ...Default.args,
     operation: SAP_INSTANCE_START,
     descriptionResolverArgs: { instanceNumber, sid },
   },
@@ -72,6 +82,7 @@ export const StartInstance = {
 
 export const StopInstance = {
   args: {
+    ...Default.args,
     operation: SAP_INSTANCE_STOP,
     descriptionResolverArgs: { instanceNumber, sid },
   },
@@ -79,6 +90,7 @@ export const StopInstance = {
 
 export const EnablePacemaker = {
   args: {
+    ...Default.args,
     operation: PACEMAKER_ENABLE,
     descriptionResolverArgs: { hostName },
   },
@@ -86,6 +98,7 @@ export const EnablePacemaker = {
 
 export const DisablePacemaker = {
   args: {
+    ...Default.args,
     operation: PACEMAKER_DISABLE,
     descriptionResolverArgs: { hostName },
   },
@@ -93,6 +106,7 @@ export const DisablePacemaker = {
 
 export const ClusterHostStart = {
   args: {
+    ...Default.args,
     operation: CLUSTER_HOST_START,
     descriptionResolverArgs: { hostName },
   },
@@ -100,6 +114,7 @@ export const ClusterHostStart = {
 
 export const ClusterHostStop = {
   args: {
+    ...Default.args,
     operation: CLUSTER_HOST_STOP,
     descriptionResolverArgs: { hostName },
   },
@@ -107,6 +122,7 @@ export const ClusterHostStop = {
 
 export const ClusterMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: { maintenance: true },
   },
@@ -114,6 +130,7 @@ export const ClusterMaintenanceChange = {
 
 export const NodeMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: { maintenance: true, node_id: hostName },
   },
@@ -121,6 +138,7 @@ export const NodeMaintenanceChange = {
 
 export const ResourceMaintenanceChange = {
   args: {
+    ...Default.args,
     operation: CLUSTER_MAINTENANCE_CHANGE,
     descriptionResolverArgs: {
       maintenance: true,
@@ -131,6 +149,7 @@ export const ResourceMaintenanceChange = {
 
 export const ClusterResourcesRefresh = {
   args: {
+    ...Default.args,
     operation: CLUSTER_RESOURCE_REFRESH,
     descriptionResolverArgs: {},
   },
@@ -138,6 +157,7 @@ export const ClusterResourcesRefresh = {
 
 export const ResourceRefresh = {
   args: {
+    ...Default.args,
     operation: CLUSTER_RESOURCE_REFRESH,
     descriptionResolverArgs: {
       resource_id: 'rsc_ip_PRD_HDB00',
@@ -147,6 +167,7 @@ export const ResourceRefresh = {
 
 export const RebootHost = {
   args: {
+    ...Default.args,
     operation: 'reboot',
     descriptionResolverArgs: { hostName },
   },

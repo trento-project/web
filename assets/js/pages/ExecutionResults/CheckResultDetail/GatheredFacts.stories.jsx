@@ -16,9 +16,20 @@ const factValues = {
     [faker.lorem.sentence(), faker.lorem.sentence()],
   ],
 };
+
 export default {
   title: 'Patterns/GatheredFacts',
   component: GatheredFacts,
+  argTypes: {
+    isTargetHost: {
+      description: 'Indicates if the target is a host',
+      control: { type: 'boolean' },
+    },
+    gatheredFacts: {
+      description: 'List of gathered facts',
+      control: { type: 'object' },
+    },
+  },
 };
 
 export const Default = {

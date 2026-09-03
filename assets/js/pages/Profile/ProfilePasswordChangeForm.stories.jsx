@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { action } from 'storybook/actions';
 
 import ProfilePasswordChangeForm from './ProfilePasswordChangeForm';
 
@@ -17,6 +18,7 @@ export default {
   argTypes: {
     errors: {
       description: 'OpenAPI errors coming from backend validation',
+      control: { type: 'object' },
     },
     onSave: {
       action: 'Save password payload',
@@ -27,7 +29,8 @@ export default {
       description: 'Cancel Action',
     },
     loading: {
-      action: 'Loading state',
+      description: 'Loading state',
+      control: { type: 'boolean' },
     },
   },
   args: {
@@ -40,8 +43,18 @@ export default {
   ),
 };
 
+export const Default = {
+  args: {
+    errors: [],
+    loading: false,
+    onSave: action('onSave'),
+    onCancel: action('onCancel'),
+  },
+};
+
 export const Loading = {
   args: {
+    ...Default.args,
     loading: true,
   },
 };
@@ -50,7 +63,7 @@ export const Empty = {};
 
 export const WithErrors = {
   args: {
-    ...Empty.args,
+    ...Default.args,
     errors: [
       {
         detail: 'Error validating password',

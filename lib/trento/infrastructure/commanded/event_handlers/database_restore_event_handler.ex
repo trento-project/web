@@ -36,15 +36,12 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
     for %{id: sap_system_id, tenant: tenant, db_host: db_host, sid: sid} <- sap_systems do
       Logger.info("Restoring sap system #{sid} attached to database #{database_id}")
 
-      commanded().dispatch(
-        %RestoreSapSystem{
-          sap_system_id: sap_system_id,
-          db_host: db_host,
-          tenant: tenant,
-          database_health: database_health
-        },
-        consistency: :strong
-      )
+      commanded().dispatch(%RestoreSapSystem{
+        sap_system_id: sap_system_id,
+        db_host: db_host,
+        tenant: tenant,
+        database_health: database_health
+      })
     end
 
     :ok

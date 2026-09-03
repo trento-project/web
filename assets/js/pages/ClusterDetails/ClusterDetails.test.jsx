@@ -7,6 +7,7 @@ import { noop } from 'lodash';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { formatDateTime } from '@lib/timezones';
 
 import { hostFactory, clusterFactory } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
@@ -45,13 +46,51 @@ describe('ClusterDetails ClusterDetails component', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: `Pacemaker Cluster Details: ${name}`,
-    });
+    expect(
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('img', { name: /cluster health/i })
+    ).toBeInTheDocument();
+  });
 
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+  it('should render a stale cluster', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const userTimezone = 'America/New_York';
+    const { id, name, health, details } = clusterFactory.build();
+
+    renderWithRouter(
+      <ClusterDetails
+        clusterID={id}
+        clusterName={name}
+        details={details}
+        hasSelectedChecks={false}
+        hosts={[]}
+        health={health}
+        staleAt={staleAt}
+        selectedChecks={[]}
+        userAbilities={userAbilities}
+        userTimezone={userTimezone}
+        onStartExecution={noop}
+        navigate={noop}
+      />
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: `Pacemaker Cluster Details: ${name}`,
+      })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('img', { name: /cluster health/i })
+    ).toHaveAttribute('data-stale');
+    expect(
+      screen.getByRole('alert', {
+        name: /An agent in one of the cluster hosts is not reporting/i,
+      })
+    ).toHaveTextContent(formatDateTime(staleAt, userTimezone));
   });
 
   it.each([

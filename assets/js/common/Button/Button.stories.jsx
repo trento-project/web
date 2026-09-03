@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import Button from '.';
+import Button from './Button';
 
 export default {
   title: 'Components/Button',
@@ -13,81 +13,150 @@ export default {
       control: { type: 'radio' },
       options: ['small', 'fit'],
       description: 'Button size',
-      table: {
-        type: { summary: 'string' },
-        defaultValue: { summary: 'small' },
-      },
+    },
+    children: {
+      description: 'Content or text displayed inside the button',
+      control: { type: 'text' },
+    },
+    className: {
+      description: 'Additional CSS classes applied to the button element',
+      control: { type: 'text' },
+    },
+    type: {
+      description: 'Style variant of the button',
+      control: { type: 'select' },
+      options: [
+        'primary',
+        'secondary',
+        'danger',
+        'danger-bold',
+        'primary-white',
+        'transparent',
+        'link',
+      ],
+    },
+    disabled: {
+      description: 'Boolean indicating whether the button is disabled',
+      control: { type: 'boolean' },
+    },
+    asSubmit: {
+      description:
+        "Boolean determining whether the button's type is submit or button",
+      control: { type: 'boolean' },
     },
   },
 };
 
-export function Default() {
-  return <Button>Hello world!</Button>;
-}
+export const Default = {
+  args: {
+    size: 'small',
+    children: 'Hello world!',
+  },
+};
 
-export function Secondary() {
-  return <Button type="secondary">Hello world!</Button>;
-}
+export const Secondary = {
+  args: {
+    ...Default.args,
+    type: 'secondary',
+    children: 'Hello world!',
+  },
+};
 
-export function Danger() {
-  return <Button type="danger">Hello world!</Button>;
-}
+export const Danger = {
+  args: {
+    ...Default.args,
+    type: 'danger',
+    children: 'Hello world!',
+  },
+};
 
-export function DangerBold() {
-  return <Button type="danger-bold">Danger!</Button>;
-}
+export const DangerBold = {
+  args: {
+    ...Default.args,
+    type: 'danger-bold',
+    children: 'Danger!',
+  },
+};
 
-export function PrimaryWhite() {
-  return <Button type="primary-white">Hello world!</Button>;
-}
+export const PrimaryWhite = {
+  args: {
+    ...Default.args,
+    type: 'primary-white',
+    children: 'Hello world!',
+  },
+};
 
-export function Transparent() {
-  return <Button type="transparent">Hello world!</Button>;
-}
+export const Transparent = {
+  args: {
+    ...Default.args,
+    type: 'transparent',
+    children: 'Hello world!',
+  },
+};
 
-export function Small() {
-  return <Button size="small">Hello world!</Button>;
-}
+export const Small = {
+  args: {
+    ...Default.args,
+    size: 'small',
+    children: 'Hello world!',
+  },
+};
 
-export function Fit() {
-  return <Button size="fit">Hello world!</Button>;
-}
+export const Fit = {
+  args: {
+    ...Default.args,
+    size: 'fit',
+    children: 'Hello world!',
+  },
+};
 
-export function Link() {
-  return <Button type="link">Go to another page</Button>;
-}
+export const Link = {
+  args: {
+    ...Default.args,
+    type: 'link',
+    children: 'Go to another page',
+  },
+};
 
-export function SmallSecondary() {
-  return (
-    <Button size="small" type="secondary">
-      Hello world!
-    </Button>
-  );
-}
+export const SmallSecondary = {
+  args: {
+    ...Default.args,
+    size: 'small',
+    type: 'secondary',
+    children: 'Hello world!',
+  },
+};
 
-export function Disabled() {
-  return <Button disabled>Hello world!</Button>;
-}
+export const Disabled = {
+  args: {
+    ...Default.args,
+    disabled: true,
+    children: 'Hello world!',
+  },
+};
 
-export function Icon() {
-  return (
-    <Button type="icon" size="none" aria-label="Close">
-      <span className="text-2xl leading-none">×</span>
-    </Button>
-  );
-}
+export const Icon = {
+  args: {
+    ...Default.args,
+    type: 'icon',
+    size: 'none',
+    'aria-label': 'Close',
+    children: <span className="text-2xl leading-none">×</span>,
+  },
+};
 
-export function FloatingActionButton() {
-  return (
+export const FloatingActionButton = {
+  args: {
+    ...Default.args,
+    type: 'fab',
+    size: 'none',
+    className: 'size-full',
+    'aria-label': 'Open assistant',
+    children: <span className="text-xl leading-none">+</span>,
+  },
+  render: (args) => (
     <div className="size-12">
-      <Button
-        type="fab"
-        size="none"
-        className="size-full"
-        aria-label="Open assistant"
-      >
-        <span className="text-xl leading-none">+</span>
-      </Button>
+      <Button {...args} />
     </div>
-  );
-}
+  ),
+};

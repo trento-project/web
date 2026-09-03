@@ -1,12 +1,13 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { faker } from '@faker-js/faker';
-import { MemoryRouter } from 'react-router';
-
-import PageHeader from '@common/PageHeader';
 import BackButton from '@common/BackButton';
+import PageHeader from '@common/PageHeader';
+import { faker } from '@faker-js/faker';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
+
 import ChecksSelectionHeader from './ChecksSelectionHeader';
 
 export default {
@@ -21,18 +22,12 @@ export default {
   ],
   argTypes: {
     targetID: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The target identifier',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     targetName: {
-      control: 'text',
+      control: { type: 'text' },
       description: 'The target name',
-      table: {
-        type: { summary: 'string' },
-      },
     },
     backTo: {
       description:
@@ -43,44 +38,37 @@ export default {
         'A Component that renders the page header for the specific target',
     },
     selection: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'The check selection currently displayed',
     },
     userAbilities: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Current user abilities',
     },
     checkSelectionPermittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check selection',
     },
     checkExecutionPermittedFor: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'Abilities that allow check execution',
     },
     savedSelection: {
-      control: 'array',
+      control: { type: 'object' },
       description: 'The last saved check selection for the target',
     },
     isSavingSelection: {
-      control: 'boolean',
+      control: { type: 'boolean' },
       description:
         'Whether Save Checks Selection button is enabled or disabled',
-      table: {
-        type: { summary: 'boolean' },
-      },
     },
     onSaveSelection: {
       description: 'Updates the selected checks on save',
-      table: {
-        type: { summary: 'function' },
-      },
+      action: 'onSaveSelection',
     },
     onStartExecution: {
       description: 'Starts the host checks execution',
-      table: {
-        type: { summary: 'function' },
-      },
+      action: 'onStartExecution',
     },
   },
 };
@@ -110,6 +98,8 @@ export const Default = {
     checkExecutionPermittedFor: ['all:cluster_checks_execution'],
     savedSelection,
     isSavingSelection: false,
+    onSaveSelection: action('onSaveSelection'),
+    onStartExecution: action('onStartExecution'),
   },
 };
 

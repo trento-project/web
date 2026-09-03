@@ -7,7 +7,7 @@ import { NavLink, Outlet } from 'react-router';
 
 import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
-import { getUserProfile } from '@state/selectors/user';
+import { getUserProfile, hasAIConfiguration } from '@state/selectors/user';
 import { optinCapturing, reset } from '@lib/analytics';
 
 import {
@@ -103,6 +103,7 @@ function Layout() {
   }, [isCollapsed]);
 
   const { id, username, email } = useSelector(getUserProfile);
+  const aiConfigured = useSelector(hasAIConfiguration);
 
   const sidebarIconColor = 'currentColor';
   const sidebarIconClassName = 'text-gray-400 hover:text-gray-300';
@@ -250,7 +251,7 @@ function Layout() {
       </div>
       {getFromConfig('aiEnabled') && (
         <SocketProvider>
-          <AIAssistant userID={id} />
+          <AIAssistant userID={id} aiConfigured={aiConfigured} />
         </SocketProvider>
       )}
     </main>

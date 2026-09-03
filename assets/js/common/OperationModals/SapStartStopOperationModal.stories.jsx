@@ -1,11 +1,10 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
-
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
-
+import { DATABASE_START, SAP_SYSTEM_START } from '@lib/operations';
 import { sapSystemFactory } from '@lib/test-utils/factories';
+import { action } from 'storybook/actions';
 
 import SapStartStopOperationModal from './SapStartStopOperationModal';
 
@@ -15,7 +14,7 @@ export default {
   argTypes: {
     operation: {
       description: 'Operation to request',
-      control: 'text',
+      control: { type: 'object' },
     },
     type: {
       description: 'System type',
@@ -24,42 +23,60 @@ export default {
     },
     sid: {
       description: 'SAP system or database sid',
-      control: 'text',
+      control: { type: 'text' },
     },
     site: {
       description: 'System replication site. Only applicable for database type',
-      control: 'text',
+      control: { type: 'text' },
     },
     isOpen: {
       description: 'Modal is open',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onRequest: {
       description: 'Request start/stop operation',
+      action: 'onRequest',
     },
     onCancel: {
       description: 'Closes the modal',
+      action: 'onCancel',
     },
-  },
-  args: {
-    isOpen: true,
   },
 };
 
 const { sid } = sapSystemFactory.build();
 
-export const SapSystem = {
+export const Default = {
   args: {
     operation: SAP_SYSTEM_START,
     type: APPLICATION_TYPE,
     sid,
+    isOpen: true,
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
+  },
+};
+
+export const SapSystem = {
+  args: {
+    ...Default.args,
+    operation: SAP_SYSTEM_START,
+    type: APPLICATION_TYPE,
+    sid,
+    isOpen: true,
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };
 
 export const Database = {
   args: {
+    ...Default.args,
     operation: DATABASE_START,
     type: DATABASE_TYPE,
     sid,
+    isOpen: true,
+    onRequest: action('onRequest'),
+    onCancel: action('onCancel'),
   },
 };

@@ -9,6 +9,7 @@ defmodule Trento.Router do
   alias Trento.Clusters.Commands.{
     CompleteChecksExecution,
     DeregisterClusterHost,
+    MarkClusterHostStale,
     RegisterOfflineClusterHost,
     RegisterOnlineClusterHost,
     RollUpCluster,
@@ -46,7 +47,8 @@ defmodule Trento.Router do
     RegisterApplicationInstance,
     RestoreSapSystem,
     RollUpSapSystem,
-    UpdateDatabaseHealth
+    UpdateDatabaseHealth,
+    UpdateDatabaseStaleAt
   }
 
   alias Trento.Clusters
@@ -80,6 +82,7 @@ defmodule Trento.Router do
 
   dispatch [
              DeregisterClusterHost,
+             MarkClusterHostStale,
              RollUpCluster,
              RegisterOfflineClusterHost,
              RegisterOnlineClusterHost,
@@ -99,7 +102,8 @@ defmodule Trento.Router do
              MarkApplicationInstanceDataStale,
              RegisterApplicationInstance,
              RollUpSapSystem,
-             UpdateDatabaseHealth
+             UpdateDatabaseHealth,
+             UpdateDatabaseStaleAt
            ],
            to: SapSystems.SapSystem,
            lifespan: SapSystems.Lifespan

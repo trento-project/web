@@ -199,8 +199,24 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           },
           database_sid: %Schema{type: :string, description: "Database SID.", example: "HA1"},
           database_health: ResourceHealth,
+          database_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database associated to this SAP system data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           database_instances: Database.DatabaseInstances,
           tags: Tags,
+          stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the SAP system data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           inserted_at: %Schema{type: :string, format: :datetime, example: "2024-01-15T10:30:00Z"},
           updated_at: %Schema{
             type: :string,
@@ -221,6 +237,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_sid: "HA1",
           database_instances: [],
           tags: [],
+          stale_at: "2024-01-15T08:00:00Z",
+          database_stale_at: "2024-01-15T08:00:00Z",
           inserted_at: "2024-01-15T10:30:00Z",
           updated_at: "2024-01-15T12:30:00Z"
         }
@@ -252,6 +270,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             database_sid: "HA1",
             database_instances: [],
             tags: [],
+            stale_at: "2024-01-15T08:00:00Z",
+            database_stale_at: "2024-01-15T08:00:00Z",
             inserted_at: "2024-01-15T10:30:00Z",
             updated_at: "2024-01-15T12:30:00Z"
           }
@@ -316,8 +336,32 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           },
           sapsystem_health: ResourceHealth,
           database_health: ResourceHealth,
+          database_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database associated to this SAP system data became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           application_health: ResourceHealth,
+          application_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when at least one application instance of this SAP system became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           hosts_health: ResourceHealth,
+          hosts_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when at least one host of this SAP system became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           clusters_health: %Schema{
             deprecated: true,
             allOf: [
@@ -325,7 +369,23 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             ]
           },
           application_cluster_health: ResourceHealth,
+          application_cluster_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the application cluster data of this SAP system became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           database_cluster_health: ResourceHealth,
+          database_cluster_stale_at: %Schema{
+            type: :string,
+            description:
+              "The timestamp indicating when the database cluster data of this SAP system became stale, supporting monitoring and troubleshooting.",
+            format: :datetime,
+            example: "2024-01-15T08:00:00Z",
+            nullable: true
+          },
           tenant: %Schema{
             type: :string,
             description: "Tenant database SID.",
@@ -343,11 +403,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
           database_id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
           sapsystem_health: "passing",
           application_health: "passing",
+          application_stale_at: "2024-01-15T08:00:00Z",
           database_health: "passing",
+          database_stale_at: "2024-01-15T08:00:00Z",
           hosts_health: "passing",
+          hosts_stale_at: "2024-01-15T08:00:00Z",
           clusters_health: "passing",
           application_cluster_health: "passing",
+          application_cluster_stale_at: "2024-01-15T08:00:00Z",
           database_cluster_health: "passing",
+          database_cluster_stale_at: "2024-01-15T08:00:00Z",
           tenant: "PRD",
           database_sid: "HA1"
         }
@@ -375,11 +440,16 @@ defmodule TrentoWeb.OpenApi.V1.Schema.SAPSystem do
             database_cluster_id: "5a65db74-dd68-4c91-b4d1-4f9d91f2c2c8",
             database_id: "9c86eb74-dd68-4c91-b4d1-4f9d91f2c2c8",
             sapsystem_health: "passing",
+            application_stale_at: "2024-01-15T08:00:00Z",
             database_health: "passing",
+            database_stale_at: "2024-01-15T08:00:00Z",
             hosts_health: "passing",
+            hosts_stale_at: "2024-01-15T08:00:00Z",
             clusters_health: "passing",
             application_cluster_health: "passing",
+            application_cluster_stale_at: "2024-01-15T08:00:00Z",
             database_cluster_health: "passing",
+            database_cluster_stale_at: "2024-01-15T08:00:00Z",
             tenant: "PRD",
             database_sid: "HA1"
           }

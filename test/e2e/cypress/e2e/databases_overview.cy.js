@@ -45,13 +45,11 @@ context('Databases Overview', () => {
   });
 
   describe('Instance deregistration', () => {
-    before(() => {
-      databasesOverviewPage.expandHddDatabaseRow();
-    });
+    before(() => databasesOverviewPage.expandHddDatabaseRow());
 
-    beforeEach(() => {
-      databasesOverviewPage.markHddDatabaseAsAbsent();
-    });
+    after(() => databasesOverviewPage.markHddDatabaseAsPresent());
+
+    beforeEach(() => databasesOverviewPage.markHddDatabaseAsAbsent());
 
     it('should mark an instance as absent and restore it as present on received respective discovery messages', () => {
       databasesOverviewPage.cleanUpButtonIsDisplayed();
@@ -63,6 +61,29 @@ context('Databases Overview', () => {
       databasesOverviewPage.clickCleanUpButton();
       databasesOverviewPage.clickModalCleanUpButton();
       databasesOverviewPage.hddDatabaseIsNotDisplayed();
+    });
+  });
+
+  describe('Stale data', () => {
+    before(() => {
+      databasesOverviewPage.startAllDatabasesAgentsHeartbeat();
+      databasesOverviewPage.visit();
+      databasesOverviewPage.expandHddDatabaseRow();
+    });
+
+    after(() => databasesOverviewPage.stopAgentsHeartbeat());
+
+    it('should mark database data as stale when an agent composing the database stops reporting', () => {
+      databasesOverviewPage.stopHddDatabaseAgentHeartbeat();
+      databasesOverviewPage.hddDatabaseDataIsMarkedAsStale();
+      databasesOverviewPage.hddDatabaseInstanceRowIsMarkedAsStale();
+    });
+
+    it('should mark database data as sync when the agent starts reporting data again', () => {
+      databasesOverviewPage.startHddDatabaseAgentHeartbeat();
+      databasesOverviewPage.markHddDatabaseAsPresent();
+      databasesOverviewPage.hddDatabaseDataIsMarkedInSync();
+      databasesOverviewPage.hddDatabaseInstanceRowIsMarkedInSync();
     });
   });
 

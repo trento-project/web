@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { action } from 'storybook/actions';
+
 import GenerateTokenModal from './GenerateTokenModal';
 
 export default {
@@ -9,15 +11,19 @@ export default {
   argTypes: {
     isOpen: {
       description: 'Opens the modal',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     onGenerate: {
-      type: 'function',
       description: 'Generate personal access token',
+      action: 'onGenerate',
     },
     onClose: {
-      type: 'function',
       description: 'Closes the modal',
+      action: 'onClose',
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
     },
   },
 };
@@ -25,5 +31,7 @@ export default {
 export const Default = {
   args: {
     isOpen: true,
+    onGenerate: action('onGenerate'),
+    onClose: action('onClose'),
   },
 };

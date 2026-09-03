@@ -10,6 +10,7 @@ defmodule Trento.AI.Configurations do
 
   alias Trento.Users.User
 
+  alias Trento.AI.Configurations.Events
   alias Trento.AI.UserConfiguration
 
   alias Trento.Repo
@@ -28,6 +29,10 @@ defmodule Trento.AI.Configurations do
     %UserConfiguration{}
     |> UserConfiguration.changeset(Map.put(attrs, :user_id, user_id))
     |> Repo.insert()
+    |> tap(fn
+      {:ok, _} -> Events.broadcast_created(user_id)
+      _ -> :ok
+    end)
   end
 
   def create_user_configuration(%User{}, _), do: {:error, :forbidden}
@@ -56,6 +61,10 @@ defmodule Trento.AI.Configurations do
         user_configuration
         |> UserConfiguration.changeset(attrs)
         |> Repo.update()
+        |> tap(fn
+          {:ok, updated} -> maybe_broadcast_update(user_configuration, updated)
+          _ -> :ok
+        end)
     end
   end
 
@@ -71,8 +80,23 @@ defmodule Trento.AI.Configurations do
       when not is_nil(user_id) do
     Repo.delete_all(from u in UserConfiguration, where: u.user_id == ^user_id)
 
+    Events.broadcast_cleared(user_id)
+
     :ok
   end
 
   def clear_user_configuration(%User{}), do: {:error, :forbidden}
+
+  defp maybe_broadcast_update(
+         %UserConfiguration{provider: provider, model: model},
+         %UserConfiguration{provider: provider, model: model}
+       ),
+       do: :ok
+
+  defp maybe_broadcast_update(%UserConfiguration{}, %UserConfiguration{
+         user_id: user_id,
+         provider: provider,
+         model: model
+       }),
+       do: Events.broadcast_updated(user_id, %{provider: provider, model: model})
 end

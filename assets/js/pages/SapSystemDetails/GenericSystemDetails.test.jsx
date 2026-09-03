@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import 'intersection-observer';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -125,13 +124,12 @@ describe('GenericSystemDetails', () => {
       />
     );
 
-    const header = screen.getByRole('heading', {
-      name: title,
-    });
-
-    expect(header).toBeInTheDocument();
-    const { getByTestId } = within(header);
-    expect(getByTestId('eos-svg-component')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', {
+        name: title,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toBeVisible();
 
     expect(screen.getByText(sid)).toBeTruthy();
     expect(screen.getByText('ENSA1')).toBeTruthy();
@@ -346,6 +344,85 @@ describe('GenericSystemDetails', () => {
     );
   });
 
+  it('should render System Replication data with active instance data', () => {
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 999,
+          system_replication_status: 'STALE_STATUS',
+          stale_at: faker.date.past().toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'ACTIVE',
+          stale_at: null,
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-white');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('1');
+    expect(getByText('Status').nextSibling).toHaveTextContent('ACTIVE');
+  });
+
+  it('should render System Replication data with newest stale instance data if all instances are stale', () => {
+    const olderDate = new Date('2024-01-01T10:00:00Z');
+    const newerDate = new Date('2024-01-02T10:00:00Z');
+
+    const database = databaseFactory.build({
+      hosts: hostFactory.buildList(2),
+      instances: [
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 1,
+          system_replication_status: 'OLD_STATUS',
+          stale_at: olderDate.toISOString(),
+        }),
+        databaseInstanceFactory.build({
+          system_replication: 'Primary',
+          system_replication_site: 'Site1',
+          system_replication_tier: 2,
+          system_replication_status: 'RECENT_STATUS',
+          stale_at: newerDate.toISOString(),
+        }),
+      ],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={database}
+        type={DATABASE_TYPE}
+        getSiteOperations={getDatabaseSiteOperations}
+      />
+    );
+
+    const siteTables = screen.getAllByRole('table');
+    const { getByText } = within(siteTables[0].previousSibling);
+
+    expect(siteTables[0].previousSibling).toHaveClass('bg-gray-100');
+    expect(getByText('Tier').nextSibling).toHaveTextContent('2');
+    expect(getByText('Status').nextSibling).toHaveTextContent('RECENT_STATUS');
+  });
+
   it('should render hosts table', () => {
     const cluster = clusterFactory.build({ type: 'hana_scale_up' });
     const host = hostFactory.build({ cluster });
@@ -407,8 +484,11 @@ describe('GenericSystemDetails', () => {
     expect(health).toHaveClass('fill-black');
   });
 
-  it('should render stale instances with stale styling', () => {
+  it('should render stale system and instances', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const userTimezone = 'America/New_York';
     const sapSystem = sapSystemFactory.build({
+      stale_at: staleAt,
       instances: [
         sapSystemApplicationInstanceFactory.build(),
         sapSystemApplicationInstanceFactory.build({
@@ -421,10 +501,23 @@ describe('GenericSystemDetails', () => {
 
     renderWithRouter(
       <GenericSystemDetails
-        title={faker.string.uuid()}
+        title="SAP System Details"
         system={sapSystem}
         type={APPLICATION_TYPE}
+        userTimezone={userTimezone}
       />
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'SAP System Details' })
+    ).toBeVisible();
+    expect(
+      screen.getByRole('alert', {
+        name: /An agent in one of the SAP system hosts is not reporting since 15 Jun 2026, 06:30:00/,
+      })
+    ).toBeVisible();
+    expect(screen.getByRole('img', { name: /system health/i })).toHaveAttribute(
+      'data-stale'
     );
 
     const [layoutTable, _] = screen.getAllByRole('table');
@@ -433,6 +526,28 @@ describe('GenericSystemDetails', () => {
     expect(rows[0]).not.toHaveClass('bg-gray-100');
     expect(rows[1]).toHaveClass('bg-gray-100');
     expect(rows[2]).not.toHaveClass('bg-gray-100');
+  });
+
+  it('should render stale database in a SAP system details view', () => {
+    const sapSystem = sapSystemFactory.build({
+      database_stale_at: '2026-06-15T10:30:00Z',
+      instances: [],
+      hosts: [],
+    });
+
+    renderWithRouter(
+      <GenericSystemDetails
+        title={faker.string.uuid()}
+        system={sapSystem}
+        type={APPLICATION_TYPE}
+      />
+    );
+
+    expect(
+      within(screen.getByText('Database health').nextSibling).getAllByTestId(
+        'eos-svg-component'
+      ).length
+    ).toBe(2);
   });
 
   it.each([

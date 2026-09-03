@@ -4,7 +4,7 @@
 export const availableHanaCluster = {
   id: '469e7be5-4e20-5007-b044-c6f540a87493',
   name: 'hana_cluster_3',
-  health: 'fill-jungle-green-500',
+  health: 'passing',
   sid: 'HDP',
   systemID: '6c9208eb-a5bb-57ef-be5c-6422dedab602',
   clusterType: 'HANA Scale Up',
@@ -17,6 +17,14 @@ export const availableHanaCluster = {
   sapHanaSRHealthState: 4,
   cibLastWritten: '25 Jan 2022, 15:36:59',
   hanaSystemReplicationOperationMode: 'logreplay',
+  hosts: [
+    {
+      id: '9cd46919-5f19-59aa-993e-cf3736c71053',
+    },
+    {
+      id: 'b767b3e9-e802-587e-a442-541d093b86b9',
+    },
+  ],
   sites: [
     {
       name: 'NBG',

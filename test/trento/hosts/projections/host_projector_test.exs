@@ -370,16 +370,23 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
     }
 
     ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    %{hostname: hostname} = host_projection = Repo.get!(HostReadModel, event.host_id)
 
-    assert :passing == host_projection.heartbeat
+    %{hostname: hostname, heartbeat: heartbeat, stale_at: stale_at} =
+      Repo.get!(HostReadModel, event.host_id)
+
+    assert :passing == heartbeat
+    assert nil == stale_at
 
     assert_broadcast "heartbeat_succeded",
-                     %{
-                       id: ^host_id,
-                       hostname: ^hostname
-                     },
+                     heartbeat_payload,
                      1000
+
+    assert %{
+             id: ^host_id,
+             hostname: ^hostname
+           } = heartbeat_payload
+
+    refute Map.has_key?(heartbeat_payload, :stale_at)
   end
 
   test "should update the heartbeat field to critical status when HeartbeatFailed is received", %{
@@ -389,15 +396,26 @@ defmodule Trento.Hosts.Projections.HostProjectorTest do
       host_id: host_id
     }
 
-    ProjectorTestHelper.project(HostProjector, event, "host_projector")
-    %{hostname: hostname} = host_projection = Repo.get!(HostReadModel, event.host_id)
+    event_created_at = DateTime.utc_now()
 
-    assert :critical == host_projection.heartbeat
+    ProjectorTestHelper.project(
+      HostProjector,
+      event,
+      %{created_at: event_created_at},
+      "host_projector"
+    )
+
+    %{hostname: hostname, heartbeat: heartbeat, stale_at: stale_at} =
+      Repo.get!(HostReadModel, event.host_id)
+
+    assert :critical == heartbeat
+    assert event_created_at == stale_at
 
     assert_broadcast "heartbeat_failed",
                      %{
                        id: ^host_id,
-                       hostname: ^hostname
+                       hostname: ^hostname,
+                       stale_at: ^event_created_at
                      },
                      1000
   end

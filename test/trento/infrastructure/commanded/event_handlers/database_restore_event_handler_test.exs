@@ -27,8 +27,7 @@ defmodule Trento.Infrastructure.Commanded.EventHandlers.DatabaseRestoreEventHand
                                                   tenant: ^tenant,
                                                   db_host: ^db_host,
                                                   database_health: :passing
-                                                },
-                                                _ ->
+                                                } ->
       :ok
     end)
 

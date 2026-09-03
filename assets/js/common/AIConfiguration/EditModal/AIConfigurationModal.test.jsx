@@ -12,7 +12,7 @@ import AIConfigurationModal from './AIConfigurationModal';
 
 describe('AIConfigurationModal', () => {
   const aiProviders = {
-    googleai: ['gemini-2.5-pro', 'gemini-1.5-pro'],
+    google: ['gemini-2.5-pro', 'gemini-1.5-pro'],
     openai: ['gpt-4o', 'gpt-4-turbo'],
   };
 
@@ -38,7 +38,7 @@ describe('AIConfigurationModal', () => {
 
   it('should render with saved configuration', async () => {
     const aiConfiguration = aiConfigurationFactory.build({
-      provider: 'googleai',
+      provider: 'google',
       model: 'gemini-2.5-pro',
     });
 
@@ -109,7 +109,7 @@ describe('AIConfigurationModal', () => {
     );
 
     expect(onSave).toHaveBeenCalledWith(
-      'googleai',
+      'google',
       'gemini-2.5-pro',
       'my-api-key'
     );
@@ -119,7 +119,7 @@ describe('AIConfigurationModal', () => {
     const user = userEvent.setup();
     const onUpdate = jest.fn();
     const aiConfiguration = aiConfigurationFactory.build({
-      provider: 'googleai',
+      provider: 'google',
       model: 'gemini-2.5-pro',
     });
 

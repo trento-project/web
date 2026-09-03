@@ -41,6 +41,20 @@ defmodule Trento.AI do
   def clear_user_configuration(user),
     do: configurations().clear_user_configuration(user)
 
+  @doc """
+  Subscribes the calling process to the given user's AI configuration lifecycle
+  events.
+
+  Every AI Assistant channel (one per browser tab) subscribes on join so it can
+  react in real time to configuration changes made elsewhere (another tab, or a
+  raw API call). See `Trento.AI.Configurations.Events` for the message contract.
+  """
+  @spec subscribe_to_configuration_events(non_neg_integer() | String.t()) ::
+          :ok | {:error, term()}
+  defdelegate subscribe_to_configuration_events(user_id),
+    to: Configurations.Events,
+    as: :subscribe
+
   defp configurations,
     do: Keyword.get(ApplicationConfigLoader.load(), :configurations, Configurations)
 end

@@ -24,7 +24,10 @@ defmodule Trento.ActivityLog.ActivityCatalog do
 
   @excluded_events [
     Trento.Hosts.Events.HostChecksSelected,
-    Trento.Clusters.Events.ChecksSelected
+    Trento.Clusters.Events.ChecksSelected,
+    Trento.Clusters.Events.ClusterHostDataMarkedStale,
+    Trento.Clusters.Events.ClusterHostDataMarkedInSync,
+    Trento.SapSystems.Events.SapSystemDatabaseStaleAtChanged
   ]
 
   @operation_activities [

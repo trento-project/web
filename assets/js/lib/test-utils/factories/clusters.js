@@ -175,6 +175,7 @@ export const clusterFactory = Factory.define(({ sequence, params }) => {
     provider: cloudProviderEnum(),
     cib_last_written: formatDateTime(faker.date.recent()),
     state: stateEnum(),
+    stale_at: null,
     details,
   };
 });

@@ -14,12 +14,6 @@ const url = '/clusters';
 const clustersEndpoint = '/api/v2/clusters';
 const clustersEndpointAlias = 'clustersEndpoint';
 
-//Selectors
-const clusterNames = '.tn-clustername';
-const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
-const tableRows = 'tbody tr';
-const rowCells = 'td';
-
 //Test data
 export const healthyClusterName = healthyClusterScenario.clusterName;
 export const unhealthyClusterName = unhealthyClusterScenario.clusterName;
@@ -43,6 +37,13 @@ const taggingRules = [
   ['hana_cluster_2', clusterTags.hana_cluster_2],
   ['hana_cluster_3', clusterTags.hana_cluster_3],
 ];
+
+//Selectors
+const clusterNames = '.tn-clustername';
+const paginationNavigationButtons = 'div[class*="bg-gray-50"] ul button';
+const tableRows = 'tbody tr';
+const rowCells = 'td';
+const hanaCluster1Row = `tr:contains("${hanaCluster1.name}")`;
 
 export const visit = () => basePage.visit(url);
 
@@ -133,6 +134,12 @@ export const clusterIsNotDisplayedWhenNodesAreDeregistered = () =>
 export const clusterNameIsDisplayed = () =>
   cy.get(`span span:contains("${hanaCluster1.name}")`).should('be.visible');
 
+export const hanaCluster1DataIsMarkedAsStale = () =>
+  basePage.elementIsMarkedStale(hanaCluster1Row);
+
+export const hanaCluster1DataIsMarkedInSync = () =>
+  basePage.elementIsMarkedInSync(hanaCluster1Row);
+
 // Helpers
 const _clusterIdByName = (clusterName) =>
   availableClusters.find(({ name }) => name === clusterName).id;
@@ -183,6 +190,23 @@ const _getClusterTags = (jsonData) => {
 
   return clusterTags;
 };
+
+const _getClustersAgentIds = () =>
+  basePage
+    .apiLogin()
+    .then(({ accessToken }) => {
+      const url = '/api/v1/hosts';
+      return cy.request({
+        method: 'GET',
+        url: url,
+        auth: {
+          bearer: accessToken,
+        },
+      });
+    })
+    .then(({ body }) =>
+      body.filter(({ cluster_id }) => cluster_id !== null).map(({ id }) => id)
+    );
 
 export const apiDeregisterAllClusterHosts = () =>
   cy
@@ -258,3 +282,14 @@ export const apiCreateUserWithClusterTagsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'cluster_tags' },
   ]);
+
+export const startHanaCluster1AgentHeartbeat = () =>
+  basePage.startAgentsHeartbeat([hanaCluster1.hosts[0]]);
+
+export const startAllClustersAgentsHeartbeat = () =>
+  _getClustersAgentIds().then((agentIds) =>
+    basePage.startAgentsHeartbeat(agentIds)
+  );
+
+export const stopHanaCluster1AgentHeartbeat = () =>
+  basePage.stopAgentsHeartbeat([hanaCluster1.hosts[0]]);

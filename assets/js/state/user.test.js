@@ -57,6 +57,7 @@ describe('user reducer', () => {
       analytics_enabled,
       analytics_eula_accepted,
       timezone,
+      ai_configuration,
     } = userFactory.build();
 
     const action = setUser({
@@ -70,6 +71,7 @@ describe('user reducer', () => {
       analytics_enabled,
       analytics_eula_accepted,
       timezone,
+      ai_configuration,
     });
 
     expect(userReducer(initialState, action)).toEqual({
@@ -84,6 +86,7 @@ describe('user reducer', () => {
       analytics_enabled,
       analytics_eula_accepted,
       timezone,
+      ai_configuration,
     });
   });
 });

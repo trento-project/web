@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { escapeRegExp } from 'lodash';
 import { TOTP } from 'totp-generator';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
@@ -28,7 +29,6 @@ const user = createUserRequestFactory.build({
 
 // Selectors
 const pageTitle = 'h1';
-const pageTitleHealth = 'h1 div svg';
 const userDropdownMenuButton = 'header button[id*="menu"]';
 const userDropdownProfileButton = 'a:contains("Profile")';
 const accessForbiddenMessage =
@@ -118,7 +118,9 @@ export const selectOptions = '[role="listbox"] [role="option"]';
 
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();
-  return cy.get(`${selectOptions}:contains("${choice}")`).click();
+  return cy
+    .contains(selectOptions, new RegExp(`^${escapeRegExp(choice)}$`))
+    .click();
 };
 
 export const getSelectControlValue = (ariaLabel) =>
@@ -143,8 +145,8 @@ export const userDropdownMenuButtonHasTheExpectedText = (username) =>
 export const pageTitleIsCorrectlyDisplayed = (title) =>
   cy.get(pageTitle).should('contain', title);
 
-export const pageTitleHealthIsCorrectlyDisplayed = (health) =>
-  cy.get(pageTitleHealth).should('have.class', health);
+export const healthIconIsCorrectlyDisplayed = (icon, health) =>
+  cy.get(icon).should('have.attr', 'data-health-state', health);
 
 export const accessForbiddenMessageIsDisplayed = () =>
   cy.get(accessForbiddenMessage).should('be.visible');
@@ -168,6 +170,18 @@ export const removeTagButtonIsDisabled = () =>
 
 export const removeTagButtonIsEnabled = () =>
   cy.get(removeEnv1TagButton).should('not.have.class', 'opacity-50');
+
+export const elementIsMarkedStale = (element, timeout = 20000) =>
+  cy.get(element, { timeout }).should('have.class', 'bg-gray-100');
+
+export const elementIsMarkedInSync = (element) =>
+  cy.get(element).should('not.have.class', 'bg-gray-100');
+
+export const healthIconIsMarkedStale = (icon, timeout = 20000) =>
+  cy.get(icon, { timeout }).should('have.attr', 'data-stale');
+
+export const healthIconIsMarkedInSync = (icon) =>
+  cy.get(icon).should('not.have.attr', 'data-stale');
 
 // API Interactions & Validations
 
@@ -246,8 +260,23 @@ export const apiDeleteAllUsers = () =>
       )
   );
 
-export const waitForRequest = (requestAlias, timeout = 5000) =>
-  cy.wait(`@${requestAlias}`, { timeout: timeout });
+const hasRefreshToken = () =>
+  cy.window().then((win) => Boolean(win.localStorage.getItem('refresh_token')));
+
+export const waitForRequest = (
+  requestAlias,
+  { timeout = 5000, retryUnauthorized = true } = {}
+) =>
+  cy.wait(`@${requestAlias}`, { timeout: timeout }).then((request) => {
+    if (!retryUnauthorized || request.response.statusCode !== 401) {
+      return request;
+    }
+
+    return hasRefreshToken().then((hasToken) => {
+      if (!hasToken) return request;
+      return cy.wait(`@${requestAlias}`, { timeout: timeout });
+    });
+  });
 
 export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
   /**
@@ -383,23 +412,8 @@ export const apiDeregisterHost = (hostId) =>
     } else return;
   });
 
-export const apiDeregisterProdHost = () =>
-  apiLogin().then(({ accessToken }) =>
-    cy
-      .request({
-        url: '/api/v1/hosts',
-        method: 'GET',
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then(({ body }) => {
-        const hostId = body[0].id;
-        return apiDeregisterHost(hostId);
-      })
-  );
-
-export const stopAgentsHeartbeat = () => cy.task('stopAgentsHeartbeat');
+export const stopAgentsHeartbeat = (agents = []) =>
+  cy.task('stopAgentsHeartbeat', { agents });
 
 export const isHostRegistered = (hostId) =>
   apiLogin()
@@ -467,8 +481,8 @@ export const apiSelectChecks = (clusterId, checks) => {
   });
 };
 
-export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  clearSUMASettings().then(() =>
+export const saveSMLMSettings = ({ url, username, password, ca_cert }) =>
+  clearSMLMSettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
@@ -486,7 +500,7 @@ export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
     )
   );
 
-export const clearSUMASettings = () =>
+export const clearSMLMSettings = () =>
   apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/suse_manager',

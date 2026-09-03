@@ -1,24 +1,25 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
-import { MemoryRouter } from 'react-router';
-
 import { faker } from '@faker-js/faker';
-
+import { providers } from '@lib/model';
 import {
-  buildHostsFromAscsErsClusterDetails,
-  buildSapSystemsFromAscsErsClusterDetails,
+  abilityFactory,
   ascsErsClusterDetailsFactory,
   ascsErsClusterNodeFactory,
   ascsErsSapSystemFactory,
-  clusterFactory,
+  buildHostsFromAscsErsClusterDetails,
+  buildSapSystemsFromAscsErsClusterDetails,
   catalogFactory,
   checksExecutionCompletedFactory,
+  clusterFactory,
 } from '@lib/test-utils/factories';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { action } from 'storybook/actions';
 
-import ClusterDetails from './ClusterDetails';
 import AscsErsClusterDetails from './AscsErsClusterDetails';
+import ClusterDetails from './ClusterDetails';
 
 const {
   id: clusterID,
@@ -64,7 +65,8 @@ const failoverDetails = ascsErsClusterDetailsFactory.build({
   catalog,
 });
 
-const userAbilities = [{ name: 'all', resource: 'all' }];
+const allAbility = abilityFactory.build({ name: 'all', resource: 'all' });
+const userAbilities = [allAbility];
 
 function ContainerWrapper({ children, ...props }) {
   return (
@@ -78,7 +80,7 @@ function ContainerWrapper({ children, ...props }) {
 
 export default {
   title: 'Layouts/AscsErsClusterDetails',
-  components: AscsErsClusterDetails,
+  component: AscsErsClusterDetails,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -91,6 +93,78 @@ export default {
       <AscsErsClusterDetails {...args} />
     </ContainerWrapper>
   ),
+  argTypes: {
+    clusterID: {
+      description: 'Unique identifier for the cluster',
+      control: { type: 'text' },
+    },
+    hosts: {
+      description: 'List of hosts in the cluster',
+      control: { type: 'object' },
+    },
+    details: {
+      description: 'Detailed information about the cluster',
+      control: { type: 'object' },
+    },
+    lastExecution: {
+      description: 'Information about the last checks execution',
+      control: { type: 'object' },
+    },
+    userAbilities: {
+      description: 'List of user abilities for actions on the cluster',
+      control: { type: 'object' },
+    },
+    cibLastWritten: {
+      description: 'Timestamp when the CIB was last written',
+      control: { type: 'date' },
+    },
+    provider: {
+      description: 'Cloud provider',
+      control: { type: 'select' },
+      options: [...providers, 'unrecognized-provider'],
+    },
+    sapSystems: {
+      description: 'Array of SAP system objects for the cluster',
+      control: { type: 'object' },
+    },
+    catalog: {
+      description: 'Catalog data (may include loading and data fields)',
+      control: { type: 'object' },
+    },
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+    },
+    navigate: {
+      description: 'Navigation function (e.g., from react-router)',
+      action: 'navigate',
+    },
+    getClusterHostOperations: {
+      description: 'Function returning available host operations for a host',
+      action: 'getClusterHostOperations',
+    },
+  },
+};
+
+export const Default = {
+  args: {
+    clusterID,
+    clusterName,
+    cibLastWritten,
+    provider,
+    selectedChecks,
+    hasSelectedChecks: true,
+    hosts: buildHostsFromAscsErsClusterDetails(details),
+    sapSystems: buildSapSystemsFromAscsErsClusterDetails(details),
+    details,
+    state,
+    lastExecution,
+    catalog,
+    userAbilities,
+    timezone: 'Etc/UTC',
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
+  },
 };
 
 export const Single = {
@@ -108,6 +182,9 @@ export const Single = {
     lastExecution,
     catalog,
     userAbilities,
+    timezone: 'Etc/UTC',
+    navigate: action('navigate'),
+    getClusterHostOperations: action('getClusterHostOperations'),
   },
 };
 

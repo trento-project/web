@@ -90,6 +90,9 @@ defmodule Trento.Factory do
     ApplicationInstanceMarkedAbsent,
     ApplicationInstanceMoved,
     ApplicationInstanceRegistered,
+    SapSystemDatabaseStaleAtChanged,
+    SapSystemDataMarkedInSync,
+    SapSystemDataMarkedStale,
     SapSystemDeregistered,
     SapSystemHealthChanged,
     SapSystemRegistered,
@@ -100,10 +103,14 @@ defmodule Trento.Factory do
   alias Trento.Clusters.Events.{
     ChecksSelected,
     ClusterChecksHealthChanged,
+    ClusterDataMarkedInSync,
+    ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
+    ClusterHostDataMarkedInSync,
+    ClusterHostDataMarkedStale,
     ClusterHostStatusChanged,
     ClusterRegistered,
     ClusterTombstoned,
@@ -115,6 +122,7 @@ defmodule Trento.Factory do
 
   alias Trento.SapSystems.Commands.{
     DeregisterApplicationInstance,
+    MarkApplicationInstanceDataStale,
     RegisterApplicationInstance,
     RollUpSapSystem
   }
@@ -197,14 +205,12 @@ defmodule Trento.Factory do
   alias OpenApiSpex.Operation
   alias Trento.AI.{LLMRegistry, OperationEntry, UserConfiguration}
 
-  alias Trento.AI.AICase
-
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
   use ExMachina.Ecto, repo: Trento.Repo
 
-  def host_registered_event_factory do
-    %HostRegistered{
+  def host_registered_event_factory(attrs) do
+    event = %{
       host_id: Faker.UUID.v4(),
       hostname: Faker.StarWars.character(),
       ip_addresses: ["#{Faker.Internet.ip_v4_address()}/#{Enum.random([16, 24, 32])}"],
@@ -216,13 +222,18 @@ defmodule Trento.Factory do
       os_version: Faker.App.semver(),
       fully_qualified_domain_name: Faker.Internet.domain_name(),
       installation_source: Enum.random([:community, :suse, :unknown]),
-      prometheus_targets: build(:host_prometheus_targets),
+      prometheus_targets: params_for(:host_prometheus_targets),
       prometheus_mode: PrometheusMode.pull(),
       heartbeat: :unknown,
-      systemd_units: build_list(2, :host_systemd_unit),
+      systemd_units: Enum.map(1..2, fn _ -> params_for(:host_systemd_unit) end),
       last_boot_timestamp:
         Enum.random(1..10) |> Faker.DateTime.backward() |> DateTime.truncate(:second)
     }
+
+    event
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> HostRegistered.new!()
   end
 
   def host_details_updated_event_factory do
@@ -404,6 +415,54 @@ defmodule Trento.Factory do
     }
   end
 
+  def cluster_host_data_marked_stale_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterHostDataMarkedStale.new!()
+  end
+
+  def cluster_host_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      host_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterHostDataMarkedInSync.new!()
+  end
+
+  def cluster_data_marked_stale_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterDataMarkedStale.new!()
+  end
+
+  def cluster_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      cluster_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> ClusterDataMarkedInSync.new!()
+  end
+
   def host_added_to_cluster_event_factory do
     %HostAddedToCluster{
       cluster_id: Faker.UUID.v4(),
@@ -463,8 +522,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def cluster_factory do
-    %ClusterReadModel{
+  def cluster_factory(attrs) do
+    cluster = %ClusterReadModel{
       id: Faker.UUID.v4(),
       name: Faker.StarWars.character(),
       sap_instances: build_list(1, :clustered_sap_instance),
@@ -473,8 +532,13 @@ defmodule Trento.Factory do
       health: Health.passing(),
       selected_checks: Enum.map(0..4, fn _ -> Faker.StarWars.planet() end),
       details: %{},
-      state: :S_IDLE
+      state: :S_IDLE,
+      stale_at: nil
     }
+
+    cluster
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
   end
 
   def cluster_enrichment_data_factory do
@@ -659,6 +723,29 @@ defmodule Trento.Factory do
     })
   end
 
+  def sap_system_data_marked_stale_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDataMarkedStale.new!()
+  end
+
+  def sap_system_data_marked_in_sync_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDataMarkedInSync.new!()
+  end
+
   def deregister_application_instance_command_factory do
     DeregisterApplicationInstance.new!(%{
       sap_system_id: Faker.UUID.v4(),
@@ -666,6 +753,20 @@ defmodule Trento.Factory do
       instance_number: "00",
       host_id: Faker.UUID.v4()
     })
+  end
+
+  def mark_application_instance_data_stale_command_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      instance_number: "00",
+      host_id: Faker.UUID.v4(),
+      stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> MarkApplicationInstanceDataStale.new!()
   end
 
   def database_registered_event_factory do
@@ -683,8 +784,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def sap_system_registered_event_factory do
-    %SapSystemRegistered{
+  def sap_system_registered_event_factory(attrs) do
+    data = %{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.UUID.v4(),
       db_host: Faker.Internet.ip_v4_address(),
@@ -692,8 +793,14 @@ defmodule Trento.Factory do
       health: Health.passing(),
       database_id: Faker.UUID.v4(),
       database_health: Health.passing(),
+      database_stale_at: nil,
       ensa_version: EnsaVersion.ensa1()
     }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemRegistered.new!()
   end
 
   def sap_system_health_changed_event_factory do
@@ -701,6 +808,18 @@ defmodule Trento.Factory do
       sap_system_id: Faker.UUID.v4(),
       health: Health.passing()
     }
+  end
+
+  def sap_system_database_stale_at_changed_event_factory(attrs) do
+    data = %{
+      sap_system_id: Faker.UUID.v4(),
+      database_stale_at: DateTime.utc_now()
+    }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemDatabaseStaleAtChanged.new!()
   end
 
   def application_instance_moved_event_factory do
@@ -719,14 +838,20 @@ defmodule Trento.Factory do
     })
   end
 
-  def sap_system_restored_event_factory do
-    %SapSystemRestored{
+  def sap_system_restored_event_factory(attrs) do
+    data = %{
       sap_system_id: Faker.UUID.v4(),
       tenant: Faker.Beer.hop(),
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.passing(),
-      database_health: Health.passing()
+      database_health: Health.passing(),
+      database_stale_at: nil
     }
+
+    data
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes
+    |> SapSystemRestored.new!()
   end
 
   def rollup_sap_system_command_factory do
@@ -871,6 +996,7 @@ defmodule Trento.Factory do
       db_host: Faker.Internet.ip_v4_address(),
       health: Health.unknown(),
       ensa_version: EnsaVersion.ensa1(),
+      stale_at: nil,
       deregistered_at: nil,
       database_id: Faker.UUID.v4()
     }
@@ -940,8 +1066,8 @@ defmodule Trento.Factory do
     }
   end
 
-  def register_application_instance_command_factory do
-    RegisterApplicationInstance.new!(%{
+  def register_application_instance_command_factory(attrs) do
+    command = %{
       sap_system_id: Faker.UUID.v4(),
       sid: Faker.StarWars.planet(),
       db_host: Faker.Internet.ip_v4_address(),
@@ -957,8 +1083,14 @@ defmodule Trento.Factory do
       ensa_version: EnsaVersion.ensa1(),
       database_id: Faker.UUID.v4(),
       database_health: Health.passing(),
+      database_stale_at: nil,
       clustered: false
-    })
+    }
+
+    command
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> RegisterApplicationInstance.new!()
   end
 
   def register_database_instance_command_factory do
@@ -1164,11 +1296,16 @@ defmodule Trento.Factory do
     })
   end
 
-  def host_health_changed_event_factory do
-    HostHealthChanged.new!(%{
+  def host_health_changed_event_factory(attrs) do
+    event = %{
       host_id: Faker.UUID.v4(),
       health: Health.passing()
-    })
+    }
+
+    event
+    |> merge_attributes(attrs)
+    |> evaluate_lazy_attributes()
+    |> HostHealthChanged.new!()
   end
 
   def software_updates_settings_factory(attrs) do
@@ -1569,16 +1706,12 @@ defmodule Trento.Factory do
   end
 
   def random_ai_provider_factory(_) do
-    AICase.stub_config_loader()
-
     Enum.random(LLMRegistry.providers())
   end
 
   def random_ai_model_factory(attrs) do
-    AICase.stub_config_loader()
-
     attrs
-    |> Map.get(:provider, :all)
+    |> Map.get(:provider, build(:random_ai_provider))
     |> LLMRegistry.get_provider_models()
     |> Enum.random()
   end

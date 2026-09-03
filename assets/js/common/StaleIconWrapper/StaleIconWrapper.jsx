@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import classNames from 'classnames';
 import { EOS_SCHEDULE_OUTLINED } from 'eos-icons-react';
 
 import { getIconSize } from '@lib/icon';
@@ -27,6 +28,9 @@ function StaleIconWrapper(WrappedIcon) {
     timezone = 'Etc/UTC',
     size = 'm',
     className = '',
+    centered = false,
+    ariaLabel = 'Icon',
+    containerProps = {},
     ...props
   }) {
     const convertedSize = getIconSize(size);
@@ -44,14 +48,20 @@ function StaleIconWrapper(WrappedIcon) {
     );
 
     return (
-      <div className="flex items-center mx-1">
+      <div
+        className="flex items-center mx-1"
+        role="img"
+        aria-label={`${ariaLabel}${staleAt ? ' Stale' : ''}`}
+        {...containerProps}
+        {...(staleAt && { 'data-stale': '' })}
+      >
         <Tooltip
           content={tooltipContent}
           place="top"
           isEnabled={tooltipEnabled}
           wrap={false}
         >
-          <div className="relative">
+          <div className={classNames('relative', { 'mx-auto': centered })}>
             <WrappedIcon
               size={convertedSize}
               className={className}

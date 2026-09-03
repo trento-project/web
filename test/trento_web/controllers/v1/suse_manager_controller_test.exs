@@ -72,7 +72,10 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
 
       assert %{
                "errors" => [
-                 %{"detail" => "SUSE Manager settings not configured.", "title" => "Not Found"}
+                 %{
+                   "detail" => "SUSE Multi-Linux Manager settings not configured.",
+                   "title" => "Not Found"
+                 }
                ]
              } == resp
     end

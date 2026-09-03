@@ -15,6 +15,9 @@ config :trento, Trento.SoftwareUpdates.Discovery,
 config :trento,
   operations_enabled: true
 
-config :trento, :ai, enabled: true
+config :llm_db,
+  filter: %{
+    deny: %{google: ["*-preview*", "*-image*"]}
+  }
 
-config :logger, level: :info
+config :trento, :ai, enabled: true

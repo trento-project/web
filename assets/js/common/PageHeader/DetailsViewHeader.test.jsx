@@ -14,4 +14,19 @@ describe('DetailsViewHeader', () => {
       'fill-jungle-green-500'
     );
   });
+
+  it('should render a stale state', () => {
+    const staleAt = '2026-06-15T10:30:00Z';
+    const timezone = 'America/New_York';
+
+    render(
+      <DetailsViewHeader health="passing" staleAt={staleAt} timezone={timezone}>
+        Stale Resource
+      </DetailsViewHeader>
+    );
+
+    expect(screen.getByText('Stale Resource')).toBeVisible();
+    const svgs = screen.getAllByTestId('eos-svg-component');
+    expect(svgs).toHaveLength(2);
+  });
 });

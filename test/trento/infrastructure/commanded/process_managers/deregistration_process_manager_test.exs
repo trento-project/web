@@ -43,7 +43,11 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
   alias Trento.SapSystems.Instance, as: SapSystemInstance
   alias Trento.SapSystems.SapSystem
 
-  alias Trento.Clusters.Commands.DeregisterClusterHost
+  alias Trento.Clusters.Commands.{
+    DeregisterClusterHost,
+    MarkClusterHostStale
+  }
+
   alias Trento.Hosts.Commands.DeregisterHost
 
   alias Trento.Databases.Commands.{
@@ -741,6 +745,31 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
                %MarkDatabaseInstanceDataStale{
                  database_id: ^database_id,
                  instance_number: ^db_instance_number_02,
+                 host_id: ^host_id,
+                 stale_at: ^created_at
+               }
+             ] = commands
+    end
+
+    test "should dispatch MarkClusterHostStale when HeartbeatFailed is emitted and the host belongs to a cluster" do
+      host_id = UUID.uuid4()
+      cluster_id = UUID.uuid4()
+      created_at = DateTime.utc_now()
+
+      initial_state = %DeregistrationProcessManager{
+        cluster_id: cluster_id,
+        database_instances: [],
+        application_instances: []
+      }
+
+      event = %HeartbeatFailed{host_id: host_id}
+      metadata = %{created_at: created_at}
+
+      commands = DeregistrationProcessManager.handle(initial_state, event, metadata)
+
+      assert [
+               %MarkClusterHostStale{
+                 cluster_id: ^cluster_id,
                  host_id: ^host_id,
                  stale_at: ^created_at
                }

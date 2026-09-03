@@ -21,7 +21,7 @@
 
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
-let heartbeatsIntervals = [];
+let heartbeatsIntervals = {};
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
@@ -50,20 +50,24 @@ module.exports = (on, config) => {
 
       agents.forEach((agentId) => {
         heartbeat(agentId);
-        let interval = setInterval(
+        clearInterval(heartbeatsIntervals[agentId]);
+        heartbeatsIntervals[agentId] = setInterval(
           () => heartbeat(agentId),
           config.env.heartbeat_interval
         );
-        heartbeatsIntervals.push(interval);
       });
 
       return null;
     },
-
-    stopAgentsHeartbeat() {
-      heartbeatsIntervals.forEach((interval) => {
-        clearInterval(interval);
+    stopAgentsHeartbeat({ agents = [] }) {
+      const agentIds = agents.length
+        ? agents
+        : Object.keys(heartbeatsIntervals);
+      agentIds.forEach((agentId) => {
+        clearInterval(heartbeatsIntervals[agentId]);
+        delete heartbeatsIntervals[agentId];
       });
+
       return null;
     },
   });

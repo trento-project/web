@@ -74,7 +74,7 @@ module.exports = {
       aTestVariable: 123,
       aiEnabled: true,
       aiProviders: {
-        googleai: [
+        google: [
           'gemini-2.5-pro',
           'gemini-2.5-flash',
           'gemini-2.5-flash-lite',
@@ -114,8 +114,8 @@ module.exports = {
     '^@pages(.*)$': '<rootDir>/js/pages$1',
     '^@state(.*)$': '<rootDir>/js/state$1',
     phoenix: '<rootDir>/mocks/phoenix.js',
-    'react-markdown': '<rootDir>/mocks/reactMarkdown.js',
-    'remark-gfm': '<rootDir>/mocks/remarkPlugin.js',
+    '^react-markdown$': '<rootDir>/mocks/reactMarkdown.js',
+    '^remark-gfm$': '<rootDir>/mocks/remarkPlugin.js',
     '\\.(jpg|ico|jpeg|png|gif|svg)$': '<rootDir>/mocks/fileMock.js',
     '\\.css$': '<rootDir>/mocks/fileMock.js',
   },
@@ -228,8 +228,16 @@ module.exports = {
 
   // Allow transforming ESM-only deps (e.g. @faker-js/faker) inside node_modules.
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
+  //
+  // The second group is react-syntax-highlighter's ESM-only transitive tree
+  // (refractor and its hast/character-entity helpers). Regenerate it after a
+  // bump by walking the dependency graph for packages with `"type": "module"`.
   transformIgnorePatterns: [
-    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|nanoid|zustand|use-sync-external-store)/)',
+    '/node_modules/(?!(?:@faker-js/faker|@assistant-ui|@ag-ui|assistant-stream|assistant-cloud|safe-content-frame|nanoid|zustand|use-sync-external-store' +
+      '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
+      '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
+      '|character-entities|character-entities-legacy|character-reference-invalid' +
+      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal)/)',
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule Trento.AI.RemoteHttpToolTest do
-  use ExUnit.Case, async: false
+  use ExUnit.Case, async: true
   use Trento.AI.AICase
 
   import Mox

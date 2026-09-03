@@ -13,7 +13,11 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
   import Trento.Factory
   import Trento.Support.Helpers.AlertingSettingsHelper
 
+  alias Trento.Clusters.Projections.ClusterReadModel
+  alias Trento.Databases.Projections.DatabaseInstanceReadModel
+  alias Trento.Hosts.Projections.HostReadModel
   alias Trento.Infrastructure.Alerting.Alerting
+  alias Trento.SapSystems.Projections.ApplicationInstanceReadModel
 
   @moduletag :integration
 
@@ -101,6 +105,87 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
       Alerting.notify_critical_sap_system_health(sap_system_id)
       assert_email_sent(subject: "Trento Alert: Sap System #{sap_system.sid} needs attention.")
+    end
+
+    test "Notify heartbeat failed including the resources running in the host" do
+      failed_at = DateTime.utc_now()
+
+      %ClusterReadModel{id: cluster_id, name: cluster_name} = insert(:cluster)
+
+      %HostReadModel{id: host_id, hostname: hostname} = insert(:host, cluster_id: cluster_id)
+
+      %{id: sap_system_id} = insert(:sap_system)
+      %{id: database_id} = insert(:database)
+
+      %ApplicationInstanceReadModel{
+        sid: application_sid,
+        instance_number: application_instance_number
+      } =
+        insert(:application_instance,
+          host_id: host_id,
+          sap_system_id: sap_system_id,
+          instance_number: "00"
+        )
+
+      %DatabaseInstanceReadModel{sid: database_sid, instance_number: database_instance_number} =
+        insert(:database_instance,
+          host_id: host_id,
+          database_id: database_id,
+          instance_number: "10"
+        )
+
+      Alerting.notify_heartbeat_failed(host_id, failed_at)
+
+      assert_email_sent(fn %Swoosh.Email{subject: subject, html_body: html_body} ->
+        assert subject == "Trento Alert: Host #{hostname} stopped reporting."
+
+        assert html_body =~ "Host: <b>#{hostname}</b>"
+        assert html_body =~ "Host ID: <b>#{host_id}</b>"
+
+        assert html_body =~
+                 "Stale since: <b>#{Calendar.strftime(failed_at, "%Y-%m-%d %H:%M:%S UTC")}</b>"
+
+        assert html_body =~ "Cluster: <b>#{cluster_name}</b>"
+        assert html_body =~ "Cluster ID: <b>#{cluster_id}</b>"
+
+        assert html_body =~
+                 "SAP application instance: <b>#{application_sid}</b> - instance number <b>#{application_instance_number}</b>"
+
+        assert html_body =~ "SAP system ID: <b>#{sap_system_id}</b>"
+
+        assert html_body =~
+                 "Database instance: <b>#{database_sid}</b> - instance number <b>#{database_instance_number}</b>"
+
+        assert html_body =~ "Database ID: <b>#{database_id}</b>"
+      end)
+    end
+
+    test "Notify heartbeat failed filtering out deregistered clusters" do
+      %ClusterReadModel{id: cluster_id, name: cluster_name} =
+        insert(:cluster, deregistered_at: DateTime.utc_now())
+
+      %HostReadModel{id: host_id, hostname: hostname} = insert(:host, cluster_id: cluster_id)
+
+      Alerting.notify_heartbeat_failed(host_id, DateTime.utc_now())
+
+      assert_email_sent(fn %Swoosh.Email{subject: subject, html_body: html_body} ->
+        refute html_body =~ cluster_name
+        refute html_body =~ cluster_id
+
+        assert subject == "Trento Alert: Host #{hostname} stopped reporting."
+      end)
+    end
+
+    test "Notify heartbeat failed without resources running in the host" do
+      %HostReadModel{id: host_id, hostname: hostname} = insert(:host, cluster_id: nil)
+
+      Alerting.notify_heartbeat_failed(host_id, DateTime.utc_now())
+
+      assert_email_sent(fn %Swoosh.Email{subject: subject, html_body: html_body} ->
+        refute html_body =~ "were running on the host"
+
+        assert subject == "Trento Alert: Host #{hostname} stopped reporting."
+      end)
     end
   end
 

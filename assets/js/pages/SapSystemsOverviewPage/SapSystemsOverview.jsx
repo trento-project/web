@@ -4,8 +4,10 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router';
 import { filter } from 'lodash';
+import classNames from 'classnames';
 
 import { getEnsaVersionLabel, getSapSystemType } from '@lib/model/sapSystems';
+import { STALE_ROW } from '@lib/tables';
 
 import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
@@ -37,15 +39,23 @@ function SapSystemsOverview({
     pagination: true,
     usePadding: false,
     collapsedRowClassName: 'bg-gray-100',
+    rowClassName: ({ staleAt }) =>
+      classNames({
+        [STALE_ROW]: !!staleAt,
+      }),
     columns: [
       {
         title: 'Health',
         key: 'health',
         filterFromParams: true,
         filter: true,
-        render: (content) => (
+        render: (content, { staleAt }) => (
           <div className="ml-4">
-            <HealthIcon health={content} />
+            <HealthIcon
+              health={content}
+              staleAt={staleAt}
+              timezone={userTimezone}
+            />
           </div>
         ),
       },
@@ -145,6 +155,7 @@ function SapSystemsOverview({
     }),
     tags: (sapSystem.tags && sapSystem.tags.map((tag) => tag.value)) || [],
     databaseId: sapSystem.database_id,
+    staleAt: sapSystem.stale_at,
   }));
 
   const counters = getCounters(data || []);

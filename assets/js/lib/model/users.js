@@ -3,9 +3,16 @@
 
 import { getFromConfig } from '@lib/config';
 
-const TRENTO_ADMIN_USERNAME = getFromConfig('adminUsername') || 'admin';
+let TRENTO_ADMIN_USERNAME;
 
-export const isAdmin = (user) => user.username === TRENTO_ADMIN_USERNAME;
+const getAdminUsername = () => {
+  if (TRENTO_ADMIN_USERNAME === undefined) {
+    TRENTO_ADMIN_USERNAME = getFromConfig('adminUsername') || 'admin';
+  }
+  return TRENTO_ADMIN_USERNAME;
+};
+
+export const isAdmin = (user) => user.username === getAdminUsername();
 
 export const isPermitted = (userAbilities, permittedFor) =>
   userAbilities

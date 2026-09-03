@@ -35,7 +35,7 @@ jobs:
       total-runs: ${{ steps.compute-matrix.outputs.total-runs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: gather versions
         uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
       - name: Compute matrix
@@ -61,17 +61,17 @@ jobs:
             otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -108,17 +108,17 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -129,7 +129,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"

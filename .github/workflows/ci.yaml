@@ -11,7 +11,7 @@ on:
       - "VERSION"
       - "CHANGELOG.md"
   pull_request:
-    types: [opened, synchronize, labeled]
+    types: [opened, synchronize]
     paths-ignore:
       - "VERSION"
   workflow_dispatch:
@@ -46,7 +46,7 @@ jobs:
       assets-changed: ${{ steps.set-outputs.outputs.assets-changed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
 
@@ -60,7 +60,7 @@ jobs:
           fi
 
       - name: Detect file changes
-        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
         id: filter
         if: steps.check-pr.outputs.running-on-pr == 'true'
         with:
@@ -114,7 +114,7 @@ jobs:
       NODEJS_BC: ${{ env.NODEJS_BC }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: gather versions
         uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
       - name: Compute matrix
@@ -132,6 +132,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - mix_env: dev
@@ -156,17 +157,17 @@ jobs:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -192,22 +193,23 @@ jobs:
     if: needs.detect-changes.outputs.assets-changed == 'true' || always()
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -226,7 +228,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Install codespell
@@ -242,7 +244,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Check license Headers
@@ -254,15 +256,15 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -299,16 +301,16 @@ jobs:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -333,17 +335,17 @@ jobs:
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -366,22 +368,23 @@ jobs:
     if: needs.detect-changes.outputs.assets-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_BC }}
           - nodejs: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ matrix.nodejs }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -396,6 +399,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -404,17 +408,17 @@ jobs:
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -425,7 +429,7 @@ jobs:
       - name: Compile
         run: mix compile --warnings-as-errors
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -435,7 +439,7 @@ jobs:
         run: mix coveralls.json --warnings-as-errors --trace
       - name: Upload coverage to Coveralls
         continue-on-error: true
-        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
         with:
           file: cover/excoveralls.json
           format: coveralls
@@ -449,7 +453,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@648a8eb78e6d50909eff900e4ec85cab4524a45b # v2
+        uses: coverallsapp/github-action@8d6379e14d29928660c4ba802d8e85393440b329 # v2
         with:
           parallel-finished: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -460,6 +464,7 @@ jobs:
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -470,17 +475,17 @@ jobs:
       MIX_ENV: prod
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -523,22 +528,22 @@ jobs:
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true' && needs.detect-changes.outputs.assets-changed == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -547,7 +552,7 @@ jobs:
             priv/plts
           key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
@@ -560,7 +565,7 @@ jobs:
         run: npm run build
         working-directory: assets
       - name: Publish to Chromatic
-        uses: chromaui/action@7804f34e4e59c0d9b3c856848f46ad96d7897429 # v17.5.0
+        uses: chromaui/action@14cfaef73576e69f95f47f60058063f46ca38719 # v18.1.0
         with:
           workingDir: assets
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
@@ -573,16 +578,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -605,22 +610,22 @@ jobs:
       MIX_ENV: dev
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -629,14 +634,14 @@ jobs:
             priv/plts
           key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -645,7 +650,7 @@ jobs:
       - name: Check Eslint and JS Code Format
         run: cd test/e2e && npm run lint && npm run format:check
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -670,7 +675,7 @@ jobs:
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
+        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
         env:
           SPLIT: ${{ strategy.job-total }}
           SPLIT_INDEX: ${{ strategy.job-index }}
@@ -694,6 +699,7 @@ jobs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - test: sap_system_split
@@ -707,22 +713,22 @@ jobs:
       MIX_ENV: dev
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -731,21 +737,21 @@ jobs:
             priv/plts
           key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
             test/e2e/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
@@ -783,7 +789,7 @@ jobs:
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
+        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
         env:
           cypress_video: false
         with:
@@ -805,6 +811,7 @@ jobs:
       [setup-matrix-env, elixir-deps, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - test: oidc
@@ -867,22 +874,22 @@ jobs:
     env: ${{ matrix.env }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Setup
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
           elixir-version: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ env.NODEJS_VERSION }}
       - name: Retrieve Elixir Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache
         with:
           path: |
@@ -891,14 +898,14 @@ jobs:
             priv/plts
           key: erlang-${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}-elixir-${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Retrieve NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-cache
         with:
           path: |
             assets/node_modules
           key: nodejs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('assets/package-lock.json') }}
       - name: Retrieve E2E NPM Cached Dependencies
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: npm-e2e-cache
         with:
           path: |
@@ -920,7 +927,7 @@ jobs:
           photofinish_path="$(command -v photofinish)"
           echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile idp"
@@ -932,7 +939,7 @@ jobs:
       - name: Run trento detached
         run: mix phx.server &
       - name: Cypress run
-        uses: cypress-io/github-action@948d67d3074f1bbb6379c8bdbb04e95d2f8e593f # v7.4.0
+        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
         env:
           cypress_video: false
         with:
@@ -953,6 +960,7 @@ jobs:
     needs: [setup-matrix-env, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -962,17 +970,17 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref }}
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - target branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache-target
         with:
           path: |
@@ -996,6 +1004,7 @@ jobs:
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
@@ -1004,17 +1013,17 @@ jobs:
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - current branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache-current
         with:
           path: |
@@ -1024,7 +1033,7 @@ jobs:
           key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Setup Node.js
         id: setup-node
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
         with:
           node-version: ${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}
       - name: Install API linting tools
@@ -1041,6 +1050,7 @@ jobs:
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - version: Unversioned
@@ -1063,15 +1073,15 @@ jobs:
             otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Elixir
         id: setup-elixir
-        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1
+        uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
         with:
           otp-version: ${{ matrix.otp }}
           elixir-version: ${{ matrix.elixir }}
       - name: Retrieve Elixir Cached Dependencies - current branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache-current
         with:
           path: |
@@ -1083,11 +1093,11 @@ jobs:
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/current-spec.json
       - name: Checkout target branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
       - name: Retrieve Elixir Cached Dependencies - target branch
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         id: mix-cache-target
         with:
           path: |
@@ -1095,6 +1105,9 @@ jobs:
             _build/${{ env.MIX_ENV }}
             priv/plts
           key: erlang-${{ matrix.otp }}-elixir-${{ matrix.elixir }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
+      - name: Install missing dependencies
+        if: steps.mix-cache-target.outputs.cache-hit != 'true'
+        run: mix deps.get
       - name: Generate target openapi.json
         run: |
           mix openapi.spec.json --start-app=false --spec TrentoWeb.OpenApi.${{ matrix.version }}.ApiSpec /tmp/specs/target-spec.json
@@ -1192,7 +1205,7 @@ jobs:
           kubectl wait --for=condition=available --timeout=300s \
             deployment/cert-manager -n cert-manager
       - name: Checkout helm-charts repository for cert-manager templates
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: trento-project/helm-charts
           ref: rolling
@@ -1233,6 +1246,7 @@ jobs:
             --set trento-mcp-server.image.tag="rolling" \
             --set prometheus.server.auth.type=none \
             --set global.trentoWeb.origin="${TRENTO_WEB_ORIGIN}" \
+            --set global.logLevel="debug" \
             --set prometheus.enabled=false \
             -f helm-charts/hack/cert-manager/override-values.yaml
 
@@ -1251,7 +1265,7 @@ jobs:
       TRENTO_DEMO_IP: ${{ secrets.TRENTO_DEMO_IP }}
       TRENTO_API_KEY: ${{ secrets.TRENTO_API_KEY }}
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - name: Install photofinish
@@ -1287,3 +1301,54 @@ jobs:
       obs_user: ${{ secrets.OBS_USER }}
       obs_pass: ${{ secrets.OBS_PASS }}
       obs_ssh_key: ${{ secrets.OBS_SSH_KEY }}
+
+  dependabot-auto-merge:
+    name: Approve and merge Dependabot PRs
+    if: >
+      always() &&
+      !contains(needs.*.result, 'failure') &&
+      !contains(needs.*.result, 'cancelled') &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
+    needs:
+      - codespell
+      - license-headers
+      - static-code-analysis-js
+      - static-code-analysis-elixir
+      - test-javascript
+      - test-elixir
+      - test-e2e
+      - test-regression
+      - test-integration
+      - api-docs-check
+      - api-bc-check
+      - test-release
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Don't approve and comment on major version update
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "⚠️ **Major version update detected** - requires manual review before merging."
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Approve and merge if minor or patch version update
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr review --approve "$PR_URL"
+          gh pr merge --squash "$PR_URL"

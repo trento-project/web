@@ -9,27 +9,19 @@ export default {
   argTypes: {
     children: {
       description: 'Label content',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'text' },
     },
     className: {
       description: 'CSS classes',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'text' },
     },
     info: {
       description: 'Tooltip for user education',
-      control: {
-        type: 'string',
-      },
+      control: { type: 'text' },
     },
     required: {
-      description: 'Wether this field is required or not',
-      control: {
-        type: 'boolean',
-      },
+      description: 'Whether this field is required or not',
+      control: { type: 'boolean' },
     },
   },
 };
@@ -42,6 +34,7 @@ export const Default = {
 
 export const Required = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     required: true,
   },
@@ -49,6 +42,7 @@ export const Required = {
 
 export const WithInfo = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     info: 'This is a tooltip for user education',
   },
@@ -56,6 +50,7 @@ export const WithInfo = {
 
 export const WithInfoRequired = {
   args: {
+    ...Default.args,
     children: 'This is a label',
     info: 'This is a tooltip for user education',
     required: true,

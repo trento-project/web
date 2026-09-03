@@ -92,6 +92,26 @@ context('Clusters Overview', () => {
     });
   });
 
+  describe('Stale data', () => {
+    before(() => {
+      clustersOverviewPage.startAllClustersAgentsHeartbeat();
+      clustersOverviewPage.visit();
+    });
+
+    after(() => clustersOverviewPage.stopAgentsHeartbeat());
+
+    it('should mark cluster data as stale when an agent composing the cluster stops reporting', () => {
+      clustersOverviewPage.stopHanaCluster1AgentHeartbeat();
+      clustersOverviewPage.hanaCluster1DataIsMarkedAsStale();
+    });
+
+    it('should mark cluster data as sync when the agent starts reporting data again', () => {
+      clustersOverviewPage.startHanaCluster1AgentHeartbeat();
+      clustersOverviewPage.apiRestoreClusterHosts();
+      clustersOverviewPage.hanaCluster1DataIsMarkedInSync();
+    });
+  });
+
   describe('Forbidden action', () => {
     describe('Tag operations', () => {
       beforeEach(() => {

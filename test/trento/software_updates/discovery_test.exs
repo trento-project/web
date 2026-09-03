@@ -121,7 +121,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
       end
     end
 
-    test "should handle failure when SUMA settings are not configured" do
+    test "should handle failure when SUSE Multi-Linux Manager settings are not configured" do
       host_id = Faker.UUID.v4()
       fully_qualified_domain_name = Faker.Internet.domain_name()
 
@@ -342,7 +342,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryTest do
                |> length()
     end
 
-    test "should handle SUMA settings not configured error" do
+    test "should handle SUSE Multi-Linux Manager settings not configured error" do
       expect(SoftwareUpdatesDiscoveryMock, :setup, fn -> {:error, :settings_not_configured} end)
 
       [%{id: host_id1}, %{id: host_id2}] = insert_list(2, :host)

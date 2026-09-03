@@ -4,6 +4,38 @@
 defmodule Trento.ActivityLog.SeverityLevel do
   @moduledoc false
 
+  @health_condition_standard %{
+    type: :kv,
+    key_suffix: "health",
+    values: %{
+      "warning" => :warning,
+      "critical" => :critical,
+      "*" => :info
+    },
+    condition: :map_value_to_severity
+  }
+  @health_condition_warn_if_unknown %{
+    type: :kv,
+    key_suffix: "health",
+    values: %{
+      "warning" => :warning,
+      "critical" => :critical,
+      "unknown" => :warning,
+      "*" => :info
+    },
+    condition: :map_value_to_severity
+  }
+  @status_condition_standard %{
+    type: :kv,
+    key_suffix: "status",
+    values: %{
+      "yellow" => :warning,
+      "red" => :critical,
+      "*" => :info
+    },
+    condition: :map_value_to_severity
+  }
+
   @severity_level_mapping %{
     "login_attempt" => %{type: :key, key: :reason, condition: :key_exists},
     "user_creation" => :info,
@@ -25,159 +57,81 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "activity_log_settings_update" => :debug,
     "heartbeat_succeeded" => :debug,
     "heartbeat_failed" => :warning,
-    "host_checks_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "host_checks_health_changed" => @health_condition_warn_if_unknown,
     "host_checks_selected" => :warning,
     "host_checks_execution_request" => :info,
     "host_cleanup_requested" => :warning,
     "host_deregistered" => :warning,
     "host_deregistration_requested" => :debug,
     "host_details_updated" => :info,
-    "host_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
+    "host_health_changed" => @health_condition_warn_if_unknown,
     "host_registered" => :info,
     "host_restored" => :info,
     "host_rolled_up" => :debug,
     "host_rollup_requested" => :debug,
-    "host_saptune_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "host_saptune_health_changed" => @health_condition_warn_if_unknown,
     "host_tombstoned" => :debug,
     "provider_updated" => :debug,
     "saptune_status_updated" => :info,
     "sles_subscriptions_updated" => :debug,
     "software_updates_discovery_cleared" => :debug,
     "software_updates_discovery_requested" => :debug,
-    "software_updates_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "software_updates_health_changed" => @health_condition_warn_if_unknown,
     "cluster_checks_selected" => :warning,
-    "cluster_checks_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "cluster_checks_health_changed" => @health_condition_warn_if_unknown,
     "cluster_deregistered" => :warning,
     "cluster_details_updated" => :debug,
-    "cluster_replication_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
-    "cluster_distributed_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
-    "cluster_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "cluster_replication_health_changed" => @health_condition_warn_if_unknown,
+    "cluster_distributed_health_changed" => @health_condition_warn_if_unknown,
+    "cluster_sbd_health_changed" => @health_condition_warn_if_unknown,
+    "cluster_health_changed" => @health_condition_warn_if_unknown,
     "cluster_registered" => :info,
     "cluster_restored" => :info,
     "cluster_rolled_up" => :debug,
     "cluster_rollup_requested" => :debug,
     "cluster_tombstoned" => :debug,
+    "cluster_data_marked_stale" => :debug,
+    "cluster_data_marked_in_sync" => :debug,
     "host_added_to_cluster" => :debug,
     "host_removed_from_cluster" => :debug,
     "application_instance_deregistered" => :warning,
-    "application_instance_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{"critical" => :critical, "unknown" => :warning, "*" => :info},
-      condition: :map_value_to_severity
-    },
+    "application_instance_status_changed" => @status_condition_standard,
     "application_instance_marked_absent" => :warning,
     "application_instance_marked_present" => :info,
     "application_instance_moved" => :info,
     "application_instance_registered" => :info,
-    "sap_system_database_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
+    "application_instance_data_marked_stale" => :debug,
+    "application_instance_data_marked_in_sync" => :debug,
+    "sap_system_database_health_changed" => @health_condition_standard,
     "sap_system_cleanup_requested" => :warning,
     "sap_system_deregistered" => :warning,
+    "sap_system_health_change" => @health_condition_standard,
     "sap_system_restored" => :debug,
     "sap_system_rolled_up" => :debug,
     "sap_system_rollup_requested" => :debug,
     "sap_system_tombstoned" => :debug,
     "sap_system_updated" => :info,
-    "database_cleanup_requested" => :warning,
-    "database_deregistered" => :warning,
-    "database_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
+    "sap_system_data_marked_stale" => :debug,
+    "sap_system_data_marked_in_sync" => :debug,
     "database_instance_deregistered" => :warning,
-    "database_instance_health_changed" => %{
-      type: :kv,
-      key_suffix: "health",
-      values: %{
-        "critical" => :critical,
-        "warning" => :warning,
-        "unknown" => :warning,
-        "*" => :info
-      },
-      condition: :map_value_to_severity
-    },
+    "database_instance_status_changed" => @status_condition_standard,
     "database_instance_marked_absent" => :warning,
     "database_instance_marked_present" => :info,
     "database_instance_registered" => :info,
     "database_instance_system_replication_changed" => :warning,
+    "database_instance_data_marked_stale" => :debug,
+    "database_instance_data_marked_in_sync" => :debug,
     "database_registered" => :info,
     "database_restored" => :info,
+    "database_cleanup_requested" => :warning,
+    "database_deregistered" => :warning,
+    "database_health_changed" => @health_condition_standard,
     "database_rolled_up" => :debug,
     "database_rollup_requested" => :info,
     "database_tenants_updated" => :info,
     "database_tombstoned" => :debug,
+    "database_data_marked_stale" => :debug,
+    "database_data_marked_in_sync" => :debug,
     "cluster_operation_requested" => :info,
     "host_operation_requested" => :info,
     "application_instance_operation_requested" => :info,

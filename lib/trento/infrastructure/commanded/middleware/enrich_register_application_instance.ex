@@ -34,13 +34,14 @@ defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
             is_nil(h.deregistered_at) and is_nil(d.deregistered_at)
 
     case Repo.one(query) do
-      %DatabaseReadModel{id: database_id, health: database_health} ->
+      %DatabaseReadModel{id: database_id, health: database_health, stale_at: database_stale_at} ->
         {:ok,
          %RegisterApplicationInstance{
            command
            | sap_system_id: UUID.uuid5(database_id, tenant),
              database_id: database_id,
-             database_health: database_health
+             database_health: database_health,
+             database_stale_at: database_stale_at
          }}
 
       nil ->

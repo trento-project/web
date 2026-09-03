@@ -23,9 +23,9 @@ export const LOGIN_ATTEMPT = 'login_attempt';
 export const RESOURCE_TAGGING = 'resource_tagging';
 export const RESOURCE_UNTAGGING = 'resource_untagging';
 export const API_KEY_GENERATION = 'api_key_generation';
-export const SAVING_SUMA_SETTINGS = 'saving_suma_settings';
-export const CHANGING_SUMA_SETTINGS = 'changing_suma_settings';
-export const CLEARING_SUMA_SETTINGS = 'clearing_suma_settings';
+export const SAVING_SMLM_SETTINGS = 'saving_suma_settings';
+export const CHANGING_SMLM_SETTINGS = 'changing_suma_settings';
+export const CLEARING_SMLM_SETTINGS = 'clearing_suma_settings';
 export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
 export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
 export const USER_CREATION = 'user_creation';
@@ -94,6 +94,8 @@ export const CLUSTER_TOMBSTONED = 'cluster_tombstoned';
 export const HOST_ADDED_TO_CLUSTER = 'host_added_to_cluster';
 export const HOST_REMOVED_FROM_CLUSTER = 'host_removed_from_cluster';
 export const CLUSTER_HOST_STATUS_CHANGED = 'cluster_host_status_changed';
+export const CLUSTER_DATA_MARKED_STALE = 'cluster_data_marked_stale';
+export const CLUSTER_DATA_MARKED_IN_SYNC = 'cluster_data_marked_in_sync';
 
 // SAP System events
 
@@ -124,6 +126,8 @@ export const SAP_SYSTEM_ROLLED_UP = 'sap_system_rolled_up';
 export const SAP_SYSTEM_ROLL_UP_REQUESTED = 'sap_system_roll_up_requested';
 export const SAP_SYSTEM_TOMBSTONED = 'sap_system_tombstoned';
 export const SAP_SYSTEM_UPDATED = 'sap_system_updated';
+export const SAP_SYSTEM_DATA_MARKED_STALE = 'sap_system_data_marked_stale';
+export const SAP_SYSTEM_DATA_MARKED_IN_SYNC = 'sap_system_data_marked_in_sync';
 
 // Database events
 export const DATABASE_DEREGISTERED = 'database_deregistered';
@@ -150,6 +154,8 @@ export const DATABASE_ROLLED_UP = 'database_rolled_up';
 export const DATABASE_ROLL_UP_REQUESTED = 'database_roll_up_requested';
 export const DATABASE_TENANTS_UPDATED = 'database_tenants_updated';
 export const DATABASE_TOMBSTONED = 'database_tombstoned';
+export const DATABASE_DATA_MARKED_STALE = 'database_data_marked_stale';
+export const DATABASE_DATA_MARKED_IN_SYNC = 'database_data_marked_in_sync';
 
 // Operations
 export const APPLICATION_INSTANCE_OPERATION_REQUESTED =
@@ -180,7 +186,8 @@ export const availableResourceNameKeys = pipe(
   uniq
 )(resourceTypesToNameKeyMap);
 
-const sumaSettingsResourceType = (_entry) => 'SUMA Settings';
+const smlmSettingsResourceType = (_entry) =>
+  'SUSE Multi-Linux Manager Settings';
 const alertingSettingsResourceType = (_entry) => 'Alerting Settings';
 const userResourceType = (_entry) => 'User';
 const profileResourceType = (_entry) => 'Profile';
@@ -261,20 +268,20 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => 'API Key was generated',
     resource: (_entry) => 'API Key',
   },
-  [SAVING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Saved',
-    message: (_entry) => 'SUMA Settings was saved',
-    resource: sumaSettingsResourceType,
+  [SAVING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Saved',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were saved',
+    resource: smlmSettingsResourceType,
   },
-  [CHANGING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Changed',
-    message: (_entry) => 'SUMA Settings was changed',
-    resource: sumaSettingsResourceType,
+  [CHANGING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Changed',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were changed',
+    resource: smlmSettingsResourceType,
   },
-  [CLEARING_SUMA_SETTINGS]: {
-    label: 'SUMA Settings Cleared',
-    message: (_entry) => 'SUMA Settings was cleared',
-    resource: sumaSettingsResourceType,
+  [CLEARING_SMLM_SETTINGS]: {
+    label: 'SUSE Multi-Linux Manager Settings Cleared',
+    message: (_entry) => 'SUSE Multi-Linux Manager Settings were cleared',
+    resource: smlmSettingsResourceType,
   },
   [SAVING_ALERTING_SETTINGS]: {
     label: 'Alerting Settings Saved',
@@ -565,6 +572,16 @@ export const ACTIVITY_TYPES_CONFIG = {
       `Cluster host status changed to ${metadata.cluster_host_status}`,
     resource: clusterResourceType,
   },
+  [CLUSTER_DATA_MARKED_STALE]: {
+    label: 'Cluster Data Marked Stale',
+    message: (_entry) => `Cluster data was marked stale`,
+    resource: clusterResourceType,
+  },
+  [CLUSTER_DATA_MARKED_IN_SYNC]: {
+    label: 'Cluster Data Marked In Sync',
+    message: (_entry) => `Cluster data was marked in sync`,
+    resource: clusterResourceType,
+  },
   // SAP System events
   [APPLICATION_INSTANCE_DEREGISTERED]: {
     label: 'Application Instance Deregistered',
@@ -656,6 +673,16 @@ export const ACTIVITY_TYPES_CONFIG = {
     message: (_entry) => `SAP system was updated`,
     resource: sapSystemResourceType,
   },
+  [SAP_SYSTEM_DATA_MARKED_STALE]: {
+    label: 'SAP System Data Marked Stale',
+    message: (_entry) => `SAP System data was marked stale`,
+    resource: sapSystemResourceType,
+  },
+  [SAP_SYSTEM_DATA_MARKED_IN_SYNC]: {
+    label: 'SAP System Data Marked In Sync',
+    message: (_entry) => `SAP System data was marked in sync`,
+    resource: sapSystemResourceType,
+  },
   // Database events
   [DATABASE_DEREGISTERED]: {
     label: 'Database Deregistered',
@@ -740,6 +767,16 @@ export const ACTIVITY_TYPES_CONFIG = {
   [DATABASE_TOMBSTONED]: {
     label: 'Database Tombstoned',
     message: (_entry) => `Database was tombstoned`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_STALE]: {
+    label: 'Database Data Marked Stale',
+    message: (_entry) => `Database data was marked stale`,
+    resource: databaseResourceType,
+  },
+  [DATABASE_DATA_MARKED_IN_SYNC]: {
+    label: 'Database Data Marked In Sync',
+    message: (_entry) => `Database data was marked in sync`,
     resource: databaseResourceType,
   },
   // Operations

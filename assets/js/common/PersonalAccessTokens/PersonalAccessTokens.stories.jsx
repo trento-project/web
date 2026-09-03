@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { faker } from '@faker-js/faker';
-import { formatISO } from 'date-fns';
-
 import { personalAccessTokenFactory } from '@lib/test-utils/factories';
+import { formatISO } from 'date-fns';
+import { action } from 'storybook/actions';
 
 import PersonalAccessTokens from './PersonalAccessTokens';
 
@@ -14,36 +14,37 @@ export default {
   argTypes: {
     className: {
       description: 'CSS classes',
-      control: 'test',
+      control: { type: 'text' },
     },
     personalAccessTokens: {
       description: 'Current user personal access tokens',
-      control: { type: 'array' },
+      control: { type: 'object' },
     },
     generateTokenAvailable: {
       description: 'Generate Token button is available or not',
-      control: 'boolean',
+      control: { type: 'boolean' },
     },
     generatedAccessToken: {
       description:
         'Generated personal access token. Used to display the GeneratedAccessTokenModal modal',
-      control: 'text',
+      control: { type: 'text' },
     },
     onDeleteToken: {
       description: 'Deletes personal access token',
-      control: 'boolean',
+      action: 'onDeleteToken',
     },
     onGenerateToken: {
-      type: 'function',
       description: 'Generates personal access token',
+      action: 'onGenerateToken',
     },
     onCloseGeneratedTokenModal: {
-      type: 'function',
       description: 'Closes new personal access token modal',
+      action: 'onCloseGeneratedTokenModal',
     },
-  },
-  args: {
-    generatedAccessToken: null,
+    timezone: {
+      description: 'Timezone string for date formatting.',
+      control: { type: 'text' },
+    },
   },
 };
 
@@ -52,6 +53,11 @@ export const Default = {
     personalAccessTokens: personalAccessTokenFactory.buildList(3),
     generatedAccessToken: null,
     generateTokenAvailable: true,
+    className: '',
+    onDeleteToken: action('onDeleteToken'),
+    onGenerateToken: action('onGenerateToken'),
+    onCloseGeneratedTokenModal: action('onCloseGeneratedTokenModal'),
+    timezone: 'Etc/UTC',
   },
 };
 

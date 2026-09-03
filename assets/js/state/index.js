@@ -20,7 +20,7 @@ import activityLogReducer from './activityLog';
 import runningOperationsReducer from './runningOperations';
 import rootSaga from './sagas';
 
-export const createStore = (router) => {
+export const createStore = (router, preloadedState) => {
   const sagaMiddleware = createSagaMiddleware({
     context: {
       router,
@@ -46,6 +46,7 @@ export const createStore = (router) => {
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(sagaMiddleware),
+    preloadedState,
   });
 
   sagaMiddleware.run(rootSaga);

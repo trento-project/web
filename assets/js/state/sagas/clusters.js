@@ -11,10 +11,12 @@ import {
   CLUSTER_DEREGISTERED,
   CLUSTER_RESTORED,
   CLUSTER_HEALTH_CHANGED,
+  CLUSTER_STALE_CHANGED,
   appendCluster,
   removeCluster,
   updateCluster,
   updateClusterHealth,
+  updateClusterStaleAt,
   updateCibLastWritten,
 } from '@state/clusters';
 
@@ -68,11 +70,16 @@ export function* clusterHealthChanged({
   );
 }
 
+export function* clusterStaleChanged({ payload }) {
+  yield put(updateClusterStaleAt(payload));
+}
+
 export function* watchClusterEvents() {
   yield takeEvery(CLUSTER_REGISTERED, clusterRegistered);
   yield takeEvery(CLUSTER_CIB_LAST_WRITTEN_UPDATED, cibLastWrittenUpdated);
   yield takeEvery(CLUSTER_DETAILS_UPDATED, clusterDetailsUpdated);
   yield takeEvery(CLUSTER_HEALTH_CHANGED, clusterHealthChanged);
+  yield takeEvery(CLUSTER_STALE_CHANGED, clusterStaleChanged);
   yield takeEvery(CLUSTER_DEREGISTERED, clusterDeregistered);
   yield takeEvery(CLUSTER_RESTORED, clusterRestored);
 }
