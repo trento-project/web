@@ -8,6 +8,8 @@ on:
     pull-requests: read
   steps:
     - id: check
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         MAX_OPEN_PRS=8
         if [[ "$GITHUB_EVENT_NAME" != "schedule" ]]; then exit 0; fi
@@ -47,7 +49,7 @@ safe-outputs:
     draft: false
     protected-files: allowed
 
-source: githubnext/agentics/workflows/doc-updater.md@1c6668b751c51af8571f01204ceffb19362e0f66
+source: githubnext/agentics/workflows/doc-updater.md@578e0e0ea6291fed42a36d3fd46cec6a0e86afd8
 ---
 
 # Trento Web Documentation Updater
