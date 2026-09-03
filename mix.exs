@@ -87,7 +87,7 @@ defmodule Trento.MixProject do
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:flop, "~> 0.26.5"},
+      {:flop, "~> 0.27.2"},
       {:floki, ">= 0.36.2", only: :test},
       {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.3.0"},
