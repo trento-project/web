@@ -1094,7 +1094,7 @@ jobs:
             priv/plts
           key: erlang-${{ steps.setup-elixir.outputs.otp-version }}-elixir-${{ steps.setup-elixir.outputs.elixir-version }}-${{ hashFiles('mix.lock') }}-${{ env.MIX_ENV }}
       - name: Install missing dependencies
-        if: step.mix-cache-target.outputs.cache-hit != 'true'
+        if: steps.mix-cache-target.outputs.cache-hit != 'true'
         run: mix deps.get
       - name: Generate target openapi.json
         run: |
