@@ -14,6 +14,9 @@ COPY . /build
 WORKDIR /build
 ARG MIX_ENV=prod
 ENV MIX_ENV=$MIX_ENV
+ENV MIX_HOME=/usr/bin
+ENV MIX_REBAR3=/usr/bin/rebar3
+ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 RUN mix deps.get
 
 FROM registry.suse.com/bci/nodejs:22 AS assets-build
@@ -35,9 +38,6 @@ ENV LC_ALL=en_US.UTF-8
 ENV VERSION=$VERSION
 ENV GTM_ID=$GTM_ID
 ENV MIX_ENV=$MIX_ENV
-ENV MIX_HOME=/usr/bin
-ENV MIX_REBAR3=/usr/bin/rebar3
-ENV MIX_PATH=/usr/lib/elixir/lib/hex/ebin
 RUN mix phx.digest
 RUN mix release
 
