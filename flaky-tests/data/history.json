@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-20T19:35:32Z",
-    "commit": "5ec298580cf4da23d321cc4f4d210b3ce4ed760f",
-    "run_id": "29771229682",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.1088
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-20T19:36:26Z",
     "commit": "5ec298580cf4da23d321cc4f4d210b3ce4ed760f",
     "run_id": "29771229682",
@@ -5933,6 +5913,26 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-04T19:41:31Z",
+    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
+    "run_id": "33911039221",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.02501
       }
     ]
   }
