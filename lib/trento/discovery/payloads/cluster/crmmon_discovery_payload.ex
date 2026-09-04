@@ -60,7 +60,6 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       :active,
       :failed,
       :blocked,
-      :orphaned,
       :failure_ignored,
       :nodes_running_on,
       :managed
@@ -76,6 +75,7 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       field :blocked, :boolean
       field :managed, :boolean
       field :orphaned, :boolean
+      field :removed, :boolean
       field :failure_ignored, :boolean
       field :nodes_running_on, :integer
 

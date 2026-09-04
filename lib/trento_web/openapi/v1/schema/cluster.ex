@@ -33,7 +33,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
         example: %{
           id: "msl_SAPHana_PRD_HDB00",
           type: "ocf::suse:SAPHanaTopology",
-          role: "Master",
+          role: "Promoted",
           status: "Started",
           fail_count: 0
         }
@@ -86,7 +86,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }
