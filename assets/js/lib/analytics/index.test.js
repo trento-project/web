@@ -182,4 +182,41 @@ describe('analytics', () => {
       });
     }
   );
+
+  it('should temporarily opt in to capture an event and then opt out', () => {
+    const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+    global.config.analyticsEnabled = true;
+    global.config.installationID = installationID;
+
+    const mockPosthog = {
+      identify: jest.fn(),
+      opt_in_capturing: jest.fn(),
+      capture: jest.fn(),
+      opt_out_capturing: jest.fn(),
+      has_opted_out_capturing: jest.fn(() => true),
+    };
+
+    jest.mock('posthog-js', () => mockPosthog);
+
+    jest.useFakeTimers();
+
+    return import('.').then(({ captureWithTemporaryOptIn }) => {
+      captureWithTemporaryOptIn('analytics_eula_rejected', 1);
+
+      expect(mockPosthog.identify).toHaveBeenCalledWith(
+        'ab156392-96c8-551b-a49b-f071c1cdcf21',
+        { installationID }
+      );
+      expect(mockPosthog.opt_in_capturing).toHaveBeenCalled();
+      expect(mockPosthog.capture).toHaveBeenCalledWith(
+        'analytics_eula_rejected',
+        {}
+      );
+      expect(mockPosthog.opt_out_capturing).not.toHaveBeenCalled();
+
+      jest.runAllTimers();
+      expect(mockPosthog.opt_out_capturing).toHaveBeenCalled();
+      jest.useRealTimers();
+    });
+  });
 });
