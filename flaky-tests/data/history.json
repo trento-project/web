@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-07-21T22:50:12Z",
-    "commit": "2ee6c815b8989ba2f05a85ba33e6e1bccf7b4220",
-    "run_id": "29863240441",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 18
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should select correct date filter when changing page::Activity Log page Pagination should select correct date filter when changing page",
-        "score": 0.1438
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.05656
-      },
-      {
-        "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
-        "score": 0.05001
-      },
-      {
-        "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
-        "score": 0.05001
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.04141
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-22T18:32:12Z",
     "commit": "b15547a5bc64b844e1efc3c5bcdb04c6fccd21a3",
     "run_id": "29945954825",
@@ -5916,5 +5884,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-09-05T19:49:01Z",
+    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
+    "run_id": "33987154780",
+    "suite": "Jest — Node 20.20.0",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
