@@ -1151,7 +1151,7 @@ jobs:
             tag: "${{ (github.event_name == 'push' && github.ref_name == 'main' && 'rolling') || github.sha }}"
           - mix_env: demo
             tag: demo
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
     with:
       image_name: trento-web
       tag: ${{ matrix.tag }}
@@ -1284,7 +1284,7 @@ jobs:
   obs-sync:
     name: Update OBS packages
     if: fromJSON(vars.OBS_ENABLED) && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/obs-sync.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
     needs:
       - static-code-analysis-elixir
       - static-code-analysis-js
