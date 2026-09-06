@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-07-22T22:57:45Z",
-    "commit": "b15547a5bc64b844e1efc3c5bcdb04c6fccd21a3",
-    "run_id": "29952158585",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 13
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.09638
-      },
-      {
-        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
-        "score": 0.07658
-      },
-      {
-        "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
-        "score": 0.05001
-      },
-      {
-        "name": "should show health status of the entire cluster of 27 hosts with critical health::Hosts Overview Health Detection Health is changed to critical when the heartbeat is not sent should show health status of the entire cluster of 27 hosts with critical health",
-        "score": 0.05001
-      },
-      {
-        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
-        "score": 0.02501
-      },
-      {
-        "name": "should show saptune not installed status::Host Details Saptune Summary for this host should be displayed should show saptune not installed status",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-23T18:33:25Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30033176102",
@@ -5933,6 +5897,17 @@
     "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
     "run_id": "34055012030",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-06T19:50:47Z",
+    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
+    "run_id": "34055012030",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
