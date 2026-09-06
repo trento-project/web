@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-22T18:33:05Z",
-    "commit": "b15547a5bc64b844e1efc3c5bcdb04c6fccd21a3",
-    "run_id": "29945954825",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 36,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Commanded.EventHandlers.ActivityLogEventHandlerTest::test should log a domain event",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-22T19:05:03Z",
     "commit": "b15547a5bc64b844e1efc3c5bcdb04c6fccd21a3",
     "run_id": "29948058612",
@@ -5950,6 +5934,22 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-06T19:17:20Z",
+    "commit": "d50796a9944e6caaf6ca8055b537eb368a25575d",
+    "run_id": "34053615483",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
       }
     ]
   }
