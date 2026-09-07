@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-23T18:34:33Z",
-    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
-    "run_id": "30033176102",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should register a SAP System and add an application instance when a MESSAGESERVER instance is already present and a new ABAP instance is added",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-23T19:07:21Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30035265603",
@@ -5968,6 +5952,26 @@
       {
         "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-07T20:42:46Z",
+    "commit": "8d36773b2cff2ace6581b5120ddf729d5de419f4",
+    "run_id": "34159543725",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster discovery",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
