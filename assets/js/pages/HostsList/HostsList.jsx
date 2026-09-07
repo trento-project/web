@@ -227,6 +227,7 @@ function HostsList() {
             <CleanUpButton
               cleaning={item.deregistering}
               size="fit"
+              type="transparent"
               className="border-none shadow-none"
               userAbilities={abilities}
               permittedFor={['cleanup:host']}
