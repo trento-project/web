@@ -7,6 +7,7 @@ defmodule TrentoWeb.V1.SettingsController do
   use Trento.AI.ControllerSpecs
 
   alias Trento.ActivityLog
+  alias Trento.Infrastructure.Alerting.Alerting
   alias Trento.Settings
   alias Trento.SoftwareUpdates
   alias TrentoWeb.OpenApi.V1.Schema
@@ -349,6 +350,31 @@ defmodule TrentoWeb.V1.SettingsController do
       conn
       |> put_status(:ok)
       |> render(:alerting_settings, alerting_settings: settings)
+    end
+  end
+
+  operation :test_alerting_settings,
+    summary: "Send a test email.",
+    description:
+      "Sends a test email using the currently saved alerting settings, supporting validation and troubleshooting of the email alerting configuration.",
+    tags: ["Settings", "MCP"],
+    responses: [
+      ok: "The test email was successfully delivered.",
+      unauthorized: Schema.Unauthorized.response(),
+      forbidden: Schema.Forbidden.response(),
+      not_found: Schema.NotFound.response(),
+      unprocessable_entity:
+        {"The test email could not be delivered.", "application/json", Schema.UnprocessableEntity}
+    ]
+
+  ai_tool :settings_test_alerting_settings, display_text: "Test alerting settings"
+
+  @spec test_alerting_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_alerting_settings(conn, _params) do
+    with :ok <- Alerting.send_test_email() do
+      conn
+      |> put_status(:ok)
+      |> json(%{})
     end
   end
 
