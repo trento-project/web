@@ -24,6 +24,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         :clearing_suma_settings,
         :saving_alerting_settings,
         :changing_alerting_settings,
+        :testing_alerting_settings,
         :user_creation,
         :user_modification,
         :user_deletion,
@@ -266,6 +267,12 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
         connection_info: {TrentoWeb.V1.SettingsController, :update_alerting_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
+      },
+      %{
+        activity: :testing_alerting_settings,
+        connection_info: {TrentoWeb.V1.SettingsController, :test_alerting_settings},
+        interesting_statuses: [200, 400, 401, 403, 404, 422, 500],
+        not_interesting_statuses: []
       },
       %{
         activity: :user_creation,
