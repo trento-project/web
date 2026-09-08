@@ -189,6 +189,54 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
     end
   end
 
+  describe "Sending a test email" do
+    test "should return an error when alerting settings are not configured" do
+      clear_alerting_app_env()
+
+      assert {:error, :alerting_settings_not_configured} = Alerting.send_test_email()
+      assert_no_email_sent()
+    end
+
+    test "should return an error when alerting is disabled" do
+      Application.put_env(:trento, :alerting, enabled: false)
+
+      assert {:error, :alerting_disabled} = Alerting.send_test_email()
+      assert_no_email_sent()
+    end
+
+    test "should deliver an email whose content states that it is a test" do
+      Application.put_env(:trento, :alerting, enabled: true)
+
+      assert :ok = Alerting.send_test_email()
+
+      assert_email_sent(fn %Swoosh.Email{subject: subject, html_body: html_body} ->
+        assert subject == "Trento Alert: Test email"
+        assert html_body =~ "This is a test email sent by Trento."
+      end)
+    end
+
+    test "should be returned to the caller when a test email cannot be delivered" do
+      relay_ip_address = Faker.Internet.ip_v4_address()
+
+      Application.put_env(
+        :trento,
+        :alerting,
+        enabled: true,
+        smtp_server: "smtp://#{relay_ip_address}"
+      )
+
+      Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.SMTP)
+
+      {result, log} = with_log(fn -> Alerting.send_test_email() end)
+
+      assert {:error, {:test_email_delivery_failed, reason}} = result
+      assert reason =~ "retries_exceeded"
+      assert reason =~ "smtp://#{relay_ip_address}"
+
+      assert log =~ "Failed to send test email"
+    end
+  end
+
   describe "Alerting errors" do
     setup do
       on_exit(fn ->
