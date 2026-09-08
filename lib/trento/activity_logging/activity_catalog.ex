@@ -201,6 +201,8 @@ defmodule Trento.ActivityLog.ActivityCatalog do
           {:saving_alerting_settings, 201},
         {TrentoWeb.V1.SettingsController, :update_alerting_settings} =>
           {:changing_alerting_settings, 200},
+        {TrentoWeb.V1.SettingsController, :test_alerting_settings} =>
+          {:testing_alerting_settings, :always},
         {TrentoWeb.V1.UsersController, :create} => {:user_creation, 201},
         {TrentoWeb.V1.UsersController, :patch} => {:user_modification, 200},
         {TrentoWeb.V1.UsersController, :put} => {:user_modification, 200},
