@@ -6,7 +6,7 @@ Type that represents the ENSA version info for a cluster.
 # `t`
 
 ```elixir
-@type t() :: :ensa2 | :ensa1 | :mixed_versions
+@type t() :: :unknown | :ensa2 | :ensa1 | :mixed_versions
 ```
 
 # `ensa1`
@@ -16,6 +16,9 @@ Type that represents the ENSA version info for a cluster.
 *macro* 
 
 # `mixed_versions`
+*macro* 
+
+# `unknown`
 *macro* 
 
 # `values`
