@@ -275,6 +275,7 @@ defmodule TrentoWeb.Router do
           get "/", SettingsController, :get_alerting_settings
           post "/", SettingsController, :create_alerting_settings
           patch "/", SettingsController, :update_alerting_settings
+          post "/test", SettingsController, :test_alerting_settings
         end
       end
 
