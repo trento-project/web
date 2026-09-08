@@ -31,7 +31,8 @@ defmodule Trento.Settings.Policy do
     test_suse_manager_settings: Trento.Settings.SuseManagerSettings,
     get_alerting_settings: Trento.Settings.AlertingSettings,
     create_alerting_settings: Trento.Settings.AlertingSettings,
-    update_alerting_settings: Trento.Settings.AlertingSettings
+    update_alerting_settings: Trento.Settings.AlertingSettings,
+    test_alerting_settings: Trento.Settings.AlertingSettings
   }
 
   def authorize(:update_api_key_settings, %User{} = user, ApiKeySettings),
@@ -50,7 +51,11 @@ defmodule Trento.Settings.Policy do
   end
 
   def authorize(action, %User{} = user, AlertingSettings)
-      when action in [:create_alerting_settings, :update_alerting_settings] do
+      when action in [
+             :create_alerting_settings,
+             :update_alerting_settings,
+             :test_alerting_settings
+           ] do
     has_global_ability?(user) or has_alerting_settings_resource_ability?(user)
   end
 
