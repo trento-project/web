@@ -3,7 +3,7 @@
 
 defmodule Trento.Infrastructure.Alerting.AlertingTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use ExUnit.Case
   use Trento.DataCase
 
   import ExUnit.CaptureLog
@@ -23,10 +23,13 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   setup :restore_alerting_app_env
 
+  setup do
+    clear_alerting_app_env()
+    :ok
+  end
+
   describe "When alerting is disabled or not configured" do
     test "no email is sent and error is returned when alerting is not configured" do
-      clear_alerting_app_env()
-
       host_id = Faker.UUID.v4()
 
       result = Alerting.notify_critical_host_health(host_id)
@@ -36,7 +39,7 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
     end
 
     test "no email should be sent when alerting is disabled" do
-      Application.put_env(:trento, :alerting, enabled: false)
+      insert(:alerting_settings, enabled: false)
       host_id = Faker.UUID.v4()
 
       result = Alerting.notify_critical_host_health(host_id)
@@ -48,7 +51,9 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   describe "Alerting the configured recipient about crucial facts with email notifications" do
     setup do
-      Application.put_env(:trento, :alerting, enabled: true)
+      insert(:alerting_settings, enabled: true)
+
+      :ok
     end
 
     test "Notify api key will be expired soon" do
@@ -191,21 +196,19 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
 
   describe "Sending a test email" do
     test "should return an error when alerting settings are not configured" do
-      clear_alerting_app_env()
-
       assert {:error, :alerting_settings_not_configured} = Alerting.send_test_email()
       assert_no_email_sent()
     end
 
     test "should return an error when alerting is disabled" do
-      Application.put_env(:trento, :alerting, enabled: false)
+      insert(:alerting_settings, enabled: false)
 
       assert {:error, :alerting_disabled} = Alerting.send_test_email()
       assert_no_email_sent()
     end
 
     test "should deliver an email whose content states that it is a test" do
-      Application.put_env(:trento, :alerting, enabled: true)
+      insert(:alerting_settings, enabled: true)
 
       assert :ok = Alerting.send_test_email()
 
@@ -214,31 +217,12 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
         assert html_body =~ "This is a test email sent by Trento."
       end)
     end
-
-    test "should be returned to the caller when a test email cannot be delivered" do
-      relay_ip_address = Faker.Internet.ip_v4_address()
-
-      Application.put_env(
-        :trento,
-        :alerting,
-        enabled: true,
-        smtp_server: "smtp://#{relay_ip_address}"
-      )
-
-      Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.SMTP)
-
-      {result, log} = with_log(fn -> Alerting.send_test_email() end)
-
-      assert {:error, {:test_email_delivery_failed, reason}} = result
-      assert reason =~ "retries_exceeded"
-      assert reason =~ "smtp://#{relay_ip_address}"
-
-      assert log =~ "Failed to send test email"
-    end
   end
 
   describe "Alerting errors" do
     setup do
+      Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.SMTP)
+
       on_exit(fn ->
         Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.Test)
       end)
@@ -247,20 +231,26 @@ defmodule Trento.Infrastructure.Alerting.AlertingTest do
     test "should be caught if SMTP server is wrongly set up" do
       relay_ip_address = Faker.Internet.ip_v4_address()
 
-      Application.put_env(
-        :trento,
-        :alerting,
-        enabled: true,
-        smtp_server: "smtp://#{relay_ip_address}"
-      )
-
-      Application.put_env(:trento, Trento.Mailer, adapter: Swoosh.Adapters.SMTP)
+      insert(:alerting_settings, enabled: true, smtp_server: "smtp://#{relay_ip_address}")
 
       host_id = Faker.UUID.v4()
       insert(:host, id: host_id)
 
       assert capture_log(fn -> Alerting.notify_critical_host_health(host_id) end) =~
                "Failed to lookup smtp://#{relay_ip_address}"
+    end
+
+    test "should return the delivery error when a test email cannot be delivered" do
+      relay_ip_address = Faker.Internet.ip_v4_address()
+      insert(:alerting_settings, enabled: true, smtp_server: "smtp://#{relay_ip_address}")
+
+      {result, log} = with_log(fn -> Alerting.send_test_email() end)
+
+      assert {:error, {:test_email_delivery_failed, reason}} = result
+      assert reason =~ "retries_exceeded"
+      assert reason =~ "smtp://#{relay_ip_address}"
+
+      assert log =~ "Failed to send test email"
     end
   end
 end
