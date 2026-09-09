@@ -12,3 +12,5 @@ export const saveSettings = (settings) =>
 
 export const updateSettings = (settings) =>
   networkClient.patch(alertingPath, settings);
+
+export const sendTestEmail = () => networkClient.post(`${alertingPath}/test`);
