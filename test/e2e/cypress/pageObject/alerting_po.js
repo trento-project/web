@@ -22,6 +22,11 @@ const testHost = {
   hostname: 'vmhdbprd01',
 };
 
+// Selectors
+
+const testEmailButton = '[aria-label="alerting-test-email-button"]';
+const testEmailSentToaster = 'p:contains("Test email sent!")';
+
 export const apiSetDevEnvAlertingSettings = (method = 'POST') =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
@@ -68,6 +73,14 @@ export const triggerSapSystemAlertingEmail = () =>
 
 export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
+
+export const testEmailIsReceived = () => emailIsReceived('Test email');
+
+export const triggerTestEmail = () =>
+  cy.get(testEmailButton).should('be.enabled').click();
+
+export const testEmailSentToasterIsDisplayed = () =>
+  cy.get(testEmailSentToaster, { timeout: 20000 }).should('be.visible');
 
 export const deleteAllEmailsFromMailpit = () => {
   if (Cypress.expose('ALERTING_TESTS')) cy.task('deleteAllEmailsFromMailpit');

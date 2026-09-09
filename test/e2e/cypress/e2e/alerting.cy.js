@@ -43,6 +43,13 @@ context('Email Alerting feature', () => {
       alertingPage.triggerHeartbeatFailedAlertingEmail();
       alertingPage.heartbeatFailedEmailIsReceived();
     });
+
+    it('Receive email when a test email is requested', () => {
+      alertingPage.visit('/settings');
+      alertingPage.triggerTestEmail();
+      alertingPage.testEmailSentToasterIsDisplayed();
+      alertingPage.testEmailIsReceived();
+    });
   });
 
   after(() => alertingPage.deleteAllEmailsFromMailpit());
