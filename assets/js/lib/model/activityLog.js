@@ -297,9 +297,9 @@ export const ACTIVITY_TYPES_CONFIG = {
   [TESTING_ALERTING_SETTINGS]: {
     label: 'Test Email Requested',
     message: ({ metadata }) =>
-      metadata?.reason
-        ? 'Test email delivery failed'
-        : 'Test email delivery succeeded',
+      metadata?.result === 'success'
+        ? 'Test email delivery succeeded'
+        : 'Test email delivery failed',
     resource: alertingSettingsResourceType,
   },
   [USER_CREATION]: {
