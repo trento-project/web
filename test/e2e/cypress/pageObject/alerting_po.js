@@ -28,6 +28,14 @@ const testEmailButton = '[aria-label="alerting-test-email-button"]';
 const testEmailSentToaster = 'p:contains("Test email sent!")';
 const testEmailFailedToaster = 'p:contains("Test email delivery failed!")';
 
+export const setDefaultAlertingSettings = () =>
+  basePage.getAlertingSettings().then((resp) => {
+    if (resp.status === 404 || resp.body.enforced_from_env === false) {
+      const requestMethod = resp.status === 404 ? 'POST' : 'PATCH';
+      apiSetDevEnvAlertingSettings(requestMethod);
+    }
+  });
+
 export const apiSetDevEnvAlertingSettings = (
   method = 'POST',
   settings = alertingDevEnvSettings
