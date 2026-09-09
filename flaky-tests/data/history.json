@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-07-25T18:18:12Z",
-    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
-    "run_id": "30168838555",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.25
-      },
-      {
-        "name": "Elixir.Trento.DiscoveryTest::test request discovery should request cluster hosts discovery",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-25T18:55:21Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30169925253",
@@ -5892,6 +5872,22 @@
       {
         "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-09T19:54:57Z",
+    "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
+    "run_id": "34396546376",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 37,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 1
       }
     ]
   }
