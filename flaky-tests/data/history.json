@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-25T18:55:21Z",
-    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
-    "run_id": "30169925253",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize database site operation database_stop",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-25T18:56:20Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30169925253",
@@ -5888,6 +5872,26 @@
       {
         "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
         "score": 1
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-09T19:56:13Z",
+    "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
+    "run_id": "34396546376",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 38,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SoftwareUpdates.DiscoveryTest::test Discovering software updates for a collection of hosts should complete discovery",
+        "score": 0.05001
       }
     ]
   }
