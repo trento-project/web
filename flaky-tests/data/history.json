@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-25T18:56:20Z",
-    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
-    "run_id": "30169925253",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › operations::should show Saptune apply operation running",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-25T22:38:17Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30171867043",
@@ -5894,5 +5878,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-09-09T20:20:30Z",
+    "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
+    "run_id": "34398379219",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
