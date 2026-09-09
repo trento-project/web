@@ -506,8 +506,8 @@ describe('useAlertingSettings', () => {
 
       axiosMock.onPost('/api/v1/settings/alerting/test').reply(200, {});
 
-      await act(() => {
-        result.current.sendTestEmail();
+      await act(async () => {
+        await result.current.sendTestEmail();
       });
 
       expect(result.current.testEmailLoading).toEqual(false);
@@ -534,8 +534,8 @@ describe('useAlertingSettings', () => {
         ],
       });
 
-      await act(() => {
-        result.current.sendTestEmail();
+      await act(async () => {
+        await result.current.sendTestEmail();
       });
 
       expect(result.current.testEmailLoading).toEqual(false);
@@ -555,8 +555,8 @@ describe('useAlertingSettings', () => {
 
       axiosMock.onPost('/api/v1/settings/alerting/test').networkError();
 
-      await act(() => {
-        result.current.sendTestEmail();
+      await act(async () => {
+        await result.current.sendTestEmail();
       });
 
       expect(store.getActions()).toEqual([
