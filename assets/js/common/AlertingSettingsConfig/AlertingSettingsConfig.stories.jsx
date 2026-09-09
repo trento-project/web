@@ -23,9 +23,17 @@ export default {
       description: 'Abilities of the current user',
       control: { type: 'object' },
     },
+    testEmailLoading: {
+      description: 'Whether a test email submission is currently in flight',
+      control: { type: 'boolean' },
+    },
     onEditClick: {
       description: 'Callback that would run on edit button being clicked',
       action: 'onEditClick',
+    },
+    onTestEmailClick: {
+      description: 'Callback that would run on test email button being clicked',
+      action: 'onTestEmailClick',
     },
   },
 };
@@ -67,5 +75,25 @@ export const WithEditButtonDisabledWhenEnforcedFromEnv = {
     },
     userAbilities: [allAbility],
     onEditClick: action('onEditClick'),
+  },
+};
+
+export const WithTestEmailButtonEnabledWhenAlertingEnabled = {
+  args: {
+    ...Default.args,
+    settings: alertingSettingsFactory.build({ alertingEnabled: true }),
+    userAbilities: [allAbility],
+    onEditClick: action('onEditClick'),
+    onTestEmailClick: action('onTestEmailClick'),
+  },
+};
+
+export const WithTestEmailButtonDisabledWhenAlertingDisabled = {
+  args: {
+    ...Default.args,
+    settings: alertingSettingsFactory.build({ alertingEnabled: false }),
+    userAbilities: [allAbility],
+    onEditClick: action('onEditClick'),
+    onTestEmailClick: action('onTestEmailClick'),
   },
 };

@@ -13,6 +13,9 @@ const alertingSettingsPermittedFor = ['all:alerting_settings'];
 export const ENFORCED_FROM_ENV_MESSAGE =
   'Alerting settings are enforced by environment variables';
 
+export const TEST_EMAIL_DISABLED_MESSAGE =
+  'Email alerts must be enabled to send a test email';
+
 export default function AlertingSettingsConfig({
   settings: {
     alertingEnabled = false,
@@ -24,7 +27,9 @@ export default function AlertingSettingsConfig({
     enforcedFromEnv = false,
   } = {},
   userAbilities = [],
+  testEmailLoading = false,
   onEditClick = noop,
+  onTestEmailClick = noop,
 }) {
   const alertingFields = [
     {
@@ -78,6 +83,28 @@ export default function AlertingSettingsConfig({
             permitted={alertingSettingsPermittedFor}
           >
             <Tooltip
+              isEnabled={!alertingEnabled}
+              content={TEST_EMAIL_DISABLED_MESSAGE}
+              place="bottom"
+            >
+              <Button
+                className="mr-2"
+                type="default-fit"
+                size="small"
+                aria-label="alerting-test-email-button"
+                onClick={onTestEmailClick}
+                disabled={!alertingEnabled || testEmailLoading}
+              >
+                Test Email
+              </Button>
+            </Tooltip>
+          </DisabledGuard>
+
+          <DisabledGuard
+            userAbilities={userAbilities}
+            permitted={alertingSettingsPermittedFor}
+          >
+            <Tooltip
               isEnabled={enforcedFromEnv}
               content={ENFORCED_FROM_ENV_MESSAGE}
               place="bottom"
@@ -87,7 +114,7 @@ export default function AlertingSettingsConfig({
                 size="small"
                 aria-label="alerting-edit-button"
                 onClick={onEditClick}
-                disabled={enforcedFromEnv}
+                disabled={enforcedFromEnv || testEmailLoading}
               >
                 Edit Settings
               </Button>
