@@ -398,8 +398,9 @@ describe('useAlertingSettings', () => {
     it('sets empty settings and activates error flag', async () => {
       axiosMock.onGet('/api/v1/settings/alerting').reply(422);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual({});
@@ -411,8 +412,9 @@ describe('useAlertingSettings', () => {
     it("sets empty settings but doesn't activate error flag", async () => {
       axiosMock.onGet('/api/v1/settings/alerting').reply(404);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual({});
@@ -422,8 +424,9 @@ describe('useAlertingSettings', () => {
     it('sends POST request with correct body when submit callback is called', async () => {
       axiosMock.onGet('/api/v1/settings/alerting').replyOnce(404);
 
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       axiosMock
@@ -449,16 +452,18 @@ describe('useAlertingSettings', () => {
     });
 
     it('correctly sets alerting settings', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
 
       expect(result.current.settings).toEqual(fetchedAlertingSettings);
     });
 
     it('sends PATCH request with correct body when submit callback is called', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       axiosMock
@@ -474,8 +479,9 @@ describe('useAlertingSettings', () => {
     });
 
     it('sets errors on HTTP failure', async () => {
+      const [hookWrapper, _] = hookWrapperWithState();
       const { result } = await act(() =>
-        renderHook(() => useAlertingSettings())
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
       );
       const submitFn = result.current.submit;
       const errors = [
@@ -490,6 +496,75 @@ describe('useAlertingSettings', () => {
       });
 
       expect(result.current.submitErrors).toEqual(errors);
+    });
+
+    it('sends a test email and spawns a toast when the submission succeeds', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').reply(200, {});
+
+      await act(() => {
+        result.current.sendTestEmail();
+      });
+
+      expect(result.current.testEmailLoading).toEqual(false);
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email sent!', icon: '✅' },
+        },
+      ]);
+    });
+
+    it('spawns a toast when the test email submission fails', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').reply(422, {
+        errors: [
+          {
+            title: 'Unprocessable Entity',
+            detail: 'Email alerting is disabled.',
+          },
+        ],
+      });
+
+      await act(() => {
+        result.current.sendTestEmail();
+      });
+
+      expect(result.current.testEmailLoading).toEqual(false);
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email delivery failed!', icon: '❌' },
+        },
+      ]);
+    });
+
+    it('spawns a toast when the test email submission fails with a network error', async () => {
+      const [hookWrapper, store] = hookWrapperWithState();
+      const { result } = await act(() =>
+        renderHook(() => useAlertingSettings(), { wrapper: hookWrapper })
+      );
+
+      axiosMock.onPost('/api/v1/settings/alerting/test').networkError();
+
+      await act(() => {
+        result.current.sendTestEmail();
+      });
+
+      expect(store.getActions()).toEqual([
+        {
+          type: 'NOTIFICATION',
+          payload: { text: 'Test email delivery failed!', icon: '❌' },
+        },
+      ]);
     });
   });
 });

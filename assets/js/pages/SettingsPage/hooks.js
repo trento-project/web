@@ -21,6 +21,7 @@ import {
   getSettings as getAlertingSettings,
   saveSettings as saveAlertingSettings,
   updateSettings as updateAlertingSettings,
+  sendTestEmail as sendAlertingTestEmail,
 } from '@lib/api/alertingSettings';
 
 export const useSuseMultiLinuxManagerSettings = () => {
@@ -176,11 +177,13 @@ export const useApiKeySettings = () => {
 };
 
 export const useAlertingSettings = () => {
+  const dispatch = useDispatch();
   const [settings, setSettings] = useState({});
   const [fetchLoading, setFetchLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [submitErrors, setSubmitErrors] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [testEmailLoading, setTestEmailLoading] = useState(false);
 
   function fromApiSettings(data) {
     return {
@@ -249,6 +252,19 @@ export const useAlertingSettings = () => {
     }
   }
 
+  async function sendTestEmail() {
+    setTestEmailLoading(true);
+
+    try {
+      await sendAlertingTestEmail();
+      dispatch(notify({ text: 'Test email sent!', icon: '✅' }));
+    } catch {
+      dispatch(notify({ text: 'Test email delivery failed!', icon: '❌' }));
+    } finally {
+      setTestEmailLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetch();
   }, []);
@@ -259,8 +275,10 @@ export const useAlertingSettings = () => {
     fetchError,
     submitLoading,
     submitErrors,
+    testEmailLoading,
     fetch,
     submit,
+    sendTestEmail,
     clearSubmitErrors,
   };
 };

@@ -129,8 +129,10 @@ function SettingsPage() {
     fetchError: alertingFetchError,
     submitLoading: alertingSubmitLoading,
     submitErrors: alertingSubmitErrors,
+    testEmailLoading: alertingTestEmailLoading,
     fetch: fetchAlertingSettings,
     submit: submitAlertingSettings,
+    sendTestEmail: sendAlertingTestEmail,
     clearSubmitErrors: clearAlertingSubmitErrors,
   } = useAlertingSettings();
 
@@ -380,10 +382,12 @@ function SettingsPage() {
             <AlertingSettingsConfig
               settings={alertingSettings}
               userAbilities={abilities}
+              testEmailLoading={alertingTestEmailLoading}
               onEditClick={() => {
                 clearAlertingSubmitErrors();
                 setAlertingSettingsModalOpen(true);
               }}
+              onTestEmailClick={sendAlertingTestEmail}
             />
           </SettingsLoader>
 
