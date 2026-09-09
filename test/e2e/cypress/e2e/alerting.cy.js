@@ -43,12 +43,27 @@ context('Email Alerting feature', () => {
       alertingPage.triggerHeartbeatFailedAlertingEmail();
       alertingPage.heartbeatFailedEmailIsReceived();
     });
+  });
 
-    it('Receive email when a test email is requested', () => {
+  describe('Test email', () => {
+    beforeEach(() => {
+      alertingPage.deleteAllEmailsFromMailpit();
+      alertingPage.apiSetDevEnvAlertingSettings('PATCH');
+    });
+
+    it('should not receive an email when alerting settings configuration is wrong and test email is requested', () => {
+      alertingPage.apiSetDevEnvInvalidAlertingSettings();
+      alertingPage.visit('/settings');
+      alertingPage.triggerTestEmail();
+      alertingPage.testEmailFailedToasterIsDisplayed();
+      alertingPage.emailIsNotReceived('Test email');
+    });
+
+    it('should receive an email when alerting settings are properly configured and test email is requested', () => {
       alertingPage.visit('/settings');
       alertingPage.triggerTestEmail();
       alertingPage.testEmailSentToasterIsDisplayed();
-      alertingPage.testEmailIsReceived();
+      alertingPage.emailIsReceived('Test email');
     });
   });
 

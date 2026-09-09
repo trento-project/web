@@ -26,8 +26,12 @@ const testHost = {
 
 const testEmailButton = '[aria-label="alerting-test-email-button"]';
 const testEmailSentToaster = 'p:contains("Test email sent!")';
+const testEmailFailedToaster = 'p:contains("Test email delivery failed!")';
 
-export const apiSetDevEnvAlertingSettings = (method = 'POST') =>
+export const apiSetDevEnvAlertingSettings = (
+  method = 'POST',
+  settings = alertingDevEnvSettings
+) =>
   basePage.apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/alerting',
@@ -36,21 +40,32 @@ export const apiSetDevEnvAlertingSettings = (method = 'POST') =>
         bearer: accessToken,
       },
       body: {
-        enabled: alertingDevEnvSettings.enabled,
-        smtp_server: alertingDevEnvSettings.smtpServer,
-        smtp_port: alertingDevEnvSettings.smtpPort,
-        smtp_username: alertingDevEnvSettings.smtpUsername,
-        smtp_password: alertingDevEnvSettings.smtpPassword,
-        sender_email: alertingDevEnvSettings.senderEmail,
-        recipient_email: alertingDevEnvSettings.recipientEmail,
+        enabled: settings.enabled,
+        smtp_server: settings.smtpServer,
+        smtp_port: settings.smtpPort,
+        smtp_username: settings.smtpUsername,
+        smtp_password: settings.smtpPassword,
+        sender_email: settings.senderEmail,
+        recipient_email: settings.recipientEmail,
       },
     })
   );
 
+export const apiSetDevEnvInvalidAlertingSettings = () =>
+  apiSetDevEnvAlertingSettings('PATCH', { smtpPort: 1024 });
+
 export const emailIsReceived = (type) =>
   cy
-    .task('searchEmailInMailpit', `Trento Alert: ${type}`)
+    .task('searchEmailInMailpit', { subject: `Trento Alert: ${type}` })
     .then((result) => cy.wrap(result.length).should('equal', 1));
+
+export const emailIsNotReceived = (type) =>
+  cy
+    .task('searchEmailInMailpit', {
+      subject: `Trento Alert: ${type}`,
+      options: { retries: 0 },
+    })
+    .then((result) => cy.wrap(result.length).should('equal', 0));
 
 export const heartbeatFailedEmailIsReceived = () =>
   emailIsReceived(`Host ${testHost.hostname} stopped reporting`);
@@ -74,13 +89,14 @@ export const triggerSapSystemAlertingEmail = () =>
 export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
 
-export const testEmailIsReceived = () => emailIsReceived('Test email');
-
 export const triggerTestEmail = () =>
   cy.get(testEmailButton).should('be.enabled').click();
 
 export const testEmailSentToasterIsDisplayed = () =>
-  cy.get(testEmailSentToaster, { timeout: 20000 }).should('be.visible');
+  cy.get(testEmailSentToaster).should('be.visible');
+
+export const testEmailFailedToasterIsDisplayed = () =>
+  cy.get(testEmailFailedToaster).should('be.visible');
 
 export const deleteAllEmailsFromMailpit = () => {
   if (Cypress.expose('ALERTING_TESTS')) cy.task('deleteAllEmailsFromMailpit');
