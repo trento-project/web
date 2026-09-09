@@ -10,12 +10,7 @@ context('Email Alerting feature', () => {
     }
     alertingPage.preloadTestData();
     alertingPage.deleteAllEmailsFromMailpit();
-    alertingPage.getAlertingSettings().then((resp) => {
-      if (resp.status === 404 || resp.body.enforced_from_env === false) {
-        const requestMethod = resp.status === 404 ? 'POST' : 'PATCH';
-        alertingPage.apiSetDevEnvAlertingSettings(requestMethod);
-      }
-    });
+    alertingPage.setDefaultAlertingSettings();
   });
 
   describe('Receive alerting emails when specific actions trigger them', () => {
@@ -48,10 +43,15 @@ context('Email Alerting feature', () => {
   describe('Test email', () => {
     beforeEach(() => {
       alertingPage.deleteAllEmailsFromMailpit();
-      alertingPage.apiSetDevEnvAlertingSettings('PATCH');
+      alertingPage.setDefaultAlertingSettings();
     });
 
-    it('should not receive an email when alerting settings configuration is wrong and test email is requested', () => {
+    it('should not receive an email when alerting settings configuration is wrong and test email is requested', function () {
+      // skipping the test if alerting settings cannot be changed using the API as they are enforced by env variables
+      if (!Cypress.expose('ALERTING_DB_TESTS')) {
+        this.skip();
+      }
+
       alertingPage.apiSetDevEnvInvalidAlertingSettings();
       alertingPage.visit('/settings');
       alertingPage.triggerTestEmail();
