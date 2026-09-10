@@ -536,6 +536,12 @@ describe('Users', () => {
   });
 
   describe('AI Configuration', () => {
+    const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
+
+    before(function () {
+      if (isTrentoProdInstance) this.skip();
+    });
+
     beforeEach(() => {
       basePage.logout();
       usersPage.apiDeleteAllUsers();
