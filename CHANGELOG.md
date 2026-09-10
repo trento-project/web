@@ -1,5 +1,72 @@
 # Changelog
 
+## [3.1.6](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.5...3.1.6) - 2026-09-10
+
+### What's Changed
+
+#### Features
+
+* Adds explicit system env variable (#4753) @trentobot
+* Fix conflicting erlang27 packages (#4749) @trentobot
+* Add runtime LOG_LEVEL option to change logging level (#4690) @trentobot
+
+#### Bug Fixes
+
+* Checks execution for ASCS/ERS clusters when SAP system is not registered (#4757) @trentobot
+* Fixed a typo in the CI definition (#4735) @trentobot
+* Delete events in batch (#4713) @trentobot
+
+#### Maintenance
+
+* Remove ranch override dependency (#4751) @trentobot
+* Fixed a typo in the CI definition (#4735) @trentobot
+* Get mix deps in API BC check in case of cache miss, CI (#4731) @trentobot
+* Disable fail-fast in the CI for most jobs (#4720) @trentobot
+* Remove PR `labeled` trigger from main CI (#4700) @trentobot
+* Reduce jest flakiness (#4679) @trentobot
+
+#### Dependencies
+
+<details>
+<summary>34 changes</summary>
+* Bump ex_machina from 2.8.1 to 2.8.2 (#4747) @trentobot
+* Bump browserslist from 4.28.2 to 4.28.8 in /assets (#4750) @trentobot
+* Run npm audit (#4736) @trentobot
+* Bump axios from 1.18.1 to 1.19.0 in /assets (#4748) @trentobot
+* Bump prettier from 3.8.5 to 3.9.6 in /assets (#4732) @trentobot
+* Bump pegasus from 0.2.6 to 1.0.0 (#4729) @trentobot
+* Bump brace-expansion in /assets (#4733) @trentobot
+* Bump phoenix from 1.7.23 to 1.7.24 (#4727) @trentobot
+* Bump swoosh from 1.26.3 to 1.27.0 (#4726) @trentobot
+* Bump flop from 0.25.0 to 0.26.5 (#4728) @trentobot
+* Bump httpoison from 2.2.3 to 2.3.0 (#4725) @trentobot
+* Bump cloak_ecto from 1.2.0 to 1.3.0 (#4719) @trentobot
+* Bump ex_machina from 2.8.0 to 2.8.1 (#4716) @trentobot
+* Bump tzdata from 1.1.4, gettext to 0.26 (#4712) @trentobot
+* Bump commanded from 1.4.10 to 1.4.11 (#4707) @trentobot
+* Bump postgrex from 0.22.2 to 0.22.3 (#4706) @trentobot
+* Bump babel-jest from 30.3.0 to 30.4.1 in /assets (#4705) @trentobot
+* Bump process_tree from 0.2.1 to 0.3.0 (#4704) @trentobot
+* Bump faker from 0.18.0 to 0.19.0 (#4702) @trentobot
+* Bump swoosh from 1.26.0 to 1.26.3 (#4699) @trentobot
+* Bump joken from 2.5.0 to 2.6.2 (#4698) @trentobot
+* Bump dompurify from 3.4.11 to 3.4.13 in /assets (#4697) @trentobot
+* Bump floki from 0.38.3 to 0.38.4 (#4696) @trentobot
+* Bump fast-uri from 3.1.2 to 3.1.5 in /assets (#4694) @trentobot
+* Bump fast-uri from 3.1.3 to 3.1.5 in /test/e2e (#4693) @trentobot
+* Bump postcss from 8.5.12 to 8.5.26 in /assets (#4692) @trentobot
+* Bump nanoid in /assets (#4691) @trentobot
+* Bump react-router from 7.15.1 to 7.18.2 (#4687) @trentobot
+* Bump semver from 7.7.4 to 7.8.5 in /assets (#4686) @trentobot
+* Bump tar and npm in /test/e2e (#4685) @trentobot
+* Bump dorny/paths-filter from 4.0.1 to 4.0.2 (#4684) @trentobot
+* Bump axios from 1.16.1 to 1.18.1 in /assets (#4683) @trentobot
+* Bump brace-expansion from 5.0.5 to 5.0.7 in /test/e2e (#4682) @trentobot
+* Bump erlef/setup-beam from 1.24.0 to 1.24.1 (#4680) @trentobot
+
+</details>
+**Full Changelog**: https://github.com/trento-project/web/compare/3.1.5...3.1.6
+
 ## [3.1.5](https://github.com/trento-project/web/tree/2.4.0/compare/3.1.4...3.1.5) - 2026-07-15
 
 ### What's Changed
@@ -569,7 +636,6 @@
 * Analytics Settings UI with Collection to Posthog (#3449) @jagabomb
 * Add the ability to request a saptune solution change (#3488) @nelsonkopliku
 * Expose cluster resource parent api (#3482) @arbulu89
-
 #### Bug Fixes
 
 * Add AUTH_SERVER_URL to wanda container (#3858) @nelsonkopliku
@@ -867,7 +933,6 @@
 * ActivityLog searching by metadata BE implementation (#3059) @gagandeepb
 * Replaces Empty Favicon with Trento Logo (#3144) @jagabomb
 #### Bug Fixes
-
 * Bugfix for web as it fails to start when no IPV6 is available (#3490) @EMaksy
 * Show tooltip only when hoovered over the start execution button (#3470) @EMaksy
 * Relax timeouts (#3477) @janvhs
@@ -1345,7 +1410,6 @@
 ## [2.3.2](https://github.com/trento-project/web/tree/2.3.2) (2024-07-24)
 [Full Changelog](https://github.com/trento-project/web/compare/2.3.1...2.3.2)
 **Fixed bugs:**
-
 - Fix process manager rename [#2814](https://github.com/trento-project/web/pull/2814) ([arbulu89](https://github.com/arbulu89))
 
 ## [2.3.1](https://github.com/trento-project/web/tree/2.3.1) (2024-06-10)
