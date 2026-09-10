@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-07-26T18:22:08Z",
-    "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
-    "run_id": "30214060756",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-07-26T18:22:54Z",
     "commit": "002a64b5b04b0cbc6a842a1616928eaec95560b8",
     "run_id": "30214060756",
@@ -5856,5 +5845,37 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-10T00:12:21Z",
+    "commit": "774bec11f798901aaa8daa6344c52cb93c3553c7",
+    "run_id": "34404008690",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 9
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.08337
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      }
+    ]
   }
 ]
