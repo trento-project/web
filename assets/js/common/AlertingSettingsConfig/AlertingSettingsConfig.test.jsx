@@ -10,6 +10,7 @@ import { alertingSettingsFactory } from '@lib//test-utils/factories/alertingSett
 
 import AlertingSettingsConfig, {
   ENFORCED_FROM_ENV_MESSAGE,
+  TEST_EMAIL_DISABLED_MESSAGE,
 } from './AlertingSettingsConfig';
 
 const adminUser = [{ name: 'all', resource: 'all' }];
@@ -136,5 +137,104 @@ describe('AlertingSettingsConfig', () => {
 
     await user.hover(editButton);
     expect(screen.queryByText(ENFORCED_FROM_ENV_MESSAGE)).toBeVisible();
+  });
+
+  it.each`
+    case                        | abilities
+    ${'not set'}                | ${undefined}
+    ${'empty list'}             | ${[]}
+    ${'non-relevant abilities'} | ${[{ name: 'all', resource: 'some_resource' }]}
+  `(
+    'forbids sending a test email when user has not sufficient abilities ($case)',
+    async ({ abilities }) => {
+      const onTestEmailClick = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <AlertingSettingsConfig
+          settings={alertingSettingsFactory.build({ alertingEnabled: true })}
+          onTestEmailClick={onTestEmailClick}
+          userAbilities={abilities}
+        />
+      );
+
+      const testEmailButton = screen.getByLabelText(
+        'alerting-test-email-button'
+      );
+      expect(testEmailButton).toBeDisabled();
+
+      await user.click(testEmailButton);
+      expect(onTestEmailClick).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each`
+    case                       | abilities
+    ${'admin'}                 | ${adminUser}
+    ${'all:alerting_settings'} | ${[{ name: 'all', resource: 'alerting_settings' }]}
+  `(
+    'allows sending a test email when user has sufficient abilities ($case) and calls correct handler',
+    async ({ abilities }) => {
+      const onTestEmailClick = jest.fn();
+      const user = userEvent.setup();
+
+      render(
+        <AlertingSettingsConfig
+          settings={alertingSettingsFactory.build({ alertingEnabled: true })}
+          onTestEmailClick={onTestEmailClick}
+          userAbilities={abilities}
+        />
+      );
+
+      const testEmailButton = screen.getByLabelText(
+        'alerting-test-email-button'
+      );
+      expect(testEmailButton).toBeEnabled();
+
+      await user.click(testEmailButton);
+      expect(onTestEmailClick).toHaveBeenCalledTimes(1);
+    }
+  );
+
+  it('disables sending a test email when email alerts are disabled', async () => {
+    const onTestEmailClick = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <AlertingSettingsConfig
+        settings={alertingSettingsFactory.build({ alertingEnabled: false })}
+        onTestEmailClick={onTestEmailClick}
+        userAbilities={adminUser}
+      />
+    );
+
+    const testEmailButton = screen.getByLabelText('alerting-test-email-button');
+    expect(testEmailButton).toBeDisabled();
+
+    await user.click(testEmailButton);
+    expect(onTestEmailClick).not.toHaveBeenCalled();
+
+    await user.hover(testEmailButton);
+    expect(screen.queryByText(TEST_EMAIL_DISABLED_MESSAGE)).toBeVisible();
+  });
+
+  it('disables sending a test email while a test email is in flight', async () => {
+    const onTestEmailClick = jest.fn();
+    const user = userEvent.setup();
+
+    render(
+      <AlertingSettingsConfig
+        settings={alertingSettingsFactory.build({ alertingEnabled: true })}
+        onTestEmailClick={onTestEmailClick}
+        userAbilities={adminUser}
+        testEmailLoading
+      />
+    );
+
+    const testEmailButton = screen.getByLabelText('alerting-test-email-button');
+    expect(testEmailButton).toBeDisabled();
+
+    await user.click(testEmailButton);
+    expect(onTestEmailClick).not.toHaveBeenCalled();
   });
 });

@@ -18,6 +18,7 @@ import {
   AI_CONFIGURATION_MODIFICATION,
   AI_CONFIGURATION_DELETION,
   OPERATION_COMPLETED,
+  TESTING_ALERTING_SETTINGS,
   availableResourceNameKeys,
   resourceNameFromMetadata,
   resourceTypes,
@@ -253,5 +254,18 @@ describe('activityLog', () => {
         );
       });
     });
+
+    it.each`
+      metadata                                                        | expectedMessage
+      ${{ result: 'success' }}                                        | ${'Test email delivery succeeded'}
+      ${{ result: 'failure', reason: 'Email alerting is disabled.' }} | ${'Test email delivery failed'}
+    `(
+      'should resolve alerting test email message',
+      ({ metadata, expectedMessage }) => {
+        expect(toMessage({ type: TESTING_ALERTING_SETTINGS, metadata })).toBe(
+          expectedMessage
+        );
+      }
+    );
   });
 });

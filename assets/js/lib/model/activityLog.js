@@ -28,6 +28,7 @@ export const CHANGING_SMLM_SETTINGS = 'changing_suma_settings';
 export const CLEARING_SMLM_SETTINGS = 'clearing_suma_settings';
 export const SAVING_ALERTING_SETTINGS = 'saving_alerting_settings';
 export const CHANGING_ALERTING_SETTINGS = 'changing_alerting_settings';
+export const TESTING_ALERTING_SETTINGS = 'testing_alerting_settings';
 export const USER_CREATION = 'user_creation';
 export const USER_MODIFICATION = 'user_modification';
 export const USER_DELETION = 'user_deletion';
@@ -291,6 +292,14 @@ export const ACTIVITY_TYPES_CONFIG = {
   [CHANGING_ALERTING_SETTINGS]: {
     label: 'Alerting Settings Changed',
     message: (_entry) => 'Alerting Settings were changed',
+    resource: alertingSettingsResourceType,
+  },
+  [TESTING_ALERTING_SETTINGS]: {
+    label: 'Test Email Requested',
+    message: ({ metadata }) =>
+      metadata?.result === 'success'
+        ? 'Test email delivery succeeded'
+        : 'Test email delivery failed',
     resource: alertingSettingsResourceType,
   },
   [USER_CREATION]: {
