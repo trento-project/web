@@ -88,6 +88,17 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
     end)
   end
 
+  @spec send_test_email() ::
+          :ok
+          | {:error, :alerting_settings_not_configured}
+          | {:error, :alerting_disabled}
+          | {:error, {:test_email_delivery_failed, String.t()}}
+  def send_test_email do
+    with {:ok, settings} <- Settings.get_alerting_settings() do
+      deliver_test_email(settings)
+    end
+  end
+
   defp notify_critical_component_health(component_fetcher) do
     deliver_notification(fn %{sender: sender, recipient: recipient} ->
       [component, identified_by, identifier, reason] = component_fetcher.()
@@ -190,11 +201,35 @@ defmodule Trento.Infrastructure.Alerting.Alerting do
 
       {:error, reason} ->
         Logger.error(
-          "Failed to send alert notification with subject \"#{subject}\": #{inspect(reason)}",
-          error: reason
+          "Failed to send alert notification with subject \"#{subject}\"",
+          error: inspect(reason)
         )
 
         :ok
+    end
+  end
+
+  defp deliver_test_email(%{enabled: false}), do: {:error, :alerting_disabled}
+
+  defp deliver_test_email(
+         %{
+           sender_email: sender,
+           recipient_email: recipient
+         } = alerting_settings
+       ) do
+    mailer_config = prepare_mailer_config(alerting_settings)
+
+    [sender: sender, recipient: recipient]
+    |> EmailAlert.test_email()
+    |> Mailer.deliver(mailer_config)
+    |> case do
+      {:ok, _} ->
+        :ok
+
+      {:error, reason} ->
+        Logger.error("Failed to send test email", error: inspect(reason))
+
+        {:error, {:test_email_delivery_failed, inspect(reason)}}
     end
   end
 end

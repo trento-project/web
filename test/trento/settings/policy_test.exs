@@ -116,6 +116,7 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "allows alerting settings actions if user has all:alerting_settings abilities" do
@@ -124,6 +125,7 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:get_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       assert Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      assert Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "allows safe alerting settings actions if user has no abilities" do
@@ -135,12 +137,14 @@ defmodule Trento.Settings.PolicyTest do
       user = %User{abilities: []}
       refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
 
     test "disallows setting/updating alerting settings if user has only not applicable abilities" do
       user = %User{abilities: [%Ability{name: "all", resource: "api_key_settings"}]}
       refute Policy.authorize(:create_alerting_settings, user, AlertingSettings)
       refute Policy.authorize(:update_alerting_settings, user, AlertingSettings)
+      refute Policy.authorize(:test_alerting_settings, user, AlertingSettings)
     end
   end
 

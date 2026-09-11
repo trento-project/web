@@ -837,6 +837,53 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
                ]
              } == resp
     end
+
+    test "should successfully send a test email", %{conn: conn} do
+      insert(:alerting_settings, enabled: true)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(~p"/api/v1/settings/alerting/test")
+      |> json_response(:ok)
+    end
+
+    test "should return error when trying to send a test email without saved settings", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(~p"/api/v1/settings/alerting/test")
+        |> json_response(:not_found)
+        |> assert_response_schema("NotFoundV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{title: "Not Found", detail: "Alerting settings not configured."}
+               ]
+             } == resp
+    end
+
+    test "should return error when trying to send a test email while alerting is disabled", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert(:alerting_settings, enabled: false)
+
+      resp =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post(~p"/api/v1/settings/alerting/test")
+        |> json_response(:unprocessable_entity)
+        |> assert_response_schema("UnprocessableEntityV1", api_spec)
+
+      assert %{
+               errors: [
+                 %{title: "Unprocessable Entity", detail: "Email alerting is disabled."}
+               ]
+             } == resp
+    end
   end
 
   describe "forbidden response" do
@@ -957,6 +1004,20 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       conn
       |> put_req_header("content-type", "application/json")
       |> patch(~p"/api/v1/settings/alerting", settings)
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+    end
+
+    test "should return forbidden when user tries to send a test email without right abilities",
+         %{
+           conn: conn,
+           api_spec: api_spec
+         } do
+      insert(:alerting_settings, enabled: true)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post(~p"/api/v1/settings/alerting/test")
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end

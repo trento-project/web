@@ -53,6 +53,12 @@ defmodule Trento.ActivityLog.SeverityLevel do
     "clearing_suma_settings" => :warning,
     "saving_alerting_settings" => :info,
     "changing_alerting_settings" => :info,
+    "testing_alerting_settings" => %{
+      type: :kv,
+      key_suffix: "result",
+      values: %{"success" => :info, "*" => :critical},
+      condition: :map_value_to_severity
+    },
     "cluster_checks_execution_request" => :info,
     "activity_log_settings_update" => :debug,
     "heartbeat_succeeded" => :debug,
