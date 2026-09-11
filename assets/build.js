@@ -3,11 +3,10 @@
 
 /* eslint-disable no-console */
 
-const path = require('path');
-const alias = require('esbuild-plugin-path-alias');
-const esbuild = require('esbuild');
+import path from 'path';
+import esbuild from 'esbuild';
 
-const resolvePath = (p) => path.resolve(__dirname, p);
+const resolvePath = (p) => path.resolve(import.meta.dirname, p);
 
 const watching = Boolean(process.env.ESBUILD_WATCH);
 
@@ -21,23 +20,6 @@ const buildConfig = {
     '.png': 'dataurl',
     '.svg': 'dataurl',
   },
-  plugins: [
-    alias({
-      phoenix: resolvePath('../deps/phoenix/priv/static/phoenix.mjs'),
-      phoenix_html: resolvePath(
-        '../deps/phoenix_html/priv/static/phoenix_html.js'
-      ),
-      phoenix_live_view: resolvePath(
-        '../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js'
-      ),
-      '@common': resolvePath('./js/common'),
-      '@hooks': resolvePath('./js/hooks'),
-      '@lib': resolvePath('./js/lib'),
-      '@pages': resolvePath('./js/pages'),
-      '@state': resolvePath('./js/state'),
-      '@static': resolvePath('./static'),
-    }),
-  ],
 };
 
 const build = async () => {

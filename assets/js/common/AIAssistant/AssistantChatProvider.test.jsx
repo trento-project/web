@@ -49,6 +49,7 @@ let fakeSocket;
 let runtimeStub;
 
 beforeEach(() => {
+  // eslint-disable-next-line import-x/namespace
   agentModule.__resetInstances();
   jest.clearAllMocks();
 
@@ -83,12 +84,14 @@ describe('AssistantChatProvider', () => {
     useSocket.mockReturnValue(null);
     renderProvider();
     expect(lastRuntimeOptions().agent).toBeNull();
+    // eslint-disable-next-line import-x/namespace
     expect(agentModule.__getInstances()).toHaveLength(0);
   });
 
   it('does not create the agent when no userID is provided', () => {
     renderProvider({ userID: undefined });
     expect(lastRuntimeOptions().agent).toBeNull();
+    // eslint-disable-next-line import-x/namespace
     expect(agentModule.__getInstances()).toHaveLength(0);
   });
 
@@ -96,8 +99,10 @@ describe('AssistantChatProvider', () => {
     renderProvider({ userID: 7, threadID: 'thread-x' });
 
     await waitFor(() => {
+      // eslint-disable-next-line import-x/namespace
       expect(agentModule.__getInstances()).toHaveLength(1);
     });
+    // eslint-disable-next-line import-x/namespace
     const [agent] = agentModule.__getInstances();
     expect(agent.opts.userID).toBe(7);
     // Provider translates threadID prop to AG-UI's `threadId` constructor option.
@@ -114,13 +119,16 @@ describe('AssistantChatProvider', () => {
   it('initializes the agent after construction', async () => {
     renderProvider();
     await waitFor(() => {
+      // eslint-disable-next-line import-x/namespace
       expect(agentModule.__getInstances()[0].initialize).toHaveBeenCalled();
     });
   });
 
   it('disconnects the agent when the provider unmounts', async () => {
     const { unmount } = renderProvider();
+    // eslint-disable-next-line import-x/namespace
     await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(1));
+    // eslint-disable-next-line import-x/namespace
     const [agent] = agentModule.__getInstances();
 
     unmount();
@@ -130,7 +138,9 @@ describe('AssistantChatProvider', () => {
   it('forwards onConnectionChange to the agent so the parent can observe transitions', async () => {
     const onConnectionChange = jest.fn();
     renderProvider({ onConnectionChange });
+    // eslint-disable-next-line import-x/namespace
     await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(1));
+    // eslint-disable-next-line import-x/namespace
     const [agent] = agentModule.__getInstances();
 
     expect(agent.opts.onConnectionChange).toBe(onConnectionChange);
@@ -145,7 +155,9 @@ describe('AssistantChatProvider', () => {
         <div />
       </AssistantChatProvider>
     );
+    // eslint-disable-next-line import-x/namespace
     await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(1));
+    // eslint-disable-next-line import-x/namespace
     const [first] = agentModule.__getInstances();
     expect(first.opts.threadId).toBe('thread-1');
 
@@ -155,7 +167,9 @@ describe('AssistantChatProvider', () => {
       </AssistantChatProvider>
     );
 
+    // eslint-disable-next-line import-x/namespace
     await waitFor(() => expect(agentModule.__getInstances()).toHaveLength(2));
+    // eslint-disable-next-line import-x/namespace
     const [, second] = agentModule.__getInstances();
     expect(second.opts.threadId).toBe('thread-2');
     expect(first.disconnect).toHaveBeenCalled();

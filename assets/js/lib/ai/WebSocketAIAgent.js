@@ -119,6 +119,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // submits a message. Returns an Observable of AG-UI events.
   run({ messages, threadId }) {
     return new Observable((subscriber) => {
+      // eslint-disable-next-line no-restricted-properties
       const runId = crypto.randomUUID();
 
       const setupRun = async () => {

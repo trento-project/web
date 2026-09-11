@@ -123,7 +123,7 @@ function useSimulatedTurn(socket, turn) {
     };
     // The turn config is captured at mount; restarting on field changes is
     // never what we want here.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [socket]);
 }
 

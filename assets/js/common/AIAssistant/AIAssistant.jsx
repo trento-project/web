@@ -41,11 +41,13 @@ function AIAssistant({
 }) {
   const [isOpen, setIsOpen] = useState(open);
   const handleClose = () => setIsOpen(false);
+  // eslint-disable-next-line no-restricted-properties
   const [threadID, setThreadID] = useState(() => crypto.randomUUID());
   const [connectionStatus, setConnectionStatus] = useState(
     initialConnectionStatus
   );
 
+  // eslint-disable-next-line no-restricted-properties
   const onNewThread = () => setThreadID(crypto.randomUUID());
 
   return (
