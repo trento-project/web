@@ -79,8 +79,14 @@ defmodule Trento.MixProject do
       {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.2.0"},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
+<<<<<<< HEAD
       {:httpoison, "== 2.3.0"},
       {:jason, "~> 1.2"},
+=======
+      {:hackney, "~> 4.0", override: true},
+      {:httpoison, "~> 3.0", override: true},
+      {:jason, "~> 1.4"},
+>>>>>>> 6cb72b3 (Bumps httpoison (#4754))
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
@@ -101,7 +107,7 @@ defmodule Trento.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:timex, "~> 3.7.7"},
-      {:tzdata, "~> 1.1.3"},
+      {:tzdata, "~> 1.1.4"},
       {:trento_contracts,
        github: "trento-project/contracts",
        ref: "c5530804a09a2e50381c9298bb9fb6c1a82957e9",
