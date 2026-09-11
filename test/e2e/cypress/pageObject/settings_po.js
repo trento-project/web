@@ -63,6 +63,7 @@ const alertingPassword = '[aria-label="smtp-password"]';
 const alertingSender = '[aria-label="alerting-sender"]';
 const alertingRecipient = '[aria-label="alerting-recipient"]';
 const alertingEditButton = '[aria-label="alerting-edit-button"]';
+const alertingTestEmailButton = '[aria-label="alerting-test-email-button"]';
 
 const alertingEnabledEditSwitch = '#alerting-enabled-input';
 const alertingServerEditField = '#smtp-server-input';
@@ -935,6 +936,12 @@ export const alertingEditButtonIsEnabled = () =>
 
 export const alertingEditButtonIsDisabled = () =>
   cy.get(alertingEditButton).should('be.disabled');
+
+export const alertingTestEmailButtonIsEnabled = () =>
+  cy.get(alertingTestEmailButton).should('be.enabled');
+
+export const alertingTestEmailButtonIsDisabled = () =>
+  cy.get(alertingTestEmailButton).should('be.disabled');
 
 const alertingRemovePasswordButtonNotExist = () => {
   getAlertingRemovePasswordButton().should('not.exist');
