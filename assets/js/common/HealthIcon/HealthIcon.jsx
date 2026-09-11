@@ -28,16 +28,20 @@ function HealthIcon({
 }) {
   const passingIcon = () =>
     isLink ? EOS_CHECK_CIRCLE_FILLED : EOS_CHECK_CIRCLE_OUTLINED;
+  // eslint-disable-next-line @eslint-react/static-components
   const PassingIcon = passingIcon();
 
   const warningIcon = () =>
     isLink ? EOS_WARNING_FILLED : EOS_WARNING_OUTLINED;
+  // eslint-disable-next-line @eslint-react/static-components
   const WarningIcon = warningIcon();
 
   const criticalIcon = () => (isLink ? EOS_ERROR_FILLED : EOS_ERROR_OUTLINED);
+  // eslint-disable-next-line @eslint-react/static-components
   const CriticalIcon = criticalIcon();
 
   const absentIcon = () => (isLink ? EOS_INFO_FILLED : EOS_INFO_OUTLINED);
+  // eslint-disable-next-line @eslint-react/static-components
   const AbsentIcon = absentIcon();
 
   const hoverOpacityClass = {
@@ -47,6 +51,7 @@ function HealthIcon({
   switch (health) {
     case 'passing':
       return (
+        // eslint-disable-next-line @eslint-react/static-components
         <PassingIcon
           size={size}
           className={classNames(
@@ -57,6 +62,7 @@ function HealthIcon({
       );
     case 'warning':
       return (
+        // eslint-disable-next-line @eslint-react/static-components
         <WarningIcon
           size={size}
           className={classNames(
@@ -67,6 +73,7 @@ function HealthIcon({
       );
     case 'critical':
       return (
+        // eslint-disable-next-line @eslint-react/static-components
         <CriticalIcon
           size={size}
           className={classNames(
@@ -77,6 +84,7 @@ function HealthIcon({
       );
     case 'absent':
       return (
+        // eslint-disable-next-line @eslint-react/static-components
         <AbsentIcon
           size={size}
           className={classNames(

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { forwardRef } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 const getSizeClasses = (size) => {
@@ -44,10 +44,16 @@ const getButtonClasses = (type) => {
   }
 };
 
-function Button(
-  { children, className, type, size, disabled, asSubmit, ...props },
-  ref
-) {
+export default function Button({
+  children,
+  className,
+  type,
+  size,
+  disabled,
+  asSubmit,
+  ref,
+  ...props
+}) {
   const buttonClasses = classNames(
     getButtonClasses(type),
     getSizeClasses(size),
@@ -67,7 +73,3 @@ function Button(
     </button>
   );
 }
-
-// forwardRef will be deprecated in React 19
-// https://react.dev/blog/2024/12/05/react-19#ref-as-a-prop
-export default forwardRef(Button);

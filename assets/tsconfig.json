@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "phoenix": ["../deps/phoenix/priv/static/phoenix.mjs"],
+      "phoenix_html": ["../deps/phoenix_html/priv/static/phoenix_html.js"],
+      "phoenix_live_view": [
+        "../deps/phoenix_live_view/priv/static/phoenix_live_view.esm.js"
+      ],
+      "@common/*": ["js/common/*"],
+      "@hooks/*": ["js/hooks/*"],
+      "@lib/*": ["js/lib/*"],
+      "@pages/*": ["js/pages/*"],
+      "@state/*": ["js/state/*"],
+      "@state": ["js/state/index.js"],
+      "@static/*": ["static/*"]
+    }
+  },
+  "exclude": ["node_modules"]
+}
