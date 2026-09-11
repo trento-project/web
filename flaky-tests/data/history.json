@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-27T18:57:31Z",
-    "commit": "04a64420235cb0e96cfc76a00c05b8517fe468be",
-    "run_id": "30294887737",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SapSystems.SapSystemTest::test SAP System registration should not emit a movement event if the coming instance using the same instance number continues in the same host",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-27T19:19:52Z",
     "commit": "04a64420235cb0e96cfc76a00c05b8517fe468be",
     "run_id": "30296317054",
@@ -5837,6 +5821,34 @@
       {
         "name": "should not produce duplicate history entries when filters are applied::Hosts Overview Filter and browser navigation should not produce duplicate history entries when filters are applied",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-11T19:47:45Z",
+    "commit": "9ca578586f0c066a9b40737afb5cb3a40f051f8d",
+    "run_id": "34639495096",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.02501
       }
     ]
   }
