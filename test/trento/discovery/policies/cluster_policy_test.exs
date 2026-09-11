@@ -7055,4 +7055,222 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
   end
+
+  describe "Pacemaker 3+ support" do
+    test "should produce Removed status when both -removed- and -orphaned- attributes are true (new name wins)" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r ->
+              Map.merge(r, %{"Active" => false, "Orphaned" => true, "Removed" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Removed"
+    end
+
+    test "should produce Orphaned status when -orphaned- attribute is true and -removed- key is absent (backward compat)" do
+      fixture =
+        "ha_cluster_discovery_hana_scale_up"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "stonith-sbd"} = r ->
+              r
+              |> Map.delete("Removed")
+              |> Map.merge(%{"Active" => false, "Orphaned" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+        ClusterPolicy.handle(fixture, nil)
+
+      stonith_resource =
+        nodes
+        |> Enum.find(&(&1.name == "node01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "stonith-sbd"))
+
+      assert stonith_resource.status == "Orphaned"
+    end
+
+    test "should extract SID and promoted/unpromoted roles for a pacemaker3 hana_scale_up dual-name payload" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{} = details,
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_hana_scale_up_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "external/sbd"
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "PRD"))
+
+      resources = Enum.flat_map(details.nodes, & &1.resources)
+      roles = Enum.map(resources, & &1.role)
+
+      assert "Promoted" in roles
+      assert "Unpromoted" in roles
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should process a pacemaker3 ascs_ers dual-name payload with no promotable clone present" do
+      assert {:ok, [%RegisterOnlineClusterHost{details: %AscsErsClusterDetails{} = details} | _]} =
+               "ha_cluster_discovery_ascs_ers_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "external/sbd"
+
+      resources =
+        details.sap_systems
+        |> Enum.flat_map(& &1.nodes)
+        |> Enum.flat_map(& &1.resources)
+
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should extract SID and promoted/unpromoted roles for a pacemaker3 hana_scale_out dual-name payload" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{} = details,
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_hana_scale_out_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "external/sbd"
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "PRD"))
+
+      resources = Enum.flat_map(details.nodes, & &1.resources)
+      roles = Enum.map(resources, & &1.role)
+
+      assert "Promoted" in roles
+      assert "Unpromoted" in roles
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should extract SID and promoted/unpromoted roles for a pacemaker3 angi_hana_scale_up dual-name payload" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{} = details,
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "external/sbd"
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "HN9"))
+
+      resources = Enum.flat_map(details.nodes, & &1.resources)
+      roles = Enum.map(resources, & &1.role)
+
+      assert "Promoted" in roles
+      assert "Unpromoted" in roles
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should extract SID and promoted/unpromoted roles for a pacemaker3 aws dual-name payload" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{} = details,
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_aws_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "external/ec2"
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "PRD"))
+
+      resources = Enum.flat_map(details.nodes, & &1.resources)
+      roles = Enum.map(resources, & &1.role)
+
+      assert "Promoted" in roles
+      assert "Unpromoted" in roles
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should extract SID and unpromoted role for a pacemaker3 gcp dual-name payload" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{} = details,
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_gcp_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      assert details.fencing_type == "fence_gce"
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "PRD"))
+
+      resources = Enum.flat_map(details.nodes, & &1.resources)
+      roles = Enum.map(resources, & &1.role)
+
+      # This fixture only has the secondary instance active, hence no "Promoted" resource.
+      assert "Unpromoted" in roles
+      refute Enum.any?(resources, &(&1.status in ["Orphaned", "Removed"]))
+    end
+
+    test "should process a pacemaker3 hana_ascs_ers dual-name payload without error" do
+      # Combined HANA + ASCS/ERS clusters don't get per-resource details (details: nil),
+      # so this only proves the dual-name attributes don't break discovery/sap_instances.
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: nil,
+                  sap_instances: [_ | _],
+                  type: :hana_ascs_ers
+                }
+              ]} =
+               "ha_cluster_discovery_hana_ascs_ers_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+    end
+  end
 end
