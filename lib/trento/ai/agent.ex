@@ -70,7 +70,9 @@ defmodule Trento.AI.Agent do
   process to its event stream, and send the user prompt. Returns
   `{:ok, server_pid}` — the `Sagents.AgentServer` process now publishing to
   the caller — or the first `{:error, reason}` from the start/subscribe/send
-  chain.
+  chain. `{:error, :registry_unavailable}` among them: this node's sagents tree
+  is already down, which happens while the BEAM drains and the endpoint is
+  still serving.
 
   Callers are expected to monitor `server_pid`. Since sagents 0.8.0 the
   subscription is bound to the subscriber's pid, and the agent child is
@@ -131,23 +133,35 @@ defmodule Trento.AI.Agent do
     :exit, reason -> {:error, reason}
   end
 
+  # Refreshing the stored agent is best effort: there may be no agent process to
+  # read from yet, `refresh_when` may answer `:noop`, and a failed write leaves
+  # the previous configuration in place — none of that should stop the prompt
+  # from being sent.
+  #
+  # `{:error, :registry_unavailable}` is the one outcome that has to travel. The
+  # node's sagents tree is gone, so `subscribe/1` and `add_message/2` would fail
+  # right after; better to end the run with a reason than to send a prompt no
+  # one can answer.
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
          {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent) do
       update_agent(agent_id, updated_agent)
+    else
+      {:error, :registry_unavailable} = error -> error
+      _ -> :ok
     end
-
-    :ok
   end
 
   defp default_refresh_when(_current_agent, _new_agent), do: :noop
 
   defp update_agent(agent_id, updated_agent) do
-    %{state: current_state} = AgentServer.get_info(agent_id)
-
-    AgentServer.update_agent_and_state(agent_id, updated_agent, current_state)
-
-    :ok
+    with %{state: current_state} <- AgentServer.get_info(agent_id),
+         :ok <- AgentServer.update_agent_and_state(agent_id, updated_agent, current_state) do
+      :ok
+    else
+      {:error, :registry_unavailable} = error -> error
+      _ -> :ok
+    end
   end
 
   defp start_opts(agent_id, agent) do
