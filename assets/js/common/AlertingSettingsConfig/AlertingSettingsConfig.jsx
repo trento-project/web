@@ -95,7 +95,7 @@ export default function AlertingSettingsConfig({
                 onClick={onTestEmailClick}
                 disabled={!alertingEnabled || testEmailLoading}
               >
-                Test Email
+                Send Test Email
               </Button>
             </Tooltip>
           </DisabledGuard>

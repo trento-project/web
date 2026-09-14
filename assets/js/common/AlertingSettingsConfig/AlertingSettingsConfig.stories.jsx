@@ -32,7 +32,8 @@ export default {
       action: 'onEditClick',
     },
     onTestEmailClick: {
-      description: 'Callback that would run on test email button being clicked',
+      description:
+        'Callback that would run on send test email button being clicked',
       action: 'onTestEmailClick',
     },
   },
