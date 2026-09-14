@@ -260,6 +260,7 @@ context('Settings page', () => {
       settingsPage.smlmEditSettingsButtonIsEnabled();
       settingsPage.smlmClearSettingsButtonIsEnabled();
       settingsPage.activityLogsEditButtonIsEnabled();
+      settingsPage.alertingTestEmailButtonIsEnabled();
     });
 
     it('should disable settings buttons if the user has no abilities', () => {
@@ -272,6 +273,7 @@ context('Settings page', () => {
       settingsPage.smlmEditSettingsButtonIsDisabled();
       settingsPage.smlmClearSettingsButtonIsDisabled();
       settingsPage.activityLogsEditButtonIsDisabled();
+      settingsPage.alertingTestEmailButtonIsDisabled();
     });
   });
 });
