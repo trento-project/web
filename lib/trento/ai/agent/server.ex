@@ -16,7 +16,7 @@ defmodule Trento.AI.Agent.Server do
 
   alias Trento.AI.ApplicationConfigLoader
 
-  @callback subscribe(String.t()) :: :ok | {:error, term()}
+  @callback subscribe(String.t()) :: {:ok, pid(), reference()} | {:error, term()}
   @callback add_message(String.t(), Message.t()) :: :ok | {:error, term()}
   @callback cancel(String.t()) :: :ok | {:error, term()}
   @callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
