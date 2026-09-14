@@ -260,6 +260,134 @@ describe('Table component', () => {
       expect(within(pages).queryByText('2')).toBeNull();
     });
 
+    describe('items per page bound to the search params', () => {
+      function TableWithSearchParams({ initialSearch = '', ...props }) {
+        const [searchParams, setSearchParams] = React.useState(
+          () => new URLSearchParams(initialSearch)
+        );
+
+        // As react router does, keep the same instance while the serialized
+        // params do not change, so that effects observing them do not re-run
+        const updateSearchParams = (next) =>
+          setSearchParams((prev) => {
+            const updated = new URLSearchParams(
+              typeof next === 'function' ? next(prev) : next
+            );
+
+            return updated.toString() === prev.toString() ? prev : updated;
+          });
+
+        return (
+          <>
+            <span data-testid="search-params">{searchParams.toString()}</span>
+            <Table
+              {...props}
+              searchParams={searchParams}
+              setSearchParams={updateSearchParams}
+            />
+          </>
+        );
+      }
+
+      it('should take the items per page from the search params', () => {
+        const data = tableDataFactory.buildList(11);
+
+        render(
+          <TableWithSearchParams
+            config={tableConfig}
+            data={data}
+            initialSearch="itemsPerPage=20"
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(11);
+      });
+
+      it('should fall back to the default items per page on an unknown value', () => {
+        const data = tableDataFactory.buildList(11);
+
+        render(
+          <TableWithSearchParams
+            config={tableConfig}
+            data={data}
+            initialSearch="itemsPerPage=13"
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(10);
+      });
+
+      it('should write the items per page selection to the search params', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(11);
+
+        render(<TableWithSearchParams config={tableConfig} data={data} />);
+
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '20' }));
+
+        await waitFor(() =>
+          expect(screen.getByTestId('search-params')).toHaveTextContent(
+            'itemsPerPage=20'
+          )
+        );
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(11);
+      });
+
+      it('should keep the filters in the search params when the items per page changes', async () => {
+        const user = userEvent.setup();
+        const data = [].concat(
+          tableDataFactory.buildList(15),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(<TableWithSearchParams config={tableConfig} data={data} />);
+
+        await filterTable(user, 'Column3', 'value3');
+
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '20' }));
+
+        await waitFor(() => {
+          const params = new URLSearchParams(
+            screen.getByTestId('search-params').textContent
+          );
+
+          expect(params.get('itemsPerPage')).toBe('20');
+          expect(params.get('column3')).toBe('value3');
+        });
+      });
+
+      it('should go back to the 1st page when the items per page changes', async () => {
+        const user = userEvent.setup();
+        const data = tableDataFactory.buildList(11);
+
+        render(<TableWithSearchParams config={tableConfig} data={data} />);
+
+        const pages = screen.getByTestId('pagination');
+        await user.click(within(pages).getByLabelText('next-page'));
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(1);
+
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '50' }));
+
+        await waitFor(() =>
+          expect(
+            screen.getByRole('table').querySelectorAll('tbody > tr')
+          ).toHaveLength(11)
+        );
+      });
+    });
+
     it('should sort filter options with filterOptionsSorter when provided', async () => {
       const user = userEvent.setup();
       const data = [
