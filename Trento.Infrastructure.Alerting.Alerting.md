@@ -39,6 +39,16 @@ Provides a set of functions of Alerting related usecases.
 @spec notify_heartbeat_failed(String.t(), DateTime.t()) :: :ok
 ```
 
+# `send_test_email`
+
+```elixir
+@spec send_test_email() ::
+  :ok
+  | {:error, :alerting_settings_not_configured}
+  | {:error, :alerting_disabled}
+  | {:error, {:test_email_delivery_failed, String.t()}}
+```
+
 ---
 
 *Consult [api-reference.md](api-reference.md) for complete listing*

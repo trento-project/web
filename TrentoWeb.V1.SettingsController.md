@@ -59,6 +59,12 @@
 
 # `shared_tags`
 
+# `test_alerting_settings`
+
+```elixir
+@spec test_alerting_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
 # `test_suse_manager_settings`
 
 ```elixir
