@@ -419,6 +419,43 @@ defmodule Trento.ActivityLog.PhoenixConnParserTest do
                  }
                )
     end
+
+    test "should mark a successfully sent test email as successful", %{conn: %Plug.Conn{} = conn} do
+      assert %{result: :success} ==
+               PhoenixConnParser.get_activity_metadata(:testing_alerting_settings, %Plug.Conn{
+                 conn
+                 | status: 200
+               })
+    end
+
+    test "should extract the failure reason of a test email that could not be sent", %{
+      conn: %Plug.Conn{} = conn
+    } do
+      detail =
+        "Test email delivery failed: " <>
+          inspect({:retries_exceeded, {:network_failure, ~c"localhost", {:error, :nxdomain}}})
+
+      errors = %{
+        errors: [
+          %{
+            title: "Unprocessable Entity",
+            detail: detail
+          }
+        ]
+      }
+
+      for resp_body <- [Jason.encode!(errors), Jason.encode_to_iodata!(errors)] do
+        assert %{
+                 result: :failure,
+                 reason: detail
+               } ==
+                 PhoenixConnParser.get_activity_metadata(:testing_alerting_settings, %Plug.Conn{
+                   conn
+                   | status: 422,
+                     resp_body: resp_body
+                 })
+      end
+    end
   end
 
   defp scenario_setup(:api_key_generation, correlation_id) do
