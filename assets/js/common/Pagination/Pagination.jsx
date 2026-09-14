@@ -55,7 +55,7 @@ function ItemsPerPageSelector({
           aria-label="per-page"
           className="min-w-20 max-w-fit"
           options={itemsPerPageOptions}
-          initialValues={[currentItemsPerPage]}
+          value={currentItemsPerPage}
           onChange={onChange}
           menuPlacement="top"
         />
