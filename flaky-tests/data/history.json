@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-07-30T18:43:21Z",
-    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
-    "run_id": "30570265711",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 42,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-07-30T18:44:30Z",
     "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
     "run_id": "30570265711",
@@ -5802,5 +5786,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-14T21:26:09Z",
+    "commit": "7403fcbf1ce89e96adfb1fa9755aa2a5f2522e02",
+    "run_id": "34895536516",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
+        "score": 0.02501
+      }
+    ]
   }
 ]
