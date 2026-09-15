@@ -91,6 +91,15 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
       |> cast(attrs, fields())
       |> cast_embed(:node, with: &resource_node_changeset/2)
       |> validate_required_fields(@required_fields)
+      |> validate_orphaned_or_removed()
+    end
+
+    defp validate_orphaned_or_removed(changeset) do
+      if is_nil(get_field(changeset, :orphaned)) and is_nil(get_field(changeset, :removed)) do
+        add_error(changeset, :removed, "either orphaned or removed must be present")
+      else
+        changeset
+      end
     end
 
     defp resource_node_changeset(resource_node, attrs) do
