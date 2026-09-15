@@ -95,6 +95,21 @@ describe('view settings', () => {
     expect(readViewSetting('hosts')).toBeNull();
   });
 
+  it('should discard the settings of the previous user even when they cannot be rewritten', () => {
+    initViewSettings(faker.string.uuid());
+    writeViewSetting('hosts', 'health=critical');
+
+    jest
+      .spyOn(window.sessionStorage.__proto__, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('storage is full');
+      });
+
+    initViewSettings(faker.string.uuid());
+
+    expect(readViewSetting('hosts')).toBeNull();
+  });
+
   it('should ignore corrupted stored settings', () => {
     window.sessionStorage.setItem('trento_view_settings', 'not json');
 
