@@ -7065,7 +7065,36 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
           Enum.map(resources, fn
             %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
               # force both keys to be present
-              Map.merge(r, %{"Orphaned" => true, "Removed" => true})
+              Map.merge(r, %{"Active" => false, "Orphaned" => true, "Removed" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      assert {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+               ClusterPolicy.handle(fixture, nil)
+
+      vip_resource =
+        nodes
+        |> Enum.find(&(&1.name == "vmhana01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "rsc_vip_HN9_HDB09_primary"))
+
+      assert vip_resource.status == "Removed"
+    end
+
+    test "should produce Removed status when only the new -Removed- key is present" do
+      fixture =
+        "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
+              r
+              # remove the legacy "Orphaned" key
+              |> Map.delete("Orphaned")
+              |> Map.merge(%{"Active" => false, "Removed" => true})
 
             r ->
               r
@@ -7095,7 +7124,7 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
               # remove the new "Removed" key
               |> Map.delete("Removed")
               # keep the legacy "Orphaned" key for backward compatibility
-              |> Map.put("Orphaned", true)
+              |> Map.merge(%{"Active" => false, "Orphaned" => true})
 
             r ->
               r
