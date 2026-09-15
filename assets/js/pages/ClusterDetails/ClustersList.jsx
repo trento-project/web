@@ -3,7 +3,6 @@
 
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useSearchParams } from 'react-router';
 import classNames from 'classnames';
 
 import { post, del } from '@lib/network';
@@ -27,6 +26,8 @@ import SapSystemLink from '@common/SapSystemLink';
 import Table from '@common/Table';
 import Tags from '@common/Tags';
 import Tooltip from '@common/Tooltip';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 
 import { ExecutionIcon } from '@pages/ClusterDetails';
 import { getCounters } from '@pages/HealthSummary/summarySelection';
@@ -63,7 +64,7 @@ const removeTag = (tag, clusterId) => {
 function ClustersList() {
   const clusters = useSelector(getClustersWithEnrichedSapInstances);
   const dispatch = useDispatch();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = usePersistentSearchParams('clusters');
   const { abilities, timezone: userTimezone } = useSelector(getUserProfile);
 
   const config = {
