@@ -1,23 +1,16 @@
 {
-  "agent_id": "779cdd70-e9e2-58ca-b18a-bf3eb3f71244",
+  "agent_id": "490f7ea0-99a7-5f50-9882-4cbcfd2f00bb",
   "discovery_type": "ha_cluster_discovery",
   "payload": {
     "Cib": {
+      "CRMFeatureSet": "3.20.5",
       "Configuration": {
-        "Constraints": {
-          "RscLocations": null
-        },
         "CrmConfig": {
           "ClusterProperties": [
             {
-              "Id": "cib-bootstrap-options-have-watchdog",
-              "Name": "have-watchdog",
-              "Value": "true"
-            },
-            {
               "Id": "cib-bootstrap-options-dc-version",
               "Name": "dc-version",
-              "Value": "2.1.5+20221208.a3f44794f-150500.6.14.4-2.1.5+20221208.a3f44794f"
+              "Value": "3.0.2+20260601.c75e25851c-160099.1.5-3.0.2+20260601.c75e25851c"
             },
             {
               "Id": "cib-bootstrap-options-cluster-infrastructure",
@@ -25,19 +18,29 @@
               "Value": "corosync"
             },
             {
+              "Id": "cib-bootstrap-options-have-watchdog",
+              "Name": "have-watchdog",
+              "Value": "true"
+            },
+            {
               "Id": "cib-bootstrap-options-cluster-name",
               "Name": "cluster-name",
-              "Value": "hacluster"
+              "Value": "clusterhdb"
             },
             {
-              "Id": "cib-bootstrap-options-fencing-timeout",
-              "Name": "fencing-timeout",
-              "Value": "150"
+              "Id": "cib-bootstrap-options-maintenance-mode",
+              "Name": "maintenance-mode",
+              "Value": "false"
             },
             {
-              "Id": "cib-bootstrap-options-stonith-timeout",
-              "Name": "stonith-timeout",
-              "Value": "150"
+              "Id": "cib-bootstrap-options-fencing-watchdog-timeout",
+              "Name": "fencing-watchdog-timeout",
+              "Value": "10"
+            },
+            {
+              "Id": "cib-bootstrap-options-last-lrm-refresh",
+              "Name": "last-lrm-refresh",
+              "Value": "1784129866"
             },
             {
               "Id": "cib-bootstrap-options-fencing-enabled",
@@ -45,29 +48,39 @@
               "Value": "true"
             },
             {
-              "Id": "cib-bootstrap-options-stonith-enabled",
-              "Name": "stonith-enabled",
-              "Value": "true"
+              "Id": "cib-bootstrap-options-fencing-timeout",
+              "Name": "fencing-timeout",
+              "Value": "150"
             },
             {
-              "Id": "cib-bootstrap-options-fencing-action",
-              "Name": "fencing-action",
-              "Value": "reboot"
+              "Id": "SAPHanaSR-hana_hn9_site_mns_ROT",
+              "Name": "hana_hn9_site_mns_ROT",
+              "Value": "vmhana02"
             },
             {
-              "Id": "cib-bootstrap-options-stonith-action",
-              "Name": "stonith-action",
-              "Value": "reboot"
+              "Id": "SAPHanaSR-hana_hn9_site_lpt_ROT",
+              "Name": "hana_hn9_site_lpt_ROT",
+              "Value": "10"
             },
             {
-              "Id": "cib-bootstrap-options-priority-fencing-delay",
-              "Name": "priority-fencing-delay",
-              "Value": "30"
+              "Id": "SAPHanaSR-hana_hn9_site_mns_WDF",
+              "Name": "hana_hn9_site_mns_WDF",
+              "Value": "vmhana01"
             },
             {
-              "Id": "cib-bootstrap-options-last-lrm-refresh",
-              "Name": "last-lrm-refresh",
-              "Value": "1718007815"
+              "Id": "SAPHanaSR-hana_hn9_site_srHook_WDF",
+              "Name": "hana_hn9_site_srHook_WDF",
+              "Value": "PRIM"
+            },
+            {
+              "Id": "SAPHanaSR-hana_hn9_site_lpt_WDF",
+              "Name": "hana_hn9_site_lpt_WDF",
+              "Value": "1789486284"
+            },
+            {
+              "Id": "SAPHanaSR-hana_hn9_glob_topology",
+              "Name": "hana_hn9_glob_topology",
+              "Value": "ScaleUp"
             },
             {
               "Id": "SAPHanaSR-hana_hn9_site_lss_WDF",
@@ -95,34 +108,9 @@
               "Value": "sync"
             },
             {
-              "Id": "SAPHanaSR-hana_hn9_site_srMode_",
-              "Name": "hana_hn9_site_srMode_",
-              "Value": "sync"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_srMode_WDF",
-              "Name": "hana_hn9_site_srMode_WDF",
-              "Value": "sync"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_glob_topology",
-              "Name": "hana_hn9_glob_topology",
-              "Value": "ScaleUp"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_mns_WDF",
-              "Name": "hana_hn9_site_mns_WDF",
-              "Value": "vmhana01"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_mns_ROT",
-              "Name": "hana_hn9_site_mns_ROT",
-              "Value": "vmhana02"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_lpt_ROT",
-              "Name": "hana_hn9_site_lpt_ROT",
-              "Value": "30"
+              "Id": "SAPHanaSR-hana_hn9_site_srPoll_ROT",
+              "Name": "hana_hn9_site_srPoll_ROT",
+              "Value": "SFAIL"
             },
             {
               "Id": "SAPHanaSR-hana_hn9_glob_sec",
@@ -130,24 +118,9 @@
               "Value": "ROT"
             },
             {
-              "Id": "SAPHanaSR-hana_hn9_site_srHook_WDF",
-              "Name": "hana_hn9_site_srHook_WDF",
-              "Value": "PRIM"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_lpt_WDF",
-              "Name": "hana_hn9_site_lpt_WDF",
-              "Value": "1718024637"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_opMode_ROT",
-              "Name": "hana_hn9_site_opMode_ROT",
-              "Value": "logreplay"
-            },
-            {
-              "Id": "SAPHanaSR-hana_hn9_site_opMode_WDF",
-              "Name": "hana_hn9_site_opMode_WDF",
-              "Value": "logreplay"
+              "Id": "SAPHanaSR-hana_hn9_site_srMode_WDF",
+              "Name": "hana_hn9_site_srMode_WDF",
+              "Value": "sync"
             },
             {
               "Id": "SAPHanaSR-hana_hn9_glob_prim",
@@ -160,20 +133,26 @@
               "Value": "PRIM"
             },
             {
-              "Id": "SAPHanaSR-hana_hn9_site_srHook_ROT",
-              "Name": "hana_hn9_site_srHook_ROT",
-              "Value": "SOK"
+              "Id": "SAPHanaSR-hana_hn9_site_opMode_ROT",
+              "Name": "hana_hn9_site_opMode_ROT",
+              "Value": "logreplay"
             },
             {
-              "Id": "SAPHanaSR-hana_hn9_site_srPoll_ROT",
-              "Name": "hana_hn9_site_srPoll_ROT",
-              "Value": "SOK"
+              "Id": "SAPHanaSR-hana_hn9_site_opMode_WDF",
+              "Name": "hana_hn9_site_opMode_WDF",
+              "Value": "logreplay"
+            },
+            {
+              "Id": "SAPHanaSR-hana_hn9_site_srHook_ROT",
+              "Name": "hana_hn9_site_srHook_ROT",
+              "Value": "SFAIL"
             }
           ]
         },
         "Nodes": [
           {
             "Id": "1",
+            "Uname": "vmhana01",
             "InstanceAttributes": [
               {
                 "Id": "nodes-1-hana_hn9_vhost",
@@ -185,11 +164,11 @@
                 "Name": "hana_hn9_site",
                 "Value": "WDF"
               }
-            ],
-            "Uname": "vmhana01"
+            ]
           },
           {
             "Id": "2",
+            "Uname": "vmhana02",
             "InstanceAttributes": [
               {
                 "Id": "nodes-2-hana_hn9_vhost",
@@ -201,15 +180,57 @@
                 "Name": "hana_hn9_site",
                 "Value": "ROT"
               }
-            ],
-            "Uname": "vmhana02"
+            ]
           }
         ],
         "Resources": {
+          "Primitives": [
+            {
+              "Id": "rsc_vip_HN9_HDB09_primary",
+              "Class": "ocf",
+              "Type": "IPaddr2",
+              "Provider": "heartbeat",
+              "InstanceAttributes": [
+                {
+                  "Id": "rsc_vip_HN9_HDB09_primary-instance_attributes-ip",
+                  "Name": "ip",
+                  "Value": "203.0.113.1"
+                }
+              ],
+              "MetaAttributes": null,
+              "Operations": null
+            },
+            {
+              "Id": "fence-throwaway",
+              "Class": "stonith",
+              "Type": "external/sbd",
+              "Provider": "",
+              "InstanceAttributes": null,
+              "MetaAttributes": [
+                {
+                  "Id": "fence-throwaway-target-role",
+                  "Name": "target-role",
+                  "Value": "Stopped"
+                },
+                {
+                  "Id": "fence-throwaway-is-managed",
+                  "Name": "is-managed",
+                  "Value": "false"
+                }
+              ],
+              "Operations": null
+            }
+          ],
+          "Masters": null,
           "Clones": [
             {
               "Id": "cln_SAPHanaTop_HN9_HDB09",
               "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaTop_HN9_HDB09-meta_attributes-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
                 {
                   "Id": "cln_SAPHanaTop_HN9_HDB09-meta_attributes-clone-node-max",
                   "Name": "clone-node-max",
@@ -222,8 +243,10 @@
                 }
               ],
               "Primitive": {
-                "Class": "ocf",
                 "Id": "rsc_SAPHanaTop_HN9_HDB09",
+                "Class": "ocf",
+                "Type": "SAPHanaTopology",
+                "Provider": "suse",
                 "InstanceAttributes": [
                   {
                     "Id": "rsc_SAPHanaTop_HN9_HDB09-instance_attributes-SID",
@@ -233,64 +256,64 @@
                   {
                     "Id": "rsc_SAPHanaTop_HN9_HDB09-instance_attributes-InstanceNumber",
                     "Name": "InstanceNumber",
-                    "Value": "09"
+                    "Value": "90"
                   }
                 ],
                 "MetaAttributes": null,
                 "Operations": [
                   {
-                    "Id": "rsc_SAPHanaTop_HN9_HDB09-start-0",
-                    "Interval": "0",
+                    "Id": "rsc_SAPHanaTop_HN9_HDB09-start-0s",
                     "Name": "start",
                     "Role": "",
-                    "Timeout": "600"
+                    "Interval": "0s",
+                    "Timeout": "600s"
                   },
                   {
-                    "Id": "rsc_SAPHanaTop_HN9_HDB09-stop-0",
-                    "Interval": "0",
+                    "Id": "rsc_SAPHanaTop_HN9_HDB09-stop-0s",
                     "Name": "stop",
                     "Role": "",
-                    "Timeout": "300"
+                    "Interval": "0s",
+                    "Timeout": "300s"
                   },
                   {
-                    "Id": "rsc_SAPHanaTop_HN9_HDB09-monitor-50",
-                    "Interval": "50",
+                    "Id": "rsc_SAPHanaTop_HN9_HDB09-monitor-50s",
                     "Name": "monitor",
                     "Role": "",
-                    "Timeout": "600"
+                    "Interval": "50s",
+                    "Timeout": "600s"
                   }
-                ],
-                "Provider": "suse",
-                "Type": "SAPHanaTopology"
+                ]
               }
             },
             {
-              "Id": "mst_SAPHanacon_HN9_HDB09",
+              "Id": "mst_SAPHanaCon_HN9_HDB09",
               "MetaAttributes": [
                 {
-                  "Id": "mst_SAPHanacon_HN9_HDB09-meta_attributes-clone-node-max",
+                  "Id": "mst_SAPHanaCon_HN9_HDB09-meta_attributes-clone-max",
+                  "Name": "clone-max",
+                  "Value": "2"
+                },
+                {
+                  "Id": "mst_SAPHanaCon_HN9_HDB09-meta_attributes-clone-node-max",
                   "Name": "clone-node-max",
                   "Value": "1"
                 },
                 {
-                  "Id": "mst_SAPHanacon_HN9_HDB09-meta_attributes-promotable",
-                  "Name": "promotable",
-                  "Value": "true"
-                },
-                {
-                  "Id": "mst_SAPHanacon_HN9_HDB09-meta_attributes-interleave",
+                  "Id": "mst_SAPHanaCon_HN9_HDB09-meta_attributes-interleave",
                   "Name": "interleave",
                   "Value": "true"
                 },
                 {
-                  "Id": "mst_SAPHanacon_HN9_HDB09-meta_attributes-maintenance",
-                  "Name": "maintenance",
-                  "Value": "false"
+                  "Id": "mst_SAPHanaCon_HN9_HDB09-meta_attributes-promotable",
+                  "Name": "promotable",
+                  "Value": "true"
                 }
               ],
               "Primitive": {
-                "Class": "ocf",
                 "Id": "rsc_SAPHanaCon_HN9_HDB09",
+                "Class": "ocf",
+                "Type": "SAPHanaController",
+                "Provider": "suse",
                 "InstanceAttributes": [
                   {
                     "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-SID",
@@ -300,12 +323,12 @@
                   {
                     "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-InstanceNumber",
                     "Name": "InstanceNumber",
-                    "Value": "09"
+                    "Value": "90"
                   },
                   {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-PREFER_SITE_TAKEOVER",
-                    "Name": "PREFER_SITE_TAKEOVER",
-                    "Value": "true"
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-AUTOMATED_REGISTER",
+                    "Name": "AUTOMATED_REGISTER",
+                    "Value": "True"
                   },
                   {
                     "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-DUPLICATE_PRIMARY_TIMEOUT",
@@ -313,9 +336,9 @@
                     "Value": "7200"
                   },
                   {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-AUTOMATED_REGISTER",
-                    "Name": "AUTOMATED_REGISTER",
-                    "Value": "false"
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-instance_attributes-PREFER_SITE_TAKEOVER",
+                    "Name": "PREFER_SITE_TAKEOVER",
+                    "Value": "True"
                   }
                 ],
                 "MetaAttributes": [
@@ -327,197 +350,177 @@
                 ],
                 "Operations": [
                   {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-start-0",
-                    "Interval": "0",
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-start-0s",
                     "Name": "start",
                     "Role": "",
-                    "Timeout": "3600"
+                    "Interval": "0s",
+                    "Timeout": "3600s"
                   },
                   {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-stop-0",
-                    "Interval": "0",
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-stop-0s",
                     "Name": "stop",
                     "Role": "",
-                    "Timeout": "3600"
+                    "Interval": "0s",
+                    "Timeout": "3600s"
                   },
                   {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-promote-0",
-                    "Interval": "0",
-                    "Name": "promote",
-                    "Role": "",
-                    "Timeout": "900"
-                  },
-                  {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-demote-0",
-                    "Interval": "0",
-                    "Name": "demote",
-                    "Role": "",
-                    "Timeout": "320"
-                  },
-                  {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-monitor-60",
-                    "Interval": "60",
-                    "Name": "monitor",
-                    "Role": "Promoted",
-                    "Timeout": "700"
-                  },
-                  {
-                    "Id": "rsc_SAPHanaCon_HN9_HDB09-monitor-61",
-                    "Interval": "61",
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-monitor-61s",
                     "Name": "monitor",
                     "Role": "Unpromoted",
-                    "Timeout": "700"
+                    "Interval": "61s",
+                    "Timeout": "700s"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-monitor-60s",
+                    "Name": "monitor",
+                    "Role": "Promoted",
+                    "Interval": "60s",
+                    "Timeout": "700s"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-promote-0s",
+                    "Name": "promote",
+                    "Role": "",
+                    "Interval": "0s",
+                    "Timeout": "700s"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaCon_HN9_HDB09-demote-0s",
+                    "Name": "demote",
+                    "Role": "",
+                    "Interval": "0s",
+                    "Timeout": "320s"
+                  }
+                ]
+              }
+            },
+            {
+              "Id": "cln_SAPHanaFil_HN9_HDB09",
+              "MetaAttributes": [
+                {
+                  "Id": "cln_SAPHanaFil_HN9_HDB09-meta_attributes-clone-node-max",
+                  "Name": "clone-node-max",
+                  "Value": "1"
+                },
+                {
+                  "Id": "cln_SAPHanaFil_HN9_HDB09-meta_attributes-interleave",
+                  "Name": "interleave",
+                  "Value": "true"
+                }
+              ],
+              "Primitive": {
+                "Id": "rsc_SAPHanaFil_HN9_HDB09",
+                "Class": "ocf",
+                "Type": "SAPHanaFilesystem",
+                "Provider": "suse",
+                "InstanceAttributes": [
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-instance_attributes-SID",
+                    "Name": "SID",
+                    "Value": "HN9"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-instance_attributes-InstanceNumber",
+                    "Name": "InstanceNumber",
+                    "Value": "90"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-instance_attributes-ON_FAIL_ACTION",
+                    "Name": "ON_FAIL_ACTION",
+                    "Value": "fence"
                   }
                 ],
-                "Provider": "suse",
-                "Type": "SAPHanaController"
+                "MetaAttributes": null,
+                "Operations": [
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-start-0s",
+                    "Name": "start",
+                    "Role": "",
+                    "Interval": "0s",
+                    "Timeout": "10s"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-stop-0s",
+                    "Name": "stop",
+                    "Role": "",
+                    "Interval": "0s",
+                    "Timeout": "20s"
+                  },
+                  {
+                    "Id": "rsc_SAPHanaFil_HN9_HDB09-monitor-120s",
+                    "Name": "monitor",
+                    "Role": "",
+                    "Interval": "120s",
+                    "Timeout": "120s"
+                  }
+                ]
               }
             }
           ],
-          "Groups": null,
-          "Masters": null,
-          "Primitives": [
-            {
-              "Class": "stonith",
-              "Id": "stonith-sbd",
-              "InstanceAttributes": [
-                {
-                  "Id": "stonith-sbd-instance_attributes-pcmk_delay_max",
-                  "Name": "pcmk_delay_max",
-                  "Value": "15"
-                }
-              ],
-              "MetaAttributes": null,
-              "Operations": null,
-              "Provider": "",
-              "Type": "external/sbd"
-            },
-            {
-              "Class": "ocf",
-              "Id": "rsc_ip_HN9_HDB09",
-              "InstanceAttributes": [
-                {
-                  "Id": "rsc_ip_HN9_HDB09-instance_attributes-ip",
-                  "Name": "ip",
-                  "Value": "10.70.1.13"
-                }
-              ],
-              "MetaAttributes": null,
-              "Operations": [
-                {
-                  "Id": "rsc_ip_HN9_HDB09-monitor-10",
-                  "Interval": "10",
-                  "Name": "monitor",
-                  "Role": "",
-                  "Timeout": "20"
-                }
-              ],
-              "Provider": "heartbeat",
-              "Type": "IPaddr2"
-            }
-          ]
+          "Groups": null
+        },
+        "Constraints": {
+          "RscLocations": null
         }
       }
     },
     "Crmmon": {
-      "Clones": [
+      "Version": "3.0.2+20260601.c75e25851c-160099.1.5",
+      "Summary": {
+        "Nodes": {
+          "Number": 2
+        },
+        "LastChange": {
+          "Time": "Tue Sep 15 17:31:24 2026"
+        },
+        "Resources": {
+          "Number": 8,
+          "Disabled": 1,
+          "Blocked": 0
+        },
+        "ClusterOptions": {
+          "StonithEnabled": true,
+          "FencingEnabled": true,
+          "StonithTimeoutMs": 150000,
+          "FencingTimeoutMs": 150000
+        }
+      },
+      "Nodes": [
         {
-          "Failed": false,
-          "FailureIgnored": false,
-          "Id": "cln_SAPHanaTop_HN9_HDB09",
-          "Managed": true,
-          "MultiState": false,
-          "Resources": [
-            {
-              "Active": true,
-              "Agent": "ocf::suse:SAPHanaTopology",
-              "Blocked": false,
-              "Failed": false,
-              "FailureIgnored": false,
-              "Id": "rsc_SAPHanaTop_HN9_HDB09",
-              "Managed": true,
-              "Node": {
-                "Cached": true,
-                "Id": "1",
-                "Name": "vmhana01"
-              },
-              "NodesRunningOn": 1,
-              "Orphaned": false,
-              "Removed": false,
-              "Role": "Started"
-            },
-            {
-              "Active": true,
-              "Agent": "ocf::suse:SAPHanaTopology",
-              "Blocked": false,
-              "Failed": false,
-              "FailureIgnored": false,
-              "Id": "rsc_SAPHanaTop_HN9_HDB09",
-              "Managed": true,
-              "Node": {
-                "Cached": true,
-                "Id": "2",
-                "Name": "vmhana02"
-              },
-              "NodesRunningOn": 1,
-              "Orphaned": false,
-              "Removed": false,
-              "Role": "Started"
-            }
-          ],
-          "Unique": false
+          "Name": "vmhana01",
+          "Id": "1",
+          "Online": true,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Maintenance": false,
+          "Pending": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "DC": false,
+          "ResourcesRunning": 4,
+          "Type": "member"
         },
         {
-          "Failed": false,
-          "FailureIgnored": false,
-          "Id": "mst_SAPHanacon_HN9_HDB09",
-          "Managed": true,
-          "MultiState": true,
-          "Resources": [
-            {
-              "Active": true,
-              "Agent": "ocf::suse:SAPHanaController",
-              "Blocked": false,
-              "Failed": false,
-              "FailureIgnored": false,
-              "Id": "rsc_SAPHanaCon_HN9_HDB09",
-              "Managed": true,
-              "Node": {
-                "Cached": true,
-                "Id": "1",
-                "Name": "vmhana01"
-              },
-              "NodesRunningOn": 1,
-              "Orphaned": false,
-              "Removed": false,
-              "Role": "Promoted"
-            },
-            {
-              "Active": true,
-              "Agent": "ocf::suse:SAPHanaController",
-              "Blocked": false,
-              "Failed": false,
-              "FailureIgnored": false,
-              "Id": "rsc_SAPHanaCon_HN9_HDB09",
-              "Managed": true,
-              "Node": {
-                "Cached": true,
-                "Id": "2",
-                "Name": "vmhana02"
-              },
-              "NodesRunningOn": 1,
-              "Orphaned": false,
-              "Removed": false,
-              "Role": "Unpromoted"
-            }
-          ],
-          "Unique": false
+          "Name": "vmhana02",
+          "Id": "2",
+          "Online": true,
+          "Standby": false,
+          "StandbyOnFail": false,
+          "Maintenance": false,
+          "Pending": false,
+          "Unclean": false,
+          "Shutdown": false,
+          "ExpectedUp": true,
+          "DC": true,
+          "ResourcesRunning": 3,
+          "Type": "member"
         }
       ],
-      "Groups": null,
       "NodeAttributes": {
         "Nodes": [
           {
+            "Name": "vmhana01",
             "Attributes": [
               {
                 "Name": "hana_hn9_clone_state",
@@ -537,7 +540,7 @@
               },
               {
                 "Name": "hana_hn9_version",
-                "Value": "2.00.073.00"
+                "Value": "2.00.088.00"
               },
               {
                 "Name": "hana_hn9_vhost",
@@ -547,10 +550,10 @@
                 "Name": "master-rsc_SAPHanaCon_HN9_HDB09",
                 "Value": "150"
               }
-            ],
-            "Name": "vmhana01"
+            ]
           },
           {
+            "Name": "vmhana02",
             "Attributes": [
               {
                 "Name": "hana_hn9_clone_state",
@@ -570,7 +573,7 @@
               },
               {
                 "Name": "hana_hn9_version",
-                "Value": "2.00.073.00"
+                "Value": "2.00.088.00"
               },
               {
                 "Name": "hana_hn9_vhost",
@@ -578,198 +581,270 @@
               },
               {
                 "Name": "master-rsc_SAPHanaCon_HN9_HDB09",
-                "Value": "100"
+                "Value": "-INFINITY"
               }
-            ],
-            "Name": "vmhana02"
+            ]
           }
         ]
       },
       "NodeHistory": {
         "Nodes": [
           {
-            "Name": "vmhana01",
+            "Name": "vmhana02",
             "ResourceHistory": [
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaFil_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "stonith-sbd"
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
               },
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaCon_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "rsc_SAPHanaTop_HN9_HDB09"
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
               },
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaTop_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "rsc_ip_HN9_HDB09"
-              },
-              {
                 "FailCount": 0,
-                "MigrationThreshold": 5000,
-                "Name": "rsc_SAPHanaCon_HN9_HDB09"
+                "Orphan": false,
+                "Removed": false
               }
             ]
           },
           {
-            "Name": "vmhana02",
+            "Name": "vmhana01",
             "ResourceHistory": [
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaTop_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "rsc_SAPHanaTop_HN9_HDB09"
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
               },
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaFil_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "rsc_ip_HN9_HDB09"
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
               },
               {
-                "FailCount": 0,
+                "Name": "rsc_SAPHanaCon_HN9_HDB09",
                 "MigrationThreshold": 5000,
-                "Name": "rsc_SAPHanaCon_HN9_HDB09"
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
+              },
+              {
+                "Name": "rsc_vip_HN9_HDB09_primary",
+                "MigrationThreshold": 5000,
+                "FailCount": 0,
+                "Orphan": false,
+                "Removed": false
               }
             ]
           }
         ]
       },
-      "Nodes": [
-        {
-          "DC": false,
-          "ExpectedUp": true,
-          "Id": "1",
-          "Maintenance": false,
-          "Name": "vmhana01",
-          "Online": true,
-          "Pending": false,
-          "ResourcesRunning": 4,
-          "Shutdown": false,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Type": "member",
-          "Unclean": false
-        },
-        {
-          "DC": true,
-          "ExpectedUp": true,
-          "Id": "2",
-          "Maintenance": false,
-          "Name": "vmhana02",
-          "Online": true,
-          "Pending": false,
-          "ResourcesRunning": 2,
-          "Shutdown": false,
-          "Standby": false,
-          "StandbyOnFail": false,
-          "Type": "member",
-          "Unclean": false
-        }
-      ],
       "Resources": [
         {
+          "Id": "rsc_vip_HN9_HDB09_primary",
+          "Agent": "ocf:heartbeat:IPaddr2",
+          "Role": "Started",
           "Active": true,
-          "Agent": "stonith:external/sbd",
-          "Blocked": false,
-          "Failed": false,
-          "FailureIgnored": false,
-          "Id": "stonith-sbd",
-          "Managed": true,
-          "Node": {
-            "Cached": true,
-            "Id": "1",
-            "Name": "vmhana01"
-          },
-          "NodesRunningOn": 1,
           "Orphaned": false,
           "Removed": false,
-          "Role": "Started"
+          "Blocked": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 1,
+          "Node": {
+            "Name": "vmhana01",
+            "Id": "1",
+            "Cached": true
+          }
         },
         {
-          "Active": true,
-          "Agent": "ocf::heartbeat:IPaddr2",
-          "Blocked": false,
-          "Failed": false,
-          "FailureIgnored": false,
-          "Id": "rsc_ip_HN9_HDB09",
-          "Managed": true,
-          "Node": {
-            "Cached": true,
-            "Id": "1",
-            "Name": "vmhana01"
-          },
-          "NodesRunningOn": 1,
+          "Id": "fence-throwaway",
+          "Agent": "stonith:external/sbd",
+          "Role": "Stopped",
+          "Active": false,
           "Orphaned": false,
           "Removed": false,
-          "Role": "Started"
+          "Blocked": false,
+          "Managed": false,
+          "Failed": false,
+          "FailureIgnored": false,
+          "NodesRunningOn": 0,
+          "Node": null
         }
       ],
-      "Summary": {
-        "ClusterOptions": {
-          "StonithEnabled": true,
-          "FencingEnabled": true
+      "Clones": [
+        {
+          "Id": "cln_SAPHanaTop_HN9_HDB09",
+          "MultiState": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Unique": false,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHanaTop_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaTopology",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana02",
+                "Id": "2",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_SAPHanaTop_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaTopology",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            }
+          ]
         },
-        "LastChange": {
-          "Time": "Mon Jun 10 13:03:57 2024"
+        {
+          "Id": "mst_SAPHanaCon_HN9_HDB09",
+          "MultiState": true,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Unique": false,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHanaCon_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaController",
+              "Role": "Unpromoted",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana02",
+                "Id": "2",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_SAPHanaCon_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaController",
+              "Role": "Promoted",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            }
+          ]
         },
-        "Nodes": {
-          "Number": 2
-        },
-        "Resources": {
-          "Blocked": 0,
-          "Disabled": 0,
-          "Number": 6
+        {
+          "Id": "cln_SAPHanaFil_HN9_HDB09",
+          "MultiState": false,
+          "Managed": true,
+          "Failed": false,
+          "FailureIgnored": false,
+          "Unique": false,
+          "Resources": [
+            {
+              "Id": "rsc_SAPHanaFil_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaFilesystem",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana02",
+                "Id": "2",
+                "Cached": true
+              }
+            },
+            {
+              "Id": "rsc_SAPHanaFil_HN9_HDB09",
+              "Agent": "ocf:suse:SAPHanaFilesystem",
+              "Role": "Started",
+              "Active": true,
+              "Orphaned": false,
+              "Removed": false,
+              "Blocked": false,
+              "Managed": true,
+              "Failed": false,
+              "FailureIgnored": false,
+              "NodesRunningOn": 1,
+              "Node": {
+                "Name": "vmhana01",
+                "Id": "1",
+                "Cached": true
+              }
+            }
+          ]
         }
-      },
-      "Version": "2.1.5+20221208.a3f44794f-150500.6.14.4"
+      ],
+      "Groups": null
     },
-    "DC": true,
-    "Id": "47d1190ffb4f781974c8356d7f863b03",
-    "Online": true,
-    "Name": "hana_cluster",
-    "Provider": "azure",
-    "State": "S_IDLE",
+    "Id": "4270ea5cfd1807ba19c6653cd0a3a9b0",
+    "Name": "clusterhdb",
     "SBD": {
+      "Devices": null,
       "Config": {
-        "SBD_DELAY_START": "yes",
-        "SBD_DEVICE": "/dev/vdb",
+        "SBD_DELAY_START": "no",
         "SBD_MOVE_TO_ROOT_CGROUP": "auto",
         "SBD_OPTS": "",
         "SBD_PACEMAKER": "yes",
-        "SBD_STARTMODE": "clean",
+        "SBD_STARTMODE": "always",
         "SBD_SYNC_RESOURCE_STARTUP": "yes",
         "SBD_TIMEOUT_ACTION": "flush,reboot",
         "SBD_WATCHDOG_DEV": "/dev/watchdog",
-        "SBD_WATCHDOG_TIMEOUT": "20"
-      },
-      "Devices": [
-        {
-          "Device": "/dev/vdb",
-          "Dump": {
-            "Header": "2.1",
-            "SectorSize": 512,
-            "Slots": 255,
-            "TimeoutAllocate": 2,
-            "TimeoutLoop": 1,
-            "TimeoutMsgwait": 120,
-            "TimeoutWatchdog": 60,
-            "Uuid": "f9ba490e-0f14-4908-859a-ace97aafaf34"
-          },
-          "List": [
-            {
-              "Id": 0,
-              "Name": "vmhana01",
-              "Status": "clear"
-            },
-            {
-              "Id": 1,
-              "Name": "vmhana02",
-              "Status": "clear"
-            }
-          ],
-          "Status": "healthy"
-        }
-      ]
-    }
+        "SBD_WATCHDOG_TIMEOUT": "5"
+      }
+    },
+    "DC": false,
+    "Provider": "kvm",
+    "Online": true,
+    "State": "S_IDLE"
   }
 }
