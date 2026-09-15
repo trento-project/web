@@ -3,6 +3,8 @@
 
 import Table from './Table';
 
+export { ITEMS_PER_PAGE_PARAM } from './Table';
+
 export {
   createStringSortingPredicate,
   createNumberSortingPredicate,

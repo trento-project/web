@@ -6,7 +6,11 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 import { page, pages } from '@lib/lists';
-import Pagination, { PageStats } from '@common/Pagination';
+import { changeSearchParams } from '@lib/searchParams';
+import Pagination, {
+  PageStats,
+  defaultItemsPerPageOptions,
+} from '@common/Pagination';
 import { TableFilters, createFilter } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
@@ -65,7 +69,14 @@ const getFilterFunction = (column, value) =>
 const getRowClassName = (rowClassName, item) =>
   typeof rowClassName === 'function' ? rowClassName(item) : rowClassName;
 
-const itemsPerPageOptions = [10, 20, 50, 75, 100];
+export const ITEMS_PER_PAGE_PARAM = 'itemsPerPage';
+
+const defaultItemsPerPage = defaultItemsPerPageOptions[0];
+
+const detectItemsPerPage = (value) =>
+  defaultItemsPerPageOptions.includes(Number(value))
+    ? Number(value)
+    : defaultItemsPerPage;
 
 function Table({
   className,
@@ -94,11 +105,33 @@ function Table({
 
   const [filters, setFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
-    itemsPerPageOptions[0]
-  );
+  const [localItemsPerPage, setLocalItemsPerPage] =
+    useState(defaultItemsPerPage);
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
+
+  // When the table is bound to the search params, the items per page selection
+  // lives in the URL, so that it can be persisted and shared
+  const itemsPerPageBoundToParams = searchParamsEnabled && Boolean(pagination);
+
+  const currentItemsPerPage = itemsPerPageBoundToParams
+    ? detectItemsPerPage(searchParams.get(ITEMS_PER_PAGE_PARAM))
+    : localItemsPerPage;
+
+  const changeItemsPerPage = (perPage) => {
+    if (!itemsPerPageBoundToParams) {
+      setLocalItemsPerPage(perPage);
+      return;
+    }
+
+    setSearchParams(changeSearchParams({ [ITEMS_PER_PAGE_PARAM]: perPage }), {
+      replace: true,
+    });
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [currentItemsPerPage]);
 
   const columnFiltersBoundToParams = columns.filter(
     (c) => c.filter && c.filterFromParams
@@ -332,10 +365,7 @@ function Table({
                     default:
                   }
                 }}
-                onChangeItemsPerPage={(perPage) => {
-                  setCurrentItemsPerPage(perPage);
-                  setCurrentPage(1);
-                }}
+                onChangeItemsPerPage={changeItemsPerPage}
                 pageStats={
                   <PageStats
                     selectedPage={Math.min(currentPage, totalPages)}

@@ -7,6 +7,7 @@ import { NavLink, Outlet } from 'react-router';
 
 import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
+import { clearViewSettings } from '@lib/viewSettings';
 import { getUserProfile, hasAIConfiguration } from '@state/selectors/user';
 import { optinCapturing, reset } from '@lib/analytics';
 
@@ -85,6 +86,7 @@ const logout = (e) => {
   e.preventDefault();
 
   clearCredentialsFromStore();
+  clearViewSettings();
   optinCapturing(false);
   reset();
   window.location.href = '/session/new';
