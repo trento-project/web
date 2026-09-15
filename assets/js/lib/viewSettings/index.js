@@ -45,6 +45,14 @@ const writeBlob = (blob) => {
   }
 };
 
+export const clearViewSettings = () => {
+  try {
+    window.sessionStorage.removeItem(STORAGE_VIEW_SETTINGS_IDENTIFIER);
+  } catch (_error) {
+    // ignored, see readBlob
+  }
+};
+
 /**
  * Bind the stored settings to a user, discarding the ones left behind by
  * whoever was logged in before them in the same tab.
@@ -56,6 +64,7 @@ export const initViewSettings = (userID) => {
 
   if (storedUserID === userID) return;
 
+  clearViewSettings();
   writeBlob({ userID, settings: {} });
 };
 
@@ -81,12 +90,4 @@ export const writeViewSetting = (viewKey, params) => {
   const { userID, settings } = readBlob();
 
   writeBlob({ userID, settings: { ...settings, [viewKey]: params } });
-};
-
-export const clearViewSettings = () => {
-  try {
-    window.sessionStorage.removeItem(STORAGE_VIEW_SETTINGS_IDENTIFIER);
-  } catch (_error) {
-    // ignored, see readBlob
-  }
 };
