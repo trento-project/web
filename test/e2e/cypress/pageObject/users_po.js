@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { random } from 'lodash';
 import { addDays } from 'date-fns';
 
 export * from './base_po.js';
@@ -627,6 +628,14 @@ export const apiCreateAIConfiguration = (provider, model, apiKey) =>
       .then(({ body: aiConfiguration }) => aiConfiguration)
   );
 
+const _aiProviderModels = (provider) =>
+  cy.window().then((win) => win.eval('config.aiProviders')[provider]);
+
+export const apiCreateAIConfigurationWithFirstModel = (provider, apiKey) =>
+  _aiProviderModels(provider).then(([model]) =>
+    apiCreateAIConfiguration(provider, model, apiKey).then(() => model)
+  );
+
 export const aiConfigurationSectionIsDisplayed = () => {
   cy.get(aiConfigurationSection).should('be.visible');
   cy.get(aiConfigurationSectionDescription).should('be.visible');
@@ -652,8 +661,29 @@ export const clickEditAIConfigurationButton = () =>
 export const selectAIProvider = (provider) =>
   basePage.selectFromDropdown(aiSelectModelProviderDropdown, provider);
 
-export const selectAIModel = (model) =>
-  basePage.selectFromDropdown(aiSelectModelDropdown, model);
+const _selectAIModelAtIndex = (index) =>
+  cy
+    .get(basePage.selectOptions)
+    .eq(index)
+    .invoke('text')
+    .then((model) => {
+      cy.get(basePage.selectOptions).eq(index).click();
+      cy.get(aiSelectModelDropdown).should('have.text', model);
+      return cy.wrap(model);
+    });
+
+export const selectFirstAIModel = () => {
+  cy.get(aiSelectModelDropdown).click();
+  return _selectAIModelAtIndex(0);
+};
+
+export const selectAnotherAIModel = () => {
+  cy.get(aiSelectModelDropdown).click();
+  return cy
+    .get(basePage.selectOptions)
+    .should('have.length.at.least', 2)
+    .then(($models) => _selectAIModelAtIndex(random(1, $models.length - 1)));
+};
 
 export const typeAIConfigurationApiKey = (apiKey) =>
   cy.get(aiApiKeyInputField).type(apiKey);

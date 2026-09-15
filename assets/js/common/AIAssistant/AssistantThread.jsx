@@ -15,6 +15,7 @@ import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
 import {
+  canSendMessage,
   effectiveConnectionStatus,
   isConfigurationCleared,
   isConfigurationRestored,
@@ -78,6 +79,44 @@ function ModelChangeBanner({ provider, model, onDismiss = noop }) {
   );
 }
 
+export function ThreadContainer({ children }) {
+  return (
+    <ThreadPrimitive.Root
+      className="relative flex h-full flex-col bg-white text-sm"
+      style={{
+        '--thread-max-width': '44rem',
+        '--accent-color': '#2fb371',
+        '--accent-foreground': '#ffffff',
+      }}
+    >
+      {children}
+    </ThreadPrimitive.Root>
+  );
+}
+
+export function ThreadMessages({ isRunning = false, isChatActive = false }) {
+  return (
+    <ThreadPrimitive.Messages>
+      {({ message }) => {
+        switch (message.role) {
+          case 'user':
+            return <UserMessage />;
+          case 'assistant':
+            return (
+              <AssistantMessage
+                isChatActive={isChatActive}
+                isRunning={isRunning}
+                message={message}
+              />
+            );
+          default:
+            return null;
+        }
+      }}
+    </ThreadPrimitive.Messages>
+  );
+}
+
 function AssistantThread({
   connectionStatus,
   configurationStatus,
@@ -93,15 +132,10 @@ function AssistantThread({
     configurationStatus
   );
 
+  const isChatActive = canSendMessage(connection, configurationStatus);
+
   return (
-    <ThreadPrimitive.Root
-      className="relative flex h-full flex-col bg-white text-sm"
-      style={{
-        '--thread-max-width': '44rem',
-        '--accent-color': '#2fb371',
-        '--accent-foreground': '#ffffff',
-      }}
-    >
+    <ThreadContainer>
       <ChatHeader
         connectionStatus={connection}
         isRunning={isRunning}
@@ -114,18 +148,7 @@ function AssistantThread({
       >
         {isEmpty && <ThreadWelcome />}
 
-        <ThreadPrimitive.Messages>
-          {({ message }) => {
-            switch (message.role) {
-              case 'user':
-                return <UserMessage />;
-              case 'assistant':
-                return <AssistantMessage isRunning={isRunning} />;
-              default:
-                return null;
-            }
-          }}
-        </ThreadPrimitive.Messages>
+        <ThreadMessages isChatActive={isChatActive} isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
           {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
@@ -142,7 +165,7 @@ function AssistantThread({
           />
         </ThreadPrimitive.ViewportFooter>
       </ThreadPrimitive.Viewport>
-    </ThreadPrimitive.Root>
+    </ThreadContainer>
   );
 }
 

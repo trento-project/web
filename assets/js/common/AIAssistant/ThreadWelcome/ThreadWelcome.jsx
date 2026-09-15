@@ -31,7 +31,7 @@ const defaultGreeting = (
  */
 function ThreadWelcome({ greeting = defaultGreeting, children }) {
   return (
-    <div className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-col gap-6 pt-32 pb-2">
+    <div className="mx-auto flex w-full max-w-[var(--thread-max-width)] flex-1 flex-col justify-center gap-6 pb-2">
       <div className="text-[22px] leading-snug text-gray-500">{greeting}</div>
       {children && <div className="flex flex-col gap-3">{children}</div>}
     </div>

@@ -16,6 +16,9 @@ defmodule Trento.Infrastructure.AI.SagentsAgentServer do
   defdelegate add_message(agent_id, message), to: Sagents.AgentServer
 
   @impl Trento.AI.Agent.Server
+  defdelegate cancel(agent_id), to: Sagents.AgentServer
+
+  @impl Trento.AI.Agent.Server
   defdelegate get_agent(agent_id), to: Sagents.AgentServer
 
   @impl Trento.AI.Agent.Server

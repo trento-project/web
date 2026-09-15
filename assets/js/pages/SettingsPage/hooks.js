@@ -16,14 +16,15 @@ import {
   updateSettings,
   clearSettings,
   testConnection,
-} from '@lib/api/suseManagerSettings';
+} from '@lib/api/suseMultiLinuxManagerSettings';
 import {
   getSettings as getAlertingSettings,
   saveSettings as saveAlertingSettings,
   updateSettings as updateAlertingSettings,
+  sendTestEmail as sendAlertingTestEmail,
 } from '@lib/api/alertingSettings';
 
-export const useSuseManagerSettings = () => {
+export const useSuseMultiLinuxManagerSettings = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({});
@@ -31,7 +32,7 @@ export const useSuseManagerSettings = () => {
   const [fetchError, setFetchError] = useState(false);
   const [testingSettings, setTestingSettings] = useState(false);
 
-  const fetchSuseManagerSettings = async () => {
+  const fetchSuseMultiLinuxManagerSettings = async () => {
     setLoading(true);
     setFetchError(false);
     try {
@@ -46,7 +47,7 @@ export const useSuseManagerSettings = () => {
     }
   };
 
-  const saveSuseManagerSettings = async (newSettings) => {
+  const saveSuseMultiLinuxManagerSettings = async (newSettings) => {
     setLoading(true);
     setEntityErrors([]);
     try {
@@ -63,7 +64,7 @@ export const useSuseManagerSettings = () => {
     }
   };
 
-  const updateSuseManagerSettings = async (newSettings) => {
+  const updateSuseMultiLinuxManagerSettings = async (newSettings) => {
     setLoading(true);
     setEntityErrors([]);
     try {
@@ -80,7 +81,7 @@ export const useSuseManagerSettings = () => {
     }
   };
 
-  const deleteSuseManagerSettings = async () => {
+  const deleteSuseMultiLinuxManagerSettings = async () => {
     setLoading(true);
     try {
       await clearSettings();
@@ -92,7 +93,7 @@ export const useSuseManagerSettings = () => {
     }
   };
 
-  const testSuseManagerSettings = async () => {
+  const testSuseMultiLinuxManagerSettings = async () => {
     setLoading(true);
     setTestingSettings(true);
     try {
@@ -107,21 +108,21 @@ export const useSuseManagerSettings = () => {
   };
 
   useEffect(() => {
-    fetchSuseManagerSettings();
+    fetchSuseMultiLinuxManagerSettings();
   }, []);
 
   return {
-    fetchSuseManagerSettings,
-    saveSuseManagerSettings,
-    updateSuseManagerSettings,
-    testSuseManagerSettings,
-    deleteSuseManagerSettings,
-    clearSuseManagerEntityErrors: () => setEntityErrors([]),
-    suseManagerSettingsLoading: loading,
-    suseManagerSettings: settings,
-    suseManagerSettingsEntityErrors: entityErrors,
-    suseManagerSettingsfetchError: fetchError,
-    suseManagerSettingsTesting: testingSettings,
+    fetchSuseMultiLinuxManagerSettings,
+    saveSuseMultiLinuxManagerSettings,
+    updateSuseMultiLinuxManagerSettings,
+    testSuseMultiLinuxManagerSettings,
+    deleteSuseMultiLinuxManagerSettings,
+    clearSuseMultiLinuxManagerEntityErrors: () => setEntityErrors([]),
+    suseMultiLinuxManagerSettingsLoading: loading,
+    suseMultiLinuxManagerSettings: settings,
+    suseMultiLinuxManagerSettingsEntityErrors: entityErrors,
+    suseMultiLinuxManagerSettingsFetchError: fetchError,
+    suseMultiLinuxManagerSettingsTesting: testingSettings,
   };
 };
 
@@ -176,11 +177,13 @@ export const useApiKeySettings = () => {
 };
 
 export const useAlertingSettings = () => {
+  const dispatch = useDispatch();
   const [settings, setSettings] = useState({});
   const [fetchLoading, setFetchLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const [submitErrors, setSubmitErrors] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [testEmailLoading, setTestEmailLoading] = useState(false);
 
   function fromApiSettings(data) {
     return {
@@ -249,6 +252,19 @@ export const useAlertingSettings = () => {
     }
   }
 
+  async function sendTestEmail() {
+    setTestEmailLoading(true);
+
+    try {
+      await sendAlertingTestEmail();
+      dispatch(notify({ text: 'Test email sent!', icon: '✅' }));
+    } catch {
+      dispatch(notify({ text: 'Test email delivery failed!', icon: '❌' }));
+    } finally {
+      setTestEmailLoading(false);
+    }
+  }
+
   useEffect(() => {
     fetch();
   }, []);
@@ -259,8 +275,10 @@ export const useAlertingSettings = () => {
     fetchError,
     submitLoading,
     submitErrors,
+    testEmailLoading,
     fetch,
     submit,
+    sendTestEmail,
     clearSubmitErrors,
   };
 };

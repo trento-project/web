@@ -43,7 +43,7 @@ import { fetchSoftwareUpdates } from '@state/softwareUpdates';
 import {
   getSoftwareUpdatesErrorMessage,
   getSoftwareUpdatesErrorTooltip,
-} from './suseManagerMessaging';
+} from './suseMultiLinuxManagerMessaging';
 import HostDetails from './HostDetails';
 
 const chartsEnabled = getFromConfig('chartsEnabled');

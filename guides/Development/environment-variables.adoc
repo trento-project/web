@@ -27,3 +27,5 @@ Dig into link:https://github.com/trento-project/web/blob/main/config/[./config] 
 
 *AUTHENTICATION* - `+ACCESS_TOKEN_ENC_SECRET+` -
 `+REFRESH_TOKEN_ENC_SECRET+`
+
+*Runtime Networking* - `+IPV4_OR_IPV6+` - (Takes value of either "IPV4" or "IPV6" depending on what is known to the deployer to be available at application start-up.)

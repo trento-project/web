@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
+import { escapeRegExp } from 'lodash';
 import { TOTP } from 'totp-generator';
 import { createUserRequestFactory } from '@lib/test-utils/factories';
 
@@ -117,7 +118,9 @@ export const selectOptions = '[role="listbox"] [role="option"]';
 
 export const selectFromDropdown = (selector, choice) => {
   cy.get(selector).click();
-  return cy.get(`${selectOptions}:contains("${choice}")`).click();
+  return cy
+    .contains(selectOptions, new RegExp(`^${escapeRegExp(choice)}$`))
+    .click();
 };
 
 export const getSelectControlValue = (ariaLabel) =>
@@ -478,8 +481,8 @@ export const apiSelectChecks = (clusterId, checks) => {
   });
 };
 
-export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
-  clearSUMASettings().then(() =>
+export const saveSMLMSettings = ({ url, username, password, ca_cert }) =>
+  clearSMLMSettings().then(() =>
     apiLogin().then(({ accessToken }) =>
       cy.request({
         url: '/api/v1/settings/suse_manager',
@@ -497,7 +500,7 @@ export const saveSUMASettings = ({ url, username, password, ca_cert }) =>
     )
   );
 
-export const clearSUMASettings = () =>
+export const clearSMLMSettings = () =>
   apiLogin().then(({ accessToken }) =>
     cy.request({
       url: '/api/v1/settings/suse_manager',

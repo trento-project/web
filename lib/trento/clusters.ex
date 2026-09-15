@@ -274,38 +274,22 @@ defmodule Trento.Clusters do
            id: cluster_id,
            provider: provider,
            type: ClusterType.ascs_ers(),
-           sap_instances: sap_instances,
            selected_checks: selected_checks
          } = cluster
        ) do
-    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
-
-    clustered_sap_instances =
-      sap_instances
-      |> Enum.map(& &1.instance_number)
-      |> Enum.uniq()
-
     hosts_data =
       Repo.all(
         from h in HostReadModel,
-          join: a in ApplicationInstanceReadModel,
-          on: h.id == a.host_id,
-          where:
-            h.cluster_id == ^cluster_id and is_nil(h.deregistered_at) and
-              a.sid in ^sap_instance_sids and a.instance_number in ^clustered_sap_instances,
-          select: %{host_id: h.id, sap_system_id: a.sap_system_id}
+          where: h.cluster_id == ^cluster_id and is_nil(h.deregistered_at),
+          select: %{host_id: h.id}
       )
 
-    aggregated_ensa_version =
-      hosts_data
-      |> Enum.map(fn %{sap_system_id: sap_system_id} -> sap_system_id end)
-      |> Enum.uniq()
-      |> get_cluster_ensa_version()
+    host_ids = Enum.map(hosts_data, & &1.host_id)
 
     env = %Checks.ClusterExecutionEnv{
       provider: provider,
       cluster_type: ClusterType.ascs_ers(),
-      ensa_version: aggregated_ensa_version,
+      ensa_version: get_cluster_ensa_version(cluster, host_ids),
       filesystem_type: get_filesystem_type(cluster)
     }
 
@@ -393,18 +377,30 @@ defmodule Trento.Clusters do
     end
   end
 
-  @spec get_cluster_ensa_version([String.t()]) :: ClusterEnsaVersion.t()
-  defp get_cluster_ensa_version(sap_system_ids) do
+  @spec get_cluster_ensa_version(ClusterReadModel.t(), [String.t()]) :: ClusterEnsaVersion.t()
+  defp get_cluster_ensa_version(%ClusterReadModel{sap_instances: sap_instances}, host_ids) do
+    sap_instance_sids = SapInstance.get_sap_instance_sids(sap_instances)
+
+    clustered_sap_instances =
+      sap_instances
+      |> Enum.map(& &1.instance_number)
+      |> Enum.uniq()
+
     ensa_versions =
       Repo.all(
         from(s in SapSystemReadModel,
+          join: a in ApplicationInstanceReadModel,
+          on: a.sap_system_id == s.id,
           select: s.ensa_version,
-          where: s.id in ^sap_system_ids and is_nil(s.deregistered_at),
+          where:
+            a.host_id in ^host_ids and a.sid in ^sap_instance_sids and
+              a.instance_number in ^clustered_sap_instances and is_nil(s.deregistered_at),
           distinct: true
         )
       )
 
     case ensa_versions do
+      [] -> ClusterEnsaVersion.unknown()
       [ensa_version] -> ensa_version
       _ -> ClusterEnsaVersion.mixed_versions()
     end

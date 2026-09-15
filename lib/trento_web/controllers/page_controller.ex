@@ -4,6 +4,7 @@
 defmodule TrentoWeb.PageController do
   use TrentoWeb, :controller
 
+  alias Trento.AI.LLMRegistry
   alias Trento.Settings
 
   @version Mix.Project.config()[:version]
@@ -85,9 +86,10 @@ defmodule TrentoWeb.PageController do
   end
 
   defp get_normalized_ai_providers do
-    Trento.AI.ApplicationConfigLoader.load()
-    |> Keyword.get(:providers, [])
-    |> Enum.map(fn {provider, config} -> {provider, Keyword.get(config, :models, [])} end)
+    LLMRegistry.providers()
+    |> Enum.map(fn provider ->
+      {provider, LLMRegistry.get_provider_models(provider)}
+    end)
     |> Enum.into(%{})
   end
 end

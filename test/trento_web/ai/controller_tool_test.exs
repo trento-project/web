@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 defmodule TrentoWeb.AI.ControllerToolTest do
-  use Trento.DataCase
+  use Trento.DataCase, async: true
 
   import Mox
   import Trento.Factory
@@ -10,6 +10,8 @@ defmodule TrentoWeb.AI.ControllerToolTest do
   alias LangChain.Function
   alias TrentoWeb.AI.{ControllerTool, McpRouteIndex}
   alias TrentoWeb.V1
+
+  setup :verify_on_exit!
 
   defp entry_for({controller, action}) do
     Enum.find(McpRouteIndex.entries(), fn e ->

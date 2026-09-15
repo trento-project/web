@@ -1,0 +1,47 @@
+// SPDX-FileCopyrightText: SUSE LLC
+// SPDX-License-Identifier: Apache-2.0
+
+import React from 'react';
+import { noop } from 'lodash';
+
+import { SMLM_PRODUCT_LABEL } from '@lib/model/suse_multilinux_manager';
+
+import Button from '@common/Button';
+import Modal from '@common/Modal';
+
+function SuseMultiLinuxManagerClearSettingsModal({
+  open = false,
+  onClearSettings = noop,
+  onCancel = noop,
+}) {
+  return (
+    <Modal
+      title={`Clear ${SMLM_PRODUCT_LABEL} Settings`}
+      open={open}
+      onClose={onCancel}
+    >
+      <div className="py-4">
+        <p className="text-gray-500">
+          By clearing {SMLM_PRODUCT_LABEL} Settings you will no longer be able
+          to view information relating to software packages and updates for
+          hosts.
+        </p>
+      </div>
+      <span className="flex w-1/3">
+        <Button
+          aria-label="confirm-clear-smlm-settings"
+          type="danger-bold"
+          className="mr-5"
+          onClick={onClearSettings}
+        >
+          Clear Settings
+        </Button>
+        <Button type="primary-white-fit" onClick={onCancel}>
+          Cancel
+        </Button>
+      </span>
+    </Modal>
+  );
+}
+
+export default SuseMultiLinuxManagerClearSettingsModal;

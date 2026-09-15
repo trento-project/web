@@ -122,7 +122,9 @@ export const everyClusterLinkGoesToExpectedClusterDetailsPage = () => {
     .then((clusterColumnIndex) =>
       cy.wrap(hostsWithCluster).each(({ host, rowIndex }) => {
         const expectedHref = `/clusters/${host.clusterId}`;
-        const clusterLinkSelector = `tbody tr:nth-child(${rowIndex + 1}) td:nth-child(${clusterColumnIndex + 1}) a[href="${expectedHref}"]`;
+        const clusterLinkSelector = `tbody tr:nth-child(${
+          rowIndex + 1
+        }) td:nth-child(${clusterColumnIndex + 1}) a[href="${expectedHref}"]`;
         cy.get(clusterLinkSelector).click();
         basePage.validateUrl(expectedHref);
         return basePage.goBack().then(() => basePage.validateUrl(url));
@@ -142,7 +144,9 @@ export const everySapSystemLinkGoesToExpectedSapSystemDetailsPage = () => {
     .then((sidColumnIndex) =>
       cy.wrap(hostsWithSapSystem).each(({ host, rowIndex }) => {
         const expectedHref = `/databases/${host.sapSystemId}`;
-        const sapSystemLinkSelector = `${tableRow}:nth-child(${rowIndex + 1}) td:nth-child(${sidColumnIndex + 1}) a[href="${expectedHref}"]`;
+        const sapSystemLinkSelector = `${tableRow}:nth-child(${
+          rowIndex + 1
+        }) td:nth-child(${sidColumnIndex + 1}) a[href="${expectedHref}"]`;
         cy.get(sapSystemLinkSelector).click();
         basePage.validateUrl(expectedHref);
         return basePage.goBack().then(() => basePage.validateUrl(url));

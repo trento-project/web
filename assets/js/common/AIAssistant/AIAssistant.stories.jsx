@@ -61,9 +61,22 @@ function useConfigurationEvents(socket, events) {
     );
     return () => timers.forEach(clearTimeout);
     // The event list is captured at mount, as with useSimulatedTurn.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [socket]);
 }
+
+// Polls until `probe` returns something truthy.
+// The chat frame measures itself before the composer mounts, so we wait.
+const waitUntil = async (probe, timeoutMs = 2000) => {
+  const deadline = Date.now() + timeoutMs;
+
+  for (;;) {
+    const found = probe();
+    if (found) return found;
+    if (Date.now() >= deadline) return null;
+    await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  }
+};
 
 // Types the user's prompt into the composer, hits send, then plays an
 // assistant turn back through the channel. Assumes useChannelScript has
@@ -90,25 +103,20 @@ function useSimulatedTurn(socket, turn) {
     };
 
     const run = async () => {
-      // Wait one paint so composer + send have mounted.
-      await new Promise((resolve) => window.requestAnimationFrame(resolve));
-      if (cancelled) return;
-
-      const composer = document.querySelector('[aria-label="Message input"]');
+      const composer = await waitUntil(() =>
+        document.querySelector('[aria-label="Message input"]')
+      );
       const send = document.querySelector('[aria-label="Send message"]');
-      if (!composer || !send) return;
+      if (cancelled || !composer || !send) return;
 
       setNativeValue(composer, turn.userText);
       send.click();
 
       // Wait for WebSocketAIAgent to push send_message back to the channel.
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      if (cancelled) return;
-
-      const sent = channel.pushed
-        .filter((p) => p.event === 'send_message')
-        .at(-1);
-      if (!sent) return;
+      const sent = await waitUntil(() =>
+        channel.pushed.filter((p) => p.event === 'send_message').at(-1)
+      );
+      if (cancelled || !sent) return;
 
       const { thread_id: threadId, run_id: runId } = sent.payload;
       const events = buildAssistantTurn({
@@ -141,7 +149,7 @@ function useSimulatedTurn(socket, turn) {
     };
     // The turn config is captured at mount; restarting on field changes is
     // never what we want here.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line @eslint-react/exhaustive-deps
   }, [socket]);
 }
 
@@ -264,7 +272,7 @@ export const OpenModelChanged = {
       events: [
         {
           event: 'model_changed',
-          payload: { provider: 'googleai', model: 'gemini-2.5-pro' },
+          payload: { provider: 'google', model: 'gemini-2.5-pro' },
         },
       ],
     },

@@ -8,10 +8,10 @@ import AIProviderLabel from './AIProviderLabel';
 
 describe('AI Provider Label', () => {
   it('should display an icon and label with Google AI as the provider', () => {
-    const { container } = render(<AIProviderLabel provider="googleai" />);
+    const { container } = render(<AIProviderLabel provider="google" />);
     expect(screen.getAllByText(/Google Gemini/)).toBeTruthy();
     expect(container.querySelector('img').getAttribute('alt')).toContain(
-      'googleai'
+      'google'
     );
   });
 

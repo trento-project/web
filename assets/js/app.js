@@ -23,13 +23,16 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-// Phoenix stuff, safe to ignore the import/no-unresolved
-/* eslint-disable import/no-unresolved */
+/* eslint-disable import-x/no-unresolved */
+// Disabling the linter for these 3 imports because they are generated
+// from the back-end and expect a preparation step to be made which
+// complicates CI and adversely affects linting in isolation.
 import 'phoenix_html';
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from 'phoenix';
 import { LiveSocket } from 'phoenix_live_view';
-import topbar from '../vendor/topbar';
+/* eslint-enable import-x/no-unresolved */
+import topbar from 'topbar';
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")

@@ -29,7 +29,9 @@ module.exports = (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
-    searchEmailInMailpit,
+    searchEmailInMailpit({ subject, options }) {
+      return searchEmailInMailpit(subject, options);
+    },
     deleteAllEmailsFromMailpit,
     startAgentHeartbeat({ agents, apiKey }) {
       const url = new URL(config.baseUrl);

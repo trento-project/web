@@ -21,7 +21,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AI do
           provider: %Schema{
             type: :string,
             description: "Chosen AI provider.",
-            example: "googleai",
+            example: "google",
             nullable: false
           },
           model: %Schema{
@@ -32,7 +32,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AI do
           }
         },
         example: %{
-          provider: "googleai",
+          provider: "google",
           model: "gemini-2.0-flash"
         },
         required: [:provider, :model]
@@ -55,7 +55,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AI do
             type: :string,
             description: "AI provider.",
             nullable: false,
-            example: "googleai"
+            example: "google"
           },
           model: %Schema{
             type: :string,
@@ -71,7 +71,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AI do
           }
         },
         example: %{
-          provider: "googleai",
+          provider: "google",
           model: "gemini-2.0-flash",
           api_key: "AIza..."
         },
@@ -96,7 +96,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.AI do
             type: :string,
             description: "AI provider.",
             nullable: false,
-            example: "googleai"
+            example: "google"
           },
           model: %Schema{
             type: :string,

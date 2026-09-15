@@ -39,6 +39,19 @@ defmodule Trento.Infrastructure.Alerting.Emails.EmailAlert do
     |> html_body(body)
   end
 
+  def test_email(sender: sender, recipient: recipient) do
+    body =
+      %{}
+      |> test_email_body()
+      |> render_heex_to_string()
+
+    new()
+    |> from({"Trento Alerts", sender})
+    |> to({"Trento Admin", recipient})
+    |> subject("Trento Alert: Test email")
+    |> html_body(body)
+  end
+
   def alert(component, identified_by, identifier, reason, sender: sender, recipient: recipient) do
     body =
       %{

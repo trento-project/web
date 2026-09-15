@@ -41,6 +41,20 @@ defmodule TrentoWeb.FallbackController do
     |> render(:"409", reason: "Alerting settings can not be set, enforced by ENV.")
   end
 
+  def call(conn, {:error, :alerting_disabled}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Email alerting is disabled.")
+  end
+
+  def call(conn, {:error, {:test_email_delivery_failed, reason}}) do
+    conn
+    |> put_status(:unprocessable_entity)
+    |> put_view(json: ErrorJSON)
+    |> render(:"422", reason: "Test email delivery failed: #{reason}")
+  end
+
   def call(conn, {:error, :suma_authentication_error}) do
     conn
     |> put_status(:unprocessable_entity)

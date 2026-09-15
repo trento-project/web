@@ -57,7 +57,7 @@ import {
   PostHogInit,
   PostHogIdentify,
   PostHogPageView,
-} from '@lib/analytics/effects';
+} from '@common/Analytics';
 
 import { createStore } from './state';
 

@@ -26,7 +26,7 @@ describe('AIConfiguration', () => {
 
   it('should show saved AI configuration', () => {
     const aiConfiguration = aiConfigurationFactory.build({
-      provider: 'googleai',
+      provider: 'google',
       model: 'gemini-2.5-pro',
     });
     render(<AIConfiguration aiConfiguration={aiConfiguration} />);

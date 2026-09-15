@@ -22,9 +22,14 @@ defmodule Trento.MixProject do
       docs: docs(),
       test_coverage: [tool: ExCoveralls],
       dialyzer: [
-        plt_add_apps: [:ex_unit, :mix]
+        plt_add_apps: [:ex_unit, :mix, :llm_db]
         # check_plt: true,
         # ignore_warnings: "dialyzer_ignore.exs"
+      ],
+      releases: [
+        trento: [
+          applications: [llm_db: :load]
+        ]
       ]
     ]
   end
@@ -57,6 +62,7 @@ defmodule Trento.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:llm_db, "~> 2026.7", runtime: false},
       {:sagents, "~> 0.7.0"},
       # temporary override to pull in an elixir 1.15 compatible version
       {:langchain,
@@ -75,20 +81,19 @@ defmodule Trento.MixProject do
       {:dialyxir, "~> 1.4.7", only: [:dev, :test], runtime: false},
       {:ecto_sql, "~> 3.14"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:eventstore, "~> 1.4", [env: :prod]},
+      {:eventstore, "~> 1.4"},
       # {:eventstore_dashboard, github: "commanded/eventstore-dashboard"},
       {:ex_doc, "~> 0.29", only: [:dev, :test], runtime: false},
       {:ex_machina, "~> 2.8.0", only: :test},
       {:excoveralls, "~> 0.10", only: :test},
       {:faker, "~> 0.17", only: [:dev, :test]},
-      {:flop, "~> 0.26.5"},
+      {:flop, "~> 0.28.0"},
       {:floki, ">= 0.36.2", only: :test},
       {:gettext, "~> 0.26"},
       {:gen_smtp, "~> 1.3.0"},
-      # see: https://github.com/pma/amqp/issues/231#issuecomment-2445049446
-      {:ranch, "~> 2.2.0", override: true},
       {:gen_rmq, github: "trento-project/trnt_gen_rmq", ref: "v5.0.1"},
-      {:httpoison, "== 2.3.0"},
+      {:hackney, "~> 4.0", override: true},
+      {:httpoison, "~> 3.0", override: true},
       {:jason, "~> 1.4"},
       {:junit_formatter, "~> 3.4", only: [:test]},
       {:mox, "~> 1.0", only: :test},
@@ -100,7 +105,7 @@ defmodule Trento.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.7"},
       {:phoenix_live_reload, "~> 1.7.0", only: [:dev, :wanda]},
-      {:phoenix_live_view, "~> 1.1.28"},
+      {:phoenix_live_view, "~> 1.2.9"},
       {:plug_cowboy, "~> 2.5"},
       {:postgrex, ">= 0.0.0"},
       {:pow, "~> 1.0.39"},
@@ -110,7 +115,7 @@ defmodule Trento.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:timex, "~> 3.7.7"},
-      {:tzdata, "~> 1.1.3"},
+      {:tzdata, "~> 1.1.4"},
       {:trento_contracts,
        github: "trento-project/contracts",
        ref: "af252ccb0e64234d65e0581043996b6574687fc8",
@@ -118,7 +123,7 @@ defmodule Trento.MixProject do
       {:unplug, "~> 1.1.0"},
       {:proper_case, "~> 1.3.1"},
       {:polymorphic_embed, "~> 5.0"},
-      {:joken, "~> 2.6.2"},
+      {:joken, "~> 2.7.0"},
       {:ecto, "~> 3.14"},
       # https://github.com/deadtrickster/ssl_verify_fun.erl/pull/27
       {:ssl_verify_fun, "~> 1.1", manager: :rebar3, override: true},

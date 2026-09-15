@@ -4,6 +4,7 @@
 import { AbstractAgent } from '@ag-ui/client';
 import { Observable } from 'rxjs';
 import { isArray, isString, last, noop, each } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 import { EventType } from '@ag-ui/core';
 
@@ -26,6 +27,15 @@ export const extractMessageText = ({ content } = {}) => {
 };
 
 const isUnauthorized = (error) => error === 'unauthorized';
+
+// The error shape @assistant-ui/react-ag-ui reads as "this run was stopped".
+// RUN_CANCELLED is dispatched instead of RUN_ERROR, so the message ends up marked as
+// stopped rather than failed.
+const abortedRunError = () => {
+  const error = new Error('AI assistant run stopped');
+  error.name = 'AbortError';
+  return error;
+};
 
 // Bridges assistant-ui's AG-UI runtime with Phoenix channels: translates
 // AG-UI protocol events to/from channel events for the ai_assistant:{userID}
@@ -165,22 +175,28 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.channel.onClose(dropConnection);
   }
 
-  // User's AI configuration was cleared server-side.
-  // Settle any in-flight run without surfacing an error
-  // and let the UI switch to its read-only / disabled state via the callback.
   _handleAIConfigurationCleared() {
-    this._settleActiveRun();
+    this._settleActiveRun(abortedRunError());
     this.#callbacks.onAIConfigurationCleared();
   }
 
-  _isStaleRunFinished({ type, runId }) {
-    return type === EventType.RUN_FINISHED && runId !== this._activeRunId;
+  // The events the server stamps with a run id. RunStarted and RunFinished both enforce one.
+  // RUN_ERROR is deliberately absent: RunError has no run_id field at all, so filtering it on
+  // one would drop every error. Everything else the channel pushes
+  // (TEXT_MESSAGE_*, TOOL_CALL_*) belongs to whichever run is subscribed.
+  static RUN_SCOPED_EVENTS = [EventType.RUN_STARTED, EventType.RUN_FINISHED];
+
+  _isStaleRunEvent({ type, runId }) {
+    return (
+      WebSocketAIAgent.RUN_SCOPED_EVENTS.includes(type) &&
+      runId !== this._activeRunId
+    );
   }
 
   _handleAgUiEvent(event) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
-    if (this._isStaleRunFinished(event)) return;
+    if (this._isStaleRunEvent(event)) return;
 
     subscriber.next(event);
 
@@ -202,7 +218,7 @@ export class WebSocketAIAgent extends AbstractAgent {
   // The send itself is deferred by at most one microtask via `await initialize()`.
   run({ messages, threadId }) {
     return new Observable((subscriber) => {
-      const runId = crypto.randomUUID();
+      const runId = uuidv4();
       const lastMessage = last(messages);
 
       if (!lastMessage || lastMessage.role !== 'user') {
@@ -256,11 +272,51 @@ export class WebSocketAIAgent extends AbstractAgent {
     });
   }
 
+  // Settle the in-flight run, with an error only when the user needs to see one.
   _settleActiveRun(maybeError) {
     const subscriber = this._activeSubscriber;
     if (!subscriber) return;
     maybeError ? subscriber.error(maybeError) : subscriber.complete();
     this._clearActiveRun();
+  }
+
+  // Our AbortError has to land last after library's cancellation steps.
+  //
+  // Cancelling has ag ui runtime write to the message twice:
+  // - `cancel()` aborts its controller, which marks the run cancelled and turns any later error into a stop rather than a failure
+  // - `cancelRun()` then schedules a timer re-applying a snapshot it took while the answer still looked alive.
+  //
+  // The microtask waits out that whole synchronous turn, making sure the state of the message is properly marked as stopped
+  _settleAsAborted(subscriber) {
+    queueMicrotask(() =>
+      setTimeout(() => subscriber.error(abortedRunError()), 0)
+    );
+  }
+
+  // Stop, from the composer.
+  // `AgUiThreadRuntimeCore.cancel()` calls it before aborting its own AbortController.
+  //
+  // The payload is empty because the server cancels the thread named in its
+  // own socket assigns.
+  abortRun() {
+    const subscriber = this._activeSubscriber;
+
+    if (subscriber) {
+      this.channel?.push('cancel_run', {});
+
+      this._clearActiveRun();
+      this._settleAsAborted(subscriber);
+    }
+
+    super.abortRun();
+  }
+
+  // "New chat". Tells the server the thread is gone so the running agent process can be killed.
+  //
+  // The payload is empty for the same reason as `abortRun`'s.
+  abandonThread() {
+    this.channel?.push('abandon_thread', {});
+    this._settleActiveRun();
   }
 
   _clearActiveRun() {

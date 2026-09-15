@@ -149,9 +149,22 @@ defmodule Trento.ActivityLog.Logger.Parser.PhoenixConnParser do
       )
       when action in [
              :saving_alerting_settings,
-             :changing_alerting_setting
+             :changing_alerting_settings
            ] do
     redact(request_body, :smtp_password)
+  end
+
+  def get_activity_metadata(:testing_alerting_settings, %Plug.Conn{status: 200}),
+    do: %{result: :success}
+
+  def get_activity_metadata(:testing_alerting_settings, %Plug.Conn{resp_body: resp_body}) do
+    reason =
+      case Jason.decode(resp_body) do
+        {:ok, %{"errors" => [%{"detail" => detail} | _]}} -> detail
+        _ -> "Unknown error"
+      end
+
+    %{result: :failure, reason: reason}
   end
 
   def get_activity_metadata(

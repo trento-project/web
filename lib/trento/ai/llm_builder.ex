@@ -8,12 +8,22 @@ defmodule Trento.AI.LLMBuilder do
 
   alias LangChain.ChatModels.{ChatAnthropic, ChatGoogleAI, ChatOpenAI}
 
+  alias Trento.AI.ApplicationConfigLoader
   alias Trento.Users
   alias Trento.Users.User
 
-  @spec build_for_user(non_neg_integer()) ::
+  @behaviour Trento.AI.LLMBuilder
+
+  @callback build_for_user(non_neg_integer()) ::
+              {:ok, struct()}
+              | {:error, :user_not_found | :no_ai_configuration}
+
+  @spec build(non_neg_integer()) ::
           {:ok, struct()}
           | {:error, :user_not_found | :no_ai_configuration}
+  def build(user_id), do: impl().build_for_user(user_id)
+
+  @impl true
   def build_for_user(user_id) do
     case Users.get_user(user_id) do
       {:error, :not_found} ->
@@ -31,7 +41,7 @@ defmodule Trento.AI.LLMBuilder do
     end
   end
 
-  defp do_build(:googleai, model, api_key),
+  defp do_build(:google, model, api_key),
     do: ChatGoogleAI.new!(%{model: model, api_key: api_key, stream: true})
 
   defp do_build(:openai, model, api_key),
@@ -45,4 +55,6 @@ defmodule Trento.AI.LLMBuilder do
         stream: true,
         thinking: %{type: "enabled"}
       })
+
+  defp impl, do: Keyword.get(ApplicationConfigLoader.load(), :llm_builder_adapter)
 end

@@ -189,7 +189,7 @@ jobs:
             test/e2e/node_modules
           key: nodejs-${{ needs.setup-matrix-env.outputs.NODEJS_DEV }}-${{ hashFiles('test/e2e/package-lock.json') }}
       - name: "Docker compose dependencies"
-        uses: isbang/compose-action@11beaa1c2dae4e8ed7b1665aa074723b6cecb0e4 # v3.0.0
+        uses: isbang/compose-action@ee6af68587292d72db67743171809c19787df4c9 # v3.1.0
         with:
           compose-file: "./docker-compose.yaml"
           compose-flags: "--profile wanda"
@@ -215,7 +215,7 @@ jobs:
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
-        uses: cypress-io/github-action@fa4a118725a8f001170d49631ea89e5d66fee626 # v7.4.1
+        uses: cypress-io/github-action@09090944bd8aaa2a517cefb6e38bf1aae336b42b # v7.4.3
         env:
           cypress_video: false
           cypress_db_host: postgres

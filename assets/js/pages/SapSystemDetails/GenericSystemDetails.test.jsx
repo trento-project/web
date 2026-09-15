@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import 'intersection-observer';
 import { faker } from '@faker-js/faker';
 import { screen, within } from '@testing-library/react';
 import '@testing-library/jest-dom';

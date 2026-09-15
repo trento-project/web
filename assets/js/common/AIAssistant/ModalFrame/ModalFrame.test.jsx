@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
+import { nextFrame } from '@lib/test-utils/modalFrame';
 
 import ModalFrame from './ModalFrame';
 
@@ -37,8 +38,9 @@ describe('ModalFrame', () => {
       expect(onOpenChange).toHaveBeenCalledWith(true);
     });
 
-    it('renders its children while open', () => {
+    it('renders its children while open', async () => {
       renderFrame({ open: true });
+      await nextFrame();
 
       expect(screen.getByText('chat panel body')).toBeVisible();
     });

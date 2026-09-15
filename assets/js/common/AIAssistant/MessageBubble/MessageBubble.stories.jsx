@@ -4,20 +4,15 @@
 import React from 'react';
 import {
   AssistantRuntimeProvider,
-  ThreadPrimitive,
-  useAui,
   useExternalStoreRuntime,
 } from '@assistant-ui/react';
 
-import { AssistantMessage, UserMessage } from './MessageBubble';
 import { identity } from 'lodash';
 
-// UserMessage / AssistantMessage rely on MessagePrimitive scoping established
-// by <ThreadPrimitive.Messages>. Mount a minimal external-store runtime
-// seeded with the messages we want to render — no backend, no agent, just
-// static state. onNew is required by the adapter contract but never fires
-// here since the stories don't render a composer.
-function StubRuntime({ messages, children }) {
+import { ThreadContainer, ThreadMessages } from '../AssistantThread';
+
+// A thread seeded via a custom external-store runtime with static messages.
+function SeededThread({ messages }) {
   const runtime = useExternalStoreRuntime({
     messages,
     isRunning: false,
@@ -25,21 +20,13 @@ function StubRuntime({ messages, children }) {
     convertMessage: identity,
     onNew: () => Promise.resolve(),
   });
-  const aui = useAui();
-  return (
-    <AssistantRuntimeProvider aui={aui} runtime={runtime}>
-      <ThreadPrimitive.Root>{children}</ThreadPrimitive.Root>
-    </AssistantRuntimeProvider>
-  );
-}
 
-function SeededThread({ messages }) {
   return (
-    <StubRuntime messages={messages}>
-      <ThreadPrimitive.Messages
-        components={{ UserMessage, AssistantMessage }}
-      />
-    </StubRuntime>
+    <AssistantRuntimeProvider runtime={runtime}>
+      <ThreadContainer>
+        <ThreadMessages />
+      </ThreadContainer>
+    </AssistantRuntimeProvider>
   );
 }
 

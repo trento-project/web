@@ -6,7 +6,7 @@ import { getProviderLabel, getProviderIcon } from './providers';
 describe('providers', () => {
   describe('getProviderLabel', () => {
     it('should return the provider label', () => {
-      expect(getProviderLabel('googleai')).toBe('Google Gemini');
+      expect(getProviderLabel('google')).toBe('Google Gemini');
       expect(getProviderLabel('openai')).toBe('OpenAI GPT');
       expect(getProviderLabel('anthropic')).toBe('Anthropic Claude');
     });
@@ -18,7 +18,7 @@ describe('providers', () => {
 
   describe('getProviderIcon', () => {
     it('should return the provider icon', () => {
-      expect(getProviderIcon('googleai')).toBeDefined();
+      expect(getProviderIcon('google')).toBeDefined();
       expect(getProviderIcon('openai')).toBeDefined();
       expect(getProviderIcon('anthropic')).toBeDefined();
     });

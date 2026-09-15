@@ -27,7 +27,7 @@ jobs:
 
   publish-containers:
     name: Publish GHCR Containers
-    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7ea6a8a1c3ed8a1f2185328219be4a724dd3686e # v1.8.0
+    uses: trento-project/.github/.github/workflows/publish-containers.yaml@7bdd3e4e59084a0edca7da6ece0456490defafb2 # v1.9.0
     needs: check-env-creation-privilege
     if: needs.check-env-creation-privilege.outputs.create_env == 'true'
     with:

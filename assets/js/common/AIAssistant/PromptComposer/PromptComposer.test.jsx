@@ -3,6 +3,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
@@ -10,18 +11,25 @@ import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
 import { OK, CLEARED, RESTORED } from '../status';
 import PromptComposer from './PromptComposer';
 
-jest.mock('@assistant-ui/react', () => ({
-  ComposerPrimitive: {
-    Root: ({ children, ...props }) => <form {...props}>{children}</form>,
-    AttachmentDropzone: ({ children, ...props }) => (
-      <div {...props}>{children}</div>
-    ),
-    Input: ({ disabled, placeholder, ...props }) => (
-      <textarea disabled={disabled} placeholder={placeholder} {...props} />
-    ),
-    Send: ({ children }) => children,
-  },
-}));
+const mockCancel = jest.fn();
+
+jest.mock('@assistant-ui/react', () => {
+  const { cloneElement } = jest.requireActual('react');
+
+  return {
+    ComposerPrimitive: {
+      Root: ({ children, ...props }) => <form {...props}>{children}</form>,
+      AttachmentDropzone: ({ children, ...props }) => (
+        <div {...props}>{children}</div>
+      ),
+      Input: ({ disabled, placeholder, ...props }) => (
+        <textarea disabled={disabled} placeholder={placeholder} {...props} />
+      ),
+      Send: ({ children }) => children,
+      Cancel: ({ children }) => cloneElement(children, { onClick: mockCancel }),
+    },
+  };
+});
 
 describe('PromptComposer', () => {
   it.each([
@@ -125,9 +133,22 @@ describe('PromptComposer', () => {
     }
   );
 
-  it('hides the send button while the thread is running', () => {
+  it('replaces the send button with a stop button while the thread is running', () => {
     render(<PromptComposer connectionStatus={CONNECTED} isRunning />);
+
     expect(screen.queryByRole('button', { name: 'Send message' })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: 'Stop generating' })
+    ).toBeVisible();
+  });
+
+  it('routes the stop button through the composer cancel primitive', async () => {
+    const user = userEvent.setup();
+    render(<PromptComposer connectionStatus={CONNECTED} isRunning />);
+
+    await user.click(screen.getByRole('button', { name: 'Stop generating' }));
+
+    expect(mockCancel).toHaveBeenCalledTimes(1);
   });
 
   it('renders the footnote with the documentation link', () => {

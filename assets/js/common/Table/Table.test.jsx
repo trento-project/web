@@ -6,7 +6,6 @@ import React from 'react';
 import { noop } from 'lodash';
 import { screen, render, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import 'intersection-observer';
 import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
