@@ -17,6 +17,7 @@ CrmmonResource field payload
   node: term(),
   nodes_running_on: term(),
   orphaned: term(),
+  removed: term(),
   role: term()
 }
 ```

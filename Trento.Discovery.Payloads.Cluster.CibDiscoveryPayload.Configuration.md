@@ -1,5 +1,5 @@
 # `Trento.Discovery.Payloads.Cluster.CibDiscoveryPayload.Configuration`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento/discovery/payloads/cluster/cib_discovery_payload.ex#L152)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/discovery/payloads/cluster/cib_discovery_payload.ex#L155)
 
 ---
 

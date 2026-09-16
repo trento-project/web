@@ -1,5 +1,5 @@
 # `Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload.CrmmonGroup`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento/discovery/payloads/cluster/crmmon_discovery_payload.ex#L178)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/discovery/payloads/cluster/crmmon_discovery_payload.ex#L186)
 
 ---
 
