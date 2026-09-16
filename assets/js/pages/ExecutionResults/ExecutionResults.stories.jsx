@@ -412,17 +412,9 @@ export default {
       description: 'List/array of selected checks for the current target',
       control: { type: 'object' },
     },
-    savedFilters: {
-      description: 'Previously saved filter settings',
-      control: { type: 'object' },
-    },
     onStartExecution: {
       description: 'Callback invoked to start an execution',
       action: 'onStartExecution',
-    },
-    onSaveFilters: {
-      description: 'Callback invoked to save current filters',
-      action: 'onSaveFilters',
     },
   },
 };
@@ -444,7 +436,6 @@ export const Default = {
     executionRunning: false,
     executionData: completedExecution.data,
     onStartExecution: action('onStartExecution'),
-    onSaveFilters: action('onSaveFilters'),
   },
 };
 
@@ -464,7 +455,6 @@ export const Running = {
     catalog: catalogData.data.items,
     executionRunning: true,
     onStartExecution: action('onStartExecution'),
-    onSaveFilters: action('onSaveFilters'),
   },
 };
 
@@ -485,6 +475,5 @@ export const Completed = {
     executionRunning: false,
     executionData: completedExecution.data,
     onStartExecution: action('onStartExecution'),
-    onSaveFilters: action('onSaveFilters'),
   },
 };

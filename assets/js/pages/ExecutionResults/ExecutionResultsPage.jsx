@@ -4,8 +4,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { setSelectedFilters } from '@state/checksResultsFilters';
-import { getSelectedFilters } from '@state/selectors/checksResultsFilters';
 import { getLastExecutionData } from '@state/selectors/lastExecutions';
 import { updateCatalog } from '@state/catalog';
 
@@ -34,8 +32,6 @@ function ExecutionResultsPage({ targetType }) {
       loading: executionLoading,
     },
   } = useSelector((state) => getLastExecutionData(state, targetID, targetType));
-
-  const savedFilters = useSelector(getSelectedFilters(targetID));
 
   const isCluster = isTargetCluster(targetType);
   const isHost = isTargetHost(targetType);
@@ -83,15 +79,11 @@ function ExecutionResultsPage({ targetType }) {
       executionData={executionData}
       executionError={executionError}
       targetSelectedChecks={target.selected_checks}
-      savedFilters={savedFilters}
       onStartExecution={(targetId, hosts, selectedChecks) => {
         isHost && dispatch(hostExecutionRequested(target, selectedChecks));
         isCluster &&
           dispatch(executionRequested(targetId, hosts, selectedChecks));
       }}
-      onSaveFilters={(filters) =>
-        dispatch(setSelectedFilters({ resourceID: targetID, filters }))
-      }
     />
   );
 }

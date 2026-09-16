@@ -10,6 +10,10 @@ import Modal from '@common/Modal';
 import Table from '@common/Table';
 import ModifiedCheckPill from '@common/ModifiedCheckPill';
 
+import { changeSearchParams } from '@lib/searchParams';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
 import {
   getCatalogCategoryList,
   getCheckResults,
@@ -24,12 +28,7 @@ import CheckResultOutline from './CheckResultOutline';
 import ExecutionHeader from './ExecutionHeader';
 import ExecutionContainer from './ExecutionContainer';
 
-// To have an array as a default prop that is also used in a useEffect's dependency
-// array we need to declare it outside the scope as a `const`, in order to prevent
-// rerendering loops.
-//
-// https://github.com/facebook/react/issues/18123
-const defaultSavedFilters = [];
+const HEALTH_PARAM = 'health';
 
 const resultsTableConfig = {
   usePadding: false,
@@ -107,13 +106,13 @@ function ExecutionResults({
   executionData,
   executionError,
   targetSelectedChecks = [],
-  savedFilters = defaultSavedFilters,
   onCatalogRefresh = () => {},
   onLastExecutionUpdate = () => {},
   onStartExecution = () => {},
-  onSaveFilters = () => {},
 }) {
-  const [predicates, setPredicates] = useState([]);
+  const [searchParams, setSearchParams] =
+    usePersistentSearchParams('checksResults');
+  const selectedResults = searchParams.getAll(HEALTH_PARAM);
   const [selectedCheck, setSelectedCheck] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -129,13 +128,10 @@ function ExecutionResults({
   const checksResults = getCheckResults(executionData);
   const catalogCategoryList = getCatalogCategoryList(catalog, checksResults);
   const tableData = checksResults
-    .filter((check) => {
-      if (predicates.length === 0) {
-        return true;
-      }
-
-      return predicates.some((predicate) => predicate(check));
-    })
+    .filter(
+      ({ result }) =>
+        selectedResults.length === 0 || selectedResults.includes(result)
+    )
     .map(
       ({
         check_id: checkID,
@@ -179,9 +175,10 @@ function ExecutionResults({
         targetName={targetName}
         targetType={targetType}
         target={target}
-        savedFilters={savedFilters}
-        onFilterChange={(newPredicates) => setPredicates(newPredicates)}
-        onFilterSave={onSaveFilters}
+        selectedResults={selectedResults}
+        onFilterChange={(results) =>
+          setSearchParams(changeSearchParams({ [HEALTH_PARAM]: results }))
+        }
       />
       <ResultsContainer
         error={catalogError || executionError}

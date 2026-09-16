@@ -87,14 +87,6 @@ const lastExecutionsSlice = createSlice({
   reducers: {},
 });
 
-const checksResultsFiltersSlice = createSlice({
-  name: 'checksResultsFilters',
-  initialState: {
-    filters: {},
-  },
-  reducers: {},
-});
-
 const hostListSlice = createSlice({
   name: 'hostsList',
   initialState: {
@@ -123,7 +115,6 @@ export default {
         reducer: {
           catalog: catalogSlice.reducer,
           lastExecutions: lastExecutionsSlice.reducer,
-          checksResultsFilters: checksResultsFiltersSlice.reducer,
           hostsList: hostListSlice.reducer,
           clustersList: clusterListSlice.reducer,
         },
@@ -201,10 +192,6 @@ export default {
       description: 'The targetSelectedChecks prop',
       control: { type: 'object' },
     },
-    savedFilters: {
-      description: 'The savedFilters prop',
-      control: { type: 'object' },
-    },
     onCatalogRefresh: {
       description: 'Callback function invoked when catalog refresh',
       action: 'onCatalogRefresh',
@@ -216,10 +203,6 @@ export default {
     onStartExecution: {
       description: 'Callback function invoked when start execution',
       action: 'onStartExecution',
-    },
-    onSaveFilters: {
-      description: 'Callback function invoked when save filters',
-      action: 'onSaveFilters',
     },
   },
 };
@@ -241,10 +224,8 @@ export const Default = {
     executionRunning: false,
     executionData: execution,
     targetSelectedChecks,
-    savedFilters: [],
     onCatalogRefresh: action('onCatalogRefresh'),
     onLastExecutionUpdate: action('onLastExecutionUpdate'),
     onStartExecution: action('onStartExecution'),
-    onSaveFilters: action('onSaveFilters'),
   },
 };

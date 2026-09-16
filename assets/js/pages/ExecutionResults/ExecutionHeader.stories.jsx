@@ -45,17 +45,13 @@ export default {
       description: 'The target prop',
       control: { type: 'text' },
     },
-    savedFilters: {
-      description: 'The savedFilters prop',
+    selectedResults: {
+      description: 'Currently selected check results',
       control: { type: 'object' },
     },
     onFilterChange: {
       description: 'Callback function invoked when filter change',
       action: 'onFilterChange',
-    },
-    onFilterSave: {
-      description: 'Callback function invoked when filter save',
-      action: 'onFilterSave',
     },
   },
 };
@@ -66,8 +62,7 @@ export const Default = {
     targetName: cluster.name,
     targetType: 'cluster',
     target: cluster,
-    savedFilters: [],
+    selectedResults: [],
     onFilterChange: action('onFilterChange'),
-    onFilterSave: action('onFilterSave'),
   },
 };
