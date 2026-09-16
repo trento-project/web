@@ -53,25 +53,19 @@ const removeTag1Button =
 const sidTableHeader = 'thead th:contains("SID")';
 const clusterTableHeader = 'thead th:contains("Cluster")';
 const tableRow = 'tbody tr';
-const hostnameFilterButton = '[data-testid="filter-Hostname"]';
-const hostnameFilterOptions = '[data-testid="filter-Hostname-options"]';
 
 // UI Interactions
 
 export const visit = (params) => {
   cy.intercept('/api/v1/hosts').as('hostsEndpoint');
-  const visitUrl = [url, params].filter(Boolean).join('?');
-  basePage.visit(visitUrl);
+  basePage.visit(url, params);
   return basePage.waitForRequest('hostsEndpoint');
 };
 
 export const validateUrl = () => basePage.validateUrl(url);
 
-export const selectHostnameFilter = (hostname) => {
-  cy.get(hostnameFilterButton).click();
-  cy.get(hostnameFilterOptions).find(`li`).contains(hostname).click();
-  return cy.get(hostnameFilterButton).click();
-};
+export const selectHostnameFilter = (hostname) =>
+  basePage.selectFilter('Hostname', hostname);
 
 export const hostsListedAre = (amount) =>
   cy.get(hostNameCell).should('have.length', amount);

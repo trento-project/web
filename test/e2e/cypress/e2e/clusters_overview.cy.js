@@ -7,6 +7,7 @@ context('Clusters Overview', () => {
   before(() => clustersOverviewPage.preloadTestData());
 
   beforeEach(() => {
+    cy.clearAllSessionStorage();
     clustersOverviewPage.interceptInitialDataFetch();
     clustersOverviewPage.visit();
     clustersOverviewPage.validateUrl();
@@ -59,6 +60,69 @@ context('Clusters Overview', () => {
       it(`should have ${clustersOverviewPage.unhealthyClusterName} displaying unhealthy state`, () => {
         clustersOverviewPage.unhealthyClusterNameDisplaysUnhealthyState();
       });
+    });
+  });
+
+  describe('Persistent filters', () => {
+    const clusterName = clustersOverviewPage.hanaCluster1.name;
+    const anotherClusterName = 'netweaver_cluster';
+
+    it('should update the URL with filter params when a filter is selected', () => {
+      clustersOverviewPage.selectNameFilter(clusterName);
+      cy.url().should('contain', `name=${clusterName}`);
+      clustersOverviewPage.clustersListedAre(1);
+    });
+
+    it('should preserve filters when coming back to clusters view', () => {
+      clustersOverviewPage.selectNameFilter(clusterName);
+      clustersOverviewPage.clustersListedAre(1);
+
+      clustersOverviewPage.goNavigationMenuItem('Dashboard');
+      clustersOverviewPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      clustersOverviewPage.goNavigationMenuItem('Clusters');
+
+      cy.url().should('contain', `name=${clusterName}`);
+      clustersOverviewPage.clustersListedAre(1);
+    });
+
+    it('should preserve filters when the clusters sidebar entry is clicked from the clusters view', () => {
+      clustersOverviewPage.selectNameFilter(clusterName);
+      clustersOverviewPage.clustersListedAre(1);
+
+      clustersOverviewPage.goNavigationMenuItem('Clusters');
+
+      cy.url().should('contain', `name=${clusterName}`);
+      clustersOverviewPage.clustersListedAre(1);
+    });
+
+    it('should preserve filters when reloading clusters view', () => {
+      clustersOverviewPage.selectNameFilter(clusterName);
+      clustersOverviewPage.clustersListedAre(1);
+
+      clustersOverviewPage.visit();
+
+      cy.url().should('contain', `name=${clusterName}`);
+      clustersOverviewPage.clustersListedAre(1);
+    });
+
+    it('should preserve the selected items per page when reloading clusters view', () => {
+      clustersOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'itemsPerPage=20');
+
+      clustersOverviewPage.visit();
+
+      cy.url().should('contain', 'itemsPerPage=20');
+      clustersOverviewPage.selectedItemsPerPageIs(20);
+    });
+
+    it('should render filtered results when visiting a URL with filter params overriding previous filters', () => {
+      clustersOverviewPage.selectNameFilter(clusterName);
+      clustersOverviewPage.clustersListedAre(1);
+
+      clustersOverviewPage.visit(`name=${anotherClusterName}`);
+
+      cy.url().should('contain', `name=${anotherClusterName}`);
+      clustersOverviewPage.clustersListedAre(3);
     });
   });
 
