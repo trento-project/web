@@ -95,10 +95,9 @@ defmodule Trento.Discovery.Payloads.Cluster.CrmmonDiscoveryPayload do
     end
 
     defp validate_orphaned_or_removed(changeset) do
-      if is_nil(get_field(changeset, :orphaned)) and is_nil(get_field(changeset, :removed)) do
-        add_error(changeset, :removed, "either orphaned or removed must be present")
-      else
-        changeset
+      case {get_field(changeset, :orphaned), get_field(changeset, :removed)} do
+        {nil, nil} -> add_error(changeset, :removed, "either orphaned or removed must be present")
+        _ -> changeset
       end
     end
 
