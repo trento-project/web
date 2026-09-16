@@ -7055,4 +7055,130 @@ defmodule Trento.Discovery.Policies.ClusterPolicyTest do
                |> ClusterPolicy.handle(nil)
     end
   end
+
+  describe "Pacemaker 3 support" do
+    test "should produce Removed status when a resource has both -Orphaned- and -Removed- (new key wins)" do
+      fixture =
+        "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
+              # force both keys to be present
+              Map.merge(r, %{"Active" => false, "Orphaned" => true, "Removed" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      assert {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+               ClusterPolicy.handle(fixture, nil)
+
+      vip_resource =
+        nodes
+        |> Enum.find(&(&1.name == "vmhana01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "rsc_vip_HN9_HDB09_primary"))
+
+      assert vip_resource.status == "Removed"
+    end
+
+    test "should produce Removed status when only the new -Removed- key is present" do
+      fixture =
+        "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
+              r
+              # remove the legacy "Orphaned" key
+              |> Map.delete("Orphaned")
+              |> Map.merge(%{"Active" => false, "Removed" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      assert {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+               ClusterPolicy.handle(fixture, nil)
+
+      vip_resource =
+        nodes
+        |> Enum.find(&(&1.name == "vmhana01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "rsc_vip_HN9_HDB09_primary"))
+
+      assert vip_resource.status == "Removed"
+    end
+
+    test "should produce Orphaned status when only the legacy -Orphaned- key is present (backward compatibility)" do
+      fixture =
+        "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
+              r
+              # remove the new "Removed" key
+              |> Map.delete("Removed")
+              # keep the legacy "Orphaned" key for backward compatibility
+              |> Map.merge(%{"Active" => false, "Orphaned" => true})
+
+            r ->
+              r
+          end)
+        end)
+
+      assert {:ok, [%RegisterOnlineClusterHost{details: %HanaClusterDetails{nodes: nodes}} | _]} =
+               ClusterPolicy.handle(fixture, nil)
+
+      vip_resource =
+        nodes
+        |> Enum.find(&(&1.name == "vmhana01"))
+        |> Map.get(:resources)
+        |> Enum.find(&(&1.id == "rsc_vip_HN9_HDB09_primary"))
+
+      assert vip_resource.status == "Orphaned"
+    end
+
+    test "should return an error when a resource has neither -Orphaned- nor -Removed-" do
+      fixture =
+        "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+        |> load_discovery_event_fixture()
+        |> update_in(["payload", "Crmmon", "Resources"], fn resources ->
+          Enum.map(resources, fn
+            %{"Id" => "rsc_vip_HN9_HDB09_primary"} = r ->
+              r
+              # remove both "Orphaned" and "Removed" keys
+              |> Map.delete("Orphaned")
+              |> Map.delete("Removed")
+
+            r ->
+              r
+          end)
+        end)
+
+      assert {:error, _} = ClusterPolicy.handle(fixture, nil)
+    end
+
+    test "should extract the SID from a pacemaker3 discovery payload with a promotable clone" do
+      assert {:ok,
+              [
+                %RegisterOnlineClusterHost{
+                  details: %HanaClusterDetails{},
+                  sap_instances: sap_instances
+                }
+                | _
+              ]} =
+               "ha_cluster_discovery_angi_hana_scale_up_pacemaker3"
+               |> load_discovery_event_fixture()
+               |> ClusterPolicy.handle(nil)
+
+      # Proves the promotable HANA resource is still found for SID extraction now that
+      # it moved from the deprecated CIB <master> tag into <clone promotable="true">.
+      assert Enum.any?(sap_instances, &(&1.sid == "HN9"))
+    end
+  end
 end

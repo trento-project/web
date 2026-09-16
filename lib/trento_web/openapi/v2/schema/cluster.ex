@@ -113,7 +113,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               %{
                 id: "rsc_SAPHana_PRD_HDB00",
                 type: "ocf::suse:SAPHana",
-                role: "Master",
+                role: "Promoted",
                 status: "running",
                 fail_count: 0
               }
@@ -137,7 +137,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }
@@ -299,7 +299,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
               %{
                 id: "rsc_SAPHana_PRD_HDB00",
                 type: "ocf::suse:SAPHana",
-                role: "Master",
+                role: "Promoted",
                 status: "running",
                 fail_count: 0
               }
@@ -344,7 +344,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             %{
               id: "rsc_SAPHana_PRD_HDB00",
               type: "ocf::suse:SAPHana",
-              role: "Master",
+              role: "Promoted",
               status: "running",
               fail_count: 0
             }

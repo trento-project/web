@@ -7,7 +7,7 @@ defmodule Trento.Clusters.ValueObjects.ClusterResourceParent do
 
   `managed` represents the maintenance state of the resource.
   `multi_state` represents the type of the group:
-    - `true` means a Master/Slave group
+    - `true` means a promotable (Promoted/Unpromoted, formerly Master/Slave) group
     - `false` means a Clone group
     - `nil` means a standard Group
   """
