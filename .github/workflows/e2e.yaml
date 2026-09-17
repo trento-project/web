@@ -65,7 +65,7 @@ jobs:
           name: terraform-state
           path: terraform/deployments/aws/hana_ha_enabled/terraform.tfstate.d
       - name: Get outputs
-        uses: dflook/terraform-output@526a6dac31329f0011ff7a3e956a9b73406439ab # v3.0.0
+        uses: dflook/terraform-output@34e195b92579cb43f2f4df0cb2fa405868a840ee # v3.0.1
         id: tf-outputs
         with:
           path: terraform/deployments/aws/hana_ha_enabled
