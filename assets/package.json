@@ -20,7 +20,7 @@
     "axios-mock-adapter": "^2.1.0",
     "babel-jest": "^30.4.1",
     "chromatic": "^16.0.0",
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "eslint": "^10.9.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
