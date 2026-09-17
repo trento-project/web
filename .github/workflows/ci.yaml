@@ -1334,4 +1334,4 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@main # v1.9.0
+    uses: trento-project/.github/.github/workflows/dependabot-auto-merge.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
