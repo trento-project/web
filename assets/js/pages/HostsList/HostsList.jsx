@@ -3,7 +3,6 @@
 
 import React, { useState } from 'react';
 
-import { useSearchParams } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { EOS_WARNING_OUTLINED } from 'eos-icons-react';
 import { uniqBy } from 'lodash';
@@ -24,6 +23,8 @@ import Tooltip from '@common/Tooltip';
 import { post, del } from '@lib/network';
 import { agentVersionWarning } from '@lib/agent';
 import { STALE_ROW } from '@lib/tables';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 
 import ClusterLink from '@pages/ClusterDetails/ClusterLink';
 import DeregistrationModal from '@pages/DeregistrationModal';
@@ -58,7 +59,7 @@ function HostsList() {
   const hostsData = useSelector(hostsListSelector);
   const { abilities, timezone } = useSelector(getUserProfile);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = usePersistentSearchParams('hosts');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [hostToDeregister, setHostToDeregister] = useState(undefined);
 
