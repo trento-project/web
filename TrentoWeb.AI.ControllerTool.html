@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="generator" content="ExDoc v0.40.4">
     <meta name="project" content="Trento Web v3.1.6">
 
 
     <title>TrentoWeb.AI.ControllerTool — Trento Web v3.1.6</title>
 
-    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+    <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-B7F5D447.js"></script>
+    <script defer src="dist/sidebar_items-2D18730F.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-Y2MUTVIN.js"></script>
+    <script defer src="dist/html-MI33G4N7.js"></script>
 
   </head>
   <body>
@@ -134,11 +134,11 @@ short-circuits (current user already present) and the rest of the
 chain runs exactly as for a real HTTP request:
 <a href="TrentoWeb.Plugs.LoadUserPlug.html"><code class="inline">TrentoWeb.Plugs.LoadUserPlug</code></a> (where wired by the controller)
 hydrates the credentials map into a <code class="inline">%Trento.Users.User{}</code>, then
-<a href="https://hexdocs.pm/bodyguard/2.4.3/Bodyguard.Plug.Authorize.html"><code class="inline">Bodyguard.Plug.Authorize</code></a> / <code class="inline">OperationsPolicyPlug</code> authorise
+<a href="https://bodyguard.hexdocs.pm/2.4.3/Bodyguard.Plug.Authorize.html"><code class="inline">Bodyguard.Plug.Authorize</code></a> / <code class="inline">OperationsPolicyPlug</code> authorise
 against the loaded user. ControllerTool itself owns no auth logic.</p><p>Args are routed by the operation's declared <code class="inline">:in</code> field
 (<code class="inline">:path</code> / <code class="inline">:query</code> / body) via <a href="Trento.AI.OpenApiToolBuilder.html"><code class="inline">Trento.AI.OpenApiToolBuilder</code></a>.
 Query-tagged args are appended to the request URL, not passed via
-<a href="https://hexdocs.pm/plug/1.20.3/Plug.Test.html#conn/3"><code class="inline">Plug.Test.conn/3</code></a>'s <code class="inline">params_or_body</code> argument — that argument is a
+<a href="https://plug.hexdocs.pm/1.20.3/Plug.Test.html#conn/3"><code class="inline">Plug.Test.conn/3</code></a>'s <code class="inline">params_or_body</code> argument — that argument is a
 single bucket routed by verb (GET → <code class="inline">query_string</code>, non-GET →
 <code class="inline">body_params</code>) and cannot carry both query and body simultaneously.
 Appending the query string to the URL is the only mechanism that
@@ -204,7 +204,7 @@ supports a non-GET endpoint with <code class="inline">:in =&gt; :query</code> pa
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> build(<a href="TrentoWeb.AI.McpRouteIndex.Entry.html#t:t/0">TrentoWeb.AI.McpRouteIndex.Entry.t</a>()) :: <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> build(<a href="TrentoWeb.AI.McpRouteIndex.Entry.html#t:t/0">TrentoWeb.AI.McpRouteIndex.Entry.t</a>()) :: <a href="https://langchain.hexdocs.pm/0.9.6/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()</pre>
 
       </div>
 
@@ -238,7 +238,7 @@ supports a non-GET endpoint with <code class="inline">:in =&gt; :query</code> pa
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.4) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

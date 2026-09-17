@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="generator" content="ExDoc v0.40.4">
     <meta name="project" content="Trento Web v3.1.6">
 
 
     <title>Trento.AI.RemoteHttpTool — Trento Web v3.1.6</title>
 
-    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+    <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-B7F5D447.js"></script>
+    <script defer src="dist/sidebar_items-2D18730F.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-Y2MUTVIN.js"></script>
+    <script defer src="dist/html-MI33G4N7.js"></script>
 
   </head>
   <body>
@@ -124,8 +124,8 @@ remote service described by its OpenAPI document.</p><p>This is the remote count
 share <a href="Trento.AI.OpenApiToolBuilder.html"><code class="inline">Trento.AI.OpenApiToolBuilder</code></a> for the transport-independent
 pieces (description, parameters_schema, arg routing, path templating,
 query encoding). Only the actual dispatch differs — <code class="inline">ControllerTool</code>
-re-enters <a href="TrentoWeb.Endpoint.html#call/2"><code class="inline">TrentoWeb.Endpoint.call/2</code></a> via <a href="https://hexdocs.pm/plug/1.20.3/Plug.Test.html"><code class="inline">Plug.Test</code></a>; this module
-performs an outbound HTTP request via <a href="https://hexdocs.pm/httpoison/3.0.0/HTTPoison.html"><code class="inline">HTTPoison</code></a>.</p><p>The JWT used to authenticate the websocket conversation is forwarded
+re-enters <a href="TrentoWeb.Endpoint.html#call/2"><code class="inline">TrentoWeb.Endpoint.call/2</code></a> via <a href="https://plug.hexdocs.pm/1.20.3/Plug.Test.html"><code class="inline">Plug.Test</code></a>; this module
+performs an outbound HTTP request via <a href="https://httpoison.hexdocs.pm/3.0.0/HTTPoison.html"><code class="inline">HTTPoison</code></a>.</p><p>The JWT used to authenticate the websocket conversation is forwarded
 to the remote service as an <code class="inline">Authorization: Bearer &lt;token&gt;</code> header.
 Remote services that share an introspection endpoint with trento web
 (e.g. wanda's <code class="inline">WandaWeb.Auth.AuthPlug</code>) authenticate the request as
@@ -201,7 +201,7 @@ through <code class="inline">tool_context.request_origin</code> is prepended at 
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> build(<a href="Trento.AI.OperationEntry.html#t:t/0">Trento.AI.OperationEntry.t</a>(), <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()) :: <a href="https://hexdocs.pm/langchain/0.9.6/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> build(<a href="Trento.AI.OperationEntry.html#t:t/0">Trento.AI.OperationEntry.t</a>(), <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()) :: <a href="https://langchain.hexdocs.pm/0.9.6/LangChain.Function.html#t:t/0">LangChain.Function.t</a>()</pre>
 
       </div>
 
@@ -239,7 +239,7 @@ through <code class="inline">tool_context.request_origin</code> is prepended at 
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.4) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

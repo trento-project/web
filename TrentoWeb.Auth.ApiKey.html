@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="generator" content="ExDoc v0.40.4">
     <meta name="project" content="Trento Web v3.1.6">
 
 
     <title>TrentoWeb.Auth.ApiKey — Trento Web v3.1.6</title>
 
-    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+    <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-B7F5D447.js"></script>
+    <script defer src="dist/sidebar_items-2D18730F.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-Y2MUTVIN.js"></script>
+    <script defer src="dist/html-MI33G4N7.js"></script>
 
   </head>
   <body>
@@ -234,8 +234,8 @@ Uses Joken as jwt base library</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> generate_and_sign(<a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:claims/0">Joken.claims</a>(), <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>()) ::
-  {:ok, <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()} | {:error, <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:error_reason/0">Joken.error_reason</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> generate_and_sign(<a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:claims/0">Joken.claims</a>(), <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>()) ::
+  {:ok, <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()} | {:error, <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:error_reason/0">Joken.error_reason</a>()}</pre>
 
       </div>
 
@@ -267,7 +267,7 @@ Uses Joken as jwt base library</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> generate_and_sign!(<a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:claims/0">Joken.claims</a>(), <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>()) :: <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> generate_and_sign!(<a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:claims/0">Joken.claims</a>(), <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>()) :: <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>()</pre>
 
       </div>
 
@@ -295,7 +295,7 @@ Uses Joken as jwt base library</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> generate_api_key!(<a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>(), <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime.t</a>() | nil) :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> generate_api_key!(<a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">map</a>(), <a href="https://elixir.hexdocs.pm/DateTime.html#t:t/0">DateTime.t</a>(), <a href="https://elixir.hexdocs.pm/DateTime.html#t:t/0">DateTime.t</a>() | nil) :: <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()</pre>
 
       </div>
 
@@ -350,8 +350,8 @@ Uses Joken as jwt base library</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> verify_and_validate(<a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  {:ok, <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()} | {:error, <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:error_reason/0">Joken.error_reason</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> verify_and_validate(<a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">term</a>()) ::
+  {:ok, <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()} | {:error, <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:error_reason/0">Joken.error_reason</a>()}</pre>
 
       </div>
 
@@ -383,8 +383,8 @@ Uses Joken as jwt base library</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> verify_and_validate!(<a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>(), <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  <a href="https://hexdocs.pm/joken/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> verify_and_validate!(<a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:bearer_token/0">Joken.bearer_token</a>(), <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:signer_arg/0">Joken.signer_arg</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">term</a>()) ::
+  <a href="https://joken.hexdocs.pm/2.7.0/Joken.html#t:claims/0">Joken.claims</a>()</pre>
 
       </div>
 
@@ -418,7 +418,7 @@ Uses Joken as jwt base library</p>
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.4) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 

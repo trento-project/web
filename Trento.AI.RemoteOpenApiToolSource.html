@@ -4,17 +4,17 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="ExDoc v0.40.3">
+    <meta name="generator" content="ExDoc v0.40.4">
     <meta name="project" content="Trento Web v3.1.6">
 
 
     <title>Trento.AI.RemoteOpenApiToolSource — Trento Web v3.1.6</title>
 
-    <link rel="stylesheet" href="dist/html-elixir-NHQLCD6Y.css" />
+    <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-B7F5D447.js"></script>
+    <script defer src="dist/sidebar_items-2D18730F.js"></script>
     <script defer src="docs_config.js"></script>
-    <script defer src="dist/html-Y2MUTVIN.js"></script>
+    <script defer src="dist/html-MI33G4N7.js"></script>
 
   </head>
   <body>
@@ -119,7 +119,7 @@ Trento Web
 
     <section id="moduledoc">
 <p><a href="Trento.AI.ToolSource.html"><code class="inline">Trento.AI.ToolSource</code></a> implementation that derives AI assistant tools
-from a remote service's OpenAPI document.</p><p>At <code class="inline">tools/1</code> time:</p><ol><li>Fetch the spec from <code class="inline">:spec_url</code> (HTTP GET, JSON response).</li><li>Decode via <a href="https://hexdocs.pm/open_api_spex/3.22.3/OpenApiSpex.OpenApi.html#from_map/1"><code class="inline">OpenApiSpex.OpenApi.from_map/1</code></a> into the struct
+from a remote service's OpenAPI document.</p><p>At <code class="inline">tools/1</code> time:</p><ol><li>Fetch the spec from <code class="inline">:spec_url</code> (HTTP GET, JSON response).</li><li>Decode via <a href="https://open-api-spex.hexdocs.pm/3.22.4/OpenApiSpex.OpenApi.html#from_map/1"><code class="inline">OpenApiSpex.OpenApi.from_map/1</code></a> into the struct
 hierarchy.</li><li>Walk every <code class="inline">(path, verb)</code> pair, keep operations whose <code class="inline">tags</code>
 include <code class="inline">&quot;MCP&quot;</code>.</li><li>Build a <a href="Trento.AI.OperationEntry.html"><code class="inline">Trento.AI.OperationEntry</code></a> per operation. <code class="inline">tool_name</code> and
 <code class="inline">display_text</code> follow the same fallback chain used locally:
@@ -128,12 +128,12 @@ include <code class="inline">&quot;MCP&quot;</code>.</li><li>Build a <a href="Tr
 <code class="inline">&lt;verb&gt;_&lt;slugified path&gt;</code> / <code class="inline">tool_name</code>.</li><li>Extract the dispatch base URL from <code class="inline">spec.servers |&gt; List.first()</code>'s
 <code class="inline">:url</code> field.</li><li>Map each entry through <a href="Trento.AI.RemoteHttpTool.html#build/2"><code class="inline">Trento.AI.RemoteHttpTool.build/2</code></a>, threading
 that base URL into the dispatcher's closure.</li></ol><h2 id="module-configuration" class="section-heading"><a href="#module-configuration" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Configuration</span></h2><pre><code class="makeup elixir" translate="no"><span class="n">config</span><span class="w"> </span><span class="ss">:trento</span><span class="p">,</span><span class="w"> </span><span class="ss">:ai</span><span class="p">,</span><span class="w">
-  </span><span class="ss">tool_sources</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="1872804831-1">[</span><span class="w">
+  </span><span class="ss">tool_sources</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="group-1">[</span><span class="w">
     </span><span class="n">...</span><span class="p">,</span><span class="w">
-    </span><span class="p" data-group-id="1872804831-2">{</span><span class="nc">Trento.AI.RemoteOpenApiToolSource</span><span class="p">,</span><span class="w">
+    </span><span class="p" data-group-id="group-2">{</span><span class="nc">Trento.AI.RemoteOpenApiToolSource</span><span class="p">,</span><span class="w">
      </span><span class="ss">name</span><span class="p">:</span><span class="w"> </span><span class="ss">:wanda</span><span class="p">,</span><span class="w">
-     </span><span class="ss">spec_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://localhost:4001/api/all/openapi&quot;</span><span class="p" data-group-id="1872804831-2">}</span><span class="w">
-  </span><span class="p" data-group-id="1872804831-1">]</span></code></pre><p>The base URL used for tool invocations comes from <code class="inline">spec.servers[0].url</code>
+     </span><span class="ss">spec_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://localhost:4001/api/all/openapi&quot;</span><span class="p" data-group-id="group-2">}</span><span class="w">
+  </span><span class="p" data-group-id="group-1">]</span></code></pre><p>The base URL used for tool invocations comes from <code class="inline">spec.servers[0].url</code>
 in the fetched OpenAPI document — the spec itself is the source of
 truth. Relative server URLs (no http/https scheme) are resolved against
 <code class="inline">tool_context.request_origin</code> at request time — see
@@ -168,7 +168,7 @@ configured sources still surface their tools.</p>
 
         <p class="built-using">
           Built using
-          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.3) for the
+          <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.40.4) for the
 
             <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
 
