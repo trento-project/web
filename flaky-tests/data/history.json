@@ -1,81 +1,5 @@
 [
   {
-    "timestamp": "2026-08-02T22:12:44Z",
-    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
-    "run_id": "30763669611",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 8
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.1029
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.1029
-      },
-      {
-        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
-        "score": 0.1029
-      },
-      {
-        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
-        "score": 0.09921
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
-        "score": 0.09921
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
-        "score": 0.09921
-      },
-      {
-        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
-        "score": 0.09921
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
-        "score": 0.02501
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.02501
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-03T19:12:50Z",
     "commit": "0a29eb0ffce24073795ce33d6c0ca8466d196750",
     "run_id": "30843375450",
@@ -5832,5 +5756,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-09-18T19:45:09Z",
+    "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
+    "run_id": "35386366005",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
