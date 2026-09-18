@@ -19,16 +19,21 @@
  * @type {Cypress.PluginConfig}
  */
 
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const cypressSplit = require('cypress-split');
-const webpack = require('@cypress/webpack-preprocessor');
+import { exec } from 'node:child_process';
+import http from 'node:http';
+import https from 'node:https';
+import { promisify } from 'node:util';
+import cypressSplit from 'cypress-split';
+import webpack from '@cypress/webpack-preprocessor';
+
+import webpackConfig from '../../webpack.config.js';
+
 const execAsync = promisify(exec);
 let heartbeatsIntervals = {};
 
 const EXEC_DEFAULT_TIMEOUT = 60000;
 
-module.exports = (on, config) => {
+export default (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
@@ -44,7 +49,7 @@ module.exports = (on, config) => {
     startAgentHeartbeat({ agents, apiKey }) {
       const url = new URL(config.baseUrl);
       const isHttps = url.protocol === 'https:';
-      const transport = isHttps ? require('https') : require('http');
+      const transport = isHttps ? https : http;
 
       const heartbeat = (agentId) => {
         transport
@@ -82,11 +87,11 @@ module.exports = (on, config) => {
     },
   });
 
-  const webpackOptions = {
-    webpackOptions: require('../../webpack.config'),
+  const preprocessorOptions = {
+    webpackOptions: webpackConfig,
     watchOptions: {},
   };
-  on('file:preprocessor', webpack(webpackOptions));
+  on('file:preprocessor', webpack(preprocessorOptions));
 
   return config;
 };
