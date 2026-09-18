@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-02T18:58:01Z",
-    "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
-    "run_id": "30761531900",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-02T22:12:44Z",
     "commit": "a9c018be65b45a589caa2d97dec53578ed25a5ca",
     "run_id": "30763669611",
@@ -5771,5 +5760,77 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-18T00:35:18Z",
+    "commit": "5e7b9d9312ad0f44d4ff4d72e7eda128170ae204",
+    "run_id": "35276356691",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 13
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1198
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1198
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1198
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1198
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1198
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1198
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.1198
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.1065
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should disable TOTP authentication and check login works without TOTP::Users TOTP authentication should disable TOTP authentication and check login works without TOTP",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting::Homepage Stale data should mark the application instances and hosts health as stale when a non clustered application instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
   }
 ]
