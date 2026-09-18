@@ -1,6 +1,7 @@
 {
   "name": "trento-e2e-tests",
   "description": "E2E testing for Trento",
+  "type": "module",
   "scripts": {
     "cypress:run": "cypress run",
     "cypress:open": "cypress open",
