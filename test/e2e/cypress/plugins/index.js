@@ -19,9 +19,14 @@
  * @type {Cypress.PluginConfig}
  */
 
+const { exec } = require('child_process');
+const { promisify } = require('util');
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
+const execAsync = promisify(exec);
 let heartbeatsIntervals = {};
+
+const EXEC_DEFAULT_TIMEOUT = 60000;
 
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
@@ -29,6 +34,9 @@ module.exports = (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
+    async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
+      return await execAsync(command, { timeout });
+    },
     searchEmailInMailpit({ subject, options }) {
       return searchEmailInMailpit(subject, options);
     },
