@@ -26,14 +26,16 @@ const webpack = require('@cypress/webpack-preprocessor');
 const execAsync = promisify(exec);
 let heartbeatsIntervals = {};
 
+const EXEC_DEFAULT_TIMEOUT = 60000;
+
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
 
   cypressSplit(on, config);
   on('task', {
-    async exec(commandString) {
-      return await execAsync(commandString);
+    async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
+      return await execAsync(command, { timeout });
     },
     searchEmailInMailpit({ subject, options }) {
       return searchEmailInMailpit(subject, options);

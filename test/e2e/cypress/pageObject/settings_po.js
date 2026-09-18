@@ -1026,10 +1026,9 @@ export const updateApiKeyExpiration = (apiKeyExpiration) =>
   );
 
 export const resetAlertingSettingsDB = () =>
-  cy.task(
-    'exec',
-    `cd ${Cypress.expose('project_root')} && mix clear_alerting_settings`
-  );
+  cy.task('exec', {
+    command: `cd ${Cypress.expose('project_root')} && mix clear_alerting_settings`,
+  });
 
 export const saveInitialAlertingSettings = () =>
   basePage.apiLogin().then(({ accessToken }) =>

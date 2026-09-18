@@ -312,9 +312,11 @@ export const loadScenario = (scenario) => {
       ? `${photofinishCommand} "${apiKey}"`
       : photofinishCommand;
     cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
-    return cy.task('exec', photofinishCommand, {
-      timeout: photofinishExecTimeout,
-    });
+    return cy.task(
+      'exec',
+      { command: photofinishCommand, timeout: photofinishExecTimeout },
+      { timeout: photofinishExecTimeout + 5000 }
+    );
   };
 
   if (Cypress.expose('web_mode') === 'dev') return runPhotofinish();
