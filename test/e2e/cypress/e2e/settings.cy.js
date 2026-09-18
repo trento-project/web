@@ -178,6 +178,7 @@ context('Settings page', () => {
     before(function () {
       settingsPage.getAlertingSettings().then((resp) => {
         if (!resp.body.enforced_from_env) {
+          // alerting settings are not enforced from env in this environment
           this.skip();
         }
       });

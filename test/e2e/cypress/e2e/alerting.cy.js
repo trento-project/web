@@ -6,6 +6,7 @@ import * as alertingPage from '../pageObject/alerting_po';
 context('Email Alerting feature', () => {
   before(function () {
     if (!Cypress.expose('ALERTING_TESTS')) {
+      // alerting tests are only run when the alerting env is available
       this.skip();
     }
     alertingPage.preloadTestData();
@@ -49,6 +50,7 @@ context('Email Alerting feature', () => {
     it('should not receive an email when alerting settings configuration is wrong and test email is requested', function () {
       // skipping the test if alerting settings cannot be changed using the API as they are enforced by env variables
       if (!Cypress.expose('ALERTING_DB_TESTS')) {
+        // alerting settings are enforced by env variables in this environment
         this.skip();
       }
 
