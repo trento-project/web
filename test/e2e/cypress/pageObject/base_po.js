@@ -312,7 +312,7 @@ export const loadScenario = (scenario) => {
       ? `${photofinishCommand} "${apiKey}"`
       : photofinishCommand;
     cy.log(`Shooting scenario "${scenario}" to: ${baseUrl}`);
-    return cy.exec(photofinishCommand, {
+    return cy.task('exec', photofinishCommand, {
       timeout: photofinishExecTimeout,
     });
   };

@@ -16,7 +16,6 @@ const calculateWandaUrl = (config) => {
 };
 
 module.exports = defineConfig({
-  allowCypressEnv: false,
   viewportWidth: 1366,
   viewportHeight: 768,
   defaultCommandTimeout: 10000,

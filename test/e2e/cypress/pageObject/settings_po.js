@@ -1026,7 +1026,8 @@ export const updateApiKeyExpiration = (apiKeyExpiration) =>
   );
 
 export const resetAlertingSettingsDB = () =>
-  cy.exec(
+  cy.task(
+    'exec',
     `cd ${Cypress.expose('project_root')} && mix clear_alerting_settings`
   );
 

@@ -19,8 +19,11 @@
  * @type {Cypress.PluginConfig}
  */
 
+const { exec } = require('child_process');
+const { promisify } = require('util');
 const cypressSplit = require('cypress-split');
 const webpack = require('@cypress/webpack-preprocessor');
+const execAsync = promisify(exec);
 let heartbeatsIntervals = {};
 
 module.exports = (on, config) => {
@@ -29,6 +32,9 @@ module.exports = (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
+    async exec(commandString) {
+      return await execAsync(commandString);
+    },
     searchEmailInMailpit({ subject, options }) {
       return searchEmailInMailpit(subject, options);
     },
