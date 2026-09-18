@@ -96,9 +96,6 @@
   "overrides": {
     "eos-icons-react": {
       "react": "$react"
-    },
-    "tailwindcss": {
-      "yaml": "^1.10.0"
     }
   },
   "scripts": {
@@ -114,6 +111,5 @@
     "pretest": "ls ../priv/static/assets/app.css || npm run tailwind:build",
     "test": "TZ=UTC jest",
     "chromatic": "npx chromatic --exit-zero-on-changes"
-  },
-  "packageManager": "npm@10.8.2"
+  }
 }
