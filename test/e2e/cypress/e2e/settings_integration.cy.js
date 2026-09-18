@@ -5,7 +5,7 @@ import * as settingsPage from '../pageObject/settings_po';
 
 describe('Alerting settings from DB', () => {
   before(function () {
-    if (!Cypress.env('ALERTING_DB_TESTS')) {
+    if (!Cypress.expose('ALERTING_DB_TESTS')) {
       this.skip();
     }
   });

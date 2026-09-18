@@ -122,7 +122,7 @@ context('Checks customization', () => {
 
   describe('Execution with customized check values', () => {
     before(function () {
-      if (Cypress.env('wanda_mode') !== 'demo') this.skip();
+      if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
     it('should run a checks execution with customized check values', () => {

@@ -5,7 +5,7 @@ export * from './base_po.js';
 import * as basePage from './base_po.js';
 
 // Test data
-const ssoType = Cypress.env('SSO_TYPE') || 'oidc';
+const ssoType = Cypress.expose('SSO_TYPE') || 'oidc';
 
 // Selectors
 const usernameInputField = 'input[autocomplete="username"]';
@@ -47,7 +47,7 @@ const _loginWithSSO = (username, password) => {
   return cy.session(args, () => {
     cy.visit('/');
     cy.get('button').contains('Login with Single Sign-on').click();
-    cy.origin(Cypress.env('idp_url'), { args }, ([username, password]) => {
+    cy.origin(Cypress.expose('idp_url'), { args }, ([username, password]) => {
       cy.get('[id="username"]').type(username);
       cy.get('[id="password"]').type(password);
       return cy.get('input').contains('Sign In').click();

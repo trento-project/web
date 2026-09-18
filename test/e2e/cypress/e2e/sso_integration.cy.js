@@ -6,7 +6,7 @@ import * as loginPage from '../pageObject/login_po';
 import * as dashboardPage from '../pageObject/dashboard_po';
 
 describe('SSO integration', () => {
-  if (!Cypress.env('SSO_INTEGRATION_TESTS')) {
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
     return;
   }
 

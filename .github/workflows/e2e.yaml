@@ -126,14 +126,14 @@ jobs:
             rabbitmq_host='${{ steps.tf-outputs.outputs.trento_server_ip }}:5672' \
             api_key='api-key'"
       - name: Cypress run
-        uses: cypress-io/github-action@c495c3ddffba403ba11be95fffb67e25203b3799 # v7.1.10
+        uses: cypress-io/github-action@09090944bd8aaa2a517cefb6e38bf1aae336b42b # v7.4.3
         env:
           CYPRESS_BASE_URL: http://${{ steps.tf-outputs.outputs.trento_server_public_ip }}
-          CYPRESS_REAL_CLUSTER_TESTS: true
         continue-on-error: true
         with:
           working-directory: test/e2e
           spec: cypress/e2e/hana_scale_up_checks.cy.js
+          expose: REAL_CLUSTER_TESTS=true
       - name: Destroy
         uses: dflook/terraform-destroy-workspace@fb0d0809a9f25427f61a9a242b68970952e2287b # v2
         continue-on-error: true

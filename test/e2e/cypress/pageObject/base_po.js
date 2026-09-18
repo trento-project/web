@@ -251,10 +251,10 @@ export const preloadTestData = ({ isDataLoadedFunc = isTestDataLoaded } = {}) =>
 
 export const loadScenario = (scenario) => {
   const [projectRoot, photofinishBinary] = [
-    Cypress.env('project_root'),
-    Cypress.env('photofinish_binary'),
+    Cypress.expose('project_root'),
+    Cypress.expose('photofinish_binary'),
   ];
-  const isTrentoProdInstance = Cypress.env('web_mode') === 'prod';
+  const isTrentoProdInstance = Cypress.expose('web_mode') === 'prod';
   const photofinishExecTimeout = isTrentoProdInstance ? 180000 : 60000;
 
   const baseUrl = Cypress.config().baseUrl;
@@ -276,7 +276,7 @@ export const loadScenario = (scenario) => {
     });
   };
 
-  if (Cypress.env('web_mode') === 'dev') return runPhotofinish();
+  if (Cypress.expose('web_mode') === 'dev') return runPhotofinish();
   else return getApiKey().then((apiKey) => runPhotofinish(apiKey));
 };
 
@@ -307,7 +307,7 @@ const isTestDataLoaded = () =>
   );
 
 export const startAgentsHeartbeat = (agents) => {
-  if (Cypress.env('web_mode') === 'dev') {
+  if (Cypress.expose('web_mode') === 'dev') {
     return cy.task('startAgentHeartbeat', { agents });
   }
 
