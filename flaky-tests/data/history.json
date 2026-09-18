@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-03T19:12:50Z",
-    "commit": "0a29eb0ffce24073795ce33d6c0ca8466d196750",
-    "run_id": "30843375450",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 43,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-03T19:14:30Z",
     "commit": "0a29eb0ffce24073795ce33d6c0ca8466d196750",
     "run_id": "30843375450",
@@ -5767,5 +5751,21 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-18T19:46:05Z",
+    "commit": "1098db2757f49b5ce65e3f22e2367759d9ef8404",
+    "run_id": "35386366005",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 38,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.02501
+      }
+    ]
   }
 ]
