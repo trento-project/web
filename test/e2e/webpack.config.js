@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-var path = require('path');
-var webpack = require('webpack');
+import path from 'node:path';
+import webpack from 'webpack';
 
-module.exports = {
+export default {
   resolve: {
     alias: {
-      '@lib': path.resolve(__dirname, '../../assets/js/lib'),
+      '@lib': path.resolve(import.meta.dirname, '../../assets/js/lib'),
     },
   },
   module: {
@@ -23,7 +23,7 @@ module.exports = {
   plugins: [
     new webpack.NormalModuleReplacementPlugin(
       /\.(png|jpe?g|gif|svg|ico)$/,
-      path.resolve(__dirname, '../../assets/mocks/fileMock.js')
+      path.resolve(import.meta.dirname, '../../assets/mocks/fileMock.js')
     ),
   ],
 };

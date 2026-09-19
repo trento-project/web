@@ -35,7 +35,7 @@ context('Clusters Overview', () => {
       after(() => clustersOverviewPage.restoreClusterName());
     });
 
-    // eslint-disable-next-line mocha/no-pending-tests
+    // wip: the expected check results are not defined yet
     describe.skip('Health status for each cluster is correct', () => {
       before(() => {
         clustersOverviewPage.apiSelectChecksForHealthyCluster();

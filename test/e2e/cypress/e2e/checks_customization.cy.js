@@ -126,6 +126,7 @@ context('Checks customization', () => {
   });
 
   describe('Execution with customized check values', () => {
+    // checks execution is only available when wanda runs in demo mode
     before(function () {
       if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
