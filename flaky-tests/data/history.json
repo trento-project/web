@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-04T19:03:35Z",
-    "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
-    "run_id": "30940001762",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-04T19:04:33Z",
     "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
     "run_id": "30940001762",
@@ -5772,6 +5756,26 @@
       {
         "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.25
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-19T19:31:08Z",
+    "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
+    "run_id": "35463835386",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 36,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.07001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.02501
       }
     ]
   }
