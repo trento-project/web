@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-04T19:35:11Z",
-    "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
-    "run_id": "30942030429",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-04T22:39:44Z",
     "commit": "6f4c56d6ffbcf2c58476ea90b37a746a26dc095d",
     "run_id": "30945541098",
@@ -5769,5 +5749,93 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-19T23:59:40Z",
+    "commit": "4ac33f472470855c0866a4955fff4ce8681a858c",
+    "run_id": "35468152025",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 25
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.2164
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.2164
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.2031
+      },
+      {
+        "name": "should create a new personal access token and grant access to guarded resources::Users Profile personal access tokens should create a new personal access token and grant access to guarded resources",
+        "score": 0.1988
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1883
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1883
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1883
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1883
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.1425
+      },
+      {
+        "name": "should enable check execution button when the correct user abilities are present::Host Details Forbidden actions Check Execution should enable check execution button when the correct user abilities are present",
+        "score": 0.05001
+      },
+      {
+        "name": "should forbid check execution when the correct user abilities are not present in both settings and details::Host Details Forbidden actions Check Execution should forbid check execution when the correct user abilities are not present in both settings and details",
+        "score": 0.05001
+      },
+      {
+        "name": "should have a link to the hosts::SAP Systems Overview Registered SAP Systems should be available in the overview Instances are the expected ones should have a link to the hosts",
+        "score": 0.05001
+      },
+      {
+        "name": "should not include deregistered host in the list::SAP system details Deregistration should not include deregistered host in the list",
+        "score": 0.05001
+      },
+      {
+        "name": "should show KVM cloud details correctly::Host Details Cloud details for this host should be displayed should show KVM cloud details correctly",
+        "score": 0.05001
+      },
+      {
+        "name": "should update number of SLES subscriptions when a host is deregistered::About page should update number of SLES subscriptions when a host is deregistered",
+        "score": 0.05001
+      },
+      {
+        "name": "should allow check selection saving::Host Details Forbidden actions Check Selection should allow check selection saving",
+        "score": 0.02501
+      },
+      {
+        "name": "should allow host clean up::Host Details Forbidden actions Clean up should allow host clean up",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid check selection saving::Host Details Forbidden actions Check Selection should forbid check selection saving",
+        "score": 0.02501
+      },
+      {
+        "name": "should forbid host clean up::Host Details Forbidden actions Clean up should forbid host clean up",
+        "score": 0.02501
+      }
+    ]
   }
 ]
