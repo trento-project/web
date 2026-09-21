@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
-import { Link, useSearchParams } from 'react-router';
+import { Link } from 'react-router';
 import { filter } from 'lodash';
 import classNames from 'classnames';
 
@@ -13,6 +13,8 @@ import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
 import Tags from '@common/Tags';
 import Table from '@common/Table';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 
 import DeregistrationModal from '@pages/DeregistrationModal';
 import HealthSummary from '@pages/HealthSummary';
@@ -30,7 +32,8 @@ function SapSystemsOverview({
   onTagRemove,
   onInstanceCleanUp,
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] =
+    usePersistentSearchParams('sapSystems');
   const [cleanUpModalOpen, setCleanUpModalOpen] = useState(false);
   const [instanceToDeregister, setInstanceToDeregister] = useState(undefined);
   const [instanceType, setInstanceType] = useState(undefined);
