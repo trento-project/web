@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { MemoryRouter } from 'react-router';
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { Link, MemoryRouter } from 'react-router';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
@@ -13,6 +14,24 @@ const renderPersistentSearchParams = ({ route = '/hosts', ...options } = {}) =>
   renderHook(() => usePersistentSearchParams('hosts', options), {
     wrapper: function Wrapper({ children }) {
       return <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>;
+    },
+  });
+
+// The hook is rendered outside the routes, so that the navigation the sidebar
+// entry triggers does not remount it, the way react router keeps a view mounted
+// when it is entered again from the view itself
+const renderPersistentSearchParamsWithSidebarEntry = ({
+  route = '/hosts',
+  ...options
+} = {}) =>
+  renderHook(() => usePersistentSearchParams('hosts', options), {
+    wrapper: function Wrapper({ children }) {
+      return (
+        <MemoryRouter initialEntries={[route]}>
+          <Link to="/hosts">Hosts</Link>
+          {children}
+        </MemoryRouter>
+      );
     },
   });
 
@@ -85,6 +104,23 @@ describe('usePersistentSearchParams', () => {
     });
 
     await waitFor(() => expect(currentSearch(view)).toBe(''));
+  });
+
+  it('should restore the stored settings when the view is entered again without being remounted', async () => {
+    const user = userEvent.setup();
+
+    const view = renderPersistentSearchParamsWithSidebarEntry({
+      route: '/hosts?health=passing',
+    });
+
+    await waitFor(() =>
+      expect(readViewSetting('hosts')).toBe('health=passing')
+    );
+
+    await user.click(screen.getByText('Hosts'));
+
+    await waitFor(() => expect(currentSearch(view)).toBe('health=passing'));
+    expect(readViewSetting('hosts')).toBe('health=passing');
   });
 
   it('should apply the default params when the view was never visited', async () => {

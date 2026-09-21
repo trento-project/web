@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router';
+import { useCallback, useEffect, useRef } from 'react';
+import { useLocation, useSearchParams } from 'react-router';
 
 import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
@@ -39,42 +39,72 @@ const usePersistentSearchParams = (viewKey, options = defaultOptions) => {
   const { transientKeys = noTransientKeys, defaultParams = noDefaultParams } =
     options;
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [urlParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
-  // The view is restored only when it is entered, while it is stored every time
-  // its params change. Both happen in the same effect, which therefore has to
-  // tell the run entering the view from the ones following it
-  const restored = useRef(false);
+  // Entering a view is a navigation, not a mount: react router keeps the view
+  // mounted when the user navigates to it from, say, the sidebar entry of the
+  // view they are already in. The params this hook itself asked for are
+  // therefore the only ones it can tell apart from the ones an entry brings in
+  const ownNavigation = useRef(false);
 
-  useEffect(() => {
-    const firstRun = !restored.current;
+  // The restored params are handed to the view during the very render the entry
+  // happens in, before the URL catches up with them
+  const entry = useRef({ locationKey: null, restoredParams: null });
 
-    restored.current = true;
+  if (entry.current.locationKey !== location.key) {
+    const firstRun = entry.current.locationKey === null;
+    const enteringView = firstRun || !ownNavigation.current;
+
+    ownNavigation.current = false;
 
     // Params found in the URL always win over the stored ones, so the view is
     // restored only when it is entered with a bare one. A view which was never
     // visited has nothing stored and falls back to its default params, while
     // one whose filters were all cleared has an empty string and keeps them
-    const enteringEmptyView = firstRun && isEmpty(searchParams);
     const paramsToRestore =
-      enteringEmptyView &&
+      enteringView &&
+      isEmpty(urlParams) &&
       (readViewSetting(viewKey) ??
         new URLSearchParams(defaultParams).toString());
 
-    if (paramsToRestore) {
-      // Storing is left to the run these params trigger, so that the bare ones
-      // this run was rendered with never reach the storage
-      setSearchParams(paramsToRestore, { replace: true });
+    entry.current = {
+      locationKey: location.key,
+      // The params are kept as they are for as long as the location lasts, so
+      // that the view is not handed a new instance on every render
+      restoredParams: paramsToRestore
+        ? new URLSearchParams(paramsToRestore)
+        : null,
+    };
+  }
+
+  const { restoredParams } = entry.current;
+  const searchParams = restoredParams ?? urlParams;
+
+  const setPersistentSearchParams = useCallback(
+    (nextInit, navigateOptions) => {
+      ownNavigation.current = true;
+
+      setSearchParams(
+        typeof nextInit === 'function'
+          ? nextInit(new URLSearchParams(searchParams))
+          : nextInit,
+        navigateOptions
+      );
+    },
+    [setSearchParams, searchParams]
+  );
+
+  useEffect(() => {
+    if (restoredParams) {
+      setPersistentSearchParams(restoredParams, { replace: true });
       return;
     }
 
-    writeViewSetting(
-      viewKey,
-      withoutTransientKeys(searchParams, transientKeys)
-    );
-  }, [searchParams]);
+    writeViewSetting(viewKey, withoutTransientKeys(urlParams, transientKeys));
+  }, [location]);
 
-  return [searchParams, setSearchParams];
+  return [searchParams, setPersistentSearchParams];
 };
 
 export default usePersistentSearchParams;

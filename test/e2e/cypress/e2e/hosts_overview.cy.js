@@ -66,6 +66,18 @@ context('Hosts Overview', () => {
       hostsOverviewPage.hostsListedAre(1);
 
       hostsOverviewPage.goNavigationMenuItem('Dashboard');
+      hostsOverviewPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      hostsOverviewPage.goNavigationMenuItem('Hosts');
+
+      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.hostsListedAre(1);
+    });
+
+    it('should preserve filters when the hosts sidebar entry is clicked from the hosts view', () => {
+      hostsOverviewPage.selectHostnameFilter(hostname);
+      cy.url().should('contain', `hostname=${hostname}`);
+      hostsOverviewPage.hostsListedAre(1);
+
       hostsOverviewPage.goNavigationMenuItem('Hosts');
 
       cy.url().should('contain', `hostname=${hostname}`);

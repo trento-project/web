@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { Link } from 'react-router';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
@@ -555,6 +556,45 @@ describe('HostsLists component', () => {
         expect(params.get('itemsPerPage')).toEqual('20');
       });
 
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr')
+      ).toHaveLength(3);
+    });
+
+    it('should keep the filters when the view is entered again from the sidebar', async () => {
+      const user = userEvent.setup();
+
+      const hosts = [].concat(
+        hostFactory.buildList(3, { health: 'critical' }),
+        hostFactory.buildList(2, { health: 'passing' })
+      );
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+
+      renderWithRouter(
+        <>
+          <Link to="/hosts">Hosts</Link>
+          {StatefulHostsList}
+        </>,
+        { route: '/hosts?health=critical' }
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('hosts')).toBe('health=critical')
+      );
+
+      await user.click(screen.getByRole('link', { name: 'Hosts' }));
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+      });
+
+      expect(readViewSetting('hosts')).toBe('health=critical');
       expect(
         screen.getByRole('table').querySelectorAll('tbody > tr')
       ).toHaveLength(3);
