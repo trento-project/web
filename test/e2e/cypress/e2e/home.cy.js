@@ -7,8 +7,62 @@ context('Homepage', () => {
   before(() => homePage.preloadTestData());
 
   beforeEach(() => {
+    cy.clearAllSessionStorage();
     homePage.visit();
     homePage.validateUrl();
+  });
+
+  describe('Persistent filters', () => {
+    it('should update the URL with filter params when a filter is selected', () => {
+      homePage.sapSystemsListedAre(3);
+
+      homePage.selectHealthFilter('critical');
+
+      cy.url().should('contain', 'health=critical');
+      homePage.sapSystemsListedAre(2);
+    });
+
+    it('should preserve filters when coming back to the home view', () => {
+      homePage.selectHealthFilter('critical');
+      homePage.sapSystemsListedAre(2);
+
+      homePage.goNavigationMenuItem('Hosts');
+      homePage.pageTitleIsCorrectlyDisplayed('Hosts');
+      homePage.goNavigationMenuItem('Dashboard');
+
+      cy.url().should('contain', 'health=critical');
+      homePage.sapSystemsListedAre(2);
+    });
+
+    it('should preserve filters when the home sidebar entry is clicked from the home view', () => {
+      homePage.selectHealthFilter('critical');
+      homePage.sapSystemsListedAre(2);
+
+      homePage.goNavigationMenuItem('Dashboard');
+
+      cy.url().should('contain', 'health=critical');
+      homePage.sapSystemsListedAre(2);
+    });
+
+    it('should preserve filters when reloading the home view', () => {
+      homePage.selectHealthFilter('critical');
+      homePage.sapSystemsListedAre(2);
+
+      homePage.visit();
+
+      cy.url().should('contain', 'health=critical');
+      homePage.sapSystemsListedAre(2);
+    });
+
+    it('should render filtered results when visiting a URL with filter params overriding previous filters', () => {
+      homePage.selectHealthFilter('critical');
+      homePage.sapSystemsListedAre(2);
+
+      homePage.visit('health=warning');
+
+      cy.url().should('contain', 'health=warning');
+      homePage.sapSystemsListedAre(1);
+    });
   });
 
   describe('Stale data', () => {

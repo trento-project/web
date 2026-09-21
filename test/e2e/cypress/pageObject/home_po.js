@@ -20,8 +20,20 @@ const sapSystemNwp = {
 // Selectors
 const nwpSystemCell = `td:contains("${sapSystemNwp.sid}")`;
 const nwpSystemRow = `tr:has(td:contains("${sapSystemNwp.sid}"))`;
+const sidCells = 'tbody td:first-child a';
+const healthBox = (health) => `[data-testid^="health-box-${health}"]`;
+
+// UI Interactions
+
+export const visit = (params) => basePage.visit('/', params);
+
+export const selectHealthFilter = (health) => cy.get(healthBox(health)).click();
 
 // Validations
+
+export const sapSystemsListedAre = (amount) =>
+  cy.get(sidCells).should('have.length', amount);
+
 const nwpSystemHealthIconIsMarkedStale = (name) => {
   cy.get(nwpSystemRow).findByRole('img', { name }).as('healthIcon');
   return basePage.healthIconIsMarkedStale('@healthIcon');

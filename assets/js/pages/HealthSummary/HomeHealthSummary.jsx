@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
 import classNames from 'classnames';
 
@@ -11,10 +11,13 @@ import Table from '@common/Table';
 import HealthIcon from '@common/HealthIcon';
 import PageHeader from '@common/PageHeader';
 
-import useQueryStringValues from '@hooks/useQueryStringValues';
+import { changeSearchParams } from '@lib/searchParams';
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
 import HealthSummary from '@pages/HealthSummary';
 
 import { getCounters, isMostRelevantPrio } from './summarySelection';
+
+const HEALTH_PARAM = 'health';
 
 const healthSummaryTableConfig = {
   usePadding: false,
@@ -155,50 +158,30 @@ const healthSummaryTableConfig = {
 };
 
 function HomeHealthSummary({ sapSystemsHealth, loading, userTimezone }) {
-  const {
-    extractedParams: { health: healthFilters = [] },
-    setQueryValues,
-  } = useQueryStringValues(['health']);
+  const [searchParams, setSearchParams] =
+    usePersistentSearchParams('dashboard');
 
-  const [counters, setCounters] = useState({
-    warning: 0,
-    critical: 0,
-    passing: 0,
-  });
+  const healthFilters = searchParams.getAll(HEALTH_PARAM);
 
-  const [summaryData, setSummaryData] = useState([]);
-  const [activeFilters, setActiveFilters] = useState({});
+  const counters = getCounters(sapSystemsHealth);
 
-  useEffect(() => {
-    setCounters(getCounters(sapSystemsHealth));
-    setSummaryData(sapSystemsHealth);
-  }, [sapSystemsHealth]);
+  const activeFilters = healthFilters.reduce(
+    (acc, curr) => ({ ...acc, [curr]: true }),
+    {}
+  );
 
-  useEffect(() => {
-    setActiveFilters(
-      healthFilters.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
-    );
-    if (healthFilters.length === 0) {
-      setSummaryData(sapSystemsHealth);
-      return;
-    }
-    setSummaryData(
-      sapSystemsHealth.filter((e) => {
-        let result = false;
-
-        healthFilters.forEach((f) => {
-          result = result || isMostRelevantPrio(e, f);
-        });
-        return result;
-      })
-    );
-  }, [healthFilters]);
+  const summaryData =
+    healthFilters.length === 0
+      ? sapSystemsHealth
+      : sapSystemsHealth.filter((entry) =>
+          healthFilters.some((filter) => isMostRelevantPrio(entry, filter))
+        );
 
   const onFiltersChange = (filterValue) => {
     const newFilters = healthFilters.includes(filterValue)
       ? healthFilters.filter((f) => f !== filterValue)
       : [...healthFilters, filterValue];
-    setQueryValues({ health: newFilters });
+    setSearchParams(changeSearchParams({ [HEALTH_PARAM]: newFilters }));
   };
 
   const normalizedSummaryData = summaryData.map((summaryDataEntry) => ({
