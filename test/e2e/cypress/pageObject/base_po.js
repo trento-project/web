@@ -44,8 +44,8 @@ export const addTagButtons = 'span span:contains("Add Tag")';
 const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.username}")`;
 
 // UI Interactions
-export const visit = (url = '/', params) =>
-  cy.visit([url, params].filter(Boolean).join('?'));
+export const visit = (url = '/', params = '', options = {}) =>
+  cy.visit([url, params].filter(Boolean).join('?'), options);
 
 export const goBack = () => cy.go('back');
 

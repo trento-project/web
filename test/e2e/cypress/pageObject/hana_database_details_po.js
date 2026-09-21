@@ -46,7 +46,7 @@ export const visitDatabase = () =>
   basePage.visit(`${url}/${selectedDatabase.Id}`);
 
 export const visitNonExistentDatabase = () =>
-  cy.visit(`${url}/other`, { failOnStatusCode: false });
+  basePage.visit(`${url}/other`, '', { failOnStatusCode: false });
 
 // Validations
 export const validatePageUrl = () =>
