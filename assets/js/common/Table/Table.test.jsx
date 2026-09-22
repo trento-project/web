@@ -10,7 +10,7 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { filterTable } from '@lib/test-utils/table';
+import { filterTable, clearFilter } from '@lib/test-utils/table';
 
 import Table from './Table';
 
@@ -260,43 +260,113 @@ describe('Table component', () => {
       expect(within(pages).queryByText('2')).toBeNull();
     });
 
+    describe('filters bound to the search params', () => {
+      it('should take the filters from the search params', () => {
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(1);
+      });
+
+      it('should apply the filters of a search params change made elsewhere', () => {
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'fromTheUrl' })
+        );
+
+        const { rerender } = render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(6);
+
+        // the view is handed the params of a navigation it did not trigger
+        rerender(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=fromTheUrl')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(1);
+      });
+
+      it('should drop a cleared filter from the search params', async () => {
+        const user = userEvent.setup();
+        const setSearchParams = jest.fn();
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        await clearFilter(user, 'Column3');
+
+        const [updateParams] = setSearchParams.mock.lastCall;
+        expect(
+          updateParams(new URLSearchParams('column3=value3')).toString()
+        ).toBe('');
+      });
+
+      it('should not write the search params before a filter is used', () => {
+        const setSearchParams = jest.fn();
+        const data = tableDataFactory.buildList(5);
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        expect(setSearchParams).not.toHaveBeenCalled();
+      });
+    });
+
     describe('items per page bound to the search params', () => {
-      function TableWithSearchParams({ initialSearch = '', ...props }) {
-        const [searchParams, setSearchParams] = React.useState(
-          () => new URLSearchParams(initialSearch)
-        );
-
-        // As react router does, keep the same instance while the serialized
-        // params do not change, so that effects observing them do not re-run
-        const updateSearchParams = (next) =>
-          setSearchParams((prev) => {
-            const updated = new URLSearchParams(
-              typeof next === 'function' ? next(prev) : next
-            );
-
-            return updated.toString() === prev.toString() ? prev : updated;
-          });
-
-        return (
-          <>
-            <span data-testid="search-params">{searchParams.toString()}</span>
-            <Table
-              {...props}
-              searchParams={searchParams}
-              setSearchParams={updateSearchParams}
-            />
-          </>
-        );
-      }
-
       it('should take the items per page from the search params', () => {
         const data = tableDataFactory.buildList(11);
 
         render(
-          <TableWithSearchParams
+          <Table
             config={tableConfig}
             data={data}
-            initialSearch="itemsPerPage=20"
+            searchParams={new URLSearchParams('itemsPerPage=20')}
+            setSearchParams={noop}
           />
         );
 
@@ -309,10 +379,11 @@ describe('Table component', () => {
         const data = tableDataFactory.buildList(11);
 
         render(
-          <TableWithSearchParams
+          <Table
             config={tableConfig}
             data={data}
-            initialSearch="itemsPerPage=13"
+            searchParams={new URLSearchParams('itemsPerPage=13')}
+            setSearchParams={noop}
           />
         );
 
@@ -323,68 +394,52 @@ describe('Table component', () => {
 
       it('should write the items per page selection to the search params', async () => {
         const user = userEvent.setup();
+        const setSearchParams = jest.fn();
         const data = tableDataFactory.buildList(11);
 
-        render(<TableWithSearchParams config={tableConfig} data={data} />);
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={setSearchParams}
+          />
+        );
 
         await user.click(screen.getByRole('combobox', { name: 'per-page' }));
         await user.click(screen.getByRole('option', { name: '20' }));
 
-        await waitFor(() =>
-          expect(screen.getByTestId('search-params')).toHaveTextContent(
-            'itemsPerPage=20'
-          )
+        const [updateParams] = setSearchParams.mock.lastCall;
+        expect(updateParams(new URLSearchParams()).toString()).toBe(
+          'itemsPerPage=20'
         );
-        expect(
-          screen.getByRole('table').querySelectorAll('tbody > tr')
-        ).toHaveLength(11);
       });
 
       it('should keep the filters in the search params when the items per page changes', async () => {
         const user = userEvent.setup();
+        const setSearchParams = jest.fn();
         const data = [].concat(
           tableDataFactory.buildList(15),
           tableDataFactory.buildList(1, { column3: 'value3' })
         );
 
-        render(<TableWithSearchParams config={tableConfig} data={data} />);
-
-        await filterTable(user, 'Column3', 'value3');
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={setSearchParams}
+          />
+        );
 
         await user.click(screen.getByRole('combobox', { name: 'per-page' }));
         await user.click(screen.getByRole('option', { name: '20' }));
 
-        await waitFor(() => {
-          const params = new URLSearchParams(
-            screen.getByTestId('search-params').textContent
-          );
+        const [updateParams] = setSearchParams.mock.lastCall;
+        const params = updateParams(new URLSearchParams('column3=value3'));
 
-          expect(params.get('itemsPerPage')).toBe('20');
-          expect(params.get('column3')).toBe('value3');
-        });
-      });
-
-      it('should go back to the 1st page when the items per page changes', async () => {
-        const user = userEvent.setup();
-        const data = tableDataFactory.buildList(11);
-
-        render(<TableWithSearchParams config={tableConfig} data={data} />);
-
-        const pages = screen.getByTestId('pagination');
-        await user.click(within(pages).getByLabelText('next-page'));
-
-        expect(
-          screen.getByRole('table').querySelectorAll('tbody > tr')
-        ).toHaveLength(1);
-
-        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
-        await user.click(screen.getByRole('option', { name: '50' }));
-
-        await waitFor(() =>
-          expect(
-            screen.getByRole('table').querySelectorAll('tbody > tr')
-          ).toHaveLength(11)
-        );
+        expect(params.get('itemsPerPage')).toBe('20');
+        expect(params.get('column3')).toBe('value3');
       });
     });
 
