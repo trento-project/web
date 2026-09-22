@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-07T18:49:00Z",
-    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
-    "run_id": "31206992810",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-07T22:23:59Z",
     "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
     "run_id": "31210654618",
@@ -5839,6 +5823,22 @@
       {
         "name": "should show saptune unsupported status::Host Details Saptune Summary for this host should be displayed should show saptune unsupported status",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-22T20:21:29Z",
+    "commit": "67e6af0fa5f97f990aca8e185ada6a18c3cac591",
+    "run_id": "35778095686",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 42,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
