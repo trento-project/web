@@ -323,7 +323,10 @@ context('HANA cluster details', () => {
       if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });
 
-    beforeEach(() => hanaClusterDetailsPage.visitAvailableHanaCluster());
+    beforeEach(() => {
+      cy.clearAllSessionStorage();
+      hanaClusterDetailsPage.visitAvailableHanaCluster();
+    });
 
     it('should include the checks catalog in the checks results once enabled', () => {
       hanaClusterDetailsPage.interceptGetChecks();

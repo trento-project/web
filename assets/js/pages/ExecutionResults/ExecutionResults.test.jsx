@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { act, screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { faker } from '@faker-js/faker';
 import { renderWithRouter } from '@lib/test-utils';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
+import { filterTable } from '@lib/test-utils/table';
 import {
   catalogFactory,
   catalogCheckFactory,
@@ -132,6 +134,11 @@ const prepareStateData = (checkExecutionStatus) => {
 };
 
 describe('ExecutionResults', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   it('should render ExecutionResults with successfully fetched results', async () => {
     const clusterName = 'test-cluster';
     const {
@@ -331,7 +338,54 @@ describe('ExecutionResults', () => {
     expect(screen.queryByText(checkID2)).toBeNull();
   });
 
-  it("should render ExecutionResults with saved 'passing' filter", async () => {
+  it("should restore the stored 'passing' filter when landing on a bare url", async () => {
+    const {
+      clusterID,
+      clusterHosts,
+      checks: [checkID1, checkID2],
+      loading,
+      catalog,
+      error,
+      executionLoading,
+      executionData,
+      executionError,
+      executionStarted,
+    } = prepareStateData('passing');
+
+    writeViewSetting('checksResults', 'health=passing');
+
+    renderWithRouter(
+      <ExecutionResults
+        targetID={clusterID}
+        targetName="test-cluster"
+        targetType="cluster"
+        target={{
+          provider: 'azure',
+          type: 'hana_scale_up',
+        }}
+        targetHosts={clusterHosts}
+        catalogLoading={loading}
+        catalog={catalog}
+        executionStarted={executionStarted}
+        catalogError={error}
+        executionLoading={executionLoading}
+        executionData={executionData}
+        executionError={executionError}
+      />,
+      { route: `/clusters/${clusterID}/executions/last` }
+    );
+
+    await waitFor(() =>
+      expect(window.location.search).toEqual('?health=passing')
+    );
+
+    expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.queryByText(checkID2)).toBeNull();
+  });
+
+  it('should store the selected filter', async () => {
+    const user = userEvent.setup();
+
     const {
       clusterID,
       clusterHosts,
@@ -362,16 +416,19 @@ describe('ExecutionResults', () => {
         executionLoading={executionLoading}
         executionData={executionData}
         executionError={executionError}
-        savedFilters={['passing']}
-      />
+      />,
+      { route: `/clusters/${clusterID}/executions/last` }
     );
 
-    expect(screen.getAllByText('test-cluster')).toHaveLength(2);
-    expect(screen.getByText('HANA Scale Up')).toBeTruthy();
-    expect(screen.getByText('Azure')).toBeTruthy();
-    expect(screen.getByText(clusterHosts[0].hostname)).toBeTruthy();
-    expect(screen.getByText(clusterHosts[1].hostname)).toBeTruthy();
     expect(screen.getAllByText(checkID1)).toHaveLength(1);
+    expect(screen.getAllByText(checkID2)).toHaveLength(1);
+
+    await filterTable(user, 'checks result', 'passing');
+
+    await waitFor(() =>
+      expect(readViewSetting('checksResults')).toEqual('health=passing')
+    );
+
     expect(screen.queryByText(checkID2)).toBeNull();
   });
 

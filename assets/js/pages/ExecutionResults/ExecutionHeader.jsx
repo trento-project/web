@@ -5,9 +5,9 @@ import React from 'react';
 import classNames from 'classnames';
 
 import Banner from '@common/Banners';
+import Filter from '@common/Filter';
 
 import { UNKNOWN_PROVIDER } from '@lib/model';
-import ChecksResultFilters from '@pages/ExecutionResults/ChecksResultFilters';
 
 import { isTargetCluster } from './checksUtils';
 import BackToTargetDetails from './BackToTargetDetails';
@@ -29,9 +29,8 @@ function ExecutionHeader({
   targetName,
   targetType,
   target,
-  savedFilters,
+  selectedResults = [],
   onFilterChange = () => {},
-  onFilterSave = () => {},
 }) {
   const targetCluster = isTargetCluster(targetType);
   return (
@@ -48,11 +47,14 @@ function ExecutionHeader({
             {targetName}
           </span>
         </h1>
-        <ChecksResultFilters
-          savedFilters={savedFilters}
-          onChange={onFilterChange}
-          onSave={onFilterSave}
-        />
+        <div className="flex">
+          <Filter
+            title="checks result"
+            options={['passing', 'warning', 'critical', 'unknown']}
+            value={selectedResults}
+            onChange={onFilterChange}
+          />
+        </div>
       </div>
       {targetCluster && clusterBanner[target.provider]}
       <TargetInfoBox targetType={targetType} target={target} />

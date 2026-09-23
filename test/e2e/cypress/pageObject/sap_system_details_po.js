@@ -50,7 +50,7 @@ export const visit = () => {
   return cy.wait('@hostsEndpoint');
 };
 export const visitNonExistentSapSystem = () =>
-  basePage.visit('/sap_systems/other', { failOnStatusCode: false });
+  basePage.visit('/sap_systems/other', '', { failOnStatusCode: false });
 
 // UI Validations
 

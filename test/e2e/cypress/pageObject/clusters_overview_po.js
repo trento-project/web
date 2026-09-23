@@ -45,7 +45,7 @@ const tableRows = 'tbody tr';
 const rowCells = 'td';
 const hanaCluster1Row = `tr:contains("${hanaCluster1.name}")`;
 
-export const visit = () => basePage.visit(url);
+export const visit = (params) => basePage.visit(url, params);
 
 export const validateUrl = () => basePage.validateUrl(url);
 
@@ -56,6 +56,9 @@ export const waitForClustersEndpoint = () =>
   basePage.waitForRequest(clustersEndpointAlias);
 
 // UI Interactions
+
+export const selectNameFilter = (clusterName) =>
+  basePage.selectFilter('Name', clusterName);
 
 export const setClusterTags = () =>
   cy
@@ -85,6 +88,9 @@ export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
 
 export const allRegisteredClustersAreDisplayed = () =>
   cy.get(clusterNames).should('have.length', availableClusters.length);
+
+export const clustersListedAre = (amount) =>
+  cy.get(clusterNames).should('have.length', amount);
 
 export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');

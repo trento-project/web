@@ -13,6 +13,7 @@ import {
 } from '@lib/test-utils/factories';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
 import { renderWithRouter, withState } from '@lib/test-utils';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import {
   ASCS_ERS,
@@ -44,6 +45,11 @@ const cleanInitialState = {
 };
 
 describe('ClustersList component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('tags operations', () => {
     it('should disable tag creation and deletion if the user abilities are not compatible', async () => {
       const state = {
@@ -252,6 +258,107 @@ describe('ClustersList component', () => {
         expect(window.location.search).toEqual(
           `?health=${health}&name=${name}&sid=${sid}&type=${type}&tags=${tag}`
         )
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: [].concat(
+            clusterFactory.buildList(3, { health: 'critical' }),
+            clusterFactory.buildList(2, { health: 'passing' })
+          ),
+        },
+      };
+
+      writeViewSetting('clusters', 'health=critical&itemsPerPage=20');
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+      renderWithRouter(StatefulClustersList, { route: '/clusters' });
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr')
+      ).toHaveLength(3);
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: [].concat(
+            clusterFactory.buildList(3, { health: 'critical' }),
+            clusterFactory.buildList(2, { health: 'passing' })
+          ),
+        },
+      };
+
+      writeViewSetting('clusters', 'health=critical');
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+      renderWithRouter(StatefulClustersList, {
+        route: '/clusters?health=passing',
+      });
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(2)
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('clusters')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: [].concat(
+            clusterFactory.buildList(3, { health: 'critical' }),
+            clusterFactory.buildList(2, { health: 'passing' })
+          ),
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+      renderWithRouter(StatefulClustersList, { route: '/clusters' });
+
+      await filterTable(user, 'Health', 'critical');
+
+      await waitFor(() =>
+        expect(readViewSetting('clusters')).toEqual('health=critical')
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+
+      const state = {
+        ...cleanInitialState,
+        clustersList: {
+          clusters: clusterFactory.buildList(3),
+        },
+      };
+
+      const [StatefulClustersList] = withState(<ClustersList />, state);
+      renderWithRouter(StatefulClustersList, { route: '/clusters' });
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('clusters')).toEqual('itemsPerPage=50')
       );
     });
   });

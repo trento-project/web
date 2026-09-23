@@ -44,7 +44,8 @@ export const addTagButtons = 'span span:contains("Add Tag")';
 const usernameMenu = `span[class="flex items-center"]:contains("${plainUser.username}")`;
 
 // UI Interactions
-export const visit = (url = '/') => cy.visit(url);
+export const visit = (url = '/', params = '', options = {}) =>
+  cy.visit([url, params].filter(Boolean).join('?'), options);
 
 export const goBack = () => cy.go('back');
 
@@ -123,8 +124,25 @@ export const selectFromDropdown = (selector, choice) => {
     .click();
 };
 
+export const selectFilter = (filterTitle, option) => {
+  const filterButton = `[data-testid="filter-${filterTitle}"]`;
+
+  selectFromDropdown(filterButton, option);
+  // Filters keep the options list open after a selection
+  return cy.get(filterButton).click();
+};
+
 export const getSelectControlValue = (ariaLabel) =>
   `div:has(> ${ariaLabel}) [class$="-singleValue"]`;
+
+// Every paginated list renders the same items per page selection
+const itemsPerPageButton = getSelectControlValue('[aria-label="per-page"]');
+
+export const selectItemsPerPage = (amount) =>
+  selectFromDropdown(itemsPerPageButton, `${amount}`);
+
+export const selectedItemsPerPageIs = (amount) =>
+  cy.get(itemsPerPageButton).should('have.text', `${amount}`);
 
 export const clickOutside = () => cy.get('body').click();
 

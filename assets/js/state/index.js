@@ -8,7 +8,6 @@ import sapSystemsHealthSummaryReducer from './healthSummary';
 import hostsListReducer from './hosts';
 import clustersListReducer from './clusters';
 import checksSelectionReducer from './checksSelection';
-import checksResultsFiltersReducer from './checksResultsFilters';
 import sapSystemListReducer from './sapSystems';
 import databasesListReducer from './databases';
 import catalogReducer from './catalog';
@@ -33,7 +32,6 @@ export const createStore = (router, preloadedState) => {
       hostsList: hostsListReducer,
       clustersList: clustersListReducer,
       checksSelection: checksSelectionReducer,
-      checksResultsFilters: checksResultsFiltersReducer,
       sapSystemsList: sapSystemListReducer,
       databasesList: databasesListReducer,
       catalog: catalogReducer,
