@@ -8,14 +8,23 @@
 import { uniq } from 'lodash';
 import { pipe, map, reduce, defaultTo, omit, filter } from 'lodash/fp';
 
+import { ITEMS_PER_PAGE_PARAM } from '@common/Table';
+
 const omitUndefined = (obj) =>
   Object.fromEntries(
     Object.entries(obj).filter(([_, v]) => typeof v !== 'undefined')
   );
 
-const paginationFields = ['after', 'before', 'first', 'last'];
+const paginationFields = [
+  'after',
+  'before',
+  'first',
+  'last',
+  ITEMS_PER_PAGE_PARAM,
+];
 const scalarKeys = [...paginationFields, 'search'];
-const ignoreKeys = ['refreshRate'];
+// ignoredKeys are not used in the API call
+const ignoreKeys = ['refreshRate', ITEMS_PER_PAGE_PARAM];
 
 const searchParamsToEntries = (searchParams) =>
   pipe(Array.from, uniq, (keys) =>
@@ -136,10 +145,10 @@ export const setFilterValueToSearchParams = (
   )(searchParams);
 
 export const getItemsPerPageFromSearchParams = (searchParams) =>
-  Number(searchParams.get('first') || searchParams.get('last'));
+  Number(searchParams.get(ITEMS_PER_PAGE_PARAM));
 
 export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
-  searchParams.set('first', itemsPerPage);
+  searchParams.set(ITEMS_PER_PAGE_PARAM, itemsPerPage);
 
   return searchParams;
 };
