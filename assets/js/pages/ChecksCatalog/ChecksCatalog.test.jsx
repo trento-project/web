@@ -32,10 +32,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     const mockUpdateCatalog = jest.fn();
 
     render(
-      <ChecksCatalog
-        filteredCatalog={catalogData}
-        updateCatalog={mockUpdateCatalog}
-      />
+      <ChecksCatalog catalog={catalogData} updateCatalog={mockUpdateCatalog} />
     );
 
     const groups = screen.getAllByRole('list');
@@ -63,7 +60,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={jest.fn()}
       />
     );
@@ -96,7 +93,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />
     );
@@ -179,7 +176,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />
     );
@@ -242,7 +239,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />,
       { route: '/catalog?targetType=host&architecture=x86_64' }
@@ -271,7 +268,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />,
       { route: '/catalog' }
@@ -306,7 +303,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={catalogCheckFactory.buildList(2)}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />,
       { route: '/catalog?provider=azure' }
@@ -333,10 +330,9 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     writeViewSetting('checksCatalog', 'provider=aws');
 
-    render(
-      <ChecksCatalog filteredCatalog={[]} updateCatalog={mockUpdateCatalog} />,
-      { route: '/catalog' }
-    );
+    render(<ChecksCatalog catalog={[]} updateCatalog={mockUpdateCatalog} />, {
+      route: '/catalog',
+    });
 
     await user.click(screen.getByRole('button', { name: 'Reset filters' }));
 
@@ -349,7 +345,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
 
     render(
       <ChecksCatalog
-        filteredCatalog={[]}
+        catalog={[]}
         catalogError="Something went wrong"
         updateCatalog={mockUpdateCatalog}
       />,
