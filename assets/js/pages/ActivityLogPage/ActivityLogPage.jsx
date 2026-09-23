@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { useSearchParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import {
   EOS_REFRESH,
@@ -37,6 +36,9 @@ import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
 import NotificationBox from '@common/NotificationBox';
 import Tooltip from '@common/Tooltip';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
 import {
   applyItemsPerPage,
   setFilterValueToSearchParams,
@@ -56,6 +58,17 @@ import {
 } from './autorefresh';
 
 const defaultItemsPerPage = 20;
+const defaultSeverities = ['info', 'warning', 'critical'];
+
+// The filters land in the url as repeated params, hence the entries form
+const defaultParams = defaultSeverities.map((severity) => [
+  'severity',
+  severity,
+]);
+
+// Next values are not persisted
+const transientKeys = ['after', 'before', 'search'];
+
 const detectItemsPerPage = (number) =>
   defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
 const changeItemsPerPage = (searchParams) => (items) => {
@@ -73,6 +86,7 @@ const changeItemsPerPage = (searchParams) => (items) => {
   }
   return { first: items };
 };
+
 const applyDefaultItemsPerPage = (params) =>
   'first' in params || 'last' in params
     ? params
@@ -187,7 +201,12 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = usePersistentSearchParams(
+    'activityLog',
+    { transientKeys, defaultParams }
+  );
+  // Store serialized version to check for changes in the useEffect
+  const currentSearchParams = searchParams.toString();
   const [activityLogRequest, setActivityLogRequest] = useState(
     request.initial()
   );
@@ -299,7 +318,7 @@ function ActivityLogPage() {
   const keepAutorefreshRate = (currentRate) => (params) =>
     currentRate ? addRefreshRateToSearchParams(params, currentRate) : params;
 
-  useEffect(() => fetchActivityLog(), [searchParams]);
+  useEffect(() => fetchActivityLog(), [currentSearchParams]);
 
   useEffect(() => {
     if (!isFirstPage) return noop;
@@ -326,7 +345,7 @@ function ActivityLogPage() {
             className="grid-rows-2"
             filters={filters}
             autoApply={false}
-            resetValue={{ severity: ['info', 'warning', 'critical'] }}
+            resetValue={{ severity: defaultSeverities }}
             value={searchParamsToFilterValue(searchParams)}
             onChange={pipe(
               setFilterValueToSearchParams,
