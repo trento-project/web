@@ -4,6 +4,7 @@
 import { hostFactory } from '@lib/test-utils/factories/hosts';
 import { relevantPatchFactory } from '@lib/test-utils/factories/relevantPatches';
 import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
@@ -35,6 +36,13 @@ export default {
       control: { type: 'text' },
     },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   render: (args) => (
     <ContainerWrapper>
       <HostRelevantPatchesPage {...args} />

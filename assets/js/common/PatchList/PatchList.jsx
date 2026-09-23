@@ -65,7 +65,13 @@ const iconFromAdvisoryType = (
   }
 };
 
-export default function PatchList({ patches, timezone, onNavigate = noop }) {
+export default function PatchList({
+  patches,
+  timezone,
+  searchParams,
+  setSearchParams,
+  onNavigate = noop,
+}) {
   const [sortingColumn, setSortingColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
 
@@ -155,6 +161,8 @@ export default function PatchList({ patches, timezone, onNavigate = noop }) {
       className="pt-2"
       config={patchListConfig}
       data={patches}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
       sortBy={columnToSortingFunc[sortingColumn]}
     />
   );
