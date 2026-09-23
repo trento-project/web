@@ -6,6 +6,7 @@ import * as settingsPage from '../pageObject/settings_po';
 describe('Alerting settings from DB', () => {
   before(function () {
     if (!Cypress.expose('ALERTING_DB_TESTS')) {
+      // alerting settings cannot be changed through the API in this environment
       this.skip();
     }
   });

@@ -319,6 +319,7 @@ context('HANA cluster details', () => {
     const CHECK_PACEMAKER = 'Pacemaker';
     const CHECK_SBD = 'SBD';
 
+    // checks results are only available when wanda runs in demo mode
     before(function () {
       if (Cypress.expose('wanda_mode') !== 'demo') this.skip();
     });

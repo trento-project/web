@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-const { defineConfig } = require('cypress');
+import { defineConfig } from 'cypress';
+
+import setupPlugins from './cypress/plugins/index.js';
 
 const DEMO = 'demo';
 const DEV = 'dev';
@@ -15,7 +17,7 @@ const calculateWandaUrl = (config) => {
     : `${config.baseUrl}/wanda`;
 };
 
-module.exports = defineConfig({
+export default defineConfig({
   viewportWidth: 1366,
   viewportHeight: 768,
   defaultCommandTimeout: 10000,
@@ -38,7 +40,7 @@ module.exports = defineConfig({
     // You may want to clean this up later by importing these.
     async setupNodeEvents(on, config) {
       config.expose.wandaUrl = calculateWandaUrl(config);
-      return require('./cypress/plugins/index.js')(on, config);
+      return setupPlugins(on, config);
     },
     testIsolation: false,
     baseUrl: 'http://localhost:4000',
