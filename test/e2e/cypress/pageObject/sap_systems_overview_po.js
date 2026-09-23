@@ -101,9 +101,13 @@ const getNwdDatabaseInstanceRow = (index) =>
 
 // UI Interactions
 export const visit = (params) => {
+  // wait for both SAP systems and databases as the view needs information
+  // from both endpoints
   cy.intercept('/api/v1/sap_systems').as('sapSystemsRequest');
+  cy.intercept('/api/v1/databases').as('databasesRequest');
   basePage.visit(url, params);
-  return basePage.waitForRequest('sapSystemsRequest', { timeout: 10000 });
+  basePage.waitForRequest('sapSystemsRequest', { timeout: 10000 });
+  return basePage.waitForRequest('databasesRequest', { timeout: 10000 });
 };
 
 export const selectSidFilter = (sid) => basePage.selectFilter('SID', sid);
