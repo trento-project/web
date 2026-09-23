@@ -69,12 +69,7 @@ const targetTypeOptionRenderer = createOptionRenderer(
   )
 );
 
-function ChecksCatalog({
-  filteredCatalog,
-  catalogError,
-  loading,
-  updateCatalog,
-}) {
+function ChecksCatalog({ catalog, catalogError, loading, updateCatalog }) {
   const [searchParams, setSearchParams] =
     usePersistentSearchParams('checksCatalog');
   // Store serialized version to check for changes in the useEffect
@@ -191,12 +186,12 @@ function ChecksCatalog({
         onClear={() => setSearchParams({})}
         onRefresh={() => updateCatalog(selectedFilters)}
         withResetFilters
-        empty={filteredCatalog.length === 0}
+        empty={catalog.length === 0}
         catalogError={catalogError}
         loading={loading}
       >
         <div>
-          {Object.entries(groupBy(filteredCatalog, 'group')).map(
+          {Object.entries(groupBy(catalog, 'group')).map(
             ([group, checks], index) => (
               <ul key={group}>
                 <Accordion

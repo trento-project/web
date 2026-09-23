@@ -5,7 +5,6 @@ import catalogReducer, {
   setCatalogLoading,
   setCatalogData,
   setCatalogError,
-  setFilteredCatalog,
 } from './catalog';
 
 describe('Catalog reducer', () => {
@@ -27,7 +26,6 @@ describe('Catalog reducer', () => {
     const initialState = {
       loading: true,
       data: [],
-      filteredCatalog: [],
     };
 
     [[1, 2, 3], []].forEach((data) => {
@@ -36,30 +34,6 @@ describe('Catalog reducer', () => {
       const expectedState = {
         loading: false,
         data,
-        filteredCatalog: data,
-        error: null,
-      };
-
-      const actual = catalogReducer(initialState, action);
-
-      expect(actual).toEqual(expectedState);
-    });
-  });
-
-  it('should set filtered catalog', () => {
-    const initialState = {
-      loading: true,
-      data: [1, 2, 3, 4, 5],
-      filteredCatalog: [1, 2, 3, 4, 5],
-    };
-
-    [[1, 2, 3], [2, 5], []].forEach((filteredCatalog) => {
-      const action = setFilteredCatalog({ data: filteredCatalog });
-
-      const expectedState = {
-        loading: false,
-        data: initialState.data,
-        filteredCatalog,
         error: null,
       };
 
@@ -73,7 +47,6 @@ describe('Catalog reducer', () => {
     const initialState = {
       loading: true,
       data: [1, 2, 3],
-      filteredCatalog: [2, 3],
       error: null,
     };
 
@@ -84,7 +57,6 @@ describe('Catalog reducer', () => {
     const expectedState = {
       loading: false,
       data: [],
-      filteredCatalog: [],
       error,
     };
 

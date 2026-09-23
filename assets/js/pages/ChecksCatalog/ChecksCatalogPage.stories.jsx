@@ -14,7 +14,7 @@ const catalogData = catalogCheckFactory.buildList(10);
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
-    filteredCatalog: catalogData,
+    data: catalogData,
     error: null,
     loading: false,
   },
@@ -42,8 +42,8 @@ export default {
     },
   ],
   argTypes: {
-    filteredCatalog: {
-      description: 'The filteredCatalog prop',
+    catalog: {
+      description: 'Catalog checks',
       control: { type: 'object' },
     },
     catalogError: {
@@ -63,7 +63,7 @@ export default {
 
 export const Default = {
   args: {
-    filteredCatalog: catalogData,
+    catalog: catalogData,
     catalogError: null,
     loading: false,
     updateCatalog: action('updateCatalog'),

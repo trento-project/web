@@ -9,7 +9,6 @@ describe('Catalog selector', () => {
       catalog: {
         loading: false,
         data: [1, 2, 3],
-        filteredCatalog: [1, 2],
         error: null,
       },
     };
@@ -17,7 +16,6 @@ describe('Catalog selector', () => {
     const expectedState = {
       loading: false,
       data: [1, 2, 3],
-      filteredCatalog: [1, 2],
       error: null,
     };
 

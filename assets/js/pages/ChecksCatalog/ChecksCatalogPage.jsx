@@ -18,14 +18,14 @@ function ChecksCatalogPage() {
   const dispatch = useDispatch();
 
   const {
-    filteredCatalog,
+    data: catalog,
     error: catalogError,
     loading,
   } = useSelector(getCatalog);
 
   return (
     <ChecksCatalog
-      filteredCatalog={filteredCatalog}
+      catalog={catalog}
       catalogError={catalogError}
       loading={loading}
       updateCatalog={({
@@ -47,7 +47,6 @@ function ChecksCatalogPage() {
               },
               isSomeFilter
             ),
-            filteredCatalog: true,
           })
         )
       }
