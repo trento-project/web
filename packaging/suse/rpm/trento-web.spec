@@ -29,8 +29,6 @@ Source2:        package-lock.json
 Source3:        node_modules.spec.inc
 %include        %{_sourcedir}/node_modules.spec.inc
 Group:          System/Monitoring
-BuildRequires:  elixir-hex
-BuildRequires:  erlang-rebar3
 BuildRequires:  gcc
 BuildRequires:  git-core
 BuildRequires:  local-npm-registry
@@ -38,13 +36,15 @@ BuildRequires:  make
 BuildRequires:  npm >= 20
 
 %if !0%{?is_opensuse} && 0%{?suse_version} < 1600
-BuildRequires:  erlang26
-BuildConflicts: erlang27
-BuildConflicts: erlang27-providers
-BuildRequires:  elixir115
-BuildConflicts: elixir119
+BuildRequires:  erlang27
+BuildRequires:  erlang27-epmd
+BuildRequires:  erlang27-rebar3
+BuildRequires:  elixir119
+BuildRequires:  elixir119-hex
 %else
-BuildRequires:  elixir >= 1.15
+BuildRequires:  elixir
+BuildRequires:  elixir-hex
+BuildRequires:  erlang-rebar3
 %endif
 
 %description
