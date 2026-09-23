@@ -39,6 +39,10 @@ const hddDatabase = {
 
 // Selectors
 
+const url = '/databases';
+
+const sidLinks = `tbody a[href*="${url}/"]`;
+
 const hdqDatabaseCell = `tr:contains("${hdqDatabase.sid}")`;
 const hdqDatabaseRowCollapsibleCell = `${hdqDatabaseCell} > td:eq(0)`;
 
@@ -69,9 +73,21 @@ const getHddDatabaseInstanceRow = (index) =>
     index + 1
   })`;
 
-export const visit = () => basePage.visit('/databases');
+export const visit = (params) => {
+  cy.intercept('/api/v1/databases').as('databasesRequest');
+  basePage.visit(url, params);
+  return basePage.waitForRequest('databasesRequest', { timeout: 10000 });
+};
+
+export const selectSidFilter = (sid) => basePage.selectFilter('SID', sid);
 
 // UI Validations
+
+export const databasesListedAre = (amount) =>
+  cy.get(sidLinks).should('have.length', amount);
+
+export const databaseIsDisplayed = (sid) =>
+  cy.get(`td:contains("${sid}")`).should('be.visible');
 
 export const hdqDatabaseIsNotDisplayed = () =>
   cy.get(hdqDatabaseCell).should('not.exist');

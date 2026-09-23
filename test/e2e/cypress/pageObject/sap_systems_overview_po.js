@@ -87,6 +87,7 @@ const systemToRemoveCollapsibleCell = `${sapSystemsTableRows}:eq(0) td:first-chi
 const nwdSystemCell = `tr:contains("${sapSystemNwd.sid}")`;
 const nwdSystemRowCollapsibleCell = `tr:contains('${sapSystemNwd.sid}') > td:eq(0)`;
 const pageTitle = 'h1:contains("SAP Systems")';
+const sidLinks = `tbody a[href*="${url}/"]`;
 
 const getNwdApplicationInstanceRow = (index) =>
   `${nwdSystemCell} + tr div[class="table-row-group"]:eq(0) div[class*="table-row border-b"]:nth-child(${
@@ -99,11 +100,17 @@ const getNwdDatabaseInstanceRow = (index) =>
   })`;
 
 // UI Interactions
-export const visit = () => {
+export const visit = (params) => {
+  // wait for both SAP systems and databases as the view needs information
+  // from both endpoints
+  cy.intercept('/api/v1/sap_systems').as('sapSystemsRequest');
   cy.intercept('/api/v1/databases').as('databasesRequest');
-  basePage.visit(url);
+  basePage.visit(url, params);
+  basePage.waitForRequest('sapSystemsRequest', { timeout: 10000 });
   return basePage.waitForRequest('databasesRequest', { timeout: 10000 });
 };
+
+export const selectSidFilter = (sid) => basePage.selectFilter('SID', sid);
 
 export const tagSapSystems = () =>
   cy
@@ -148,6 +155,9 @@ export const nwdInstance01CleanUpButtonIsNotVisible = () =>
   cy.get(nwdInstance01CleanUpButton).should('not.exist');
 
 export const validateUrl = (_url = url) => basePage.validateUrl(_url);
+
+export const sapSystemsListedAre = (amount) =>
+  cy.get(sidLinks).should('have.length', amount);
 
 export const systemApplicationLayerRowsAreTheExpected = (amount) =>
   cy.get(firstSystemApplicationLayerRows).should('have.length', amount);

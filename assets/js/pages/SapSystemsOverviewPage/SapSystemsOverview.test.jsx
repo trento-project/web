@@ -17,12 +17,18 @@ import {
 import { renderWithRouter } from '@lib/test-utils';
 import { APPLICATION_TYPE, DATABASE_TYPE } from '@lib/model/sapSystems';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import SapSystemsOverview from './SapSystemsOverview';
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('SapSystemsOverviews component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('overview content', () => {
     it('should display the correct number of SAP systems', () => {
       const sapSystemCount = 3;
@@ -551,6 +557,111 @@ describe('SapSystemsOverviews component', () => {
         expect(window.location.search).toEqual(
           `?health=${health}&sid=${sid}&tags=${tags[0].value}`
         )
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('sapSystems', 'health=critical&itemsPerPage=20');
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+      ).toHaveLength(3);
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('sapSystems', 'health=critical');
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems?health=passing' }
+      );
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+        ).toHaveLength(2)
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      const sapSystems = [].concat(
+        sapSystemFactory.buildList(3, { health: 'critical' }),
+        sapSystemFactory.buildList(2, { health: 'passing' })
+      );
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystems}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await filterTable(user, 'Health', 'critical');
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('health=critical')
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <SapSystemsOverview
+          userAbilities={userAbilities}
+          sapSystems={sapSystemFactory.buildList(3)}
+          applicationInstances={[]}
+          databaseInstances={[]}
+        />,
+        { route: '/sap_systems' }
+      );
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('sapSystems')).toEqual('itemsPerPage=50')
       );
     });
   });

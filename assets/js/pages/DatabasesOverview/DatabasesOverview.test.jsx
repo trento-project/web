@@ -14,12 +14,18 @@ import {
 } from '@lib/test-utils/factories';
 import { renderWithRouter } from '@lib/test-utils';
 import { filterTable, clearFilter } from '@lib/test-utils/table';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import DatabasesOverview from './DatabasesOverview';
 
 const userAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('DatabasesOverview component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('overview content', () => {
     it('should display stale databases with gray background and stale icon', async () => {
       const user = userEvent.setup();
@@ -267,6 +273,107 @@ describe('DatabasesOverview component', () => {
         expect(window.location.search).toEqual(
           `?health=${health}&sid=${sid}&tags=${tags[0].value}`
         )
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const databases = [].concat(
+        databaseFactory.buildList(3, { health: 'critical' }),
+        databaseFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('databases', 'health=critical&itemsPerPage=20');
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+        />,
+        { route: '/databases' }
+      );
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+      ).toHaveLength(3);
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const databases = [].concat(
+        databaseFactory.buildList(3, { health: 'critical' }),
+        databaseFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('databases', 'health=critical');
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+        />,
+        { route: '/databases?health=passing' }
+      );
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr:not([hidden])')
+        ).toHaveLength(2)
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('databases')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      const databases = [].concat(
+        databaseFactory.buildList(3, { health: 'critical' }),
+        databaseFactory.buildList(2, { health: 'passing' })
+      );
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databases}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+        />,
+        { route: '/databases' }
+      );
+
+      await filterTable(user, 'Health', 'critical');
+
+      await waitFor(() =>
+        expect(readViewSetting('databases')).toEqual('health=critical')
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <DatabasesOverview
+          databases={databaseFactory.buildList(3)}
+          databaseInstances={[]}
+          userAbilities={userAbilities}
+        />,
+        { route: '/databases' }
+      );
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('databases')).toEqual('itemsPerPage=50')
       );
     });
   });

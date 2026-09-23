@@ -3,11 +3,13 @@
 
 import React from 'react';
 import { faker } from '@faker-js/faker';
-import { screen, fireEvent, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
 import { renderWithRouter } from '@lib/test-utils';
 import { healthSummaryFactory } from '@lib/test-utils/factories';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import HomeHealthSummary from './HomeHealthSummary';
 
@@ -56,6 +58,11 @@ const homeHealthSummaryData = [
 ];
 
 describe('HomeHealthSummary component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   it('should have a clickable SAP INSTANCE icon with link to the belonging instance', () => {
     const { container } = renderWithRouter(
       <HomeHealthSummary
@@ -158,6 +165,8 @@ describe('HomeHealthSummary component', () => {
 
   describe('health box filter behaviour', () => {
     it('should put the filters values in the query string when health filters are selected', async () => {
+      const user = userEvent.setup();
+
       const { container } = renderWithRouter(
         <HomeHealthSummary
           sapSystemsHealth={homeHealthSummaryData}
@@ -173,8 +182,8 @@ describe('HomeHealthSummary component', () => {
         ['critical', 5],
       ];
 
-      cases.forEach(([health, results]) => {
-        fireEvent.click(
+      for (const [health, results] of cases) {
+        await user.click(
           screen.getByTestId(`health-box-${health}-not-selected`)
         );
 
@@ -184,19 +193,82 @@ describe('HomeHealthSummary component', () => {
 
         expect(window.location.search).toEqual(`?health=${health}`);
 
-        fireEvent.click(screen.getByTestId(`health-box-${health}-selected`));
-      });
+        await user.click(screen.getByTestId(`health-box-${health}-selected`));
+      }
 
       expect(window.location.search).toEqual('');
 
-      cases.forEach(([health]) => {
-        fireEvent.click(
+      for (const [health] of cases) {
+        await user.click(
           screen.getByTestId(`health-box-${health}-not-selected`)
         );
-      });
+      }
 
       expect(window.location.search).toEqual(
         '?health=passing&health=warning&health=critical'
+      );
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      writeViewSetting('dashboard', 'health=passing');
+
+      const { container } = renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />
+      );
+
+      await waitFor(() =>
+        expect(window.location.search).toEqual('?health=passing')
+      );
+
+      expect(container.querySelector('tbody').childNodes.length).toEqual(1);
+      expect(
+        screen.getByTestId('health-box-passing-selected')
+      ).toBeInTheDocument();
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      writeViewSetting('dashboard', 'health=critical');
+
+      const { container } = renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />,
+        { route: '/?health=passing' }
+      );
+
+      expect(container.querySelector('tbody').childNodes.length).toEqual(1);
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HomeHealthSummary
+          sapSystemsHealth={homeHealthSummaryData}
+          loading={false}
+        />
+      );
+
+      await user.click(screen.getByTestId('health-box-passing-not-selected'));
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual('health=passing')
+      );
+
+      await user.click(screen.getByTestId('health-box-warning-not-selected'));
+
+      await waitFor(() =>
+        expect(readViewSetting('dashboard')).toEqual(
+          'health=passing&health=warning'
+        )
       );
     });
   });

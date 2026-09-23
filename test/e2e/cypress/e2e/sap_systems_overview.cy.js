@@ -6,7 +6,10 @@ import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 context('SAP Systems Overview', () => {
   before(() => sapSystemsOverviewPage.preloadTestData());
 
-  beforeEach(() => sapSystemsOverviewPage.visit());
+  beforeEach(() => {
+    cy.clearAllSessionStorage();
+    sapSystemsOverviewPage.visit();
+  });
 
   it('should have expected url', () => {
     sapSystemsOverviewPage.validateUrl();
@@ -66,6 +69,71 @@ context('SAP Systems Overview', () => {
       it('should discover a JAVA system', () => {
         sapSystemsOverviewPage.javaSystemIsDiscoveredCorrectly();
       });
+    });
+  });
+
+  describe('Persistent filters', () => {
+    const sid = 'NWP';
+    const anotherSid = 'NWQ';
+
+    it('should update the URL with filter params when a filter is selected', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when coming back to sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.goNavigationMenuItem('Dashboard');
+      sapSystemsOverviewPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      sapSystemsOverviewPage.goNavigationMenuItem('SAP Systems');
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when the sap systems sidebar entry is clicked from the sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.goNavigationMenuItem('SAP Systems');
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve filters when reloading sap systems view', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.visit();
+
+      cy.url().should('contain', `sid=${sid}`);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+    });
+
+    it('should preserve the selected items per page when reloading sap systems view', () => {
+      sapSystemsOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'itemsPerPage=20');
+
+      sapSystemsOverviewPage.visit();
+
+      cy.url().should('contain', 'itemsPerPage=20');
+      sapSystemsOverviewPage.selectedItemsPerPageIs(20);
+    });
+
+    it('should render filtered results when visiting a URL with filter params overriding previous filters', () => {
+      sapSystemsOverviewPage.selectSidFilter(sid);
+      sapSystemsOverviewPage.sapSystemsListedAre(1);
+
+      sapSystemsOverviewPage.visit(`sid=${anotherSid}`);
+
+      cy.url().should('contain', `sid=${anotherSid}`);
+      sapSystemsOverviewPage.nwqSystemIsDisplayed();
+      sapSystemsOverviewPage.nwpSystemIsNotDisplayed();
     });
   });
 

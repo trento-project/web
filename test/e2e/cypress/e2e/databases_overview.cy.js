@@ -11,12 +11,80 @@ context('Databases Overview', () => {
   });
 
   beforeEach(() => {
+    cy.clearAllSessionStorage();
     databasesOverviewPage.restoreHdqDatabasePrimaryInstance();
+  });
+
+  describe('Persistent filters', () => {
+    const sid = databasesOverviewPage.hdqDatabase.sid;
+    const anotherSid = 'HDP';
+
+    beforeEach(() => databasesOverviewPage.visit());
+
+    it('should update the URL with filter params when a filter is selected', () => {
+      databasesOverviewPage.selectSidFilter(sid);
+
+      cy.url().should('contain', `sid=${sid}`);
+      databasesOverviewPage.databasesListedAre(1);
+    });
+
+    it('should preserve filters when coming back to databases view', () => {
+      databasesOverviewPage.selectSidFilter(sid);
+      databasesOverviewPage.databasesListedAre(1);
+
+      databasesOverviewPage.goNavigationMenuItem('Dashboard');
+      databasesOverviewPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      databasesOverviewPage.goNavigationMenuItem('HANA Databases');
+
+      cy.url().should('contain', `sid=${sid}`);
+      databasesOverviewPage.databasesListedAre(1);
+    });
+
+    it('should preserve filters when the databases sidebar entry is clicked from the databases view', () => {
+      databasesOverviewPage.selectSidFilter(sid);
+      databasesOverviewPage.databasesListedAre(1);
+
+      databasesOverviewPage.goNavigationMenuItem('HANA Databases');
+
+      cy.url().should('contain', `sid=${sid}`);
+      databasesOverviewPage.databasesListedAre(1);
+    });
+
+    it('should preserve filters when reloading databases view', () => {
+      databasesOverviewPage.selectSidFilter(sid);
+      databasesOverviewPage.databasesListedAre(1);
+
+      databasesOverviewPage.visit();
+
+      cy.url().should('contain', `sid=${sid}`);
+      databasesOverviewPage.databasesListedAre(1);
+    });
+
+    it('should preserve the selected items per page when reloading databases view', () => {
+      databasesOverviewPage.selectItemsPerPage(20);
+      cy.url().should('contain', 'itemsPerPage=20');
+
+      databasesOverviewPage.visit();
+
+      cy.url().should('contain', 'itemsPerPage=20');
+      databasesOverviewPage.selectedItemsPerPageIs(20);
+    });
+
+    it('should render filtered results when visiting a URL with filter params overriding previous filters', () => {
+      databasesOverviewPage.selectSidFilter(sid);
+      databasesOverviewPage.databasesListedAre(1);
+
+      databasesOverviewPage.visit(`sid=${anotherSid}`);
+
+      cy.url().should('contain', `sid=${anotherSid}`);
+      databasesOverviewPage.databaseIsDisplayed(anotherSid);
+      databasesOverviewPage.hdqDatabaseIsNotDisplayed();
+    });
   });
 
   describe('Deregistration', () => {
     beforeEach(() => {
-      databasesOverviewPage.refresh();
+      databasesOverviewPage.visit();
       databasesOverviewPage.expandHdqDatabaseRow();
     });
 
