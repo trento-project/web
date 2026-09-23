@@ -42,10 +42,6 @@ export default {
   title: 'Layouts/ChecksCatalog',
   component: ChecksCatalog,
   argTypes: {
-    completeCatalog: {
-      control: { type: 'object' },
-      description: 'The whole Catalog content',
-    },
     filteredCatalog: {
       control: { type: 'object' },
       description: 'The filtered Catalog content',
@@ -79,7 +75,6 @@ export default {
 
 export const Default = {
   args: {
-    completeCatalog: catalogData,
     filteredCatalog: catalogData,
     loading: false,
     catalogError: '',

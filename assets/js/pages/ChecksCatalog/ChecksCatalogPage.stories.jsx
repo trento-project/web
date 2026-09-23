@@ -5,6 +5,7 @@ import { catalogCheckFactory } from '@lib/test-utils/factories';
 import { configureStore, createSlice } from '@reduxjs/toolkit';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
 import ChecksCatalogPage from './ChecksCatalogPage';
@@ -13,8 +14,7 @@ const catalogData = catalogCheckFactory.buildList(10);
 const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
-    data: catalogData,
-    filteredCatalog: false,
+    filteredCatalog: catalogData,
     error: null,
     loading: false,
   },
@@ -34,19 +34,17 @@ export default {
 
       return (
         <Provider store={mockStore}>
-          <Story />
+          <MemoryRouter>
+            <Story />
+          </MemoryRouter>
         </Provider>
       );
     },
   ],
   argTypes: {
-    completeCatalog: {
-      description: 'The completeCatalog prop',
-      control: { type: 'object' },
-    },
     filteredCatalog: {
       description: 'The filteredCatalog prop',
-      control: { type: 'boolean' },
+      control: { type: 'object' },
     },
     catalogError: {
       description: 'The catalogError prop',
@@ -65,8 +63,7 @@ export default {
 
 export const Default = {
   args: {
-    completeCatalog: catalogData,
-    filteredCatalog: false,
+    filteredCatalog: catalogData,
     catalogError: null,
     loading: false,
     updateCatalog: action('updateCatalog'),
