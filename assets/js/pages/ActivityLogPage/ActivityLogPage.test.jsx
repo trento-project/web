@@ -226,7 +226,7 @@ describe('ActivityLogPage', () => {
     const onGetSpy = jest.spyOn(networkClient, 'get');
     axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
 
-    writeViewSetting('activityLog', 'severity=critical&first=50');
+    writeViewSetting('activityLog', 'severity=critical&itemsPerPage=50');
 
     const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
 
@@ -238,7 +238,9 @@ describe('ActivityLogPage', () => {
       const params = new URLSearchParams(window.location.search);
 
       expect(params.getAll('severity')).toEqual(['critical']);
-      expect(params.get('first')).toEqual('50');
+      expect(params.get('itemsPerPage')).toEqual('50');
+      expect(params.has('first')).toBe(false);
+      expect(params.has('last')).toBe(false);
     });
 
     expect(onGetSpy).toHaveBeenLastCalledWith(
@@ -246,7 +248,7 @@ describe('ActivityLogPage', () => {
       expect.objectContaining({
         params: expect.objectContaining({
           severity: ['critical'],
-          first: '50',
+          first: 50,
         }),
       })
     );
@@ -326,8 +328,32 @@ describe('ActivityLogPage', () => {
 
     await waitFor(() =>
       expect(
-        new URLSearchParams(readViewSetting('activityLog')).get('first')
+        new URLSearchParams(readViewSetting('activityLog')).get('itemsPerPage')
       ).toEqual('50')
     );
+  });
+
+  it('should persist the items per page value', async () => {
+    const user = userEvent.setup();
+    axiosMock.onGet('/api/v1/activity_log').reply(200, {
+      data: [],
+      pagination: { has_next_page: true, end_cursor: 'some-cursor' },
+    });
+
+    const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
+
+    await act(() =>
+      renderWithRouter(StatefulActivityLogPage, { route: '/activity_log' })
+    );
+
+    await user.click(screen.getByRole('button', { name: 'next-page' }));
+
+    await waitFor(() => {
+      const stored = new URLSearchParams(readViewSetting('activityLog'));
+
+      expect(stored.has('first')).toBe(false);
+      expect(stored.has('after')).toBe(false);
+      expect(stored.get('itemsPerPage')).toEqual('20');
+    });
   });
 });

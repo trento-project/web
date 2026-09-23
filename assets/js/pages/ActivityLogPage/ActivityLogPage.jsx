@@ -31,6 +31,7 @@ import ComposedFilter from '@common/ComposedFilter';
 import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 import Spinner from '@common/Spinner';
 import Select, { createOptionRenderer } from '@common/Select';
+import { ITEMS_PER_PAGE_PARAM } from '@common/Table';
 
 import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
@@ -67,7 +68,7 @@ const defaultParams = defaultSeverities.map((severity) => [
 ]);
 
 // Next values are not persisted
-const transientKeys = ['after', 'before', 'search'];
+const transientKeys = ['after', 'before', 'first', 'last', 'search'];
 
 const detectItemsPerPage = (number) =>
   defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
@@ -76,27 +77,30 @@ const changeItemsPerPage = (searchParams) => (items) => {
     return {
       first: items,
       after: searchParams.get('after'),
+      [ITEMS_PER_PAGE_PARAM]: items,
     };
   }
   if (searchParams.has('before')) {
     return {
       last: items,
       before: searchParams.get('before'),
+      [ITEMS_PER_PAGE_PARAM]: items,
     };
   }
-  return { first: items };
+  return { [ITEMS_PER_PAGE_PARAM]: items };
 };
 
-const applyDefaultItemsPerPage = (params) =>
+const applyItemsPerPageToAPIParams = (itemsPerPage) => (params) =>
   'first' in params || 'last' in params
     ? params
-    : { first: defaultItemsPerPage, ...params };
+    : { first: itemsPerPage, ...params };
 
-const activityLogRequestClient = pipe(
-  searchParamsToAPIParams,
-  applyDefaultItemsPerPage,
-  getActivityLog
-);
+const activityLogRequestClient = (itemsPerPage) =>
+  pipe(
+    searchParamsToAPIParams,
+    applyItemsPerPageToAPIParams(itemsPerPage),
+    getActivityLog
+  );
 
 function MainView({
   request: { status, response },
@@ -148,16 +152,24 @@ function MainView({
               return {
                 last: itemsPerPage,
                 before: pagination?.start_cursor,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
               };
             case 'next':
               return {
                 first: itemsPerPage,
                 after: pagination?.end_cursor,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
               };
             case 'first':
-              return { first: itemsPerPage };
+              return {
+                first: itemsPerPage,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
+              };
             case 'last':
-              return { last: itemsPerPage };
+              return {
+                last: itemsPerPage,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
+              };
             default:
               return {};
           }
@@ -299,7 +311,7 @@ function ActivityLogPage() {
   const fetchActivityLog = () => {
     // defer the loading state to avoid flickering
     const tid = setTimeout(() => setActivityLogRequest(request.loading()), 500);
-    activityLogRequestClient(searchParams)
+    activityLogRequestClient(itemsPerPage)(searchParams)
       .then(
         pipe(
           ({ data }) => ({

@@ -48,7 +48,7 @@ context('Activity Log page', () => {
       activityLogPage.selectFilterTypeOption('User Created');
       activityLogPage.clickApplyFiltersButton();
       activityLogPage.validateUrl(
-        `/activity_log?${defaultSeverity}&type=user_creation&first=20`
+        `/activity_log?${defaultSeverity}&type=user_creation&itemsPerPage=20`
       );
 
       const queryString = `?search=foo+bar&from_date=custom&from_date=${fromDate}&to_date=custom&to_date=${toDate}&type=login_attempt&type=resource_tagging`;
@@ -89,7 +89,7 @@ context('Activity Log page', () => {
       const toDateQueryString =
         activityLogPage.formatEncodedDateForQueryString(toDate);
 
-      const expectedUrl = `/activity_log?${defaultSeverity}&from_date=custom&from_date=${fromDateQueryString}&to_date=custom&to_date=${toDateQueryString}&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&from_date=custom&from_date=${fromDateQueryString}&to_date=custom&to_date=${toDateQueryString}&type=login_attempt&type=resource_tagging&search=foo+bar&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -124,7 +124,7 @@ context('Activity Log page', () => {
       activityLogPage.pageTitleIsCorrectlyDisplayed('At a glance');
       activityLogPage.clickActivityLogNavigationItem();
 
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -138,7 +138,7 @@ context('Activity Log page', () => {
       // initial load and change of filters
       activityLogPage.activityLogEndpointIsCalledTimes(2);
 
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
   });
@@ -151,7 +151,7 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(`/activity_log?${defaultSeverity}`);
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&${defaultSeverity}`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -166,7 +166,7 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&type=sles_subscriptions_updated&search=x86_64&severity=debug`;
+        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&type=sles_subscriptions_updated&search=x86_64&severity=debug`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -175,7 +175,7 @@ context('Activity Log page', () => {
       activityLogPage.visit(`?${defaultSeverity}`);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
-        let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
+        let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&${defaultSeverity}`;
         activityLogPage.clickNextPageButton();
         activityLogPage.waitForActivityLogRequest();
         activityLogPage.validateUrl(expectedUrl);
@@ -190,7 +190,7 @@ context('Activity Log page', () => {
         'have.text',
         'Login Attempt'
       );
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -203,7 +203,7 @@ context('Activity Log page', () => {
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&from_date=custom&from_date=${fromDate}`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -254,7 +254,8 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickFirstPageButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = '/activity_log?first=20&type=host_registered';
+      const expectedUrl =
+        '/activity_log?first=20&itemsPerPage=20&type=host_registered';
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -264,7 +265,8 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickLastPageButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = '/activity_log?last=20&type=host_registered';
+      const expectedUrl =
+        '/activity_log?last=20&itemsPerPage=20&type=host_registered';
       activityLogPage.validateUrl(expectedUrl);
     });
   });
@@ -317,7 +319,7 @@ context('Activity Log page', () => {
       activityLogPage.clickResetFiltersButton();
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue('10s');
-      const expectedUrl = `/activity_log?${defaultSeverity}&first=20&refreshRate=10000`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&itemsPerPage=20&refreshRate=10000`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -365,7 +367,7 @@ context('Activity Log page', () => {
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
   });
