@@ -2,17 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { noop } from 'lodash';
 import { faker } from '@faker-js/faker';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import { renderWithRouter as render } from '@lib/test-utils';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import UpgradablePackages from './UpgradablePackages';
 
 describe('UpgradablePackages', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   it('shows all packages by default', () => {
     const packages = upgradablePackageFactory.buildList(8);
 
@@ -42,6 +48,64 @@ describe('UpgradablePackages', () => {
     const tableRows = container.querySelectorAll('tbody > tr');
 
     expect(tableRows.length).toBe(1);
+  });
+
+  it('should restore the stored items per page when landing on a bare url', async () => {
+    const packages = upgradablePackageFactory.buildList(15);
+
+    writeViewSetting('hostUpgradablePackages', 'itemsPerPage=20');
+
+    const { container } = render(
+      <UpgradablePackages upgradablePackages={packages} />,
+      { route: '/hosts/host1/packages' }
+    );
+
+    await waitFor(() => {
+      const params = new URLSearchParams(window.location.search);
+
+      expect(params.get('itemsPerPage')).toEqual('20');
+    });
+
+    expect(container.querySelectorAll('tbody > tr')).toHaveLength(15);
+  });
+
+  it('should let the items per page in the url win over the stored one', async () => {
+    const packages = upgradablePackageFactory.buildList(15);
+
+    writeViewSetting('hostUpgradablePackages', 'itemsPerPage=50');
+
+    const { container } = render(
+      <UpgradablePackages upgradablePackages={packages} />,
+      { route: '/hosts/host1/packages?itemsPerPage=10' }
+    );
+
+    await waitFor(() =>
+      expect(container.querySelectorAll('tbody > tr')).toHaveLength(10)
+    );
+
+    await waitFor(() =>
+      expect(readViewSetting('hostUpgradablePackages')).toEqual(
+        'itemsPerPage=10'
+      )
+    );
+  });
+
+  it('should store the selected items per page', async () => {
+    const user = userEvent.setup();
+    const packages = upgradablePackageFactory.buildList(15);
+
+    render(<UpgradablePackages upgradablePackages={packages} />, {
+      route: '/hosts/host1/packages',
+    });
+
+    await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+    await user.click(screen.getByRole('option', { name: '50' }));
+
+    await waitFor(() =>
+      expect(readViewSetting('hostUpgradablePackages')).toEqual(
+        'itemsPerPage=50'
+      )
+    );
   });
 });
 
