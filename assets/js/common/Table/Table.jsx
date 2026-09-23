@@ -6,12 +6,19 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 
 import { page, pages } from '@lib/lists';
-import Pagination, { PageStats } from '@common/Pagination';
-import { TableFilters, createFilter } from './filters';
+import { changeSearchParams } from '@lib/searchParams';
+import Pagination, {
+  PageStats,
+  defaultItemsPerPage,
+  defaultItemsPerPageOptions,
+} from '@common/Pagination';
+import { TableFilters } from './filters';
 import { defaultRowKey } from './defaultRowKey';
 import SortingIcon from './SortingIcon';
 import EmptyState from './EmptyState';
 import CollapsibleTableRow from './CollapsibleTableRow';
+
+export const ITEMS_PER_PAGE_PARAM = 'itemsPerPage';
 
 const defaultCellRender = (content) => (
   <p className="whitespace-no-wrap">{content}</p>
@@ -65,7 +72,10 @@ const getFilterFunction = (column, value) =>
 const getRowClassName = (rowClassName, item) =>
   typeof rowClassName === 'function' ? rowClassName(item) : rowClassName;
 
-const itemsPerPageOptions = [10, 20, 50, 75, 100];
+const detectItemsPerPage = (value) =>
+  defaultItemsPerPageOptions.includes(Number(value))
+    ? Number(value)
+    : defaultItemsPerPage;
 
 function Table({
   className,
@@ -92,83 +102,73 @@ function Table({
     onPageChange = noop,
   } = config;
 
-  const [filters, setFilters] = useState([]);
+  const [localFilters, setLocalFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentItemsPerPage, setCurrentItemsPerPage] = useState(
-    itemsPerPageOptions[0]
-  );
+  const [localItemsPerPage, setLocalItemsPerPage] =
+    useState(defaultItemsPerPage);
 
   const searchParamsEnabled = Boolean(searchParams && setSearchParams);
 
-  const columnFiltersBoundToParams = columns.filter(
-    (c) => c.filter && c.filterFromParams
-  );
+  // When the table is bound to the search params, the items per page selection
+  // lives in the URL, so that it can be persisted and shared
+  const itemsPerPageBoundToParams = searchParamsEnabled && Boolean(pagination);
 
-  const hasFilters = columns.filter(({ filter }) => Boolean(filter)).length > 0;
+  const currentItemsPerPage = itemsPerPageBoundToParams
+    ? detectItemsPerPage(searchParams.get(ITEMS_PER_PAGE_PARAM))
+    : localItemsPerPage;
 
-  useEffect(() => {
-    if (!searchParamsEnabled) return;
-    const filtersBoundToQs = filters.reduce((acc, curr) => {
-      const isFilterBoundToQs = columnFiltersBoundToParams.find(
-        (col) => col.key === curr.key
-      );
+  const changeItemsPerPage = (perPage) => {
+    setCurrentPage(1);
 
-      if (!isFilterBoundToQs) return [...acc];
-
-      return [...acc, { key: curr.key, value: curr.value }];
-    }, []);
-
-    setSearchParams(
-      (prev) => updateSearchParams(new URLSearchParams(prev), filtersBoundToQs),
-      { replace: true }
-    );
-  }, [filters]);
-
-  useEffect(() => {
-    if (!searchParamsEnabled) return;
-
-    const filterFromQs = columnFiltersBoundToParams.reduce((acc, curr) => {
-      const paramsFilterValue = searchParams.getAll(curr.key);
-
-      if (paramsFilterValue.length === 0) return [...acc];
-
-      const filterFunction = getFilterFunction(curr, paramsFilterValue);
-
-      return [
-        ...acc,
-        ...createFilter(filters, curr.key, paramsFilterValue, filterFunction),
-      ];
-    }, []);
-
-    const hasActiveParamFilters = filters.some((f) =>
-      columnFiltersBoundToParams.some((col) => col.key === f.key)
-    );
-
-    // If there are no filters in the query string but there are active filters bound to params, clear them
-    if (filterFromQs.length === 0 && hasActiveParamFilters) {
-      setFilters(
-        filters.filter(
-          (f) => !columnFiltersBoundToParams.some((col) => col.key === f.key)
-        )
-      );
+    if (!itemsPerPageBoundToParams) {
+      setLocalItemsPerPage(perPage);
       return;
     }
 
-    const filtersChanged = filterFromQs.some((qsFilter) => {
-      const currentFilter = filters.find((f) => f.key === qsFilter.key);
-      return (
-        !currentFilter ||
-        currentFilter.value.length !== qsFilter.value.length ||
-        currentFilter.value.some((v, i) => v === qsFilter.value[i])
-      );
+    setSearchParams(changeSearchParams({ [ITEMS_PER_PAGE_PARAM]: perPage }), {
+      replace: true,
     });
+  };
 
-    // Apply filters from qs only if they differ from current filters to avoid
-    // infinite loop of updates and unnecessary re-renders
-    if (filtersChanged) {
-      setFilters(filterFromQs);
-    }
-  }, [searchParams]);
+  // Columns are bound to the search params only when the table itself is, so
+  // that a table without them keeps every filter local
+  const columnFiltersBoundToParams = searchParamsEnabled
+    ? columns.filter((c) => c.filter && c.filterFromParams)
+    : [];
+
+  const hasFilters = columns.some(({ filter }) => Boolean(filter));
+
+  const isBoundToParams = (filterKey) =>
+    columnFiltersBoundToParams.some(({ key }) => key === filterKey);
+
+  // The filters of the columns bound to the search params are read from the URL
+  // rather than kept in state, so that the two never need to be synchronized
+  const filters = [
+    ...localFilters,
+    ...columnFiltersBoundToParams
+      .map(({ key }) => ({ key, value: searchParams.getAll(key) }))
+      .filter(({ value }) => value.length > 0),
+  ];
+
+  const changeFilters = (newFilters) => {
+    setCurrentPage(1);
+    setLocalFilters(newFilters.filter(({ key }) => !isBoundToParams(key)));
+
+    if (columnFiltersBoundToParams.length === 0) return;
+
+    // Every bound column is written, so that the ones cleared in the meantime
+    // are dropped from the URL
+    const filtersBoundToParams = columnFiltersBoundToParams.map(({ key }) => ({
+      key,
+      value: newFilters.find((filter) => filter.key === key)?.value ?? [],
+    }));
+
+    setSearchParams(
+      (prev) =>
+        updateSearchParams(new URLSearchParams(prev), filtersBoundToParams),
+      { replace: true }
+    );
+  };
 
   const filteredData = filters
     .map(({ key, value }) => {
@@ -186,15 +186,19 @@ function Table({
 
   const sortedData = sortBy ? [...filteredData].sort(sortBy) : filteredData;
 
+  const totalPages = pages(sortedData, currentItemsPerPage);
+
+  // The selected page can get out of range when the data or the items per page
+  // change outside of the pagination controls, so it is always clamped
+  const selectedPage = Math.min(currentPage, totalPages);
+
   const renderedData = pagination
-    ? page(currentPage, sortedData, currentItemsPerPage)
+    ? page(selectedPage, sortedData, currentItemsPerPage)
     : sortedData;
 
   useEffect(() => {
     onPageChange(renderedData);
-  }, [currentPage, renderedData.length]);
-
-  const totalPages = pages(sortedData, currentItemsPerPage);
+  }, [selectedPage, renderedData.length]);
 
   return (
     <div
@@ -208,10 +212,7 @@ function Table({
             config={config}
             data={data}
             filters={filters}
-            onChange={(newFilters) => {
-              setFilters(newFilters);
-              setCurrentPage(1);
-            }}
+            onChange={changeFilters}
           />
         </div>
       )}
@@ -312,16 +313,16 @@ function Table({
             </table>
             {pagination && (
               <Pagination
-                hasPrev={currentPage > 1}
-                hasNext={currentPage < totalPages}
+                hasPrev={selectedPage > 1}
+                hasNext={selectedPage < totalPages}
                 currentItemsPerPage={currentItemsPerPage}
                 onSelect={(selection) => {
                   switch (selection) {
                     case 'prev':
-                      setCurrentPage(currentPage - 1);
+                      setCurrentPage(selectedPage - 1);
                       break;
                     case 'next':
-                      setCurrentPage(currentPage + 1);
+                      setCurrentPage(selectedPage + 1);
                       break;
                     case 'first':
                       setCurrentPage(1);
@@ -332,13 +333,10 @@ function Table({
                     default:
                   }
                 }}
-                onChangeItemsPerPage={(perPage) => {
-                  setCurrentItemsPerPage(perPage);
-                  setCurrentPage(1);
-                }}
+                onChangeItemsPerPage={changeItemsPerPage}
                 pageStats={
                   <PageStats
-                    selectedPage={Math.min(currentPage, totalPages)}
+                    selectedPage={selectedPage}
                     itemsPresent={renderedData.length}
                     itemsTotal={filteredData.length}
                     currentItemsPerPage={currentItemsPerPage}

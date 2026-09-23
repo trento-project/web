@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
+import { Link } from 'react-router';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import { faker } from '@faker-js/faker';
 import userEvent from '@testing-library/user-event';
@@ -22,10 +23,16 @@ import {
 } from '@lib/test-utils';
 
 import { filterTable, clearFilter } from '@lib/test-utils/table';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import HostsList from './HostsList';
 
 describe('HostsLists component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('list content', () => {
     [
       {
@@ -527,7 +534,136 @@ describe('HostsLists component', () => {
         )
       );
     });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const hosts = [].concat(
+        hostFactory.buildList(3, { health: 'critical' }),
+        hostFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('hosts', 'health=critical&itemsPerPage=20');
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+      renderWithRouter(StatefulHostsList, { route: '/hosts' });
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr')
+      ).toHaveLength(3);
+    });
+
+    it('should keep the filters when the view is entered again from the sidebar', async () => {
+      const user = userEvent.setup();
+
+      const hosts = [].concat(
+        hostFactory.buildList(3, { health: 'critical' }),
+        hostFactory.buildList(2, { health: 'passing' })
+      );
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+
+      renderWithRouter(
+        <>
+          <Link to="/hosts">Hosts</Link>
+          {StatefulHostsList}
+        </>,
+        { route: '/hosts?health=critical' }
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('hosts')).toBe('health=critical')
+      );
+
+      await user.click(screen.getByRole('link', { name: 'Hosts' }));
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('health')).toEqual('critical');
+      });
+
+      expect(readViewSetting('hosts')).toBe('health=critical');
+      expect(
+        screen.getByRole('table').querySelectorAll('tbody > tr')
+      ).toHaveLength(3);
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const hosts = [].concat(
+        hostFactory.buildList(3, { health: 'critical' }),
+        hostFactory.buildList(2, { health: 'passing' })
+      );
+
+      writeViewSetting('hosts', 'health=critical');
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+      renderWithRouter(StatefulHostsList, { route: '/hosts?health=passing' });
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(2)
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('hosts')).toEqual('health=passing')
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+      const hosts = [].concat(
+        hostFactory.buildList(3, { health: 'critical' }),
+        hostFactory.buildList(2, { health: 'passing' })
+      );
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+      renderWithRouter(StatefulHostsList, { route: '/hosts' });
+
+      await filterTable(user, 'Health', 'critical');
+
+      await waitFor(() =>
+        expect(readViewSetting('hosts')).toEqual('health=critical')
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+      const hosts = hostFactory.buildList(3);
+
+      const [StatefulHostsList] = withState(<HostsList />, {
+        ...defaultInitialState,
+        hostsList: { hosts },
+      });
+      renderWithRouter(StatefulHostsList, { route: '/hosts' });
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('hosts')).toEqual('itemsPerPage=50')
+      );
+    });
   });
+
   describe('tag operations', () => {
     it('should disable tag creation and deletion if the user abilities are not compatible', async () => {
       const host1 = hostFactory.build({

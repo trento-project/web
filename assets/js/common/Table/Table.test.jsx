@@ -10,7 +10,7 @@ import '@testing-library/jest-dom';
 
 import { faker } from '@faker-js/faker';
 import { Factory } from 'fishery';
-import { filterTable } from '@lib/test-utils/table';
+import { filterTable, clearFilter } from '@lib/test-utils/table';
 
 import Table from './Table';
 
@@ -258,6 +258,189 @@ describe('Table component', () => {
 
       const pages = screen.getByTestId('pagination');
       expect(within(pages).queryByText('2')).toBeNull();
+    });
+
+    describe('filters bound to the search params', () => {
+      it('should take the filters from the search params', () => {
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(1);
+      });
+
+      it('should apply the filters of a search params change made elsewhere', () => {
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'fromTheUrl' })
+        );
+
+        const { rerender } = render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(6);
+
+        // the view is handed the params of a navigation it did not trigger
+        rerender(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=fromTheUrl')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(1);
+      });
+
+      it('should drop a cleared filter from the search params', async () => {
+        const user = userEvent.setup();
+        const setSearchParams = jest.fn();
+        const data = [].concat(
+          tableDataFactory.buildList(5),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        await clearFilter(user, 'Column3');
+
+        const [updateParams] = setSearchParams.mock.lastCall;
+        expect(
+          updateParams(new URLSearchParams('column3=value3')).toString()
+        ).toBe('');
+      });
+
+      it('should not write the search params before a filter is used', () => {
+        const setSearchParams = jest.fn();
+        const data = tableDataFactory.buildList(5);
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        expect(setSearchParams).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('items per page bound to the search params', () => {
+      it('should take the items per page from the search params', () => {
+        const data = tableDataFactory.buildList(11);
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('itemsPerPage=20')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(11);
+      });
+
+      it('should fall back to the default items per page on an unknown value', () => {
+        const data = tableDataFactory.buildList(11);
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('itemsPerPage=13')}
+            setSearchParams={noop}
+          />
+        );
+
+        expect(
+          screen.getByRole('table').querySelectorAll('tbody > tr')
+        ).toHaveLength(10);
+      });
+
+      it('should write the items per page selection to the search params', async () => {
+        const user = userEvent.setup();
+        const setSearchParams = jest.fn();
+        const data = tableDataFactory.buildList(11);
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams()}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '20' }));
+
+        const [updateParams] = setSearchParams.mock.lastCall;
+        expect(updateParams(new URLSearchParams()).toString()).toBe(
+          'itemsPerPage=20'
+        );
+      });
+
+      it('should keep the filters in the search params when the items per page changes', async () => {
+        const user = userEvent.setup();
+        const setSearchParams = jest.fn();
+        const data = [].concat(
+          tableDataFactory.buildList(15),
+          tableDataFactory.buildList(1, { column3: 'value3' })
+        );
+
+        render(
+          <Table
+            config={tableConfig}
+            data={data}
+            searchParams={new URLSearchParams('column3=value3')}
+            setSearchParams={setSearchParams}
+          />
+        );
+
+        await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+        await user.click(screen.getByRole('option', { name: '20' }));
+
+        const [updateParams] = setSearchParams.mock.lastCall;
+        const params = updateParams(new URLSearchParams('column3=value3'));
+
+        expect(params.get('itemsPerPage')).toBe('20');
+        expect(params.get('column3')).toBe('value3');
+      });
     });
 
     it('should sort filter options with filterOptionsSorter when provided', async () => {

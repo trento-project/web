@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useNavigate } from 'react-router';
 import { setUserAsLogged, setUser as setUserInState } from '@state/user';
 import { clearCredentialsFromStore } from '@lib/auth';
+import { initViewSettings } from '@lib/viewSettings';
 
 export default function Guard({ redirectPath, getUser }) {
   const [user, setUser] = useState(null);
@@ -17,6 +18,9 @@ export default function Guard({ redirectPath, getUser }) {
   useEffect(() => {
     getUser()
       .then((trentoUser) => {
+        // Runs before any protected view is rendered, so that a user never
+        // inherits the view settings of whoever was logged in before them
+        initViewSettings(trentoUser.id);
         setUser(trentoUser);
         dispatch(setUserInState(trentoUser));
         setUserLoading(false);
