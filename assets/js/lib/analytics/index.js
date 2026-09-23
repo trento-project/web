@@ -124,6 +124,13 @@ export const capture = (analyticsEnabled, event, payload) => {
   posthog.capture(event, { ...payload });
 };
 
+export const captureWithTemporaryOptIn = (eventName, userId) => {
+  identify(true, userId);
+  optinCapturing(true);
+  capture(true, eventName);
+  setTimeout(() => optinCapturing(false), 500);
+};
+
 export const reset = () => {
   if (!analyticsEnabledConfig) {
     return;
