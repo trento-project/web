@@ -689,6 +689,7 @@ jobs:
           SPLIT_FILE: cypress-split-timings.json
           cypress_video: false
         with:
+          browser: chrome
           working-directory: test/e2e
           wait-on-timeout: 30
           config: baseUrl=http://localhost:4000,retries=1
@@ -800,6 +801,7 @@ jobs:
         env:
           cypress_video: false
         with:
+          browser: chrome
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
@@ -950,6 +952,7 @@ jobs:
         env:
           cypress_video: false
         with:
+          browser: chrome
           working-directory: test/e2e
           spec: ${{ matrix.cypress_spec }}
           wait-on-timeout: 30
