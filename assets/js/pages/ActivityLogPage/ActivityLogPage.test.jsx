@@ -256,6 +256,30 @@ describe('ActivityLogPage', () => {
     onGetSpy.mockRestore();
   });
 
+  it('should use itemsPerPage over a mismatching first/last in the api call', async () => {
+    const onGetSpy = jest.spyOn(networkClient, 'get');
+    axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
+
+    const [StatefulActivityLogPage] = withDefaultState(<ActivityLogPage />);
+
+    await act(() =>
+      renderWithRouter(StatefulActivityLogPage, {
+        route: '/activity_log?itemsPerPage=20&first=50',
+      })
+    );
+
+    await waitFor(() =>
+      expect(onGetSpy).toHaveBeenLastCalledWith(
+        '/activity_log',
+        expect.objectContaining({
+          params: expect.objectContaining({ first: 20 }),
+        })
+      )
+    );
+
+    onGetSpy.mockRestore();
+  });
+
   it('should let the filters in the url win over the stored ones', async () => {
     axiosMock.onGet('/api/v1/activity_log').reply(200, { data: [] });
 

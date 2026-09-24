@@ -145,7 +145,9 @@ export const setFilterValueToSearchParams = (
   )(searchParams);
 
 export const getItemsPerPageFromSearchParams = (searchParams) =>
-  Number(searchParams.get(ITEMS_PER_PAGE_PARAM));
+  Number(searchParams.get(ITEMS_PER_PAGE_PARAM)) ||
+  Number(searchParams.get('first')) ||
+  Number(searchParams.get('last'));
 
 export const applyItemsPerPage = (itemsPerPage) => (searchParams) => {
   searchParams.set(ITEMS_PER_PAGE_PARAM, itemsPerPage);
