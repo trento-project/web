@@ -138,7 +138,7 @@ context('SAP Systems Overview', () => {
   });
 
   describe('SAP Systems Tagging', () => {
-    before(() => sapSystemsOverviewPage.apiRemoveAllSapSystemsTags());
+    beforeEach(() => sapSystemsOverviewPage.apiRemoveAllSapSystemsTags());
 
     describe('Add tag to SAP System', () => {
       it('should tag SAP System', () => {
