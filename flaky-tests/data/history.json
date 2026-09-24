@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-09T18:23:34Z",
-    "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
-    "run_id": "31328001254",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-09T22:15:01Z",
     "commit": "066de7ead1047d8db95442d88577b6a8c16f6a13",
     "run_id": "31330519780",
@@ -5837,6 +5826,22 @@
       {
         "name": "should reload all settings data after refresh token flow::Settings page Page reload after refresh token flow should reload all settings data after refresh token flow",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-24T20:36:39Z",
+    "commit": "9602defed64527519ac2709cbd4ead71b59a284c",
+    "run_id": "36054381375",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
       }
     ]
   }
