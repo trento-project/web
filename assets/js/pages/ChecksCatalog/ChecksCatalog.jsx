@@ -128,10 +128,13 @@ function ChecksCatalog({
       options: clusterCatalogFilters.map(({ type, hanaScenario }) => ({
         label: { type, hanaScenario },
         value: { type, hanaScenario },
-        key: `${type}_${hanaScenario}`,
       })),
       renderOption: clusterTypeRenderer,
       value: selectedClusterType,
+      getOptionValue: ({ value }) =>
+        value === OPTION_ALL
+          ? OPTION_ALL
+          : `${value.type}_${value.hanaScenario}`,
       onChange: (clusterType) =>
         changeFilters({
           [CLUSTER_TYPE_PARAM]: get(clusterType, 'type', OPTION_ALL),
