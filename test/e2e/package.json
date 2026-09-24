@@ -3,7 +3,7 @@
   "description": "E2E testing for Trento",
   "type": "module",
   "scripts": {
-    "cypress:run": "cypress run",
+    "cypress:run": "cypress run --browser chrome",
     "cypress:open": "cypress open",
     "lint": "eslint .",
     "format:check": "prettier --check .",

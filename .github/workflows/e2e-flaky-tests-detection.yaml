@@ -221,7 +221,8 @@ jobs:
           cypress_db_host: postgres
           cypress_db_port: 5432
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
+          browser: chrome
+          command: npx cypress run --browser chrome --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
           working-directory: test/e2e
           wait-on-timeout: 30
           expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
