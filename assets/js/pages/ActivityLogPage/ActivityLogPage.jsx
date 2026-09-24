@@ -90,10 +90,13 @@ const changeItemsPerPage = (searchParams) => (items) => {
   return { [ITEMS_PER_PAGE_PARAM]: items };
 };
 
-const applyItemsPerPageToAPIParams = (itemsPerPage) => (params) =>
-  'first' in params || 'last' in params
-    ? params
-    : { first: itemsPerPage, ...params };
+// itemsPerPage is the single source of truth for the page size; first/last
+// coming from the params only pick the direction
+const applyItemsPerPageToAPIParams = (itemsPerPage) => (params) => {
+  if ('first' in params) return { ...params, first: itemsPerPage };
+  if ('last' in params) return { ...params, last: itemsPerPage };
+  return { first: itemsPerPage, ...params };
+};
 
 const activityLogRequestClient = (itemsPerPage) =>
   pipe(
