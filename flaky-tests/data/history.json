@@ -1,61 +1,5 @@
 [
   {
-    "timestamp": "2026-08-10T22:26:03Z",
-    "commit": "19ad9d99fd6a93ecff63b0cc6cb793f6abdf4269",
-    "run_id": "31423308307",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 13
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should show AWS cloud details correctly::Host Details Cloud details for this host should be displayed should show AWS cloud details correctly",
-        "score": 0.25
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.1668
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should forbid check execution when the correct user abilities are missing in details and settings::HANA cluster details Forbidden actions Check Execution should forbid check execution when the correct user abilities are missing in details and settings",
-        "score": 0.02501
-      },
-      {
-        "name": "should include the checks catalog in the checks results once enabled::HANA cluster details Check Selection should allow to enable checks from the checks catalog should include the checks catalog in the checks results once enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Checks version::About page should show the Checks version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the Wanda version::About page should show the Wanda version",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with kvm provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      },
-      {
-        "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-11T18:15:41Z",
     "commit": "28d08483378ae9a2aceacd7395fa263986293c62",
     "run_id": "31520501248",
@@ -5766,5 +5710,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-09-25T20:38:44Z",
+    "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
+    "run_id": "36185373829",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 48,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
