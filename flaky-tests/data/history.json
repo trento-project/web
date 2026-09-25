@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-10T18:52:26Z",
-    "commit": "19ad9d99fd6a93ecff63b0cc6cb793f6abdf4269",
-    "run_id": "31419339405",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-10T22:26:03Z",
     "commit": "19ad9d99fd6a93ecff63b0cc6cb793f6abdf4269",
     "run_id": "31423308307",
@@ -5760,6 +5744,26 @@
       {
         "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-25T20:37:31Z",
+    "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
+    "run_id": "36185373829",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.ClustersTest::test checks execution with wanda adapter should request checks execution for all relevant registered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
