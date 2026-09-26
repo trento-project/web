@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { noop } from 'lodash';
-import { useSearchParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import {
   EOS_REFRESH,
@@ -32,11 +31,15 @@ import ComposedFilter from '@common/ComposedFilter';
 import Pagination, { defaultItemsPerPageOptions } from '@common/Pagination';
 import Spinner from '@common/Spinner';
 import Select, { createOptionRenderer } from '@common/Select';
+import { ITEMS_PER_PAGE_PARAM } from '@common/Table';
 
 import ConnectionErrorAntenna from '@static/connection-error-antenna.svg';
 
 import NotificationBox from '@common/NotificationBox';
 import Tooltip from '@common/Tooltip';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
 import {
   applyItemsPerPage,
   setFilterValueToSearchParams,
@@ -56,6 +59,17 @@ import {
 } from './autorefresh';
 
 const defaultItemsPerPage = 20;
+const defaultSeverities = ['info', 'warning', 'critical'];
+
+// The filters land in the url as repeated params, hence the entries form
+const defaultParams = defaultSeverities.map((severity) => [
+  'severity',
+  severity,
+]);
+
+// Next values are not persisted
+const transientKeys = ['after', 'before', 'first', 'last', 'search'];
+
 const detectItemsPerPage = (number) =>
   defaultItemsPerPageOptions.includes(number) ? number : defaultItemsPerPage;
 const changeItemsPerPage = (searchParams) => (items) => {
@@ -63,26 +77,33 @@ const changeItemsPerPage = (searchParams) => (items) => {
     return {
       first: items,
       after: searchParams.get('after'),
+      [ITEMS_PER_PAGE_PARAM]: items,
     };
   }
   if (searchParams.has('before')) {
     return {
       last: items,
       before: searchParams.get('before'),
+      [ITEMS_PER_PAGE_PARAM]: items,
     };
   }
-  return { first: items };
+  return { [ITEMS_PER_PAGE_PARAM]: items };
 };
-const applyDefaultItemsPerPage = (params) =>
-  'first' in params || 'last' in params
-    ? params
-    : { first: defaultItemsPerPage, ...params };
 
-const activityLogRequestClient = pipe(
-  searchParamsToAPIParams,
-  applyDefaultItemsPerPage,
-  getActivityLog
-);
+// itemsPerPage is the single source of truth for the page size; first/last
+// coming from the params only pick the direction
+const applyItemsPerPageToAPIParams = (itemsPerPage) => (params) => {
+  if ('first' in params) return { ...params, first: itemsPerPage };
+  if ('last' in params) return { ...params, last: itemsPerPage };
+  return { first: itemsPerPage, ...params };
+};
+
+const activityLogRequestClient = (itemsPerPage) =>
+  pipe(
+    searchParamsToAPIParams,
+    applyItemsPerPageToAPIParams(itemsPerPage),
+    getActivityLog
+  );
 
 function MainView({
   request: { status, response },
@@ -134,16 +155,24 @@ function MainView({
               return {
                 last: itemsPerPage,
                 before: pagination?.start_cursor,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
               };
             case 'next':
               return {
                 first: itemsPerPage,
                 after: pagination?.end_cursor,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
               };
             case 'first':
-              return { first: itemsPerPage };
+              return {
+                first: itemsPerPage,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
+              };
             case 'last':
-              return { last: itemsPerPage };
+              return {
+                last: itemsPerPage,
+                [ITEMS_PER_PAGE_PARAM]: itemsPerPage,
+              };
             default:
               return {};
           }
@@ -187,7 +216,12 @@ function RefreshIntervalSelection({ disabled = false, rate, onChange = noop }) {
 
 function ActivityLogPage() {
   const users = useSelector(getActivityLogUsers);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = usePersistentSearchParams(
+    'activityLog',
+    { transientKeys, defaultParams }
+  );
+  // Store serialized version to check for changes in the useEffect
+  const currentSearchParams = searchParams.toString();
   const [activityLogRequest, setActivityLogRequest] = useState(
     request.initial()
   );
@@ -280,7 +314,7 @@ function ActivityLogPage() {
   const fetchActivityLog = () => {
     // defer the loading state to avoid flickering
     const tid = setTimeout(() => setActivityLogRequest(request.loading()), 500);
-    activityLogRequestClient(searchParams)
+    activityLogRequestClient(itemsPerPage)(searchParams)
       .then(
         pipe(
           ({ data }) => ({
@@ -299,7 +333,7 @@ function ActivityLogPage() {
   const keepAutorefreshRate = (currentRate) => (params) =>
     currentRate ? addRefreshRateToSearchParams(params, currentRate) : params;
 
-  useEffect(() => fetchActivityLog(), [searchParams]);
+  useEffect(() => fetchActivityLog(), [currentSearchParams]);
 
   useEffect(() => {
     if (!isFirstPage) return noop;
@@ -326,7 +360,7 @@ function ActivityLogPage() {
             className="grid-rows-2"
             filters={filters}
             autoApply={false}
-            resetValue={{ severity: ['info', 'warning', 'critical'] }}
+            resetValue={{ severity: defaultSeverities }}
             value={searchParamsToFilterValue(searchParams)}
             onChange={pipe(
               setFilterValueToSearchParams,

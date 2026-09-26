@@ -8,7 +8,10 @@ const defaultSeverity = 'severity=info&severity=warning&severity=critical';
 
 context('Activity Log page', () => {
   before(() => activityLogPage.preloadTestData());
-  beforeEach(() => activityLogPage.interceptActivityLogEndpoint());
+  beforeEach(() => {
+    cy.clearAllSessionStorage();
+    activityLogPage.interceptActivityLogEndpoint();
+  });
 
   describe('Navigation', () => {
     it('should navigate to Activity Log page', () => {
@@ -23,20 +26,6 @@ context('Activity Log page', () => {
       basePage.visit();
       basePage.clickActivityLogNavigationItem5Times();
       activityLogPage.activityLogEndpointIsCalledOnlyOnce();
-    });
-
-    it('should reset querystring when reloading the page from navigation menu', () => {
-      const queryString =
-        '?search=foo+bar&from_date=custom&from_date=2024-08-13T10%3A21%3A00.000Z&to_date=custom&to_date=2024-08-14T10%3A21%3A00.000Z&type=login_attempt&type=resource_tagging&refreshRate=5000';
-      activityLogPage.visit(queryString);
-      activityLogPage.refreshRateFilterHasTheExpectedValue('5s');
-      activityLogPage.filteredActionsAreTheExpectedOnes(
-        'Login Attempt, Tag Added'
-      );
-      basePage.clickActivityLogNavigationItem();
-      activityLogPage.refreshRateFilterHasTheExpectedValue('Off');
-      activityLogPage.filterTypeHasNothingSelected();
-      activityLogPage.validateUrl(`/activity_log?${defaultSeverity}`);
     });
   });
 
@@ -53,6 +42,14 @@ context('Activity Log page', () => {
     it('should render with selected filters from querystring', () => {
       const fromDate = '2024-08-13T10%3A21%3A00.000Z';
       const toDate = '2024-08-14T10%3A21%3A00.000Z';
+
+      activityLogPage.visit();
+      activityLogPage.clickFilterTypeButton();
+      activityLogPage.selectFilterTypeOption('User Created');
+      activityLogPage.clickApplyFiltersButton();
+      activityLogPage.validateUrl(
+        `/activity_log?${defaultSeverity}&type=user_creation&itemsPerPage=20`
+      );
 
       const queryString = `?search=foo+bar&from_date=custom&from_date=${fromDate}&to_date=custom&to_date=${toDate}&type=login_attempt&type=resource_tagging`;
       activityLogPage.visit(queryString);
@@ -92,7 +89,7 @@ context('Activity Log page', () => {
       const toDateQueryString =
         activityLogPage.formatEncodedDateForQueryString(toDate);
 
-      const expectedUrl = `/activity_log?${defaultSeverity}&from_date=custom&from_date=${fromDateQueryString}&to_date=custom&to_date=${toDateQueryString}&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&from_date=custom&from_date=${fromDateQueryString}&to_date=custom&to_date=${toDateQueryString}&type=login_attempt&type=resource_tagging&search=foo+bar&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -116,6 +113,34 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.validateUrl(`/activity_log${queryString}`);
     });
+
+    it('should preserve filters when coming back to activity log view', () => {
+      activityLogPage.visit();
+      activityLogPage.clickFilterTypeButton();
+      activityLogPage.selectFilterTypeOption('Login Attempt');
+      activityLogPage.clickApplyFiltersButton();
+
+      activityLogPage.goNavigationMenuItem('Dashboard');
+      activityLogPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      activityLogPage.clickActivityLogNavigationItem();
+
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
+      activityLogPage.validateUrl(expectedUrl);
+    });
+
+    it('should preserve filters when the activity log sidebar entry is clicked from the activity log view', () => {
+      activityLogPage.visit();
+      activityLogPage.clickFilterTypeButton();
+      activityLogPage.selectFilterTypeOption('Login Attempt');
+      activityLogPage.clickApplyFiltersButton();
+
+      activityLogPage.clickActivityLogNavigationItem();
+      // initial load and change of filters
+      activityLogPage.activityLogEndpointIsCalledTimes(2);
+
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
+      activityLogPage.validateUrl(expectedUrl);
+    });
   });
 
   describe('Pagination', () => {
@@ -126,7 +151,7 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(`/activity_log?${defaultSeverity}`);
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&${defaultSeverity}`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -141,7 +166,7 @@ context('Activity Log page', () => {
         activityLogPage.validateUrl(expectedUrl);
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
-        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&type=sles_subscriptions_updated&search=x86_64&severity=debug`;
+        expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&type=sles_subscriptions_updated&search=x86_64&severity=debug`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -150,7 +175,7 @@ context('Activity Log page', () => {
       activityLogPage.visit(`?${defaultSeverity}`);
       activityLogPage.waitForActivityLogRequest().then(({ response }) => {
         activityLogPage.paginationPropertiesAreTheExpected(response);
-        let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&${defaultSeverity}`;
+        let expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&${defaultSeverity}`;
         activityLogPage.clickNextPageButton();
         activityLogPage.waitForActivityLogRequest();
         activityLogPage.validateUrl(expectedUrl);
@@ -165,7 +190,7 @@ context('Activity Log page', () => {
         'have.text',
         'Login Attempt'
       );
-      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&type=login_attempt&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -178,7 +203,7 @@ context('Activity Log page', () => {
         activityLogPage.clickNextPageButton();
         activityLogPage.activityLogRequestHasExpectedStatusCode(200);
         activityLogPage.filterFromDateHasTheExpectedValue(fromDate);
-        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&from_date=custom&from_date=${fromDate}`;
+        const expectedUrl = `/activity_log?first=20&after=${response.body.pagination.end_cursor}&itemsPerPage=20&from_date=custom&from_date=${fromDate}`;
         activityLogPage.validateUrl(expectedUrl);
       });
     });
@@ -229,7 +254,8 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickFirstPageButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = '/activity_log?first=20&type=host_registered';
+      const expectedUrl =
+        '/activity_log?first=20&itemsPerPage=20&type=host_registered';
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -239,7 +265,8 @@ context('Activity Log page', () => {
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.clickLastPageButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = '/activity_log?last=20&type=host_registered';
+      const expectedUrl =
+        '/activity_log?last=20&itemsPerPage=20&type=host_registered';
       activityLogPage.validateUrl(expectedUrl);
     });
   });
@@ -292,7 +319,7 @@ context('Activity Log page', () => {
       activityLogPage.clickResetFiltersButton();
       activityLogPage.waitForActivityLogRequest();
       activityLogPage.autoRefreshIntervalButtonHasTheExpectedValue('10s');
-      const expectedUrl = `/activity_log?${defaultSeverity}&first=20&refreshRate=10000`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&itemsPerPage=20&refreshRate=10000`;
       activityLogPage.validateUrl(expectedUrl);
     });
 
@@ -309,8 +336,8 @@ context('Activity Log page', () => {
               currentRefreshRate
             );
             activityLogPage.selectRefreshRate(newRefreshRate);
-            const expectedUrl = `/activity_log${
-              expectedRefreshRate ? `?refreshRate=${expectedRefreshRate}` : ''
+            const expectedUrl = `/activity_log?${defaultSeverity}${
+              expectedRefreshRate ? `&refreshRate=${expectedRefreshRate}` : ''
             }`;
             activityLogPage.validateUrl(expectedUrl);
           }
@@ -340,7 +367,7 @@ context('Activity Log page', () => {
       activityLogPage.typeMetadataFilter('foo bar');
       activityLogPage.clickApplyFiltersButton();
       activityLogPage.waitForActivityLogRequest();
-      const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&first=20`;
+      const expectedUrl = `/activity_log?${defaultSeverity}&refreshRate=5000&type=login_attempt&type=resource_tagging&search=foo+bar&itemsPerPage=20`;
       activityLogPage.validateUrl(expectedUrl);
     });
   });

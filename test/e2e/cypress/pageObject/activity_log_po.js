@@ -189,10 +189,15 @@ export const selectPaginationButtonHasTheExpectedValue = (pagination) =>
   cy.get(selectPaginationButton).should('have.text', pagination);
 
 // Response Validations
-export const activityLogEndpointIsCalledOnlyOnce = () => {
+export const activityLogEndpointIsCalledTimes = (times) => {
   waitForActivityLogRequest();
-  return cy.get(`@${activityLogEndpointAlias}.all`).should('have.length', 1);
+  return cy
+    .get(`@${activityLogEndpointAlias}.all`)
+    .should('have.length', times);
 };
+
+export const activityLogEndpointIsCalledOnlyOnce = () =>
+  activityLogEndpointIsCalledTimes(1);
 
 export const activityLogRequestHasExpectedStatusCode = (statusCode) =>
   basePage.validateResponseStatusCode(activityLogEndpointAlias, statusCode);
