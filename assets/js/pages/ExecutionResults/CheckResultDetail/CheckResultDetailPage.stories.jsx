@@ -66,7 +66,6 @@ const catalogSlice = createSlice({
   name: 'catalog',
   initialState: {
     data: catalogArray,
-    filteredCatalog: catalogArray,
     loading: false,
     error: null,
   },

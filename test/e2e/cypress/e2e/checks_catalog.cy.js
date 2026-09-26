@@ -5,6 +5,7 @@ import * as checksCatalogPage from '../pageObject/checks_catalog_po';
 
 describe('Checks catalog', () => {
   beforeEach(() => {
+    cy.clearAllSessionStorage();
     checksCatalogPage.interceptChecksCatalogEndpoint();
     checksCatalogPage.visit();
     checksCatalogPage.validateUrl('/catalog');
@@ -50,6 +51,47 @@ describe('Checks catalog', () => {
   });
 
   describe('Filtering', () => {
+    it('should preserve filters when coming back to the checks catalog view', () => {
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      cy.url().should('contain', 'provider=aws');
+
+      checksCatalogPage.goNavigationMenuItem('Dashboard');
+      checksCatalogPage.pageTitleIsCorrectlyDisplayed('At a glance');
+      checksCatalogPage.goNavigationMenuItem('Checks catalog');
+      checksCatalogPage
+        .waitForChecksCatalogRequest()
+        .then((response) =>
+          expect(response.request.url).to.include('provider=aws')
+        );
+
+      cy.url().should('contain', 'provider=aws');
+    });
+
+    it('should preserve filters when reloading the checks catalog view', () => {
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      cy.url().should('contain', 'provider=aws');
+
+      checksCatalogPage.visit();
+      checksCatalogPage
+        .waitForChecksCatalogRequest()
+        .then((response) =>
+          expect(response.request.url).to.include('provider=aws')
+        );
+
+      cy.url().should('contain', 'provider=aws');
+    });
+
+    it('should preserve filters when the checks catalog sidebar entry is clicked from the checks catalog view', () => {
+      checksCatalogPage.selectFromProvidersDropdown('AWS');
+      cy.url().should('contain', 'provider=aws');
+
+      checksCatalogPage.goNavigationMenuItem('Checks catalog');
+      // initial load and change of filters
+      checksCatalogPage.checksCatalogEndpointCalledTimes(2);
+
+      cy.url().should('contain', 'provider=aws');
+    });
+
     it('expected query is issued for AWS provider', () => {
       const expectedRequestQuery = 'provider=aws';
 
@@ -58,6 +100,7 @@ describe('Checks catalog', () => {
         .then((endpointUrl) =>
           expect(endpointUrl).to.include(expectedRequestQuery)
         );
+      cy.url().should('contain', 'provider=aws');
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type', () => {
@@ -71,6 +114,7 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedProviderQuery);
           expect(endpointUrl).to.include(expectedTargetQuery);
         });
+      cy.url().should('contain', 'provider=aws&targetType=cluster');
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Perf. Opt.', () => {
@@ -89,6 +133,10 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedClusterTypeQuery);
           expect(endpointUrl).to.include(expectedHanaScenarioQuery);
         });
+      cy.url().should(
+        'contain',
+        'provider=aws&targetType=cluster&clusterType=hana_scale_up&hanaScenario=performance_optimized'
+      );
     });
 
     it('expected query is issued for AWS provider & Cluster Target Type & HANA Scale Up Cost Opt.', () => {
@@ -107,6 +155,10 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedClusterTypeQuery);
           expect(endpointUrl).to.include(expectedHanaScenarioQuery);
         });
+      cy.url().should(
+        'contain',
+        'provider=aws&targetType=cluster&clusterType=hana_scale_up&hanaScenario=cost_optimized'
+      );
     });
 
     it('expected query is issued for AWS provider & Hosts Target Type', () => {
@@ -120,6 +172,7 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedProviderQuery);
           expect(endpointUrl).to.include(expectedTargetQuery);
         });
+      cy.url().should('contain', 'provider=aws&targetType=host');
     });
 
     it('expected query is issued for AWS provider & Hosts Target Type & x86_64 Architecture', () => {
@@ -136,6 +189,10 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedTargetQuery);
           expect(endpointUrl).to.include(expectedArchQuery);
         });
+      cy.url().should(
+        'contain',
+        'provider=aws&targetType=host&architecture=x86_64'
+      );
     });
 
     it('expected query is issued for Azure provider & Hosts Target Type & ppc64le Architecture', () => {
@@ -152,6 +209,10 @@ describe('Checks catalog', () => {
           expect(endpointUrl).to.include(expectedTargetQuery);
           expect(endpointUrl).to.include(expectedArchQuery);
         });
+      cy.url().should(
+        'contain',
+        'provider=azure&targetType=host&architecture=ppc64le'
+      );
     });
   });
 

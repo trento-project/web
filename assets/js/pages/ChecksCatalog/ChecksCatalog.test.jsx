@@ -3,16 +3,23 @@
 
 import React from 'react';
 
-import { screen, render } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
 import { faker } from '@faker-js/faker';
+import { renderWithRouter as render } from '@lib/test-utils';
 import { catalogCheckFactory } from '@lib/test-utils/factories';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import ChecksCatalog from './ChecksCatalog';
 
 describe('ChecksCatalog ChecksCatalog component', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   it('should render the checks catalog with fetched data', async () => {
     const user = userEvent.setup();
 
@@ -25,10 +32,7 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     const mockUpdateCatalog = jest.fn();
 
     render(
-      <ChecksCatalog
-        completeCatalog={catalogData}
-        updateCatalog={mockUpdateCatalog}
-      />
+      <ChecksCatalog catalog={catalogData} updateCatalog={mockUpdateCatalog} />
     );
 
     const groups = screen.getAllByRole('list');
@@ -51,150 +55,45 @@ describe('ChecksCatalog ChecksCatalog component', () => {
     });
   });
 
-  const scenarios = [
-    {
-      name: 'catalog without host checks',
-      catalogData: catalogCheckFactory.buildList(5, {
-        metadata: { target_type: 'cluster' },
-      }),
-      filter: 'All targets',
-      expectDisabled: 'Hosts',
-      expectEnabled: 'Clusters',
-    },
-    {
-      name: 'catalog without cluster checks',
-      catalogData: catalogCheckFactory.buildList(5, {
-        metadata: { target_type: 'host' },
-      }),
-      filter: 'All targets',
-      expectDisabled: 'Clusters',
-      expectEnabled: 'Hosts',
-    },
-    {
-      name: 'catalog without hana scale out cluster checks',
-      catalogData: [
-        catalogCheckFactory.build({
-          metadata: {
-            target_type: 'cluster',
-            cluster_type: 'hana_scale_up',
-            hana_scenario: 'performance_optimized',
-            architecture_type: 'classic',
-          },
-        }),
-        catalogCheckFactory.build({
-          metadata: {
-            target_type: 'cluster',
-            cluster_type: 'hana_scale_up',
-            hana_scenario: 'cost_optimized',
-            architecture_type: 'classic',
-          },
-        }),
-        catalogCheckFactory.build({
-          metadata: {
-            target_type: 'host',
-          },
-        }),
-        catalogCheckFactory.build({
-          metadata: {
-            target_type: 'cluster',
-            cluster_type: 'ascs_ers',
-          },
-        }),
-      ],
-      initialTargetType: 'Clusters',
-      filter: 'All cluster types',
-      expectDisabled: 'HANA Scale Out',
-      expectAllEnabled: [
-        'HANA Scale Up Perf. Opt.',
-        'HANA Scale Up Cost Opt.',
-        'ASCS/ERS',
-      ],
-    },
-  ];
+  it('should enable the target type specific filters only for their target type', async () => {
+    const user = userEvent.setup();
 
-  it.each(scenarios)(
-    'should rely upon the whole catalog for filters rendering when $name',
-    async ({
-      catalogData,
-      initialTargetType,
-      filter,
-      expectDisabled,
-      expectEnabled,
-      expectAllEnabled,
-    }) => {
-      const user = userEvent.setup();
-      const mockUpdateCatalog = jest.fn();
+    render(
+      <ChecksCatalog
+        catalog={catalogCheckFactory.buildList(2)}
+        updateCatalog={jest.fn()}
+      />
+    );
 
-      render(
-        <ChecksCatalog
-          completeCatalog={catalogData}
-          filteredCatalog={catalogCheckFactory.buildList(2)}
-          updateCatalog={mockUpdateCatalog}
-        />
-      );
+    const clusterTypesFilter = () =>
+      screen.getByRole('combobox', { name: 'cluster-types' });
+    const architecturesFilter = () =>
+      screen.getByRole('combobox', { name: 'architectures' });
 
-      if (initialTargetType) {
-        await user.click(screen.getByText('All targets'));
-        await user.click(screen.getByText(initialTargetType));
-      }
+    // Both target type specific filters are disabled without a selected target
+    expect(clusterTypesFilter()).toBeDisabled();
+    expect(architecturesFilter()).toBeDisabled();
 
-      await user.click(screen.getByText(filter));
-      expect(
-        screen.getByText(expectDisabled, { exact: false }).closest('div')
-      ).toHaveAttribute('aria-disabled', 'true');
-      const expectItemEnabled = (itemExpectedEnabled) =>
-        expect(
-          screen.getByText(itemExpectedEnabled).closest('div')
-        ).toHaveAttribute('aria-disabled', 'false');
+    await user.click(screen.getByText('All targets'));
+    await user.click(screen.getByText('Clusters'));
 
-      if (expectEnabled) {
-        expectItemEnabled(expectEnabled);
-      }
-      if (expectAllEnabled) {
-        expectAllEnabled.forEach(expectItemEnabled);
-      }
-    }
-  );
+    expect(clusterTypesFilter()).toBeEnabled();
+    expect(architecturesFilter()).toBeDisabled();
+
+    await user.click(screen.getAllByText('Clusters')[0]);
+    await user.click(screen.getByText('Hosts'));
+
+    expect(clusterTypesFilter()).toBeDisabled();
+    expect(architecturesFilter()).toBeEnabled();
+  });
 
   it('should query the catalog with the correct filters', async () => {
     const user = userEvent.setup();
     const mockUpdateCatalog = jest.fn();
 
-    const catalogData = [
-      catalogCheckFactory.build({
-        metadata: { target_type: 'host' },
-      }),
-      catalogCheckFactory.build({
-        metadata: {
-          target_type: 'cluster',
-          cluster_type: 'hana_scale_up',
-          hana_scenario: 'performance_optimized',
-        },
-      }),
-      catalogCheckFactory.build({
-        metadata: {
-          target_type: 'cluster',
-          cluster_type: 'hana_scale_up',
-          hana_scenario: 'cost_optimized',
-        },
-      }),
-      catalogCheckFactory.build({
-        metadata: {
-          target_type: 'cluster',
-          cluster_type: 'hana_scale_out',
-        },
-      }),
-      catalogCheckFactory.build({
-        metadata: {
-          target_type: 'cluster',
-          cluster_type: 'ascs_ers',
-        },
-      }),
-    ];
-
     render(
       <ChecksCatalog
-        completeCatalog={catalogData}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />
     );
@@ -265,24 +164,19 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedTargetType: 'cluster',
       selectedArchitecture: 'all',
     });
+
+    expect(readViewSetting('checksCatalog')).toEqual(
+      'provider=aws&targetType=cluster&clusterType=ascs_ers'
+    );
   });
 
   it('should query the catalog with the correct host filters', async () => {
     const user = userEvent.setup();
     const mockUpdateCatalog = jest.fn();
 
-    const catalogData = [
-      catalogCheckFactory.build({
-        metadata: { target_type: 'host', arch: 'x86_64' },
-      }),
-      catalogCheckFactory.build({
-        metadata: { target_type: 'host', arch: 'ppc64le' },
-      }),
-    ];
-
     render(
       <ChecksCatalog
-        completeCatalog={catalogData}
+        catalog={catalogCheckFactory.buildList(2)}
         updateCatalog={mockUpdateCatalog}
       />
     );
@@ -334,6 +228,136 @@ describe('ChecksCatalog ChecksCatalog component', () => {
       selectedClusterType: 'all',
       selectedHanaScenario: 'all',
       selectedProvider: 'all',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'all',
+    });
+  });
+
+  it('should clear the filters of the target type being left behind', async () => {
+    const user = userEvent.setup();
+    const mockUpdateCatalog = jest.fn();
+
+    render(
+      <ChecksCatalog
+        catalog={catalogCheckFactory.buildList(2)}
+        updateCatalog={mockUpdateCatalog}
+      />,
+      { route: '/catalog?targetType=host&architecture=x86_64' }
+    );
+
+    await user.click(screen.getByText('Hosts'));
+    await user.click(screen.getByText('Clusters'));
+
+    await waitFor(() =>
+      expect(mockUpdateCatalog).toHaveBeenLastCalledWith({
+        selectedClusterType: 'all',
+        selectedHanaScenario: 'all',
+        selectedProvider: 'all',
+        selectedTargetType: 'cluster',
+        selectedArchitecture: 'all',
+      })
+    );
+
+    expect(window.location.search).toEqual('?targetType=cluster');
+  });
+
+  it('should restore the stored filters when landing on a bare url', async () => {
+    const mockUpdateCatalog = jest.fn();
+
+    writeViewSetting('checksCatalog', 'targetType=host&provider=aws');
+
+    render(
+      <ChecksCatalog
+        catalog={catalogCheckFactory.buildList(2)}
+        updateCatalog={mockUpdateCatalog}
+      />,
+      { route: '/catalog' }
+    );
+
+    await waitFor(() => {
+      const params = new URLSearchParams(window.location.search);
+
+      expect(params.get('targetType')).toEqual('host');
+      expect(params.get('provider')).toEqual('aws');
+    });
+
+    expect(screen.getByText('Hosts')).toBeVisible();
+    expect(screen.getByText('AWS')).toBeVisible();
+
+    // The catalog is queried once, with the restored filters, and not with the
+    // empty ones first
+    expect(mockUpdateCatalog).toHaveBeenCalledTimes(1);
+    expect(mockUpdateCatalog).toHaveBeenLastCalledWith({
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'aws',
+      selectedTargetType: 'host',
+      selectedArchitecture: 'all',
+    });
+  });
+
+  it('should let the filters in the url win over the stored ones', async () => {
+    const mockUpdateCatalog = jest.fn();
+
+    writeViewSetting('checksCatalog', 'provider=aws');
+
+    render(
+      <ChecksCatalog
+        catalog={catalogCheckFactory.buildList(2)}
+        updateCatalog={mockUpdateCatalog}
+      />,
+      { route: '/catalog?provider=azure' }
+    );
+
+    await waitFor(() =>
+      expect(mockUpdateCatalog).toHaveBeenLastCalledWith({
+        selectedClusterType: 'all',
+        selectedHanaScenario: 'all',
+        selectedProvider: 'azure',
+        selectedTargetType: 'all',
+        selectedArchitecture: 'all',
+      })
+    );
+
+    await waitFor(() =>
+      expect(readViewSetting('checksCatalog')).toEqual('provider=azure')
+    );
+  });
+
+  it('should store the cleared filters when they are reset with an empty checks catalog', async () => {
+    const user = userEvent.setup();
+    const mockUpdateCatalog = jest.fn();
+
+    writeViewSetting('checksCatalog', 'provider=aws');
+
+    render(<ChecksCatalog catalog={[]} updateCatalog={mockUpdateCatalog} />, {
+      route: '/catalog',
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Reset filters' }));
+
+    await waitFor(() => expect(readViewSetting('checksCatalog')).toEqual(''));
+  });
+
+  it('should refresh the catalog with the current filters', async () => {
+    const user = userEvent.setup();
+    const mockUpdateCatalog = jest.fn();
+
+    render(
+      <ChecksCatalog
+        catalog={[]}
+        catalogError="Something went wrong"
+        updateCatalog={mockUpdateCatalog}
+      />,
+      { route: '/catalog?provider=aws&targetType=host' }
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Try again' }));
+
+    expect(mockUpdateCatalog).toHaveBeenLastCalledWith({
+      selectedClusterType: 'all',
+      selectedHanaScenario: 'all',
+      selectedProvider: 'aws',
       selectedTargetType: 'host',
       selectedArchitecture: 'all',
     });
