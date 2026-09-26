@@ -1,41 +1,5 @@
 [
   {
-    "timestamp": "2026-08-11T18:52:14Z",
-    "commit": "28d08483378ae9a2aceacd7395fa263986293c62",
-    "run_id": "31523119309",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 6
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show system/database operation database_stop in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show SAP system operation Stop system with enabled state as false",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation database_start in running state",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
-        "score": 0.02501
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-11T18:53:21Z",
     "commit": "28d08483378ae9a2aceacd7395fa263986293c62",
     "run_id": "31523119309",
@@ -5703,5 +5667,69 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-09-26T00:43:28Z",
+    "commit": "7676f8f11a67f7adeab688dc0fc34b9af1f1b26d",
+    "run_id": "36192379213",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 23
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.2177
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.2177
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.2177
+      },
+      {
+        "name": "should create a new personal access token and grant access to guarded resources::Users Profile personal access tokens should create a new personal access token and grant access to guarded resources",
+        "score": 0.2031
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.1882
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.1882
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.1882
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.1882
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.04892
+      },
+      {
+        "name": "should include restored host again in the list of hosts after restoring it::HANA database details Deregistration should include restored host again in the list of hosts after restoring it",
+        "score": 0.04859
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      }
+    ]
   }
 ]
