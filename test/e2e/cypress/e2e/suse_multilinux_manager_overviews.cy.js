@@ -7,6 +7,7 @@ context('SUSE Multi-Linux Manager overviews', () => {
   before(() => hostDetailsPage.preloadTestData());
 
   beforeEach(() => {
+    cy.clearAllSessionStorage();
     hostDetailsPage.clearSMLMSettings();
     hostDetailsPage.saveSMLMSettingsForAdmin();
   });
@@ -58,6 +59,52 @@ context('SUSE Multi-Linux Manager overviews', () => {
       hostDetailsPage.upgradablePackagesAmountIsTheExpected(
         ' Host not found in SUSE Multi-Linux Manager'
       );
+    });
+  });
+
+  describe('Persistent filters', () => {
+    it('should preserve filters in the patch list view', () => {
+      const expectedQueryString = 'advisoryType=bugfix&itemsPerPage=50';
+      hostDetailsPage.interceptSmlmRequestsMockedForProdInstance();
+      hostDetailsPage.visitVmdrbddev01Host();
+      hostDetailsPage.clickRelevantPatches();
+
+      hostDetailsPage.selectPatchTypeFilter('bugfix');
+      hostDetailsPage.selectItemsPerPage('50');
+      hostDetailsPage.expectedPatchNumberIs(1);
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.clickBackToHostDetailsButton();
+      hostDetailsPage.clickRelevantPatches();
+      hostDetailsPage.expectedPatchNumberIs(1);
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.refresh();
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.visitVmdrbddev01HostPatchList('advisoryType=all');
+      hostDetailsPage.expectedPatchNumberIs(2);
+      cy.url().should('contain', 'advisoryType=all');
+    });
+
+    it('should preserve filters in the upgradable packages view', () => {
+      const expectedQueryString = 'itemsPerPage=50';
+      hostDetailsPage.interceptSmlmRequestsMockedForProdInstance();
+      hostDetailsPage.visitVmdrbddev01Host();
+      hostDetailsPage.clickUpgradablePackagesCard();
+
+      hostDetailsPage.selectItemsPerPage('50');
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.clickBackToHostDetailsButton();
+      hostDetailsPage.clickUpgradablePackagesCard();
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.refresh();
+      cy.url().should('contain', expectedQueryString);
+
+      hostDetailsPage.visitVmdrbddev01HostUpgradablePackages('itemsPerPage=10');
+      cy.url().should('contain', 'itemsPerPage=10');
     });
   });
 });

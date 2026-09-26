@@ -26,6 +26,16 @@ export default {
       description: 'Timezone string for date formatting.',
       control: { type: 'text' },
     },
+    searchParams: {
+      description:
+        'URL search params (e.g. `new URLSearchParams(window.location.search)`) used for filters/pagination',
+      control: { type: 'object' },
+    },
+    setSearchParams: {
+      description:
+        'Setter function to update search params (usually from React Router)',
+      action: 'setSearchParams',
+    },
   },
   decorators: [
     (Story) => (
@@ -41,6 +51,8 @@ export const Default = {
   args: {
     patches: relevantPatchFactory.buildList(5),
     onNavigate: action('onNavigate'),
+    searchParams: new URLSearchParams(),
+    setSearchParams: action('setSearchParams'),
   },
 };
 
@@ -48,7 +60,6 @@ export const NoPatches = {
   args: {
     ...Default.args,
     patches: undefined,
-    onNavigate: action('onNavigate'),
   },
 };
 
@@ -60,6 +71,5 @@ export const AllStates = {
       relevantPatchFactory.build({ advisory_type: 'bugfix' }),
       relevantPatchFactory.build({ advisory_type: 'enhancement' }),
     ],
-    onNavigate: action('onNavigate'),
   },
 };

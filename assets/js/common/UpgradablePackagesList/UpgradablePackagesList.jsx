@@ -13,6 +13,8 @@ const upgradablePackagesDefault = [];
 function UpgradablePackagesList({
   upgradablePackages = upgradablePackagesDefault,
   patchesLoading,
+  searchParams,
+  setSearchParams,
   onPatchClick = noop,
   sortDirection = 'asc',
   toggleSortDirection = () => {},
@@ -80,6 +82,8 @@ function UpgradablePackagesList({
       className="pt-2"
       config={config}
       data={upgradablePackages}
+      searchParams={searchParams}
+      setSearchParams={setSearchParams}
       sortBy={sortByLatestPackage}
     />
   );
