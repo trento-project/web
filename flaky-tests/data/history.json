@@ -1,33 +1,5 @@
 [
   {
-    "timestamp": "2026-08-12T18:54:34Z",
-    "commit": "2267c2693c6aa2aa2ab973331ff0c69bafbff7bf",
-    "run_id": "31628116471",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 5
-    },
-    "top_flaky_tests": [
-      {
-        "name": "UpgradablePackagesPage::should render correctly",
-        "score": 0.09051
-      },
-      {
-        "name": "Deregistration Modal component::should render a database instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render an application instance deregistration modal correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Label Component::should display an info tooltip if specified",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-12T22:43:56Z",
     "commit": "2267c2693c6aa2aa2ab973331ff0c69bafbff7bf",
     "run_id": "31632612926",
@@ -5700,6 +5672,30 @@
       {
         "name": "should not include deregistered host in the list::SAP system details Deregistration should not include deregistered host in the list",
         "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-27T20:17:21Z",
+    "commit": "4d56fb36a9c304b30f94998bfa52bd70fc952d46",
+    "run_id": "36346522817",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.02501
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.02501
       }
     ]
   }
