@@ -32,11 +32,11 @@ defmodule TrentoWeb.V1.SettingsController do
       "Updates the configuration and credentials for SUSE Multi-Linux Manager integration, supporting ongoing software management and updates.",
     request_body:
       {"Request body containing updated SUSE Multi-Linux Manager credentials and configuration for ongoing secure integration and software management.",
-       "application/json", Schema.Platform.UpdateSuseManagerSettingsRequest},
+       "application/json", Schema.Platform.UpdateSmlmSettingsRequest},
     responses: [
       ok:
         {"SUSE Multi-Linux Manager settings have been successfully updated and saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
+         "application/json", Schema.Platform.SmlmSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
   ]
@@ -165,7 +165,7 @@ defmodule TrentoWeb.V1.SettingsController do
     responses: [
       ok:
         {"A comprehensive set of SUSE Multi-Linux Manager integration credentials and configuration details for automated software management.",
-         "application/json", Schema.Platform.SuseManagerSettings},
+         "application/json", Schema.Platform.SmlmSettings},
       not_found: Schema.NotFound.response()
     ]
 
@@ -185,11 +185,11 @@ defmodule TrentoWeb.V1.SettingsController do
       "Saves new credentials and configuration for SUSE Multi-Linux Manager integration, enabling secure software management and updates.",
     request_body:
       {"Request body containing new SUSE Multi-Linux Manager credentials and configuration for secure integration and software management.",
-       "application/json", Schema.Platform.SaveSuseManagerSettingsRequest},
+       "application/json", Schema.Platform.SaveSmlmSettingsRequest},
     responses: [
       created:
         {"SUSE Multi-Linux Manager settings have been successfully saved, including credentials and configuration for secure integration.",
-         "application/json", Schema.Platform.SuseManagerSettings},
+         "application/json", Schema.Platform.SmlmSettings},
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 

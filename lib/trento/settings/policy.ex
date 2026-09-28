@@ -17,7 +17,7 @@ defmodule Trento.Settings.Policy do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
-    SuseManagerSettings
+    SmlmSettings
   }
 
   alias Trento.Users.User
@@ -25,10 +25,10 @@ defmodule Trento.Settings.Policy do
   @action_to_resource %{
     update_api_key_settings: Trento.Settings.ApiKeySettings,
     update_activity_log_settings: Trento.Settings.ActivityLogSettings,
-    save_smlm_settings: Trento.Settings.SuseManagerSettings,
-    update_smlm_settings: Trento.Settings.SuseManagerSettings,
-    delete_smlm_settings: Trento.Settings.SuseManagerSettings,
-    test_smlm_settings: Trento.Settings.SuseManagerSettings,
+    save_smlm_settings: Trento.Settings.SmlmSettings,
+    update_smlm_settings: Trento.Settings.SmlmSettings,
+    delete_smlm_settings: Trento.Settings.SmlmSettings,
+    test_smlm_settings: Trento.Settings.SmlmSettings,
     get_alerting_settings: Trento.Settings.AlertingSettings,
     create_alerting_settings: Trento.Settings.AlertingSettings,
     update_alerting_settings: Trento.Settings.AlertingSettings,
@@ -41,7 +41,7 @@ defmodule Trento.Settings.Policy do
   def authorize(:update_activity_log_settings, %User{} = user, ActivityLogSettings),
     do: has_global_ability?(user) or has_activity_logs_settings_change_ability?(user)
 
-  def authorize(action, %User{} = user, SuseManagerSettings)
+  def authorize(action, %User{} = user, SmlmSettings)
       when action in [
              :save_smlm_settings,
              :update_smlm_settings,

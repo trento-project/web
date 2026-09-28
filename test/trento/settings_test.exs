@@ -25,7 +25,7 @@ defmodule Trento.SettingsTest do
     AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
-    SuseManagerSettings
+    SmlmSettings
   }
 
   alias Trento.Hosts.Commands.CompleteSoftwareUpdatesDiscovery
@@ -156,7 +156,7 @@ defmodule Trento.SettingsTest do
           )
 
         assert {:ok,
-                %SuseManagerSettings{
+                %SmlmSettings{
                   url: ^url,
                   username: ^username,
                   password: ^password,
@@ -179,7 +179,7 @@ defmodule Trento.SettingsTest do
           )
 
         assert {:ok,
-                %SuseManagerSettings{
+                %SmlmSettings{
                   url: ^url,
                   username: ^username,
                   password: ^password,
@@ -254,7 +254,7 @@ defmodule Trento.SettingsTest do
         }
 
         assert {:ok,
-                %SuseManagerSettings{
+                %SmlmSettings{
                   url: ^url,
                   username: ^username,
                   password: ^password,
@@ -272,7 +272,7 @@ defmodule Trento.SettingsTest do
         }
 
         assert {:ok,
-                %SuseManagerSettings{
+                %SmlmSettings{
                   url: ^url,
                   username: ^username,
                   password: ^password,
@@ -298,7 +298,7 @@ defmodule Trento.SettingsTest do
         }
 
         assert {:ok,
-                %SuseManagerSettings{
+                %SmlmSettings{
                   url: ^url,
                   username: ^username,
                   password: ^password,
