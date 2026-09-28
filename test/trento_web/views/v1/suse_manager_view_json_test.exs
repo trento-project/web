@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule TrentoWeb.V1.SUSEManagerJSONTest do
+defmodule TrentoWeb.V1.SmlmJSONTest do
   use TrentoWeb.ConnCase, async: true
 
   import Trento.Factory
 
-  alias TrentoWeb.V1.SUSEManagerJSON
+  alias TrentoWeb.V1.SmlmJSON
 
   describe "renders software_updates.json" do
     test "should render relevant fields" do
@@ -19,7 +19,7 @@ defmodule TrentoWeb.V1.SUSEManagerJSONTest do
       }
 
       assert expected_software_updates ==
-               SUSEManagerJSON.software_updates(%{
+               SmlmJSON.software_updates(%{
                  relevant_patches: relevant_patches,
                  upgradable_packages: upgradable_packages
                })
@@ -50,7 +50,7 @@ defmodule TrentoWeb.V1.SUSEManagerJSONTest do
                affected_packages: ^affected_packages,
                affected_systems: ^affected_systems
              } =
-               SUSEManagerJSON.errata_details(%{
+               SmlmJSON.errata_details(%{
                  errata_details: errata_details,
                  cves: cves,
                  fixes: fixes,
