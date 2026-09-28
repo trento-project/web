@@ -178,7 +178,7 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :save_suse_manager_settings,
+  operation :save_smlm_settings,
     summary: "Saves the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -193,12 +193,12 @@ defmodule TrentoWeb.V1.SettingsController do
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
-  @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def save_suse_manager_settings(conn, _) do
+  @spec save_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def save_smlm_settings(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
+    with {:ok, saved_settings} <- Settings.save_smlm_settings(settings_params) do
       conn
       |> put_status(:created)
       |> render(:suse_manager, %{settings: saved_settings})

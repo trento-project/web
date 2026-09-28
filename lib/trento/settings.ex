@@ -122,11 +122,11 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec save_suse_manager_settings(suse_manager_settings_save_submission, module()) ::
+  @spec save_smlm_settings(suse_manager_settings_save_submission, module()) ::
           {:ok, SuseManagerSettings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
-  def save_suse_manager_settings(settings_submission, date_service \\ DateService) do
+  def save_smlm_settings(settings_submission, date_service \\ DateService) do
     with {:ok, :settings_not_configured, settings} <- ensure_no_suse_manager_settings_configured() do
       settings
       |> save_or_update_suse_manager_settings(settings_submission, date_service)
