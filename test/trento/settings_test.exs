@@ -241,7 +241,7 @@ defmodule Trento.SettingsTest do
           submission
           |> List.wrap()
           |> Enum.each(fn submission ->
-            assert {:error, %{errors: ^errors}} = Settings.save_suse_manager_settings(submission)
+            assert {:error, %{errors: ^errors}} = Settings.save_smlm_settings(submission)
           end)
         end
       end
@@ -260,7 +260,7 @@ defmodule Trento.SettingsTest do
                   password: ^password,
                   ca_cert: nil,
                   ca_uploaded_at: nil
-                }} = Settings.save_suse_manager_settings(settings)
+                }} = Settings.save_smlm_settings(settings)
       end
 
       test "should save SUSE Multi-Linux Manager settings with a nil ca cert" do
@@ -278,7 +278,7 @@ defmodule Trento.SettingsTest do
                   password: ^password,
                   ca_cert: nil,
                   ca_uploaded_at: nil
-                }} = Settings.save_suse_manager_settings(settings)
+                }} = Settings.save_smlm_settings(settings)
       end
 
       test "should save SUSE Multi-Linux Manager settings with ca cert" do
@@ -305,7 +305,7 @@ defmodule Trento.SettingsTest do
                   ca_cert: ^ca_cert,
                   ca_uploaded_at: ^now
                 }} =
-                 Settings.save_suse_manager_settings(settings, Trento.Support.DateService.Mock)
+                 Settings.save_smlm_settings(settings, Trento.Support.DateService.Mock)
       end
 
       test "should not save SUSE Multi-Linux Manager settings if already saved" do
@@ -316,14 +316,14 @@ defmodule Trento.SettingsTest do
           ca_cert: nil
         }
 
-        assert {:ok, _} = Settings.save_suse_manager_settings(settings)
+        assert {:ok, _} = Settings.save_smlm_settings(settings)
 
         assert {:error, :settings_already_configured} =
-                 Settings.save_suse_manager_settings(settings)
+                 Settings.save_smlm_settings(settings)
       end
 
       for operation <- [
-            &Settings.save_suse_manager_settings/1,
+            &Settings.save_smlm_settings/1,
             &Settings.change_suse_manager_settings/1
           ] do
         @operation operation
@@ -364,7 +364,7 @@ defmodule Trento.SettingsTest do
           }
 
           case inspect(@operation) do
-            "&Trento.Settings.save_suse_manager_settings/1" ->
+            "&Trento.Settings.save_smlm_settings/1" ->
               :ok
 
             "&Trento.Settings.change_suse_manager_settings/1" ->
