@@ -191,7 +191,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.SettingsController, :update_api_key_settings} => {:api_key_generation, 200},
         {TrentoWeb.V1.SettingsController, :save_smlm_settings} =>
           {:saving_suma_settings, 201},
-        {TrentoWeb.V1.SettingsController, :patch_suse_manager_settings} =>
+        {TrentoWeb.V1.SettingsController, :patch_smlm_settings} =>
           {:changing_suma_settings, 200},
         {TrentoWeb.V1.SettingsController, :put_suse_manager_settings} =>
           {:changing_suma_settings, 200},
