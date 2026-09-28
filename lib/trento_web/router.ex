@@ -266,7 +266,7 @@ defmodule TrentoWeb.Router do
           get "/", SettingsController, :get_smlm_settings
           post "/", SettingsController, :save_smlm_settings
           patch "/", SettingsController, :patch_smlm_settings
-          put "/", SettingsController, :put_suse_manager_settings
+          put "/", SettingsController, :put_smlm_settings
           delete "/", SettingsController, :delete_suse_manager_settings
           post "/test", SettingsController, :test_suse_manager_settings
         end

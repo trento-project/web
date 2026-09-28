@@ -206,13 +206,13 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   operation :patch_smlm_settings, @update_suse_manager_operation_options
-  operation :put_suse_manager_settings, @update_suse_manager_operation_options
+  operation :put_smlm_settings, @update_suse_manager_operation_options
 
   @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def patch_smlm_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
-  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  @spec put_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def put_smlm_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
   operation :delete_suse_manager_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
@@ -381,7 +381,7 @@ defmodule TrentoWeb.V1.SettingsController do
   def get_action(%{private: %{phoenix_action: action}})
       when action in [
              :patch_smlm_settings,
-             :put_suse_manager_settings
+             :put_smlm_settings
            ],
       do: :update_suse_manager_settings
 
