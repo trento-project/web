@@ -20,6 +20,10 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     ClusterDeregistered,
     ClusterDetailsUpdated,
     ClusterHealthChanged,
+    ClusterChecksHealthChanged,
+    ClusterDiscoveredHealthChanged,
+    ClusterReplicationHealthChanged,
+    ClusterSbdHealthChanged,
     ClusterRegistered,
     ClusterRestored
   }
@@ -32,35 +36,30 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   project(
     %ClusterRegistered{
-      cluster_id: id,
-      name: name,
-      sap_instances: sap_instances,
-      provider: provider,
-      type: type,
-      resources_number: resources_number,
-      hosts_number: hosts_number,
-      details: details,
-      health: health,
-      state: state
-    },
+      cluster_id: cluster_id
+    } = event,
     fn multi ->
+      params =
+        event
+        |> Map.from_struct()
+        |> Map.put(:id, cluster_id)
+        |> postprocess_health_details()
+
       changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{}, %{
-          id: id,
-          name: name,
-          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-          provider: provider,
-          type: type,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details,
-          health: health,
-          state: state
-        })
+        ClusterReadModel.changeset(%ClusterReadModel{}, params)
 
       Ecto.Multi.insert(multi, :cluster, changeset)
     end
   )
+
+  defp postprocess_health_details(%{health_details: health_details} = params)
+       when not is_nil(health_details) do
+    health_details
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
+    |> then(&Map.replace!(params, :health_details, &1))
+  end
+
+  defp postprocess_health_details(params), do: params
 
   project(
     %ClusterDeregistered{
@@ -151,6 +150,93 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
+
+  project(
+    %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: checks_health},
+    fn multi ->
+      from(c in ClusterReadModel,
+        where: c.id == ^cluster_id,
+        update: [
+          set: [
+            health_details:
+              fragment(
+                "jsonb_set(?, '{checks_health, value}', to_jsonb(?::text)), false",
+                c.health_details,
+                ^checks_health
+              ),
+            updated_at: ^DateTime.utc_now()
+          ]
+        ]
+      )
+      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
+    end
+  )
+
+  project(
+    %ClusterDiscoveredHealthChanged{cluster_id: cluster_id, discovered_health: discovered_health},
+    fn multi ->
+      from(c in ClusterReadModel,
+        where: c.id == ^cluster_id,
+        update: [
+          set: [
+            health_details:
+              fragment(
+                "jsonb_set(?, '{discovered_health, value}', to_jsonb(?::text)), false",
+                c.health_details,
+                ^discovered_health
+              ),
+            updated_at: ^DateTime.utc_now()
+          ]
+        ]
+      )
+      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
+    end
+  )
+
+  project(
+    %ClusterReplicationHealthChanged{
+      cluster_id: cluster_id,
+      replication_health: replication_health
+    },
+    fn multi ->
+      from(c in ClusterReadModel,
+        where: c.id == ^cluster_id,
+        update: [
+          set: [
+            health_details:
+              fragment(
+                "jsonb_set(?, '{replication_health, value}', to_jsonb(?::text)), false",
+                c.health_details,
+                ^replication_health
+              ),
+            updated_at: ^DateTime.utc_now()
+          ]
+        ]
+      )
+      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
+    end
+  )
+
+  project(
+    %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: sbd_health},
+    fn multi ->
+      from(c in ClusterReadModel,
+        where: c.id == ^cluster_id,
+        update: [
+          set: [
+            health_details:
+              fragment(
+                "jsonb_set(?, '{sbd_health, value}', to_jsonb(?::text)), false",
+                c.health_details,
+                ^sbd_health
+              ),
+            updated_at: ^DateTime.utc_now()
+          ]
+        ]
+      )
+      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
+    end
+  )
 
   project(
     %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
