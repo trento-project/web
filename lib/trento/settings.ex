@@ -23,14 +23,14 @@ defmodule Trento.Settings do
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
   require Logger
 
-  @type suse_manager_settings_save_submission :: %{
+  @type smlm_settings_save_submission :: %{
           url: String.t(),
           username: String.t(),
           password: String.t(),
           ca_cert: String.t() | nil
         }
 
-  @type suse_manager_settings_change_submission :: %{
+  @type smlm_settings_change_submission :: %{
           url: String.t() | nil,
           username: String.t() | nil,
           password: String.t() | nil,
@@ -122,7 +122,7 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec save_smlm_settings(suse_manager_settings_save_submission, module()) ::
+  @spec save_smlm_settings(smlm_settings_save_submission, module()) ::
           {:ok, SmlmSettings.t()}
           | {:error, :settings_already_configured}
           | {:error, any()}
@@ -134,7 +134,8 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec change_smlm_settings(suse_manager_settings_change_submission, module()) ::
+  @spec change_smlm_settings(smlm_settings_change_submission, module()) ::
+          {:ok, SmlmSettings.t()}
           | {:error, :settings_not_configured}
           | {:error, any()}
   def change_smlm_settings(settings_submission, date_service \\ DateService) do
