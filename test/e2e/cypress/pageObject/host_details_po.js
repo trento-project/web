@@ -110,6 +110,15 @@ export const visit = (selectedHost = '') =>
 export const visitVmdrbddev01Host = () =>
   basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf');
 
+export const visitVmdrbddev01HostPatchList = (params) =>
+  basePage.visit('/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf/patches', params);
+
+export const visitVmdrbddev01HostUpgradablePackages = (params) =>
+  basePage.visit(
+    '/hosts/240f96b1-8d26-53b7-9e99-ffb0f2e735bf/packages',
+    params
+  );
+
 export const visitVmdrbddev02Host = () =>
   basePage.visit('/hosts/21de186a-e38f-5804-b643-7f4ef22fecfd');
 
@@ -139,6 +148,14 @@ export const clickUpgradablePackagesCard = () =>
 
 export const clickFirstRelatedPackage = () =>
   cy.get(firstRelatedPackage).click();
+
+export const selectPatchTypeFilter = (patchType) => {
+  const filterButton = basePage.getSelectControlValue(
+    '[aria-label="advisories"]'
+  );
+
+  return basePage.selectFromDropdown(filterButton, patchType);
+};
 
 //Validations
 export const restoredHostIsDisplayed = () =>
@@ -200,6 +217,9 @@ export const expectedSynopsisText2IsDisplayed = () =>
   cy
     .get(synopsisCell2)
     .should('have.text', 'important: Security update for java-1_8_0-ibm');
+
+export const expectedPatchNumberIs = (patchCount) =>
+  cy.get('tbody tr').should('have.length', patchCount);
 
 export const expectedHostIsDisplayedInTitle = () =>
   cy.get(hostPatchesViewTitle).should('have.text', 'vmdrbddev01');

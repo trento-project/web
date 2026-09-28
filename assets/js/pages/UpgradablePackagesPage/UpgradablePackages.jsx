@@ -12,6 +12,8 @@ import Input from '@common/Input';
 import Button from '@common/Button';
 import { containsSubstring } from '@lib/filter';
 
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
 const sortCsvContent = (content, sortingDirection) => {
   if (content.length <= 1) {
     return content;
@@ -32,6 +34,11 @@ export default function UpgradablePackages({
   onPatchClick = noop,
   onLoad = noop,
 }) {
+  // The items per page selection is remembered for every host, not per host
+  const [searchParams, setSearchParams] = usePersistentSearchParams(
+    'hostUpgradablePackages'
+  );
+
   const [search, setSearch] = useState('');
   const [csvURL, setCsvURL] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
@@ -138,6 +145,8 @@ export default function UpgradablePackages({
       <UpgradablePackagesList
         patchesLoading={patchesLoading}
         upgradablePackages={filteredPackages}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
         onPatchClick={onPatchClick}
         onLoad={onLoad}
         toggleSortDirection={toggleSortDirection}

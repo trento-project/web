@@ -12,6 +12,11 @@ import Select from '@common/Select';
 import Button from '@common/Button';
 
 import { containsSubstring } from '@lib/filter';
+import { changeSearchParams } from '@lib/searchParams';
+
+import usePersistentSearchParams from '@hooks/usePersistentSearchParams';
+
+const ADVISORY_TYPE_PARAM = 'advisoryType';
 
 const advisoryTypesFromPatches = (patches) =>
   Array.from(new Set(patches.map(({ advisory_type }) => advisory_type))).sort();
@@ -24,7 +29,13 @@ const filterPatchesByAdvisoryType = (patches, advisoryType) =>
 function HostRelevantPatches({ hostName, onNavigate, patches, timezone }) {
   const advisoryTypes = ['all'].concat(advisoryTypesFromPatches(patches));
 
-  const [displayedAdvisories, setDisplayedAdvisories] = useState('all');
+  // The advisory type is remembered for every host, not per host
+  const [searchParams, setSearchParams] = usePersistentSearchParams(
+    'hostRelevantPatches'
+  );
+
+  const displayedAdvisories = searchParams.get(ADVISORY_TYPE_PARAM) || 'all';
+
   const [search, setSearch] = useState('');
 
   const [displayedPatches, setDisplayedPatches] = useState(patches);
@@ -87,10 +98,14 @@ function HostRelevantPatches({ hostName, onNavigate, patches, timezone }) {
         <div className="flex flex-1 items-center space-x-2 lg:justify-end">
           <Select
             aria-label="advisories"
-            onChange={setDisplayedAdvisories}
+            onChange={(advisoryType) =>
+              setSearchParams(
+                changeSearchParams({ [ADVISORY_TYPE_PARAM]: advisoryType })
+              )
+            }
             options={advisoryTypes}
             className="min-w-36 max-w-fit"
-            initialValues={[displayedAdvisories]}
+            value={displayedAdvisories}
           />
           <Input
             className="flex flex-1 min-w-36 lg:max-w-96"
@@ -113,6 +128,8 @@ function HostRelevantPatches({ hostName, onNavigate, patches, timezone }) {
         onNavigate={onNavigate}
         patches={displayedPatches}
         timezone={timezone}
+        searchParams={searchParams}
+        setSearchParams={setSearchParams}
       />
     </>
   );

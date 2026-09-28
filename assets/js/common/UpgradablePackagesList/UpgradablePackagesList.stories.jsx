@@ -32,6 +32,16 @@ export default {
         'Callback function invoked when the Latest Package column header is clicked to toggle sort order',
       action: 'toggle sort direction',
     },
+    searchParams: {
+      description:
+        'URL search params (e.g. `new URLSearchParams(window.location.search)`) used for filters/pagination',
+      control: { type: 'object' },
+    },
+    setSearchParams: {
+      description:
+        'Setter function to update search params (usually from React Router)',
+      action: 'setSearchParams',
+    },
   },
 };
 
@@ -42,6 +52,8 @@ export const Default = {
     upgradablePackages: csvDataupgradablePackageFactory.buildList(2),
     onPatchClick: action('onPatchClick'),
     toggleSortDirection: action('toggleSortDirection'),
+    searchParams: new URLSearchParams(),
+    setSearchParams: action('setSearchParams'),
   },
 };
 

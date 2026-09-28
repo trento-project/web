@@ -4,6 +4,7 @@
 import { hostFactory } from '@lib/test-utils/factories/hosts';
 import { upgradablePackageFactory } from '@lib/test-utils/factories/upgradablePackage';
 import React from 'react';
+import { MemoryRouter } from 'react-router';
 import { action } from 'storybook/actions';
 
 import UpgradablePackages from './UpgradablePackages';
@@ -33,6 +34,13 @@ export default {
       description: 'Callback when list is loaded',
     },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   render: (args) => <UpgradablePackages {...args} />,
 };
 

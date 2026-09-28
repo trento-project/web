@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { faker } from '@faker-js/faker';
@@ -11,6 +11,7 @@ import { noop } from 'lodash';
 import { renderWithRouter } from '@lib/test-utils';
 import { hostFactory, relevantPatchFactory } from '@lib/test-utils/factories';
 import { DEFAULT_TIMEZONE } from '@lib/timezones';
+import { readViewSetting, writeViewSetting } from '@lib/viewSettings';
 
 import HostRelevantPatchesPage from './HostRelevantPatchesPage';
 
@@ -24,6 +25,11 @@ const enhancePatchesWithAdvisoryType = (
   }));
 
 describe('HostRelevantPatchesPage', () => {
+  beforeEach(() => {
+    // Restore filter settings
+    window.sessionStorage.clear();
+  });
+
   describe('renders relevant information correctly', () => {
     it('displays the hostname', () => {
       const host = hostFactory.build();
@@ -189,6 +195,124 @@ describe('HostRelevantPatchesPage', () => {
       const tableRows = container.querySelectorAll('tbody > tr');
 
       expect(tableRows.length).toBe(1);
+    });
+
+    it('should restore the stored filters when landing on a bare url', async () => {
+      const patches = enhancePatchesWithAdvisoryType(
+        relevantPatchFactory.buildList(8)
+      );
+      const expectedPatches = patches.filter(
+        ({ advisory_type }) => advisory_type === 'adv-0'
+      );
+
+      writeViewSetting(
+        'hostRelevantPatches',
+        'advisoryType=adv-0&itemsPerPage=20'
+      );
+
+      const { container } = renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />,
+        { route: '/hosts/host1/patches' }
+      );
+
+      await waitFor(() => {
+        const params = new URLSearchParams(window.location.search);
+
+        expect(params.get('advisoryType')).toEqual('adv-0');
+        expect(params.get('itemsPerPage')).toEqual('20');
+      });
+
+      expect(container.querySelectorAll('tbody > tr')).toHaveLength(
+        expectedPatches.length
+      );
+      expectedPatches.forEach((patch) => {
+        expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
+      });
+    });
+
+    it('should let the filters in the url win over the stored ones', async () => {
+      const patches = enhancePatchesWithAdvisoryType(
+        relevantPatchFactory.buildList(8)
+      );
+      const expectedPatches = patches.filter(
+        ({ advisory_type }) => advisory_type === 'adv-1'
+      );
+
+      writeViewSetting('hostRelevantPatches', 'advisoryType=adv-0');
+
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />,
+        { route: '/hosts/host1/patches?advisoryType=adv-1' }
+      );
+
+      await waitFor(() =>
+        expectedPatches.forEach((patch) => {
+          expect(screen.getByText(patch.advisory_synopsis)).toBeVisible();
+        })
+      );
+
+      await waitFor(() =>
+        expect(readViewSetting('hostRelevantPatches')).toEqual(
+          'advisoryType=adv-1'
+        )
+      );
+    });
+
+    it('should store the selected filters', async () => {
+      const user = userEvent.setup();
+
+      const patches = enhancePatchesWithAdvisoryType(
+        relevantPatchFactory.buildList(8)
+      );
+
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />,
+        { route: '/hosts/host1/patches' }
+      );
+
+      const advisorySelect = screen.getByRole('combobox', {
+        name: 'advisories',
+      });
+      await user.click(advisorySelect);
+      await user.click(screen.getByRole('option', { name: 'adv-0' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('hostRelevantPatches')).toEqual(
+          'advisoryType=adv-0'
+        )
+      );
+    });
+
+    it('should store the selected items per page', async () => {
+      const user = userEvent.setup();
+
+      const patches = relevantPatchFactory.buildList(3);
+
+      renderWithRouter(
+        <HostRelevantPatchesPage
+          patches={patches}
+          timezone={DEFAULT_TIMEZONE}
+        />,
+        { route: '/hosts/host1/patches' }
+      );
+
+      await user.click(screen.getByRole('combobox', { name: 'per-page' }));
+      await user.click(screen.getByRole('option', { name: '50' }));
+
+      await waitFor(() =>
+        expect(readViewSetting('hostRelevantPatches')).toEqual(
+          'itemsPerPage=50'
+        )
+      );
     });
   });
 
