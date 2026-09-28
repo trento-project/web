@@ -397,7 +397,7 @@ defmodule TrentoWeb.V1.SettingsController do
     update_settings_paylod = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
+    with {:ok, saved_settings} <- Settings.change_smlm_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
       |> render(:suse_manager, %{settings: saved_settings})

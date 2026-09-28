@@ -134,11 +134,11 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec change_suse_manager_settings(suse_manager_settings_change_submission, module()) ::
+  @spec change_smlm_settings(suse_manager_settings_change_submission, module()) ::
           {:ok, SuseManagerSettings.t()}
           | {:error, :settings_not_configured}
           | {:error, any()}
-  def change_suse_manager_settings(settings_submission, date_service \\ DateService) do
+  def change_smlm_settings(settings_submission, date_service \\ DateService) do
     with {:ok, settings} <- get_smlm_settings() do
       settings
       |> save_or_update_smlm_settings(settings_submission, date_service)
