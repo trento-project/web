@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
+defmodule Trento.Infrastructure.SoftwareUpdates.Smlm do
   @moduledoc """
   SUSE Multi-Linux Manager Software updates discovery adapter
   """
@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
-  alias Trento.Infrastructure.SoftwareUpdates.SumaApi
+  alias Trento.Infrastructure.SoftwareUpdates.SmlmApi
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def setup do

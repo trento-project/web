@@ -9,8 +9,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   import Trento.Factory
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.{
-    State,
-    SmlmAuth
+    SmlmAuth,
+    State
   }
 
   alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock, as: SmlmApiMock

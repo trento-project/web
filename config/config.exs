@@ -274,11 +274,11 @@ config :trento, Trento.Vault,
 config :trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.Infrastructure.SoftwareUpdates.MockSmlm
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.Suma,
+config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.SumaApi,
-  executor: Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+config :trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
+  executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 
 config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure

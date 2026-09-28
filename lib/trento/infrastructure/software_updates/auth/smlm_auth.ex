@@ -11,7 +11,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   use GenServer, restart: :transient
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
-  alias Trento.Infrastructure.SoftwareUpdates.SumaApi
+  alias Trento.Infrastructure.SoftwareUpdates.SmlmApi
   alias Trento.Settings
 
   @default_name "smlm_authentication"

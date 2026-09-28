@@ -4,7 +4,7 @@
 defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SumaHttpExecutorTest do
   use ExUnit.Case
 
-  alias Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor
+  alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 
   def load_certificate_content(name) do
     File.cwd!()
