@@ -15,17 +15,17 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   alias Trento.Clusters.Events.{
     ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDataMarkedInSync,
     ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
-    ClusterHealthChanged,
-    ClusterChecksHealthChanged,
     ClusterDiscoveredHealthChanged,
-    ClusterReplicationHealthChanged,
-    ClusterSbdHealthChanged,
+    ClusterHealthChanged,
     ClusterRegistered,
-    ClusterRestored
+    ClusterReplicationHealthChanged,
+    ClusterRestored,
+    ClusterSbdHealthChanged
   }
 
   alias Trento.Clusters.Projections.ClusterReadModel
@@ -154,42 +154,24 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   project(
     %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: checks_health},
     fn multi ->
-      from(c in ClusterReadModel,
-        where: c.id == ^cluster_id,
-        update: [
-          set: [
-            health_details:
-              fragment(
-                "jsonb_set(?, '{checks_health, value}', to_jsonb(?::text)), false",
-                c.health_details,
-                ^checks_health
-              ),
-            updated_at: ^DateTime.utc_now()
-          ]
-        ]
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        prepare_health_details_update_query(cluster_id, "checks_health", checks_health),
+        []
       )
-      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
     end
   )
 
   project(
     %ClusterDiscoveredHealthChanged{cluster_id: cluster_id, discovered_health: discovered_health},
     fn multi ->
-      from(c in ClusterReadModel,
-        where: c.id == ^cluster_id,
-        update: [
-          set: [
-            health_details:
-              fragment(
-                "jsonb_set(?, '{discovered_health, value}', to_jsonb(?::text)), false",
-                c.health_details,
-                ^discovered_health
-              ),
-            updated_at: ^DateTime.utc_now()
-          ]
-        ]
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        prepare_health_details_update_query(cluster_id, "discovered_health", discovered_health),
+        []
       )
-      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
     end
   )
 
@@ -199,44 +181,45 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       replication_health: replication_health
     },
     fn multi ->
-      from(c in ClusterReadModel,
-        where: c.id == ^cluster_id,
-        update: [
-          set: [
-            health_details:
-              fragment(
-                "jsonb_set(?, '{replication_health, value}', to_jsonb(?::text)), false",
-                c.health_details,
-                ^replication_health
-              ),
-            updated_at: ^DateTime.utc_now()
-          ]
-        ]
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        prepare_health_details_update_query(cluster_id, "replication_health", replication_health),
+        []
       )
-      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
     end
   )
 
   project(
     %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: sbd_health},
     fn multi ->
-      from(c in ClusterReadModel,
-        where: c.id == ^cluster_id,
-        update: [
-          set: [
-            health_details:
-              fragment(
-                "jsonb_set(?, '{sbd_health, value}', to_jsonb(?::text)), false",
-                c.health_details,
-                ^sbd_health
-              ),
-            updated_at: ^DateTime.utc_now()
-          ]
-        ]
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        prepare_health_details_update_query(cluster_id, "sbd_health", sbd_health),
+        []
       )
-      |> then(&Ecto.Multi.update_all(multi, :health_details, &1, []))
     end
   )
+
+  defp prepare_health_details_update_query(cluster_id, value_path, value) do
+    from(
+      c in ClusterReadModel,
+      where: c.id == ^cluster_id,
+      update: [
+        set: [
+          health_details:
+            fragment(
+              "jsonb_set(?, '{?, value}', to_jsonb(?::text)), false",
+              c.health_details,
+              ^value_path,
+              ^value
+            ),
+          updated_at: ^DateTime.utc_now()
+        ]
+      ]
+    )
+  end
 
   project(
     %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
