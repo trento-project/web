@@ -189,12 +189,9 @@ defmodule Trento.ActivityLog.ActivityCatalog do
         {TrentoWeb.V1.TagsController, :remove_tag_from_sap_system} => {:resource_untagging, 204},
         {TrentoWeb.V1.TagsController, :remove_tag_from_database} => {:resource_untagging, 204},
         {TrentoWeb.V1.SettingsController, :update_api_key_settings} => {:api_key_generation, 200},
-        {TrentoWeb.V1.SettingsController, :save_smlm_settings} =>
-          {:saving_suma_settings, 201},
-        {TrentoWeb.V1.SettingsController, :patch_smlm_settings} =>
-          {:changing_suma_settings, 200},
-        {TrentoWeb.V1.SettingsController, :put_smlm_settings} =>
-          {:changing_suma_settings, 200},
+        {TrentoWeb.V1.SettingsController, :save_smlm_settings} => {:saving_suma_settings, 201},
+        {TrentoWeb.V1.SettingsController, :patch_smlm_settings} => {:changing_suma_settings, 200},
+        {TrentoWeb.V1.SettingsController, :put_smlm_settings} => {:changing_suma_settings, 200},
         {TrentoWeb.V1.SettingsController, :delete_smlm_settings} =>
           {:clearing_suma_settings, 204},
         {TrentoWeb.V1.SettingsController, :create_alerting_settings} =>
