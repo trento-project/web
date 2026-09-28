@@ -127,7 +127,7 @@ defmodule Trento.Settings do
           | {:error, :settings_already_configured}
           | {:error, any()}
   def save_smlm_settings(settings_submission, date_service \\ DateService) do
-    with {:ok, :settings_not_configured, settings} <- ensure_no_suse_manager_settings_configured() do
+    with {:ok, :settings_not_configured, settings} <- ensure_no_smlm_settings_configured() do
       settings
       |> save_or_update_smlm_settings(settings_submission, date_service)
       |> log_error("Error while saving software updates settings")
@@ -291,7 +291,7 @@ defmodule Trento.Settings do
     end
   end
 
-  defp ensure_no_suse_manager_settings_configured do
+  defp ensure_no_smlm_settings_configured do
     case Repo.one(SmlmSettings.base_query()) do
       nil ->
         {:ok, :settings_not_configured, nil}
