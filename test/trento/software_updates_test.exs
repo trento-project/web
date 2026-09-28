@@ -37,7 +37,7 @@ defmodule Trento.SoftwareUpdates.SettingsTest do
 
       Enum.each(1..3, fn _ ->
         assert :ok == Settings.clear_suse_manager_settings()
-        assert {:error, :settings_not_configured} == Settings.get_suse_manager_settings()
+        assert {:error, :settings_not_configured} == Settings.get_smlm_settings()
       end)
     end
   end

@@ -76,7 +76,7 @@ defmodule Trento.Settings.PolicyTest do
     test "should allow SUSE Multi-Linux Manager settings actions if the user has all:all ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "all"}]}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
       assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
       assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
@@ -86,7 +86,7 @@ defmodule Trento.Settings.PolicyTest do
     test "should allow SUSE Multi-Linux Manager settings actions if the user has all:suma_settings ability" do
       user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:save_suse_manager_settings, user, SuseManagerSettings)
       assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
       assert Policy.authorize(:delete_suse_manager_settings, user, SuseManagerSettings)
@@ -96,7 +96,7 @@ defmodule Trento.Settings.PolicyTest do
     test "should allow SUSE Multi-Linux Manager settings actions if the user has no abilities" do
       user = %User{abilities: []}
 
-      assert Policy.authorize(:get_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:get_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:test_suse_manager_settings, user, SuseManagerSettings)
     end
 
