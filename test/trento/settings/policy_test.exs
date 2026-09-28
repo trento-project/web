@@ -78,7 +78,7 @@ defmodule Trento.Settings.PolicyTest do
 
       assert Policy.authorize(:get_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:save_smlm_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:update_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:delete_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:test_smlm_settings, user, SuseManagerSettings)
     end
@@ -88,7 +88,7 @@ defmodule Trento.Settings.PolicyTest do
 
       assert Policy.authorize(:get_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:save_smlm_settings, user, SuseManagerSettings)
-      assert Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      assert Policy.authorize(:update_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:delete_smlm_settings, user, SuseManagerSettings)
       assert Policy.authorize(:test_smlm_settings, user, SuseManagerSettings)
     end
@@ -104,7 +104,7 @@ defmodule Trento.Settings.PolicyTest do
       user = %User{abilities: []}
 
       refute Policy.authorize(:save_smlm_settings, user, SuseManagerSettings)
-      refute Policy.authorize(:update_suse_manager_settings, user, SuseManagerSettings)
+      refute Policy.authorize(:update_smlm_settings, user, SuseManagerSettings)
       refute Policy.authorize(:delete_smlm_settings, user, SuseManagerSettings)
     end
   end
