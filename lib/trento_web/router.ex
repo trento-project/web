@@ -148,12 +148,12 @@ defmodule TrentoWeb.Router do
       get "/hosts/:id/exporters_status", PrometheusController, :exporters_status
       get "/hosts/:id/metrics/query", HostController, :query_metrics
 
-      get "/hosts/:id/software_updates", SUSEManagerController, :software_updates
+      get "/hosts/:id/software_updates", SmlmController, :software_updates
 
-      get "/software_updates/packages", SUSEManagerController, :patches_for_packages
+      get "/software_updates/packages", SmlmController, :patches_for_packages
 
       get "/software_updates/errata_details/:advisory_name",
-          SUSEManagerController,
+          SmlmController,
           :errata_details
 
       post "/clusters/:id/tags", TagsController, :add_tag_to_cluster,
