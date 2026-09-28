@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.SettingsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  @update_suse_manager_operation_options [
+  @update_smlm_operation_options [
     summary: "Updates the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -205,8 +205,8 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :patch_smlm_settings, @update_suse_manager_operation_options
-  operation :put_smlm_settings, @update_suse_manager_operation_options
+  operation :patch_smlm_settings, @update_smlm_operation_options
+  operation :put_smlm_settings, @update_smlm_operation_options
 
   @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def patch_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
