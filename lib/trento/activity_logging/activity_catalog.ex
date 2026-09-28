@@ -195,7 +195,7 @@ defmodule Trento.ActivityLog.ActivityCatalog do
           {:changing_suma_settings, 200},
         {TrentoWeb.V1.SettingsController, :put_smlm_settings} =>
           {:changing_suma_settings, 200},
-        {TrentoWeb.V1.SettingsController, :delete_suse_manager_settings} =>
+        {TrentoWeb.V1.SettingsController, :delete_smlm_settings} =>
           {:clearing_suma_settings, 204},
         {TrentoWeb.V1.SettingsController, :create_alerting_settings} =>
           {:saving_alerting_settings, 201},

@@ -214,7 +214,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec put_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def put_smlm_settings(conn, params), do: update_suse_manager_settings(conn, params)
 
-  operation :delete_suse_manager_settings,
+  operation :delete_smlm_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -224,8 +224,8 @@ defmodule TrentoWeb.V1.SettingsController do
         "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
     ]
 
-  @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def delete_suse_manager_settings(conn, _) do
+  @spec delete_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete_smlm_settings(conn, _) do
     :ok = Settings.clear_suse_manager_settings()
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
