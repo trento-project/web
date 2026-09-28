@@ -3,7 +3,9 @@
 
 defmodule Trento.Support.ValueDetails do
   @moduledoc """
-  TODO
+  ValueDetails struct blueprint
+
+  Module intended to be used in a `use` expressions to define derived modules having the the same structure of their struct but configurable type for the `value` field.
   """
   defmacro __using__(opts) do
     value_type = Keyword.fetch!(opts, :value_type)
@@ -31,7 +33,7 @@ end
 
 defmodule Trento.Support.HealthValueDetails do
   @moduledoc """
-  TODO
+  ValueDetails struct with Trento.Enums.Health as `value` field type.
   """
   require Trento.Enums.Health, as: Health
 
