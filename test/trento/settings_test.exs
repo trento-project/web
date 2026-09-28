@@ -324,7 +324,7 @@ defmodule Trento.SettingsTest do
 
       for operation <- [
             &Settings.save_smlm_settings/1,
-            &Settings.change_suse_manager_settings/1
+            &Settings.change_smlm_settings/1
           ] do
         @operation operation
         test "should issue software updates discovery process when doing settings operation #{inspect(operation)}",
@@ -367,7 +367,7 @@ defmodule Trento.SettingsTest do
             "&Trento.Settings.save_smlm_settings/1" ->
               :ok
 
-            "&Trento.Settings.change_suse_manager_settings/1" ->
+            "&Trento.Settings.change_smlm_settings/1" ->
               expect(Trento.SoftwareUpdates.Discovery.Mock, :clear, 1, fn -> :ok end)
 
               insert_software_updates_settings(settings)
@@ -388,7 +388,7 @@ defmodule Trento.SettingsTest do
         }
 
         assert {:error, :settings_not_configured} ==
-                 Settings.change_suse_manager_settings(submission)
+                 Settings.change_smlm_settings(submission)
       end
 
       test "should validate partial changes to SUSE Multi-Linux Manager settings" do
@@ -450,7 +450,7 @@ defmodule Trento.SettingsTest do
           |> List.wrap()
           |> Enum.each(fn change_submission ->
             assert {:error, %{errors: ^errors}} =
-                     Settings.change_suse_manager_settings(change_submission)
+                     Settings.change_smlm_settings(change_submission)
           end)
         end
       end
@@ -480,7 +480,7 @@ defmodule Trento.SettingsTest do
                   password: ^new_password,
                   ca_cert: ^initial_ca_cert,
                   ca_uploaded_at: ^initial_ca_uploaded_at
-                }} = Settings.change_suse_manager_settings(change_submission)
+                }} = Settings.change_smlm_settings(change_submission)
       end
 
       test "should properly update ca_cert and its upload date when a new cert is provided" do
@@ -517,7 +517,7 @@ defmodule Trento.SettingsTest do
                   ca_cert: ^new_ca_cert,
                   ca_uploaded_at: ^now
                 }} =
-                 Settings.change_suse_manager_settings(
+                 Settings.change_smlm_settings(
                    change_submission,
                    Trento.Support.DateService.Mock
                  )
@@ -553,13 +553,13 @@ defmodule Trento.SettingsTest do
           change_result =
             case run_iteration do
               1 ->
-                Settings.change_suse_manager_settings(
+                Settings.change_smlm_settings(
                   change_submission,
                   Trento.Support.DateService.Mock
                 )
 
               _ ->
-                Settings.change_suse_manager_settings(change_submission)
+                Settings.change_smlm_settings(change_submission)
             end
 
           assert {:ok,
@@ -597,7 +597,7 @@ defmodule Trento.SettingsTest do
                   password: ^initial_password,
                   ca_cert: nil,
                   ca_uploaded_at: nil
-                }} = Settings.change_suse_manager_settings(change_submission)
+                }} = Settings.change_smlm_settings(change_submission)
       end
 
       test "should reject an invalid SSL certificate" do
@@ -612,7 +612,7 @@ defmodule Trento.SettingsTest do
                   errors: [
                     ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
                   ]
-                }} = Settings.change_suse_manager_settings(change_submission)
+                }} = Settings.change_smlm_settings(change_submission)
       end
 
       test "should reject a 'foobar' SSL certificate" do
@@ -631,7 +631,7 @@ defmodule Trento.SettingsTest do
                   errors: [
                     ca_cert: {"unable to parse X.509 certificate", [validation: :ca_cert_parsing]}
                   ]
-                }} = Settings.change_suse_manager_settings(change_submission)
+                }} = Settings.change_smlm_settings(change_submission)
       end
 
       test "should reject an expired SSL certificate" do
@@ -647,7 +647,7 @@ defmodule Trento.SettingsTest do
                     ca_cert:
                       {"the X.509 certificate is not valid", [validation: :ca_cert_validity]}
                   ]
-                }} = Settings.change_suse_manager_settings(change_submission)
+                }} = Settings.change_smlm_settings(change_submission)
       end
 
       test "should support idempotent sequential clear settings" do
