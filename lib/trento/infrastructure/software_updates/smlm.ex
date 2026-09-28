@@ -65,19 +65,19 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       {:ok, new_state} ->
         request
         |> do_handle(new_state)
-        |> handle_suma_authentication_error(request)
+        |> handle_smlm_authentication_error(request)
 
       error ->
         error
     end
   end
 
-  defp handle_suma_authentication_error({:error, :suma_authentication_error}, request) do
+  defp handle_smlm_authentication_error({:error, :smlm_authentication_error}, request) do
     clear()
     handle_request(request)
   end
 
-  defp handle_suma_authentication_error(result, _), do: result
+  defp handle_smlm_authentication_error(result, _), do: result
 
   defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
          url: url,

@@ -272,7 +272,7 @@ config :trento, Trento.Vault,
   ]
 
 config :trento, Trento.SoftwareUpdates.Discovery,
-  adapter: Trento.Infrastructure.SoftwareUpdates.MockSuma
+  adapter: Trento.Infrastructure.SoftwareUpdates.MockSmlm
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.Suma,
   auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth

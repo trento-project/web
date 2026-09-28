@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth do
   alias Trento.Infrastructure.SoftwareUpdates.SumaApi
   alias Trento.Settings
 
-  @default_name "suma_authentication"
+  @default_name "smlm_authentication"
 
   def start_link([]), do: start_link(@default_name)
 

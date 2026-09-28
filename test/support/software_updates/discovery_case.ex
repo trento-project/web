@@ -9,7 +9,7 @@ defmodule Trento.SoftwareUpdates.DiscoveryCase do
   setup _ do
     Mox.stub_with(
       Trento.SoftwareUpdates.Discovery.Mock,
-      Trento.Infrastructure.SoftwareUpdates.MockSuma
+      Trento.Infrastructure.SoftwareUpdates.MockSmlm
     )
 
     :ok
