@@ -17,9 +17,13 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
 
   alias Trento.Hosts.Projections.HostReadModel
 
+  alias Trento.Clusters.ValueObjects.AscsErsClusterHealthDetailsRead
+  alias Trento.Clusters.ValueObjects.HanaClusterHealthDetailsRead
   alias Trento.Clusters.ValueObjects.SapInstance
 
   alias Trento.Tags.Tag
+
+  import PolymorphicEmbed, only: [polymorphic_embeds_one: 2, cast_polymorphic_embed: 2]
 
   defdelegate authorize(action, user, params), to: Trento.Clusters.Policy
 
@@ -36,6 +40,18 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
     field :type, Ecto.Enum, values: ClusterType.values()
     field :selected_checks, {:array, :string}, default: []
     field :health, Ecto.Enum, values: Health.values()
+
+    polymorphic_embeds_one(:health_details,
+      types: [
+        hana_scale_up: HanaClusterHealthDetailsRead,
+        hana_scale_out: HanaClusterHealthDetailsRead,
+        ascs_ers: AscsErsClusterHealthDetailsRead
+      ],
+      on_replace: :update,
+      use_parent_field_for_type: :type,
+      on_type_not_found: :nilify
+    )
+
     field :resources_number, :integer
     field :hosts_number, :integer
     field :state, Ecto.Enum, values: ClusterState.values()
@@ -62,7 +78,8 @@ defmodule Trento.Clusters.Projections.ClusterReadModel do
   @spec changeset(t() | Ecto.Changeset.t(), map) :: Ecto.Changeset.t()
   def changeset(cluster, attrs) do
     cluster
-    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:sap_instances])
+    |> cast(attrs, __MODULE__.__schema__(:fields) -- [:sap_instances, :health_details])
     |> cast_embed(:sap_instances)
+    |> cast_polymorphic_embed(:health_details)
   end
 end
