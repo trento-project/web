@@ -195,12 +195,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule SaveSuseManagerSettingsRequest do
+  defmodule SaveSmlmSettingsRequest do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "SaveSuseManagerSettingsRequestV1",
+        title: "SaveSmlmSettingsRequestV1",
         description:
           "Represents the request body for saving SUSE Multi-Linux Manager settings, including connection and authentication details for secure management.",
         type: :object,
@@ -237,12 +237,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule UpdateSuseManagerSettingsRequest do
+  defmodule UpdateSmlmSettingsRequest do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "UpdateSuseManagerSettingsRequestV1",
+        title: "UpdateSmlmSettingsRequestV1",
         description:
           "Request body for updating SUSE Multi-Linux Manager settings.\nOnly provide fields to be updated.",
         type: :object,
@@ -277,12 +277,12 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
     )
   end
 
-  defmodule SuseManagerSettings do
+  defmodule SmlmSettings do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "SuseManagerSettingsV1",
+        title: "SmlmSettingsV1",
         description:
           "Represents the settings for SUSE Multi-Linux Manager, including connection details and certificate upload information for secure management.",
         type: :object,
