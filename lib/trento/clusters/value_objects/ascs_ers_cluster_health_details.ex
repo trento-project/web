@@ -21,3 +21,26 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetails do
     field :distributed_health, Ecto.Enum, values: Health.values()
   end
 end
+
+defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetailsRead do
+  use Ecto.Schema
+
+  import Ecto.Changeset
+
+  alias Trento.Support.HealthValueDetails
+
+  @primary_key false
+  embedded_schema do
+    embeds_one :checks_health, HealthValueDetails
+    embeds_one :sbd_health, HealthValueDetails
+    embeds_one :distributed_health, HealthValueDetails
+  end
+
+  def changeset(%__MODULE__{} = struct, attrs) do
+    struct
+    |> cast(attrs, [])
+    |> cast_embed(:checks_health, required: true)
+    |> cast_embed(:sbd_health, required: true)
+    |> cast_embed(:distributed_health, required: true)
+  end
+end
