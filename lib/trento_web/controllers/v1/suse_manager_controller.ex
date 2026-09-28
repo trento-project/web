@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule TrentoWeb.V1.SUSEManagerController do
+defmodule TrentoWeb.V1.SmlmController do
   use TrentoWeb, :controller
   use OpenApiSpex.ControllerSpecs
   use Trento.AI.ControllerSpecs
