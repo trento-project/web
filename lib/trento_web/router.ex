@@ -263,7 +263,7 @@ defmodule TrentoWeb.Router do
         get "/activity_log", SettingsController, :get_activity_log_settings
 
         scope "/suse_manager" do
-          get "/", SettingsController, :get_suse_manager_settings
+          get "/", SettingsController, :get_smlm_settings
           post "/", SettingsController, :save_suse_manager_settings
           patch "/", SettingsController, :patch_suse_manager_settings
           put "/", SettingsController, :put_suse_manager_settings

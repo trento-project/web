@@ -110,9 +110,9 @@ defmodule Trento.Settings do
 
   # SUSE Multi-Linux Manager settings
 
-  @spec get_suse_manager_settings ::
+  @spec get_smlm_settings ::
           {:ok, SuseManagerSettings.t()} | {:error, :settings_not_configured}
-  def get_suse_manager_settings do
+  def get_smlm_settings do
     settings = Repo.one(SuseManagerSettings.base_query())
 
     if settings do
@@ -139,7 +139,7 @@ defmodule Trento.Settings do
           | {:error, :settings_not_configured}
           | {:error, any()}
   def change_suse_manager_settings(settings_submission, date_service \\ DateService) do
-    with {:ok, settings} <- get_suse_manager_settings() do
+    with {:ok, settings} <- get_smlm_settings() do
       settings
       |> save_or_update_suse_manager_settings(settings_submission, date_service)
       |> log_error("Error while updating software updates settings")

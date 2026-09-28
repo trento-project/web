@@ -141,7 +141,7 @@ defmodule Trento.SettingsTest do
       end
 
       test "should return an error when settings are not available" do
-        assert {:error, :settings_not_configured} == Settings.get_suse_manager_settings()
+        assert {:error, :settings_not_configured} == Settings.get_smlm_settings()
       end
 
       test "should return settings without ca certificate" do
@@ -162,7 +162,7 @@ defmodule Trento.SettingsTest do
                   password: ^password,
                   ca_cert: nil,
                   ca_uploaded_at: nil
-                }} = Settings.get_suse_manager_settings()
+                }} = Settings.get_smlm_settings()
       end
 
       test "should return settings with ca certificate" do
@@ -185,7 +185,7 @@ defmodule Trento.SettingsTest do
                   password: ^password,
                   ca_cert: ^ca_cert,
                   ca_uploaded_at: ^ca_uploaded_at
-                }} = Settings.get_suse_manager_settings()
+                }} = Settings.get_smlm_settings()
       end
 
       test "should not save invalid SUSE Multi-Linux Manager settings" do
@@ -656,11 +656,11 @@ defmodule Trento.SettingsTest do
           ca_uploaded_at: DateTime.utc_now()
         )
 
-        assert {:ok, _} = Settings.get_suse_manager_settings()
+        assert {:ok, _} = Settings.get_smlm_settings()
 
         Enum.each(1..3, fn _ ->
           assert :ok == Settings.clear_suse_manager_settings()
-          assert {:error, :settings_not_configured} == Settings.get_suse_manager_settings()
+          assert {:error, :settings_not_configured} == Settings.get_smlm_settings()
         end)
       end
     end

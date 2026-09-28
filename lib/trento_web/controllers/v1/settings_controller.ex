@@ -157,7 +157,7 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :get_suse_manager_settings,
+  operation :get_smlm_settings,
     summary: "Gets the SUSE Multi-Linux Manager Settings.",
     tags: ["Settings", "MCP"],
     description:
@@ -171,9 +171,9 @@ defmodule TrentoWeb.V1.SettingsController do
 
   ai_tool :settings_get_suse_manager, display_text: "Get Multi-Linux-Manager settings"
 
-  @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def get_suse_manager_settings(conn, _) do
-    with {:ok, settings} <- Settings.get_suse_manager_settings() do
+  @spec get_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_smlm_settings(conn, _) do
+    with {:ok, settings} <- Settings.get_smlm_settings() do
       render(conn, :suse_manager, %{settings: settings})
     end
   end
