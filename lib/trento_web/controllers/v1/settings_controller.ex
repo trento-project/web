@@ -226,7 +226,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   @spec delete_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def delete_smlm_settings(conn, _) do
-    :ok = Settings.clear_suse_manager_settings()
+    :ok = Settings.clear_smlm_settings()
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
   end

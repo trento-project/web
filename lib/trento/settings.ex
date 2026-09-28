@@ -146,8 +146,8 @@ defmodule Trento.Settings do
     end
   end
 
-  @spec clear_suse_manager_settings :: :ok
-  def clear_suse_manager_settings do
+  @spec clear_smlm_settings :: :ok
+  def clear_smlm_settings do
     Repo.delete_all(SuseManagerSettings.base_query())
 
     SoftwareUpdatesDiscovery.clear_software_updates_discoveries()

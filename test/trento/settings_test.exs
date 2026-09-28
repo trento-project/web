@@ -659,7 +659,7 @@ defmodule Trento.SettingsTest do
         assert {:ok, _} = Settings.get_smlm_settings()
 
         Enum.each(1..3, fn _ ->
-          assert :ok == Settings.clear_suse_manager_settings()
+          assert :ok == Settings.clear_smlm_settings()
           assert {:error, :settings_not_configured} == Settings.get_smlm_settings()
         end)
       end
