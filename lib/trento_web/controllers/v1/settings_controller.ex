@@ -231,7 +231,7 @@ defmodule TrentoWeb.V1.SettingsController do
     send_resp(conn, :no_content, "")
   end
 
-  operation :test_suse_manager_settings,
+  operation :test_smlm_settings,
     summary: "Tests connection with SUSE Multi-Linux Manager.",
     tags: ["Settings", "MCP"],
     description:
@@ -245,8 +245,8 @@ defmodule TrentoWeb.V1.SettingsController do
 
   ai_tool :settings_test_suse_manager, display_text: "Test Multi-Linux-Manager connection"
 
-  @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def test_suse_manager_settings(conn, _) do
+  @spec test_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_smlm_settings(conn, _) do
     with :ok <- SoftwareUpdates.test_connection_settings() do
       conn
       |> put_status(:ok)
