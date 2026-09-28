@@ -27,7 +27,7 @@ defmodule Trento.Settings.Policy do
     update_activity_log_settings: Trento.Settings.ActivityLogSettings,
     save_smlm_settings: Trento.Settings.SuseManagerSettings,
     update_suse_manager_settings: Trento.Settings.SuseManagerSettings,
-    delete_suse_manager_settings: Trento.Settings.SuseManagerSettings,
+    delete_smlm_settings: Trento.Settings.SuseManagerSettings,
     test_suse_manager_settings: Trento.Settings.SuseManagerSettings,
     get_alerting_settings: Trento.Settings.AlertingSettings,
     create_alerting_settings: Trento.Settings.AlertingSettings,
@@ -45,7 +45,7 @@ defmodule Trento.Settings.Policy do
       when action in [
              :save_smlm_settings,
              :update_suse_manager_settings,
-             :delete_suse_manager_settings
+             :delete_smlm_settings
            ] do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)
   end
