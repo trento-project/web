@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SumaHttpExecutorTest do
+defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SmlmHttpExecutorTest do
   use ExUnit.Case
 
   alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor

@@ -275,7 +275,7 @@ config :trento, Trento.SoftwareUpdates.Discovery,
   adapter: Trento.Infrastructure.SoftwareUpdates.MockSmlm
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
-  auth: Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth
+  auth: Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth
 
 config :trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
