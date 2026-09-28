@@ -26,7 +26,7 @@ defmodule Trento.Settings.Policy do
     update_api_key_settings: Trento.Settings.ApiKeySettings,
     update_activity_log_settings: Trento.Settings.ActivityLogSettings,
     save_smlm_settings: Trento.Settings.SuseManagerSettings,
-    update_suse_manager_settings: Trento.Settings.SuseManagerSettings,
+    update_smlm_settings: Trento.Settings.SuseManagerSettings,
     delete_smlm_settings: Trento.Settings.SuseManagerSettings,
     test_smlm_settings: Trento.Settings.SuseManagerSettings,
     get_alerting_settings: Trento.Settings.AlertingSettings,
@@ -44,7 +44,7 @@ defmodule Trento.Settings.Policy do
   def authorize(action, %User{} = user, SuseManagerSettings)
       when action in [
              :save_smlm_settings,
-             :update_suse_manager_settings,
+             :update_smlm_settings,
              :delete_smlm_settings
            ] do
     has_global_ability?(user) or has_suma_settings_change_ability?(user)

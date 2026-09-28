@@ -209,10 +209,10 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :put_smlm_settings, @update_suse_manager_operation_options
 
   @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def patch_smlm_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  def patch_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
 
   @spec put_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_smlm_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  def put_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
 
   operation :delete_smlm_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
@@ -383,7 +383,7 @@ defmodule TrentoWeb.V1.SettingsController do
              :patch_smlm_settings,
              :put_smlm_settings
            ],
-      do: :update_suse_manager_settings
+      do: :update_smlm_settings
 
   def get_action(%{private: %{phoenix_action: action}}), do: action
 
@@ -393,7 +393,7 @@ defmodule TrentoWeb.V1.SettingsController do
     |> Trento.Settings.Policy.get_resource()
   end
 
-  defp update_suse_manager_settings(conn, _) do
+  defp update_smlm_settings(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
