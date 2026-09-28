@@ -30,6 +30,9 @@ defmodule Trento.Support.ValueDetails do
 end
 
 defmodule Trento.Support.HealthValueDetails do
+  @moduledoc """
+  TODO
+  """
   require Trento.Enums.Health, as: Health
 
   use Trento.Support.ValueDetails,
