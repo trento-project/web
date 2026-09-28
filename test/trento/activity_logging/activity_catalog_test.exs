@@ -246,7 +246,7 @@ defmodule Trento.ActivityLog.ActivityCatalogTest do
       },
       %{
         activity: :changing_suma_settings,
-        connection_info: {TrentoWeb.V1.SettingsController, :put_suse_manager_settings},
+        connection_info: {TrentoWeb.V1.SettingsController, :put_smlm_settings},
         interesting_statuses: 200,
         not_interesting_statuses: [400, 401, 403, 404, 500]
       },
