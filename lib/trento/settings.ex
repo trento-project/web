@@ -14,8 +14,8 @@ defmodule Trento.Settings do
     AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
-    SSOCertificatesSettings,
-    SmlmSettings
+    SmlmSettings,
+    SSOCertificatesSettings
   }
 
   alias Trento.Support.DateService
