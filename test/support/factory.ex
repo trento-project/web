@@ -167,8 +167,8 @@ defmodule Trento.Factory do
     AlertingSettings,
     ApiKeySettings,
     InstallationSettings,
-    SSOCertificatesSettings,
-    SmlmSettings
+    SmlmSettings,
+    SSOCertificatesSettings
   }
 
   alias Trento.ActivityLog.ActivityLog, as: ActivityLogEntry
