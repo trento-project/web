@@ -29,6 +29,7 @@ defmodule Trento.Clusters.ValueObjects.AscsErsClusterHealthDetailsRead do
 
   alias Trento.Support.HealthValueDetails
 
+  @derive {Jason.Encoder, except: [:__struct__]}
   @primary_key false
   embedded_schema do
     embeds_one :checks_health, HealthValueDetails
