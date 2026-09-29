@@ -28,5 +28,25 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SumaHttpExecutorTest do
                |> length() == expected_entries
       end
     end
+
+    test "should preserve exact DER bytes and signature validity without re-encoding" do
+      cert_pem = load_certificate_content("one_entry_chain.pem")
+      [{:Certificate, expected_der, :not_encrypted}] = :public_key.pem_decode(cert_pem)
+
+      assert [actual_der] = HttpExecutor.get_cert_der(cert_pem)
+      assert actual_der == expected_der
+
+      private_key = X509.PrivateKey.new_rsa(1024)
+
+      self_signed_pem =
+        private_key
+        |> X509.Certificate.self_signed("/CN=Test CA")
+        |> X509.Certificate.to_pem()
+
+      assert [self_signed_der] = HttpExecutor.get_cert_der(self_signed_pem)
+      cert = X509.Certificate.from_der!(self_signed_der)
+      public_key = X509.Certificate.public_key(cert)
+      assert :public_key.pkix_verify(self_signed_der, public_key)
+    end
   end
 end
