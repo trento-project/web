@@ -89,8 +89,10 @@ function CheckResultDetailPage({ targetType }) {
 
   const hostsIDList = useSelector((state) => getHostIDs(state));
 
+  const check = findCheck(catalog, checkID);
+
   useEffect(() => {
-    if (catalog.length === 0) {
+    if (!check) {
       dispatch(updateCatalog());
     }
     if (!executionData) {
@@ -170,7 +172,7 @@ function CheckResultDetailPage({ targetType }) {
     );
   }
 
-  const { description, severity, expectations } = findCheck(catalog, checkID);
+  const { description, severity, expectations } = check;
 
   const resultTargetID = getResultTargetID(
     targetID,
