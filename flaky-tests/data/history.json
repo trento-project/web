@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-14T18:51:59Z",
-    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
-    "run_id": "31828904787",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 1
-    },
-    "top_flaky_tests": [
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-14T22:29:59Z",
     "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
     "run_id": "31832331158",
@@ -5630,6 +5614,22 @@
       {
         "name": "should have SBD with unhealthy status after change::HANA cluster details Cluster SBD should have the expected devices with the correct status should have SBD with unhealthy status after change",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-09-29T21:37:38Z",
+    "commit": "fd8b9f0dd3026c77bc06de47190ce3aa9cc7fe2f",
+    "run_id": "36632616614",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
       }
     ]
   }
