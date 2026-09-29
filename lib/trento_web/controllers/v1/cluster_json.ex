@@ -15,6 +15,7 @@ defmodule TrentoWeb.V1.ClusterJSON do
     |> Map.delete(:sap_instances)
     |> Map.delete(:state)
     |> Map.delete(:stale_at)
+    |> Map.delete(:health_details)
   end
 
   def cluster_registered(%{cluster: cluster}) do
