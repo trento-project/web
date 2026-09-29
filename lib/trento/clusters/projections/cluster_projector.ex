@@ -27,10 +27,9 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     ClusterRestored,
     ClusterSbdHealthChanged
   }
-
   alias Trento.Clusters.Projections.ClusterReadModel
-
   alias Trento.Repo
+  alias Trento.Support.StructHelper
 
   import Trento.Clusters, only: [enrich_cluster_model: 1]
 
@@ -41,7 +40,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     fn multi ->
       params =
         event
-        |> Map.from_struct()
+        |> StructHelper.to_atomized_map()
         |> Map.put(:id, cluster_id)
         |> postprocess_health_details()
 

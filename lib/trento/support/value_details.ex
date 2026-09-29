@@ -15,6 +15,7 @@ defmodule Trento.Support.ValueDetails do
       use Ecto.Schema
       import Ecto.Changeset
 
+      @derive {Jason.Encoder, except: [:__struct__]}
       @primary_key false
       embedded_schema do
         field :value, unquote(value_type), unquote(value_opts)
