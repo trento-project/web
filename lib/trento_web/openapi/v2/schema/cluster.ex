@@ -15,6 +15,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
 
   alias TrentoWeb.OpenApi.V1.Schema.{Cluster, Provider, ResourceHealth, Tags}
 
+  alias TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails
+
   defmodule ClusterResource do
     @moduledoc false
 
@@ -744,6 +746,7 @@ defmodule TrentoWeb.OpenApi.V2.Schema.Cluster do
             example: ["check_2"]
           },
           health: ResourceHealth,
+          health_details: ClusterHealthDetails,
           resources_number: %Schema{
             type: :integer,
             description:
