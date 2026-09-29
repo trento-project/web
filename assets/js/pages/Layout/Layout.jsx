@@ -71,7 +71,7 @@ const navigation = [
   },
   {
     name: 'Activity Log',
-    href: '/activity_log?severity=info&severity=warning&severity=critical',
+    href: '/activity_log',
     icon: EOS_ASSIGNMENT,
   },
   {
