@@ -30,11 +30,15 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SumaHttpExecutorTest do
     end
 
     test "should preserve exact DER bytes and signature validity without re-encoding" do
-      cert_pem = load_certificate_content("one_entry_chain.pem")
-      [{:Certificate, expected_der, :not_encrypted}] = :public_key.pem_decode(cert_pem)
+      # non_canonical_der_ca.pem has an explicit `critical FALSE` in an extension,
+      # which is dropped when the certificate is decoded and re-encoded.
+      for fixture <- ["one_entry_chain.pem", "non_canonical_der_ca.pem"] do
+        cert_pem = load_certificate_content(fixture)
+        [{:Certificate, expected_der, :not_encrypted}] = :public_key.pem_decode(cert_pem)
 
-      assert [actual_der] = HttpExecutor.get_cert_der(cert_pem)
-      assert actual_der == expected_der
+        assert [actual_der] = HttpExecutor.get_cert_der(cert_pem)
+        assert actual_der == expected_der
+      end
 
       private_key = X509.PrivateKey.new_rsa(1024)
 
