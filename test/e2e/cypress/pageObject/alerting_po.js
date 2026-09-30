@@ -62,9 +62,21 @@ export const apiSetDevEnvAlertingSettings = (
 export const apiSetDevEnvInvalidAlertingSettings = () =>
   apiSetDevEnvAlertingSettings('PATCH', { smtpPort: 1024 });
 
+// Emails can take a while to be sent on slower environments.
+const EMAIL_SEARCH_RETRIES = 240;
+const EMAIL_SEARCH_DELAY = 500;
+const EMAIL_TASK_TIMEOUT = 130000;
+
 export const emailIsReceived = (type) =>
   cy
-    .task('searchEmailInMailpit', { subject: `Trento Alert: ${type}` })
+    .task(
+      'searchEmailInMailpit',
+      {
+        subject: `Trento Alert: ${type}`,
+        options: { retries: EMAIL_SEARCH_RETRIES, delay: EMAIL_SEARCH_DELAY },
+      },
+      { timeout: EMAIL_TASK_TIMEOUT }
+    )
     .then((result) => cy.wrap(result.length).should('equal', 1));
 
 export const emailIsNotReceived = (type) =>
@@ -98,7 +110,7 @@ export const triggerDatabaseAlertingEmail = () =>
   basePage.loadScenario('hana-database-detail-RED');
 
 export const triggerTestEmail = () =>
-  cy.get(testEmailButton).should('be.enabled').click();
+  cy.get(testEmailButton, { timeout: 30000 }).should('be.enabled').click();
 
 export const testEmailSentToasterIsDisplayed = () =>
   cy.get(testEmailSentToaster).should('be.visible');
