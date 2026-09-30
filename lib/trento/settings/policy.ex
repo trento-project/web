@@ -47,7 +47,7 @@ defmodule Trento.Settings.Policy do
              :update_smlm_settings,
              :delete_smlm_settings
            ] do
-    has_global_ability?(user) or has_suma_settings_change_ability?(user)
+    has_global_ability?(user) or has_smlm_settings_change_ability?(user)
   end
 
   def authorize(action, %User{} = user, AlertingSettings)
@@ -70,7 +70,7 @@ defmodule Trento.Settings.Policy do
   defp has_activity_logs_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "activity_logs_settings"})
 
-  defp has_suma_settings_change_ability?(user),
+  defp has_smlm_settings_change_ability?(user),
     do: user_has_ability?(user, %{name: "all", resource: "suma_settings"})
 
   defp has_alerting_settings_resource_ability?(user),

@@ -208,7 +208,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           url: %Schema{
             type: :string,
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -226,7 +226,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         },
         required: [:url, :username, :password],
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin",
           password: "secretpassword",
           ca_cert:
@@ -251,7 +251,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
         properties: %{
           url: %Schema{
             type: :string,
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -269,7 +269,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           }
         },
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin"
         }
       },
@@ -292,7 +292,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
             type: :string,
             description:
               "The URL used to access SUSE Multi-Linux Manager, supporting connectivity and management.",
-            example: "https://suse-manager.example.com"
+            example: "https://suse-multi-linux-manager.example.com"
           },
           username: %Schema{
             type: :string,
@@ -310,7 +310,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.Platform do
           }
         },
         example: %{
-          url: "https://suse-manager.example.com",
+          url: "https://suse-multi-linux-manager.example.com",
           username: "admin",
           ca_uploaded_at: "2024-01-15T10:30:00Z"
         }
