@@ -196,7 +196,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec save_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def save_smlm_settings(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
 
     with {:ok, saved_settings} <- Settings.save_smlm_settings(settings_params) do
       conn
@@ -227,7 +227,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec delete_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def delete_smlm_settings(conn, _) do
     :ok = Settings.clear_smlm_settings()
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
   end
 
@@ -395,7 +395,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
   defp update_smlm_settings(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
-    :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
+    :ok = propagate_correlation_id(:smlm_settings, @correlation_ttl)
 
     with {:ok, saved_settings} <- Settings.change_smlm_settings(update_settings_paylod) do
       conn
@@ -405,7 +405,7 @@ defmodule TrentoWeb.V1.SettingsController do
   end
 
   defp propagate_correlation_id(ctx, correlation_ttl)
-       when ctx in [:api_key, :suse_manager_settings] do
+       when ctx in [:api_key, :smlm_settings] do
     correlation_id = Process.get(:correlation_id)
 
     key = ActivityLog.correlation_key(ctx)
@@ -425,7 +425,7 @@ defmodule TrentoWeb.V1.SettingsController do
 
             :ok
 
-          :suse_manager_settings ->
+          :smlm_settings ->
             # The associated cache key stays until the next save/change operation.
             :ok
         end
