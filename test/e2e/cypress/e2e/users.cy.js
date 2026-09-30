@@ -153,13 +153,28 @@ describe('Users', () => {
   describe('Admin user profile', () => {
     beforeEach(() => {
       usersPage.visit();
-    });
-
-    it('should not allow editing admin user profile', () => {
       basePage.clickUserDropdownMenuButton();
       basePage.clickUserDropdownProfileButton();
-      usersPage.saveButtonIsDisabled();
+    });
+
+    it('should not allow editing admin user profile main fields', () => {
+      usersPage.fullNameInputIsDisabled();
+      usersPage.emailInputIsDisabled();
+      usersPage.usernameInputIsDisabled();
       usersPage.changePasswordButtonIsDisabled();
+    });
+
+    it('should allow editing analytics and timezone values', () => {
+      const timezone = 'Europe/Berlin';
+
+      usersPage.selectTimezone(timezone);
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickEditUserSaveButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
+
+      usersPage.clickAnalyticsOptInSwitch();
+      usersPage.clickEditUserSaveButton();
+      usersPage.profileChangesSavedToasterIsDisplayed();
     });
   });
 

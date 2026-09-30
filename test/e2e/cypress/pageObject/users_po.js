@@ -317,6 +317,15 @@ export const userAlreadyUpdatedWarningIsNotDisplayed = () =>
 export const userEditedSuccessfullyToasterIsDisplayed = () =>
   cy.get(userEditedSuccessfullyToaster).should('be.visible');
 
+export const fullNameInputIsDisabled = () =>
+  cy.get(fullNameInputField).should('be.disabled');
+
+export const emailInputIsDisabled = () =>
+  cy.get(emailInputField).should('be.disabled');
+
+export const usernameInputIsDisabled = () =>
+  cy.get(userNameInputField).should('be.disabled');
+
 export const changePasswordButtonIsDisabled = () =>
   cy.get(changePasswordButton).should('be.disabled');
 
