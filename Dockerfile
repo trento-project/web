@@ -68,7 +68,7 @@ LABEL org.opencontainers.image.base.digest="latest"
 LABEL io.artifacthub.package.logo-url="https://www.trento-project.io/images/trento-icon.svg"
 LABEL io.artifacthub.package.readme-url="https://raw.githubusercontent.com/trento-project/web/refs/heads/main/packaging/suse/container/README.md"
 # Erlang runtime dependencies
-RUN zypper -n in libsystemd0 libopenssl3
+RUN zypper -n in libsystemd0 libopenssl1_1
 WORKDIR /app
 COPY --from=release /build/_build/$MIX_ENV/rel/trento .
 EXPOSE 4000/tcp
