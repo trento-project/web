@@ -23,7 +23,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   defp setup_initial_settings, do: {:ok, %{settings: insert_software_updates_settings()}}
 
   describe "Process start up and identification" do
-    test "should find an already started SUMA process" do
+    test "should find an already started SMLM process" do
       assert {_, {:already_started, pid}} = start_supervised(SmlmAuth)
 
       assert pid == SmlmAuth.identify()
@@ -57,7 +57,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
       setup_initial_settings()
     end
 
-    test "should redact sensitive data in SUMA state", %{
+    test "should redact sensitive data in SMLM state", %{
       settings: %SmlmSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})

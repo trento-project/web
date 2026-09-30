@@ -135,7 +135,7 @@ defmodule Trento.SettingsTest do
   for scenario <- [:with_correlation, :without_correlation] do
     @scenario scenario
 
-    describe "suse_manager_settings #{@scenario}" do
+    describe "smlm_settings #{@scenario}" do
       setup do
         scenario_setup(@scenario)
       end
