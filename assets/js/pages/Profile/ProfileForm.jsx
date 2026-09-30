@@ -48,7 +48,7 @@ function ProfileForm({
   timezones = [],
   errors,
   loading,
-  disableForm,
+  isDefaultAdmin,
   passwordModalOpen = false,
   totpBoxOpen = false,
   singleSignOnEnabled = false,
@@ -68,7 +68,7 @@ function ProfileForm({
   const [timezoneState, setTimezone] = useState(timezone);
   const [timezoneErrorState, setTimezoneError] = useState(null);
 
-  const saveButtonVisible = !singleSignOnEnabled || analyticsEnabledConfig;
+  const commonInputsDisabled = isDefaultAdmin || singleSignOnEnabled;
 
   const validateRequired = () => {
     let error = false;
@@ -91,7 +91,7 @@ function ProfileForm({
     }
 
     const user = {
-      ...(!singleSignOnEnabled && {
+      ...(!commonInputsDisabled && {
         fullname: fullNameState,
         email: emailAddressState,
       }),
@@ -147,7 +147,7 @@ function ProfileForm({
                 setFullName(value);
                 setFullNameError(null);
               }}
-              disabled={singleSignOnEnabled}
+              disabled={commonInputsDisabled}
             />
             {fullNameErrorState && errorMessage(fullNameErrorState)}
           </div>
@@ -162,7 +162,7 @@ function ProfileForm({
                 setEmailAddress(value);
                 setEmailAddressError(null);
               }}
-              disabled={singleSignOnEnabled}
+              disabled={commonInputsDisabled}
             />
             {emailAddressErrorState && errorMessage(emailAddressErrorState)}
           </div>
@@ -177,13 +177,14 @@ function ProfileForm({
                 <Button
                   onClick={togglePasswordModal}
                   type="primary-white"
-                  disabled={loading || disableForm || singleSignOnEnabled}
+                  disabled={loading || isDefaultAdmin}
                 >
                   Change Password
                 </Button>
               </div>
 
               <Label
+                htmlFor="totp"
                 className="col-start-1 col-span-2"
                 info="Setup a multi-factor TOTP authentication besides your password to increase security
               for your account."
@@ -193,9 +194,10 @@ function ProfileForm({
               <div className="col-start-3 col-span-4">
                 <div className="inline-flex">
                   <Switch
+                    id="totp"
                     selected={totpEnabled}
                     onChange={toggleTotp}
-                    disabled={loading || disableForm || totpBoxOpen}
+                    disabled={loading || isDefaultAdmin || totpBoxOpen}
                   />
                   {totpBoxOpen && (
                     <span
@@ -251,7 +253,7 @@ function ProfileForm({
               }}
               isMulti={false}
               isSearchable
-              disabled={loading || disableForm}
+              isDisabled={loading}
               placeholder="Select timezone..."
               noOptionsMessage={() => 'No timezones found'}
             />
@@ -273,6 +275,7 @@ function ProfileForm({
           {analyticsEnabledConfig && (
             <>
               <Label
+                htmlFor="analytics"
                 className="col-start-1 col-span-2 pt-2"
                 info={ANALYTICS_TOOLTIP_MESSAGE}
               >
@@ -282,8 +285,9 @@ function ProfileForm({
                 <div className="pt-2">
                   <div className="flex items-center">
                     <Switch
+                      id="analytics"
                       selected={analyticsEnabledState}
-                      disabled={loading || disableForm}
+                      disabled={loading}
                       onChange={(value) => setAnalyticsState(value)}
                     />
                   </div>
@@ -292,17 +296,11 @@ function ProfileForm({
             </>
           )}
         </div>
-        {saveButtonVisible && (
-          <div className="flex flex-row w-80 space-x-2 mt-5">
-            <Button
-              disabled={loading || disableForm}
-              type="default-fit"
-              onClick={onSaveClicked}
-            >
-              Save
-            </Button>
-          </div>
-        )}
+        <div className="flex flex-row w-80 space-x-2 mt-5">
+          <Button disabled={loading} type="default-fit" onClick={onSaveClicked}>
+            Save
+          </Button>
+        </div>
       </div>
       <Modal
         title="Disable TOTP"

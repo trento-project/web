@@ -82,8 +82,8 @@ export default {
         'Available timezone options for the timezone select (array of { value, label })',
       control: { type: 'object' },
     },
-    disableForm: {
-      description: 'When true, disables all inputs and actions in the form',
+    isDefaultAdmin: {
+      description: 'Whether the user is the default admin user',
       control: { type: 'boolean' },
     },
     singleSignOnEnabled: {
@@ -143,6 +143,7 @@ export const Default = {
     emailAddress: email,
     username,
     abilities,
+    isDefaultAdmin: false,
     totpSecret: 'HKJDFHJKHDIU379847HJKDJKH',
     totpQrData:
       'otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example',
@@ -205,5 +206,12 @@ export const SingleSignOnEnabled = {
   args: {
     ...Default.args,
     singleSignOnEnabled: true,
+  },
+};
+
+export const Admin = {
+  args: {
+    ...Default.args,
+    isDefaultAdmin: true,
   },
 };
