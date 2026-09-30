@@ -174,7 +174,7 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec get_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_smlm_settings(conn, _) do
     with {:ok, settings} <- Settings.get_smlm_settings() do
-      render(conn, :suse_manager, %{settings: settings})
+      render(conn, :smlm, %{settings: settings})
     end
   end
 
@@ -201,7 +201,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.save_smlm_settings(settings_params) do
       conn
       |> put_status(:created)
-      |> render(:suse_manager, %{settings: saved_settings})
+      |> render(:smlm, %{settings: saved_settings})
     end
   end
 
@@ -400,7 +400,7 @@ defmodule TrentoWeb.V1.SettingsController do
     with {:ok, saved_settings} <- Settings.change_smlm_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
-      |> render(:suse_manager, %{settings: saved_settings})
+      |> render(:smlm, %{settings: saved_settings})
     end
   end
 

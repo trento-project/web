@@ -35,7 +35,7 @@ defmodule TrentoWeb.V1.SettingsJSON do
         }
       }
 
-  def suse_manager(%{
+  def smlm(%{
         settings: %{
           url: url,
           username: username,
