@@ -218,7 +218,8 @@ defmodule TrentoWeb.OpenApi.V1.Schema.User do
     OpenApiSpex.schema(
       %{
         title: "UserProfileUpdateRequestV1",
-        description: "Request body to update a user profile.",
+        description:
+          "Request body to update a user profile. If the user is the default admin only analytics_enabled, analytics_eula_accepted and timezone parameters are accepted.",
         additionalProperties: false,
         type: :object,
         properties: %{

@@ -93,6 +93,64 @@ defmodule TrentoWeb.V1.ProfileControllerTest do
     assert %{id: ^user_id, fullname: ^fullname, email: ^email, timezone: "Europe/Moscow"} = resp
   end
 
+  test "should update the default admin user profile with allowed fields", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    %{id: user_id} = insert(:user, username: admin_username())
+
+    conn =
+      Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+    valid_params = %{
+      analytics_enabled: true,
+      timezone: "Europe/Moscow"
+    }
+
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", valid_params)
+      |> json_response(:ok)
+      |> assert_schema("UserProfileV1", api_spec)
+
+    assert %{timezone: "Europe/Moscow"} = resp
+  end
+
+  test "should forbid updating default admin user profile with forbidden field", %{
+    conn: conn,
+    api_spec: api_spec
+  } do
+    %{id: user_id} = insert(:user, username: admin_username())
+
+    conn =
+      Pow.Plug.assign_current_user(conn, %{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
+
+    valid_params = %{
+      fullname: Faker.Person.name(),
+      email: Faker.Internet.email(),
+      timezone: "Europe/Moscow"
+    }
+
+    resp =
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/profile", valid_params)
+      |> json_response(:forbidden)
+      |> assert_schema("ForbiddenV1", api_spec)
+
+    assert %{
+             errors: [
+               %{
+                 title: "Forbidden",
+                 detail:
+                   "The default admin user is a system-protected resource. " <>
+                     "Only the following fields can be modified: analytics_enabled, analytics_eula_accepted, timezone."
+               }
+             ]
+           } == resp
+  end
+
   test "should update the profile with allowed fields when SSO is enabled", %{
     conn: conn,
     api_spec: api_spec,
