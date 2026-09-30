@@ -169,7 +169,7 @@ defmodule TrentoWeb.V1.SettingsController do
       not_found: Schema.NotFound.response()
     ]
 
-  ai_tool :settings_get_suse_manager, display_text: "Get SUSE Multi-Linux-Manager settings"
+  ai_tool :settings_get_smlm, display_text: "Get SUSE Multi-Linux-Manager settings"
 
   @spec get_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_smlm_settings(conn, _) do
@@ -243,7 +243,7 @@ defmodule TrentoWeb.V1.SettingsController do
          Schema.UnprocessableEntity}
     ]
 
-  ai_tool :settings_test_suse_manager, display_text: "Test SUSE Multi-Linux-Manager connection"
+  ai_tool :settings_test_smlm, display_text: "Test SUSE Multi-Linux-Manager connection"
 
   @spec test_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def test_smlm_settings(conn, _) do
