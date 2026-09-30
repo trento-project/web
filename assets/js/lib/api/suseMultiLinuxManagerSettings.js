@@ -3,16 +3,16 @@
 
 import { networkClient } from '@lib/network';
 
-export const getSettings = () => networkClient.get(`/settings/suse_manager`);
+export const getSettings = () => networkClient.get(`/settings/smlm`);
 
 export const saveSettings = (settings) =>
-  networkClient.post(`/settings/suse_manager`, settings);
+  networkClient.post(`/settings/smlm`, settings);
 
 export const updateSettings = (settings) =>
-  networkClient.patch(`/settings/suse_manager`, settings);
+  networkClient.patch(`/settings/smlm`, settings);
 
 export const clearSettings = () =>
-  networkClient.delete(`/settings/suse_manager`);
+  networkClient.delete(`/settings/smlm`);
 
 export const testConnection = () =>
-  networkClient.post(`/settings/suse_manager/test`);
+  networkClient.post(`/settings/smlm/test`);

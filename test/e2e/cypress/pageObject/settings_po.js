@@ -268,7 +268,7 @@ export const clickGenerateApiKeyConfirmationButton = () =>
 export const clickModalCloseButton = () => cy.get(modalCloseButton).click();
 
 export const interceptTestSMLMSettingsRequest = (expectedStatusCode) =>
-  cy.intercept('/api/v1/settings/suse_manager/test', {
+  cy.intercept('/api/v1/settings/smlm/test', {
     statusCode: expectedStatusCode,
   });
 
@@ -344,7 +344,7 @@ export const interceptSettingsPageEndpoints = () => {
   cy.intercept('/api/v1/settings/activity_log').as(
     'activityLogSettingsEndpoint'
   );
-  cy.intercept('/api/v1/settings/suse_manager').as('smlmSettingsEndpoint');
+  cy.intercept('/api/v1/settings/smlm').as('smlmSettingsEndpoint');
   return cy
     .intercept('/api/v1/settings/alerting')
     .as('alertingSettingsEndpoint');
