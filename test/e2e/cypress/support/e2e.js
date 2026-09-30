@@ -32,8 +32,10 @@ import {
 
 before(() => {
   Cypress.session.clearAllSavedSessions();
-  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) apiLoginAndCreateSession();
-  getLoginCredentials().then(({ username, password }) =>
-    apiAcceptAnalyticsEula(username, password)
-  );
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
+    apiLoginAndCreateSession();
+    getLoginCredentials().then(({ username, password }) =>
+      apiAcceptAnalyticsEula(username, password)
+    );
+  }
 });
