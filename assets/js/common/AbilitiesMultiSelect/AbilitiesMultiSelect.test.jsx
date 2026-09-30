@@ -36,7 +36,7 @@ describe('AbilitiesMultiSelect Component', () => {
       { id: 10, name: 'all', resource: 'database_tags' },
       { id: 11, name: 'all', resource: 'sap_system_tags' },
       { id: 12, name: 'all', resource: 'api_key_settings' },
-      { id: 13, name: 'all', resource: 'suma_settings' },
+      { id: 13, name: 'all', resource: 'smlm_settings' },
       { id: 14, name: 'all', resource: 'activity_logs_settings' },
       { id: 15, name: 'saptune_solution_apply', resource: 'host' },
       { id: 16, name: 'saptune_solution_change', resource: 'host' },
