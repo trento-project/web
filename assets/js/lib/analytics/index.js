@@ -131,7 +131,7 @@ export const rawCapture = (userID, event, properties) => {
   const distinctUserID = getDistinctUserID(userID);
   const gtmConfig = getGtmConfig();
   const apiKey = get(gtmConfig, 'apiKey');
-  const apiHost = get(gtmConfig, 'config.api_host');
+  const apiHost = get(gtmConfig, 'config.api_host', DEFAULT_OPTS.api_host);
   const webversion = getFromConfig('webversion');
 
   if (!apiKey) {

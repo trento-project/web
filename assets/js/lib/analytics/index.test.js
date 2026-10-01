@@ -195,41 +195,52 @@ describe('analytics', () => {
     });
   });
 
-  it('should raw capture the event with the expected payload', () => {
-    const apiKey = 'my-key';
-    const apiHost = 'https://eu.posthog.com';
-    const userID = 1;
-    const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
-    const distinctUserID = 'ab156392-96c8-551b-a49b-f071c1cdcf21';
+  it.each([
+    {
+      config: { api_host: 'https://eu.posthog.com' },
+      expectedApiHost: 'https://eu.posthog.com',
+    },
+    {
+      config: {},
+      expectedApiHost: 'https://eu.posthog.com',
+    },
+  ])(
+    'should raw capture the event with the expected payload',
+    ({ config, expectedApiHost }) => {
+      const apiKey = 'my-key';
+      const userID = 1;
+      const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+      const distinctUserID = 'ab156392-96c8-551b-a49b-f071c1cdcf21';
 
-    global.config.webversion = '1.2.3';
-    global.window.posthogConfig = {
-      apiKey,
-      config: { api_host: apiHost },
-    };
-    global.config.installationID = installationID;
-    const mockApiCapture = jest.fn().mockResolvedValue();
-
-    jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
-
-    return import('.').then(({ rawCapture }) => {
-      rawCapture(userID, 'eula_displayed', { foo: 'bar' });
-
-      expect(mockApiCapture).toHaveBeenCalledWith(
-        apiHost,
+      global.config.webversion = '1.2.3';
+      global.window.posthogConfig = {
         apiKey,
-        'eula_displayed',
-        distinctUserID,
-        {
-          foo: 'bar',
-          $lib: 'web',
-          webversion: '1.2.3',
-          $process_person_profile: true,
-          $set_once: { installationID },
-        }
-      );
-    });
-  });
+        config,
+      };
+      global.config.installationID = installationID;
+      const mockApiCapture = jest.fn().mockResolvedValue();
+
+      jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
+
+      return import('.').then(({ rawCapture }) => {
+        rawCapture(userID, 'eula_displayed', { foo: 'bar' });
+
+        expect(mockApiCapture).toHaveBeenCalledWith(
+          expectedApiHost,
+          apiKey,
+          'eula_displayed',
+          distinctUserID,
+          {
+            foo: 'bar',
+            $lib: 'web',
+            webversion: '1.2.3',
+            $process_person_profile: true,
+            $set_once: { installationID },
+          }
+        );
+      });
+    }
+  );
 
   it('should log an error when the raw capture request fails', () => {
     global.window.posthogConfig = {
