@@ -20,7 +20,11 @@
 import '@testing-library/cypress/add-commands';
 
 // Import commands.js using ES2015 syntax:
-import { apiLoginAndCreateSession } from '../pageObject/base_po';
+import {
+  apiLoginAndCreateSession,
+  apiAcceptAnalyticsEula,
+  getLoginCredentials,
+} from '../pageObject/base_po';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -28,5 +32,10 @@ import { apiLoginAndCreateSession } from '../pageObject/base_po';
 
 before(() => {
   Cypress.session.clearAllSavedSessions();
-  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) apiLoginAndCreateSession();
+  if (!Cypress.expose('SSO_INTEGRATION_TESTS')) {
+    apiLoginAndCreateSession();
+    getLoginCredentials().then(({ username, password }) =>
+      apiAcceptAnalyticsEula(username, password)
+    );
+  }
 });

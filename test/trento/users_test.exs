@@ -151,10 +151,33 @@ defmodule Trento.UsersTest do
       assert analytics_eula_accepted_at == nil
     end
 
-    test "update_user_profile_sso_enabled does not update user with id 1" do
-      assert {:error, :forbidden} =
-               Users.update_user_profile_sso_enabled(%User{username: admin_username()}, %{
-                 analytics_enabled: true
+    test "update_user_profile updates accepted fields for admin" do
+      user = insert(:user, username: admin_username())
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at,
+                analytics_eula_accepted_at: analytics_eula_accepted_at,
+                timezone: "Europe/Berlin"
+              }} =
+               Users.update_user_profile(user, %{
+                 analytics_enabled: true,
+                 analytics_eula_accepted: true,
+                 timezone: "Europe/Berlin"
+               })
+
+      refute analytics_enabled_at == nil
+      refute analytics_eula_accepted_at == nil
+    end
+
+    test "update_user_profile forbids updating unaccepted fields for admin" do
+      assert {:error, :forbidden,
+              [
+                "The default admin user is a system-protected resource. " <>
+                  "Only the following fields can be modified: analytics_enabled, analytics_eula_accepted, timezone."
+              ]} =
+               Users.update_user_profile(%User{username: admin_username()}, %{
+                 fullname: true
                })
     end
 
@@ -226,6 +249,36 @@ defmodule Trento.UsersTest do
                Users.update_user_profile_sso_enabled(user, %{timezone: "US/Pacific-New"})
 
       assert changeset.errors[:timezone]
+    end
+
+    test "update_user_profile_sso_enabled updates accepted fields for admin" do
+      user = insert(:user, username: admin_username())
+
+      assert {:ok,
+              %User{
+                analytics_enabled_at: analytics_enabled_at,
+                analytics_eula_accepted_at: analytics_eula_accepted_at,
+                timezone: "Europe/Berlin"
+              }} =
+               Users.update_user_profile_sso_enabled(user, %{
+                 analytics_enabled: true,
+                 analytics_eula_accepted: true,
+                 timezone: "Europe/Berlin"
+               })
+
+      refute analytics_enabled_at == nil
+      refute analytics_eula_accepted_at == nil
+    end
+
+    test "update_user_profile_sso_enabled forbids updating unaccepted fields for admin" do
+      assert {:error, :forbidden,
+              [
+                "The default admin user is a system-protected resource. " <>
+                  "Only the following fields can be modified: analytics_enabled, analytics_eula_accepted, timezone."
+              ]} =
+               Users.update_user_profile_sso_enabled(%User{username: admin_username()}, %{
+                 fullname: true
+               })
     end
   end
 

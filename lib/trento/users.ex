@@ -22,6 +22,10 @@ defmodule Trento.Users do
 
   alias Trento.Users.User
 
+  @admin_accepted_patch_fields [:analytics_enabled, :analytics_eula_accepted, :timezone]
+  @patch_forbidden_msg "The default admin user is a system-protected resource. " <>
+                         "Only the following fields can be modified: #{Enum.join(@admin_accepted_patch_fields, ", ")}."
+
   @spec by_id(id :: non_neg_integer()) :: {:ok, User.t()} | {:error, :not_found}
   def by_id(id) do
     case Repo.get(User, id) do
@@ -99,36 +103,25 @@ defmodule Trento.Users do
     |> Repo.insert()
   end
 
-  def update_user_profile(%User{username: username} = user, attrs) do
-    if username == admin_username() do
-      {:error, :forbidden}
-    else
-      updated_attrs =
-        attrs
-        |> maybe_set_password_change_requested_at(true)
-        |> maybe_enable_analytics()
-        |> maybe_accept_analytics_eula()
+  def update_user_profile(%User{username: username} = user, attrs),
+    do:
+      do_update_profile(
+        user,
+        attrs,
+        username == admin_username(),
+        update_admin_profile_params_accepted?(attrs),
+        false
+      )
 
-      user
-      |> User.profile_update_changeset(updated_attrs)
-      |> Repo.update()
-    end
-  end
-
-  def update_user_profile_sso_enabled(%User{username: username} = user, attrs) do
-    if username == admin_username() do
-      {:error, :forbidden}
-    else
-      updated_attrs =
-        attrs
-        |> maybe_enable_analytics()
-        |> maybe_accept_analytics_eula()
-
-      user
-      |> User.profile_update_sso_enabled_changeset(updated_attrs)
-      |> Repo.update()
-    end
-  end
+  def update_user_profile_sso_enabled(%User{username: username} = user, attrs),
+    do:
+      do_update_profile(
+        user,
+        attrs,
+        username == admin_username(),
+        update_admin_profile_params_accepted?(attrs),
+        true
+      )
 
   def update_user(%User{locked_at: nil} = user, %{enabled: false} = attrs) do
     updated_attrs =
@@ -354,6 +347,46 @@ defmodule Trento.Users do
       end
     )
   end
+
+  defp do_update_profile(%User{}, _attrs, true = _is_admin, false = _params_accepted, _),
+    do: {:error, :forbidden, [@patch_forbidden_msg]}
+
+  defp do_update_profile(%User{} = user, attrs, true = _is_admin, _, _) do
+    updated_attrs =
+      attrs
+      |> maybe_enable_analytics()
+      |> maybe_accept_analytics_eula()
+
+    user
+    |> User.profile_update_admin_changeset(updated_attrs)
+    |> Repo.update()
+  end
+
+  defp do_update_profile(%User{} = user, attrs, false = _is_admin, _, false = _sso_enabled) do
+    updated_attrs =
+      attrs
+      |> maybe_set_password_change_requested_at(true)
+      |> maybe_enable_analytics()
+      |> maybe_accept_analytics_eula()
+
+    user
+    |> User.profile_update_changeset(updated_attrs)
+    |> Repo.update()
+  end
+
+  defp do_update_profile(%User{} = user, attrs, false = _is_admin, _, true = _sso_enabled) do
+    updated_attrs =
+      attrs
+      |> maybe_enable_analytics()
+      |> maybe_accept_analytics_eula()
+
+    user
+    |> User.profile_update_sso_enabled_changeset(updated_attrs)
+    |> Repo.update()
+  end
+
+  defp update_admin_profile_params_accepted?(attrs),
+    do: Map.keys(attrs) -- @admin_accepted_patch_fields == []
 
   defp do_update(%User{username: username} = user, %{abilities: abilities} = attrs) do
     if username == admin_username() do

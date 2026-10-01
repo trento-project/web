@@ -251,7 +251,7 @@ function ProfilePage() {
         totpBoxOpen={totpBoxOpen}
         toggleTotpBox={setTotpBoxOpen}
         loading={loading || saving}
-        disableForm={isDefaultAdmin}
+        isDefaultAdmin={isDefaultAdmin}
         singleSignOnEnabled={isSingleSignOnEnabled()}
         onSave={updateProfile}
         onEnableTotp={totpInitiateEnrolling}
