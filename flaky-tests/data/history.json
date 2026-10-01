@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-17T17:51:10Z",
-    "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
-    "run_id": "32051035485",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 38,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-17T18:22:21Z",
     "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
     "run_id": "32052826110",
@@ -5610,6 +5590,17 @@
     "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
     "run_id": "36932236307",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-01T22:36:51Z",
+    "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
+    "run_id": "36932236307",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
