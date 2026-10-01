@@ -182,4 +182,73 @@ describe('analytics', () => {
       });
     }
   );
+
+  it('should not raw capture the event if the apiKey has not been loaded from GTM', () => {
+    global.window.posthogConfig = {};
+
+    return import('.').then(({ rawCapture }) => {
+      rawCapture(1, 'eula_displayed', {});
+      /* eslint-disable-next-line */
+      expect(console.error).toHaveBeenCalledWith(
+        'cannot load apiKey value from GTM'
+      );
+    });
+  });
+
+  it('should raw capture the event with the expected payload', () => {
+    const apiKey = 'my-key';
+    const apiHost = 'https://eu.posthog.com';
+    const userID = 1;
+    const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+    const distinctUserID = 'ab156392-96c8-551b-a49b-f071c1cdcf21';
+
+    global.config.webversion = '1.2.3';
+    global.window.posthogConfig = {
+      apiKey,
+      config: { api_host: apiHost },
+    };
+    global.config.installationID = installationID;
+    const mockApiCapture = jest.fn().mockResolvedValue();
+
+    jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
+
+    return import('.').then(({ rawCapture }) => {
+      rawCapture(userID, 'eula_displayed', { foo: 'bar' });
+
+      expect(mockApiCapture).toHaveBeenCalledWith(
+        apiHost,
+        apiKey,
+        'eula_displayed',
+        distinctUserID,
+        {
+          foo: 'bar',
+          $lib: 'web',
+          webversion: '1.2.3',
+          $process_person_profile: true,
+          $set_once: { installationID },
+        }
+      );
+    });
+  });
+
+  it('should log an error when the raw capture request fails', () => {
+    global.window.posthogConfig = {
+      apiKey: 'my-key',
+      config: { api_host: 'https://eu.posthog.com' },
+    };
+    const mockApiCapture = jest
+      .fn()
+      .mockRejectedValue(new Error('network error'));
+
+    jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
+
+    return import('.').then(async ({ rawCapture }) => {
+      rawCapture(1, 'eula_displayed', {});
+      await Promise.resolve();
+      /* eslint-disable-next-line */
+      expect(console.error).toHaveBeenCalledWith(
+        'error capturing Posthog raw event'
+      );
+    });
+  });
 });
