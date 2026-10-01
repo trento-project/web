@@ -93,6 +93,16 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
              } = All.spec(TestRouter)
     end
 
+    test "marks the legacy SUSE Manager settings routes as deprecated" do
+      spec = TrentoWeb.OpenApi.V1.ApiSpec.spec()
+
+      assert spec.paths["/api/v1/settings/suse_manager"].post.deprecated
+      refute spec.paths["/api/v1/settings/smlm"].post.deprecated
+
+      assert spec.paths["/api/v1/settings/suse_manager/test"].post.operationId ==
+               "TrentoWeb.V1.SettingsController.test_suse_manager_settings"
+    end
+
     test "should use oas_server_url if configured" do
       on_exit(fn ->
         Application.put_env(:trento, :oas_server_url, nil)
