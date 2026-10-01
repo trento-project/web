@@ -9,6 +9,7 @@ describe('analytics', () => {
   beforeEach(() => {
     jest.resetModules();
     jest.spyOn(console, 'error').mockImplementation(() => null);
+    jest.useRealTimers();
   });
 
   afterEach(() => {
@@ -70,6 +71,36 @@ describe('analytics', () => {
         before_send: expect.any(Function),
         opt_out_capturing_by_default: true,
       });
+    });
+  });
+
+  it('should preserve the loaded callback across GTM config retries', () => {
+    jest.useFakeTimers();
+
+    const apiKey = 'my-key';
+    global.config.analyticsEnabled = true;
+    global.window.posthogConfig = undefined;
+
+    const mockInit = jest.fn((_key, opts) => opts.loaded());
+
+    jest.mock('posthog-js', () => ({
+      init: mockInit,
+    }));
+
+    return import('.').then(({ init }) => {
+      const loadedFunc = jest.fn();
+      init(loadedFunc);
+
+      expect(mockInit).not.toHaveBeenCalled();
+
+      global.window.posthogConfig = { apiKey };
+      jest.advanceTimersByTime(100);
+
+      expect(mockInit).toHaveBeenCalledWith(
+        apiKey,
+        expect.objectContaining({ loaded: expect.any(Function) })
+      );
+      expect(loadedFunc).toHaveBeenCalled();
     });
   });
 

@@ -94,7 +94,7 @@ export const init = (loadedFunc = noop) => {
       },
     });
   } else {
-    setTimeout(init, 100);
+    setTimeout(() => init(loadedFunc), 100);
   }
 };
 
