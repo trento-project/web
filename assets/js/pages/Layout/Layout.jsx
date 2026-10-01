@@ -116,7 +116,7 @@ function Layout() {
       <AnalyticsEula
         analyticsConfigEnabled={getFromConfig('analyticsEnabled')}
         analyticsCapture={rawCapture}
-        isAnalyticsLoaded={isLoaded()}
+        isAnalyticsLoadedFunc={isLoaded}
       />
       <div className="flex flex-col h-screen items-start justify-between">
         <div

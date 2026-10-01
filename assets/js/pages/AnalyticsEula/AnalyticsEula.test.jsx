@@ -26,7 +26,7 @@ describe('AnalyticsEula component', () => {
       <AnalyticsEula
         analyticsConfigEnabled={analyticsConfigEnabled}
         analyticsCapture={mockCapture}
-        isAnalyticsLoaded
+        isAnalyticsLoadedFunc={() => true}
       />,
       {
         user: { id: userID, analytics_eula_accepted: analyticsEulaAccepted },

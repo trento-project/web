@@ -18,14 +18,14 @@ const EULA_TEMPORARY_DECLINED_EVENT = 'eula_temporary_declined';
 export default function AnalyticsEula({
   analyticsConfigEnabled,
   analyticsCapture,
-  isAnalyticsLoaded,
+  isAnalyticsLoadedFunc,
 }) {
   const dispatch = useDispatch();
   const { id: userID, analytics_eula_accepted } = useSelector(getUserProfile);
   const [analyticsEulaModalOpen, setAnalyticsEulaModalOpen] = useState(
     !analytics_eula_accepted
   );
-  const [analyticsLoaded, setAnalyticsLoaded] = useState(isAnalyticsLoaded);
+  const [analyticsLoaded, setAnalyticsLoaded] = useState(isAnalyticsLoadedFunc);
   const [eulaUserElection, setEulaUserElection] = useState();
   // save initial eula accepted state, so further changes doesn't change event capturing
   const eulaRequiredRef = useRef(!analytics_eula_accepted);
