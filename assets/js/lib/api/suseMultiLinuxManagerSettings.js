@@ -11,8 +11,6 @@ export const saveSettings = (settings) =>
 export const updateSettings = (settings) =>
   networkClient.patch(`/settings/smlm`, settings);
 
-export const clearSettings = () =>
-  networkClient.delete(`/settings/smlm`);
+export const clearSettings = () => networkClient.delete(`/settings/smlm`);
 
-export const testConnection = () =>
-  networkClient.post(`/settings/smlm/test`);
+export const testConnection = () => networkClient.post(`/settings/smlm/test`);
