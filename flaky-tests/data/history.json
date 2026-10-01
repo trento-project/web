@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-17T17:50:14Z",
-    "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
-    "run_id": "32051035485",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 37,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.ActivityLogTest::test Activity Log types inclusion should exclude user management activities by default",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-17T17:51:10Z",
     "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
     "run_id": "32051035485",
@@ -5624,5 +5604,16 @@
         "score": 0.05001
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-01T22:35:42Z",
+    "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
+    "run_id": "36932236307",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
