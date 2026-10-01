@@ -25,6 +25,7 @@ concurrency:
 
 env:
   MIX_ENV: test
+  ELIXIR_BC_ENABLED: "false" # set to "true" to also run Elixir jobs against ELIXIR_BC/ERLANG_BC
   ELIXIR_BC: "1.15.7-otp-26"
   ERLANG_BC: "26.2.1"
   NODEJS_BC: "20.20.0"
@@ -109,22 +110,31 @@ jobs:
       ELIXIR_DEV: ${{ env.ELIXIR_VERSION }}
       ERLANG_DEV: ${{ env.ERLANG_VERSION }}
       NODEJS_DEV: ${{ env.NODEJS_VERSION }}
-      ELIXIR_BC: ${{ env.ELIXIR_BC }}
-      ERLANG_BC: ${{ env.ERLANG_BC }}
       NODEJS_BC: ${{ env.NODEJS_BC }}
+      ELIXIR_MATRIX: ${{ steps.compute-matrix.outputs.ELIXIR_MATRIX }}
+      ELIXIR_DEPS_MATRIX: ${{ steps.compute-matrix.outputs.ELIXIR_DEPS_MATRIX }}
+      API_BC_MATRIX: ${{ steps.compute-matrix.outputs.API_BC_MATRIX }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: gather versions
         uses: endorama/asdf-parse-tool-versions@e60863920ff5af9bf1c794ffbaaef91384b07eed # v1.6.0
       - name: Compute matrix
+        id: compute-matrix
         run: |
           echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
           echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
-          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
-          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
           echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
+          ELIXIR_MATRIX=$(jq -cn \
+            --arg bc_enabled "${{ env.ELIXIR_BC_ENABLED }}" \
+            --arg elixir_bc "${{ env.ELIXIR_BC }}" --arg otp_bc "${{ env.ERLANG_BC }}" \
+            --arg elixir_dev "${{ env.ELIXIR_VERSION }}" --arg otp_dev "${{ env.ERLANG_VERSION }}" \
+            '(if $bc_enabled == "true" then [{elixir: $elixir_bc, otp: $otp_bc}] else [] end)
+              + [{elixir: $elixir_dev, otp: $otp_dev}]')
+          echo "ELIXIR_MATRIX=$ELIXIR_MATRIX" >> $GITHUB_OUTPUT
+          echo "ELIXIR_DEPS_MATRIX=$(jq -c '[("dev", "test", "prod") as $mix_env | .[] | {mix_env: $mix_env} + .]' <<< "$ELIXIR_MATRIX")" >> $GITHUB_OUTPUT
+          echo "API_BC_MATRIX=$(jq -c '[("Unversioned", "V1", "V2") as $version | .[] | {version: $version} + .]' <<< "$ELIXIR_MATRIX")" >> $GITHUB_OUTPUT
 
   elixir-deps:
     name: Elixir ${{ matrix.mix_env }} dependencies (Elixir ${{ matrix.elixir }})
@@ -134,25 +144,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - mix_env: dev
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: dev
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - mix_env: test
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: test
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - mix_env: prod
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - mix_env: prod
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_DEPS_MATRIX) }}
     env:
       MIX_ENV: ${{ matrix.mix_env }}
     steps:
@@ -328,11 +320,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_MATRIX) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -401,11 +389,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_MATRIX) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -473,11 +457,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_MATRIX) }}
     env:
       MIX_ENV: prod
     steps:
@@ -969,11 +949,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_MATRIX) }}
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout target branch
@@ -1013,11 +989,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.ELIXIR_MATRIX) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1059,25 +1031,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - version: Unversioned
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: Unversioned
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - version: V1
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: V1
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
-          - version: V2
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_BC }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_BC }}
-          - version: V2
-            elixir: ${{ needs.setup-matrix-env.outputs.ELIXIR_DEV }}
-            otp: ${{ needs.setup-matrix-env.outputs.ERLANG_DEV }}
+        include: ${{ fromJson(needs.setup-matrix-env.outputs.API_BC_MATRIX) }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
