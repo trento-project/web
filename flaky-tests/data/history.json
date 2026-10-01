@@ -1,37 +1,5 @@
 [
   {
-    "timestamp": "2026-08-16T21:57:53Z",
-    "commit": "dabcce6533c8dede28cb9f649414b2d14508d0e3",
-    "run_id": "31965599662",
-    "suite": "E2E",
-    "metrics": {
-      "completed_runs": 100,
-      "failed_runs": 12
-    },
-    "top_flaky_tests": [
-      {
-        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
-        "score": 0.09051
-      },
-      {
-        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
-        "score": 0.06594
-      },
-      {
-        "name": "should allow to deregister a host after clean up confirmation & restore it::Hosts Overview Deregistration Clean-up button should deregister a host should allow to deregister a host after clean up confirmation & restore it",
-        "score": 0.05001
-      },
-      {
-        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
-        "score": 0.05001
-      },
-      {
-        "name": "should not display eula if analytics is enabled in the profile view::Users Analytics eula should not display eula if analytics is enabled in the profile view",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-17T17:50:14Z",
     "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
     "run_id": "32051035485",
@@ -5634,6 +5602,26 @@
       {
         "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-01T22:14:14Z",
+    "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
+    "run_id": "36930706576",
+    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
       }
     ]
   }
