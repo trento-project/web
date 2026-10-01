@@ -115,7 +115,7 @@ defmodule Trento.MixProject do
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:timex, "~> 3.7.7"},
-      {:tzdata, "~> 1.1.4"},
+      {:tzdata, "~> 1.2.1"},
       {:trento_contracts,
        github: "trento-project/contracts",
        ref: "af252ccb0e64234d65e0581043996b6574687fc8",
