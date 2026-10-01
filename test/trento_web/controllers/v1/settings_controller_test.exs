@@ -635,6 +635,71 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
 
       assert "" == resp
     end
+
+    test "should return user settings through the legacy route", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
+      insert_software_updates_settings()
+
+      conn
+      |> get("/api/v1/settings/suse_manager")
+      |> json_response(:ok)
+      |> assert_schema("SmlmSettingsV1", api_spec)
+    end
+
+    test "should save settings through the legacy route", %{conn: conn, api_spec: api_spec} do
+      settings = %{
+        url: Faker.Internet.image_url(),
+        username: Faker.Internet.user_name(),
+        password: Faker.Lorem.word(),
+        ca_cert: build(:self_signed_certificate)
+      }
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/settings/suse_manager", settings)
+      |> json_response(:created)
+      |> assert_schema("SmlmSettingsV1", api_spec)
+    end
+
+    test "should patch settings through the legacy route", %{conn: conn, api_spec: api_spec} do
+      insert_software_updates_settings()
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> patch("/api/v1/settings/suse_manager", %{username: "legacy_username"})
+      |> json_response(:ok)
+      |> assert_schema("SmlmSettingsV1", api_spec)
+    end
+
+    test "should put settings through the legacy route", %{conn: conn, api_spec: api_spec} do
+      insert_software_updates_settings()
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> put("/api/v1/settings/suse_manager", %{username: "legacy_username"})
+      |> json_response(:ok)
+      |> assert_schema("SmlmSettingsV1", api_spec)
+    end
+
+    test "should delete settings through the legacy route", %{conn: conn} do
+      insert_software_updates_settings()
+
+      conn = delete(conn, "/api/v1/settings/suse_manager")
+
+      assert response(conn, :no_content) == ""
+    end
+
+    test "should test the connection through the legacy route", %{conn: conn} do
+      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+
+      conn
+      |> put_req_header("content-type", "application/json")
+      |> post("/api/v1/settings/suse_manager/test")
+      |> json_response(:ok)
+      |> then(&assert &1 == "")
+    end
   end
 
   describe "SSOCertificatesSettings" do

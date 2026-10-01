@@ -95,8 +95,12 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
 
     test "marks the legacy SUSE Manager settings routes as deprecated" do
       spec = TrentoWeb.OpenApi.V1.ApiSpec.spec()
+      legacy_settings = spec.paths["/api/v1/settings/suse_manager"]
 
-      assert spec.paths["/api/v1/settings/suse_manager"].post.deprecated
+      for operation <- [:get, :post, :patch, :put, :delete] do
+        assert Map.fetch!(legacy_settings, operation).deprecated
+      end
+
       refute spec.paths["/api/v1/settings/smlm"].post.deprecated
 
       assert spec.paths["/api/v1/settings/suse_manager/test"].post.operationId ==
