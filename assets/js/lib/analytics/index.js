@@ -149,7 +149,7 @@ export const rawCapture = (userID, event, properties) => {
       installationID,
     },
   }).catch((error) => {
-    logError('error capturing Posthog raw event', error);
+    logError(`error capturing Posthog raw event: ${error.message}`);
   });
 };
 

@@ -289,7 +289,7 @@ describe('analytics', () => {
       await Promise.resolve();
       /* eslint-disable-next-line */
       expect(console.error).toHaveBeenCalledWith(
-        'error capturing Posthog raw event'
+        'error capturing Posthog raw event: network error'
       );
     });
   });

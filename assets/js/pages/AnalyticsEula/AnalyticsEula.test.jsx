@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockAdapter from 'axios-mock-adapter';
 
@@ -16,6 +16,7 @@ describe('AnalyticsEula component', () => {
     analyticsConfigEnabled = true,
     analyticsEulaAccepted = false,
     userID = 1,
+    isAnalyticsLoadedFunc = () => true,
   } = {}) => {
     const mockCapture = jest.fn();
 
@@ -26,7 +27,7 @@ describe('AnalyticsEula component', () => {
       <AnalyticsEula
         analyticsConfigEnabled={analyticsConfigEnabled}
         analyticsCapture={mockCapture}
-        isAnalyticsLoadedFunc={() => true}
+        isAnalyticsLoadedFunc={isAnalyticsLoadedFunc}
       />,
       {
         user: { id: userID, analytics_eula_accepted: analyticsEulaAccepted },
@@ -66,6 +67,25 @@ describe('AnalyticsEula component', () => {
       expect.anything(),
       'eula_displayed',
       expect.anything()
+    );
+  });
+
+  it('should capture eula_displayed once PostHog finishes loading after mount', async () => {
+    const isAnalyticsLoadedFunc = jest.fn().mockReturnValue(false);
+    const { mockCapture } = setup({
+      analyticsEulaAccepted: false,
+      isAnalyticsLoadedFunc,
+    });
+
+    expect(mockCapture).not.toHaveBeenCalled();
+
+    act(() => {
+      isAnalyticsLoadedFunc.mockReturnValue(true);
+      document.dispatchEvent(new CustomEvent('posthog_loaded'));
+    });
+
+    await waitFor(() =>
+      expect(mockCapture).toHaveBeenCalledWith(1, 'eula_displayed', {})
     );
   });
 

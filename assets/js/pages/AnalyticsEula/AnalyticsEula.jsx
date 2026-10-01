@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { editUserProfile } from '@lib/api/users';
@@ -25,20 +30,16 @@ export default function AnalyticsEula({
   const [analyticsEulaModalOpen, setAnalyticsEulaModalOpen] = useState(
     !analytics_eula_accepted
   );
-  const [analyticsLoaded, setAnalyticsLoaded] = useState(isAnalyticsLoadedFunc);
   const [eulaUserElection, setEulaUserElection] = useState();
   // save initial eula accepted state, so further changes doesn't change event capturing
   const eulaRequiredRef = useRef(!analytics_eula_accepted);
 
-  // wait until posthog is properly loaded. need to wait until posthog configuration
-  // data has been loaded from GTM and this is an async task
-  useEffect(() => {
-    if (analyticsLoaded) return;
-    const { cleanup } = addPostHogLoadedListener(() =>
-      setAnalyticsLoaded(true)
-    );
-    return cleanup;
-  }, [analyticsLoaded]);
+  // wait until posthog configuration data has been loaded from GTM and this is an async task
+  // subscribe to addPostHogLoadedListener and wait until analytics is completely loaded
+  const analyticsLoaded = useSyncExternalStore(
+    addPostHogLoadedListener,
+    isAnalyticsLoadedFunc
+  );
 
   // capture event when posthog is loaded and the eula modal was open at some point
   useEffect(() => {
