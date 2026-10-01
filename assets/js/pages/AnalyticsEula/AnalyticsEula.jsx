@@ -12,8 +12,8 @@ import AnalyticsEulaModal from './AnalyticsEulaModal';
 
 const EULA_DISPLAYED_EVENT = 'eula_displayed';
 const EULA_ACCEPTED_EVENT = 'eula_accepted';
-const EULA_DECLIEND_EVENT = 'eula_declined';
-const EULA_TEMPORARY_DECLIEND_EVENT = 'eula_temporary_declined';
+const EULA_DECLINED_EVENT = 'eula_declined';
+const EULA_TEMPORARY_DECLINED_EVENT = 'eula_temporary_declined';
 
 export default function AnalyticsEula({
   analyticsConfigEnabled,
@@ -80,7 +80,7 @@ export default function AnalyticsEula({
       onCancel={(checked) => {
         setAnalyticsEulaModalOpen(false);
         setEulaUserElection(
-          checked ? EULA_DECLIEND_EVENT : EULA_TEMPORARY_DECLIEND_EVENT
+          checked ? EULA_DECLINED_EVENT : EULA_TEMPORARY_DECLINED_EVENT
         );
         if (checked) {
           updateAnalyticsEula({
