@@ -28,9 +28,11 @@ jobs:
   setup-matrix:
     runs-on: ubuntu-24.04
     outputs:
-      ELIXIR_MATRIX: ${{ steps.compute-matrix.outputs.ELIXIR_MATRIX }}
-      ELIXIR_VERSIONS: ${{ steps.compute-matrix.outputs.ELIXIR_VERSIONS }}
-      ANALYSIS_MATRIX: ${{ steps.compute-matrix.outputs.ANALYSIS_MATRIX }}
+      ELIXIR_BC: ${{ steps.compute-matrix.outputs.ELIXIR_BC }}
+      ERLANG_BC: ${{ steps.compute-matrix.outputs.ERLANG_BC }}
+      ELIXIR_DEV: ${{ steps.compute-matrix.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.compute-matrix.outputs.ERLANG_DEV }}
+      ELIXIR_BC_EXCLUDE: ${{ steps.compute-matrix.outputs.ELIXIR_BC_EXCLUDE }}
       run_range: ${{ steps.compute-matrix.outputs.run_range }}
       total-runs: ${{ steps.compute-matrix.outputs.total-runs }}
     steps:
@@ -41,18 +43,15 @@ jobs:
       - name: Compute matrix
         id: compute-matrix
         run: |
-          ELIXIR_MATRIX=$(jq -cn \
-            --arg bc_enabled "${{ env.ELIXIR_BC_ENABLED }}" \
-            --arg elixir_bc "${{ env.ELIXIR_BC }}" --arg otp_bc "${{ env.ERLANG_BC }}" \
-            --arg elixir_dev "${{ env.ELIXIR_VERSION }}" --arg otp_dev "${{ env.ERLANG_VERSION }}" \
-            '(if $bc_enabled == "true" then [{elixir: $elixir_bc, otp: $otp_bc}] else [] end)
-              + [{elixir: $elixir_dev, otp: $otp_dev}]')
-          echo "ELIXIR_MATRIX=$ELIXIR_MATRIX" >> $GITHUB_OUTPUT
-          echo "ELIXIR_VERSIONS=$(jq -c 'map(.elixir)' <<< "$ELIXIR_MATRIX")" >> $GITHUB_OUTPUT
-          echo "ANALYSIS_MATRIX=$(jq -c 'reverse | map({
-            "suite-name": "Backend — Elixir \(.elixir), OTP \(.otp)",
-            "junit-artifact-pattern": "backend-junit-reports-elixir\(.elixir)-*"
-          })' <<< "$ELIXIR_MATRIX")" >> $GITHUB_OUTPUT
+          echo "ELIXIR_BC=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_BC=${{ env.ERLANG_BC }}" >> $GITHUB_OUTPUT
+          echo "ELIXIR_DEV=${{ env.ELIXIR_VERSION }}" >> $GITHUB_OUTPUT
+          echo "ERLANG_DEV=${{ env.ERLANG_VERSION }}" >> $GITHUB_OUTPUT
+          if [[ "${{ env.ELIXIR_BC_ENABLED }}" == "true" ]]; then
+            echo "ELIXIR_BC_EXCLUDE=none" >> $GITHUB_OUTPUT
+          else
+            echo "ELIXIR_BC_EXCLUDE=${{ env.ELIXIR_BC }}" >> $GITHUB_OUTPUT
+          fi
           echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
 
@@ -62,7 +61,18 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        include: ${{ fromJson(needs.setup-matrix.outputs.ELIXIR_MATRIX) }}
+        elixir:
+          - ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+        otp:
+          - ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+        exclude:
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC_EXCLUDE }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -101,8 +111,18 @@ jobs:
       fail-fast: false
       matrix:
         run: ${{ fromJson(needs.setup-matrix.outputs.run_range) }}
-        elixir: ${{ fromJson(needs.setup-matrix.outputs.ELIXIR_VERSIONS) }}
-        include: ${{ fromJson(needs.setup-matrix.outputs.ELIXIR_MATRIX) }}
+        elixir:
+          - ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+        otp:
+          - ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+        exclude:
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC_EXCLUDE }}
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -160,11 +180,22 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        include: ${{ fromJson(needs.setup-matrix.outputs.ANALYSIS_MATRIX) }}
+        elixir:
+          - ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+          - ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+        otp:
+          - ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+          - ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+        exclude:
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_DEV }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_DEV }}
+            otp: ${{ needs.setup-matrix.outputs.ERLANG_BC }}
+          - elixir: ${{ needs.setup-matrix.outputs.ELIXIR_BC_EXCLUDE }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
-      suite-name: ${{ matrix.suite-name }}
-      junit-artifact-pattern: ${{ matrix.junit-artifact-pattern }}
+      suite-name: "Backend — Elixir ${{ matrix.elixir }}, OTP ${{ matrix.otp }}"
+      junit-artifact-pattern: backend-junit-reports-elixir${{ matrix.elixir }}-*
       total-runs: ${{ needs.setup-matrix.outputs.total-runs }}
     secrets:
       SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
