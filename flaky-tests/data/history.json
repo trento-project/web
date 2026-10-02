@@ -1,65 +1,5 @@
 [
   {
-    "timestamp": "2026-08-17T18:22:21Z",
-    "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
-    "run_id": "32052826110",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 10
-    },
-    "top_flaky_tests": [
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize instance operation sap_instance_start",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails › forbidden actions::should forbid/authorize system/database operation sap_system_stop",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Start database with enabled state as true",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as false",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation database_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show instance operation sap_instance_start in running state",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › Host reboot operation button::should show the reboot button always enabled",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › forbidden actions::should enable Saptune change solution operation button based on user abilities",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › last execution overview::should be displayed when lastExecution has data inside",
-        "score": 0.05001
-      },
-      {
-        "name": "HostDetails component › operations::should show Apply Saptune Solution operation disabled",
-        "score": 0.05001
-      },
-      {
-        "name": "GenericSystemDetails::should show database operation Start database with enabled state as true",
-        "score": 0.02501
-      },
-      {
-        "name": "GenericSystemDetails::should show database site operation Stop database with enabled state as true",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-17T18:23:21Z",
     "commit": "2db29c569efe83228b33f95c1da21d6e64a8c811",
     "run_id": "32052826110",
@@ -5606,5 +5546,101 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-02T02:00:33Z",
+    "commit": "7bd2b8395af495246a5cf86f1f7cf8be4b3a89a9",
+    "run_id": "36936599596",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 37
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should create a new personal access token and grant access to guarded resources::Users Profile personal access tokens should create a new personal access token and grant access to guarded resources",
+        "score": 0.2873
+      },
+      {
+        "name": "should register a new instance with an already existing instance number, when the application instance is not clustered::SAP Systems Overview Move application instance should register a new instance with an already existing instance number, when the application instance is not clustered",
+        "score": 0.2367
+      },
+      {
+        "name": "should have RED health in SAP system when HANA instance with RED status is received::SAP Systems Overview Health and statuses are updated should have RED health in SAP system when HANA instance with RED status is received",
+        "score": 0.2222
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a GRAY status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a GRAY status is received",
+        "score": 0.2222
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a RED status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a RED status is received",
+        "score": 0.2222
+      },
+      {
+        "name": "should have expected health in SAP system and instance when a YELLOW status is received::SAP Systems Overview Health and statuses are updated should have expected health in SAP system and instance when a YELLOW status is received",
+        "score": 0.2222
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.2153
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.2153
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1797
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.1612
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP system details Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.1612
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.08384
+      },
+      {
+        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.05001
+      },
+      {
+        "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
+        "score": 0.05001
+      },
+      {
+        "name": "should clear the AI configuration on confirm::Users AI Configuration Clearing AI Configuration should clear the AI configuration on confirm",
+        "score": 0.02501
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.02501
+      },
+      {
+        "name": "should include restored host again in the list::SAP system details Deregistration should include restored host again in the list",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark an instance as absent and restore it as present on received respective discovery messages::SAP Systems Overview Instance deregistration should mark an instance as absent and restore it as present on received respective discovery messages",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark cluster data as sync when the agent starts reporting data again::HANA cluster details Stale data should mark cluster data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.02501
+      },
+      {
+        "name": "should show Red badge in instance when RED status is received::HANA database details The database layout shows all the running instances should show Red badge in instance when RED status is received",
+        "score": 0.02501
+      }
+    ]
   }
 ]
