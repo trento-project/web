@@ -546,6 +546,62 @@ describe('ProfileForm', () => {
     ).toBeVisible();
   });
 
+  describe('Default admin', () => {
+    it('should disable only common input fields', () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          isDefaultAdmin
+          analyticsEnabledConfig
+        />
+      );
+
+      expect(screen.getByLabelText('fullname')).toBeDisabled();
+      expect(screen.getByLabelText('email')).toBeDisabled();
+      expect(screen.getByLabelText('username')).toBeDisabled();
+      expect(screen.getByLabelText('permissions')).toBeDisabled();
+      expect(screen.getByText('Change Password')).toBeDisabled();
+      expect(screen.getByLabelText(/Authenticator App/)).toBeDisabled();
+      expect(screen.getByLabelText('Timezone')).toBeEnabled();
+      expect(screen.getByLabelText(/Analytics Opt-in/)).toBeEnabled();
+    });
+
+    it('should save enabled input values', async () => {
+      const { username, fullname, email, abilities } = profileFactory.build();
+
+      const mockOnSave = jest.fn();
+
+      render(
+        <ProfileForm
+          fullName={fullname}
+          emailAddress={email}
+          username={username}
+          abilities={abilities}
+          timezone={DEFAULT_TIMEZONE}
+          timezones={timezones}
+          onSave={mockOnSave}
+          isDefaultAdmin
+        />
+      );
+
+      expect(screen.queryByText('Save')).toBeInTheDocument();
+
+      const user = userEvent.setup();
+
+      await user.click(screen.getByRole('button', { name: 'Save' }));
+
+      expect(mockOnSave).toHaveBeenNthCalledWith(1, {
+        analytics_enabled: false,
+        timezone: DEFAULT_TIMEZONE,
+      });
+    });
+  });
+
   describe('Single sign on', () => {
     it('should disable fullname, email and username fields', () => {
       const { username, fullname, email, abilities } = profileFactory.build();
@@ -557,6 +613,7 @@ describe('ProfileForm', () => {
           username={username}
           abilities={abilities}
           singleSignOnEnabled
+          analyticsEnabledConfig
         />
       );
 
@@ -564,6 +621,8 @@ describe('ProfileForm', () => {
       expect(screen.getByLabelText('email')).toBeDisabled();
       expect(screen.getByLabelText('username')).toBeDisabled();
       expect(screen.getByLabelText('permissions')).toBeDisabled();
+      expect(screen.getByLabelText('Timezone')).toBeEnabled();
+      expect(screen.getByLabelText(/Analytics Opt-in/)).toBeEnabled();
     });
 
     it('should remove password and totp fields', () => {
@@ -584,27 +643,7 @@ describe('ProfileForm', () => {
       expect(screen.getByText('Permissions')).toBeVisible();
     });
 
-    it('should keep timezone selector enabled', () => {
-      const { username, fullname, email, abilities } = profileFactory.build();
-
-      render(
-        <ProfileForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          abilities={abilities}
-          timezones={timezones}
-          singleSignOnEnabled
-        />
-      );
-
-      expect(screen.getByLabelText('Timezone')).toBeEnabled();
-      expect(
-        screen.getByText(getTimezoneLabel(DEFAULT_TIMEZONE))
-      ).toBeVisible();
-    });
-
-    it('should show save button if analytics configuration is enabled', async () => {
+    it('should save enabled input values', async () => {
       const { username, fullname, email, abilities } = profileFactory.build();
 
       const mockOnSave = jest.fn();
@@ -615,10 +654,10 @@ describe('ProfileForm', () => {
           emailAddress={email}
           username={username}
           abilities={abilities}
-          onSave={mockOnSave}
+          timezone={DEFAULT_TIMEZONE}
           timezones={timezones}
+          onSave={mockOnSave}
           singleSignOnEnabled
-          analyticsEnabledConfig
         />
       );
 
@@ -631,42 +670,6 @@ describe('ProfileForm', () => {
       expect(mockOnSave).toHaveBeenNthCalledWith(1, {
         analytics_enabled: false,
         timezone: DEFAULT_TIMEZONE,
-      });
-    });
-
-    it('should set timezone in save payload when timezone selector changes', async () => {
-      const { username, fullname, email, abilities } = profileFactory.build();
-      const timezone = userTimezone;
-      const mockOnSave = jest.fn();
-      const user = userEvent.setup();
-
-      render(
-        <ProfileForm
-          fullName={fullname}
-          emailAddress={email}
-          username={username}
-          abilities={abilities}
-          timezone={DEFAULT_TIMEZONE}
-          timezones={timezones}
-          onSave={mockOnSave}
-          singleSignOnEnabled
-          analyticsEnabledConfig
-        />
-      );
-
-      const timezoneSelectorInput = screen.getByRole('combobox', {
-        name: 'Timezone',
-      });
-      const timezoneLabel = getTimezoneLabel(timezone);
-
-      await user.click(timezoneSelectorInput);
-      await user.type(timezoneSelectorInput, timezone);
-      await user.click(await screen.findByText(timezoneLabel));
-      await user.click(screen.getByRole('button', { name: 'Save' }));
-
-      expect(mockOnSave).toHaveBeenCalledWith({
-        analytics_enabled: false,
-        timezone,
       });
     });
   });

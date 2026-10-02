@@ -121,6 +121,12 @@ defmodule Trento.Users.User do
     |> validate_timezone()
   end
 
+  def profile_update_admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:analytics_enabled_at, :analytics_eula_accepted_at, :timezone])
+    |> validate_timezone()
+  end
+
   def totp_update_changeset(user, attrs) do
     cast(user, attrs, [:totp_enabled_at, :totp_secret, :totp_last_used_at])
   end

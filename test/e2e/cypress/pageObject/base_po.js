@@ -209,7 +209,7 @@ export const validateResponseStatusCode = (endpointAlias, expectedStatusCode) =>
     .its('response.statusCode')
     .should('eq', expectedStatusCode);
 
-const getLoginCredentials = (username, password) => {
+export const getLoginCredentials = (username, password) => {
   if (username !== undefined && password !== undefined) {
     return cy.wrap({ username, password });
   }
