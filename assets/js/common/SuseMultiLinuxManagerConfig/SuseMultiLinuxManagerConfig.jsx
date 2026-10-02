@@ -12,7 +12,7 @@ import DisabledGuard from '@common/DisabledGuard';
 import SuseMultiLinuxManagerClearSettingsModal from '@common/SuseMultiLinuxManagerClearSettingsDialog';
 import CertificateUploadDate from './CertificateUploadDate';
 
-const smlmSettingsPermittedFor = ['all:suma_settings'];
+const smlmSettingsPermittedFor = ['all:smlm_settings'];
 
 function SuseMultiLinuxManagerConfig({
   url = 'https://',
