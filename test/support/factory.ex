@@ -1320,7 +1320,7 @@ defmodule Trento.Factory do
 
     %SmlmSettings{}
     |> SmlmSettings.changeset(%{
-      type: :suse_manager_settings,
+      type: :smlm_settings,
       url: url,
       username: username,
       password: password,
