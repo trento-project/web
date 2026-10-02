@@ -34,7 +34,7 @@ defmodule Trento.Application do
         Trento.Infrastructure.Catalog.AMQP.Consumer,
         Trento.Infrastructure.Discovery.AMQP.Publisher,
         Trento.Vault,
-        Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth,
+        Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth,
         {Samly.Provider, []},
         {Sagents.Supervisor, []}
         # Start a worker by calling: Trento.Worker.start_link(arg)

@@ -163,7 +163,7 @@ config :trento, Trento.Infrastructure.Messaging.Adapter.AMQP,
 config :trento, Trento.Infrastructure.Prometheus,
   adapter: Trento.Infrastructure.Prometheus.MockPrometheusApi
 
-config :trento, Trento.Infrastructure.SoftwareUpdates.MockSuma,
+config :trento, Trento.Infrastructure.SoftwareUpdates.MockSmlm,
   relevant_patches_system_ids: [
     # vmdrbddev01
     5980

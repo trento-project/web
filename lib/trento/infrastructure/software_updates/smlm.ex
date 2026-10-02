@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
+defmodule Trento.Infrastructure.SoftwareUpdates.Smlm do
   @moduledoc """
   SUSE Multi-Linux Manager Software updates discovery adapter
   """
@@ -9,7 +9,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
   @behaviour Trento.SoftwareUpdates.Discovery.Gen
 
   alias Trento.Infrastructure.SoftwareUpdates.Auth.State
-  alias Trento.Infrastructure.SoftwareUpdates.SumaApi
+  alias Trento.Infrastructure.SoftwareUpdates.SmlmApi
 
   @impl Trento.SoftwareUpdates.Discovery.Gen
   def setup do
@@ -65,82 +65,82 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Suma do
       {:ok, new_state} ->
         request
         |> do_handle(new_state)
-        |> handle_suma_authentication_error(request)
+        |> handle_smlm_authentication_error(request)
 
       error ->
         error
     end
   end
 
-  defp handle_suma_authentication_error({:error, :suma_authentication_error}, request) do
+  defp handle_smlm_authentication_error({:error, :smlm_authentication_error}, request) do
     clear()
     handle_request(request)
   end
 
-  defp handle_suma_authentication_error(result, _), do: result
+  defp handle_smlm_authentication_error(result, _), do: result
 
   defp do_handle({:get_system_id, fully_qualified_domain_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert)
+       do: SmlmApi.get_system_id(url, auth_cookie, fully_qualified_domain_name, ca_cert)
 
   defp do_handle({:get_relevant_patches, system_id}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert)
+       do: SmlmApi.get_relevant_patches(url, auth_cookie, system_id, ca_cert)
 
   defp do_handle({:get_upgradable_packages, system_id}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_upgradable_packages(url, auth_cookie, system_id, ca_cert)
+       do: SmlmApi.get_upgradable_packages(url, auth_cookie, system_id, ca_cert)
 
   defp do_handle({:get_patches_for_package, package_id}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_patches_for_package(url, auth_cookie, package_id, ca_cert)
+       do: SmlmApi.get_patches_for_package(url, auth_cookie, package_id, ca_cert)
 
   defp do_handle({:get_errata_details, advisory_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_errata_details(url, auth_cookie, advisory_name, ca_cert)
+       do: SmlmApi.get_errata_details(url, auth_cookie, advisory_name, ca_cert)
 
   defp do_handle({:get_affected_systems, advisory_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_affected_systems(url, auth_cookie, advisory_name, ca_cert)
+       do: SmlmApi.get_affected_systems(url, auth_cookie, advisory_name, ca_cert)
 
   defp do_handle({:get_cves, advisory_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_cves(url, auth_cookie, advisory_name, ca_cert)
+       do: SmlmApi.get_cves(url, auth_cookie, advisory_name, ca_cert)
 
   defp do_handle({:get_affected_packages, advisory_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_affected_packages(url, auth_cookie, advisory_name, ca_cert)
+       do: SmlmApi.get_affected_packages(url, auth_cookie, advisory_name, ca_cert)
 
   defp do_handle({:get_bugzilla_fixes, advisory_name}, %State{
          url: url,
          auth: auth_cookie,
          ca_cert: ca_cert
        }),
-       do: SumaApi.get_bugzilla_fixes(url, auth_cookie, advisory_name, ca_cert)
+       do: SmlmApi.get_bugzilla_fixes(url, auth_cookie, advisory_name, ca_cert)
 
   defp auth, do: Application.fetch_env!(:trento, __MODULE__)[:auth]
 end

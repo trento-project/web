@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: SUSE LLC
 # SPDX-License-Identifier: Apache-2.0
 
-defmodule Trento.Infrastructure.SoftwareUpdates.MockSuma do
+defmodule Trento.Infrastructure.SoftwareUpdates.MockSmlm do
   @moduledoc """
   Mocked SUSE Multi-Linux Manager Software updates discovery adapter
   """
