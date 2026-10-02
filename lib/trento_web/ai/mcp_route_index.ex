@@ -33,6 +33,7 @@ defmodule TrentoWeb.AI.McpRouteIndex do
   def entries(router \\ @default_router) do
     router
     |> extract_mcp_routes()
+    |> Enum.uniq_by(fn {%{plug: controller, plug_opts: action}, _} -> {controller, action} end)
     |> Enum.map(&build_entry/1)
   end
 
