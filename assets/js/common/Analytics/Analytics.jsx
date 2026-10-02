@@ -24,12 +24,10 @@ const dispatchPosthogLoadedEvent = () => {
   document.dispatchEvent(new CustomEvent(POSTHOG_LOADED_EVENT));
 };
 
-const addPostHogLoadedListener = (callback) => {
+export const addPostHogLoadedListener = (callback) => {
   document.addEventListener(POSTHOG_LOADED_EVENT, callback, { once: true });
-  return {
-    cleanup: () => {
-      document.removeEventListener(POSTHOG_LOADED_EVENT, callback);
-    },
+  return () => {
+    document.removeEventListener(POSTHOG_LOADED_EVENT, callback);
   };
 };
 
@@ -67,8 +65,7 @@ export function PostHogIdentify() {
         identifyUser(analyticsEnabled, userID);
       };
 
-      const { cleanup } = addPostHogLoadedListener(onLoad);
-      return cleanup;
+      return addPostHogLoadedListener(onLoad);
     }
   }, [userID, analyticsEnabled]);
 

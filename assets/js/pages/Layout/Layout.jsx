@@ -9,7 +9,7 @@ import { getFromConfig } from '@lib/config';
 import { clearCredentialsFromStore } from '@lib/auth';
 import { clearViewSettings } from '@lib/viewSettings';
 import { getUserProfile, hasAIConfiguration } from '@state/selectors/user';
-import { optinCapturing, reset } from '@lib/analytics';
+import { optinCapturing, reset, isLoaded, rawCapture } from '@lib/analytics';
 
 import {
   EOS_HOME_OUTLINED,
@@ -113,7 +113,11 @@ function Layout() {
 
   return (
     <main className="bg-gray-100 dark:bg-gray-800 relative">
-      <AnalyticsEula />
+      <AnalyticsEula
+        analyticsConfigEnabled={getFromConfig('analyticsEnabled')}
+        analyticsCapture={rawCapture}
+        isAnalyticsLoadedFunc={isLoaded}
+      />
       <div className="flex flex-col h-screen items-start justify-between">
         <div
           className={classNames(
