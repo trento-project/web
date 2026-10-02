@@ -16,7 +16,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SmlmTest do
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
-  describe "Setup SUMA connection" do
+  describe "Setup SMLM connection" do
     test "should setup with successful authentication" do
       expect(SmlmAuthMock, :authenticate, fn ->
         {:ok, %State{}}
