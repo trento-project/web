@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-19T17:50:47Z",
-    "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
-    "run_id": "32282352086",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 38,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SoftwareUpdates.SettingsTest::test getting related patches for some packages should return an aggregated list of packages and related patches",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-19T18:19:36Z",
     "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
     "run_id": "32284498688",
@@ -5558,6 +5538,17 @@
     "commit": "ee40d9d10350169ef8b28c9f6f8c8fa51315af6f",
     "run_id": "37150611467",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-03T20:42:58Z",
+    "commit": "ee40d9d10350169ef8b28c9f6f8c8fa51315af6f",
+    "run_id": "37150611467",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
