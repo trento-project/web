@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-18T18:23:44Z",
-    "commit": "98cab90a5ecfd75fd698cbe3b31cbd1dce3fa370",
-    "run_id": "32168478210",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "ClustersList component › filtering::should filter the table content by SID filter",
-        "score": 0.05001
-      },
-      {
-        "name": "Deregistration Modal component::should render a host deregistration modal correctly",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-18T22:46:16Z",
     "commit": "98cab90a5ecfd75fd698cbe3b31cbd1dce3fa370",
     "run_id": "32173805623",
@@ -5610,6 +5590,30 @@
       {
         "name": "should show host again with a working link after restoring it::HANA cluster details Deregistration should show host again with a working link after restoring it",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-03T20:07:16Z",
+    "commit": "ee40d9d10350169ef8b28c9f6f8c8fa51315af6f",
+    "run_id": "37149116224",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 35,
+      "failed_runs": 3
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Operations.AMQP.ProcessorTest::test requesting discovery upon operation completion should request saptune discovery request when 'pacemaker_enable' operation is completed",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
+        "score": 0.05001
       }
     ]
   }
