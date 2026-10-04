@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-19T18:20:51Z",
-    "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
-    "run_id": "32284498688",
-    "suite": "Jest — Node 20.20.0",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-19T22:07:52Z",
     "commit": "f931906fe79ec1ec2ded198b1916cc097ec02190",
     "run_id": "32289873989",
@@ -5600,6 +5589,26 @@
       },
       {
         "name": "should keep configuration when clear modal is dismissed::Users AI Configuration Clearing AI Configuration should keep configuration when clear modal is dismissed",
+        "score": 0.05001
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-04T20:17:36Z",
+    "commit": "ee40d9d10350169ef8b28c9f6f8c8fa51315af6f",
+    "run_id": "37230614885",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 44,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
         "score": 0.05001
       }
     ]
