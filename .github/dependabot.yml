@@ -38,6 +38,10 @@ updates:
         patterns:
           - "eslint*"
           - "@eslint*"
+      react-core:
+        patterns:
+          - "react"
+          - "react-dom"
   - package-ecosystem: "npm"
     directory: "/test/e2e"
     schedule:
