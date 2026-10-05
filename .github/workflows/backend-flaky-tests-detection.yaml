@@ -22,23 +22,25 @@ env:
   NUM_RUNS: ${{ github.event.inputs.num_runs || 50 }}
 
 jobs:
-  elixir-toolchain:
-    name: Elixir toolchain
+  elixir-setup:
+    name: Elixir toolchain and test dependencies
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
-      ELIXIR_DEV: ${{ steps.toolchain.outputs.ELIXIR_DEV }}
-      ERLANG_DEV: ${{ steps.toolchain.outputs.ERLANG_DEV }}
-      TOOLCHAINS: ${{ steps.toolchain.outputs.TOOLCHAINS }}
+      ELIXIR_DEV: ${{ steps.setup.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.setup.outputs.ERLANG_DEV }}
+      TOOLCHAINS: ${{ steps.setup.outputs.TOOLCHAINS }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Compute OTP/Elixir toolchain
-        id: toolchain
-        uses: trento-project/.github/actions/elixir-toolchain@shared-elixir-otp-toolchain-matrix
+      - name: Set up Elixir toolchain and build dependencies
+        id: setup
+        uses: trento-project/.github/actions/elixir-setup@single-elixir-setup-action
+        with:
+          mix-envs: '["test"]'
 
   setup-matrix:
     runs-on: ubuntu-24.04
@@ -52,40 +54,15 @@ jobs:
           echo "run_range=[$(seq -s, 1 ${{ env.NUM_RUNS }})]" >> $GITHUB_OUTPUT
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
 
-  elixir-deps:
-    name: Elixir test dependencies (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain]
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        mix_env: ["test"]
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
-    env:
-      MIX_ENV: ${{ matrix.mix_env }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up Elixir and build dependencies
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
-        with:
-          otp-version: ${{ matrix.toolchain.otp }}
-          elixir-version: ${{ matrix.toolchain.elixir }}
-          build-deps: "true"
-
   test-backend:
     name: Backend Tests (Elixir ${{ matrix.toolchain.elixir }}, Run ${{ matrix.run }})
-    needs: [elixir-toolchain, setup-matrix, elixir-deps]
+    needs: [elixir-setup, setup-matrix]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         run: ${{ fromJson(needs.setup-matrix.outputs.run_range) }}
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     timeout-minutes: 10
     steps:
       - name: Checkout
@@ -94,7 +71,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -129,12 +106,12 @@ jobs:
           retention-days: 1
 
   flaky-tests-analysis:
-    needs: [elixir-toolchain, setup-matrix, test-backend]
+    needs: [elixir-setup, setup-matrix, test-backend]
     if: ${{ !cancelled() }}
     strategy:
       max-parallel: 1
       matrix:
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     uses: ./.github/workflows/flaky-tests-analysis.yaml
     with:
       suite-name: "Backend — Elixir ${{ matrix.toolchain.elixir }}, OTP ${{ matrix.toolchain.otp }}"

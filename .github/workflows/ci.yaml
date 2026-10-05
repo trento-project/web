@@ -100,24 +100,27 @@ jobs:
             echo "assets-changed=${{ steps.filter.outputs.assets || 'false' }}" >> $GITHUB_OUTPUT
           fi
 
-  elixir-toolchain:
-    name: Elixir toolchain
+  elixir-setup:
+    name: Elixir toolchain and dependencies
     needs: [detect-changes]
+    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
     runs-on: ubuntu-24.04
     permissions:
       contents: read
     outputs:
-      ELIXIR_DEV: ${{ steps.toolchain.outputs.ELIXIR_DEV }}
-      ERLANG_DEV: ${{ steps.toolchain.outputs.ERLANG_DEV }}
-      TOOLCHAINS: ${{ steps.toolchain.outputs.TOOLCHAINS }}
+      ELIXIR_DEV: ${{ steps.setup.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.setup.outputs.ERLANG_DEV }}
+      TOOLCHAINS: ${{ steps.setup.outputs.TOOLCHAINS }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Compute OTP/Elixir toolchain
-        id: toolchain
-        uses: trento-project/.github/actions/elixir-toolchain@shared-elixir-otp-toolchain-matrix
+      - name: Set up Elixir toolchain and build dependencies
+        id: setup
+        uses: trento-project/.github/actions/elixir-setup@single-elixir-setup-action
+        with:
+          mix-envs: '["dev","test","prod"]'
 
   setup-matrix-env:
     runs-on: ubuntu-24.04
@@ -135,32 +138,6 @@ jobs:
         run: |
           echo "NODEJS_DEV=${{ env.NODEJS_VERSION }}" >> $GITHUB_OUTPUT
           echo "NODEJS_BC=${{ env.NODEJS_BC }}" >> $GITHUB_OUTPUT
-
-  elixir-deps:
-    name: Elixir ${{ matrix.mix_env }} dependencies (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, detect-changes]
-    if: needs.detect-changes.outputs.elixir-changed == 'true' || always()
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        mix_env: ["dev", "test", "prod"]
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
-    env:
-      MIX_ENV: ${{ matrix.mix_env }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - name: Set up Elixir and build dependencies
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
-        with:
-          otp-version: ${{ matrix.toolchain.otp }}
-          elixir-version: ${{ matrix.toolchain.elixir }}
-          build-deps: "true"
 
   npm-deps:
     name: Npm dependencies
@@ -227,17 +204,17 @@ jobs:
 
   generate-docs:
     name: Generate project documentation
-    needs: [elixir-toolchain, detect-changes]
+    needs: [elixir-setup, detect-changes]
     runs-on: ubuntu-24.04
     if: github.event_name == 'push' && github.ref_name == 'main'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
-          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-setup.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-setup.outputs.ELIXIR_DEV }}
       - name: Build docs
         uses: lee-dohm/generate-elixir-docs@a745603eef443621976df401f45aaff4d849056b # v1
       - name: Generate openapi.json
@@ -289,12 +266,12 @@ jobs:
 
   static-code-analysis-elixir:
     name: Static Code Analysis Elixir (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, elixir-deps, detect-changes]
+    needs: [elixir-setup, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -302,7 +279,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -348,13 +325,13 @@ jobs:
 
   test-elixir:
     name: Elixir tests (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, elixir-deps, detect-changes]
+    needs: [elixir-setup, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -362,7 +339,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -407,13 +384,13 @@ jobs:
 
   test-release:
     name: Test release build (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, elixir-deps, detect-changes]
+    needs: [elixir-setup, detect-changes]
     if: needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     env:
       MIX_ENV: prod
     steps:
@@ -423,7 +400,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -457,14 +434,7 @@ jobs:
 
   chromatic:
     name: Chromatic deployment
-    needs:
-      [
-        elixir-toolchain,
-        setup-matrix-env,
-        elixir-deps,
-        npm-deps,
-        detect-changes,
-      ]
+    needs: [elixir-setup, setup-matrix-env, npm-deps, detect-changes]
     runs-on: ubuntu-24.04
     if: github.event_name != 'repository_dispatch' && github.secret_source != 'None' && vars.CHROMATIC_ENABLED == 'true' && needs.detect-changes.outputs.assets-changed == 'true'
     steps:
@@ -474,10 +444,10 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
-          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-setup.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-setup.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
@@ -532,14 +502,7 @@ jobs:
   test-e2e:
     name: E2E Tests
     needs:
-      [
-        elixir-toolchain,
-        setup-matrix-env,
-        elixir-deps,
-        npm-deps,
-        npm-e2e-deps,
-        detect-changes,
-      ]
+      [elixir-setup, setup-matrix-env, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -554,10 +517,10 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
-          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-setup.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-setup.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
@@ -626,14 +589,7 @@ jobs:
   test-regression:
     name: Regression tests
     needs:
-      [
-        elixir-toolchain,
-        setup-matrix-env,
-        elixir-deps,
-        npm-deps,
-        npm-e2e-deps,
-        detect-changes,
-      ]
+      [elixir-setup, setup-matrix-env, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -655,10 +611,10 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
-          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-setup.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-setup.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
@@ -736,14 +692,7 @@ jobs:
   test-integration:
     name: Integration tests
     needs:
-      [
-        elixir-toolchain,
-        setup-matrix-env,
-        elixir-deps,
-        npm-deps,
-        npm-e2e-deps,
-        detect-changes,
-      ]
+      [elixir-setup, setup-matrix-env, npm-deps, npm-e2e-deps, detect-changes]
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -814,10 +763,10 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
-          otp-version: ${{ needs.elixir-toolchain.outputs.ERLANG_DEV }}
-          elixir-version: ${{ needs.elixir-toolchain.outputs.ELIXIR_DEV }}
+          otp-version: ${{ needs.elixir-setup.outputs.ERLANG_DEV }}
+          elixir-version: ${{ needs.elixir-setup.outputs.ELIXIR_DEV }}
       - name: Setup Node
         id: setup-node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v6
@@ -882,41 +831,33 @@ jobs:
           path: test/e2e/cypress/screenshots/
 
   target-branch-deps:
-    name: Rebuild target branch dependencies (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, detect-changes]
+    name: Rebuild target branch dependencies
+    needs: [elixir-setup, detect-changes]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        mix_env: ["test"]
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
-    env:
-      MIX_ENV: ${{ matrix.mix_env }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           persist-credentials: false
-      - name: Set up Elixir and build dependencies
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+      - name: Set up Elixir toolchain and build dependencies
+        uses: trento-project/.github/actions/elixir-setup@single-elixir-setup-action
         with:
-          otp-version: ${{ matrix.toolchain.otp }}
-          elixir-version: ${{ matrix.toolchain.elixir }}
-          build-deps: "true"
+          mix-envs: '["test"]'
+          toolchains: ${{ needs.elixir-setup.outputs.TOOLCHAINS }}
 
   api-docs-check:
     name: API docs check (Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, setup-matrix-env, elixir-deps, detect-changes]
+    needs: [elixir-setup, setup-matrix-env, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -924,7 +865,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies - current branch
         id: mix-cache-current
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -943,7 +884,7 @@ jobs:
 
   api-bc-check:
     name: API bc check (${{ matrix.version }}, Elixir ${{ matrix.toolchain.elixir }})
-    needs: [elixir-toolchain, elixir-deps, target-branch-deps, detect-changes]
+    needs: [elixir-setup, target-branch-deps, detect-changes]
     if: github.event_name == 'pull_request' && !failure() && !cancelled() && needs.detect-changes.outputs.elixir-changed == 'true'
     runs-on: ubuntu-24.04
     strategy:
@@ -953,13 +894,13 @@ jobs:
           - Unversioned
           - V1
           - V2
-        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+        toolchain: ${{ fromJson(needs.elixir-setup.outputs.TOOLCHAINS) }}
     steps:
       - name: Checkout current branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Elixir and restore cached dependencies - current branch
         id: mix-cache-current
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -972,7 +913,7 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref || github.ref_name }}
       - name: Retrieve Elixir Cached Dependencies - target branch
         id: mix-cache-target
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@single-elixir-setup-action
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
