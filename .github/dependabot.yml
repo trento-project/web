@@ -30,6 +30,10 @@ updates:
           - "@assistant-ui/*"
           - "assistant-cloud"
           - "assistant-stream"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-jest"
       eslint:
         patterns:
           - "eslint*"
