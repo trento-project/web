@@ -130,7 +130,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.SmlmApi do
           ca_cert :: String.t() | nil
         ) ::
           {:ok, [map()]}
-          | {:error, :error_getting_errata_details | :mlm_authentication_error}
+          | {:error, :error_getting_errata_details | :smlm_authentication_error}
   def get_errata_details(url, auth, advisory_name, ca_cert) do
     url
     |> get_smlm_api_url()
