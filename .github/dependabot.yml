@@ -25,6 +25,11 @@ updates:
     cooldown:
       default-days: 14
     groups:
+      assistant-ui:
+        patterns:
+          - "@assistant-ui/*"
+          - "assistant-cloud"
+          - "assistant-stream"
       eslint:
         patterns:
           - "eslint*"
