@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
       - name: Compute OTP/Elixir toolchain
         id: toolchain
-        uses: trento-project/.github/actions/elixir-toolchain@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/elixir-toolchain@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
 
   setup-matrix:
     runs-on: ubuntu-24.04
@@ -71,7 +71,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Elixir and build dependencies
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
@@ -94,7 +94,7 @@ jobs:
           fetch-depth: 0
       - name: Set up Elixir and restore cached dependencies
         id: mix-cache
-        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        uses: trento-project/.github/actions/setup-elixir@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
         with:
           otp-version: ${{ matrix.toolchain.otp }}
           elixir-version: ${{ matrix.toolchain.elixir }}
