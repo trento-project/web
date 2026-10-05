@@ -24,7 +24,21 @@ env:
 jobs:
   elixir-toolchain:
     name: Elixir toolchain
-    uses: trento-project/.github/.github/workflows/elixir-toolchain.yaml@shared-elixir-otp-toolchain-matrix
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      ELIXIR_DEV: ${{ steps.toolchain.outputs.ELIXIR_DEV }}
+      ERLANG_DEV: ${{ steps.toolchain.outputs.ERLANG_DEV }}
+      TOOLCHAINS: ${{ steps.toolchain.outputs.TOOLCHAINS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compute OTP/Elixir toolchain
+        id: toolchain
+        uses: trento-project/.github/actions/elixir-toolchain@shared-elixir-otp-toolchain-matrix
 
   setup-matrix:
     runs-on: ubuntu-24.04
@@ -39,12 +53,29 @@ jobs:
           echo "total-runs=${{ env.NUM_RUNS }}" >> $GITHUB_OUTPUT
 
   elixir-deps:
-    name: Elixir test dependencies
+    name: Elixir test dependencies (Elixir ${{ matrix.toolchain.elixir }})
     needs: [elixir-toolchain]
-    uses: trento-project/.github/.github/workflows/elixir-deps.yaml@shared-elixir-otp-toolchain-matrix
-    with:
-      toolchains: ${{ needs.elixir-toolchain.outputs.TOOLCHAINS }}
-      mix_envs: '["test"]'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        mix_env: ["test"]
+        toolchain: ${{ fromJson(needs.elixir-toolchain.outputs.TOOLCHAINS) }}
+    env:
+      MIX_ENV: ${{ matrix.mix_env }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Elixir and build dependencies
+        uses: trento-project/.github/actions/setup-elixir@shared-elixir-otp-toolchain-matrix
+        with:
+          otp-version: ${{ matrix.toolchain.otp }}
+          elixir-version: ${{ matrix.toolchain.elixir }}
+          build-deps: "true"
 
   test-backend:
     name: Backend Tests (Elixir ${{ matrix.toolchain.elixir }}, Run ${{ matrix.run }})
