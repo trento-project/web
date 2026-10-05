@@ -302,7 +302,7 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('prompt is sent back to the composer when the run is stopped before its first token', async () => {
+  it('marks the answer as stopped when the run is stopped before its first token', async () => {
     const { user, channel, sendUserMessage } = await renderAIAssistant({
       open: true,
     });
@@ -318,9 +318,15 @@ describe('AG-UI event flow', () => {
     ]);
 
     await waitFor(() => {
-      expect(assistantBubbles()).toHaveLength(0);
+      expect(assistantBubbles()).toHaveLength(1);
     });
-    expect(screen.getByLabelText('Message input')).toHaveValue('hello');
+    const stoppedBubble = assistantBubble();
+    expect(within(stoppedBubble).getByText('Response stopped.')).toBeVisible();
+    expect(
+      within(stoppedBubble).getByRole('button', { name: 'retry' })
+    ).toBeVisible();
+    expect(screen.getByText('hello')).toBeVisible();
+    expect(screen.getByLabelText('Message input')).toHaveValue('');
     expect(await screen.findByLabelText('Send message')).toBeVisible();
   });
 
