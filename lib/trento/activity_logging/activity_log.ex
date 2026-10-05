@@ -6,12 +6,12 @@ defmodule Trento.ActivityLog.ActivityLog do
   ActivityLog represents an interesting activity that is tracked
   """
   use Ecto.Schema
+  use Flop.Schema
   import Ecto.Changeset
 
   @type t() :: %__MODULE__{}
 
-  @derive {
-    Flop.Schema,
+  @flop_options [
     filterable: [:type, :actor, :severity, :inserted_at],
     sortable: [:type, :actor, :inserted_at],
     max_limit: 100,
@@ -22,7 +22,7 @@ defmodule Trento.ActivityLog.ActivityLog do
     },
     pagination_types: [:first, :last],
     default_pagination_type: :first
-  }
+  ]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "activity_logs" do
