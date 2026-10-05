@@ -104,10 +104,6 @@ jobs:
     name: Elixir toolchain
     needs: [detect-changes]
     uses: trento-project/.github/.github/workflows/elixir-toolchain.yaml@shared-elixir-otp-toolchain-matrix
-    with:
-      bc_enabled: true
-      elixir_bc: "1.15.7-otp-26"
-      erlang_bc: "26.2.1"
 
   setup-matrix-env:
     runs-on: ubuntu-24.04
