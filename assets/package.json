@@ -19,7 +19,7 @@
     "autoprefixer": "^10.5.0",
     "axios-mock-adapter": "^2.1.0",
     "babel-jest": "^30.4.1",
-    "chromatic": "^16.0.0",
+    "chromatic": "^18.9.4",
     "esbuild": "^0.28.2",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
