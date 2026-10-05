@@ -12,7 +12,7 @@ on:
 jobs:
   backport:
     name: Backport
-    uses: trento-project/.github/.github/workflows/backport-pr.yaml@d8679bc6bc759e119793a2d59285098613f52055 # v1.10.0
+    uses: trento-project/.github/.github/workflows/backport-pr.yaml@94dac57211d792dda649383e7f23326b24a9087b # v1.11.0
     secrets:
       gh_token: ${{ secrets.TRENTOBOT_GH_PAT }}
       ssh_key: ${{ secrets.TRENTOBOT_SSH_KEY }}
