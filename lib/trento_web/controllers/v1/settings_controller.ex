@@ -25,7 +25,7 @@ defmodule TrentoWeb.V1.SettingsController do
   plug OpenApiSpex.Plug.CastAndValidate, json_render_error_v2: true
   action_fallback TrentoWeb.FallbackController
 
-  @update_suse_manager_operation_options [
+  @update_smlm_operation_options [
     summary: "Updates the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -157,7 +157,7 @@ defmodule TrentoWeb.V1.SettingsController do
     end
   end
 
-  operation :get_suse_manager_settings,
+  operation :get_smlm_settings,
     summary: "Gets the SUSE Multi-Linux Manager Settings.",
     tags: ["Settings", "MCP"],
     description:
@@ -171,14 +171,14 @@ defmodule TrentoWeb.V1.SettingsController do
 
   ai_tool :settings_get_suse_manager, display_text: "Get Multi-Linux-Manager settings"
 
-  @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def get_suse_manager_settings(conn, _) do
-    with {:ok, settings} <- Settings.get_suse_manager_settings() do
+  @spec get_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def get_smlm_settings(conn, _) do
+    with {:ok, settings} <- Settings.get_smlm_settings() do
       render(conn, :suse_manager, %{settings: settings})
     end
   end
 
-  operation :save_suse_manager_settings,
+  operation :save_smlm_settings,
     summary: "Saves the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -193,28 +193,28 @@ defmodule TrentoWeb.V1.SettingsController do
       unprocessable_entity: Schema.UnprocessableEntity.response()
     ]
 
-  @spec save_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def save_suse_manager_settings(conn, _) do
+  @spec save_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def save_smlm_settings(conn, _) do
     settings_params = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.save_suse_manager_settings(settings_params) do
+    with {:ok, saved_settings} <- Settings.save_smlm_settings(settings_params) do
       conn
       |> put_status(:created)
       |> render(:suse_manager, %{settings: saved_settings})
     end
   end
 
-  operation :patch_suse_manager_settings, @update_suse_manager_operation_options
-  operation :put_suse_manager_settings, @update_suse_manager_operation_options
+  operation :patch_smlm_settings, @update_smlm_operation_options
+  operation :put_smlm_settings, @update_smlm_operation_options
 
-  @spec patch_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def patch_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def patch_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
 
-  @spec put_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def put_suse_manager_settings(conn, params), do: update_suse_manager_settings(conn, params)
+  @spec put_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def put_smlm_settings(conn, params), do: update_smlm_settings(conn, params)
 
-  operation :delete_suse_manager_settings,
+  operation :delete_smlm_settings,
     summary: "Clears the SUSE Multi-Linux Manager settings.",
     tags: ["Settings"],
     description:
@@ -224,14 +224,14 @@ defmodule TrentoWeb.V1.SettingsController do
         "All SUSE Multi-Linux Manager credentials and configuration have been successfully cleared from the system."
     ]
 
-  @spec delete_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def delete_suse_manager_settings(conn, _) do
-    :ok = Settings.clear_suse_manager_settings()
+  @spec delete_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def delete_smlm_settings(conn, _) do
+    :ok = Settings.clear_smlm_settings()
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
     send_resp(conn, :no_content, "")
   end
 
-  operation :test_suse_manager_settings,
+  operation :test_smlm_settings,
     summary: "Tests connection with SUSE Multi-Linux Manager.",
     tags: ["Settings", "MCP"],
     description:
@@ -245,8 +245,8 @@ defmodule TrentoWeb.V1.SettingsController do
 
   ai_tool :settings_test_suse_manager, display_text: "Test Multi-Linux-Manager connection"
 
-  @spec test_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def test_suse_manager_settings(conn, _) do
+  @spec test_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
+  def test_smlm_settings(conn, _) do
     with :ok <- SoftwareUpdates.test_connection_settings() do
       conn
       |> put_status(:ok)
@@ -380,10 +380,10 @@ defmodule TrentoWeb.V1.SettingsController do
 
   def get_action(%{private: %{phoenix_action: action}})
       when action in [
-             :patch_suse_manager_settings,
-             :put_suse_manager_settings
+             :patch_smlm_settings,
+             :put_smlm_settings
            ],
-      do: :update_suse_manager_settings
+      do: :update_smlm_settings
 
   def get_action(%{private: %{phoenix_action: action}}), do: action
 
@@ -393,11 +393,11 @@ defmodule TrentoWeb.V1.SettingsController do
     |> Trento.Settings.Policy.get_resource()
   end
 
-  defp update_suse_manager_settings(conn, _) do
+  defp update_smlm_settings(conn, _) do
     update_settings_paylod = OpenApiSpex.body_params(conn)
     :ok = propagate_correlation_id(:suse_manager_settings, @correlation_ttl)
 
-    with {:ok, saved_settings} <- Settings.change_suse_manager_settings(update_settings_paylod) do
+    with {:ok, saved_settings} <- Settings.change_smlm_settings(update_settings_paylod) do
       conn
       |> put_status(:ok)
       |> render(:suse_manager, %{settings: saved_settings})
