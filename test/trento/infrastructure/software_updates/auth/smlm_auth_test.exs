@@ -14,7 +14,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   }
 
   alias Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.Mock, as: SmlmApiMock
-  alias Trento.Settings.SuseManagerSettings
+  alias Trento.Settings.SmlmSettings
 
   setup [:set_mox_from_context, :verify_on_exit!]
 
@@ -23,7 +23,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
   defp setup_initial_settings, do: {:ok, %{settings: insert_software_updates_settings()}}
 
   describe "Process start up and identification" do
-    test "should find an already started SUMA process" do
+    test "should find an already started SMLM process" do
       assert {_, {:already_started, pid}} = start_supervised(SmlmAuth)
 
       assert pid == SmlmAuth.identify()
@@ -57,8 +57,8 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
       setup_initial_settings()
     end
 
-    test "should redact sensitive data in SUMA state", %{
-      settings: %SuseManagerSettings{url: url, username: username, password: password}
+    test "should redact sensitive data in SMLM state", %{
+      settings: %SmlmSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
@@ -89,7 +89,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
     end
 
     test "should use an already authenticated auth cookie", %{
-      settings: %SuseManagerSettings{url: url, username: username, password: password}
+      settings: %SmlmSettings{url: url, username: username, password: password}
     } do
       {:ok, _} = start_supervised({SmlmAuth, @test_integration_name})
 
@@ -175,7 +175,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuthTest do
     end
 
     test "should clear service state", %{
-      settings: %SuseManagerSettings{
+      settings: %SmlmSettings{
         url: url,
         username: username,
         password: password,
