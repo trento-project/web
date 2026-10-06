@@ -1,5 +1,5 @@
 # `TrentoWeb.V1.SmlmJSON`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/suse_manager_json.ex#L4)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/smlm_json.ex#L4)
 
 # `errata_details`
 

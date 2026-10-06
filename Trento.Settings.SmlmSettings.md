@@ -1,5 +1,5 @@
 # `Trento.Settings.SmlmSettings`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento/settings/suse_manager_settings.ex#L4)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento/settings/smlm_settings.ex#L4)
 
 Schema for SUSE Multi-Linux Manager settings.
 

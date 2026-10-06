@@ -13,7 +13,7 @@
 
 # `settings`
 
-# `suse_manager`
+# `smlm`
 
 ---
 

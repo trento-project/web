@@ -1,5 +1,5 @@
 # `TrentoWeb.V1.SmlmController`
-[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/suse_manager_controller.ex#L4)
+[🔗](https://github.com/trento-project/web/blob/main/lib/trento_web/controllers/v1/smlm_controller.ex#L4)
 
 # `errata_details`
 
