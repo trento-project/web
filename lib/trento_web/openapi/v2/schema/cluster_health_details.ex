@@ -32,8 +32,8 @@ defmodule TrentoWeb.OpenApi.V2.Schema.ClusterHealthDetails do
             distributed_health: HealthValueDetails
           },
           required: [:checks_health, :sbd_health, :distributed_health]
-        },
-      ],
+        }
+      ]
     },
     struct?: false
   )

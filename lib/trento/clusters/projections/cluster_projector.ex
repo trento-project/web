@@ -27,6 +27,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     ClusterRestored,
     ClusterSbdHealthChanged
   }
+
   alias Trento.Clusters.Projections.ClusterReadModel
   alias Trento.Repo
   alias Trento.Support.StructHelper
@@ -157,7 +158,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       Ecto.Multi.update_all(
         multi,
         :health_details,
-        prepare_health_details_update_query(cluster_id, "checks_health", checks_health),
+        health_details_update_query(cluster_id, "checks_health", checks_health),
         []
       )
     end
@@ -169,7 +170,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       Ecto.Multi.update_all(
         multi,
         :health_details,
-        prepare_health_details_update_query(cluster_id, "discovered_health", discovered_health),
+        health_details_update_query(cluster_id, "discovered_health", discovered_health),
         []
       )
     end
@@ -184,7 +185,7 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       Ecto.Multi.update_all(
         multi,
         :health_details,
-        prepare_health_details_update_query(cluster_id, "replication_health", replication_health),
+        health_details_update_query(cluster_id, "replication_health", replication_health),
         []
       )
     end
@@ -196,13 +197,13 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       Ecto.Multi.update_all(
         multi,
         :health_details,
-        prepare_health_details_update_query(cluster_id, "sbd_health", sbd_health),
+        health_details_update_query(cluster_id, "sbd_health", sbd_health),
         []
       )
     end
   )
 
-  defp prepare_health_details_update_query(cluster_id, value_path, value) do
+  defp health_details_update_query(cluster_id, value_path, value) do
     from(
       c in ClusterReadModel,
       where: c.id == ^cluster_id,
@@ -210,10 +211,10 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
         set: [
           health_details:
             fragment(
-              "jsonb_set(?, '{?, value}', to_jsonb(?::text)), false",
+              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
               c.health_details,
               ^value_path,
-              ^value
+              ^to_string(value)
             ),
           updated_at: ^DateTime.utc_now()
         ]
