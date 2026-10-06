@@ -113,14 +113,13 @@ defmodule Mix.Tasks.RepairProjections do
 
   defp get_subscription_last_seen!(projector_name) do
     registry = Module.concat(Trento.EventStore, EventStore.Subscriptions.Registry)
-    case Registry.whereis_name(
-           {registry, {"$all", projector_name}}
-         ) do
-           :undefined ->
-             :starting
 
-           pid when is_pid(pid) ->
-             EventStore.Subscriptions.Subscription.last_seen(pid)
+    case Registry.whereis_name({registry, {"$all", projector_name}}) do
+      :undefined ->
+        :starting
+
+      pid when is_pid(pid) ->
+        EventStore.Subscriptions.Subscription.last_seen(pid)
     end
   end
 end
