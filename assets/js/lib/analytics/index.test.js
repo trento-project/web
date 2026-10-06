@@ -9,6 +9,7 @@ describe('analytics', () => {
   beforeEach(() => {
     jest.resetModules();
     jest.spyOn(console, 'error').mockImplementation(() => null);
+    jest.useRealTimers();
   });
 
   afterEach(() => {
@@ -70,6 +71,36 @@ describe('analytics', () => {
         before_send: expect.any(Function),
         opt_out_capturing_by_default: true,
       });
+    });
+  });
+
+  it('should preserve the loaded callback across GTM config retries', () => {
+    jest.useFakeTimers();
+
+    const apiKey = 'my-key';
+    global.config.analyticsEnabled = true;
+    global.window.posthogConfig = undefined;
+
+    const mockInit = jest.fn((_key, opts) => opts.loaded());
+
+    jest.mock('posthog-js', () => ({
+      init: mockInit,
+    }));
+
+    return import('.').then(({ init }) => {
+      const loadedFunc = jest.fn();
+      init(loadedFunc);
+
+      expect(mockInit).not.toHaveBeenCalled();
+
+      global.window.posthogConfig = { apiKey };
+      jest.advanceTimersByTime(100);
+
+      expect(mockInit).toHaveBeenCalledWith(
+        apiKey,
+        expect.objectContaining({ loaded: expect.any(Function) })
+      );
+      expect(loadedFunc).toHaveBeenCalled();
     });
   });
 
@@ -182,4 +213,84 @@ describe('analytics', () => {
       });
     }
   );
+
+  it('should not raw capture the event if the apiKey has not been loaded from GTM', () => {
+    global.window.posthogConfig = {};
+
+    return import('.').then(({ rawCapture }) => {
+      rawCapture(1, 'eula_displayed', {});
+      /* eslint-disable-next-line */
+      expect(console.error).toHaveBeenCalledWith(
+        'cannot load apiKey value from GTM'
+      );
+    });
+  });
+
+  it.each([
+    {
+      config: { api_host: 'https://eu.posthog.com' },
+      expectedApiHost: 'https://eu.posthog.com',
+    },
+    {
+      config: {},
+      expectedApiHost: 'https://eu.posthog.com',
+    },
+  ])(
+    'should raw capture the event with the expected payload',
+    ({ config, expectedApiHost }) => {
+      const apiKey = 'my-key';
+      const userID = 1;
+      const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+      const distinctUserID = 'ab156392-96c8-551b-a49b-f071c1cdcf21';
+
+      global.config.webversion = '1.2.3';
+      global.window.posthogConfig = {
+        apiKey,
+        config,
+      };
+      global.config.installationID = installationID;
+      const mockApiCapture = jest.fn().mockResolvedValue();
+
+      jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
+
+      return import('.').then(({ rawCapture }) => {
+        rawCapture(userID, 'eula_displayed', { foo: 'bar' });
+
+        expect(mockApiCapture).toHaveBeenCalledWith(
+          expectedApiHost,
+          apiKey,
+          'eula_displayed',
+          distinctUserID,
+          {
+            foo: 'bar',
+            $lib: 'web',
+            webversion: '1.2.3',
+            $process_person_profile: true,
+            $set_once: { installationID },
+          }
+        );
+      });
+    }
+  );
+
+  it('should log an error when the raw capture request fails', () => {
+    global.window.posthogConfig = {
+      apiKey: 'my-key',
+      config: { api_host: 'https://eu.posthog.com' },
+    };
+    const mockApiCapture = jest
+      .fn()
+      .mockRejectedValue(new Error('network error'));
+
+    jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
+
+    return import('.').then(async ({ rawCapture }) => {
+      rawCapture(1, 'eula_displayed', {});
+      await Promise.resolve();
+      /* eslint-disable-next-line */
+      expect(console.error).toHaveBeenCalledWith(
+        'error capturing Posthog raw event: network error'
+      );
+    });
+  });
 });
