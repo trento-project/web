@@ -371,12 +371,12 @@ Trento.Infrastructure.Prometheus.html
 Trento.Infrastructure.SSO.Config.html
 Trento.Infrastructure.SSO.html
 Trento.Infrastructure.SoftwareUpdates.Auth.Gen.html
+Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth.html
 Trento.Infrastructure.SoftwareUpdates.Auth.State.html
-Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth.html
-Trento.Infrastructure.SoftwareUpdates.MockSuma.html
-Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.html
-Trento.Infrastructure.SoftwareUpdates.Suma.html
-Trento.Infrastructure.SoftwareUpdates.SumaApi.html
+Trento.Infrastructure.SoftwareUpdates.MockSmlm.html
+Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.html
+Trento.Infrastructure.SoftwareUpdates.Smlm.html
+Trento.Infrastructure.SoftwareUpdates.SmlmApi.html
 Trento.MessagingCase.html
 Trento.Operations.ApplicationInstancePolicy.html
 Trento.Operations.ClusterPolicy.html
@@ -608,7 +608,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-94F2E73D.js
-dist/sidebar_items-B7F5D447.js
+dist/search_data-330D05A5.js
+dist/sidebar_items-EA4CD1B7.js
 index.html
 search.html

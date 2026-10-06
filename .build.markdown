@@ -370,12 +370,12 @@ Trento.Infrastructure.Prometheus.md
 Trento.Infrastructure.SSO.Config.md
 Trento.Infrastructure.SSO.md
 Trento.Infrastructure.SoftwareUpdates.Auth.Gen.md
+Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth.md
 Trento.Infrastructure.SoftwareUpdates.Auth.State.md
-Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth.md
-Trento.Infrastructure.SoftwareUpdates.MockSuma.md
-Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.md
-Trento.Infrastructure.SoftwareUpdates.Suma.md
-Trento.Infrastructure.SoftwareUpdates.SumaApi.md
+Trento.Infrastructure.SoftwareUpdates.MockSmlm.md
+Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.md
+Trento.Infrastructure.SoftwareUpdates.Smlm.md
+Trento.Infrastructure.SoftwareUpdates.SmlmApi.md
 Trento.MessagingCase.md
 Trento.Operations.ApplicationInstancePolicy.md
 Trento.Operations.ClusterPolicy.md

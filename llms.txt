@@ -796,17 +796,17 @@ Chart time series objects
 
   - [Trento.Infrastructure.SoftwareUpdates.Auth.Gen](Trento.Infrastructure.SoftwareUpdates.Auth.Gen.md): Behaviour of the SUSE Multi-Linux Manager authentication process.
 
+  - [Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth](Trento.Infrastructure.SoftwareUpdates.Auth.SmlmAuth.md): GenServer module to authenticate with SUSE Multi-Linux Manager
+
   - [Trento.Infrastructure.SoftwareUpdates.Auth.State](Trento.Infrastructure.SoftwareUpdates.Auth.State.md): State for the SUSE Multi-Linux Manager Software Updates discovery adapter
 
-  - [Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth](Trento.Infrastructure.SoftwareUpdates.Auth.SumaAuth.md): GenServer module to authenticate with SUSE Multi-Linux Manager
+  - [Trento.Infrastructure.SoftwareUpdates.MockSmlm](Trento.Infrastructure.SoftwareUpdates.MockSmlm.md): Mocked SUSE Multi-Linux Manager Software updates discovery adapter
 
-  - [Trento.Infrastructure.SoftwareUpdates.MockSuma](Trento.Infrastructure.SoftwareUpdates.MockSuma.md): Mocked SUSE Multi-Linux Manager Software updates discovery adapter
+  - [Trento.Infrastructure.SoftwareUpdates.Smlm](Trento.Infrastructure.SoftwareUpdates.Smlm.md): SUSE Multi-Linux Manager Software updates discovery adapter
 
-  - [Trento.Infrastructure.SoftwareUpdates.Suma](Trento.Infrastructure.SoftwareUpdates.Suma.md): SUSE Multi-Linux Manager Software updates discovery adapter
+  - [Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor](Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor.md): SUSE Multi-Linux Manager Http requests executor
 
-  - [Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor](Trento.Infrastructure.SoftwareUpdates.Suma.HttpExecutor.md): SUSE Multi-Linux Manager Http requests executor
-
-  - [Trento.Infrastructure.SoftwareUpdates.SumaApi](Trento.Infrastructure.SoftwareUpdates.SumaApi.md): SUSE Multi-Linux Manager API client supporting software updates discovery.
+  - [Trento.Infrastructure.SoftwareUpdates.SmlmApi](Trento.Infrastructure.SoftwareUpdates.SmlmApi.md): SUSE Multi-Linux Manager API client supporting software updates discovery.
 
   - [Trento.Infrastructure.Checks.AMQP.Consumer](Trento.Infrastructure.Checks.AMQP.Consumer.md): AMQP checks consumer.
 
