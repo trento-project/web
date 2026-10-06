@@ -51,7 +51,7 @@
     "@assistant-ui/react": "^0.15.21",
     "@assistant-ui/react-ag-ui": "^0.0.60",
     "@assistant-ui/react-markdown": "^0.14.16",
-    "@date-fns/tz": "^1.4.1",
+    "@date-fns/tz": "^1.5.0",
     "@date-fns/utc": "^2.1.1",
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
