@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-EA4CD1B7.js"></script>
+    <script defer src="dist/sidebar_items-5CD8E2C9.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -183,7 +183,7 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#change_suse_manager_settings/2" data-no-tooltip="" translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</a>
+        <a href="#change_smlm_settings/2" data-no-tooltip="" translate="no">change_smlm_settings(settings_submission, date_service \\ DateService)</a>
 
       </div>
 
@@ -191,7 +191,7 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#clear_suse_manager_settings/0" data-no-tooltip="" translate="no">clear_suse_manager_settings()</a>
+        <a href="#clear_smlm_settings/0" data-no-tooltip="" translate="no">clear_smlm_settings()</a>
 
       </div>
 
@@ -247,6 +247,14 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
+        <a href="#get_smlm_settings/0" data-no-tooltip="" translate="no">get_smlm_settings()</a>
+
+      </div>
+
+    </div>
+
+    <div class="summary-row">
+      <div class="summary-signature">
         <a href="#get_sso_certificates/0" data-no-tooltip="" translate="no">get_sso_certificates()</a>
 
       </div>
@@ -255,15 +263,7 @@ Trento Web
 
     <div class="summary-row">
       <div class="summary-signature">
-        <a href="#get_suse_manager_settings/0" data-no-tooltip="" translate="no">get_suse_manager_settings()</a>
-
-      </div>
-
-    </div>
-
-    <div class="summary-row">
-      <div class="summary-signature">
-        <a href="#save_suse_manager_settings/2" data-no-tooltip="" translate="no">save_suse_manager_settings(settings_submission, date_service \\ DateService)</a>
+        <a href="#save_smlm_settings/2" data-no-tooltip="" translate="no">save_smlm_settings(settings_submission, date_service \\ DateService)</a>
 
       </div>
 
@@ -483,16 +483,16 @@ Trento Web
 
   </section>
 </section>
-<section class="detail" id="change_suse_manager_settings/2">
+<section class="detail" id="change_smlm_settings/2">
 
-    <span id="change_suse_manager_settings/1"></span>
+    <span id="change_smlm_settings/1"></span>
 
   <div class="detail-header">
-    <a href="#change_suse_manager_settings/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#change_smlm_settings/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">change_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
+      <h1 class="signature" translate="no">change_smlm_settings(settings_submission, date_service \\ DateService)</h1>
 
 
         <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L141" class="icon-action" rel="help nofollow" aria-label="View Source">
@@ -506,10 +506,7 @@ Trento Web
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> change_suse_manager_settings(
-  <a href="#t:suse_manager_settings_change_submission/0">suse_manager_settings_change_submission</a>(),
-  <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">module</a>()
-) ::
+          <pre translate="no"><span class="attribute">@spec</span> change_smlm_settings(<a href="#t:suse_manager_settings_change_submission/0">suse_manager_settings_change_submission</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">module</a>()) ::
   {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
   | {:error, :settings_not_configured}
   | {:error, <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">any</a>()}</pre>
@@ -519,14 +516,14 @@ Trento Web
 
   </section>
 </section>
-<section class="detail" id="clear_suse_manager_settings/0">
+<section class="detail" id="clear_smlm_settings/0">
 
   <div class="detail-header">
-    <a href="#clear_suse_manager_settings/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#clear_smlm_settings/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">clear_suse_manager_settings()</h1>
+      <h1 class="signature" translate="no">clear_smlm_settings()</h1>
 
 
         <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L150" class="icon-action" rel="help nofollow" aria-label="View Source">
@@ -540,7 +537,7 @@ Trento Web
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> clear_suse_manager_settings() :: :ok</pre>
+          <pre translate="no"><span class="attribute">@spec</span> clear_smlm_settings() :: :ok</pre>
 
       </div>
 
@@ -724,6 +721,36 @@ Trento Web
 
   </section>
 </section>
+<section class="detail" id="get_smlm_settings/0">
+
+  <div class="detail-header">
+    <a href="#get_smlm_settings/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+      <i class="ri-link-m" aria-hidden="true"></i>
+    </a>
+    <div class="heading-with-actions">
+      <h1 class="signature" translate="no">get_smlm_settings()</h1>
+
+
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L115" class="icon-action" rel="help nofollow" aria-label="View Source">
+          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
+        </a>
+
+    </div>
+  </div>
+
+  <section class="docstring">
+
+      <div class="specs">
+
+          <pre translate="no"><span class="attribute">@spec</span> get_smlm_settings() ::
+  {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
+  | {:error, :settings_not_configured}</pre>
+
+      </div>
+
+
+  </section>
+</section>
 <section class="detail" id="get_sso_certificates/0">
 
   <div class="detail-header">
@@ -752,46 +779,16 @@ Trento Web
 
   </section>
 </section>
-<section class="detail" id="get_suse_manager_settings/0">
+<section class="detail" id="save_smlm_settings/2">
+
+    <span id="save_smlm_settings/1"></span>
 
   <div class="detail-header">
-    <a href="#get_suse_manager_settings/0" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
+    <a href="#save_smlm_settings/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
       <i class="ri-link-m" aria-hidden="true"></i>
     </a>
     <div class="heading-with-actions">
-      <h1 class="signature" translate="no">get_suse_manager_settings()</h1>
-
-
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L115" class="icon-action" rel="help nofollow" aria-label="View Source">
-          <i class="ri-code-s-slash-line" aria-hidden="true"></i>
-        </a>
-
-    </div>
-  </div>
-
-  <section class="docstring">
-
-      <div class="specs">
-
-          <pre translate="no"><span class="attribute">@spec</span> get_suse_manager_settings() ::
-  {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
-  | {:error, :settings_not_configured}</pre>
-
-      </div>
-
-
-  </section>
-</section>
-<section class="detail" id="save_suse_manager_settings/2">
-
-    <span id="save_suse_manager_settings/1"></span>
-
-  <div class="detail-header">
-    <a href="#save_suse_manager_settings/2" class="detail-link" data-no-tooltip="" aria-label="Link to this function">
-      <i class="ri-link-m" aria-hidden="true"></i>
-    </a>
-    <div class="heading-with-actions">
-      <h1 class="signature" translate="no">save_suse_manager_settings(settings_submission, date_service \\ DateService)</h1>
+      <h1 class="signature" translate="no">save_smlm_settings(settings_submission, date_service \\ DateService)</h1>
 
 
         <a href="https://github.com/trento-project/web/blob/main/lib/trento/settings.ex#L129" class="icon-action" rel="help nofollow" aria-label="View Source">
@@ -805,7 +802,7 @@ Trento Web
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> save_suse_manager_settings(<a href="#t:suse_manager_settings_save_submission/0">suse_manager_settings_save_submission</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">module</a>()) ::
+          <pre translate="no"><span class="attribute">@spec</span> save_smlm_settings(<a href="#t:suse_manager_settings_save_submission/0">suse_manager_settings_save_submission</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">module</a>()) ::
   {:ok, <a href="Trento.Settings.SuseManagerSettings.html#t:t/0">Trento.Settings.SuseManagerSettings.t</a>()}
   | {:error, :settings_already_configured}
   | {:error, <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">any</a>()}</pre>
