@@ -457,7 +457,7 @@ Trento.Settings.ApiKeySettings.html
 Trento.Settings.InstallationSettings.html
 Trento.Settings.Policy.html
 Trento.Settings.SSOCertificatesSettings.html
-Trento.Settings.SuseManagerSettings.html
+Trento.Settings.SmlmSettings.html
 Trento.Settings.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.RelevantPatch.html
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.UpgradablePackage.html
@@ -586,12 +586,12 @@ TrentoWeb.V1.ProfileController.html
 TrentoWeb.V1.ProfileJSON.html
 TrentoWeb.V1.PrometheusController.html
 TrentoWeb.V1.PrometheusJSON.html
-TrentoWeb.V1.SUSEManagerController.html
-TrentoWeb.V1.SUSEManagerJSON.html
 TrentoWeb.V1.SapSystemController.html
 TrentoWeb.V1.SapSystemJSON.html
 TrentoWeb.V1.SettingsController.html
 TrentoWeb.V1.SettingsJSON.html
+TrentoWeb.V1.SmlmController.html
+TrentoWeb.V1.SmlmJSON.html
 TrentoWeb.V1.TagsController.html
 TrentoWeb.V1.UsersController.html
 TrentoWeb.V1.UsersJSON.html
@@ -608,7 +608,7 @@ dist/lato-latin-700-normal-2XVSBPG4.woff2
 dist/lato-latin-ext-400-normal-N27NCBWW.woff2
 dist/lato-latin-ext-700-normal-Q2L5DVMW.woff2
 dist/remixicon-ZWU5GQ4X.woff2
-dist/search_data-2390EF5D.js
-dist/sidebar_items-5CD8E2C9.js
+dist/search_data-C4AD671E.js
+dist/sidebar_items-D3B46C85.js
 index.html
 search.html

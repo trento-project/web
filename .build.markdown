@@ -456,7 +456,7 @@ Trento.Settings.ApiKeySettings.md
 Trento.Settings.InstallationSettings.md
 Trento.Settings.Policy.md
 Trento.Settings.SSOCertificatesSettings.md
-Trento.Settings.SuseManagerSettings.md
+Trento.Settings.SmlmSettings.md
 Trento.Settings.md
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.RelevantPatch.md
 Trento.SoftwareUpdates.Discovery.DiscoveryResult.UpgradablePackage.md
@@ -585,12 +585,12 @@ TrentoWeb.V1.ProfileController.md
 TrentoWeb.V1.ProfileJSON.md
 TrentoWeb.V1.PrometheusController.md
 TrentoWeb.V1.PrometheusJSON.md
-TrentoWeb.V1.SUSEManagerController.md
-TrentoWeb.V1.SUSEManagerJSON.md
 TrentoWeb.V1.SapSystemController.md
 TrentoWeb.V1.SapSystemJSON.md
 TrentoWeb.V1.SettingsController.md
 TrentoWeb.V1.SettingsJSON.md
+TrentoWeb.V1.SmlmController.md
+TrentoWeb.V1.SmlmJSON.md
 TrentoWeb.V1.TagsController.md
 TrentoWeb.V1.UsersController.md
 TrentoWeb.V1.UsersJSON.md

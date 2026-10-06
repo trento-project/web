@@ -223,7 +223,7 @@ installed.
 - [Trento.Settings.Policy](Trento.Settings.Policy.md): Policy for the Settings resource
 - [Trento.Settings.SSOCertificatesSettings](Trento.Settings.SSOCertificatesSettings.md): SSOCertificatesSettings is the STI projection containing SSL certificates
 
-- [Trento.Settings.SuseManagerSettings](Trento.Settings.SuseManagerSettings.md): Schema for SUSE Multi-Linux Manager settings.
+- [Trento.Settings.SmlmSettings](Trento.Settings.SmlmSettings.md): Schema for SUSE Multi-Linux Manager settings.
 
 - [Trento.SoftwareUpdates](Trento.SoftwareUpdates.md): Entry point for the software updates feature.
 
@@ -995,12 +995,12 @@ to receive personal broadcasts
   - [TrentoWeb.V1.ProfileJSON](TrentoWeb.V1.ProfileJSON.md)
   - [TrentoWeb.V1.PrometheusController](TrentoWeb.V1.PrometheusController.md)
   - [TrentoWeb.V1.PrometheusJSON](TrentoWeb.V1.PrometheusJSON.md)
-  - [TrentoWeb.V1.SUSEManagerController](TrentoWeb.V1.SUSEManagerController.md)
-  - [TrentoWeb.V1.SUSEManagerJSON](TrentoWeb.V1.SUSEManagerJSON.md)
   - [TrentoWeb.V1.SapSystemController](TrentoWeb.V1.SapSystemController.md)
   - [TrentoWeb.V1.SapSystemJSON](TrentoWeb.V1.SapSystemJSON.md)
   - [TrentoWeb.V1.SettingsController](TrentoWeb.V1.SettingsController.md)
   - [TrentoWeb.V1.SettingsJSON](TrentoWeb.V1.SettingsJSON.md)
+  - [TrentoWeb.V1.SmlmController](TrentoWeb.V1.SmlmController.md)
+  - [TrentoWeb.V1.SmlmJSON](TrentoWeb.V1.SmlmJSON.md)
   - [TrentoWeb.V1.TagsController](TrentoWeb.V1.TagsController.md)
   - [TrentoWeb.V1.UsersController](TrentoWeb.V1.UsersController.md)
   - [TrentoWeb.V1.UsersJSON](TrentoWeb.V1.UsersJSON.md)

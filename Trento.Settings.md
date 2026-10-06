@@ -31,10 +31,10 @@ Provides a set of functions of settings related usecases.
 }
 ```
 
-# `suse_manager_settings_change_submission`
+# `smlm_settings_change_submission`
 
 ```elixir
-@type suse_manager_settings_change_submission() :: %{
+@type smlm_settings_change_submission() :: %{
   url: String.t() | nil,
   username: String.t() | nil,
   password: String.t() | nil,
@@ -42,10 +42,10 @@ Provides a set of functions of settings related usecases.
 }
 ```
 
-# `suse_manager_settings_save_submission`
+# `smlm_settings_save_submission`
 
 ```elixir
-@type suse_manager_settings_save_submission() :: %{
+@type smlm_settings_save_submission() :: %{
   url: String.t(),
   username: String.t(),
   password: String.t(),
@@ -67,8 +67,8 @@ Provides a set of functions of settings related usecases.
 # `change_smlm_settings`
 
 ```elixir
-@spec change_smlm_settings(suse_manager_settings_change_submission(), module()) ::
-  {:ok, Trento.Settings.SuseManagerSettings.t()}
+@spec change_smlm_settings(smlm_settings_change_submission(), module()) ::
+  {:ok, Trento.Settings.SmlmSettings.t()}
   | {:error, :settings_not_configured}
   | {:error, any()}
 ```
@@ -128,8 +128,7 @@ Provides a set of functions of settings related usecases.
 
 ```elixir
 @spec get_smlm_settings() ::
-  {:ok, Trento.Settings.SuseManagerSettings.t()}
-  | {:error, :settings_not_configured}
+  {:ok, Trento.Settings.SmlmSettings.t()} | {:error, :settings_not_configured}
 ```
 
 # `get_sso_certificates`
@@ -141,8 +140,8 @@ Provides a set of functions of settings related usecases.
 # `save_smlm_settings`
 
 ```elixir
-@spec save_smlm_settings(suse_manager_settings_save_submission(), module()) ::
-  {:ok, Trento.Settings.SuseManagerSettings.t()}
+@spec save_smlm_settings(smlm_settings_save_submission(), module()) ::
+  {:ok, Trento.Settings.SmlmSettings.t()}
   | {:error, :settings_already_configured}
   | {:error, any()}
 ```
