@@ -101,8 +101,13 @@ Never:
 
 ## Skills
 
+Repo skills live in `.agents/skills/` (Claude Code reads them through `.claude/skills`).
+
+- Before writing or changing jest tests under `assets/js/`, load `trento-frontend-testing`.
+
 Generic process skills (test proof, debugging, narrow changes, agent supervision) live in
-[trento-project/agent-skills](https://github.com/trento-project/agent-skills).
+[trento-project/agent-skills](https://github.com/trento-project/agent-skills). Install them
+with the command in that repository's README.
 
 ## Open team decisions
 
