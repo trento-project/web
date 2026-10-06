@@ -393,7 +393,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
       %{
         name: "get_errata_details unauthorized",
         mocks: [
-          get_errata_details: {:error, :suma_authentication_error},
+          get_errata_details: {:error, :smlm_authentication_error},
           get_cves: {:ok, build_list(10, :cve)},
           get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
           get_affected_packages: {:ok, build_list(10, :affected_package)},
@@ -404,7 +404,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         name: "get_cves unauthorized",
         mocks: [
           get_errata_details: {:ok, build(:errata_details)},
-          get_cves: {:error, :suma_authentication_error},
+          get_cves: {:error, :smlm_authentication_error},
           get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
           get_affected_packages: {:ok, build_list(10, :affected_package)},
           get_affected_systems: {:ok, build_list(10, :affected_system)}
@@ -415,7 +415,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
         mocks: [
           get_errata_details: {:ok, build(:errata_details)},
           get_cves: {:ok, build_list(10, :cve)},
-          get_bugzilla_fixes: {:error, :suma_authentication_error},
+          get_bugzilla_fixes: {:error, :smlm_authentication_error},
           get_affected_packages: {:ok, build_list(10, :affected_package)},
           get_affected_systems: {:ok, build_list(10, :affected_system)}
         ]
@@ -426,7 +426,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           get_errata_details: {:ok, build(:errata_details)},
           get_cves: {:ok, build_list(10, :cve)},
           get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
-          get_affected_packages: {:error, :suma_authentication_error},
+          get_affected_packages: {:error, :smlm_authentication_error},
           get_affected_systems: {:ok, build_list(10, :affected_system)}
         ]
       },
@@ -437,7 +437,7 @@ defmodule TrentoWeb.V1.SUSEManagerControllerTest do
           get_cves: {:ok, build_list(10, :cve)},
           get_bugzilla_fixes: {:ok, build(:bugzilla_fix)},
           get_affected_packages: {:ok, build_list(10, :affected_package)},
-          get_affected_systems: {:error, :suma_authentication_error}
+          get_affected_systems: {:error, :smlm_authentication_error}
         ]
       }
     ]
