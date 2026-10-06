@@ -13,11 +13,18 @@ defmodule Mix.Tasks.RepairProjections do
 
   import Trento.Tasks.Helper
 
+  @shortdoc "Rebuild projections marked for reset"
   def run(_args) do
+    # Ensure we don't start serving during replay of the
+    # events. Concerning mostly during production release task.
+    disable_endpoint_server()
+
     case start_repo() do
       {:ok, _} ->
         Enum.each([:eventstore, :commanded], &Application.ensure_all_started/1)
         Trento.Commanded.start_link()
+        Phoenix.PubSub.Supervisor.start_link(name: Trento.PubSub)
+        TrentoWeb.Endpoint.start_link()
 
         check_and_rebuild_projectors()
 
@@ -26,45 +33,35 @@ defmodule Mix.Tasks.RepairProjections do
     end
   end
 
+  defp disable_endpoint_server do
+    endpoint_config =
+      :trento
+      |> Application.get_env(TrentoWeb.Endpoint, [])
+      |> Keyword.put(:server, false)
+
+    Application.put_env(:trento, TrentoWeb.Endpoint, endpoint_config)
+  end
+
   defp check_and_rebuild_projectors do
-    all_projectors = get_all_projectors()
-
-    # All projectors subscribe to the global stream "$all". Get the
-    # latest event in the global stream.
-    {:ok, %{stream_version: stream_version}} = Trento.EventStore.stream_info("$all")
-
-    # Get all projection checkpoints
-    checkpoints =
-      "SELECT projection_name, last_seen_event_number FROM projection_versions;"
+    # Projectors to rebuild are marked with the special value `0`.
+    projectors_to_rebuild =
+      "SELECT projection_name FROM projection_versions WHERE last_seen_event_number = 0;"
       |> Trento.Repo.query!()
       |> Map.fetch!(:rows)
-      |> Map.new(fn [name, version] -> {name, version} end)
-
-    # Identify which projectors need rebuilding
-    projectors_to_rebuild =
-      Enum.filter(all_projectors, fn projector ->
-        last_seen = Map.get(checkpoints, projector, nil)
-        is_nil(last_seen) or last_seen < stream_version
-      end)
+      |> List.flatten()
 
     if Enum.empty?(projectors_to_rebuild) do
-      Logger.info("All read model projections are up to date.")
+      Logger.info(IO.ANSI.format([:green, "No projections need rebuilding."]))
     else
+      # All projectors subscribe to the global stream "$all". Get the
+      # latest event in the global stream.
+      {:ok, %{stream_version: stream_version}} = Trento.EventStore.stream_info("$all")
+
       Logger.info(
-        "Rebuilding/catching up: #{Enum.join(projectors_to_rebuild, ", ")} (stream head: #{stream_version})..."
+        "Rebuilding projectors: #{Enum.join(projectors_to_rebuild, ", ")} (stream head: #{stream_version})..."
       )
 
       rebuild_projectors(projectors_to_rebuild, stream_version)
-    end
-  end
-
-  defp get_all_projectors do
-    {:ok, {_flags, children}} = Trento.ProjectorsSupervisor.init([])
-
-    for %{id: {_module, opts}} <- children,
-        name = Keyword.get(opts, :name),
-        is_binary(name) do
-      name
     end
   end
 
@@ -99,18 +96,10 @@ defmodule Mix.Tasks.RepairProjections do
     if System.monotonic_time(:millisecond) > deadline do
       {:error, :timeout}
     else
-      query = """
-      SELECT projection_name, last_seen_event_number
-      FROM projection_versions
-      WHERE projection_name = ANY($1::text[]);
-      """
-
-      %Postgrex.Result{rows: rows} = Trento.Repo.query!(query, [projector_names])
-      versions = Map.new(rows, fn [name, version] -> {name, version} end)
-
       all_caught_up? =
-        Enum.all?(projector_names, fn projector ->
-          Map.get(versions, projector, 0) >= target_stream_version
+        Enum.all?(projector_names, fn projector_name ->
+          last_seen = get_subscription_last_seen!(projector_name)
+          is_integer(last_seen) and last_seen >= target_stream_version
         end)
 
       if all_caught_up? do
@@ -119,6 +108,19 @@ defmodule Mix.Tasks.RepairProjections do
         Process.sleep(100)
         do_poll_catchup(projector_names, target_stream_version, deadline)
       end
+    end
+  end
+
+  defp get_subscription_last_seen!(projector_name) do
+    registry = Module.concat(Trento.EventStore, EventStore.Subscriptions.Registry)
+    case Registry.whereis_name(
+           {registry, {"$all", projector_name}}
+         ) do
+           :undefined ->
+             :starting
+
+           pid when is_pid(pid) ->
+             EventStore.Subscriptions.Subscription.last_seen(pid)
     end
   end
 end

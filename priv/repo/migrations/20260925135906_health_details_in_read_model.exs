@@ -14,12 +14,18 @@ defmodule Trento.Repo.Migrations.HealthDetailsInReadModel do
       add :health_details, :map
     end
 
-    # Delete the clusters table and delete the row tracking the
-    # last_seen_event. This would trigger a projection rebuild. Hint:
-    # the finishing step of this process is in the
-    # Trento.Release.init() task named `repair_projections`.
     execute "TRUNCATE TABLE clusters;"
-    execute "DELETE FROM projection_versions WHERE projection_name = 'cluster_projector';"
+
+    # Mark cluster_projector for rebuild. This would be finalized in
+    # Trento.Release.init() task named `repair_projections`.
+    # NOTE: The SQL command is UPDATE so it skips setting last seen
+    # event to 0 if no such row exists. We want to rebuild only if
+    # there were projections already.
+    execute("""
+      UPDATE projection_versions
+      SET last_seen_event_number = 0, updated_at = NOW()
+      WHERE projection_name = 'cluster_projector';
+    """)
   end
 
   # TODO: remove these
