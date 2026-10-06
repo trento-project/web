@@ -8,7 +8,7 @@
     "@eslint-react/kit": "^5.20.5",
     "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.6.0",
-    "@storybook/addon-docs": "^10.3.4",
+    "@storybook/addon-docs": "^10.6.0",
     "@storybook/react": "^10.3.4",
     "@storybook/react-vite": "^10.6.0",
     "@tailwindcss/typography": "^0.5.20",
