@@ -110,13 +110,18 @@ defmodule Trento.AI.Agent do
   @spec cancel(String.t()) :: :ok | {:error, term()}
   def cancel(agent_id), do: AgentServer.cancel(agent_id)
 
+  # Best effort: no agent yet, a `:noop` or a failed write must not block the
+  # prompt. Only a drained registry ends the run, as nothing after it can work.
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
-         {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent) do
-      update_agent(agent_id, updated_agent)
+         {:ok, updated_agent} <- refresh_when.(current_agent, maybe_new_agent),
+         %{state: current_state} <- AgentServer.get_info(agent_id),
+         :ok <- AgentServer.update_agent_and_state(agent_id, updated_agent, current_state) do
+      :ok
+    else
+      {:error, :registry_unavailable} = error -> error
+      _ -> :ok
     end
-
-    :ok
   end
 
   defp default_refresh_when(_current_agent, _new_agent), do: :noop
@@ -124,16 +129,9 @@ defmodule Trento.AI.Agent do
   defp ensure_not_running(agent_id) do
     case AgentServer.get_status(agent_id) do
       :running -> {:error, :agent_busy}
+      {:error, :registry_unavailable} = error -> error
       _ -> :ok
     end
-  end
-
-  defp update_agent(agent_id, updated_agent) do
-    %{state: current_state} = AgentServer.get_info(agent_id)
-
-    AgentServer.update_agent_and_state(agent_id, updated_agent, current_state)
-
-    :ok
   end
 
   defp start_opts(agent_id, agent) do

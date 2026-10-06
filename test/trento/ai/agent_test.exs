@@ -254,6 +254,103 @@ defmodule Trento.AI.AgentTest do
     end
   end
 
+  # The refresh swallows other failures; a drained registry must still end the run.
+  describe "run/3 — sagents registry unavailable" do
+    setup :run_opts
+
+    test "aborts the run when get_status reports the registry is unavailable",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id ->
+        {:error, :registry_unavailable}
+      end)
+
+      # No get_agent / subscribe / add_message expectations — verify_on_exit! catches strays.
+      assert {:error, :registry_unavailable} = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "aborts the run when get_agent reports the registry is unavailable",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:error, :registry_unavailable}
+      end)
+
+      # No subscribe / add_message expectations — verify_on_exit! catches strays.
+      assert {:error, :registry_unavailable} = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "aborts the run when get_info reports the registry is unavailable",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      refresh_when = fn _current, new_agent -> {:ok, new_agent} end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn ^agent_id ->
+        {:error, :registry_unavailable}
+      end)
+
+      assert {:error, :registry_unavailable} =
+               TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+    end
+
+    test "aborts the run when update_agent_and_state reports the registry is unavailable",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      refresh_when = fn _current, new_agent -> {:ok, new_agent} end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn ^agent_id ->
+        %{state: %Sagents.State{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn ^agent_id, _, _ ->
+        {:error, :registry_unavailable}
+      end)
+
+      assert {:error, :registry_unavailable} =
+               TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+    end
+
+    test "still sends the prompt when the refresh fails for any other reason",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      refresh_when = fn _current, new_agent -> {:ok, new_agent} end
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id ->
+        {:ok, %Sagents.Agent{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :get_info, fn ^agent_id ->
+        %{state: %Sagents.State{agent_id: agent_id}}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :update_agent_and_state, fn ^agent_id, _, _ ->
+        {:error, :agent_not_running}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
+      expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
+
+      assert {:ok, _server_pid} =
+               TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+    end
+  end
+
   describe "stop/1" do
     test "cancels the in-flight run, then delegates to the supervisor's stop_agent/1" do
       agent_id = "thread-#{Faker.UUID.v4()}"
