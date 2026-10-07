@@ -63,7 +63,7 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:llm_db, "~> 2026.7", runtime: false},
-      {:sagents, "~> 0.7.0"},
+      {:sagents, "~> 0.16.1"},
       {:langchain, "~> 0.14.4"},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
