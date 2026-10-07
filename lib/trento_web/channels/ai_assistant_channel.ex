@@ -28,7 +28,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
   | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one as `RUN_ERROR` |
-  | `:run_has_started` | boolean | per run | stale-`:idle` guard. `subscribe/1` replies with a status snapshot, so every `run/3` delivers an `:idle` from before the prompt; this flag is only set on the `:running` event for THIS run, so we ignore it |
+  | `:run_has_started` | boolean | per run | stale-`:idle` guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers an `:idle` from before the prompt; this flag is only set on the `:running` event for THIS run, so we ignore it |
 
   ### Mutation surfaces
 
