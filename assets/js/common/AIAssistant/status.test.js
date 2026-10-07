@@ -7,26 +7,37 @@ import {
   OK,
   CLEARED,
   RESTORED,
+  EXPIRED,
   canSendMessage,
   effectiveConnectionStatus,
   isChatReadOnly,
   isConfigurationAvailable,
   isConfigurationCleared,
   isConfigurationRestored,
+  isConversationExpired,
 } from './status';
 
 describe('AIAssistant configuration status', () => {
   describe('status predicates', () => {
     it.each`
-      configurationStatus | cleared  | restored | available | readOnly
-      ${OK}               | ${false} | ${false} | ${true}   | ${false}
-      ${CLEARED}          | ${true}  | ${false} | ${false}  | ${true}
-      ${RESTORED}         | ${false} | ${true}  | ${true}   | ${true}
+      configurationStatus | cleared  | restored | expired  | available | readOnly
+      ${OK}               | ${false} | ${false} | ${false} | ${true}   | ${false}
+      ${CLEARED}          | ${true}  | ${false} | ${false} | ${false}  | ${true}
+      ${RESTORED}         | ${false} | ${true}  | ${false} | ${true}   | ${true}
+      ${EXPIRED}          | ${false} | ${false} | ${true}  | ${true}   | ${true}
     `(
       'describes the $configurationStatus configuration',
-      ({ configurationStatus, cleared, restored, available, readOnly }) => {
+      ({
+        configurationStatus,
+        cleared,
+        restored,
+        expired,
+        available,
+        readOnly,
+      }) => {
         expect(isConfigurationCleared(configurationStatus)).toBe(cleared);
         expect(isConfigurationRestored(configurationStatus)).toBe(restored);
+        expect(isConversationExpired(configurationStatus)).toBe(expired);
         expect(isConfigurationAvailable(configurationStatus)).toBe(available);
         expect(isChatReadOnly(configurationStatus)).toBe(readOnly);
       }
@@ -38,6 +49,7 @@ describe('AIAssistant configuration status', () => {
       connectionStatus | configurationStatus | allowed
       ${CONNECTED}     | ${OK}               | ${true}
       ${CONNECTED}     | ${RESTORED}         | ${false}
+      ${CONNECTED}     | ${EXPIRED}          | ${false}
       ${CONNECTED}     | ${CLEARED}          | ${false}
       ${CONNECTING}    | ${OK}               | ${false}
       ${DISCONNECTED}  | ${OK}               | ${false}

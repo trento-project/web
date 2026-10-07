@@ -27,7 +27,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:current_thread_id` | UUID string | set at each `send_message`, and at a join that names one | used as the sagents `agent_id` + echoed in run events |
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
-  | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one as `RUN_ERROR` |
+  | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one: `conversation_expired`, after a `RUN_ERROR` when a run was in flight |
   | `:run_has_started` | boolean | per run | stale-status guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers the status from before the prompt (`:idle`, or `:error` after a failed run); this flag is only set on the `:running` event for THIS run, so we ignore it |
 
   ### Mutation surfaces
@@ -39,7 +39,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
   - `monitor_agent_server/2` — alongside `activate_run/2`; swaps `:agent_monitor_ref` for a monitor on the pid `Trento.AI.Agent.run/3` returned. Survives `reset_run/1`: the subscription spans runs.
   - `view_thread/2` — on each prompt; tracks the channel as a viewer of the thread, so sagents stops the agent once nobody views it. A different thread first goes through `leave_thread/1`: one agent per channel.
-  - `leave_thread/1` — our own stop (`abandon_thread`, AI-configuration clear, thread change): untracks the viewer and stops the agent.
+  - `leave_thread/1` — our own stop (`abandon_thread`, AI-configuration clear, thread change): drops the monitor, so the agent going down is not reported as an expired conversation, then untracks the viewer and stops the agent.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -299,26 +299,19 @@ defmodule TrentoWeb.AIAssistantChannel do
     {:noreply, socket}
   end
 
+  # The agent server is gone, and its conversation context with it.
+  # Our own `stop/1` drops the monitor first, so it never gets here.
   @impl true
   def handle_info(
         {:DOWN, ref, :process, _pid, reason},
-        %{assigns: %{agent_monitor_ref: ref, loading: true}} = socket
-      ) do
-    Logger.error("Agent stopped unexpectedly: #{inspect(reason)}")
-
-    {:noreply,
-     socket
-     |> assign(:agent_monitor_ref, nil)
-     |> reset_run()
-     |> AgUi.run_error(:agent_down)}
-  end
-
-  # No run in flight: an idle server stopping (inactivity timeout, our own `stop/1`).
-  def handle_info(
-        {:DOWN, ref, :process, _pid, _reason},
         %{assigns: %{agent_monitor_ref: ref}} = socket
       ),
-      do: {:noreply, assign(socket, :agent_monitor_ref, nil)}
+      do:
+        {:noreply,
+         socket
+         |> assign(:agent_monitor_ref, nil)
+         |> fail_run_in_flight(reason)
+         |> push_conversation_expired()}
 
   @impl true
   def handle_info(
@@ -420,11 +413,12 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   defp cancel_run(socket), do: socket
 
-  # Our own stop: untracks the viewer and stops the agent.
+  # Our own stop. The monitor goes first, so the agent going down is not reported as expired.
   defp leave_thread(%{assigns: %{current_thread_id: thread_id}} = socket)
        when is_binary(thread_id),
        do:
          socket
+         |> drop_agent_monitor()
          |> tap(&Presence.untrack_viewer(thread_id, viewer_id(&1)))
          |> tap(fn _ -> TrentoAIAgent.stop(thread_id) end)
 
@@ -437,6 +431,27 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   defp viewer_id(%{assigns: %{current_user_id: user_id}}), do: to_string(user_id)
+
+  defp drop_agent_monitor(%{assigns: %{agent_monitor_ref: ref}} = socket)
+       when is_reference(ref) do
+    Process.demonitor(ref, [:flush])
+    assign(socket, :agent_monitor_ref, nil)
+  end
+
+  defp drop_agent_monitor(socket), do: socket
+
+  defp fail_run_in_flight(%{assigns: %{loading: true}} = socket, reason) do
+    Logger.error("Agent stopped unexpectedly: #{inspect(reason)}")
+
+    socket
+    |> reset_run()
+    |> AgUi.run_error(:agent_down)
+  end
+
+  defp fail_run_in_flight(socket, _reason), do: socket
+
+  defp push_conversation_expired(%{assigns: %{current_thread_id: thread_id}} = socket),
+    do: tap(socket, &push(&1, "conversation_expired", %{thread_id: thread_id}))
 
   # Consecutive runs resolve to the same server: replace the monitor, don't stack it.
   defp monitor_agent_server(socket, server_pid) do

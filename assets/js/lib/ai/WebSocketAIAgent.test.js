@@ -719,6 +719,30 @@ describe('WebSocketAIAgent', () => {
       expect(agent._activeRunId).toBeNull();
     });
 
+    it('forwards conversation_expired for the current thread', async () => {
+      const onConversationExpired = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationExpired,
+      });
+      agent.threadId = 'thread-1';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+
+      expect(onConversationExpired).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores conversation_expired for a thread it has already left', async () => {
+      const onConversationExpired = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationExpired,
+      });
+      agent.threadId = 'thread-2';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+
+      expect(onConversationExpired).not.toHaveBeenCalled();
+    });
+
     it('resets omitted callback to a noop', async () => {
       const spies = {
         onConnectionChange: jest.fn(),

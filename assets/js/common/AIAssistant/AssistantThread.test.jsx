@@ -15,7 +15,7 @@ import { renderWithRouter } from '@lib/test-utils';
 import { CONNECTED, DISCONNECTED } from '@lib/ai';
 
 import AssistantThread from './AssistantThread';
-import { OK, CLEARED, RESTORED } from './status';
+import { OK, CLEARED, RESTORED, EXPIRED } from './status';
 
 // Drives the real ThreadPrimitive off assistant-ui's external store rather
 // so the viewport, the message render prop and the composer are all the production ones.
@@ -132,6 +132,16 @@ describe('AssistantThread', () => {
       /A new AI configuration is available\. Start a new chat to continue\./
     );
     expect(composer()).toBeDisabled();
+  });
+
+  it('shows the expired banner and disables the composer, with New chat available', () => {
+    renderThread({ connectionStatus: CONNECTED, configurationStatus: EXPIRED });
+
+    expect(banner()).toHaveTextContent(
+      /This conversation has expired\. Start a new chat to continue\./
+    );
+    expect(composer()).toBeDisabled();
+    expect(newChat()).toBeEnabled();
   });
 
   it('reports a cleared configuration as offline even while the channel is up', () => {

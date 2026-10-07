@@ -129,7 +129,7 @@ defmodule TrentoWeb.AIAssistant.AgUi do
     do: "The assistant is restarting. Try again in a moment."
 
   defp format_error(:agent_down),
-    do: "The assistant stopped unexpectedly. Start a new chat to continue."
+    do: "The assistant stopped unexpectedly."
 
   defp format_error(_reason), do: "Sorry, something went wrong. Please try again."
 

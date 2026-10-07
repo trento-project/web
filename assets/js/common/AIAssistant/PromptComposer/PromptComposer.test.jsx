@@ -8,7 +8,7 @@ import '@testing-library/jest-dom';
 
 import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
 
-import { OK, CLEARED, RESTORED } from '../status';
+import { OK, CLEARED, RESTORED, EXPIRED } from '../status';
 import PromptComposer from './PromptComposer';
 
 const mockCancel = jest.fn();
@@ -55,6 +55,10 @@ describe('PromptComposer', () => {
       placeholder: 'Start a new chat to continue',
     },
     {
+      configurationStatus: EXPIRED,
+      placeholder: 'Start a new chat to continue',
+    },
+    {
       configurationStatus: 'unknown',
       placeholder: 'AI Assistant is disabled',
     },
@@ -78,6 +82,8 @@ describe('PromptComposer', () => {
     { connectionStatus: CONNECTED, configurationStatus: CLEARED },
     // Online and configured, but this thread belongs to the old configuration.
     { connectionStatus: CONNECTED, configurationStatus: RESTORED },
+    // Online, but the assistant no longer has this conversation's context.
+    { connectionStatus: CONNECTED, configurationStatus: EXPIRED },
   ])(
     'disables the input and the send button when $connectionStatus and the configuration is $configurationStatus',
     ({ connectionStatus, configurationStatus }) => {

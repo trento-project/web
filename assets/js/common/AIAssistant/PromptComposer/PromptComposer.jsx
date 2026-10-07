@@ -27,12 +27,13 @@ const PLACEHOLDERS = {
   [CONNECTION_STATUS.DISCONNECTED]: 'Offline - waiting to reconnect...',
 };
 
-// Read-only has two causes that need different wording:
+// Read-only causes that need different wording:
 // - CLEARED means there is nothing left to answer with
-// - RESTORED means a configuration is back but a new chat needs to be started
+// - RESTORED and EXPIRED mean a new chat needs to be started
 const READ_ONLY_PLACEHOLDERS = {
   [CONFIGURATION_STATUS.CLEARED]: 'AI Assistant is disabled',
   [CONFIGURATION_STATUS.RESTORED]: 'Start a new chat to continue',
+  [CONFIGURATION_STATUS.EXPIRED]: 'Start a new chat to continue',
 };
 
 const footnote = (
