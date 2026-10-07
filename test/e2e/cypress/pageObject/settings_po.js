@@ -1054,6 +1054,6 @@ export const apiCreateUserWithSettingsAbilities = () =>
   basePage.apiCreateUserWithAbilities([
     { name: 'all', resource: 'activity_logs_settings' },
     { name: 'all', resource: 'api_key_settings' },
-    { name: 'all', resource: 'suma_settings' },
+    { name: 'all', resource: 'smlm_settings' },
     { name: 'all', resource: 'alerting_settings' },
   ]);

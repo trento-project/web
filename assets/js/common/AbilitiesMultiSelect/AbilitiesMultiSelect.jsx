@@ -48,7 +48,7 @@ const groupedAbilities = [
     tooltip: 'Permits all operations on settings',
     groupAbilities: [
       'all:api_key_settings',
-      'all:suma_settings',
+      'all:smlm_settings',
       'all:activity_logs_settings',
       'all:alerting_settings',
     ],

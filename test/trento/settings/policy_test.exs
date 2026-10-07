@@ -83,8 +83,8 @@ defmodule Trento.Settings.PolicyTest do
       assert Policy.authorize(:test_smlm_settings, user, SmlmSettings)
     end
 
-    test "should allow SUSE Multi-Linux Manager settings actions if the user has all:suma_settings ability" do
-      user = %User{abilities: [%Ability{name: "all", resource: "suma_settings"}]}
+    test "should allow SUSE Multi-Linux Manager settings actions if the user has all:smlm_settings ability" do
+      user = %User{abilities: [%Ability{name: "all", resource: "smlm_settings"}]}
 
       assert Policy.authorize(:get_smlm_settings, user, SmlmSettings)
       assert Policy.authorize(:save_smlm_settings, user, SmlmSettings)
