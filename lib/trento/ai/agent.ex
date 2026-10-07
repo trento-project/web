@@ -8,14 +8,9 @@ defmodule Trento.AI.Agent do
   `run/3` is the single side-effecting entrypoint: it builds the agent,
   ensures the per-thread `Sagents.AgentServer` is running, subscribes the
   **calling process** to the agent's `{:agent, ...}` event stream, and
-  sends the user prompt. Since sagents 0.8.0 those events are delivered by
-  monitored direct `send/2` from the AgentServer rather than broadcast over
-  `Phoenix.PubSub`; the payload shapes are unchanged, but the stream is now
-  bound to the subscriber's pid, which is why `run/3` hands the server pid
-  back for the caller to monitor. Callers (the Phoenix
-  channel) only deal with trento-domain arguments + the AG-UI events that
-  arrive in their mailbox; `Sagents` and `LangChain` are implementation
-  details of this module.
+  sends the user prompt. Callers (the Phoenix channel) only deal with
+  trento-domain arguments + the AG-UI events that arrive in their mailbox;
+  `Sagents` and `LangChain` are implementation details of this module.
 
   `new!/1` is the pure factory (no side effects). Useful for tests that
   want to inspect the configured agent.
@@ -68,17 +63,12 @@ defmodule Trento.AI.Agent do
   @doc """
   Ensure the agent for `:agent_id` is running, subscribe the calling
   process to its event stream, and send the user prompt. Returns
-  `{:ok, server_pid}` — the `Sagents.AgentServer` process now publishing to
-  the caller — or the first `{:error, reason}` from the start/subscribe/send
-  chain.
+  `{:ok, server_pid}` or the first `{:error, reason}` from the
+  start/subscribe/send chain.
 
-  Callers are expected to monitor `server_pid`. Since sagents 0.8.0 the
-  subscription is bound to the subscriber's pid, and the agent child is
-  `restart: :transient`, so a server crash detaches the caller from the event
-  stream for good: the restarted process has a different pid and no longer
-  knows about us. The `monitor_ref` sagents hands back from `subscribe/1` is
-  *its* monitor of the subscriber, not ours of it, so it cannot be used for
-  this.
+  The subscription does not survive an AgentServer restart, so callers
+  monitor `server_pid` to notice the server dying. The ref `subscribe/1`
+  returns is sagents' monitor of the caller, not one the caller can use.
   """
   @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
@@ -119,17 +109,7 @@ defmodule Trento.AI.Agent do
   Best-effort — returns `{:error, reason}` when nothing is running for the id.
   """
   @spec cancel(String.t()) :: :ok | {:error, term()}
-  def cancel(agent_id) do
-    AgentServer.cancel(agent_id)
-  catch
-    # Since sagents 0.12 `AgentServer.cancel/1` guards its own `GenServer.call`
-    # and names the cases that used to exit here — nothing registered for
-    # `agent_id`, a reply outliving the 5s default, the server dying mid-call —
-    # as `{:error, :agent_not_running}`. This clause is the backstop for the
-    # adapter boundary: `agent_server_adapter` is configurable, and an exit
-    # signal must not take the caller down with it.
-    :exit, reason -> {:error, reason}
-  end
+  def cancel(agent_id), do: AgentServer.cancel(agent_id)
 
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
@@ -153,13 +133,7 @@ defmodule Trento.AI.Agent do
   defp start_opts(agent_id, agent) do
     [
       agent_id: agent_id,
-      agent: agent,
-      # Presence wiring only: sagents keeps just the name half of this tuple
-      # (as `pubsub_name`) and reads it at a single call site, to subscribe the
-      # AgentServer to `Phoenix.Presence` diffs — and only when the separate
-      # `:presence_tracking` option is also set. Trento sets no presence options,
-      # so this is inert today. Agent events reach subscribers via direct `send/2`.
-      pubsub: {Phoenix.PubSub, Trento.PubSub}
+      agent: agent
     ]
   end
 

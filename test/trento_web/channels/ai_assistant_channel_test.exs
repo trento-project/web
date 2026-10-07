@@ -964,11 +964,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  # Since sagents 0.8.0 the event stream is a monitored direct `send/2` bound to
-  # the subscriber pid, not a Phoenix.PubSub topic. An AgentServer crash therefore
-  # detaches the channel silently: the restarted process has a new pid and never
-  # publishes to us again. The channel monitors the server so a death surfaces as
-  # RUN_ERROR instead of leaving the UI spinning forever.
+  # The event stream does not survive an AgentServer crash, so the channel
+  # monitors the server: a death mid-run must end as RUN_ERROR, not a spinner.
   describe "handle_info {:DOWN, ...} — agent server death" do
     setup :join_socket_with_ai_config
 
@@ -1594,8 +1591,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     %{thread_id: thread_id, task_pid: task_pid}
   end
 
-  # A live, inert process standing in for the sagents AgentServer: the channel
-  # only ever monitors it, so identity and liveness are all it needs.
+  # Stands in for the AgentServer: the channel only monitors it.
   defp spawn_fake_agent_server do
     pid = spawn(fn -> Process.sleep(:infinity) end)
     on_exit(fn -> Process.exit(pid, :kill) end)
@@ -1603,8 +1599,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     pid
   end
 
-  # Stubs the whole Agent.run/3 adapter chain so that it reports `server_pid`
-  # as the process backing the agent, for any number of runs.
+  # Stubs the Agent.run/3 adapter chain to report `server_pid`, for any number of runs.
   defp stub_agent_run(server_pid) do
     stub(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, server_pid} end)
     stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
