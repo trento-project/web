@@ -27,15 +27,17 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:current_thread_id` | UUID string | set at each `send_message` | used as the sagents `agent_id` + echoed in run events |
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
-  | `:run_has_started` | boolean | per run | stale-`:idle` guard. `Sagents.AgentServer.init/1` broadcasts `{:status_changed, :idle, nil}` at boot and on Horde `node_transferred`; this flag is only set on the `:running` event for THIS run, so we ignore stray initial idles |
+  | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one as `RUN_ERROR` |
+  | `:run_has_started` | boolean | per run | stale-status guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers the status from before the prompt (`:idle`, or `:error` after a failed run); this flag is only set on the `:running` event for THIS run, so we ignore it |
 
   ### Mutation surfaces
 
-  All run-state mutations go through three private helpers:
+  All run-state mutations go through these private helpers:
 
   - `stash_run_ids/3` — at the head of `handle_in("send_message", ...)`, before validation.
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
   - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
+  - `monitor_agent_server/2` — alongside `activate_run/2`; swaps `:agent_monitor_ref` for a monitor on the pid `Trento.AI.Agent.run/3` returned. Survives `reset_run/1`: the subscription spans runs.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -65,6 +67,7 @@ defmodule TrentoWeb.AIAssistantChannel do
        socket
        |> assign(:access_token, token)
        |> assign(:current_scope, %User{id: current_user_id})
+       |> assign(:agent_monitor_ref, nil)
        |> assign(:loading, false)}
     end
   end
@@ -217,8 +220,9 @@ defmodule TrentoWeb.AIAssistantChannel do
     |> TrentoAIAgent.new!()
     |> TrentoAIAgent.run(prompt, refresh_when: &agent_config_changed/2)
     |> case do
-      :ok ->
+      {:ok, server_pid} ->
         socket
+        |> monitor_agent_server(server_pid)
         |> activate_run(run_id)
         |> AgUi.run_started(run_id, thread_id)
 
@@ -275,7 +279,10 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
+  def handle_info(
+        {:agent, {:status_changed, :error, reason}},
+        %{assigns: %{run_has_started: true}} = socket
+      ) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
     {:noreply,
@@ -283,6 +290,36 @@ defmodule TrentoWeb.AIAssistantChannel do
      |> reset_run()
      |> AgUi.run_error(reason)}
   end
+
+  def handle_info(
+        {:agent, {:status_changed, :error, _reason}},
+        %{assigns: %{run_has_started: false}} = socket
+      ) do
+    Logger.warning("Ignoring stale :error event - run hasn't started yet")
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(
+        {:DOWN, ref, :process, _pid, reason},
+        %{assigns: %{agent_monitor_ref: ref, loading: true}} = socket
+      ) do
+    error_msg = "Agent stopped unexpectedly: #{inspect(reason)}"
+    Logger.error(error_msg)
+
+    {:noreply,
+     socket
+     |> assign(:agent_monitor_ref, nil)
+     |> reset_run()
+     |> AgUi.run_error(error_msg)}
+  end
+
+  # No run in flight: an idle server stopping (inactivity timeout, our own `stop/1`).
+  def handle_info(
+        {:DOWN, ref, :process, _pid, _reason},
+        %{assigns: %{agent_monitor_ref: ref}} = socket
+      ),
+      do: {:noreply, assign(socket, :agent_monitor_ref, nil)}
 
   @impl true
   def handle_info(
@@ -359,6 +396,16 @@ defmodule TrentoWeb.AIAssistantChannel do
       socket
       |> assign(:current_run_id, run_id)
       |> assign(:current_thread_id, thread_id)
+
+  # Consecutive runs resolve to the same server: replace the monitor, don't stack it.
+  defp monitor_agent_server(socket, server_pid) do
+    case socket.assigns[:agent_monitor_ref] do
+      nil -> :ok
+      ref -> Process.demonitor(ref, [:flush])
+    end
+
+    assign(socket, :agent_monitor_ref, Process.monitor(server_pid))
+  end
 
   defp activate_run(socket, run_id),
     do:

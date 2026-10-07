@@ -91,9 +91,20 @@ defmodule Trento.AI.AgentTest do
   describe "run/2" do
     setup :run_opts
 
-    test "returns :ok when start_agent_sync, subscribe, and add_message all succeed",
+    test "refuses a busy agent without refreshing, subscribing or sending the prompt",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id -> :running end)
+
+      # No get_agent / subscribe / add_message expectations
+      assert {:error, :agent_busy} = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "returns the AgentServer pid when start_agent_sync, subscribe, and add_message all succeed",
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
       test_pid = self()
+      # Distinct from the supervisor's pid: run/3 must return the one subscribe/1 named.
+      server_pid = spawn(fn -> :ok end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn start_opts ->
         send(test_pid, {:start_agent_sync, start_opts})
@@ -101,7 +112,10 @@ defmodule Trento.AI.AgentTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, server_pid, make_ref()}
+      end)
 
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id,
                                                            %Message{role: :user} = msg ->
@@ -109,11 +123,10 @@ defmodule Trento.AI.AgentTest do
         :ok
       end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt)
+      assert {:ok, ^server_pid} = TrentoAIAgent.run(agent, prompt)
 
       assert_received {:start_agent_sync, start_opts}
       assert Keyword.fetch!(start_opts, :agent_id) == agent_id
-      assert Keyword.fetch!(start_opts, :pubsub) == {Phoenix.PubSub, Trento.PubSub}
 
       assert_received {:add_message, %Message{content: [%{content: "hello"}]}}
     end
@@ -139,7 +152,7 @@ defmodule Trento.AI.AgentTest do
     test "surfaces an add_message failure", %{agent: agent, prompt: prompt} do
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> {:error, :timeout} end)
 
       assert {:error, :timeout} = TrentoAIAgent.run(agent, prompt)
@@ -171,10 +184,13 @@ defmodule Trento.AI.AgentTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
 
       assert_received {:refresh_when, ^current_agent, ^agent}
     end
@@ -191,10 +207,13 @@ defmodule Trento.AI.AgentTest do
 
       # No get_info / update_agent_and_state expectations —
       # verify_on_exit! catches strays.
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
     end
 
     test "does not invoke refresh_when when AgentServer is not yet running",
@@ -205,10 +224,14 @@ defmodule Trento.AI.AgentTest do
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       expect(Trento.AI.Agent.Server.Mock, :get_agent, fn ^agent_id -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt, refresh_when: refresh_when)
     end
 
     test "default refresh_when (no opt) never triggers update_agent_and_state",
@@ -221,10 +244,13 @@ defmodule Trento.AI.AgentTest do
 
       # default_refresh_when/2 returns :noop unconditionally;
       # no get_info / update_agent_and_state expectations.
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn ^agent_id, _ -> :ok end)
 
-      assert :ok = TrentoAIAgent.run(agent, prompt)
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt)
     end
   end
 
@@ -252,9 +278,10 @@ defmodule Trento.AI.AgentTest do
 
     test "propagates the supervisor's error verbatim (nothing running)" do
       agent_id = "thread-#{Faker.UUID.v4()}"
-      reason = {:noproc, {GenServer, :call, [agent_id, :cancel, 5000]}}
 
-      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> exit(reason) end)
+      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id ->
+        {:error, :agent_not_running}
+      end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^agent_id ->
         {:error, :not_found}
@@ -281,15 +308,6 @@ defmodule Trento.AI.AgentTest do
       end)
 
       assert {:error, :not_found} = TrentoAIAgent.cancel(agent_id)
-    end
-
-    test "returns an error instead of exiting when the agent process is gone" do
-      agent_id = "thread-#{Faker.UUID.v4()}"
-      reason = {:noproc, {GenServer, :call, [agent_id, :cancel, 5000]}}
-
-      expect(Trento.AI.Agent.Server.Mock, :cancel, fn ^agent_id -> exit(reason) end)
-
-      assert {:error, ^reason} = TrentoAIAgent.cancel(agent_id)
     end
   end
 
@@ -379,7 +397,7 @@ defmodule Trento.AI.AgentTest do
       assert :ok = TrentoAIAgent.cancel(agent_id)
       assert_receive {:agent, {:status_changed, :cancelled, nil}}, @integration_timeout
 
-      assert :ok = TrentoAIAgent.run(agent, "second prompt")
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, "second prompt")
 
       assert_receive {:llm_called, _task_pid}, @integration_timeout
       assert_receive {:agent, {:status_changed, :running, nil}}, @integration_timeout
@@ -431,6 +449,9 @@ defmodule Trento.AI.AgentTest do
       test name, %{agent_id: agent_id} do
         task_pid = await_in_flight_run()
 
+        # `subscribe/1` first sent the agent's status from before the prompt.
+        assert_received {:agent, {:status_changed, :idle, nil}}
+
         send(task_pid, :release)
 
         assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
@@ -456,8 +477,7 @@ defmodule Trento.AI.AgentTest do
     test "returns an error instead of exiting when no agent is registered for the id" do
       agent_id = "thread-#{Faker.UUID.v4()}"
 
-      assert {:error, {:noproc, {GenServer, :call, [_name, :cancel, _timeout]}}} =
-               TrentoAIAgent.cancel(agent_id)
+      assert {:error, :agent_not_running} = TrentoAIAgent.cancel(agent_id)
     end
   end
 
@@ -480,10 +500,16 @@ defmodule Trento.AI.AgentTest do
     model = struct!(FakeChatModel, Keyword.put(model_opts, :notify, self()))
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: build(:user))
 
-    :ok = TrentoAIAgent.run(agent, prompt)
+    {:ok, server_pid} = TrentoAIAgent.run(agent, prompt)
     stop_agent_on_exit(agent_id)
 
-    %{agent: agent, agent_id: agent_id, pid: agent_pid!(agent_id), prompt: prompt}
+    %{
+      agent: agent,
+      agent_id: agent_id,
+      pid: agent_pid!(agent_id),
+      server_pid: server_pid,
+      prompt: prompt
+    }
   end
 
   defp running_agent(_context), do: :ok
@@ -501,11 +527,7 @@ defmodule Trento.AI.AgentTest do
       )
 
     {:ok, _sup} =
-      TrentoAIAgentSupervisor.start_agent_sync(
-        agent_id: agent_id,
-        agent: agent,
-        pubsub: {Phoenix.PubSub, Trento.PubSub}
-      )
+      TrentoAIAgentSupervisor.start_agent_sync(agent_id: agent_id, agent: agent)
 
     stop_agent_on_exit(agent_id)
 
@@ -524,11 +546,36 @@ defmodule Trento.AI.AgentTest do
     task_pid
   end
 
+  # The mocked run/2 tests can only prove run/3 handles what the mocks return;
+  # this one fails if a sagents bump changes what the real adapters hand back.
+  describe "run/3 — integration (real supervisor + agent server)" do
+    @describetag :integration
+
+    setup [:real_sagents_adapters, :running_agent]
+
+    @tag :running_agent
+    test "returns the live AgentServer pid and streams its events to the caller",
+         %{agent_id: agent_id, server_pid: server_pid} do
+      await_in_flight_run()
+
+      assert server_pid == Sagents.AgentServer.get_pid(agent_id)
+    end
+
+    @tag running_agent: [block_for: :timer.minutes(1)]
+    test "refuses a second prompt while a run is in flight", %{agent: agent} do
+      await_in_flight_run()
+
+      assert {:error, :agent_busy} = TrentoAIAgent.run(agent, "second prompt")
+    end
+  end
+
   defp run_opts(_ctx) do
     agent_id = "thread-#{Faker.UUID.v4()}"
     model = build(:random_langchain_model)
     scope = build(:user)
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: scope)
+
+    stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :idle end)
 
     %{agent: agent, agent_id: agent_id, prompt: "hello"}
   end

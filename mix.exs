@@ -63,11 +63,11 @@ defmodule Trento.MixProject do
   defp deps do
     [
       {:llm_db, "~> 2026.7", runtime: false},
-      {:sagents, "~> 0.7.0"},
-      # temporary override to pull in an elixir 1.15 compatible version
+      {:sagents, "~> 0.16.1"},
+      # fork carrying the streamed Gemini tool call status fix https://github.com/brainlid/langchain/pull/671
       {:langchain,
        github: "nelsonkopliku/langchain",
-       ref: "a4f2439d99747205884a013ffd6f16c2f0a7a32f",
+       ref: "cf2b8be9dd89c8dfe1fbef938c488fe599fb3f7c",
        override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},

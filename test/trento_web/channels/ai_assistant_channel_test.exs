@@ -64,6 +64,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
   setup do
     stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_700_000_000 end)
+    stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :idle end)
     :ok
   end
 
@@ -374,8 +375,19 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:agent, {:status_changed, :error, ...}}" do
     setup :join_socket
 
+    test "ignores a stale :error when :run_has_started is false (subscribe snapshot)",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: true, run_has_started: false})
+
+      send(socket.channel_pid, {:agent, {:status_changed, :error, nil}})
+
+      refute_push("ag_ui_event", _, 100)
+      assert %{loading: true} = wait_assigns(socket)
+    end
+
     test "emits RUN_ERROR with the binary reason passed verbatim (no prefix)",
          %{socket: socket} do
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, "boom"}})
 
       assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => "boom"})
@@ -384,6 +396,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     test "emits RUN_ERROR with `Sorry, ...` prefix for %LangChainError{}",
          %{socket: socket} do
       error = LangChain.LangChainError.exception(type: "x", message: "stream gone")
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, error}})
 
       assert_push("ag_ui_event", %{
@@ -394,6 +407,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     test "emits RUN_ERROR with `Sorry, ...` + inspect for arbitrary term",
          %{socket: socket} do
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, :timeout}})
 
       assert_push("ag_ui_event", %{
@@ -609,7 +623,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -668,7 +682,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -709,7 +723,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -746,7 +760,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -770,7 +784,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -810,7 +824,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -864,7 +878,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -908,7 +922,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         :ok
       end)
 
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
 
       push(socket, "send_message", %{
@@ -932,7 +946,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id -> :ok end)
+
+      expect(Trento.AI.Agent.Server.Mock, :subscribe, fn _agent_id ->
+        {:ok, self(), make_ref()}
+      end)
+
       expect(Trento.AI.Agent.Server.Mock, :add_message, fn _agent_id, _msg -> :ok end)
 
       run_id = "run-#{System.unique_integer([:positive])}"
@@ -957,6 +975,89 @@ defmodule TrentoWeb.AIAssistantChannelTest do
                message_started: false,
                run_has_started: false
              } = wait_assigns(socket)
+    end
+  end
+
+  # The event stream does not survive an AgentServer crash, so the channel
+  # monitors the server: a death mid-run must end as RUN_ERROR, not a spinner.
+  describe "handle_info {:DOWN, ...} — agent server death" do
+    setup :join_socket_with_ai_config
+
+    test "emits RUN_ERROR and clears loading when the agent server dies mid-run",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+      assert %{loading: true} = wait_assigns(socket)
+
+      Process.exit(server_pid, :kill)
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Agent stopped unexpectedly: :killed"
+      })
+
+      assert %{loading: false} = wait_assigns(socket)
+    end
+
+    test "stays quiet when the agent server dies with no run in flight",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
+      send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
+
+      # Inactivity shutdown of an idle AgentServer is normal, not a failed run.
+      Process.exit(server_pid, :kill)
+
+      refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    test "does not accumulate monitors across runs on the same agent server",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+
+      for run_id <- ["r1", "r2"] do
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => run_id,
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_STARTED", "runId" => ^run_id})
+
+        send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
+        send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
+        assert_push("ag_ui_event", %{"type" => "RUN_FINISHED", "runId" => ^run_id})
+      end
+
+      {:monitors, monitors} = Process.info(socket.channel_pid, :monitors)
+
+      assert Enum.count(monitors, &(&1 == {:process, server_pid})) == 1
     end
   end
 
@@ -1502,6 +1603,22 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     stop_agent_on_exit(thread_id)
 
     %{thread_id: thread_id, task_pid: task_pid}
+  end
+
+  # Stands in for the AgentServer: the channel only monitors it.
+  defp spawn_fake_agent_server do
+    pid = spawn(fn -> Process.sleep(:infinity) end)
+    on_exit(fn -> Process.exit(pid, :kill) end)
+
+    pid
+  end
+
+  # Stubs the Agent.run/3 adapter chain to report `server_pid`, for any number of runs.
+  defp stub_agent_run(server_pid) do
+    stub(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, server_pid} end)
+    stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+    stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, server_pid, make_ref()} end)
+    stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})

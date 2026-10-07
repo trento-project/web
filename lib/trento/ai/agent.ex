@@ -5,9 +5,9 @@ defmodule Trento.AI.Agent do
   @moduledoc """
   Factory + lifecycle entrypoint for the Trento AI Assistant agent.
 
-  `run/1` is the single side-effecting entrypoint: it builds the agent,
+  `run/3` is the single side-effecting entrypoint: it builds the agent,
   ensures the per-thread `Sagents.AgentServer` is running, subscribes the
-  **calling process** to the agent's `{:agent, ...}` PubSub stream, and
+  **calling process** to the agent's `{:agent, ...}` event stream, and
   sends the user prompt. Callers (the Phoenix channel) only deal with
   trento-domain arguments + the AG-UI events that arrive in their mailbox;
   `Sagents` and `LangChain` are implementation details of this module.
@@ -62,10 +62,13 @@ defmodule Trento.AI.Agent do
 
   @doc """
   Ensure the agent for `:agent_id` is running, subscribe the calling
-  process to its event stream, and send the user prompt. Returns `:ok`
-  or the first `{:error, reason}` from the start/subscribe/send chain.
+  process to its event stream, and send the user prompt. Returns
+  `{:ok, server_pid}` or the first `{:error, reason}` from the start/subscribe/send chain.
+
+  Returns `{:error, :agent_busy}` while a run is in flight: sagents would
+  queue the prompt behind it, and its events would read as this run's.
   """
-  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: :ok | {:error, term()}
+  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
     refresh_when = Keyword.get(opts, :refresh_when, &default_refresh_when/2)
 
@@ -73,9 +76,11 @@ defmodule Trento.AI.Agent do
            agent_id
            |> start_opts(maybe_new_agent)
            |> AgentSupervisor.start_agent_sync(),
+         :ok <- ensure_not_running(agent_id),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
-         :ok <- AgentServer.subscribe(agent_id) do
-      AgentServer.add_message(agent_id, Message.new_user!(prompt))
+         {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
+         :ok <- AgentServer.add_message(agent_id, Message.new_user!(prompt)) do
+      {:ok, server_pid}
     end
   end
 
@@ -103,18 +108,7 @@ defmodule Trento.AI.Agent do
   Best-effort — returns `{:error, reason}` when nothing is running for the id.
   """
   @spec cancel(String.t()) :: :ok | {:error, term()}
-  def cancel(agent_id) do
-    AgentServer.cancel(agent_id)
-  catch
-    # `AgentServer.cancel/1` is a `GenServer.call` on a via-registry name, so it
-    # exits rather than returning an error when:
-    #   - nothing is registered for `agent_id` (`:noproc`) — never started, or already stopped
-    #   - the reply outlives the 5s default (`:timeout`) — the server answers only after a 2s task grace
-    #   - the server dies mid-call — a concurrent `stop/1` parks in `terminate/2` for up to 25s
-    # None of these leaves a run worth reporting on, and the exit signal must not
-    # take the caller down with it.
-    :exit, reason -> {:error, reason}
-  end
+  def cancel(agent_id), do: AgentServer.cancel(agent_id)
 
   defp maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when) do
     with {:ok, current_agent} <- AgentServer.get_agent(agent_id),
@@ -127,6 +121,13 @@ defmodule Trento.AI.Agent do
 
   defp default_refresh_when(_current_agent, _new_agent), do: :noop
 
+  defp ensure_not_running(agent_id) do
+    case AgentServer.get_status(agent_id) do
+      :running -> {:error, :agent_busy}
+      _ -> :ok
+    end
+  end
+
   defp update_agent(agent_id, updated_agent) do
     %{state: current_state} = AgentServer.get_info(agent_id)
 
@@ -138,8 +139,7 @@ defmodule Trento.AI.Agent do
   defp start_opts(agent_id, agent) do
     [
       agent_id: agent_id,
-      agent: agent,
-      pubsub: {Phoenix.PubSub, Trento.PubSub}
+      agent: agent
     ]
   end
 
