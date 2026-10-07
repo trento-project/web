@@ -69,6 +69,6 @@ module.exports = {
       '|react-syntax-highlighter|refractor|hastscript|hast-util-parse-selector|property-information' +
       '|space-separated-tokens|comma-separated-tokens|decode-named-character-reference|parse-entities' +
       '|character-entities|character-entities-legacy|character-reference-invalid' +
-      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal)/)',
+      '|is-alphabetical|is-alphanumerical|is-decimal|is-hexadecimal|uuid)/)',
   ],
 };
