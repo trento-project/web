@@ -64,11 +64,7 @@ defmodule Trento.MixProject do
     [
       {:llm_db, "~> 2026.7", runtime: false},
       {:sagents, "~> 0.7.0"},
-      # temporary override to pull in an elixir 1.15 compatible version
-      {:langchain,
-       github: "nelsonkopliku/langchain",
-       ref: "a4f2439d99747205884a013ffd6f16c2f0a7a32f",
-       override: true},
+      {:langchain, "~> 0.14.4"},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
