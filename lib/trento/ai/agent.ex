@@ -10,7 +10,9 @@ defmodule Trento.AI.Agent do
   **calling process** to the agent's `{:agent, ...}` event stream, and
   sends the user prompt. Since sagents 0.8.0 those events are delivered by
   monitored direct `send/2` from the AgentServer rather than broadcast over
-  `Phoenix.PubSub`; the payload shapes are unchanged. Callers (the Phoenix
+  `Phoenix.PubSub`; the payload shapes are unchanged, but the stream is now
+  bound to the subscriber's pid, which is why `run/3` hands the server pid
+  back for the caller to monitor. Callers (the Phoenix
   channel) only deal with trento-domain arguments + the AG-UI events that
   arrive in their mailbox; `Sagents` and `LangChain` are implementation
   details of this module.
@@ -65,10 +67,20 @@ defmodule Trento.AI.Agent do
 
   @doc """
   Ensure the agent for `:agent_id` is running, subscribe the calling
-  process to its event stream, and send the user prompt. Returns `:ok`
-  or the first `{:error, reason}` from the start/subscribe/send chain.
+  process to its event stream, and send the user prompt. Returns
+  `{:ok, server_pid}` — the `Sagents.AgentServer` process now publishing to
+  the caller — or the first `{:error, reason}` from the start/subscribe/send
+  chain.
+
+  Callers are expected to monitor `server_pid`. Since sagents 0.8.0 the
+  subscription is bound to the subscriber's pid, and the agent child is
+  `restart: :transient`, so a server crash detaches the caller from the event
+  stream for good: the restarted process has a different pid and no longer
+  knows about us. The `monitor_ref` sagents hands back from `subscribe/1` is
+  *its* monitor of the subscriber, not ours of it, so it cannot be used for
+  this.
   """
-  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: :ok | {:error, term()}
+  @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
     refresh_when = Keyword.get(opts, :refresh_when, &default_refresh_when/2)
 
@@ -77,8 +89,9 @@ defmodule Trento.AI.Agent do
            |> start_opts(maybe_new_agent)
            |> AgentSupervisor.start_agent_sync(),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
-         {:ok, _server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id) do
-      AgentServer.add_message(agent_id, Message.new_user!(prompt))
+         {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
+         :ok <- AgentServer.add_message(agent_id, Message.new_user!(prompt)) do
+      {:ok, server_pid}
     end
   end
 
