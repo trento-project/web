@@ -440,6 +440,9 @@ defmodule Trento.AI.AgentTest do
       test name, %{agent_id: agent_id} do
         task_pid = await_in_flight_run()
 
+        # `subscribe/1` first sent the agent's status from before the prompt.
+        assert_received {:agent, {:status_changed, :idle, nil}}
+
         send(task_pid, :release)
 
         assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
@@ -531,20 +534,7 @@ defmodule Trento.AI.AgentTest do
     assert_receive {:agent, {:status_changed, :running, nil}}, @integration_timeout
     assert_receive {:llm_called, task_pid}, @integration_timeout
 
-    discard_subscribe_snapshot()
-
     task_pid
-  end
-
-  # `subscribe/1` replies with a status snapshot (the `:idle` from before the
-  # prompt), always ahead of `:running`. Left in the mailbox, a test waiting for
-  # the run's own `:idle` would match it and read the agent mid-run.
-  defp discard_subscribe_snapshot do
-    receive do
-      {:agent, {:status_changed, :idle, nil}} -> :ok
-    after
-      0 -> :ok
-    end
   end
 
   # The mocked run/2 tests can only prove run/3 handles what the mocks return;
