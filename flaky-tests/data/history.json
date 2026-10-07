@@ -1,21 +1,5 @@
 [
   {
-    "timestamp": "2026-08-22T17:46:17Z",
-    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
-    "run_id": "32587848811",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Ai.ConfigurationsTest::test updating a user AI configuration should broadcast that the configuration was updated when the provider/model changed",
-        "score": 0.1215
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-22T18:15:37Z",
     "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
     "run_id": "32589174092",
@@ -5600,6 +5584,22 @@
       {
         "name": "should show the default check catalog with corosync token timeout default value::HANA cluster details Cluster with nutanix provider should show the default check catalog with corosync token timeout default value",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-07T22:03:48Z",
+    "commit": "971bd03a6e012f1d9486cea5b8aa6449e7cb788a",
+    "run_id": "37692735368",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 45,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
       }
     ]
   }
