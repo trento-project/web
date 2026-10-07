@@ -122,13 +122,12 @@ defmodule Trento.AI.Agent do
   def cancel(agent_id) do
     AgentServer.cancel(agent_id)
   catch
-    # `AgentServer.cancel/1` is a `GenServer.call` on a via-registry name, so it
-    # exits rather than returning an error when:
-    #   - nothing is registered for `agent_id` (`:noproc`) — never started, or already stopped
-    #   - the reply outlives the 5s default (`:timeout`) — the server answers only after a 2s task grace
-    #   - the server dies mid-call — a concurrent `stop/1` parks in `terminate/2` for up to 25s
-    # None of these leaves a run worth reporting on, and the exit signal must not
-    # take the caller down with it.
+    # Since sagents 0.12 `AgentServer.cancel/1` guards its own `GenServer.call`
+    # and names the cases that used to exit here — nothing registered for
+    # `agent_id`, a reply outliving the 5s default, the server dying mid-call —
+    # as `{:error, :agent_not_running}`. This clause is the backstop for the
+    # adapter boundary: `agent_server_adapter` is configurable, and an exit
+    # signal must not take the caller down with it.
     :exit, reason -> {:error, reason}
   end
 
