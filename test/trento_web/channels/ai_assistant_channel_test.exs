@@ -64,6 +64,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
   setup do
     stub(Joken.CurrentTime.Mock, :current_time, fn -> 1_700_000_000 end)
+    stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :idle end)
     :ok
   end
 

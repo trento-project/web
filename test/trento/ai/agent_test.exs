@@ -91,6 +91,15 @@ defmodule Trento.AI.AgentTest do
   describe "run/2" do
     setup :run_opts
 
+    test "refuses a busy agent without refreshing, subscribing or sending the prompt",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+      expect(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id -> :running end)
+
+      # No get_agent / subscribe / add_message expectations
+      assert {:error, :agent_busy} = TrentoAIAgent.run(agent, prompt)
+    end
+
     test "returns the AgentServer pid when start_agent_sync, subscribe, and add_message all succeed",
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
       test_pid = self()
@@ -551,6 +560,13 @@ defmodule Trento.AI.AgentTest do
 
       assert server_pid == Sagents.AgentServer.get_pid(agent_id)
     end
+
+    @tag running_agent: [block_for: :timer.minutes(1)]
+    test "refuses a second prompt while a run is in flight", %{agent: agent} do
+      await_in_flight_run()
+
+      assert {:error, :agent_busy} = TrentoAIAgent.run(agent, "second prompt")
+    end
   end
 
   defp run_opts(_ctx) do
@@ -558,6 +574,8 @@ defmodule Trento.AI.AgentTest do
     model = build(:random_langchain_model)
     scope = build(:user)
     agent = TrentoAIAgent.new!(agent_id: agent_id, model: model, scope: scope)
+
+    stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :idle end)
 
     %{agent: agent, agent_id: agent_id, prompt: "hello"}
   end

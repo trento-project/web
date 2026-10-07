@@ -64,6 +64,9 @@ defmodule Trento.AI.Agent do
   Ensure the agent for `:agent_id` is running, subscribe the calling
   process to its event stream, and send the user prompt. Returns
   `{:ok, server_pid}` or the first `{:error, reason}` from the start/subscribe/send chain.
+
+  Returns `{:error, :agent_busy}` while a run is in flight: sagents would
+  queue the prompt behind it, and its events would read as this run's.
   """
   @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
@@ -73,6 +76,7 @@ defmodule Trento.AI.Agent do
            agent_id
            |> start_opts(maybe_new_agent)
            |> AgentSupervisor.start_agent_sync(),
+         :ok <- ensure_not_running(agent_id),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
          {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
          :ok <- AgentServer.add_message(agent_id, Message.new_user!(prompt)) do
@@ -116,6 +120,13 @@ defmodule Trento.AI.Agent do
   end
 
   defp default_refresh_when(_current_agent, _new_agent), do: :noop
+
+  defp ensure_not_running(agent_id) do
+    case AgentServer.get_status(agent_id) do
+      :running -> {:error, :agent_busy}
+      _ -> :ok
+    end
+  end
 
   defp update_agent(agent_id, updated_agent) do
     %{state: current_state} = AgentServer.get_info(agent_id)
