@@ -374,8 +374,19 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:agent, {:status_changed, :error, ...}}" do
     setup :join_socket
 
+    test "ignores a stale :error when :run_has_started is false (subscribe snapshot)",
+         %{socket: socket} do
+      seed_assigns(socket, %{loading: true, run_has_started: false})
+
+      send(socket.channel_pid, {:agent, {:status_changed, :error, nil}})
+
+      refute_push("ag_ui_event", _, 100)
+      assert %{loading: true} = wait_assigns(socket)
+    end
+
     test "emits RUN_ERROR with the binary reason passed verbatim (no prefix)",
          %{socket: socket} do
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, "boom"}})
 
       assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => "boom"})
@@ -384,6 +395,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     test "emits RUN_ERROR with `Sorry, ...` prefix for %LangChainError{}",
          %{socket: socket} do
       error = LangChain.LangChainError.exception(type: "x", message: "stream gone")
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, error}})
 
       assert_push("ag_ui_event", %{
@@ -394,6 +406,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
     test "emits RUN_ERROR with `Sorry, ...` + inspect for arbitrary term",
          %{socket: socket} do
+      seed_assigns(socket, %{run_has_started: true})
       send(socket.channel_pid, {:agent, {:status_changed, :error, :timeout}})
 
       assert_push("ag_ui_event", %{

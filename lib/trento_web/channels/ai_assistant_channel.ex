@@ -28,7 +28,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
   | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one as `RUN_ERROR` |
-  | `:run_has_started` | boolean | per run | stale-`:idle` guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers an `:idle` from before the prompt; this flag is only set on the `:running` event for THIS run, so we ignore it |
+  | `:run_has_started` | boolean | per run | stale-status guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers the status from before the prompt (`:idle`, or `:error` after a failed run); this flag is only set on the `:running` event for THIS run, so we ignore it |
 
   ### Mutation surfaces
 
@@ -279,13 +279,24 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_info({:agent, {:status_changed, :error, reason}}, socket) do
+  def handle_info(
+        {:agent, {:status_changed, :error, reason}},
+        %{assigns: %{run_has_started: true}} = socket
+      ) do
     Logger.error("Agent execution failed: #{inspect(reason)}")
 
     {:noreply,
      socket
      |> reset_run()
      |> AgUi.run_error(reason)}
+  end
+
+  def handle_info(
+        {:agent, {:status_changed, :error, _reason}},
+        %{assigns: %{run_has_started: false}} = socket
+      ) do
+    Logger.warning("Ignoring stale :error event - run hasn't started yet")
+    {:noreply, socket}
   end
 
   @impl true
