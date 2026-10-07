@@ -192,15 +192,9 @@ defmodule TrentoWeb.AIAssistantChannel do
         |> run_agent(model_config, prompt)
 
       {:error, reason} ->
-        {:noreply, AgUi.run_error(socket, model_setup_error(reason))}
+        {:noreply, AgUi.run_error(socket, reason)}
     end
   end
-
-  defp model_setup_error(:no_ai_configuration),
-    do: "Failed to start agent. No AI configuration found for user."
-
-  defp model_setup_error(:user_not_found),
-    do: "Failed to start agent. User not found."
 
   defp run_agent(
          %{
@@ -234,12 +228,11 @@ defmodule TrentoWeb.AIAssistantChannel do
         |> AgUi.run_started(run_id, thread_id)
 
       {:error, reason} ->
-        error_msg = "Failed to start agent: #{inspect(reason)}"
-        Logger.error(error_msg)
+        Logger.error("Failed to start agent: #{inspect(reason)}")
 
         socket
         |> reset_run()
-        |> AgUi.run_error(error_msg)
+        |> AgUi.run_error(reason)
     end
     |> then(&{:noreply, &1})
   end
@@ -311,14 +304,13 @@ defmodule TrentoWeb.AIAssistantChannel do
         {:DOWN, ref, :process, _pid, reason},
         %{assigns: %{agent_monitor_ref: ref, loading: true}} = socket
       ) do
-    error_msg = "Agent stopped unexpectedly: #{inspect(reason)}"
-    Logger.error(error_msg)
+    Logger.error("Agent stopped unexpectedly: #{inspect(reason)}")
 
     {:noreply,
      socket
      |> assign(:agent_monitor_ref, nil)
      |> reset_run()
-     |> AgUi.run_error(error_msg)}
+     |> AgUi.run_error(:agent_down)}
   end
 
   # No run in flight: an idle server stopping (inactivity timeout, our own `stop/1`).
