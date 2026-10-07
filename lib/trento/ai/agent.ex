@@ -63,12 +63,7 @@ defmodule Trento.AI.Agent do
   @doc """
   Ensure the agent for `:agent_id` is running, subscribe the calling
   process to its event stream, and send the user prompt. Returns
-  `{:ok, server_pid}` or the first `{:error, reason}` from the
-  start/subscribe/send chain.
-
-  The subscription does not survive an AgentServer restart, so callers
-  monitor `server_pid` to notice the server dying. The ref `subscribe/1`
-  returns is sagents' monitor of the caller, not one the caller can use.
+  `{:ok, server_pid}` or the first `{:error, reason}` from the start/subscribe/send chain.
   """
   @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do

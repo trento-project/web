@@ -303,8 +303,7 @@ defmodule TrentoWeb.AIAssistantChannel do
      |> AgUi.run_error(error_msg)}
   end
 
-  # No run in flight: an idle server stopping (inactivity timeout, our own
-  # `stop/1`) is routine.
+  # No run in flight: an idle server stopping (inactivity timeout, our own `stop/1`).
   def handle_info(
         {:DOWN, ref, :process, _pid, _reason},
         %{assigns: %{agent_monitor_ref: ref}} = socket
