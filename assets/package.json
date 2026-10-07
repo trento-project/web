@@ -68,7 +68,7 @@
     "lodash": "^4.18.1",
     "papaparse": "^5.7.0",
     "postcss-import": "^16.1.1",
-    "posthog-js": "^1.434.8",
+    "posthog-js": "^1.434.10",
     "qrcode.react": "^4.2.0",
     "rc-input": "^1.8.0",
     "rc-input-number": "^9.5.0",
