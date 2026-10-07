@@ -64,7 +64,11 @@ defmodule Trento.MixProject do
     [
       {:llm_db, "~> 2026.7", runtime: false},
       {:sagents, "~> 0.16.1"},
-      {:langchain, "~> 0.14.4"},
+      # fork carrying the streamed Gemini tool call status fix https://github.com/brainlid/langchain/pull/671
+      {:langchain,
+       github: "nelsonkopliku/langchain",
+       ref: "cf2b8be9dd89c8dfe1fbef938c488fe599fb3f7c",
+       override: true},
       # used for the event  envelopes
       {:ag_ui_ex, "~> 0.1.0"},
       {:cachex, "~> 4.1"},
