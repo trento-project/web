@@ -9,16 +9,32 @@ import Tooltip from '@common/Tooltip';
 
 export const COPIED_FEEDBACK_MS = 2000;
 
+const copyDefaultOpts = {
+  fallbackToPrompt: true, // keep 3.x.x compatibility. prompt fallback was enabled there
+};
+
+// writeToClipboard returns a Promise that resolves into a boolean.
 // Make sure both flavours go out in a single clipboard event:
 // - `text/html` so rich targets (docs, mail, ticket trackers) keep the formatting
 // - `text/plain` so everything else gets `content` as it would have without the HTML
 export const writeToClipboard = (content, html) => {
-  if (!html) return copy(content);
+  if (!html) return copy(content, copyDefaultOpts);
 
   return copy(content, {
-    onCopy: (clipboardData) => {
-      clipboardData.setData('text/plain', content);
-      clipboardData.setData('text/html', html);
+    ...copyDefaultOpts,
+    format: 'text/html',
+    onCopy: (data) => {
+      // compatible for browsers without the new navigator.clipboard
+      if (data instanceof DataTransfer) {
+        data.setData('text/plain', content);
+        data.setData('text/html', html);
+        return;
+      }
+
+      return new ClipboardItem({
+        'text/plain': new Blob([content], { type: 'text/plain' }),
+        'text/html': new Blob([html], { type: 'text/html' }),
+      });
     },
   });
 };
@@ -39,11 +55,13 @@ function CopyButton({
     return () => clearTimeout(timeout);
   }, [copied]);
 
-  const copyText = () => {
+  const copyText = async () => {
     if (onCopy) return onCopy();
 
-    writeToClipboard(content, getHtml());
-    setCopied(true);
+    const copyResult = await writeToClipboard(content, getHtml());
+    if (copyResult) {
+      setCopied(true);
+    }
   };
 
   return (

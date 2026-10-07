@@ -22,7 +22,9 @@ function CopyReplyButton({
   const { copy, disabled, isCopied } = useActionBarCopy({
     copiedDuration: COPIED_FEEDBACK_MS,
     copyToClipboard: async (markdown) => {
-      if (!onWriteToClipboard(markdown, contentRef?.current?.innerHTML)) {
+      if (
+        !(await onWriteToClipboard(markdown, contentRef?.current?.innerHTML))
+      ) {
         throw new Error('clipboard write failed');
       }
     },
