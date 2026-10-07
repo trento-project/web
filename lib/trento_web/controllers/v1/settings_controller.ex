@@ -257,7 +257,6 @@ defmodule TrentoWeb.V1.SettingsController do
   @spec get_suse_manager_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
   def get_suse_manager_settings(conn, params), do: get_smlm_settings(conn, params)
 
-  # Deprecated: This endpoint is deprecated, see save_smlm_settings instead.
   operation :save_smlm_settings, @save_smlm_operation_options
 
   @spec save_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -465,11 +464,17 @@ defmodule TrentoWeb.V1.SettingsController do
            ],
       do: :update_smlm_settings
 
+  def get_action(%{private: %{phoenix_action: :get_suse_manager_settings}}),
+    do: :get_smlm_settings
+
   def get_action(%{private: %{phoenix_action: :save_suse_manager_settings}}),
     do: :save_smlm_settings
 
   def get_action(%{private: %{phoenix_action: :delete_suse_manager_settings}}),
     do: :delete_smlm_settings
+
+  def get_action(%{private: %{phoenix_action: :update_suse_manager_settings}}),
+    do: :update_smlm_settings
 
   def get_action(%{private: %{phoenix_action: :test_suse_manager_settings}}),
     do: :test_smlm_settings

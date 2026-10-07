@@ -14,6 +14,8 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   setup_all :setup_api_spec_v1
   setup :setup_user
 
+  @settings_routes ["smlm", "suse_manager"]
+
   describe "ApiKeySettings" do
     test "should return not found when api key settings are not configured", %{
       conn: conn,
@@ -166,6 +168,7 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
   end
 
   describe "SmlmSettings" do
+    # The "suse_manager" route is deprecated, but we still include it for backward compatibility
     setup do
       correlation_id = UUID.uuid4()
       key = UUID.uuid4()
@@ -173,532 +176,488 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       Trento.ActivityLog.put_correlation_id(key, correlation_id)
     end
 
-    test "should return user settings", %{conn: conn, api_spec: api_spec} do
-      insert_software_updates_settings(
-        ca_cert: build(:self_signed_certificate),
-        ca_uploaded_at: DateTime.utc_now()
-      )
+    for settings_route <- @settings_routes do
+      @settings_route settings_route
 
-      conn
-      |> get("/api/v1/settings/smlm")
-      |> json_response(:ok)
-      |> assert_schema("SmlmSettingsV1", api_spec)
-    end
+      test "should return user settings through the #{settings_route} route", %{
+        conn: conn,
+        api_spec: api_spec
+      } do
+        insert_software_updates_settings(
+          ca_cert: build(:self_signed_certificate),
+          ca_uploaded_at: DateTime.utc_now()
+        )
 
-    test "should return forbidden if no user settings have been saved", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      conn
-      |> get("/api/v1/settings/smlm")
-      |> json_response(:not_found)
-      |> assert_schema("NotFoundV1", api_spec)
-    end
+        conn
+        |> get("/api/v1/settings/#{@settings_route}")
+        |> json_response(:ok)
+        |> assert_schema("SmlmSettingsV1", api_spec)
+      end
 
-    test "should save new valid settings if no previous settings have been saved", %{conn: conn} do
-      settings =
-        %{url: url, username: username} = %{
+      test "should return forbidden if no user settings have been saved through the #{settings_route} route",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> get("/api/v1/settings/#{@settings_route}")
+        |> json_response(:not_found)
+        |> assert_schema("NotFoundV1", api_spec)
+      end
+
+      test "should save new valid settings if no previous settings have been saved through the #{settings_route} route",
+           %{conn: conn} do
+        settings =
+          %{url: url, username: username} = %{
+            url: Faker.Internet.image_url(),
+            username: Faker.Internet.user_name(),
+            password: Faker.Lorem.word(),
+            ca_cert: build(:self_signed_certificate)
+          }
+
+        %{"ca_uploaded_at" => ca_uploaded_at} =
+          resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/#{@settings_route}", settings)
+          |> json_response(:created)
+
+        assert %{"url" => ^url, "username" => ^username} = resp
+        refute ca_uploaded_at == nil
+      end
+
+      test "should not save settings if HTTP protocol provided in URL through the #{settings_route} route",
+           %{conn: conn} do
+        settings = %{
+          url: "http://insecureurl.com",
+          username: Faker.Internet.user_name(),
+          password: Faker.Lorem.word(),
+          ca_cert: build(:self_signed_certificate)
+        }
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/#{@settings_route}", settings)
+          |> json_response(:unprocessable_entity)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "can only be an https url",
+                     "source" => %{"pointer" => "/url"},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
+
+      test "should return 422 status if no body is provided in request through the #{settings_route} route",
+           %{conn: conn} do
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/#{@settings_route}", nil)
+          |> json_response(:unprocessable_entity)
+
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Missing field: url",
+                     "source" => %{"pointer" => "/url"},
+                     "title" => "Invalid value"
+                   },
+                   %{
+                     "detail" => "Missing field: username",
+                     "source" => %{"pointer" => "/username"},
+                     "title" => "Invalid value"
+                   },
+                   %{
+                     "detail" => "Missing field: password",
+                     "source" => %{"pointer" => "/password"},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
+
+      test "should not save valid settings when previously settings have been saved through the #{settings_route} route",
+           %{conn: conn} do
+        insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
+
+        new_settings = %{
           url: Faker.Internet.image_url(),
           username: Faker.Internet.user_name(),
           password: Faker.Lorem.word(),
           ca_cert: build(:self_signed_certificate)
         }
 
-      %{"ca_uploaded_at" => ca_uploaded_at} =
-        resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm", settings)
-        |> json_response(:created)
-
-      assert %{"url" => ^url, "username" => ^username} = resp
-      refute ca_uploaded_at == nil
-    end
-
-    test "should not save settings if HTTP protocol provided in URL", %{conn: conn} do
-      settings = %{
-        url: "http://insecureurl.com",
-        username: Faker.Internet.user_name(),
-        password: Faker.Lorem.word(),
-        ca_cert: build(:self_signed_certificate)
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm", settings)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "can only be an https url",
-                   "source" => %{"pointer" => "/url"},
-                   "title" => "Invalid value"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should return 422 status if no body is provided in request", %{conn: conn} do
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm", nil)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Missing field: url",
-                   "source" => %{"pointer" => "/url"},
-                   "title" => "Invalid value"
-                 },
-                 %{
-                   "detail" => "Missing field: username",
-                   "source" => %{"pointer" => "/username"},
-                   "title" => "Invalid value"
-                 },
-                 %{
-                   "detail" => "Missing field: password",
-                   "source" => %{"pointer" => "/password"},
-                   "title" => "Invalid value"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should not save valid settings when previously settings have been saved", %{conn: conn} do
-      insert_software_updates_settings(ca_cert: nil, ca_uploaded_at: nil)
-
-      new_settings = %{
-        url: Faker.Internet.image_url(),
-        username: Faker.Internet.user_name(),
-        password: Faker.Lorem.word(),
-        ca_cert: build(:self_signed_certificate)
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm", new_settings)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Credentials have already been set.",
-                   "title" => "Unprocessable Entity"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should not save invalid settings", %{conn: conn} do
-      settings = %{
-        url: Faker.Internet.image_url(),
-        username: Faker.Internet.user_name()
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm", settings)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Missing field: password",
-                   "source" => %{"pointer" => "/password"},
-                   "title" => "Invalid value"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved",
-         %{
-           conn: conn
-         } do
-      submission = %{
-        url: "https://validurl.com",
-        username: Faker.Internet.user_name(),
-        password: Faker.Lorem.word(),
-        ca_cert: nil
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/smlm", submission)
-        |> json_response(:not_found)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "SUSE Multi-Linux Manager settings not configured.",
-                   "title" => "Not Found"
-                 }
-               ]
-             } == resp
-    end
-
-    test "should not process empty request body", %{
-      conn: conn
-    } do
-      insert_software_updates_settings()
-
-      submission = %{}
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/smlm", submission)
-        |> json_response(:unprocessable_entity)
-
-      assert %{
-               "errors" => [
-                 %{
-                   "detail" => "Object property count 0 is less than minProperties: 1",
-                   "title" => "Invalid value",
-                   "source" => %{"pointer" => "/"}
-                 }
-               ]
-             } == resp
-    end
-
-    test "should validate partial changes to SUSE Multi-Linux Manager settings", %{conn: conn} do
-      insert_software_updates_settings()
-
-      change_settings_scenarios = [
-        %{
-          change_submissions: %{url: nil},
-          errors: [
-            %{
-              "detail" => "null value where string expected",
-              "source" => %{"pointer" => "/url"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: [%{url: ""}, %{url: "   "}],
-          errors: [
-            %{
-              "detail" => "can't be blank",
-              "source" => %{"pointer" => "/url"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: %{url: "http://not-secure.com"},
-          errors: [
-            %{
-              "detail" => "can only be an https url",
-              "source" => %{"pointer" => "/url"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: %{username: nil},
-          errors: [
-            %{
-              "detail" => "null value where string expected",
-              "source" => %{"pointer" => "/username"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: [%{username: ""}, %{username: "   "}],
-          errors: [
-            %{
-              "detail" => "can't be blank",
-              "source" => %{"pointer" => "/username"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: %{password: nil},
-          errors: [
-            %{
-              "detail" => "null value where string expected",
-              "source" => %{"pointer" => "/password"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: [
-            %{password: ""},
-            %{password: "   "}
-          ],
-          errors: [
-            %{
-              "detail" => "can't be blank",
-              "source" => %{"pointer" => "/password"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: [
-            %{ca_cert: ""},
-            %{ca_cert: "   "}
-          ],
-          errors: [
-            %{
-              "detail" => "can't be blank",
-              "source" => %{"pointer" => "/ca_cert"},
-              "title" => "Invalid value"
-            }
-          ]
-        },
-        %{
-          change_submissions: %{
-            url: nil,
-            username: "",
-            password: "   ",
-            ca_cert: nil
-          },
-          errors: [
-            %{
-              "detail" => "null value where string expected",
-              "source" => %{"pointer" => "/url"},
-              "title" => "Invalid value"
-            }
-          ]
-        }
-      ]
-
-      for %{change_submissions: change_submissions, errors: errors} <- change_settings_scenarios do
-        change_submissions
-        |> List.wrap()
-        |> Enum.each(fn change_submission ->
-          resp =
-            conn
-            |> put_req_header("content-type", "application/json")
-            |> patch("/api/v1/settings/smlm", change_submission)
-            |> json_response(:unprocessable_entity)
-
-          assert %{"errors" => errors} == resp
-        end)
-      end
-    end
-
-    test "should support partial change of SUSE Multi-Linux Manager settings", %{conn: conn} do
-      %{
-        url: initial_url,
-        username: _initial_username,
-        password: _initial_password,
-        ca_cert: _initial_ca_cert,
-        ca_uploaded_at: initial_ca_uploaded_at
-      } =
-        insert_software_updates_settings(
-          ca_cert: build(:self_signed_certificate),
-          ca_uploaded_at: DateTime.utc_now()
-        )
-
-      change_submission = %{
-        username: new_username = "new_username",
-        password: "new_password"
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/smlm", change_submission)
-        |> json_response(:ok)
-
-      assert %{
-               "url" => initial_url,
-               "username" => new_username,
-               "ca_uploaded_at" => DateTime.to_iso8601(initial_ca_uploaded_at)
-             } == resp
-    end
-
-    test "should properly update ca_cert and its upload date when a new cert is provided", %{
-      conn: conn
-    } do
-      %{
-        url: _initial_url,
-        username: initial_username,
-        password: _initial_password,
-        ca_cert: _initial_ca_cert,
-        ca_uploaded_at: initial_ca_uploaded_at
-      } =
-        insert_software_updates_settings(
-          ca_cert: build(:self_signed_certificate),
-          ca_uploaded_at: DateTime.utc_now()
-        )
-
-      change_submission = %{
-        url: new_url = "https://new.com",
-        ca_cert: build(:self_signed_certificate)
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/smlm", change_submission)
-        |> json_response(:ok)
-
-      assert %{"url" => ^new_url, "username" => ^initial_username} = resp
-
-      %{"ca_uploaded_at" => new_upload_time} = resp
-
-      refute new_upload_time == initial_ca_uploaded_at
-    end
-
-    test "should properly remove ca_cert and its upload date", %{conn: conn} do
-      %{
-        url: initial_url,
-        username: initial_username,
-        password: _initial_password,
-        ca_cert: _initial_ca_cert,
-        ca_uploaded_at: _initial_ca_uploaded_at
-      } =
-        insert_software_updates_settings(
-          ca_cert: build(:self_signed_certificate),
-          ca_uploaded_at: DateTime.utc_now()
-        )
-
-      change_submission = %{
-        ca_cert: nil
-      }
-
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> patch("/api/v1/settings/smlm", change_submission)
-        |> json_response(:ok)
-
-      assert %{
-               "url" => initial_url,
-               "username" => initial_username,
-               "ca_uploaded_at" => nil
-             } == resp
-    end
-
-    test "should return 204 if no user settings have previously been saved", %{conn: conn} do
-      conn = delete(conn, "/api/v1/settings/smlm")
-
-      assert response(conn, 204) == ""
-    end
-
-    test "should return 204 when user settings have previously been saved", %{conn: conn} do
-      insert_software_updates_settings()
-
-      conn = delete(conn, "/api/v1/settings/smlm")
-
-      assert response(conn, 204) == ""
-    end
-
-    test "should return 422 on test connection failure", %{conn: conn} do
-      error_reasons = [
-        :settings_not_configured,
-        :some_error_during_test_connection
-      ]
-
-      for error_reason <- error_reasons do
-        expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> {:error, error_reason} end)
-
         resp =
           conn
           |> put_req_header("content-type", "application/json")
-          |> post("/api/v1/settings/smlm/test", %{})
+          |> post("/api/v1/settings/#{@settings_route}", new_settings)
           |> json_response(:unprocessable_entity)
 
         assert %{
                  "errors" => [
                    %{
-                     "detail" => "Connection with software updates provider failed.",
+                     "detail" => "Credentials have already been set.",
                      "title" => "Unprocessable Entity"
                    }
                  ]
                } == resp
       end
-    end
 
-    test "should return 200 on successful test connection", %{conn: conn} do
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+      test "should not save invalid settings through the #{settings_route} route", %{conn: conn} do
+        settings = %{
+          url: Faker.Internet.image_url(),
+          username: Faker.Internet.user_name()
+        }
 
-      resp =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/settings/smlm/test")
-        |> json_response(:ok)
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/#{@settings_route}", settings)
+          |> json_response(:unprocessable_entity)
 
-      assert "" == resp
-    end
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Missing field: password",
+                     "source" => %{"pointer" => "/password"},
+                     "title" => "Invalid value"
+                   }
+                 ]
+               } == resp
+      end
 
-    test "should return user settings through the legacy route", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
+      test "should not be able to change SUSE Multi-Linux Manager settings if none previously saved through the #{settings_route} route",
+           %{
+             conn: conn
+           } do
+        submission = %{
+          url: "https://validurl.com",
+          username: Faker.Internet.user_name(),
+          password: Faker.Lorem.word(),
+          ca_cert: nil
+        }
 
-      conn
-      |> get("/api/v1/settings/suse_manager")
-      |> json_response(:ok)
-      |> assert_schema("SmlmSettingsV1", api_spec)
-    end
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> patch("/api/v1/settings/#{@settings_route}", submission)
+          |> json_response(:not_found)
 
-    test "should save settings through the legacy route", %{conn: conn, api_spec: api_spec} do
-      settings = %{
-        url: Faker.Internet.image_url(),
-        username: Faker.Internet.user_name(),
-        password: Faker.Lorem.word(),
-        ca_cert: build(:self_signed_certificate)
-      }
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "SUSE Multi-Linux Manager settings not configured.",
+                     "title" => "Not Found"
+                   }
+                 ]
+               } == resp
+      end
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/settings/suse_manager", settings)
-      |> json_response(:created)
-      |> assert_schema("SmlmSettingsV1", api_spec)
-    end
+      test "should not process empty request body through the #{settings_route} route", %{
+        conn: conn
+      } do
+        insert_software_updates_settings()
 
-    test "should patch settings through the legacy route", %{conn: conn, api_spec: api_spec} do
-      insert_software_updates_settings()
+        submission = %{}
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/settings/suse_manager", %{username: "legacy_username"})
-      |> json_response(:ok)
-      |> assert_schema("SmlmSettingsV1", api_spec)
-    end
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> patch("/api/v1/settings/#{@settings_route}", submission)
+          |> json_response(:unprocessable_entity)
 
-    test "should put settings through the legacy route", %{conn: conn, api_spec: api_spec} do
-      insert_software_updates_settings()
+        assert %{
+                 "errors" => [
+                   %{
+                     "detail" => "Object property count 0 is less than minProperties: 1",
+                     "title" => "Invalid value",
+                     "source" => %{"pointer" => "/"}
+                   }
+                 ]
+               } == resp
+      end
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> put("/api/v1/settings/suse_manager", %{username: "legacy_username"})
-      |> json_response(:ok)
-      |> assert_schema("SmlmSettingsV1", api_spec)
-    end
+      test "should validate partial changes to SUSE Multi-Linux Manager settings through the #{settings_route} route",
+           %{conn: conn} do
+        insert_software_updates_settings()
 
-    test "should delete settings through the legacy route", %{conn: conn} do
-      insert_software_updates_settings()
+        change_settings_scenarios = [
+          %{
+            change_submissions: %{url: nil},
+            errors: [
+              %{
+                "detail" => "null value where string expected",
+                "source" => %{"pointer" => "/url"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: [%{url: ""}, %{url: "   "}],
+            errors: [
+              %{
+                "detail" => "can't be blank",
+                "source" => %{"pointer" => "/url"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: %{url: "http://not-secure.com"},
+            errors: [
+              %{
+                "detail" => "can only be an https url",
+                "source" => %{"pointer" => "/url"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: %{username: nil},
+            errors: [
+              %{
+                "detail" => "null value where string expected",
+                "source" => %{"pointer" => "/username"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: [%{username: ""}, %{username: "   "}],
+            errors: [
+              %{
+                "detail" => "can't be blank",
+                "source" => %{"pointer" => "/username"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: %{password: nil},
+            errors: [
+              %{
+                "detail" => "null value where string expected",
+                "source" => %{"pointer" => "/password"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: [
+              %{password: ""},
+              %{password: "   "}
+            ],
+            errors: [
+              %{
+                "detail" => "can't be blank",
+                "source" => %{"pointer" => "/password"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: [
+              %{ca_cert: ""},
+              %{ca_cert: "   "}
+            ],
+            errors: [
+              %{
+                "detail" => "can't be blank",
+                "source" => %{"pointer" => "/ca_cert"},
+                "title" => "Invalid value"
+              }
+            ]
+          },
+          %{
+            change_submissions: %{
+              url: nil,
+              username: "",
+              password: "   ",
+              ca_cert: nil
+            },
+            errors: [
+              %{
+                "detail" => "null value where string expected",
+                "source" => %{"pointer" => "/url"},
+                "title" => "Invalid value"
+              }
+            ]
+          }
+        ]
 
-      conn = delete(conn, "/api/v1/settings/suse_manager")
+        for %{change_submissions: change_submissions, errors: errors} <- change_settings_scenarios do
+          change_submissions
+          |> List.wrap()
+          |> Enum.each(fn change_submission ->
+            resp =
+              conn
+              |> put_req_header("content-type", "application/json")
+              |> patch("/api/v1/settings/#{@settings_route}", change_submission)
+              |> json_response(:unprocessable_entity)
 
-      assert response(conn, :no_content) == ""
-    end
+            assert %{"errors" => errors} == resp
+          end)
+        end
+      end
 
-    test "should test the connection through the legacy route", %{conn: conn} do
-      expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+      test "should support partial change of SUSE Multi-Linux Manager settings through the #{settings_route} route",
+           %{conn: conn} do
+        %{
+          url: initial_url,
+          username: _initial_username,
+          password: _initial_password,
+          ca_cert: _initial_ca_cert,
+          ca_uploaded_at: initial_ca_uploaded_at
+        } =
+          insert_software_updates_settings(
+            ca_cert: build(:self_signed_certificate),
+            ca_uploaded_at: DateTime.utc_now()
+          )
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/settings/suse_manager/test")
-      |> json_response(:ok)
-      |> then(&assert &1 == "")
+        change_submission = %{
+          username: new_username = "new_username",
+          password: "new_password"
+        }
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> patch("/api/v1/settings/#{@settings_route}", change_submission)
+          |> json_response(:ok)
+
+        assert %{
+                 "url" => initial_url,
+                 "username" => new_username,
+                 "ca_uploaded_at" => DateTime.to_iso8601(initial_ca_uploaded_at)
+               } == resp
+      end
+
+      test "should properly update ca_cert and its upload date when a new cert is provided through the #{settings_route} route",
+           %{
+             conn: conn
+           } do
+        %{
+          url: _initial_url,
+          username: initial_username,
+          password: _initial_password,
+          ca_cert: _initial_ca_cert,
+          ca_uploaded_at: initial_ca_uploaded_at
+        } =
+          insert_software_updates_settings(
+            ca_cert: build(:self_signed_certificate),
+            ca_uploaded_at: DateTime.utc_now()
+          )
+
+        change_submission = %{
+          url: new_url = "https://new.com",
+          ca_cert: build(:self_signed_certificate)
+        }
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> patch("/api/v1/settings/#{@settings_route}", change_submission)
+          |> json_response(:ok)
+
+        assert %{"url" => ^new_url, "username" => ^initial_username} = resp
+
+        %{"ca_uploaded_at" => new_upload_time} = resp
+
+        refute new_upload_time == initial_ca_uploaded_at
+      end
+
+      test "should properly remove ca_cert and its upload date through the #{settings_route} route",
+           %{conn: conn} do
+        %{
+          url: initial_url,
+          username: initial_username,
+          password: _initial_password,
+          ca_cert: _initial_ca_cert,
+          ca_uploaded_at: _initial_ca_uploaded_at
+        } =
+          insert_software_updates_settings(
+            ca_cert: build(:self_signed_certificate),
+            ca_uploaded_at: DateTime.utc_now()
+          )
+
+        change_submission = %{
+          ca_cert: nil
+        }
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> patch("/api/v1/settings/#{@settings_route}", change_submission)
+          |> json_response(:ok)
+
+        assert %{
+                 "url" => initial_url,
+                 "username" => initial_username,
+                 "ca_uploaded_at" => nil
+               } == resp
+      end
+
+      test "should return 204 if no user settings have previously been saved through the #{settings_route} route",
+           %{conn: conn} do
+        conn = delete(conn, "/api/v1/settings/#{@settings_route}")
+
+        assert response(conn, 204) == ""
+      end
+
+      test "should return 204 when user settings have previously been saved through the #{settings_route} route",
+           %{conn: conn} do
+        insert_software_updates_settings()
+
+        conn = delete(conn, "/api/v1/settings/#{@settings_route}")
+
+        assert response(conn, 204) == ""
+      end
+
+      test "should return 422 on test connection failure through the #{settings_route} route", %{
+        conn: conn
+      } do
+        error_reasons = [
+          :settings_not_configured,
+          :some_error_during_test_connection
+        ]
+
+        for error_reason <- error_reasons do
+          expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> {:error, error_reason} end)
+
+          resp =
+            conn
+            |> put_req_header("content-type", "application/json")
+            |> post("/api/v1/settings/#{@settings_route}/test", %{})
+            |> json_response(:unprocessable_entity)
+
+          assert %{
+                   "errors" => [
+                     %{
+                       "detail" => "Connection with software updates provider failed.",
+                       "title" => "Unprocessable Entity"
+                     }
+                   ]
+                 } == resp
+        end
+      end
+
+      test "should return 200 on successful test connection through the #{settings_route} route",
+           %{conn: conn} do
+        expect(Trento.SoftwareUpdates.Discovery.Mock, :setup, fn -> :ok end)
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> post("/api/v1/settings/#{@settings_route}/test")
+          |> json_response(:ok)
+
+        assert "" == resp
+      end
     end
   end
 
@@ -994,48 +953,53 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
       |> assert_schema("ForbiddenV1", api_spec)
     end
 
-    test "should return forbidden when user tries to create settings without right abilities", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      settings = %{
-        url: Faker.Internet.image_url(),
-        username: Faker.Internet.user_name(),
-        password: Faker.Lorem.word(),
-        ca_cert: build(:self_signed_certificate)
-      }
+    for settings_route <- @settings_routes do
+      @settings_route settings_route
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> post("/api/v1/settings/smlm", settings)
-      |> json_response(:forbidden)
-      |> assert_schema("ForbiddenV1", api_spec)
-    end
+      test "should return forbidden when user tries to create settings without right abilities through the #{settings_route} route",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        settings = %{
+          url: Faker.Internet.image_url(),
+          username: Faker.Internet.user_name(),
+          password: Faker.Lorem.word(),
+          ca_cert: build(:self_signed_certificate)
+        }
 
-    test "should return forbidden when user tries to update settings without right abilities", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      insert_software_updates_settings()
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> post("/api/v1/settings/#{@settings_route}", settings)
+        |> json_response(:forbidden)
+        |> assert_schema("ForbiddenV1", api_spec)
+      end
 
-      change_submission = %{}
+      test "should return forbidden when user tries to update settings without right abilities through the #{settings_route} route",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        insert_software_updates_settings()
 
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> patch("/api/v1/settings/smlm", change_submission)
-      |> json_response(:forbidden)
-      |> assert_schema("ForbiddenV1", api_spec)
-    end
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> patch("/api/v1/settings/#{@settings_route}", %{})
+        |> json_response(:forbidden)
+        |> assert_schema("ForbiddenV1", api_spec)
+      end
 
-    test "should return forbidden when user tries to delete settings without right abilities", %{
-      conn: conn,
-      api_spec: api_spec
-    } do
-      conn
-      |> put_req_header("content-type", "application/json")
-      |> delete("/api/v1/settings/smlm")
-      |> json_response(:forbidden)
-      |> assert_schema("ForbiddenV1", api_spec)
+      test "should return forbidden when user tries to delete settings without right abilities through the #{settings_route} route",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> delete("/api/v1/settings/#{@settings_route}")
+        |> json_response(:forbidden)
+        |> assert_schema("ForbiddenV1", api_spec)
+      end
     end
 
     test "should return forbidden when user tries to create alerting settings without right abilities",

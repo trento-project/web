@@ -101,10 +101,7 @@ defmodule TrentoWeb.OpenApi.ApiSpecTest do
         assert Map.fetch!(legacy_settings, operation).deprecated
       end
 
-      refute spec.paths["/api/v1/settings/smlm"].post.deprecated
-
-      assert spec.paths["/api/v1/settings/suse_manager/test"].post.operationId ==
-               "TrentoWeb.V1.SettingsController.test_suse_manager_settings"
+      assert spec.paths["/api/v1/settings/suse_manager/test"].post.deprecated
     end
 
     test "should use oas_server_url if configured" do
