@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { EOS_CONTENT_COPY } from 'eos-icons-react';
 import { noop } from 'lodash';
 import copy from 'copy-to-clipboard';
+import { logError } from '@lib/log';
 import Tooltip from '@common/Tooltip';
 
 export const COPIED_FEEDBACK_MS = 2000;
@@ -61,6 +62,8 @@ function CopyButton({
     const copyResult = await writeToClipboard(content, getHtml());
     if (copyResult) {
       setCopied(true);
+    } else {
+      logError('clipboard write failed');
     }
   };
 

@@ -28,6 +28,7 @@ const readBlob = (blob) =>
 describe('CopyButton', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    jest.spyOn(console, 'error').mockImplementation(() => null);
     global.DataTransfer = jest.fn();
     global.ClipboardItem = jest.fn();
   });
@@ -206,5 +207,8 @@ describe('CopyButton', () => {
     await user.click(getCopyButton());
 
     expect(screen.queryByText('Copied to clipboard')).not.toBeInTheDocument();
+
+    /* eslint-disable-next-line */
+    expect(console.error).toHaveBeenCalledWith('clipboard write failed');
   });
 });
