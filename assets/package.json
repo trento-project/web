@@ -91,7 +91,7 @@
     "semver": "^7.8.5",
     "topbar": "^3.0.1",
     "tzdata": "^1.0.51",
-    "uuid": "^11.1.0"
+    "uuid": "^14.0.2"
   },
   "overrides": {
     "eos-icons-react": {
