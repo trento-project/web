@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-E8E8DC51.js"></script>
+    <script defer src="dist/sidebar_items-97BA275D.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -118,12 +118,12 @@ Trento Web
 
 
     <section id="moduledoc">
-<p>Factory + lifecycle entrypoint for the Trento AI Assistant agent.</p><p><code class="inline">run/1</code> is the single side-effecting entrypoint: it builds the agent,
-ensures the per-thread <a href="https://sagents.hexdocs.pm/0.7.0/Sagents.AgentServer.html"><code class="inline">Sagents.AgentServer</code></a> is running, subscribes the
-<strong>calling process</strong> to the agent's <code class="inline">{:agent, ...}</code> PubSub stream, and
+<p>Factory + lifecycle entrypoint for the Trento AI Assistant agent.</p><p><a href="#run/3"><code class="inline">run/3</code></a> is the single side-effecting entrypoint: it builds the agent,
+ensures the per-thread <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentServer.html"><code class="inline">Sagents.AgentServer</code></a> is running, subscribes the
+<strong>calling process</strong> to the agent's <code class="inline">{:agent, ...}</code> event stream, and
 sends the user prompt. Callers (the Phoenix channel) only deal with
 trento-domain arguments + the AG-UI events that arrive in their mailbox;
-<a href="https://sagents.hexdocs.pm/0.7.0/Sagents.html"><code class="inline">Sagents</code></a> and <code class="inline">LangChain</code> are implementation details of this module.</p><p><a href="#new!/1"><code class="inline">new!/1</code></a> is the pure factory (no side effects). Useful for tests that
+<a href="https://sagents.hexdocs.pm/0.16.1/Sagents.html"><code class="inline">Sagents</code></a> and <code class="inline">LangChain</code> are implementation details of this module.</p><p><a href="#new!/1"><code class="inline">new!/1</code></a> is the pure factory (no side effects). Useful for tests that
 want to inspect the configured agent.</p>
     </section>
 
@@ -169,8 +169,8 @@ conversation state alive.</p></div>
       </div>
 
         <div class="summary-synopsis"><p>Ensure the agent for <code class="inline">:agent_id</code> is running, subscribe the calling
-process to its event stream, and send the user prompt. Returns <code class="inline">:ok</code>
-or the first <code class="inline">{:error, reason}</code> from the start/subscribe/send chain.</p></div>
+process to its event stream, and send the user prompt. Returns
+<code class="inline">{:ok, server_pid}</code> or the first <code class="inline">{:error, reason}</code> from the start/subscribe/send chain.</p></div>
 
     </div>
 
@@ -208,7 +208,7 @@ or the first <code class="inline">{:error, reason}</code> from the start/subscri
       <h1 class="signature" translate="no">cancel(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L106" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L111" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -248,7 +248,7 @@ conversation state alive.</p><p>Best-effort — returns <code class="inline">{:e
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> new!(<a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">keyword</a>()) :: <a href="https://sagents.hexdocs.pm/0.7.0/Sagents.Agent.html#t:t/0">Sagents.Agent.t</a>()</pre>
+          <pre translate="no"><span class="attribute">@spec</span> new!(<a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">keyword</a>()) :: <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.Agent.html#t:t/0">Sagents.Agent.t</a>()</pre>
 
       </div>
 
@@ -271,7 +271,7 @@ to tools that need it, without polluting <code class="inline">:scope</code>.</li
       <h1 class="signature" translate="no">run(maybe_new_agent, prompt, opts \\ [])</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L69" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L72" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -282,13 +282,14 @@ to tools that need it, without polluting <code class="inline">:scope</code>.</li
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@spec</span> run(<a href="https://sagents.hexdocs.pm/0.7.0/Sagents.Agent.html#t:t/0">Sagents.Agent.t</a>(), <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">keyword</a>()) :: :ok | {:error, <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre translate="no"><span class="attribute">@spec</span> run(<a href="https://sagents.hexdocs.pm/0.16.1/Sagents.Agent.html#t:t/0">Sagents.Agent.t</a>(), <a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>(), <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">keyword</a>()) :: {:ok, <a href="https://elixir.hexdocs.pm/typespecs.html#basic-types">pid</a>()} | {:error, <a href="https://elixir.hexdocs.pm/typespecs.html#built-in-types">term</a>()}</pre>
 
       </div>
 
 <p>Ensure the agent for <code class="inline">:agent_id</code> is running, subscribe the calling
-process to its event stream, and send the user prompt. Returns <code class="inline">:ok</code>
-or the first <code class="inline">{:error, reason}</code> from the start/subscribe/send chain.</p>
+process to its event stream, and send the user prompt. Returns
+<code class="inline">{:ok, server_pid}</code> or the first <code class="inline">{:error, reason}</code> from the start/subscribe/send chain.</p><p>Returns <code class="inline">{:error, :agent_busy}</code> while a run is in flight: sagents would
+queue the prompt behind it, and its events would read as this run's.</p>
   </section>
 </section>
 <section class="detail" id="stop/1">
@@ -301,7 +302,7 @@ or the first <code class="inline">{:error, reason}</code> from the start/subscri
       <h1 class="signature" translate="no">stop(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L94" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L99" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

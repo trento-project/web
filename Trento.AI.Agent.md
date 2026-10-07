@@ -3,9 +3,9 @@
 
 Factory + lifecycle entrypoint for the Trento AI Assistant agent.
 
-`run/1` is the single side-effecting entrypoint: it builds the agent,
+`run/3` is the single side-effecting entrypoint: it builds the agent,
 ensures the per-thread `Sagents.AgentServer` is running, subscribes the
-**calling process** to the agent's `{:agent, ...}` PubSub stream, and
+**calling process** to the agent's `{:agent, ...}` event stream, and
 sends the user prompt. Callers (the Phoenix channel) only deal with
 trento-domain arguments + the AG-UI events that arrive in their mailbox;
 `Sagents` and `LangChain` are implementation details of this module.
@@ -44,12 +44,15 @@ Accepted `opts`:
 # `run`
 
 ```elixir
-@spec run(Sagents.Agent.t(), String.t(), keyword()) :: :ok | {:error, term()}
+@spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
 ```
 
 Ensure the agent for `:agent_id` is running, subscribe the calling
-process to its event stream, and send the user prompt. Returns `:ok`
-or the first `{:error, reason}` from the start/subscribe/send chain.
+process to its event stream, and send the user prompt. Returns
+`{:ok, server_pid}` or the first `{:error, reason}` from the start/subscribe/send chain.
+
+Returns `{:error, :agent_busy}` while a run is in flight: sagents would
+queue the prompt behind it, and its events would read as this run's.
 
 # `stop`
 

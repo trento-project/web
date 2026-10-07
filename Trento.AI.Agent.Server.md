@@ -33,10 +33,16 @@ a Mox mock without booting the real sagents stack.
 @callback get_info(String.t()) :: %{state: Sagents.State.t()}
 ```
 
+# `get_status`
+
+```elixir
+@callback get_status(String.t()) :: Sagents.AgentServer.status() | :not_running
+```
+
 # `subscribe`
 
 ```elixir
-@callback subscribe(String.t()) :: :ok | {:error, term()}
+@callback subscribe(String.t()) :: {:ok, pid(), reference()} | {:error, term()}
 ```
 
 # `update_agent_and_state`
@@ -53,6 +59,8 @@ a Mox mock without booting the real sagents stack.
 # `get_agent`
 
 # `get_info`
+
+# `get_status`
 
 # `subscribe`
 
