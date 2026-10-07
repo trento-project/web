@@ -134,6 +134,12 @@ defmodule TrentoWeb.AI.McpRouteIndexTest do
           },
           %Phoenix.Router.Route{
             plug: FakeMcpController,
+            plug_opts: :with_summary,
+            verb: :post,
+            path: "/fake/with_summary2"
+          },
+          %Phoenix.Router.Route{
+            plug: FakeMcpController,
             plug_opts: :empty_summary,
             verb: :get,
             path: "/fake/empty_summary"
@@ -159,6 +165,13 @@ defmodule TrentoWeb.AI.McpRouteIndexTest do
 
     test "derives tool_name from controller stem + action when ai_tool/2 absent" do
       assert %Entry{tool_name: "fake_mcp_with_summary"} = fake_entry(:with_summary)
+    end
+
+    test "deduplicates routes with the same controller and action" do
+      entries = McpRouteIndex.entries(FakeMcpRouter)
+
+      assert length(entries) == 3
+      assert %Entry{verb: :get, path: "/fake/with_summary"} = fake_entry(:with_summary)
     end
 
     test "returns nil display_text when operation.summary is empty" do
