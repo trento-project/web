@@ -3,13 +3,16 @@
 
 defmodule Trento.AI.Presence do
   @moduledoc """
-  Tracks who is viewing an AI agent's conversation. sagents stops an idle
-  agent once its last viewer is gone, see `track_viewer/2`.
+  Viewers of AI agent conversations. sagents stops an idle agent once its last viewer is gone.
   """
 
   use Phoenix.Presence,
     otp_app: :trento,
     pubsub_server: Trento.PubSub
+
+  alias Trento.AI.ApplicationConfigLoader
+
+  @viewer_check_delay :timer.seconds(60)
 
   @doc """
   The Presence topic sagents watches for `agent_id`'s viewers.
@@ -18,12 +21,17 @@ defmodule Trento.AI.Presence do
   def viewers_topic(agent_id), do: "ai_agent_viewers:#{agent_id}"
 
   @doc """
-  Registers the calling process as a viewer of `agent_id`'s conversation.
+  Grace period after the last viewer leaves, so a client that rejoins in time keeps the agent.
+  Set by `:viewer_check_delay` in the `:ai` application environment.
+  """
+  @spec viewer_check_delay() :: non_neg_integer()
+  def viewer_check_delay,
+    do: Keyword.get(ApplicationConfigLoader.load(), :viewer_check_delay, @viewer_check_delay)
 
-  sagents stops an idle agent once it has no viewer left, after a grace period
-  that lets a reconnecting client pick the conversation up again. A viewer is
-  dropped when its process exits, so tracking from the channel process covers
-  every way the client can go away. Tracking the same viewer twice is a no-op.
+  @doc """
+  Tracks the calling process as a viewer of `agent_id`. Presence drops the viewer when the
+  process exits, so tracking from the channel covers every way the client goes away.
+  Tracking twice is a no-op.
   """
   @spec track_viewer(String.t(), String.t()) :: :ok | {:error, term()}
   def track_viewer(agent_id, viewer_id) do
@@ -35,7 +43,7 @@ defmodule Trento.AI.Presence do
   end
 
   @doc """
-  Removes the calling process as a viewer of `agent_id`'s conversation.
+  Untracks the calling process as a viewer of `agent_id`.
   """
   @spec untrack_viewer(String.t(), String.t()) :: :ok
   def untrack_viewer(agent_id, viewer_id),

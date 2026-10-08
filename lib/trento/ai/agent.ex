@@ -24,8 +24,6 @@ defmodule Trento.AI.Agent do
 
   # Stops any idle agent, viewed or not: sagents' idle timer ignores presence.
   @inactivity_timeout :timer.minutes(30)
-  # Grace period after the last viewer leaves, so a client that rejoins in time keeps the agent.
-  @viewer_check_delay :timer.seconds(60)
 
   @doc """
   Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
@@ -148,8 +146,7 @@ defmodule Trento.AI.Agent do
       presence_tracking: [
         presence_module: Presence,
         topic: Presence.viewers_topic(agent_id),
-        check_delay:
-          Keyword.get(ApplicationConfigLoader.load(), :viewer_check_delay, @viewer_check_delay)
+        check_delay: Presence.viewer_check_delay()
       ]
     ]
   end
