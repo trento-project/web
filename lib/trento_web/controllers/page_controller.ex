@@ -15,6 +15,7 @@ defmodule TrentoWeb.PageController do
     deregistration_debounce = Application.fetch_env!(:trento, :deregistration_debounce)
     admin_username = Application.fetch_env!(:trento, :admin_user)
     installation_id = Settings.get_installation_id()
+    installation_method = Application.fetch_env!(:trento, :analytics)[:installation_method]
     analytics_enabled = Application.fetch_env!(:trento, :analytics)[:enabled]
     operations_enabled = Application.fetch_env!(:trento, :operations_enabled)
     ai_enabled = Trento.AI.enabled?()
@@ -27,6 +28,7 @@ defmodule TrentoWeb.PageController do
       deregistration_debounce: deregistration_debounce,
       admin_username: admin_username,
       installation_id: installation_id,
+      installation_method: installation_method,
       analytics_enabled: analytics_enabled,
       sso_enabled: sso_enabled,
       sso_login_url: login_url,

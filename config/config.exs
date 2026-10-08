@@ -259,7 +259,8 @@ config :trento,
 
 config :trento, :analytics,
   enabled: true,
-  gtm_id: System.get_env("GTM_ID", "")
+  gtm_id: System.get_env("GTM_ID", ""),
+  installation_method: System.get_env("INSTALLATION_METHOD", "dev")
 
 config :trento, Trento.Vault,
   ciphers: [
