@@ -393,7 +393,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
              } = state
     end
 
-    test "should update state when ApplicationInstaceMoved event is received removing the instance from the old host" do
+    test "should update state when ApplicationInstanceMoved event is received removing the instance from the old host" do
       old_host_id = UUID.uuid4()
       new_host_id = UUID.uuid4()
       sap_system_id = UUID.uuid4()
@@ -431,7 +431,7 @@ defmodule Trento.Infrastructure.Commanded.ProcessManagers.DeregistrationProcessM
              } = state
     end
 
-    test "should update state when ApplicationInstaceMoved event is received adding the instance in the new host" do
+    test "should update state when ApplicationInstanceMoved event is received adding the instance in the new host" do
       old_host_id = UUID.uuid4()
       new_host_id = UUID.uuid4()
       sap_system_id = UUID.uuid4()

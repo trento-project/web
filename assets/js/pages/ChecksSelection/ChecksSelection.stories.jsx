@@ -89,7 +89,7 @@ export const Default = {
   args: {
     groupID: faker.string.uuid(),
     catalog,
-    userAbilities: [{ name: 'all', resource: 'check_customization' }],
+    userAbilities: [{ name: 'all', resource: 'checks_customization' }],
     provider: 'aws',
     loading: false,
     onUpdateCatalog: action('onUpdateCatalog'),

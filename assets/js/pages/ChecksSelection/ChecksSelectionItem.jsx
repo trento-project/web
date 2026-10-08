@@ -16,7 +16,7 @@ import { isPermitted } from '@lib/model/users';
 
 const defaultAbilities = [];
 
-const CUSTOMIZATION_ALLOWED_FOR = ['all:all', 'all:check_customization'];
+const CUSTOMIZATION_ALLOWED_FOR = ['all:all', 'all:checks_customization'];
 
 const canCustomize = (abilities, customizable) =>
   isPermitted(abilities, CUSTOMIZATION_ALLOWED_FOR) && customizable;

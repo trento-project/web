@@ -91,7 +91,7 @@ describe('Checks Customizability', () => {
   const allAbility = { name: 'all', resource: 'all' };
   const checkCustomizationAbility = {
     name: 'all',
-    resource: 'check_customization',
+    resource: 'checks_customization',
   };
 
   it.each`
