@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-23T17:43:12Z",
-    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
-    "run_id": "32654910084",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 43,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB return error when trying to update with wrong value for field invalid smtp server",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-23T18:13:28Z",
     "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
     "run_id": "32656299918",
@@ -5671,5 +5651,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-08T22:55:50Z",
+    "commit": "d36b0c547c154ed4f52cee630598d34288b0a6a7",
+    "run_id": "37853364175",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
