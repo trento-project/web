@@ -15,7 +15,7 @@ defmodule TrentoWeb.Layouts do
 
   embed_templates "layouts/*"
   @compile {:no_warn_undefined, {Routes, :live_dashboard_path, 2}}
-  @gtm_id Application.compile_env!(:trento, :analytics)[:gtm_id]
+  @gtm_id Application.compile_env!(:trento, [:analytics, :gtm_id])
 
   # next functions are used in `root.html.heex` to interpolate values
   def get_gtm_id do
