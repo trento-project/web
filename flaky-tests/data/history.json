@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-23T17:42:23Z",
-    "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
-    "run_id": "32654910084",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 44,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-23T17:43:12Z",
     "commit": "9b691ca43063443f24a84d0ef39cf0e22477827c",
     "run_id": "32654910084",
@@ -5651,6 +5640,34 @@
       },
       {
         "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-08T22:08:07Z",
+    "commit": "d36b0c547c154ed4f52cee630598d34288b0a6a7",
+    "run_id": "37850495748",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 4
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.UsersTest::test users by_id/1 returns not found for unknown users",
+        "score": 0.5
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_message/1 should consume any incoming message",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
+        "score": 0.05001
+      },
+      {
+        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
         "score": 0.02501
       }
     ]
