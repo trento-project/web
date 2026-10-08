@@ -537,6 +537,37 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
                } == resp
       end
 
+      test "should support change via PUT through the #{settings_route}", %{conn: conn} do
+        %{
+          url: initial_url,
+          username: _initial_username,
+          password: _initial_password,
+          ca_cert: _initial_ca_cert,
+          ca_uploaded_at: initial_ca_uploaded_at
+        } =
+          insert_software_updates_settings(
+            ca_cert: build(:self_signed_certificate),
+            ca_uploaded_at: DateTime.utc_now()
+          )
+
+        change_submission = %{
+          username: new_username = "new_username",
+          password: "new_password"
+        }
+
+        resp =
+          conn
+          |> put_req_header("content-type", "application/json")
+          |> put("/api/v1/settings/#{@settings_route}", change_submission)
+          |> json_response(:ok)
+
+        assert %{
+                 "url" => initial_url,
+                 "username" => new_username,
+                 "ca_uploaded_at" => DateTime.to_iso8601(initial_ca_uploaded_at)
+               } == resp
+      end
+
       test "should properly update ca_cert and its upload date when a new cert is provided through the #{settings_route} route",
            %{
              conn: conn
@@ -985,6 +1016,20 @@ defmodule TrentoWeb.V1.SettingsControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> patch("/api/v1/settings/#{@settings_route}", %{})
+        |> json_response(:forbidden)
+        |> assert_schema("ForbiddenV1", api_spec)
+      end
+
+      test "should return forbidden when user tries to update settings with PUT without right abilities through the #{settings_route} route",
+           %{
+             conn: conn,
+             api_spec: api_spec
+           } do
+        insert_software_updates_settings()
+
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put("/api/v1/settings/#{@settings_route}", %{})
         |> json_response(:forbidden)
         |> assert_schema("ForbiddenV1", api_spec)
       end
