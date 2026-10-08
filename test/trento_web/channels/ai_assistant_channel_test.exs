@@ -1116,6 +1116,24 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         refute viewer_id in viewers(thread_id)
       end
     end
+
+    test "tracks the thread the client names when it rejoins",
+         %{user_id: user_id, thread_id: thread_id, viewer_id: viewer_id} do
+      join_as_persisted_user(user_id, %{"thread_id" => thread_id})
+
+      assert viewer_id in viewers(thread_id)
+    end
+
+    test "stops the rejoined thread's agent on abandon_thread",
+         %{user_id: user_id, thread_id: thread_id, viewer_id: viewer_id} do
+      %{socket: socket} = join_as_persisted_user(user_id, %{"thread_id" => thread_id})
+      stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^thread_id -> :ok end)
+
+      socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+
+      refute viewer_id in viewers(thread_id)
+    end
   end
 
   describe "handle_in send_message/3 — error paths before the agent starts" do
@@ -1647,16 +1665,18 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     join_as_persisted_user(user_id)
   end
 
-  defp join_as_persisted_user(user_id) do
+  defp join_as_persisted_user(user_id, join_params \\ %{}) do
     jwt = generate_jwt(user_id)
     request_origin = "https://trento.test"
 
     {:ok, _, socket} =
       UserSocket
       |> socket("user_id", %{current_user_id: user_id, request_origin: request_origin})
-      |> subscribe_and_join(AIAssistantChannel, "ai_assistant:#{user_id}", %{
-        "access_token" => jwt
-      })
+      |> subscribe_and_join(
+        AIAssistantChannel,
+        "ai_assistant:#{user_id}",
+        Map.put(join_params, "access_token", jwt)
+      )
 
     Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
     Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
