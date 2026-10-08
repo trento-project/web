@@ -119,7 +119,9 @@ Trento Web
 
     <section id="moduledoc">
 <p>Production implementation of <a href="Trento.AI.Agent.Supervisor.html"><code class="inline">Trento.AI.Agent.Supervisor</code></a> —
-delegates to <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentsDynamicSupervisor.html"><code class="inline">Sagents.AgentsDynamicSupervisor</code></a>.</p>
+delegates to <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentsDynamicSupervisor.html"><code class="inline">Sagents.AgentsDynamicSupervisor</code></a>.</p><p><code class="inline">start_agent_sync/1</code> exits once this node's sagents tree is down, for
+example while the node drains. The exit is caught into
+<code class="inline">{:error, :registry_unavailable}</code>.</p>
     </section>
 
 </div>

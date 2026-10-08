@@ -376,7 +376,8 @@ a Mox mock without booting the real sagents stack.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> get_info(<a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()) :: %{state: <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.State.html#t:t/0">Sagents.State.t</a>()}</pre>
+          <pre translate="no"><span class="attribute">@callback</span> get_info(<a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()) ::
+  %{state: <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.State.html#t:t/0">Sagents.State.t</a>()} | {:error, :registry_unavailable}</pre>
 
       </div>
 
@@ -393,7 +394,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">get_status(t)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L24" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L25" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -404,7 +405,8 @@ a Mox mock without booting the real sagents stack.</p>
 
       <div class="specs">
 
-          <pre translate="no"><span class="attribute">@callback</span> get_status(<a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()) :: <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentServer.html#t:status/0">Sagents.AgentServer.status</a>() | :not_running</pre>
+          <pre translate="no"><span class="attribute">@callback</span> get_status(<a href="https://elixir.hexdocs.pm/String.html#t:t/0">String.t</a>()) ::
+  <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentServer.html#t:status/0">Sagents.AgentServer.status</a>() | :not_running | {:error, :registry_unavailable}</pre>
 
       </div>
 
@@ -449,7 +451,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">update_agent_and_state(t, t, t)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L25" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L27" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -491,7 +493,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">add_message(agent_id, message)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L29" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L31" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -513,7 +515,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">cancel(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L30" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L32" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -535,7 +537,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">get_agent(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L31" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -557,7 +559,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">get_info(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L32" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L34" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -579,7 +581,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">get_status(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L33" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L35" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -601,7 +603,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">subscribe(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L28" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L30" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -623,7 +625,7 @@ a Mox mock without booting the real sagents stack.</p>
       <h1 class="signature" translate="no">update_agent_and_state(agent_id, agent, state)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L35" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent/server.ex#L37" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

@@ -30,13 +30,15 @@ a Mox mock without booting the real sagents stack.
 # `get_info`
 
 ```elixir
-@callback get_info(String.t()) :: %{state: Sagents.State.t()}
+@callback get_info(String.t()) ::
+  %{state: Sagents.State.t()} | {:error, :registry_unavailable}
 ```
 
 # `get_status`
 
 ```elixir
-@callback get_status(String.t()) :: Sagents.AgentServer.status() | :not_running
+@callback get_status(String.t()) ::
+  Sagents.AgentServer.status() | :not_running | {:error, :registry_unavailable}
 ```
 
 # `subscribe`

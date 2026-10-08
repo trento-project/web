@@ -119,7 +119,9 @@ Trento Web
 
     <section id="moduledoc">
 <p>Production implementation of <a href="Trento.AI.Agent.Server.html"><code class="inline">Trento.AI.Agent.Server</code></a> —
-delegates to <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentServer.html"><code class="inline">Sagents.AgentServer</code></a>.</p>
+delegates to <a href="https://sagents.hexdocs.pm/0.16.1/Sagents.AgentServer.html"><code class="inline">Sagents.AgentServer</code></a>.</p><p><code class="inline">get_agent/1</code>, <code class="inline">get_info/1</code>, <code class="inline">get_status/1</code> and <code class="inline">update_agent_and_state/3</code> raise
+<a href="https://sagents.hexdocs.pm/0.16.1/Sagents.RegistryUnavailableError.html"><code class="inline">Sagents.RegistryUnavailableError</code></a> once this node's sagents tree is down, for example while the node drains.
+They are rescued into <code class="inline">{:error, :registry_unavailable}</code>, as the behaviour requires.</p>
     </section>
 
 </div>

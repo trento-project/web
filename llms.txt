@@ -731,10 +731,8 @@ configuration lifecycle events carried over `Phoenix.PubSub`.
 
   - [Trento.Infrastructure.AI.SagentsAgentServer](Trento.Infrastructure.AI.SagentsAgentServer.md): Production implementation of `Trento.AI.Agent.Server` —
 delegates to `Sagents.AgentServer`.
-
   - [Trento.Infrastructure.AI.SagentsDynamicSupervisor](Trento.Infrastructure.AI.SagentsDynamicSupervisor.md): Production implementation of `Trento.AI.Agent.Supervisor` —
 delegates to `Sagents.AgentsDynamicSupervisor`.
-
   - [Trento.Infrastructure.Alerting.Alerting](Trento.Infrastructure.Alerting.Alerting.md): Provides a set of functions of Alerting related usecases.
 
   - [Trento.Infrastructure.Alerting.Emails.EmailLayout](Trento.Infrastructure.Alerting.Emails.EmailLayout.md): Common layout of the Trento alerting emails.
