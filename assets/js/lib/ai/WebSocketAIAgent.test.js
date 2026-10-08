@@ -7,22 +7,6 @@ import { aguiEvents } from '@lib/test-utils/aguiEvents';
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
 import { CONNECTING, CONNECTED, DISCONNECTED } from './connectionStatus';
 
-// Wrap socket.channel + each channel.leave with jest.fn so the existing
-// `toHaveBeenCalled` / `mockClear` assertions still apply. The shared
-// makeMockSocket stays jest-free so stories can use it too.
-function makeJestSocket() {
-  const socket = makeMockSocket();
-  const original = socket.channel;
-  socket.channel = jest.fn((topic) => {
-    const channel = original(topic);
-    if (!jest.isMockFunction(channel.leave)) {
-      channel.leave = jest.fn(channel.leave);
-    }
-    return channel;
-  });
-  return socket;
-}
-
 const flushMicrotasks = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
 };
@@ -51,7 +35,7 @@ function makeAuthDoubles() {
 // doubles come last and are returned as handles: a test that needs a failing
 // refresh does `refreshToken.mockRejectedValueOnce(...)` on the returned spy.
 function makeAgent(overrides = {}) {
-  const socket = makeJestSocket();
+  const socket = makeMockSocket();
   const auth = makeAuthDoubles();
   const agent = new WebSocketAIAgent({
     socket,
@@ -94,12 +78,10 @@ describe('WebSocketAIAgent', () => {
 
       const initPromise = agent.initialize();
 
-      expect(socket.channel).toHaveBeenCalledWith(
-        'ai_assistant:u42',
-        expect.any(Function)
-      );
-      const [, paramsFn] = socket.channel.mock.calls[0];
-      expect(paramsFn()).toEqual({ access_token: 'TEST_TOKEN' });
+      expect(socket.channels.has('ai_assistant:u42')).toBe(true);
+      expect(getChannel().joinPayload).toMatchObject({
+        access_token: 'TEST_TOKEN',
+      });
       expect(onConnectionChange).toHaveBeenNthCalledWith(1, CONNECTING);
 
       getChannel().joinPush.fire('ok');
@@ -149,13 +131,24 @@ describe('WebSocketAIAgent', () => {
       }
     );
 
+    it('uses the most up to date threadId on join and rejoin', async () => {
+      const { agent, channel } = await connectedAgent({ threadId: 'thread-1' });
+      expect(channel.joinPayload).toMatchObject({ thread_id: 'thread-1' });
+
+      agent.threadId = 'thread-2';
+      channel.rejoin();
+
+      expect(channel.joinPayload).toMatchObject({ thread_id: 'thread-2' });
+    });
+
     it('is idempotent when channel is already initialized', async () => {
-      const { agent, socket } = await connectedAgent();
+      const { agent, channel } = await connectedAgent();
+      const join = jest.spyOn(channel, 'join');
 
-      socket.channel.mockClear();
-      await agent.initialize();
+      const again = agent.initialize();
 
-      expect(socket.channel).not.toHaveBeenCalled();
+      expect(join).not.toHaveBeenCalled();
+      await again;
     });
 
     it('refreshes and rejoins on join error with reason "unauthorized"', async () => {
@@ -164,6 +157,7 @@ describe('WebSocketAIAgent', () => {
         userID: 'u9',
         onConnectionChange,
       });
+      const buildChannel = jest.spyOn(socket, 'channel');
 
       const initPromise = agent.initialize();
       const firstChannel = getChannel();
@@ -176,9 +170,10 @@ describe('WebSocketAIAgent', () => {
       expect(refreshToken).toHaveBeenCalledTimes(1);
       // Second channel created (initialize re-entered after channel was nulled),
       // and its params callback reads the token refreshed in between.
-      expect(socket.channel).toHaveBeenCalledTimes(2);
-      const [, retryParamsFn] = socket.channel.mock.calls[1];
-      expect(retryParamsFn()).toEqual({ access_token: 'NEW_TOKEN' });
+      expect(buildChannel).toHaveBeenCalledTimes(2);
+      expect(getChannel().joinPayload).toMatchObject({
+        access_token: 'NEW_TOKEN',
+      });
 
       // Second join succeeds — initPromise resolves.
       const secondChannel = getChannel();
@@ -619,10 +614,11 @@ describe('WebSocketAIAgent', () => {
       const onConnectionChange = jest.fn();
       const { agent, channel } = await connectedAgent({ onConnectionChange });
       onConnectionChange.mockClear();
+      const leave = jest.spyOn(channel, 'leave');
 
       agent.disconnect();
 
-      expect(channel.leave).toHaveBeenCalled();
+      expect(leave).toHaveBeenCalled();
       expect(agent.channel).toBeNull();
       expect(onConnectionChange).toHaveBeenCalledWith(DISCONNECTED);
     });

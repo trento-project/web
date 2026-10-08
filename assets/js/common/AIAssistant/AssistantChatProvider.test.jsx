@@ -110,6 +110,12 @@ describe('AssistantChatProvider', () => {
     expect(onConnectionChange).toHaveBeenCalledWith(CONNECTED);
   });
 
+  it('names the thread on screen in the first join, not a placeholder', () => {
+    const { channel } = renderProvider({ threadID: 'thread-1' });
+
+    expect(channel().joinPayload).toMatchObject({ thread_id: 'thread-1' });
+  });
+
   it('attaches the callbacks before initializing, so the first transition is not lost', async () => {
     const onConnectionChange = jest.fn();
     const { channel } = renderProvider({ onConnectionChange });

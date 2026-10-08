@@ -24,7 +24,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:current_scope` | `%Trento.Users.User{id: id}` | from `join/3` | passed to `Sagents.Agent.new!` as `:scope` so tool callbacks see `context.scope.id` |
   | `:loading` | boolean | toggled per run | double-send guard — prevents race conditions |
   | `:current_run_id` | UUID string | set at each `send_message` | echoed in `RUN_STARTED` + `RUN_FINISHED` AG-UI events for client-side correlation |
-  | `:current_thread_id` | UUID string | set at each `send_message` | used as the sagents `agent_id` + echoed in run events |
+  | `:current_thread_id` | UUID string | set at each `send_message`, and at a join that names one | used as the sagents `agent_id` + echoed in run events |
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
   | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one as `RUN_ERROR` |
@@ -58,7 +58,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def join(
         "ai_assistant:" <> user_id,
-        %{"access_token" => token},
+        %{"access_token" => token} = payload,
         %{assigns: %{current_user_id: current_user_id}} = socket
       ) do
     with :ok <- check_ai_enabled(),
@@ -70,7 +70,8 @@ defmodule TrentoWeb.AIAssistantChannel do
        |> assign(:access_token, token)
        |> assign(:current_scope, %User{id: current_user_id})
        |> assign(:agent_monitor_ref, nil)
-       |> assign(:loading, false)}
+       |> assign(:loading, false)
+       |> resume_thread(payload)}
     end
   end
 
@@ -403,6 +404,16 @@ defmodule TrentoWeb.AIAssistantChannel do
       socket
       |> assign(:current_run_id, run_id)
       |> assign(:current_thread_id, thread_id)
+
+  # A rejoin after a network drop names the thread still on screen. Viewing it
+  # again keeps its agent alive past the grace period, before the next prompt.
+  defp resume_thread(socket, %{"thread_id" => thread_id}) when is_binary(thread_id),
+    do:
+      socket
+      |> view_thread(thread_id)
+      |> assign(:current_thread_id, thread_id)
+
+  defp resume_thread(socket, _payload), do: socket
 
   # One agent per channel: moving to another thread leaves the previous one.
   defp view_thread(socket, thread_id) do
