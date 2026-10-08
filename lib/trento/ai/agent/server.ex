@@ -20,8 +20,10 @@ defmodule Trento.AI.Agent.Server do
   @callback add_message(String.t(), Message.t()) :: :ok | {:error, term()}
   @callback cancel(String.t()) :: :ok | {:error, term()}
   @callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
-  @callback get_info(String.t()) :: %{state: Sagents.State.t()}
-  @callback get_status(String.t()) :: Sagents.AgentServer.status() | :not_running
+  @callback get_info(String.t()) ::
+              %{state: Sagents.State.t()} | {:error, :registry_unavailable}
+  @callback get_status(String.t()) ::
+              Sagents.AgentServer.status() | :not_running | {:error, :registry_unavailable}
   @callback update_agent_and_state(String.t(), Sagents.Agent.t(), Sagents.State.t()) ::
               :ok | {:error, term()}
 
