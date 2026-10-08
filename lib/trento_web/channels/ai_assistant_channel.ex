@@ -38,6 +38,8 @@ defmodule TrentoWeb.AIAssistantChannel do
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
   - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
   - `monitor_agent_server/2` — alongside `activate_run/2`; swaps `:agent_monitor_ref` for a monitor on the pid `Trento.AI.Agent.run/3` returned. Survives `reset_run/1`: the subscription spans runs.
+  - `view_thread/2` — on each prompt; tracks the channel as a viewer of the thread, so sagents stops the agent once nobody views it. A different thread first goes through `leave_thread/1`: one agent per channel.
+  - `leave_thread/1` — our own stop (`abandon_thread`, AI-configuration clear, thread change): untracks the viewer and stops the agent.
 
   `:running` and `:llm_deltas` perform single-flag flips inline
   (`run_has_started`, `message_started`).
@@ -48,7 +50,7 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   alias Trento.AI
   alias Trento.AI.Agent, as: TrentoAIAgent
-  alias Trento.AI.LLMBuilder
+  alias Trento.AI.{LLMBuilder, Presence}
   alias Trento.Users.User
   alias TrentoWeb.AIAssistant.AgUi
   alias TrentoWeb.Auth.AccessToken
@@ -109,11 +111,18 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_in(action, _payload, socket)
       when action in ["cancel_run", "abandon_thread"] do
-    case {socket.assigns[:current_thread_id], action} do
-      {nil, _} -> :ok
-      {thread_id, "cancel_run"} -> TrentoAIAgent.cancel(thread_id)
-      {thread_id, "abandon_thread"} -> TrentoAIAgent.stop(thread_id)
-    end
+    socket =
+      case {socket.assigns[:current_thread_id], action} do
+        {nil, _} ->
+          socket
+
+        {thread_id, "cancel_run"} ->
+          TrentoAIAgent.cancel(thread_id)
+          socket
+
+        {_thread_id, "abandon_thread"} ->
+          leave_thread(socket)
+      end
 
     {:reply, :ok, reset_run(socket)}
   end
@@ -181,6 +190,7 @@ defmodule TrentoWeb.AIAssistantChannel do
     case LLMBuilder.build(current_user_id) do
       {:ok, model_config} ->
         socket
+        |> view_thread(thread_id)
         |> stash_run_ids(run_id, thread_id)
         |> run_agent(model_config, prompt)
 
@@ -363,10 +373,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   def handle_info({:ai_configuration, :cleared}, socket) do
     # The user's AI configuration was cleared.
     # Stop any in-flight agent for this thread and notify the client
-    case socket.assigns[:current_thread_id] do
-      nil -> :ok
-      thread_id -> TrentoAIAgent.stop(thread_id)
-    end
+    socket = leave_thread(socket)
 
     push(socket, "ai_configuration_cleared", %{})
 
@@ -396,6 +403,33 @@ defmodule TrentoWeb.AIAssistantChannel do
       socket
       |> assign(:current_run_id, run_id)
       |> assign(:current_thread_id, thread_id)
+
+  # One agent per channel: moving to another thread leaves the previous one.
+  defp view_thread(socket, thread_id) do
+    socket =
+      if socket.assigns[:current_thread_id] in [nil, thread_id],
+        do: socket,
+        else: leave_thread(socket)
+
+    case Presence.track_viewer(thread_id, viewer_id(socket)) do
+      :ok -> :ok
+      {:error, reason} -> Logger.warning("Cannot track the AI agent viewer: #{inspect(reason)}")
+    end
+
+    socket
+  end
+
+  # Our own stop: untracks the viewer and stops the agent.
+  defp leave_thread(%{assigns: %{current_thread_id: thread_id}} = socket)
+       when is_binary(thread_id) do
+    Presence.untrack_viewer(thread_id, viewer_id(socket))
+    TrentoAIAgent.stop(thread_id)
+    socket
+  end
+
+  defp leave_thread(socket), do: socket
+
+  defp viewer_id(%{assigns: %{current_user_id: user_id}}), do: to_string(user_id)
 
   # Consecutive runs resolve to the same server: replace the monitor, don't stack it.
   defp monitor_agent_server(socket, server_pid) do

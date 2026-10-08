@@ -14,7 +14,7 @@ defmodule Trento.AI.AgentTest do
   alias Trento.AI.Agent, as: TrentoAIAgent
   alias Trento.AI.Agent.Server, as: TrentoAIAgentServer
   alias Trento.AI.Agent.Supervisor, as: TrentoAIAgentSupervisor
-  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel}
+  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel, Presence}
   alias Trento.Users.User
 
   @fake_reply "You are absolutely right, I am a fake model."
@@ -129,6 +129,26 @@ defmodule Trento.AI.AgentTest do
       assert Keyword.fetch!(start_opts, :agent_id) == agent_id
 
       assert_received {:add_message, %Message{content: [%{content: "hello"}]}}
+    end
+
+    test "starts the agent with a 30-minute idle timeout and a 60 s viewer grace period",
+         %{agent: agent, prompt: prompt} do
+      test_pid = self()
+
+      expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn start_opts ->
+        send(test_pid, {:start_agent_sync, start_opts})
+        {:ok, self()}
+      end)
+
+      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
+      stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, self(), make_ref()} end)
+      stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+
+      assert {:ok, _server_pid} = TrentoAIAgent.run(agent, prompt)
+
+      assert_received {:start_agent_sync, start_opts}
+      assert Keyword.fetch!(start_opts, :inactivity_timeout) == :timer.minutes(30)
+      assert get_in(start_opts, [:presence_tracking, :check_delay]) == :timer.seconds(60)
     end
 
     test "short-circuits when start_agent_sync fails (subscribe + add_message NOT called)",
@@ -643,6 +663,16 @@ defmodule Trento.AI.AgentTest do
     task_pid
   end
 
+  # Lets the run started by `running_agent/1` answer, and blocks until the agent is idle again.
+  defp complete_run do
+    task_pid = await_in_flight_run()
+
+    # `subscribe/1` first sent the agent's status from before the prompt.
+    assert_received {:agent, {:status_changed, :idle, nil}}
+    send(task_pid, :release)
+    assert_receive {:agent, {:status_changed, :idle, nil}}, @integration_timeout
+  end
+
   # The mocked run/2 tests can only prove run/3 handles what the mocks return;
   # this one fails if a sagents bump changes what the real adapters hand back.
   describe "run/3 — integration (real supervisor + agent server)" do
@@ -663,6 +693,63 @@ defmodule Trento.AI.AgentTest do
       await_in_flight_run()
 
       assert {:error, :agent_busy} = TrentoAIAgent.run(agent, "second prompt")
+    end
+  end
+
+  describe "viewer presence — integration (real supervisor + agent server)" do
+    @describetag :integration
+
+    @describetag :running_agent
+
+    setup [:real_sagents_adapters, :running_agent]
+
+    @tag ai_config_overrides: [viewer_check_delay: 50]
+    test "stops an idle agent once its last viewer leaves", %{agent_id: agent_id, pid: pid} do
+      :ok = Presence.track_viewer(agent_id, "user-1")
+      complete_run()
+      ref = Process.monitor(pid)
+
+      :ok = Presence.untrack_viewer(agent_id, "user-1")
+
+      assert_receive {:agent, {:agent_shutdown, %{reason: :no_viewers}}}, @integration_timeout
+      assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, @integration_timeout
+    end
+
+    @tag ai_config_overrides: [viewer_check_delay: 50]
+    test "keeps an idle agent when one viewer leaves and another remains",
+         %{agent_id: agent_id, pid: pid} do
+      :ok = Presence.track_viewer(agent_id, "user-1")
+      :ok = Presence.track_viewer(agent_id, "user-2")
+      complete_run()
+      ref = Process.monitor(pid)
+      :ok = Phoenix.PubSub.subscribe(Trento.PubSub, Presence.viewers_topic(agent_id))
+
+      :ok = Presence.untrack_viewer(agent_id, "user-2")
+
+      assert_receive %{event: "presence_diff", payload: %{leaves: %{"user-2" => _}}},
+                     @integration_timeout
+
+      refute_receive {:DOWN, ^ref, :process, _, _}, 300
+    end
+
+    @tag ai_config_overrides: [viewer_check_delay: 300]
+    test "keeps an idle agent whose viewer comes back within the check delay",
+         %{agent_id: agent_id, pid: pid} do
+      :ok = Presence.track_viewer(agent_id, "user-1")
+      complete_run()
+      ref = Process.monitor(pid)
+      :ok = Phoenix.PubSub.subscribe(Trento.PubSub, Presence.viewers_topic(agent_id))
+
+      :ok = Presence.untrack_viewer(agent_id, "user-1")
+
+      assert_receive %{event: "presence_diff", payload: %{leaves: %{"user-1" => _}}},
+                     @integration_timeout
+
+      # get_status is a call: it returns after the agent has handled the leave and scheduled its stop.
+      assert :idle = TrentoAIAgentServer.get_status(agent_id)
+      :ok = Presence.track_viewer(agent_id, "user-1")
+
+      refute_receive {:DOWN, ^ref, :process, _, _}, 600
     end
   end
 

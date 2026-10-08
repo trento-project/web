@@ -1061,6 +1061,63 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "viewer presence" do
+    setup :join_socket_with_ai_config
+
+    setup %{user_id: user_id} do
+      %{thread_id: "thread-#{Faker.UUID.v4()}", viewer_id: to_string(user_id)}
+    end
+
+    test "tracks the channel as a viewer of the thread it prompts",
+         %{socket: socket, access_token: jwt, thread_id: thread_id, viewer_id: viewer_id} do
+      stub_agent_run(spawn_fake_agent_server())
+
+      push_prompt(socket, jwt, thread_id)
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+      assert viewer_id in viewers(thread_id)
+    end
+
+    test "stops the previous thread's agent when the client moves to another thread",
+         %{socket: socket, access_token: jwt, thread_id: thread_id, viewer_id: viewer_id} do
+      stub_agent_run(spawn_fake_agent_server())
+      stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^thread_id -> :ok end)
+
+      push_prompt(socket, jwt, thread_id)
+      finish_run(socket)
+
+      next_thread_id = "thread-#{Faker.UUID.v4()}"
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, next_thread_id)
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED", "threadId" => ^next_thread_id})
+
+      refute viewer_id in viewers(thread_id)
+      assert viewer_id in viewers(next_thread_id)
+    end
+
+    for action <- ["abandon_thread", :ai_configuration_cleared] do
+      @action action
+      test "stops viewing the thread on #{inspect(action)}",
+           %{socket: socket, access_token: jwt, thread_id: thread_id, viewer_id: viewer_id} do
+        stub_agent_run(spawn_fake_agent_server())
+        stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+        stub(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn _ -> :ok end)
+
+        push_prompt(socket, jwt, thread_id)
+        finish_run(socket)
+
+        case @action do
+          "abandon_thread" -> socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+          :ai_configuration_cleared -> send(socket.channel_pid, {:ai_configuration, :cleared})
+        end
+
+        _ = wait_assigns(socket)
+        refute viewer_id in viewers(thread_id)
+      end
+    end
+  end
+
   describe "handle_in send_message/3 — error paths before the agent starts" do
     setup :join_socket_without_ai_config
 
@@ -1521,6 +1578,43 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "viewer presence — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    @tag ai_config_overrides: [viewer_check_delay: 50]
+    test "stops the thread's idle agent once its channel goes away",
+         %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+      send(task_pid, :release)
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"}, @integration_timeout)
+
+      agent = Process.monitor(agent_pid!(thread_id))
+      refute_receive {:DOWN, ^agent, :process, _, _}, 300
+
+      kill_channel(socket)
+
+      assert_receive {:DOWN, ^agent, :process, _, _}, @integration_timeout
+    end
+
+    # Only the release ends the run, so the stop below cannot come from the model timing out.
+    @tag ai_config_overrides: [viewer_check_delay: 50]
+    @tag fake_llm: [block_for: :timer.minutes(1)]
+    test "lets a run outlive its viewer and stops the agent when the run ends",
+         %{socket: socket, access_token: jwt} do
+      %{thread_id: thread_id, task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+
+      agent = Process.monitor(agent_pid!(thread_id))
+      kill_channel(socket)
+
+      refute_receive {:DOWN, ^agent, :process, _, _}, 300
+      send(task_pid, :release)
+
+      assert_receive {:DOWN, ^agent, :process, _, _}, @integration_timeout
+    end
+  end
+
   defp join_socket(_context) do
     jwt = generate_jwt(7)
     request_origin = "https://trento.test"
@@ -1605,6 +1699,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     %{thread_id: thread_id, task_pid: task_pid}
   end
 
+  # A killed channel skips every callback, so only presence notices it is gone.
+  defp kill_channel(%{channel_pid: channel_pid}) do
+    Process.unlink(channel_pid)
+    ref = Process.monitor(channel_pid)
+    Process.exit(channel_pid, :kill)
+    assert_receive {:DOWN, ^ref, :process, _, :killed}
+  end
+
   # Stands in for the AgentServer: the channel only monitors it.
   defp spawn_fake_agent_server do
     pid = spawn(fn -> Process.sleep(:infinity) end)
@@ -1619,6 +1721,22 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
     stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, server_pid, make_ref()} end)
     stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)
+  end
+
+  defp push_prompt(socket, jwt, thread_id) do
+    push(socket, "send_message", %{
+      "message" => "hi",
+      "run_id" => "run-#{Faker.UUID.v4()}",
+      "thread_id" => thread_id,
+      "access_token" => jwt
+    })
+  end
+
+  defp finish_run(socket) do
+    assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+    send(socket.channel_pid, {:agent, {:status_changed, :running, nil}})
+    send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
+    assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
   end
 
   defp generate_jwt(sub), do: AccessToken.generate_access_token!(%{"sub" => sub})
