@@ -110,7 +110,7 @@ describe('AssistantChatProvider', () => {
     expect(onConnectionChange).toHaveBeenCalledWith(CONNECTED);
   });
 
-  it('names the thread on screen in the first join, not a placeholder', () => {
+  it('joins with the provided threadId', () => {
     const { channel } = renderProvider({ threadID: 'thread-1' });
 
     expect(channel().joinPayload).toMatchObject({ thread_id: 'thread-1' });
