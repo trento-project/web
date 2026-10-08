@@ -9,6 +9,12 @@
 @spec delete_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
+# `delete_suse_manager_settings`
+
+```elixir
+@spec delete_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
 # `get_action`
 
 # `get_activity_log_settings`
@@ -31,6 +37,12 @@
 @spec get_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
+# `get_suse_manager_settings`
+
+```elixir
+@spec get_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
 # `open_api_operation`
 
 ```elixir
@@ -43,16 +55,34 @@
 @spec patch_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
+# `patch_suse_manager_settings`
+
+```elixir
+@spec patch_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
 # `put_smlm_settings`
 
 ```elixir
 @spec put_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
+# `put_suse_manager_settings`
+
+```elixir
+@spec put_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
 # `save_smlm_settings`
 
 ```elixir
 @spec save_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
+# `save_suse_manager_settings`
+
+```elixir
+@spec save_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
 # `shared_security`
@@ -69,6 +99,12 @@
 
 ```elixir
 @spec test_smlm_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
+```
+
+# `test_suse_manager_settings`
+
+```elixir
+@spec test_suse_manager_settings(Plug.Conn.t(), any()) :: Plug.Conn.t()
 ```
 
 # `update_activity_log_settings`
