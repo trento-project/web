@@ -280,9 +280,9 @@ defmodule TrentoWeb.V1.SettingsController do
   operation :patch_smlm_settings, @update_smlm_operation_options
   operation :put_smlm_settings, @update_smlm_operation_options
 
-  # Deprecated: This endpoint is deprecated, see update_smlm_settings instead.
-  operation :patch_suse_manager_settings, @deprecated_update_smlm_operation_options
   # Deprecated: This endpoint is deprecated, see patch_smlm_settings instead.
+  operation :patch_suse_manager_settings, @deprecated_update_smlm_operation_options
+  # Deprecated: This endpoint is deprecated, see put_smlm_settings instead.
   operation :put_suse_manager_settings, @deprecated_update_smlm_operation_options
 
   @spec patch_smlm_settings(Plug.Conn.t(), any) :: Plug.Conn.t()
