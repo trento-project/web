@@ -110,23 +110,19 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   @impl true
-  def handle_in(action, _payload, socket)
-      when action in ["cancel_run", "abandon_thread"] do
-    socket =
-      case {socket.assigns[:current_thread_id], action} do
-        {nil, _} ->
-          socket
+  def handle_in("cancel_run", _payload, socket),
+    do:
+      {:reply, :ok,
+       socket
+       |> cancel_run()
+       |> reset_run()}
 
-        {thread_id, "cancel_run"} ->
-          TrentoAIAgent.cancel(thread_id)
-          socket
-
-        {_thread_id, "abandon_thread"} ->
-          leave_thread(socket)
-      end
-
-    {:reply, :ok, reset_run(socket)}
-  end
+  def handle_in("abandon_thread", _payload, socket),
+    do:
+      {:reply, :ok,
+       socket
+       |> leave_thread()
+       |> reset_run()}
 
   defp check_ai_enabled do
     case AI.enabled?() do
@@ -416,29 +412,37 @@ defmodule TrentoWeb.AIAssistantChannel do
   defp resume_thread(socket, _payload), do: socket
 
   # One agent per channel: moving to another thread leaves the previous one.
-  defp view_thread(socket, thread_id) do
-    socket =
-      if socket.assigns[:current_thread_id] in [nil, thread_id],
-        do: socket,
-        else: leave_thread(socket)
+  defp view_thread(%{assigns: %{current_thread_id: previous}} = socket, thread_id)
+       when is_binary(previous) and previous != thread_id,
+       do:
+         socket
+         |> leave_thread()
+         |> tap(&track_viewer(&1, thread_id))
 
-    case Presence.track_viewer(thread_id, viewer_id(socket)) do
-      :ok -> :ok
-      {:error, reason} -> Logger.warning("Cannot track the AI agent viewer: #{inspect(reason)}")
-    end
+  defp view_thread(socket, thread_id), do: tap(socket, &track_viewer(&1, thread_id))
 
-    socket
-  end
+  # Ends the run in flight but keeps the thread's agent and its conversation.
+  defp cancel_run(%{assigns: %{current_thread_id: thread_id}} = socket)
+       when is_binary(thread_id),
+       do: tap(socket, fn _ -> TrentoAIAgent.cancel(thread_id) end)
+
+  defp cancel_run(socket), do: socket
 
   # Our own stop: untracks the viewer and stops the agent.
   defp leave_thread(%{assigns: %{current_thread_id: thread_id}} = socket)
-       when is_binary(thread_id) do
-    Presence.untrack_viewer(thread_id, viewer_id(socket))
-    TrentoAIAgent.stop(thread_id)
-    socket
-  end
+       when is_binary(thread_id),
+       do:
+         socket
+         |> tap(&Presence.untrack_viewer(thread_id, viewer_id(&1)))
+         |> tap(fn _ -> TrentoAIAgent.stop(thread_id) end)
 
   defp leave_thread(socket), do: socket
+
+  defp track_viewer(socket, thread_id) do
+    with {:error, reason} <- Presence.track_viewer(thread_id, viewer_id(socket)) do
+      Logger.warning("Cannot track the AI agent viewer: #{inspect(reason)}")
+    end
+  end
 
   defp viewer_id(%{assigns: %{current_user_id: user_id}}), do: to_string(user_id)
 
