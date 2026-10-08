@@ -641,10 +641,10 @@ export const interceptSmlmRequestsMockedForProdInstance = () => {
       body: smlmMocks.getPackagesPatches(),
     }).as('getPackagesPatches');
 
-    cy.intercept('POST', '/api/v1/settings/suse_manager', {
+    cy.intercept('POST', '/api/v1/settings/smlm', {
       statusCode: 201,
     });
-    return cy.intercept('DELETE', '/api/v1/settings/suse_manager', {
+    return cy.intercept('DELETE', '/api/v1/settings/smlm', {
       statusCode: 204,
     });
   }
