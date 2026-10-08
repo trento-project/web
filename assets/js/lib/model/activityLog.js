@@ -196,14 +196,14 @@ const clusterResourceType = (_entry) => 'Cluster';
 const hostResourceType = (_entry) => 'Host';
 const sapSystemResourceType = (_entry) => 'SAP System';
 const databaseResourceType = (_entry) => 'Database';
-const applicationInstaceResourceType = (_entry) => 'Application Instance';
+const applicationInstanceResourceType = (_entry) => 'Application Instance';
 
 const resourceTypeMapping = (entry) => ({
   host: hostResourceType(entry),
   cluster: clusterResourceType(entry),
   database: databaseResourceType(entry),
   sap_system: sapSystemResourceType(entry),
-  application_instance: applicationInstaceResourceType(entry),
+  application_instance: applicationInstanceResourceType(entry),
   cluster_host: hostResourceType(entry),
 });
 
@@ -793,7 +793,7 @@ export const ACTIVITY_TYPES_CONFIG = {
     label: 'Application Instance Operation Requested',
     message: ({ metadata }) =>
       `Operation ${getOperationLabel(metadata.operation)} requested`,
-    resource: applicationInstaceResourceType,
+    resource: applicationInstanceResourceType,
   },
   [CLUSTER_OPERATION_REQUESTED]: {
     label: 'Cluster Operation Requested',
