@@ -121,9 +121,11 @@ describe('analytics', () => {
   it('should identify the user with the given userID', () => {
     // predictable Installation ID
     const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+    const installationMethod = 'rpm';
     global.config.analyticsEnabled = true;
 
     global.config.installationID = installationID;
+    global.config.installationMethod = installationMethod;
     global.window.posthogConfig = {
       apiKey: 'my-key',
     };
@@ -137,7 +139,7 @@ describe('analytics', () => {
       identify(true, 1);
       expect(mockIdentify).toHaveBeenCalledWith(
         'ab156392-96c8-551b-a49b-f071c1cdcf21',
-        { installationID }
+        { installationID, installationMethod }
       );
     });
   });
@@ -241,6 +243,7 @@ describe('analytics', () => {
       const apiKey = 'my-key';
       const userID = 1;
       const installationID = '1775ad46-43ca-4aaa-851a-bd3688702893';
+      const installationMethod = 'container';
       const distinctUserID = 'ab156392-96c8-551b-a49b-f071c1cdcf21';
 
       global.config.webversion = '1.2.3';
@@ -249,6 +252,7 @@ describe('analytics', () => {
         config,
       };
       global.config.installationID = installationID;
+      global.config.installationMethod = installationMethod;
       const mockApiCapture = jest.fn().mockResolvedValue();
 
       jest.mock('@lib/api/analytics', () => ({ capture: mockApiCapture }));
@@ -266,7 +270,7 @@ describe('analytics', () => {
             $lib: 'web',
             webversion: '1.2.3',
             $process_person_profile: true,
-            $set_once: { installationID },
+            $set_once: { installationID, installationMethod },
           }
         );
       });

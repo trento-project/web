@@ -40,6 +40,7 @@ const DEFAULT_OPTS = {
 
 const analyticsEnabledConfig = getFromConfig('analyticsEnabled');
 const installationID = getFromConfig('installationID');
+const installationMethod = getFromConfig('installationMethod');
 
 // window.posthogConfig is loaded from GTM (Google Tag Manager) snippet
 // The GTM container must have a Tag with Custom HTML type with the next
@@ -106,6 +107,7 @@ export const identify = (analyticsEnabled, userID) => {
   const distinctUserID = getDistinctUserID(userID);
   posthog.identify(distinctUserID, {
     installationID,
+    installationMethod,
   });
 };
 
@@ -147,6 +149,7 @@ export const rawCapture = (userID, event, properties) => {
     $process_person_profile: true,
     $set_once: {
       installationID,
+      installationMethod,
     },
   }).catch((error) => {
     logError(`error capturing Posthog raw event: ${error.message}`);
