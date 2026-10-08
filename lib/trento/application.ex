@@ -18,6 +18,7 @@ defmodule Trento.Application do
         TrentoWeb.Telemetry,
         # Start the PubSub system
         {Phoenix.PubSub, name: Trento.PubSub},
+        Trento.AI.Presence,
         {Cachex, [:activity_correlations]},
         {Task.Supervisor, name: Trento.TasksSupervisor},
         # Start the Endpoint (http/https)

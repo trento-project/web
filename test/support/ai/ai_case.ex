@@ -7,7 +7,7 @@ defmodule Trento.AI.AICase do
   use ExUnit.CaseTemplate
 
   alias Trento.AI.Agent, as: TrentoAIAgent
-  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel, LLMBuilder}
+  alias Trento.AI.{ApplicationConfigLoader, FakeChatModel, LLMBuilder, Presence}
   alias Trento.Infrastructure.AI.{SagentsAgentServer, SagentsDynamicSupervisor}
 
   # Booting a real sagents process tree and reaching the model call is slower
@@ -103,6 +103,12 @@ defmodule Trento.AI.AICase do
         raise "no agent process registered for #{inspect(agent_id)}: #{inspect(reason)}"
     end
   end
+
+  @doc """
+  Lists the viewer ids tracked for `agent_id`.
+  """
+  def viewers(agent_id),
+    do: agent_id |> Presence.viewers_topic() |> Presence.list() |> Map.keys()
 
   defp stub_ai_config(context, overrides) do
     merged = Keyword.merge(Map.get(context, :ai_config_overrides, []), overrides)

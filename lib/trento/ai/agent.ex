@@ -20,7 +20,12 @@ defmodule Trento.AI.Agent do
   alias Sagents.Middleware.{PatchToolCalls, Summarization, TodoList}
   alias Trento.AI.Agent.Server, as: AgentServer
   alias Trento.AI.Agent.Supervisor, as: AgentSupervisor
-  alias Trento.AI.{ApplicationConfigLoader, ToolsRegistry}
+  alias Trento.AI.{ApplicationConfigLoader, Presence, ToolsRegistry}
+
+  # Stops any idle agent, viewed or not: sagents' idle timer ignores presence.
+  @inactivity_timeout :timer.minutes(30)
+  # Grace period after the last viewer leaves, so a client that rejoins in time keeps the agent.
+  @viewer_check_delay :timer.seconds(60)
 
   @doc """
   Pure factory for a Sagents.Agent struct configured as the Trento AI Assistant.
@@ -137,7 +142,15 @@ defmodule Trento.AI.Agent do
   defp start_opts(agent_id, agent) do
     [
       agent_id: agent_id,
-      agent: agent
+      agent: agent,
+      inactivity_timeout: @inactivity_timeout,
+      pubsub: {Phoenix.PubSub, Trento.PubSub},
+      presence_tracking: [
+        presence_module: Presence,
+        topic: Presence.viewers_topic(agent_id),
+        check_delay:
+          Keyword.get(ApplicationConfigLoader.load(), :viewer_check_delay, @viewer_check_delay)
+      ]
     ]
   end
 
