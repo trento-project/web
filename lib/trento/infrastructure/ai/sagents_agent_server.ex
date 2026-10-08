@@ -25,29 +25,26 @@ defmodule Trento.Infrastructure.AI.SagentsAgentServer do
   defdelegate cancel(agent_id), to: Sagents.AgentServer
 
   @impl Trento.AI.Agent.Server
-  def get_agent(agent_id) do
-    Sagents.AgentServer.get_agent(agent_id)
-  rescue
-    RegistryUnavailableError -> {:error, :registry_unavailable}
-  end
+  def get_agent(agent_id),
+    do: rescue_registry_unavailable(fn -> Sagents.AgentServer.get_agent(agent_id) end)
 
   @impl Trento.AI.Agent.Server
-  def get_info(agent_id) do
-    Sagents.AgentServer.get_info(agent_id)
-  rescue
-    RegistryUnavailableError -> {:error, :registry_unavailable}
-  end
+  def get_info(agent_id),
+    do: rescue_registry_unavailable(fn -> Sagents.AgentServer.get_info(agent_id) end)
 
   @impl Trento.AI.Agent.Server
-  def get_status(agent_id) do
-    Sagents.AgentServer.get_status(agent_id)
-  rescue
-    RegistryUnavailableError -> {:error, :registry_unavailable}
-  end
+  def get_status(agent_id),
+    do: rescue_registry_unavailable(fn -> Sagents.AgentServer.get_status(agent_id) end)
 
   @impl Trento.AI.Agent.Server
-  def update_agent_and_state(agent_id, agent, state) do
-    Sagents.AgentServer.update_agent_and_state(agent_id, agent, state)
+  def update_agent_and_state(agent_id, agent, state),
+    do:
+      rescue_registry_unavailable(fn ->
+        Sagents.AgentServer.update_agent_and_state(agent_id, agent, state)
+      end)
+
+  defp rescue_registry_unavailable(fun) do
+    fun.()
   rescue
     RegistryUnavailableError -> {:error, :registry_unavailable}
   end

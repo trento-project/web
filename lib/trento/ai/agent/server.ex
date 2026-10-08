@@ -10,8 +10,6 @@ defmodule Trento.AI.Agent.Server do
   `Trento.Infrastructure.AI.SagentsAgentServer`. Override via the
   `:trento, :ai, agent_server_adapter:` config so tests can substitute
   a Mox mock without booting the real sagents stack.
-
-  Callbacks report failure as tagged tuples, `{:error, :registry_unavailable}` included.
   """
 
   alias LangChain.Message

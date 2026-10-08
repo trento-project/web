@@ -9,9 +9,6 @@ defmodule Trento.AI.Agent.Supervisor do
   `Trento.Infrastructure.AI.SagentsDynamicSupervisor`. Override via the
   `:trento, :ai, agent_supervisor_adapter:` config so tests can
   substitute a Mox mock.
-
-  Callbacks report failure as tagged tuples, `{:error, :registry_unavailable}`
-  included.
   """
 
   alias Trento.AI.ApplicationConfigLoader
