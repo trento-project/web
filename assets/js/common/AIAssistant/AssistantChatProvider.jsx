@@ -36,20 +36,20 @@ function AssistantChatProvider({
   });
 
   useEffect(() => {
+    // The AG-UI runtime reads `agent.threadId` when building each run's
+    // payload (defaults to "main" if unset). Mutate the live agent instead
+    // of rebuilding it so the channel + websocket stay alive across thread
+    // changes. Declared before `initialize()` so the first join names this thread.
+    agent.threadId = threadID;
+  }, [agent, threadID]);
+
+  useEffect(() => {
     // Catch rejections (channel-join error / timeout / missing socket)
     // so they don't bubble up as unhandled promise rejections —
     // onConnectionChange handles flipping the UI to DISCONNECTED
     agent.initialize().catch(noop);
     return () => agent.disconnect();
   }, [agent]);
-
-  useEffect(() => {
-    // The AG-UI runtime reads `agent.threadId` when building each run's
-    // payload (defaults to "main" if unset). Mutate the live agent instead
-    // of rebuilding it so the channel + websocket stay alive across thread
-    // changes.
-    agent.threadId = threadID;
-  }, [agent, threadID]);
 
   const runtime = useAgUiRuntime({ agent });
   const aui = useAui();

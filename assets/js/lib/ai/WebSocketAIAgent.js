@@ -124,8 +124,10 @@ export class WebSocketAIAgent extends AbstractAgent {
   // On 'unauthorized' the channel reference is dropped so the helper's retry rebuilds
   // with the just-refreshed token in the params callback.
   _join() {
+    // Phoenix re-evaluates these params on every rejoin, so a reconnect names the thread still on screen.
     this.channel = this.socket.channel(`ai_assistant:${this.userID}`, () => ({
       access_token: this._getAccessToken(),
+      thread_id: this.threadId,
     }));
     this._setupChannelHandlers();
     return new Promise((resolve, reject) => {
