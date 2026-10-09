@@ -15,52 +15,51 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
   alias Trento.Clusters.Events.{
     ChecksSelected,
+    ClusterChecksHealthChanged,
     ClusterDataMarkedInSync,
     ClusterDataMarkedStale,
     ClusterDeregistered,
     ClusterDetailsUpdated,
+    ClusterDiscoveredHealthChanged,
     ClusterHealthChanged,
     ClusterRegistered,
-    ClusterRestored
+    ClusterReplicationHealthChanged,
+    ClusterRestored,
+    ClusterSbdHealthChanged
   }
 
   alias Trento.Clusters.Projections.ClusterReadModel
-
   alias Trento.Repo
+  alias Trento.Support.StructHelper
 
   import Trento.Clusters, only: [enrich_cluster_model: 1]
 
   project(
     %ClusterRegistered{
-      cluster_id: id,
-      name: name,
-      sap_instances: sap_instances,
-      provider: provider,
-      type: type,
-      resources_number: resources_number,
-      hosts_number: hosts_number,
-      details: details,
-      health: health,
-      state: state
-    },
+      cluster_id: cluster_id
+    } = event,
     fn multi ->
+      params =
+        event
+        |> StructHelper.to_atomized_map()
+        |> Map.put(:id, cluster_id)
+        |> postprocess_health_details()
+
       changeset =
-        ClusterReadModel.changeset(%ClusterReadModel{}, %{
-          id: id,
-          name: name,
-          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-          provider: provider,
-          type: type,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details,
-          health: health,
-          state: state
-        })
+        ClusterReadModel.changeset(%ClusterReadModel{}, params)
 
       Ecto.Multi.insert(multi, :cluster, changeset)
     end
   )
+
+  defp postprocess_health_details(%{health_details: health_details} = params)
+       when not is_nil(health_details) do
+    health_details
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
+    |> then(&Map.replace!(params, :health_details, &1))
+  end
+
+  defp postprocess_health_details(params), do: params
 
   project(
     %ClusterDeregistered{
@@ -151,6 +150,76 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
 
     Ecto.Multi.update(multi, :cluster, changeset)
   end)
+
+  project(
+    %ClusterChecksHealthChanged{cluster_id: cluster_id, checks_health: checks_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "checks_health", checks_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterDiscoveredHealthChanged{cluster_id: cluster_id, discovered_health: discovered_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "discovered_health", discovered_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterReplicationHealthChanged{
+      cluster_id: cluster_id,
+      replication_health: replication_health
+    },
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "replication_health", replication_health),
+        []
+      )
+    end
+  )
+
+  project(
+    %ClusterSbdHealthChanged{cluster_id: cluster_id, sbd_health: sbd_health},
+    fn multi ->
+      Ecto.Multi.update_all(
+        multi,
+        :health_details,
+        health_details_update_query(cluster_id, "sbd_health", sbd_health),
+        []
+      )
+    end
+  )
+
+  defp health_details_update_query(cluster_id, value_path, value) do
+    from(
+      c in ClusterReadModel,
+      where: c.id == ^cluster_id,
+      update: [
+        set: [
+          health_details:
+            fragment(
+              "jsonb_set(?, ARRAY[?::text, 'value'], to_jsonb(?::text), false)",
+              c.health_details,
+              ^value_path,
+              ^to_string(value)
+            ),
+          updated_at: ^DateTime.utc_now()
+        ]
+      ]
+    )
+  end
 
   project(
     %ClusterDataMarkedStale{cluster_id: cluster_id, stale_at: stale_at},
