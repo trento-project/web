@@ -51,3 +51,6 @@ storybook-static
 .DS_Store
 
 /.claude/
+
+# Default TLS material directory of the mailpit compose service
+/.mailpit-tls/
