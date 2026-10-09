@@ -19,6 +19,7 @@ import {
   effectiveConnectionStatus,
   isConfigurationCleared,
   isConfigurationRestored,
+  isConversationExpired,
 } from './status';
 
 function ThreadBanner({ children }) {
@@ -52,6 +53,14 @@ function RestoredBanner() {
   return (
     <ThreadBanner>
       A new AI configuration is available. Start a new chat to continue.
+    </ThreadBanner>
+  );
+}
+
+function ExpiredBanner() {
+  return (
+    <ThreadBanner>
+      This conversation has expired. Start a new chat to continue.
     </ThreadBanner>
   );
 }
@@ -152,6 +161,7 @@ function AssistantThread({
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
           {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
           {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
+          {isConversationExpired(configurationStatus) && <ExpiredBanner />}
           {modelNotice && (
             <ModelChangeBanner
               {...modelNotice}

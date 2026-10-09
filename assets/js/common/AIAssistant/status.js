@@ -3,19 +3,23 @@
 
 import { CONNECTION_STATUS, isOnline } from '@lib/ai';
 
-// Lifecycle of the assistant relative to the user's AI configuration:
+// Lifecycle of the assistant relative to the user's AI configuration and the current conversation:
 //   ok       - configured and usable
 //   cleared  - configuration was removed; chat is read-only, launcher disabled
 //   restored - configuration came back while a cleared chat was still open;
 //              the user must start a new chat to resume
+//   expired  - the server-side agent lost this conversation's context;
+//              the user must start a new chat to resume
 export const OK = 'ok';
 export const CLEARED = 'cleared';
 export const RESTORED = 'restored';
+export const EXPIRED = 'expired';
 
 export const CONFIGURATION_STATUS = {
   OK,
   CLEARED,
   RESTORED,
+  EXPIRED,
 };
 
 export const isConfigurationCleared = (configurationStatus) =>
@@ -23,6 +27,9 @@ export const isConfigurationCleared = (configurationStatus) =>
 
 export const isConfigurationRestored = (configurationStatus) =>
   configurationStatus === CONFIGURATION_STATUS.RESTORED;
+
+export const isConversationExpired = (configurationStatus) =>
+  configurationStatus === CONFIGURATION_STATUS.EXPIRED;
 
 export const isConfigurationAvailable = (configurationStatus) =>
   !isConfigurationCleared(configurationStatus);

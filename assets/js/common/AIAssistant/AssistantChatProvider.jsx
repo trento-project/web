@@ -17,6 +17,7 @@ function AssistantChatProvider({
   onAIConfigurationCleared = noop,
   onAIConfigurationCreated = noop,
   onModelChanged = noop,
+  onConversationExpired = noop,
   children,
 }) {
   const socket = useSocket();
@@ -32,6 +33,7 @@ function AssistantChatProvider({
       onAIConfigurationCleared,
       onAIConfigurationCreated,
       onModelChanged,
+      onConversationExpired,
     });
   });
 

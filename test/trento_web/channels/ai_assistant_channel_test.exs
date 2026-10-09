@@ -385,12 +385,15 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert %{loading: true} = wait_assigns(socket)
     end
 
-    test "emits RUN_ERROR with the binary reason passed verbatim (no prefix)",
-         %{socket: socket} do
+    test "emits a generic RUN_ERROR for a raw binary reason", %{socket: socket} do
       seed_assigns(socket, %{run_has_started: true})
-      send(socket.channel_pid, {:agent, {:status_changed, :error, "boom"}})
+      reason = ~s(Failed to build chain: %RuntimeError{message: "internal detail"})
+      send(socket.channel_pid, {:agent, {:status_changed, :error, reason}})
 
-      assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => "boom"})
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Sorry, something went wrong. Please try again."
+      })
     end
 
     test "emits RUN_ERROR with `Sorry, ...` prefix for %LangChainError{}",
@@ -405,14 +408,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       })
     end
 
-    test "emits RUN_ERROR with `Sorry, ...` + inspect for arbitrary term",
-         %{socket: socket} do
+    test "emits a generic RUN_ERROR, never the raw reason", %{socket: socket} do
       seed_assigns(socket, %{run_has_started: true})
-      send(socket.channel_pid, {:agent, {:status_changed, :error, :timeout}})
+      crash = {%RuntimeError{message: "internal detail"}, [{Mod, :fun, 1, []}]}
+      send(socket.channel_pid, {:agent, {:status_changed, :error, crash}})
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Sorry, I encountered an error: :timeout"
+        "message" => "Sorry, something went wrong. Please try again."
       })
     end
   end
@@ -983,7 +986,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:DOWN, ...} — agent server death" do
     setup :join_socket_with_ai_config
 
-    test "emits RUN_ERROR and clears loading when the agent server dies mid-run",
+    test "emits RUN_ERROR, clears loading and expires the conversation when the agent server dies mid-run",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1003,13 +1006,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Agent stopped unexpectedly: :killed"
+        "message" => "The assistant stopped unexpectedly."
       })
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       assert %{loading: false} = wait_assigns(socket)
     end
 
-    test "stays quiet when the agent server dies with no run in flight",
+    test "expires the conversation without a RUN_ERROR when the agent server dies with no run in flight",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1028,10 +1032,43 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
       assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
 
-      # Inactivity shutdown of an idle AgentServer is normal, not a failed run.
+      # Inactivity shutdown of an idle AgentServer is not a failed run, but its context is gone.
       Process.exit(server_pid, :kill)
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    for action <- ["abandon_thread", :ai_configuration_cleared] do
+      @action action
+      test "does not expire the conversation when #{inspect(action)} stops the agent",
+           %{socket: socket, access_token: jwt} do
+        server_pid = spawn_fake_agent_server()
+
+        stub_agent_run(server_pid)
+        stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+
+        expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t1" ->
+          Process.exit(server_pid, :kill)
+          :ok
+        end)
+
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => "r1",
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+        case @action do
+          "abandon_thread" -> socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+          :ai_configuration_cleared -> send(socket.channel_pid, {:ai_configuration, :cleared})
+        end
+
+        refute_push("conversation_expired", _, 100)
+      end
     end
 
     test "does not accumulate monitors across runs on the same agent server",
@@ -1139,7 +1176,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in send_message/3 — error paths before the agent starts" do
     setup :join_socket_without_ai_config
 
-    test "emits verbatim RUN_ERROR when user has no AI configuration",
+    test "emits a RUN_ERROR explaining that the user has no AI configuration",
          %{socket: socket, access_token: jwt} do
       push(socket, "send_message", %{
         "message" => "hi",
@@ -1174,7 +1211,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in send_message/3 — error paths while the agent starts" do
     setup :join_socket_with_ai_config
 
-    test "emits verbatim RUN_ERROR when sagents start_agent_sync fails",
+    test "emits a generic RUN_ERROR when sagents start_agent_sync fails",
          %{socket: socket, access_token: jwt} do
       # run_agent probes the running agent (for model-drift detection) before
       # starting it — brand-new thread here, so :not_found.
@@ -1193,8 +1230,31 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Failed to start agent: :boom"
+        "message" => "Sorry, something went wrong. Please try again."
       })
+    end
+
+    for {name, status, message} <- [
+          {"a busy agent", :running,
+           "The assistant is still answering a previous message. Try again in a moment."},
+          {"an unavailable registry", {:error, :registry_unavailable},
+           "The assistant is restarting. Try again in a moment."}
+        ] do
+      @status status
+      @message message
+      test "explains #{name} in plain words", %{socket: socket, access_token: jwt} do
+        expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+        expect(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> @status end)
+
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => "r1",
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => @message})
+      end
     end
   end
 

@@ -73,6 +73,12 @@ function AIAssistant({ userID, aiConfigured = true, open = false }) {
   const handleAIConfigurationCleared = () =>
     setConfigurationStatus(CONFIGURATION_STATUS.CLEARED);
 
+  // A cleared configuration explains more than an expired conversation, so it wins.
+  const handleConversationExpired = () =>
+    setConfigurationStatus((prev) =>
+      prev === CONFIGURATION_STATUS.OK ? CONFIGURATION_STATUS.EXPIRED : prev
+    );
+
   const handleAIConfigurationCreated = () => {
     // A still-open cleared chat must be explicitly restarted by the user;
     // otherwise (closed launcher) just re-enable and reset the thread so the
@@ -96,6 +102,7 @@ function AIAssistant({ userID, aiConfigured = true, open = false }) {
       onAIConfigurationCleared={handleAIConfigurationCleared}
       onAIConfigurationCreated={handleAIConfigurationCreated}
       onModelChanged={handleModelChanged}
+      onConversationExpired={handleConversationExpired}
     >
       <AssistantUI
         open={isOpen}

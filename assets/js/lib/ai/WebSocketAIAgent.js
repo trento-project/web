@@ -70,12 +70,14 @@ export class WebSocketAIAgent extends AbstractAgent {
     onAIConfigurationCleared = noop,
     onAIConfigurationCreated = noop,
     onModelChanged = noop,
+    onConversationExpired = noop,
   } = {}) {
     this.#callbacks = {
       onConnectionChange,
       onAIConfigurationCleared,
       onAIConfigurationCreated,
       onModelChanged,
+      onConversationExpired,
     };
     return this;
   }
@@ -168,6 +170,10 @@ export class WebSocketAIAgent extends AbstractAgent {
         () => this.#callbacks.onAIConfigurationCreated(),
       ],
       ['model_changed', (payload) => this.#callbacks.onModelChanged(payload)],
+      [
+        'conversation_expired',
+        ({ thread_id: threadId }) => this._handleConversationExpired(threadId),
+      ],
     ];
 
     each(messageHandlerMap, ([eventName, handler]) =>
@@ -175,6 +181,11 @@ export class WebSocketAIAgent extends AbstractAgent {
     );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
+  }
+
+  // A late event for a thread the user has already left must not lock the new one.
+  _handleConversationExpired(threadId) {
+    if (threadId === this.threadId) this.#callbacks.onConversationExpired();
   }
 
   _handleAIConfigurationCleared() {
