@@ -9,6 +9,7 @@ context('Email Alerting feature', () => {
       // alerting tests are only run when the alerting env is available
       this.skip();
     }
+    alertingPage.clearSMLMSettings();
     alertingPage.preloadTestData();
     alertingPage.deleteAllEmailsFromMailpit();
     alertingPage.setDefaultAlertingSettings();

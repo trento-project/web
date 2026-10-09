@@ -124,13 +124,19 @@ services:
     image: ghcr.io/axllent/mailpit:v1.24 # https://github.com/axllent/mailpit/pkgs/container/mailpit
     volumes:
       - mailpit:/data
+      # Optional TLS material (cert.pem and key.pem) for the SMTP server,
+      # only used when TRENTO_SMTP_TLS_DIR is set.
+      - ${TRENTO_SMTP_TLS_DIR:-./.mailpit-tls}:/certs:ro
     ports:
       - 1025:1025
       - 8025:8025
     environment:
       MP_VERBOSE: true
       MP_DATABASE: /data/mailpit.db
-      MP_SMTP_AUTH: ${TRENTO_SMTP_AUTHENTICATED:+"trentouser:pass"}
+      MP_SMTP_AUTH: ${TRENTO_SMTP_AUTHENTICATED:+trentouser:pass}
       # Allow authenticated access to the server when not using
       # STARTTLS/TLS.
       MP_SMTP_AUTH_ALLOW_INSECURE: ${TRENTO_SMTP_INSECURE:-false}
+      MP_SMTP_TLS_CERT: ${TRENTO_SMTP_TLS_DIR:+/certs/cert.pem}
+      MP_SMTP_TLS_KEY: ${TRENTO_SMTP_TLS_DIR:+/certs/key.pem}
+      MP_SMTP_REQUIRE_STARTTLS: ${TRENTO_SMTP_REQUIRE_STARTTLS:-false}
