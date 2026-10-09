@@ -18,6 +18,7 @@ const calculateWandaUrl = (config) => {
 };
 
 export default defineConfig({
+  defaultBrowser: 'chrome',
   viewportWidth: 1366,
   viewportHeight: 768,
   defaultCommandTimeout: 10000,
