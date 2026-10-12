@@ -52,15 +52,6 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     end
   )
 
-  defp postprocess_health_details(%{health_details: health_details} = params)
-       when not is_nil(health_details) do
-    health_details
-    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
-    |> then(&Map.replace!(params, :health_details, &1))
-  end
-
-  defp postprocess_health_details(params), do: params
-
   project(
     %ClusterDeregistered{
       cluster_id: cluster_id,
@@ -108,18 +99,23 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
     },
     fn multi ->
       changeset =
-        ClusterReadModel
-        |> Repo.get!(id)
-        |> ClusterReadModel.changeset(%{
-          name: name,
-          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-          provider: provider,
-          type: type,
-          resources_number: resources_number,
-          hosts_number: hosts_number,
-          details: details,
-          state: state
-        })
+        cluster = Repo.get!(ClusterReadModel, id)
+
+        params =
+          %{
+            name: name,
+            sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+            provider: provider,
+            type: type,
+            resources_number: resources_number,
+            hosts_number: hosts_number,
+            details: details,
+            state: state
+          }
+          |> maybe_put_default_health_details(cluster.health_details)
+          |> postprocess_health_details()
+
+      changeset = ClusterReadModel.changeset(cluster, params)
 
       Ecto.Multi.update(multi, :cluster, changeset)
     end
@@ -334,4 +330,34 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
   end
 
   def after_update(_, _, _), do: :ok
+
+  # -- Helpers --
+
+  defp postprocess_health_details(%{health_details: health_details} = params)
+       when not is_nil(health_details) do
+    health_details
+    |> Map.new(fn {key, value} -> {key, %{value: value}} end)
+    |> then(&Map.replace!(params, :health_details, &1))
+  end
+
+  defp postprocess_health_details(params), do: params
+
+  defp maybe_put_default_health_details(%{type: :ascs_ers} = params, nil) do
+    Map.put(params, :health_details, %{
+      checks_health: :unknown,
+      sbd_health: :unknown,
+      distributed_health: :unknown
+    })
+  end
+
+  defp maybe_put_default_health_details(%{type: type} = params, nil)
+       when type in [:hana_scale_up, :hana_scale_out] do
+    Map.put(params, :health_details, %{
+      checks_health: :unknown,
+      sbd_health: :unknown,
+      replication_health: :unknown
+    })
+  end
+
+  defp maybe_put_default_health_details(params, _previous_health_details), do: params
 end
