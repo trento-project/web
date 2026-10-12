@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-08-26T19:33:45Z",
-    "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
-    "run_id": "33004011811",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 45,
-      "failed_runs": 3
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Infrastructure.Messaging.Adapter.AMQP.ConsumerTest::test handle_error/1 should reject unknown events and move them to the dead letter queue",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-26T19:36:45Z",
     "commit": "b8c0dab7e7ff3f674f331c5fab30f482d7dd951a",
     "run_id": "33004011811",
@@ -5776,5 +5752,16 @@
         "score": 0.03207
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-12T23:42:01Z",
+    "commit": "bb87f110ed3348f5ac38ebe96aa62f354c8ec23c",
+    "run_id": "38322838956",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 38,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
