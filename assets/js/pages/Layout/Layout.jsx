@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -250,8 +250,8 @@ function Layout() {
             © 2020-2026 SUSE LLC
           </span>
           <span className="flex items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-            This tool is free software released under the Apache License,
-            Version 2.0
+            This tool is free software released under the GNU General Public
+            License, version 3 or later
           </span>
         </footer>
       </div>

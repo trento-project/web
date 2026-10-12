@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # For reference
 # Dialyzer :call_without_opaque warnings for MapSet and Ecto.Multi are known false positives

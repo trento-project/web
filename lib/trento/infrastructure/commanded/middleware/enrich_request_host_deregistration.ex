@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: SUSE LLC
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 defimpl Trento.Infrastructure.Commanded.Middleware.Enrichable,
   for: Trento.Hosts.Commands.RequestHostDeregistration do

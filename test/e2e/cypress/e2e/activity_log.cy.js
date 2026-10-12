@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import * as activityLogPage from '../pageObject/activity_log_po';
 import * as basePage from '../pageObject/base_po';
