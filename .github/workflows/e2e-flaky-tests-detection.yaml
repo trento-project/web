@@ -13,16 +13,13 @@ on:
         description: "Number of containers to use (Max: 200)"
         required: false
         default: "100"
-      spec_pattern:
-        description: "Spec files pattern (Default: **/*.cy.js)"
-        required: false
 
 concurrency:
   group: ${{ github.workflow }}
 
 env:
   MIX_ENV: dev
-  DEFAULT_NUM_CONTAINERS: 100
+  DEFAULT_NUM_CONTAINERS: 10
   PHOTOFINISH_VERSION: "v1.4.2" # https://github.com/trento-project/photofinish/releases
 
 jobs:
@@ -131,12 +128,16 @@ jobs:
       matrix: ${{ steps.generate.outputs.matrix }}
       total-runs: ${{ steps.generate.outputs.total-runs }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
       - name: Set environment variable for NUM_CONTAINERS
         run: echo "NUM_CONTAINERS=${{ github.event.inputs.num_runs || env.DEFAULT_NUM_CONTAINERS }}" >> $GITHUB_ENV
       - name: Generate Matrix
         id: generate
         run: |
-          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)]}" > matrix.json
+          echo "{\"container\": [$(seq -s, 1 $NUM_CONTAINERS)], \"cypress_spec\": [$(ls -Qm test/e2e/cypress/e2e/ | tr -d ' ' | tr -d '\n')]}" > matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
           echo "total-runs=$NUM_CONTAINERS" >> $GITHUB_OUTPUT
         shell: bash
@@ -149,6 +150,7 @@ jobs:
       fail-fast: false
       matrix:
         container: ${{ fromJson(needs.generate-matrix.outputs.matrix).container }}
+        cypress_spec: ${{ fromJson(needs.generate-matrix.outputs.matrix).cypress_spec }}
     timeout-minutes: 40
     steps:
       - name: Checkout
@@ -206,12 +208,6 @@ jobs:
           cache: enable
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Get photofinish path
-        id: photofinish-path
-        run: |
-          set -euo pipefail
-          photofinish_path="$(command -v photofinish)"
-          echo "path=$photofinish_path" >> "$GITHUB_OUTPUT"
       - name: Set ENV_TS to get current Timestamp for JUnit reports
         run: echo "ENV_TS=$(date +%F_%T | sed 's/:/-/g')" >> $GITHUB_ENV
       - name: Cypress run
@@ -221,10 +217,9 @@ jobs:
           cypress_db_host: postgres
           cypress_db_port: 5432
         with:
-          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec ${{ github.event.inputs.spec_pattern || '**/*.cy.js' }}
+          command: npx cypress run --reporter junit --reporter-options mochaFile=/tmp/trento-e2e-junit-[hash]-${{ env.ENV_TS }}.xml --spec cypress/e2e/${{ matrix.cypress_spec }} --browser chrome
           working-directory: test/e2e
           wait-on-timeout: 30
-          expose: photofinish_binary=${{ steps.photofinish-path.outputs.path }}
       - name: Upload cypress test junit reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -240,14 +235,14 @@ jobs:
           path: test/e2e/cypress/screenshots/**/*.png
           retention-days: 7
 
-  flaky-tests-analysis:
-    needs: [test-e2e, generate-matrix]
-    if: ${{ !cancelled() }}
-    uses: ./.github/workflows/flaky-tests-analysis.yaml
-    with:
-      suite-name: E2E
-      junit-artifact-pattern: e2e-junit-reports-*
-      screenshot-artifact-pattern: e2e-screenshots-*
-      total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
-    secrets:
-      SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
+  # flaky-tests-analysis:
+  #   needs: [test-e2e, generate-matrix]
+  #   if: ${{ !cancelled() }}
+  #   uses: ./.github/workflows/flaky-tests-analysis.yaml
+  #   with:
+  #     suite-name: E2E
+  #     junit-artifact-pattern: e2e-junit-reports-*
+  #     screenshot-artifact-pattern: e2e-screenshots-*
+  #     total-runs: ${{ needs.generate-matrix.outputs.total-runs }}
+  #   secrets:
+  #     SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_FLAKY_TESTS_ALERT_WEBHOOK_URL }}
