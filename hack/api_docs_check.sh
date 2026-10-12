@@ -110,6 +110,7 @@ rules:
   path-must-match-api-standards: "off"
   paths-kebab-case: "off"
   rhoas-error-schema: "off"
+  rhoas-info-license-apache2.0: "off"
   rhoas-list-schema: "off"
   rhoas-object-schema: "off"
   rhoas-path-regexp: "off"
