@@ -131,6 +131,9 @@ defmodule TrentoWeb.AIAssistant.AgUi do
   defp format_error(:agent_down),
     do: "The assistant stopped unexpectedly."
 
+  defp format_error(:conversation_expired),
+    do: "This conversation has expired. Start a new chat to continue."
+
   defp format_error(_reason), do: "Sorry, something went wrong. Please try again."
 
   @spec push_event(Socket.t(), struct()) :: Socket.t()

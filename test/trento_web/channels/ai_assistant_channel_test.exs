@@ -1047,6 +1047,75 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
     end
 
+    test "refuses a prompt on the expired thread instead of answering it without context",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      Process.exit(server_pid, :kill)
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t1")
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "This conversation has expired. Start a new chat to continue."
+      })
+
+      refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
+    end
+
+    test "expires the conversation when a prompt is handled before the agent's :DOWN",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      stub_agent_run(spawn_fake_agent_server())
+
+      # Queues the prompt ahead of the :DOWN of the agent that stops right after it.
+      :ok = :sys.suspend(socket.channel_pid)
+      push_prompt(socket, jwt, "t1")
+      monitor_ref = Process.monitor(server_pid)
+      Process.exit(server_pid, :kill)
+      assert_receive {:DOWN, ^monitor_ref, :process, _, _}
+      :ok = :sys.resume(socket.channel_pid)
+
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "This conversation has expired. Start a new chat to continue."
+      })
+
+      refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
+    end
+
+    test "answers a new chat once the conversation expired", %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+      stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> {:error, :noproc} end)
+      stub(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn _ -> {:error, :not_found} end)
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      Process.exit(server_pid, :kill)
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t2")
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED", "threadId" => "t2"})
+    end
+
     for action <- ["abandon_thread", :ai_configuration_cleared] do
       @action action
       test "does not expire the conversation when #{inspect(action)} stops the agent",

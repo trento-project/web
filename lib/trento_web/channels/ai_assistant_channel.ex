@@ -28,6 +28,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   | `:message_id` | UUID string | set per run | identifies the assistant text-message lifecycle (`TEXT_MESSAGE_*`); also used as `parent_message_id` for `TOOL_CALL_START`. Currently equals `:current_run_id` but kept separate so future multi-message-per-run flows |
   | `:message_started` | boolean | per run | tracks whether `TEXT_MESSAGE_START` has been emitted — drives "skip duplicate START on subsequent deltas" + "skip orphan END at :idle when no text streamed" |
   | `:agent_monitor_ref` | reference \| nil | from `join/3`, replaced per run | monitor on the `Sagents.AgentServer`. The event stream does not survive a server crash, so its `:DOWN` is what surfaces one: `conversation_expired`, after a `RUN_ERROR` when a run was in flight |
+  | `:expired_thread_id` | UUID string | unset until the monitored agent server goes down | a prompt on that thread is refused: a fresh agent would answer it without the conversation on screen |
   | `:run_has_started` | boolean | per run | stale-status guard. `subscribe/1` sends a new subscriber a status snapshot, so the first `run/3` against a server delivers the status from before the prompt (`:idle`, or `:error` after a failed run); this flag is only set on the `:running` event for THIS run, so we ignore it |
 
   ### Mutation surfaces
@@ -41,7 +42,7 @@ defmodule TrentoWeb.AIAssistantChannel do
   - `track_viewer/2` — at `join/3`, and on each prompt through `maybe_switch_thread/2`; tracks the viewer and sets `:current_thread_id`. A prompt on another thread first goes through `leave_current_thread/1` (untracks the viewer, stops the agent).
   - `leave_current_thread/1` — our own stop (`abandon_thread`, AI-configuration clear, thread change): drops the monitor, so the agent going down is not reported as an expired conversation, then untracks the viewer and stops the agent.
   - `handle_in("send_message", ...)` — replaces `:access_token` with the token the prompt carries, once it validates.
-  - the `{:DOWN, ...}` handler — clears `:agent_monitor_ref` once the monitored agent server is gone.
+  - `expire_conversation/2` — from the `{:DOWN, ...}` handler, or from `receive_agent_down/1` when a prompt is handled before that `:DOWN`; clears `:agent_monitor_ref` and sets `:expired_thread_id`.
 
   The `:running` status flips `run_has_started` inline, and `AgUi.maybe_text_message_start/1`
   flips `message_started` on the run's first `:llm_deltas` event.
@@ -99,6 +100,7 @@ defmodule TrentoWeb.AIAssistantChannel do
       :ok ->
         socket
         |> assign(:access_token, token)
+        |> receive_agent_down()
         |> handle_incoming_prompt(String.trim(prompt), run_id, thread_id)
 
       {:error, _} = error ->
@@ -183,6 +185,14 @@ defmodule TrentoWeb.AIAssistantChannel do
        do: {:noreply, socket}
 
   defp handle_incoming_prompt(socket, "", _run_id, _thread_id), do: {:noreply, socket}
+
+  defp handle_incoming_prompt(
+         %{assigns: %{expired_thread_id: thread_id}} = socket,
+         _prompt,
+         _run_id,
+         thread_id
+       ),
+       do: {:noreply, AgUi.run_error(socket, :conversation_expired)}
 
   defp handle_incoming_prompt(
          %{assigns: %{current_scope: %{id: current_user_id}}} = socket,
@@ -310,14 +320,9 @@ defmodule TrentoWeb.AIAssistantChannel do
   @impl true
   def handle_info(
         {:DOWN, ref, :process, _pid, reason},
-        %{assigns: %{agent_monitor_ref: ref, current_thread_id: thread_id}} = socket
+        %{assigns: %{agent_monitor_ref: ref}} = socket
       ),
-      do:
-        {:noreply,
-         socket
-         |> assign(:agent_monitor_ref, nil)
-         |> fail_run_in_flight(reason)
-         |> tap(&push(&1, "conversation_expired", %{thread_id: thread_id}))}
+      do: {:noreply, expire_conversation(socket, reason)}
 
   @impl true
   def handle_info(
@@ -429,6 +434,27 @@ defmodule TrentoWeb.AIAssistantChannel do
   end
 
   defp drop_agent_monitor(socket), do: socket
+
+  defp expire_conversation(%{assigns: %{current_thread_id: thread_id}} = socket, reason),
+    do:
+      socket
+      |> assign(:agent_monitor_ref, nil)
+      |> assign(:expired_thread_id, thread_id)
+      |> fail_run_in_flight(reason)
+      |> tap(&push(&1, "conversation_expired", %{thread_id: thread_id}))
+
+  # A prompt can be handled before the queued `:DOWN` of an agent that already stopped.
+  # Monitoring the agent the prompt starts would flush that `:DOWN`, so take it first.
+  defp receive_agent_down(%{assigns: %{agent_monitor_ref: ref}} = socket)
+       when is_reference(ref) do
+    receive do
+      {:DOWN, ^ref, :process, _pid, reason} -> expire_conversation(socket, reason)
+    after
+      0 -> socket
+    end
+  end
+
+  defp receive_agent_down(socket), do: socket
 
   defp fail_run_in_flight(%{assigns: %{loading: true}} = socket, reason) do
     Logger.error("Agent stopped unexpectedly: #{inspect(reason)}")
