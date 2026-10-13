@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-28T01:42:21Z",
-    "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
-    "run_id": "33132806221",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 42,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-28T01:43:34Z",
     "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
     "run_id": "33132806221",
@@ -5773,5 +5753,16 @@
         "score": 0.02501
       }
     ]
+  },
+  {
+    "timestamp": "2026-10-13T22:29:04Z",
+    "commit": "3e31e59182654c6f484eb43d39616a7d2285fc13",
+    "run_id": "38474276506",
+    "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
   }
 ]
