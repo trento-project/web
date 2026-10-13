@@ -281,18 +281,29 @@ export const apiDeleteAllUsers = () =>
 const hasRefreshToken = () =>
   cy.window().then((win) => Boolean(win.localStorage.getItem('refresh_token')));
 
+// With testIsolation disabled, requests still in flight when a navigation
+// happens end up aborted (no response) but are matched by the alias later on.
+const waitForCompletedRequest = (requestAlias, timeout) =>
+  cy
+    .wait(`@${requestAlias}`, { timeout })
+    .then((request) =>
+      request.response
+        ? request
+        : waitForCompletedRequest(requestAlias, timeout)
+    );
+
 export const waitForRequest = (
   requestAlias,
   { timeout = 5000, retryUnauthorized = true } = {}
 ) =>
-  cy.wait(`@${requestAlias}`, { timeout: timeout }).then((request) => {
+  waitForCompletedRequest(requestAlias, timeout).then((request) => {
     if (!retryUnauthorized || request.response.statusCode !== 401) {
       return request;
     }
 
     return hasRefreshToken().then((hasToken) => {
       if (!hasToken) return request;
-      return cy.wait(`@${requestAlias}`, { timeout: timeout });
+      return waitForCompletedRequest(requestAlias, timeout);
     });
   });
 

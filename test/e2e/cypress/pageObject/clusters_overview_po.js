@@ -81,7 +81,6 @@ export const hanaCluster1TagsAreDisplayed = () =>
 export const clusterNameLinkIsDisplayedAsId = (clusterName) => {
   const clusterID = _clusterIdByName(clusterName);
   const clusterNameLinkCellSelector = `${tableRows} > ${rowCells}:nth-child(2):contains("${clusterID}")`;
-  basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
   return cy.get(clusterNameLinkCellSelector).should('have.text', clusterID);
 };
@@ -96,7 +95,6 @@ export const paginationButtonsAreDisabled = () =>
   cy.get(paginationNavigationButtons).should('be.disabled');
 
 export const clustersDataIsDisplayedAsExpected = () => {
-  basePage.waitForInitialDataFetch();
   cy.get(tableRows).should('have.length', availableClusters.length);
   return cy.wrap(availableClusters).each((cluster, index) => {
     const clusterNameSelector = `${tableRows}:eq(${index}) > ${rowCells}:eq(1)`;
