@@ -994,7 +994,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:DOWN, ...} — agent server death" do
     setup :join_socket_with_ai_config
 
-    test "emits RUN_ERROR and clears loading when the agent server dies mid-run",
+    test "emits RUN_ERROR, clears loading and expires the conversation when the agent server dies mid-run",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1017,10 +1017,11 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         "message" => "The assistant stopped unexpectedly."
       })
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       assert %{loading: false} = wait_assigns(socket)
     end
 
-    test "stays quiet when the agent server dies with no run in flight",
+    test "expires the conversation without a RUN_ERROR when the agent server dies with no run in flight",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1039,10 +1040,43 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
       assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
 
-      # Inactivity shutdown of an idle AgentServer is normal, not a failed run.
+      # Inactivity shutdown of an idle AgentServer is not a failed run, but its context is gone.
       Process.exit(server_pid, :kill)
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    for action <- ["abandon_thread", :ai_configuration_cleared] do
+      @action action
+      test "does not expire the conversation when #{inspect(action)} stops the agent",
+           %{socket: socket, access_token: jwt} do
+        server_pid = spawn_fake_agent_server()
+
+        stub_agent_run(server_pid)
+        stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+
+        expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t1" ->
+          Process.exit(server_pid, :kill)
+          :ok
+        end)
+
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => "r1",
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+        case @action do
+          "abandon_thread" -> socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+          :ai_configuration_cleared -> send(socket.channel_pid, {:ai_configuration, :cleared})
+        end
+
+        refute_push("conversation_expired", _, 100)
+      end
     end
 
     test "does not accumulate monitors across runs on the same agent server",
@@ -1570,6 +1604,39 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, @integration_timeout
 
       assert_push("ai_configuration_cleared", %{}, @integration_timeout)
+    end
+  end
+
+  describe "Conversation expiry — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:fresh_thread, :join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    @tag ai_config_overrides: [inactivity_timeout: 1_000]
+    test "expires the conversation once the idle timeout stops the agent",
+         %{socket: socket, access_token: jwt, thread_id: thread_id} do
+      %{task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+      send(task_pid, :release)
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"}, @integration_timeout)
+
+      assert_push("conversation_expired", %{thread_id: ^thread_id}, @integration_timeout)
+      refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    # The idle timeout fires mid-run; sagents' terminate/2 then waits for the run's task, which ends after 1 s.
+    @tag ai_config_overrides: [inactivity_timeout: 300]
+    @tag fake_llm: [block_for: 1_000]
+    test "fails the run in flight and expires the conversation when the idle timeout cuts the run",
+         %{socket: socket, access_token: jwt, thread_id: thread_id} do
+      start_run!(socket, jwt, run_id: "r1")
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_ERROR", "message" => "The assistant stopped unexpectedly."},
+        @integration_timeout
+      )
+
+      assert_push("conversation_expired", %{thread_id: ^thread_id}, @integration_timeout)
     end
   end
 
