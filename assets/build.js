@@ -24,6 +24,12 @@ const buildConfig = {
 
 const build = async () => {
   if (watching) {
+    // Terminate this build process when BEAM is stopped.
+    process.stdin.on('close', () => {
+      process.exit(0);
+    });
+    process.stdin.resume();
+
     const context = await esbuild.context(buildConfig);
     console.log('=> JS bundle was built!');
     console.log('=> Watching...');
