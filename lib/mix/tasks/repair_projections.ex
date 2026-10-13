@@ -13,25 +13,38 @@ defmodule Mix.Tasks.RepairProjections do
 
   import Trento.Tasks.Helper
 
+  @archive_replay_timeout 120_000 # 2mins
+  @active_catchup_timeout 120_000 # 2mins
+
   @shortdoc "Rebuild projections marked for reset"
   def run(_args) do
     # Ensure we don't start serving during replay of the
     # events. Concerning mostly during production release task.
     disable_endpoint_server()
 
-    with :ok <- start_dependency_processes() do
-      case check_and_rebuild_projectors() do
-        :no_rebuild_needed ->
-          Logger.info(IO.ANSI.format([:green, "No projections need rebuilding."]))
+    case start_dependency_processes() do
+      :ok ->
+        case check_and_rebuild_projectors() do
+          :no_rebuild_needed ->
+            Logger.info(IO.ANSI.format([:green, "No projections need rebuilding."]))
 
-        :ok ->
-          Logger.info(IO.ANSI.format([:green, "Projections catch-up complete."]))
+          :ok ->
+            Logger.info(IO.ANSI.format([:green, "Projections rebuild complete."]))
 
-        {:error, :timeout} ->
-          Logger.error(IO.ANSI.format([:red, "Timed out waiting for projections to catch up."]))
-          System.stop(2)
-      end
-    else
+          {:error, {:timeout, :archive_replay, projector_name}} ->
+            Logger.error(IO.ANSI.format([:red, "Timed out replaying archived streams for #{projector_name}."]))
+            System.stop(2)
+
+          {:error, {:timeout, :active_catchup}} ->
+            Logger.error(IO.ANSI.format([:red, "Timed out waiting for active projections to catch up."]))
+            System.stop(2)
+
+          {:error, error} ->
+            Logger.error("Failed to rebuild projections: #{inspect(error)}")
+            System.stop(3)
+
+        end
+
       {:error, error} ->
         print_error("Could not start dependencies: #{inspect(error)}")
         System.stop(1)
@@ -48,7 +61,7 @@ defmodule Mix.Tasks.RepairProjections do
     :ok
   end
 
-  defp start_dependency_processes() do
+  defp start_dependency_processes do
     with {:ok, _} <- Application.ensure_all_started(:eventstore),
          {:ok, _} <- Application.ensure_all_started(:commanded),
          {:ok, _} <- start_repo(),
@@ -72,28 +85,42 @@ defmodule Mix.Tasks.RepairProjections do
     else
       Logger.info("Rebuilding projectors: #{Enum.join(projectors_to_rebuild, ", ")}...")
 
-      replay_archived_streams(projectors_to_rebuild)
-      rebuild_active_projectors(projectors_to_rebuild)
+      with :ok <- replay_archived_streams(projectors_to_rebuild),
+           :ok <- rebuild_active_projectors(projectors_to_rebuild) do
+        :ok
+      end
     end
   end
 
   # Manually read the archived streams and replay their events into
-  # the projection. Because of RollUp, membership of these events in
-  # the `$all` stream is deleted. Thus, the standard subscription
-  # mechanism for projections doesn't find them. All archived streams
-  # are traversed for every projector since this is how normal
-  # projectors are working. Resetting of the projector checkpoint is
-  # needed since single-streams have local versioning that starts from
-  # 1 every time.
+  # the projection, sorted by their created_at timestamp.  Because of
+  # RollUp, membership of these events in the `$all` stream is
+  # deleted. Replaying them in global created_at order reconstructs
+  # their original chronological order across all aggregates.
+  # Resetting of the projector checkpoint is needed afterwards so that
+  # active projectors can catch up on the `$all` stream since
+  # artificial event numbers were used during replay of archived
+  # streams.
   defp replay_archived_streams(projector_names) do
     projector_modules_map = get_projector_modules()
-    archived_streams = fetch_archived_stream_uuids()
+    {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
 
-    Enum.each(projector_names, fn projector_name ->
-      projector_module = Map.fetch!(projector_modules_map, projector_name)
-      replay_archived_streams_for_projector(projector_name, projector_module, archived_streams)
-      reset_projector_checkpoint(projector_name)
-    end)
+    try do
+      Enum.reduce_while(projector_names, :ok, fn projector_name, :ok ->
+        projector_module = Map.fetch!(projector_modules_map, projector_name)
+
+        case replay_archived_streams_for_projector(pid, projector_name, projector_module) do
+          :ok ->
+            reset_projector_checkpoint(projector_name)
+            {:cont, :ok}
+
+          {:error, reason} ->
+            {:halt, {:error, reason}}
+        end
+      end)
+    after
+      GenServer.stop(pid)
+    end
   end
 
   # Get projector name to module map from its supervisor but without
@@ -106,63 +133,109 @@ defmodule Mix.Tasks.RepairProjections do
     end)
   end
 
-  # Get all archived streams. They are sorted by their archive name.
-  # CAVEAT: Since RollUp is deleting membership (link) of the events
-  # from these streams in the `$all` stream, their relative positions
-  # according to events from other aggregates are permanently
-  # lost. So, for this to work reliably we expect projections to
-  # receive events from their aggregate only, which seems to be the
-  # case in Trento, except for the host projector.
-  defp fetch_archived_stream_uuids do
-    {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
+  # We re-create what Commanded stream_forward() function is doing but
+  # combining events from all archived streams. Since the logical
+  # global ordering of these events is lost from the RollUp process we
+  # use `created_at` field of the events themselves to maximally
+  # approximate that order. Additionally, we make use of optimizations
+  # such as using Postgrex.stream() instead of the manual chunking
+  # used by the EventStore implementation.
+  defp replay_archived_streams_for_projector(pid, projector_name, projector_module) do
+    Logger.info("Replaying archived stream events for #{projector_name}...")
 
-    {:ok, %{rows: rows}} =
-      Postgrex.query(
+    transaction_result =
+      Postgrex.transaction(
         pid,
-        """
-        SELECT stream_uuid
-        FROM streams
-        WHERE stream_uuid LIKE '%-archived-%'
-        ORDER BY split_part(stream_uuid, '-archived-', 2) ASC;
-        """
+        fn conn ->
+          conn
+          |> stream_archived_forward()
+          |> Enum.reduce(0, fn event, count ->
+            # This function re-creates what the handler is doing internally.
+            metadata =
+              Commanded.EventStore.RecordedEvent.enrich_metadata(event,
+                additional_metadata: %{
+                  application: Trento.Commanded,
+                  handler_name: projector_name
+                }
+              )
+
+            projector_module.handle(event.data, metadata)
+            # NOTE: Processing an event doesn't actually mean
+            # replaying that event since the handler receives events
+            # from all archived streams and would drop the ones it's
+            # not interested in. There is no trivial way to catch when
+            # the projector handler actually replayed the event.
+            count + 1
+          end)
+        end,
+        timeout: @archive_replay_timeout
       )
 
-    GenServer.stop(pid)
+    case transaction_result do
+      {:ok, count} ->
+        Logger.info(
+          "Archived streams replay complete for #{projector_name}. #{count} events processed."
+        )
+        :ok
 
-    List.flatten(rows)
+      {:error, :rollback} ->
+        {:error, {:timeout, :archive_replay, projector_name}}
+
+      {:error, reason} = error ->
+        {:error, {:archive_replay_failed, projector_name, reason}}
+    end
   end
 
-  defp replay_archived_streams_for_projector(projector_name, projector_module, archived_streams) do
-    if Enum.empty?(archived_streams) do
-      Logger.info("No archived streams found for #{projector_name}.")
-    else
-      Logger.info(
-        "Replaying #{length(archived_streams)} archived stream(s) for #{projector_name}..."
-      )
+  # Read all archived streams and order their events by `created_at`
+  # field and assigning an event_number that is derived from that
+  # ordering.
+  defp stream_archived_forward(conn) do
+    config = Trento.EventStore.config()
+    serializer = Keyword.get(config, :serializer, Trento.Support.JsonbSerializer)
+    schema = Keyword.get(config, :schema, "public")
 
-      Enum.each(archived_streams, fn stream_uuid ->
-        Trento.Commanded
-        |> Commanded.EventStore.stream_forward(stream_uuid)
-        |> Commanded.Event.Upcast.upcast_event_stream(
-          additional_metadata: %{application: Trento.Commanded}
-        )
-        |> Enum.each(fn event ->
-          metadata =
-            Commanded.EventStore.RecordedEvent.enrich_metadata(event,
-              additional_metadata: %{
-                application: Trento.Commanded,
-                handler_name: projector_name
-              }
-            )
+    # Archived streams have names
+    # `<stream_id>-archived-<timestamp-of-archival>`. The mapping
+    # table `stream_events` has only one record per event for the
+    # archived streams and this is the record that designates that
+    # this event originated from the archive stream, hence the
+    # stream_id == original_stream_id filter.
+    query = """
+    SELECT
+      row_number() OVER (ORDER BY e.created_at, se.stream_id, se.stream_version) AS event_number,
+      e.event_id,
+      s.stream_uuid,
+      se.original_stream_version,
+      e.event_type,
+      e.correlation_id,
+      e.causation_id,
+      e.data,
+      e.metadata,
+      e.created_at
+    FROM "#{schema}".stream_events se
+    INNER JOIN "#{schema}".streams s ON s.stream_id = se.stream_id
+    INNER JOIN "#{schema}".events e ON se.event_id = e.event_id
+    WHERE se.stream_id = se.original_stream_id AND s.stream_uuid LIKE '%-archived-%'
+    ORDER BY event_number ASC;
+    """
 
-          projector_module.handle(event.data, metadata)
-        end)
-      end)
+    conn
+    |> Postgrex.stream(query, [], max_rows: 1_000)
+    |> Stream.flat_map(&result_to_recorded_events(&1, serializer))
+    |> Commanded.Event.Upcast.upcast_event_stream(
+      additional_metadata: %{application: Trento.Commanded}
+    )
+  end
 
-      Logger.info(
-        IO.ANSI.format([:green, "Archived streams replay complete for #{projector_name}."])
-      )
-    end
+  defp result_to_recorded_events(%Postgrex.Result{rows: rows}, serializer) do
+    rows
+    |> EventStore.Storage.Reader.EventAdapter.to_event_data()
+    |> Enum.map(&EventStore.RecordedEvent.deserialize(&1, serializer))
+    # Convert EventStore.RecordedEvent to
+    # Commanded.EventStore.Recorded event which is part of
+    # `commanded_event_store_adapter` in the original
+    # stream_forward() function.
+    |> Enum.map(&Commanded.EventStore.Adapters.EventStore.Mapper.from_recorded_event/1)
   end
 
   defp reset_projector_checkpoint(projector_name) do
@@ -192,11 +265,14 @@ defmodule Mix.Tasks.RepairProjections do
     # caught up on the stream.
     {:ok, supervisor_pid} = Trento.ProjectorsSupervisor.start_link([])
 
-    result = wait_for_projectors(projector_names, stream_version, 60_000)
-
-    Supervisor.stop(supervisor_pid)
-
-    result
+    try do
+      case wait_for_projectors(projector_names, stream_version, @active_catchup_timeout) do
+        :ok -> :ok
+        {:error, :timeout} -> {:error, {:timeout, :active_catchup}}
+      end
+    after
+      Supervisor.stop(supervisor_pid)
+    end
   end
 
   defp wait_for_projectors(projector_names, target_stream_version, timeout_ms) do
