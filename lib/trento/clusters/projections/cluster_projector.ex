@@ -98,22 +98,21 @@ defmodule Trento.Clusters.Projections.ClusterProjector do
       state: state
     },
     fn multi ->
-      changeset =
-        cluster = Repo.get!(ClusterReadModel, id)
+      cluster = Repo.get!(ClusterReadModel, id)
 
-        params =
-          %{
-            name: name,
-            sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
-            provider: provider,
-            type: type,
-            resources_number: resources_number,
-            hosts_number: hosts_number,
-            details: details,
-            state: state
-          }
-          |> maybe_put_default_health_details(cluster.health_details)
-          |> postprocess_health_details()
+      params =
+        %{
+          name: name,
+          sap_instances: Enum.map(sap_instances, &Map.from_struct/1),
+          provider: provider,
+          type: type,
+          resources_number: resources_number,
+          hosts_number: hosts_number,
+          details: details,
+          state: state
+        }
+        |> maybe_put_default_health_details(cluster.health_details)
+        |> postprocess_health_details()
 
       changeset = ClusterReadModel.changeset(cluster, params)
 
