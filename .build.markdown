@@ -16,6 +16,7 @@ Trento.AI.LLMBuilder.md
 Trento.AI.LLMRegistry.md
 Trento.AI.OpenApiToolBuilder.md
 Trento.AI.OperationEntry.md
+Trento.AI.Presence.md
 Trento.AI.RemoteHttpTool.md
 Trento.AI.RemoteOpenApiToolSource.md
 Trento.AI.ToolSource.md
