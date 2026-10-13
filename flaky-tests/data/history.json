@@ -1,29 +1,5 @@
 [
   {
-    "timestamp": "2026-08-28T01:43:34Z",
-    "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
-    "run_id": "33132806221",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 39,
-      "failed_runs": 4
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.07501
-      },
-      {
-        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — AI settings drift swaps the running agent silently when only the api key changed",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.SessionControllerTest::test login endpoint should validate totp correctly",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-28T01:59:44Z",
     "commit": "e551222a026a1c0512dc34d52b1d9400e4a07428",
     "run_id": "33133466866",
@@ -5759,6 +5735,17 @@
     "commit": "3e31e59182654c6f484eb43d39616a7d2285fc13",
     "run_id": "38474276506",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-13T22:30:04Z",
+    "commit": "3e31e59182654c6f484eb43d39616a7d2285fc13",
+    "run_id": "38474276506",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
