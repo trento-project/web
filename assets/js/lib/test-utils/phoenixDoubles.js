@@ -27,6 +27,8 @@ export class MockChannel {
     this.closeHandlers = [];
     this.pushed = [];
     this.joinPush = makePush();
+    this.params = {};
+    this.joinPayload = null;
   }
 
   on(event, cb) {
@@ -44,8 +46,16 @@ export class MockChannel {
     return push;
   }
 
+  // Phoenix evaluates the join params when it sends the join, so record what was sent.
   join() {
+    this.joinPayload =
+      typeof this.params === 'function' ? this.params() : this.params;
     return this.joinPush;
+  }
+
+  // Test convenience: after a reconnect Phoenix sends the join again, with the params evaluated anew.
+  rejoin() {
+    return this.join();
   }
 
   onError(cb) {
@@ -72,9 +82,11 @@ export function makeMockSocket() {
   const channels = new Map();
   return {
     channels,
-    channel: (topic) => {
+    channel: (topic, params = {}) => {
       if (!channels.has(topic)) channels.set(topic, new MockChannel());
-      return channels.get(topic);
+      const channel = channels.get(topic);
+      channel.params = params;
+      return channel;
     },
   };
 }
