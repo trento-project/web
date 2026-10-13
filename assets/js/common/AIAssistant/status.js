@@ -27,11 +27,17 @@ export const isConfigurationRestored = (configurationStatus) =>
 export const isConfigurationAvailable = (configurationStatus) =>
   !isConfigurationCleared(configurationStatus);
 
+const isConfigurationKnown = (configurationStatus) =>
+  Object.values(CONFIGURATION_STATUS).includes(configurationStatus);
+
 // The conversation can only be written to while the configuration is intact.
 // - a cleared configuration has nothing to answer with
 // - a restored one belongs to a fresh chat, so the current thread stays read-only
+// - an unknown one is not trusted
 export const isChatReadOnly = (configurationStatus) =>
-  configurationStatus !== CONFIGURATION_STATUS.OK;
+  isConfigurationCleared(configurationStatus) ||
+  isConfigurationRestored(configurationStatus) ||
+  !isConfigurationKnown(configurationStatus);
 
 // Why the chat is read-only, if it is: the configuration explains more than an
 // expired conversation, so it goes first. Returns the configuration status

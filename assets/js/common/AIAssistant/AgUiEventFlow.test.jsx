@@ -655,6 +655,28 @@ describe('AG-UI event flow', () => {
       ).not.toBeInTheDocument();
     });
 
+    it('cannot retry once the conversation expired. a new chat must be started', async () => {
+      const { channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const first = await sendUserMessage('first');
+      await streamAssistantTurn(first, { messageId: 'a', deltas: ['one'] });
+
+      expect(
+        await screen.findByRole('button', { name: 'retry' })
+      ).toBeVisible();
+
+      await act(async () => {
+        channel.emit('conversation_expired', { thread_id: first.thread_id });
+      });
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', { name: 'retry' })
+        ).not.toBeInTheDocument()
+      );
+    });
+
     it('cannot retry while the channel is down', async () => {
       const { channel, sendUserMessage, streamAssistantTurn } =
         await renderAIAssistant({ open: true });

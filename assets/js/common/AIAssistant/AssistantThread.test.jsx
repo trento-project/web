@@ -12,7 +12,7 @@ import {
 } from '@assistant-ui/react';
 
 import { renderWithRouter } from '@lib/test-utils';
-import { CONNECTED, DISCONNECTED } from '@lib/ai';
+import { CONNECTED, DISCONNECTED, EXPIRED } from '@lib/ai';
 
 import AssistantThread from './AssistantThread';
 import { OK, CLEARED, RESTORED } from './status';
@@ -146,6 +146,22 @@ describe('AssistantThread', () => {
       connectionStatus: CONNECTED,
       configurationStatus: RESTORED,
     });
+
+    expect(screen.getByText('Online')).toBeInTheDocument();
+    expect(newChat()).toBeEnabled();
+  });
+
+  it('goes read-only when the conversation expired', () => {
+    renderThread({ conversationStatus: EXPIRED });
+
+    expect(banner()).toHaveTextContent(
+      /This conversation has expired\. Start a new chat to continue\./
+    );
+    expect(composer()).toBeDisabled();
+  });
+
+  it('stays online on an expired conversation so a new chat can be started', () => {
+    renderThread({ connectionStatus: CONNECTED, conversationStatus: EXPIRED });
 
     expect(screen.getByText('Online')).toBeInTheDocument();
     expect(newChat()).toBeEnabled();
