@@ -68,7 +68,8 @@ const permissionsInputField =
 const emptyListAccessTokens = 'p:contains("No keys issued.")';
 const generateTokenButton = 'button:contains("Generate Token")';
 const modalGenerateTokenButton = 'button:contains("Generate Token"):eq(1)';
-const generatedTokenButton = 'button:contains("Close"):visible';
+const generatedTokenButton =
+  '[role="dialog"]:contains("Generated Token") button:contains("Close"):visible';
 const deleteTokenButton = 'button:contains("Delete")';
 const modalDeleteTokenButton = 'button:contains("Delete Token")';
 const tokenNameField = 'input[aria-label="token-name"]';
