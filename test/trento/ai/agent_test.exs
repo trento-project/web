@@ -732,6 +732,17 @@ defmodule Trento.AI.AgentTest do
       refute_receive {:DOWN, ^ref, :process, _, _}, 300
     end
 
+    @tag ai_config_overrides: [inactivity_timeout: 500]
+    test "stops a viewed idle agent once the inactivity timeout passes",
+         %{agent_id: agent_id, pid: pid} do
+      :ok = Presence.track_viewer(agent_id, "user-1")
+      complete_run()
+      ref = Process.monitor(pid)
+
+      assert_receive {:agent, {:agent_shutdown, %{reason: :inactivity}}}, @integration_timeout
+      assert_receive {:DOWN, ^ref, :process, ^pid, _reason}, @integration_timeout
+    end
+
     @tag ai_config_overrides: [viewer_check_delay: 300]
     test "keeps an idle agent whose viewer comes back within the check delay",
          %{agent_id: agent_id, pid: pid} do

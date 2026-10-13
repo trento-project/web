@@ -825,9 +825,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
           "thread_id" => "t1"
         })
 
-      Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
-      Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
-
       test_pid = self()
 
       expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn opts ->
@@ -1101,27 +1098,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert viewer_id in viewers(next_thread_id)
     end
 
-    for action <- ["abandon_thread", :ai_configuration_cleared] do
-      @action action
-      test "stops viewing the thread on #{inspect(action)}",
-           %{socket: socket, access_token: jwt, thread_id: thread_id, viewer_id: viewer_id} do
-        stub_agent_run(spawn_fake_agent_server())
-        stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
-        stub(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn _ -> :ok end)
-
-        push_prompt(socket, jwt, thread_id)
-        finish_run(socket)
-
-        case @action do
-          "abandon_thread" -> socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
-          :ai_configuration_cleared -> send(socket.channel_pid, {:ai_configuration, :cleared})
-        end
-
-        _ = wait_assigns(socket)
-        refute viewer_id in viewers(thread_id)
-      end
-    end
-
     test "tracks the thread again when a prompt follows a leave on the same thread",
          %{socket: socket, access_token: jwt, thread_id: thread_id, viewer_id: viewer_id} do
       stub_agent_run(spawn_fake_agent_server())
@@ -1135,17 +1111,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
 
       assert viewer_id in viewers(thread_id)
-    end
-
-    test "stops the joined thread's agent on abandon_thread",
-         %{socket: socket, thread_id: thread_id, viewer_id: viewer_id} do
-      stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
-      expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn ^thread_id -> :ok end)
-      assert viewer_id in viewers(thread_id)
-
-      socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
-
-      refute viewer_id in viewers(thread_id)
     end
   end
 
@@ -1260,7 +1225,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
 
     test "abandons the thread where there's nothing running",
-         %{socket: socket} do
+         %{socket: socket, user_id: user_id} do
       seed_assigns(socket, %{loading: false})
 
       expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t1" ->
@@ -1268,9 +1233,12 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       end)
 
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t1" -> :ok end)
+      assert to_string(user_id) in viewers("t1")
 
       ref = push(socket, "abandon_thread", %{})
       assert_reply ref, :ok
+
+      refute to_string(user_id) in viewers("t1")
     end
   end
 
@@ -1284,11 +1252,13 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       # stop/1 cancels the in-flight run before terminating the agent.
       expect(Trento.AI.Agent.Server.Mock, :cancel, fn "t1" -> :ok end)
       expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t1" -> :ok end)
+      assert to_string(user_id) in viewers("t1")
 
       AIConfigurationsEvents.broadcast_cleared(user_id)
 
       assert_push("ai_configuration_cleared", %{})
       assert %{loading: false} = wait_assigns(socket)
+      refute to_string(user_id) in viewers("t1")
     end
 
     test "still goes read-only when stopping the agent fails (best-effort stop)",
@@ -1589,7 +1559,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       agent = Process.monitor(agent_pid!(thread_id))
       kill_channel(socket)
-      join_as_persisted_user(user_id, thread_id)
+      join_channel(user_id, %{thread_id: thread_id})
 
       refute_receive {:DOWN, ^agent, :process, _, _}, 300
     end
@@ -1611,21 +1581,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
-  defp join_socket(context) do
-    jwt = generate_jwt(7)
-    request_origin = "https://trento.test"
-    thread_id = Map.get(context, :thread_id, "t1")
-
-    {:ok, _, socket} =
-      UserSocket
-      |> socket("user_id", %{current_user_id: 7, request_origin: request_origin})
-      |> subscribe_and_join(AIAssistantChannel, "ai_assistant:7", %{
-        "access_token" => jwt,
-        "thread_id" => thread_id
-      })
-
-    %{socket: socket, access_token: jwt, request_origin: request_origin, thread_id: thread_id}
-  end
+  defp join_socket(context), do: join_channel(7, context)
 
   defp join_socket_with_ai_config(context) do
     %{id: user_id} = insert(:user)
@@ -1636,18 +1592,20 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       model: "gemini-2.5-flash"
     )
 
-    join_as_persisted_user(user_id, Map.get(context, :thread_id, "t1"))
+    join_channel(user_id, context)
   end
 
   defp join_socket_without_ai_config(context) do
     %{id: user_id} = insert(:user)
 
-    join_as_persisted_user(user_id, Map.get(context, :thread_id, "t1"))
+    join_channel(user_id, context)
   end
 
-  defp join_as_persisted_user(user_id, thread_id) do
+  # Joins as `user_id` on the context's thread, "t1" by default.
+  defp join_channel(user_id, context) do
     jwt = generate_jwt(user_id)
     request_origin = "https://trento.test"
+    thread_id = Map.get(context, :thread_id, "t1")
 
     {:ok, _, socket} =
       UserSocket
@@ -1656,10 +1614,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         "access_token" => jwt,
         "thread_id" => thread_id
       })
-
-    Mox.allow(Trento.AI.Agent.Supervisor.Mock, self(), socket.channel_pid)
-    Mox.allow(Trento.AI.Agent.Server.Mock, self(), socket.channel_pid)
-    Mox.allow(Trento.AI.LLMBuilder.Mock, self(), socket.channel_pid)
 
     %{
       socket: socket,

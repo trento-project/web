@@ -32,16 +32,18 @@ defmodule TrentoWeb.AIAssistantChannel do
 
   ### Mutation surfaces
 
-  All run-state mutations go through these private helpers:
+  All run-state mutations happen in these places:
 
   - `stash_run_id/2` — on each prompt, once the model is built; sets `:current_run_id`.
   - `activate_run/2` — once the agent is alive + subscribed + first message added; marks `:loading: true` and zeros per-run booleans.
   - `reset_run/1` — on `:idle` (success), `:error`, `run_agent` failure, the client's `cancel_run` and `abandon_thread`, and an AI-configuration clear; clears per-run booleans and `:loading`. Leaves the IDs alone — next `send_message` overwrites them.
   - `monitor_agent_server/2` — alongside `activate_run/2`; swaps `:agent_monitor_ref` for a monitor on the pid `Trento.AI.Agent.run/3` returned. Survives `reset_run/1`: the subscription spans runs.
   - `track_viewer/2` — at `join/3`, and on each prompt through `maybe_switch_thread/2`; tracks the viewer and sets `:current_thread_id`. A prompt on another thread first goes through `leave_current_thread/1` (untracks the viewer, stops the agent).
+  - `handle_in("send_message", ...)` — replaces `:access_token` with the token the prompt carries, once it validates.
+  - the `{:DOWN, ...}` handlers — clear `:agent_monitor_ref` once the monitored agent server is gone.
 
-  `:running` and `:llm_deltas` perform single-flag flips inline
-  (`run_has_started`, `message_started`).
+  The `:running` status flips `run_has_started` inline, and `AgUi.maybe_text_message_start/1`
+  flips `message_started` on the run's first `:llm_deltas` event.
   """
 
   use TrentoWeb, :channel

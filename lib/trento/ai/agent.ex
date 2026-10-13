@@ -22,7 +22,7 @@ defmodule Trento.AI.Agent do
   alias Trento.AI.Agent.Supervisor, as: AgentSupervisor
   alias Trento.AI.{ApplicationConfigLoader, Presence, ToolsRegistry}
 
-  # Stops any idle agent, viewed or not: sagents' idle timer ignores presence.
+  # Stops any idle agent, viewed or not: sagents' idle timer ignores presence. Overridable via `:inactivity_timeout`.
   @inactivity_timeout :timer.minutes(30)
 
   @doc """
@@ -141,7 +141,7 @@ defmodule Trento.AI.Agent do
     [
       agent_id: agent_id,
       agent: agent,
-      inactivity_timeout: @inactivity_timeout,
+      inactivity_timeout: inactivity_timeout(),
       pubsub: {Phoenix.PubSub, Trento.PubSub},
       presence_tracking: [
         presence_module: Presence,
@@ -150,6 +150,9 @@ defmodule Trento.AI.Agent do
       ]
     ]
   end
+
+  defp inactivity_timeout,
+    do: Keyword.get(ApplicationConfigLoader.load(), :inactivity_timeout, @inactivity_timeout)
 
   defp load_base_system_prompt do
     ApplicationConfigLoader.load()
