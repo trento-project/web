@@ -11,6 +11,7 @@ import { CONNECTION_STATUS, isConversationExpired, isOnline } from '@lib/ai';
 export const OK = 'ok';
 export const CLEARED = 'cleared';
 export const RESTORED = 'restored';
+export const UNKNOWN = 'unknown';
 
 export const CONFIGURATION_STATUS = {
   OK,
@@ -41,10 +42,13 @@ export const isChatReadOnly = (configurationStatus) =>
 
 // Why the chat is read-only, if it is: the configuration explains more than an
 // expired conversation, so it goes first. Returns the configuration status
-// (cleared, restored), the conversation status (expired), or null.
+// (cleared, restored, UNKNOWN), the conversation status
+// (expired), or null.
 export const readOnlyReason = (configurationStatus, conversationStatus) => {
   if (isChatReadOnly(configurationStatus)) {
-    return configurationStatus;
+    return isConfigurationKnown(configurationStatus)
+      ? configurationStatus
+      : UNKNOWN;
   }
 
   if (isConversationExpired(conversationStatus)) {

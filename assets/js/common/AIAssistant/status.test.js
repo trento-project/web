@@ -7,6 +7,7 @@ import {
   OK,
   CLEARED,
   RESTORED,
+  UNKNOWN,
   canSendMessage,
   effectiveConnectionStatus,
   readOnlyReason,
@@ -43,6 +44,8 @@ describe('AIAssistant status', () => {
       ${CLEARED}          | ${ACTIVE}          | ${CLEARED}
       ${CLEARED}          | ${EXPIRED}         | ${CLEARED}
       ${RESTORED}         | ${EXPIRED}         | ${RESTORED}
+      ${'unknown'}        | ${ACTIVE}          | ${UNKNOWN}
+      ${undefined}        | ${ACTIVE}          | ${UNKNOWN}
     `(
       'is $reason when the configuration is $configurationStatus and the conversation is $conversationStatus',
       ({ configurationStatus, conversationStatus, reason }) => {
@@ -59,6 +62,8 @@ describe('AIAssistant status', () => {
       ${CONNECTED}     | ${OK}               | ${ACTIVE}          | ${true}
       ${CONNECTED}     | ${RESTORED}         | ${ACTIVE}          | ${false}
       ${CONNECTED}     | ${CLEARED}          | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${undefined}        | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${null}             | ${ACTIVE}          | ${false}
       ${CONNECTED}     | ${OK}               | ${EXPIRED}         | ${false}
       ${CONNECTING}    | ${OK}               | ${ACTIVE}          | ${false}
       ${DISCONNECTED}  | ${OK}               | ${ACTIVE}          | ${false}
