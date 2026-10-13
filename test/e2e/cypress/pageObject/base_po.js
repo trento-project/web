@@ -286,6 +286,11 @@ export const waitForRequest = (
   { timeout = 5000, retryUnauthorized = true } = {}
 ) =>
   cy.wait(`@${requestAlias}`, { timeout: timeout }).then((request) => {
+    // Handle interrupted requests such as "CDP Fetch request canceled by the browser" events.
+    if (typeof request.response == 'undefined') {
+      return request;
+    }
+
     if (!retryUnauthorized || request.response.statusCode !== 401) {
       return request;
     }
