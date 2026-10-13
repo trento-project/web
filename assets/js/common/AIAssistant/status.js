@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { CONNECTION_STATUS, isOnline } from '@lib/ai';
+import { CONNECTION_STATUS, isConversationExpired, isOnline } from '@lib/ai';
 
 // Lifecycle of the assistant relative to the user's AI configuration:
 //   ok       - configured and usable
@@ -33,6 +33,21 @@ export const isConfigurationAvailable = (configurationStatus) =>
 export const isChatReadOnly = (configurationStatus) =>
   configurationStatus !== CONFIGURATION_STATUS.OK;
 
+// Why the chat is read-only, if it is: the configuration explains more than an
+// expired conversation, so it goes first. Returns the configuration status
+// (cleared, restored), the conversation status (expired), or null.
+export const readOnlyReason = (configurationStatus, conversationStatus) => {
+  if (isChatReadOnly(configurationStatus)) {
+    return configurationStatus;
+  }
+
+  if (isConversationExpired(conversationStatus)) {
+    return conversationStatus;
+  }
+
+  return null;
+};
+
 // --- Folding the two axes into one ------------------------------------------
 // Connection and configuration are orthogonal, but a cleared configuration
 // makes the live socket irrelevant: there is nothing to talk to.
@@ -50,5 +65,11 @@ export const effectiveConnectionStatus = (
 // A cleared configuration is already read-only, so folding the connection first
 // would change nothing - which also makes this safe to call with either the raw
 // or the effective connection status.
-export const canSendMessage = (connectionStatus, configurationStatus) =>
-  isOnline(connectionStatus) && !isChatReadOnly(configurationStatus);
+// An expired conversation blocks sending too, whatever the configuration.
+export const canSendMessage = (
+  connectionStatus,
+  configurationStatus,
+  conversationStatus
+) =>
+  isOnline(connectionStatus) &&
+  !readOnlyReason(configurationStatus, conversationStatus);

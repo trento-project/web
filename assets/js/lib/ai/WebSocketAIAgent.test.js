@@ -6,6 +6,7 @@ import { aguiEvents } from '@lib/test-utils/aguiEvents';
 
 import { extractMessageText, WebSocketAIAgent } from './WebSocketAIAgent';
 import { CONNECTING, CONNECTED, DISCONNECTED } from './connectionStatus';
+import { ACTIVE, EXPIRED } from './conversationStatus';
 
 const flushMicrotasks = async () => {
   for (let i = 0; i < 5; i += 1) await Promise.resolve();
@@ -717,6 +718,42 @@ describe('WebSocketAIAgent', () => {
       expect(complete).not.toHaveBeenCalled();
       expect(agent._activeSubscriber).toBeNull();
       expect(agent._activeRunId).toBeNull();
+    });
+
+    it("reports the current thread's conversation as expired, and active again once abandoned", async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationStatusChange,
+      });
+      agent.threadId = 'thread-1';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+      expect(onConversationStatusChange).toHaveBeenLastCalledWith(EXPIRED);
+
+      agent.abandonThread();
+      expect(onConversationStatusChange).toHaveBeenLastCalledWith(ACTIVE);
+      expect(onConversationStatusChange).toHaveBeenCalledTimes(2);
+    });
+
+    it('ignores conversation_expired for a thread it has already left', async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent, channel } = await connectedAgent({
+        onConversationStatusChange,
+      });
+      agent.threadId = 'thread-2';
+
+      channel.emit('conversation_expired', { thread_id: 'thread-1' });
+
+      expect(onConversationStatusChange).not.toHaveBeenCalled();
+    });
+
+    it('does not report an already active conversation when the thread is abandoned', async () => {
+      const onConversationStatusChange = jest.fn();
+      const { agent } = await connectedAgent({ onConversationStatusChange });
+
+      agent.abandonThread();
+
+      expect(onConversationStatusChange).not.toHaveBeenCalled();
     });
 
     it('resets omitted callback to a noop', async () => {

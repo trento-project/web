@@ -117,6 +117,38 @@ describe('AIAssistant', () => {
     });
   });
 
+  describe('when the conversation expired', () => {
+    it('starts the fresh thread of a closed launcher with an active conversation', async () => {
+      const { user, channel, sendUserMessage, streamAssistantTurn } =
+        await renderAIAssistant({ open: true });
+
+      const turn = await sendUserMessage('hello');
+      await streamAssistantTurn(turn, { messageId: 'a', deltas: ['hi'] });
+
+      await act(async () => {
+        channel.emit('conversation_expired', { thread_id: turn.thread_id });
+      });
+      expect(
+        await screen.findByText(/This conversation has expired/i)
+      ).toBeInTheDocument();
+
+      await user.click(screen.getByLabelText('Close'));
+
+      await act(async () => {
+        channel.emit('ai_configuration_created');
+      });
+
+      await user.click(await findEnabledTrigger());
+
+      await waitFor(() =>
+        expect(screen.getByLabelText('Message input')).toBeEnabled()
+      );
+      expect(
+        screen.queryByText(/This conversation has expired/i)
+      ).not.toBeInTheDocument();
+    });
+  });
+
   describe('when the configuration changes after the launcher was opened', () => {
     it('prompts to restart the chat without discarding the conversation', async () => {
       const { channel, user, sendUserMessage, streamAssistantTurn } =

@@ -253,6 +253,58 @@ describe('AG-UI event flow', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('goes read-only when the conversation expires, until a new chat is started', async () => {
+    const { channel, user, sendUserMessage, streamAssistantTurn } =
+      await renderAIAssistant({ open: true });
+
+    const sent = await sendUserMessage('first');
+    await streamAssistantTurn(sent, { messageId: 'a', deltas: ['one'] });
+
+    await act(async () => {
+      channel.emit('conversation_expired', { thread_id: sent.thread_id });
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/This conversation has expired/i)
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.getByPlaceholderText('Start a new chat to continue')
+    ).toBeDisabled();
+
+    await user.click(screen.getByRole('button', { name: 'New chat' }));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Message input')).toBeEnabled();
+    });
+    expect(
+      screen.queryByText(/This conversation has expired/i)
+    ).not.toBeInTheDocument();
+  });
+
+  it('keeps a cleared configuration in charge when the conversation also expires', async () => {
+    const { channel, sendUserMessage, streamAssistantTurn } =
+      await renderAIAssistant({ open: true });
+
+    const sent = await sendUserMessage('first');
+    await streamAssistantTurn(sent, { messageId: 'a', deltas: ['one'] });
+
+    await act(async () => {
+      channel.emit('ai_configuration_cleared');
+      channel.emit('conversation_expired', { thread_id: sent.thread_id });
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText('AI Assistant is disabled')
+      ).toBeDisabled();
+    });
+    expect(
+      screen.queryByText(/This conversation has expired/i)
+    ).not.toBeInTheDocument();
+  });
+
   it('locks "New chat" for the length of the run', async () => {
     const { emitAgUi, sendUserMessage } = await renderAIAssistant({
       open: true,

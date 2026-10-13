@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 
-import { CONNECTED, CONNECTING, DISCONNECTED } from '@lib/ai';
+import { CONNECTED, CONNECTING, DISCONNECTED, EXPIRED } from '@lib/ai';
 
 import { OK, CLEARED, RESTORED } from '../status';
 import PromptComposer from './PromptComposer';
@@ -93,6 +93,21 @@ describe('PromptComposer', () => {
       ).toBeDisabled();
     }
   );
+
+  it('asks for a new chat and disables the input and the send button when the conversation expired', () => {
+    render(
+      <PromptComposer
+        connectionStatus={CONNECTED}
+        configurationStatus={OK}
+        conversationStatus={EXPIRED}
+      />
+    );
+
+    expect(
+      screen.getByPlaceholderText('Start a new chat to continue')
+    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled();
+  });
 
   it('enables the input and the send button when connected with an ok configuration', () => {
     render(<PromptComposer connectionStatus={CONNECTED} />);

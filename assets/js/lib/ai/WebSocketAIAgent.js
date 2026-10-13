@@ -12,6 +12,7 @@ import { getAccessTokenFromStore, refreshAndStoreAccessToken } from '@lib/auth';
 import { handleUnrecoverableAuthError } from '@lib/network';
 
 import { CONNECTION_STATUS } from './connectionStatus';
+import { CONVERSATION_STATUS } from './conversationStatus';
 
 // Pure helper: collapse a message's content (string or array of parts) to
 // the plain text the server expects in `send_message`.
@@ -57,6 +58,7 @@ export class WebSocketAIAgent extends AbstractAgent {
     this.userID = userID;
     this.channel = null;
     this._connectionStatus = CONNECTION_STATUS.DISCONNECTED;
+    this._conversationStatus = CONVERSATION_STATUS.ACTIVE;
     this._activeSubscriber = null;
     this._activeRunId = null;
     this._getAccessToken = getAccessToken;
@@ -70,12 +72,14 @@ export class WebSocketAIAgent extends AbstractAgent {
     onAIConfigurationCleared = noop,
     onAIConfigurationCreated = noop,
     onModelChanged = noop,
+    onConversationStatusChange = noop,
   } = {}) {
     this.#callbacks = {
       onConnectionChange,
       onAIConfigurationCleared,
       onAIConfigurationCreated,
       onModelChanged,
+      onConversationStatusChange,
     };
     return this;
   }
@@ -168,6 +172,10 @@ export class WebSocketAIAgent extends AbstractAgent {
         () => this.#callbacks.onAIConfigurationCreated(),
       ],
       ['model_changed', (payload) => this.#callbacks.onModelChanged(payload)],
+      [
+        'conversation_expired',
+        ({ thread_id: threadId }) => this._handleConversationExpired(threadId),
+      ],
     ];
 
     each(messageHandlerMap, ([eventName, handler]) =>
@@ -175,6 +183,13 @@ export class WebSocketAIAgent extends AbstractAgent {
     );
     this.channel.onError(dropConnection);
     this.channel.onClose(dropConnection);
+  }
+
+  // A late event for a thread the user has already left must not lock the new one.
+  _handleConversationExpired(threadId) {
+    if (threadId === this.threadId) {
+      this._setConversationStatus(CONVERSATION_STATUS.EXPIRED);
+    }
   }
 
   _handleAIConfigurationCleared() {
@@ -313,12 +328,14 @@ export class WebSocketAIAgent extends AbstractAgent {
     super.abortRun();
   }
 
-  // "New chat". Tells the server the thread is gone so the running agent process can be killed.
+  // "New chat". Tells the server the thread is gone so the running agent process can be killed,
+  // and starts an active conversation.
   //
   // The payload is empty for the same reason as `abortRun`'s.
   abandonThread() {
     this.channel?.push('abandon_thread', {});
     this._settleActiveRun();
+    this._setConversationStatus(CONVERSATION_STATUS.ACTIVE);
   }
 
   _clearActiveRun() {
@@ -330,6 +347,12 @@ export class WebSocketAIAgent extends AbstractAgent {
     if (this._connectionStatus === status) return;
     this._connectionStatus = status;
     this.#callbacks.onConnectionChange(status);
+  }
+
+  _setConversationStatus(status) {
+    if (this._conversationStatus === status) return;
+    this._conversationStatus = status;
+    this.#callbacks.onConversationStatusChange(status);
   }
 
   disconnect() {
