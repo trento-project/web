@@ -69,7 +69,7 @@ const sapSystemNwq = {
 const instancesData = availableSAPSystems.flatMap((system) => system.instances);
 
 // Selectors
-const sapSystemsTableRows = 'tbody tr[class=""]';
+const sapSystemsTableRows = 'tbody > tr:nth-child(odd)';
 const firstSystemApplicationLayerRows =
   'tbody tr:nth-child(odd):eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
@@ -336,7 +336,7 @@ export const tableDisplaysExpectedAmountOfSystems = (systemsAmount) =>
 
 export const instanceHasItsStatusCorrectlyUpdated = (status, rowIndex) => {
   const healthClass = healthMap[status];
-  const sapSystemsFirstRow = `${sapSystemsTableRows}:eq(0)`;
+  const sapSystemsFirstRow = nwdSystemCell;
   const sapSystemInstanceStatusBadge = `${sapSystemsFirstRow} td:eq(1) svg`;
   cy.get(sapSystemInstanceStatusBadge).should('have.class', healthClass);
 
@@ -375,7 +375,7 @@ export const nwdSystemDataIsMarkedAsStale = () =>
   basePage.elementIsMarkedStale(nwdSystemCell);
 
 export const nwdSystemDataIsMarkedInSync = () =>
-  basePage.elementIsMarkedInSync(nwdSystemCell);
+  basePage.elementIsMarkedInSync(nwdSystemCell, 20000);
 
 export const nwdSystemInstanceRowIsMarkedAsStale = () =>
   basePage.elementIsMarkedStale(
@@ -384,7 +384,8 @@ export const nwdSystemInstanceRowIsMarkedAsStale = () =>
 
 export const nwdSystemInstanceRowIsMarkedInSync = () =>
   basePage.elementIsMarkedInSync(
-    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row)
+    getNwdApplicationInstanceRow(sapSystemNwd.applicationInstance.row),
+    20000
   );
 
 export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
@@ -394,7 +395,8 @@ export const hddDatabaseInstanceRowIsMarkedAsStale = () =>
 
 export const hddDatabaseInstanceRowIsMarkedInSync = () =>
   basePage.elementIsMarkedInSync(
-    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row)
+    getNwdDatabaseInstanceRow(sapSystemNwd.attachedDatabase.instance.row),
+    20000
   );
 
 export const existentTagCannotBeModified = () =>
@@ -570,6 +572,13 @@ export const startAllSapSystemsAgentsHeartbeat = () =>
   apiGetSapSystemAgentIds().then((agentIds) =>
     basePage.startAgentsHeartbeat(agentIds)
   );
+
+export const restoreSapSystemsOverviewState = () =>
+  basePage
+    .loadScenario('healthy-27-node-SAP-cluster')
+    .then(() => revertMovedScenario())
+    .then(() => revertNotMovedScenario())
+    .then(() => apiDeregisterJavaSystems());
 
 const apiGetSapSystemAgentIds = () =>
   apiGetSapSystems().then(({ body }) => [

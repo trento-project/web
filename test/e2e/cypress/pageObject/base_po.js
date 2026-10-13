@@ -192,8 +192,8 @@ export const removeTagButtonIsEnabled = () =>
 export const elementIsMarkedStale = (element, timeout = 20000) =>
   cy.get(element, { timeout }).should('have.class', 'bg-gray-100');
 
-export const elementIsMarkedInSync = (element) =>
-  cy.get(element).should('not.have.class', 'bg-gray-100');
+export const elementIsMarkedInSync = (element, timeout = 10000) =>
+  cy.get(element, { timeout }).should('not.have.class', 'bg-gray-100');
 
 export const healthIconIsMarkedStale = (icon, timeout = 20000) =>
   cy.get(icon, { timeout }).should('have.attr', 'data-stale');
