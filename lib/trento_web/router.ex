@@ -143,18 +143,6 @@ defmodule TrentoWeb.Router do
         put "#{path}/checks/schedule", ChecksScheduleController, :update,
           assigns: %{target_type: target_type},
           as: :"#{target_type}s_checks_schedule"
-
-        post "#{path}/checks/exception_windows",
-             ChecksScheduleController,
-             :create_exception_window,
-             assigns: %{target_type: target_type},
-             as: :"#{target_type}s_checks_schedule"
-
-        delete "#{path}/checks/exception_windows/:window_id",
-               ChecksScheduleController,
-               :delete_exception_window,
-               assigns: %{target_type: target_type},
-               as: :"#{target_type}s_checks_schedule"
       end
 
       delete "/hosts/:id", HostController, :delete

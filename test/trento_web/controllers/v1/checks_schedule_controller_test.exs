@@ -64,50 +64,94 @@ defmodule TrentoWeb.V1.ChecksScheduleControllerTest do
     test "should return the schedule of a host", %{conn: conn, api_spec: api_spec} do
       %{id: host_id} = insert(:host)
 
-      assert %{interval: nil, effective_interval: 5, exception_windows: []} =
+      assert %{
+               interval: nil,
+               effective_interval: 5,
+               exception_window: nil,
+               in_exception_window: false
+             } =
                conn
                |> get("/api/v1/hosts/#{host_id}/checks/schedule")
                |> json_response(200)
                |> assert_schema("ChecksScheduleV1", api_spec)
     end
 
-    test "should set the interval of a cluster", %{conn: conn, api_spec: api_spec} do
+    test "should set the interval and a recurring exception window of a cluster", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       %{id: cluster_id} = insert(:cluster)
 
-      assert %{interval: 60, effective_interval: 60} =
+      assert %{
+               interval: 60,
+               effective_interval: 60,
+               exception_window: %{
+                 frequency: "weekly",
+                 weekdays: [1, 5],
+                 timezone: "Europe/Berlin",
+                 duration: 60
+               }
+             } =
                conn
                |> put_req_header("content-type", "application/json")
-               |> put("/api/v1/clusters/#{cluster_id}/checks/schedule", %{interval: 60})
+               |> put("/api/v1/clusters/#{cluster_id}/checks/schedule", %{
+                 interval: 60,
+                 exception_window: %{
+                   starts_at: "2026-10-12T22:00:00Z",
+                   duration: 60,
+                   timezone: "Europe/Berlin",
+                   frequency: "weekly",
+                   interval: 2,
+                   weekdays: [1, 5]
+                 }
+               })
                |> json_response(200)
                |> assert_schema("ChecksScheduleV1", api_spec)
     end
 
-    test "should add and delete an exception window of a host", %{conn: conn, api_spec: api_spec} do
+    test "should reset the interval and remove the exception window of a host", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       %{id: host_id} = insert(:host)
 
-      %{id: window_id} =
-        conn
-        |> put_req_header("content-type", "application/json")
-        |> post("/api/v1/hosts/#{host_id}/checks/exception_windows", %{
-          starts_at: "2026-10-14T10:00:00Z",
-          duration: 90
+      {:ok, _} =
+        Trento.ChecksScheduling.update_target_schedule(host_id, :host, %{
+          interval: 60,
+          exception_window: %{starts_at: ~U[2026-10-14 10:00:00Z], duration: 90}
         })
-        |> json_response(201)
-        |> assert_schema("ChecksExceptionWindowV1", api_spec)
 
-      conn
-      |> delete("/api/v1/hosts/#{host_id}/checks/exception_windows/#{window_id}")
-      |> response(204)
+      assert %{interval: nil, effective_interval: 5, exception_window: nil} =
+               conn
+               |> put_req_header("content-type", "application/json")
+               |> put("/api/v1/hosts/#{host_id}/checks/schedule", %{
+                 interval: nil,
+                 exception_window: nil
+               })
+               |> json_response(200)
+               |> assert_schema("ChecksScheduleV1", api_spec)
     end
 
-    test "should refuse a checks execution inside an exception window", %{conn: conn} do
+    test "should refuse a checks execution inside an exception window", %{
+      conn: conn,
+      api_spec: api_spec
+    } do
       %{id: cluster_id} = insert(:cluster, type: ClusterType.hana_scale_up())
 
       {:ok, _} =
-        Trento.ChecksScheduling.add_exception_window(cluster_id, :cluster, %{
-          starts_at: DateTime.add(DateTime.utc_now(), -5, :minute),
-          duration: 30
+        Trento.ChecksScheduling.update_target_schedule(cluster_id, :cluster, %{
+          interval: nil,
+          exception_window: %{
+            starts_at: DateTime.add(DateTime.utc_now(), -5, :minute),
+            duration: 30
+          }
         })
+
+      assert %{in_exception_window: true} =
+               conn
+               |> get("/api/v1/clusters/#{cluster_id}/checks/schedule")
+               |> json_response(200)
+               |> assert_schema("ChecksScheduleV1", api_spec)
 
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn _, _, _ -> :ok end)
 
@@ -127,7 +171,7 @@ defmodule TrentoWeb.V1.ChecksScheduleControllerTest do
       conn
       |> Pow.Plug.assign_current_user(%{"user_id" => user_id}, Pow.Plug.fetch_config(conn))
       |> put_req_header("content-type", "application/json")
-      |> put("/api/v1/hosts/#{host_id}/checks/schedule", %{interval: 60})
+      |> put("/api/v1/hosts/#{host_id}/checks/schedule", %{interval: 60, exception_window: nil})
       |> json_response(:forbidden)
       |> assert_schema("ForbiddenV1", api_spec)
     end

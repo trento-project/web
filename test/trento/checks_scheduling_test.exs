@@ -154,47 +154,114 @@ defmodule Trento.ChecksSchedulingTest do
     end
   end
 
-  describe "target schedule management" do
-    test "should set and reset the interval of a target" do
+  describe "recurring exception windows" do
+    test "should tell whether a time falls inside a recurring exception window" do
       target_id = Faker.UUID.v4()
 
-      assert {:ok, %TargetSchedule{interval: 60}} =
-               ChecksScheduling.set_target_interval(target_id, :cluster, 60)
+      # Every Saturday (6), 22:00 to 02:00 Berlin time
+      {:ok, _} =
+        ChecksScheduling.update_target_schedule(target_id, :host, %{
+          interval: nil,
+          exception_window: %{
+            starts_at: ~U[2026-10-17 20:00:00Z],
+            duration: 240,
+            timezone: "Europe/Berlin",
+            frequency: :weekly,
+            weekdays: [6]
+          }
+        })
 
-      assert %{interval: 60, exception_windows: []} =
-               ChecksScheduling.get_target_schedule(target_id)
-
-      assert {:ok, %TargetSchedule{interval: nil}} =
-               ChecksScheduling.set_target_interval(target_id, :cluster, nil)
+      assert ChecksScheduling.in_exception_window?(target_id, ~U[2026-10-24 23:00:00Z])
+      refute ChecksScheduling.in_exception_window?(target_id, ~U[2026-10-25 01:00:00Z])
+      # After the end of the daylight saving time the window follows the local time
+      assert ChecksScheduling.in_exception_window?(target_id, ~U[2026-10-31 21:30:00Z])
+      refute ChecksScheduling.in_exception_window?(target_id, ~U[2026-10-31 20:30:00Z])
     end
+  end
 
-    test "should reject an interval that is not allowed" do
-      assert {:error, %Ecto.Changeset{}} =
-               ChecksScheduling.set_target_interval(Faker.UUID.v4(), :host, 7)
-    end
+  describe "update_target_schedule/3" do
+    @window %{starts_at: ~U[2026-10-14 10:00:00Z], duration: 90, timezone: "Etc/UTC"}
 
-    test "should add and delete exception windows of a target" do
+    test "should set the interval and the exception window of a target in one update" do
       target_id = Faker.UUID.v4()
 
-      assert {:ok, %ExceptionWindow{id: window_id}} =
-               ChecksScheduling.add_exception_window(target_id, :host, %{
-                 starts_at: ~U[2026-10-14 10:00:00Z],
-                 duration: 90
+      assert {:ok, %{interval: 60, exception_window: %ExceptionWindow{duration: 90}}} =
+               ChecksScheduling.update_target_schedule(target_id, :cluster, %{
+                 interval: 60,
+                 exception_window: @window
                })
 
-      assert %{exception_windows: [%ExceptionWindow{id: ^window_id, duration: 90}]} =
+      assert %{interval: 60, exception_window: %ExceptionWindow{duration: 90}} =
                ChecksScheduling.get_target_schedule(target_id)
-
-      assert :ok = ChecksScheduling.delete_exception_window(target_id, window_id)
-      assert {:error, :not_found} = ChecksScheduling.delete_exception_window(target_id, window_id)
     end
 
-    test "should reject an exception window without a positive duration" do
-      assert {:error, %Ecto.Changeset{}} =
-               ChecksScheduling.add_exception_window(Faker.UUID.v4(), :host, %{
-                 starts_at: ~U[2026-10-14 10:00:00Z],
-                 duration: 0
+    test "should replace the exception window of a target" do
+      target_id = Faker.UUID.v4()
+
+      {:ok, _} =
+        ChecksScheduling.update_target_schedule(target_id, :host, %{
+          interval: nil,
+          exception_window: @window
+        })
+
+      {:ok, _} =
+        ChecksScheduling.update_target_schedule(target_id, :host, %{
+          interval: nil,
+          exception_window: %{@window | duration: 30}
+        })
+
+      assert %{exception_window: %ExceptionWindow{duration: 30}} =
+               ChecksScheduling.get_target_schedule(target_id)
+
+      assert 1 == Repo.aggregate(ExceptionWindow, :count)
+    end
+
+    test "should reset the interval and remove the exception window of a target" do
+      target_id = Faker.UUID.v4()
+
+      {:ok, _} =
+        ChecksScheduling.update_target_schedule(target_id, :host, %{
+          interval: 60,
+          exception_window: @window
+        })
+
+      assert {:ok, %{interval: nil, exception_window: nil}} =
+               ChecksScheduling.update_target_schedule(target_id, :host, %{
+                 interval: nil,
+                 exception_window: nil
                })
+    end
+
+    test "should change nothing when the interval is not allowed" do
+      target_id = Faker.UUID.v4()
+
+      assert {:error, %Ecto.Changeset{}} =
+               ChecksScheduling.update_target_schedule(target_id, :host, %{
+                 interval: 7,
+                 exception_window: @window
+               })
+
+      assert %{interval: nil, exception_window: nil} =
+               ChecksScheduling.get_target_schedule(target_id)
+    end
+
+    test "should keep the previous exception window when the new one is not valid" do
+      target_id = Faker.UUID.v4()
+
+      {:ok, _} =
+        ChecksScheduling.update_target_schedule(target_id, :host, %{
+          interval: nil,
+          exception_window: @window
+        })
+
+      assert {:error, %Ecto.Changeset{}} =
+               ChecksScheduling.update_target_schedule(target_id, :host, %{
+                 interval: nil,
+                 exception_window: %{@window | duration: 0}
+               })
+
+      assert %{exception_window: %ExceptionWindow{duration: 90}} =
+               ChecksScheduling.get_target_schedule(target_id)
     end
   end
 
