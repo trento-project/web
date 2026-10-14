@@ -99,6 +99,7 @@ defmodule Trento.MixProject do
       {:mox, "~> 1.0", only: :test},
       {:nimble_parsec, "~> 1.4"},
       {:oban, "~> 2.24"},
+      {:oban_web, "~> 2.13", only: :dev},
       {:open_api_spex, "~> 3.21"},
       {:pegasus, "~> 1.0.0"},
       {:phoenix, "~> 1.7.23"},
