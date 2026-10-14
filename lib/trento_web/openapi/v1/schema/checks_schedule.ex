@@ -56,39 +56,65 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
     )
   end
 
+  defmodule ExceptionWindowProperties do
+    @moduledoc false
+
+    alias OpenApiSpex.Schema
+
+    def properties do
+      %{
+        starts_at: %Schema{type: :string, format: :"date-time"},
+        duration: %Schema{type: :integer, minimum: 1, description: "Duration in minutes."},
+        timezone: %Schema{type: :string, example: "Europe/Berlin"},
+        frequency: %Schema{
+          type: :string,
+          nullable: true,
+          enum: [nil, "daily", "weekly", "monthly", "yearly"],
+          description: "Null for a one-time window."
+        },
+        interval: %Schema{type: :integer, minimum: 1, description: "Repeat every X periods."},
+        weekdays: %Schema{
+          type: :array,
+          items: %Schema{type: :integer, minimum: 1, maximum: 7},
+          description: "Weekly windows: 1 Monday .. 7 Sunday."
+        },
+        ends_on: %Schema{type: :string, format: :date, nullable: true}
+      }
+    end
+  end
+
   defmodule ExceptionWindow do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
         title: "ChecksExceptionWindowV1",
-        description: "Time window in which checks are not executed for the target.",
+        description: "One-time or recurring time window in which checks are not executed.",
         type: :object,
         additionalProperties: false,
-        properties: %{
-          id: %Schema{type: :string, format: :uuid},
-          starts_at: %Schema{type: :string, format: :"date-time"},
-          duration: %Schema{type: :integer, description: "Duration in minutes."}
-        },
-        required: [:id, :starts_at, :duration]
+        nullable: true,
+        properties:
+          Map.put(ExceptionWindowProperties.properties(), :id, %Schema{
+            type: :string,
+            format: :uuid
+          }),
+        required: [:id, :starts_at, :duration, :timezone, :frequency, :interval, :weekdays]
       },
       struct?: false
     )
   end
 
-  defmodule CreateExceptionWindowRequest do
+  defmodule ExceptionWindowRequest do
     @moduledoc false
 
     OpenApiSpex.schema(
       %{
-        title: "CreateChecksExceptionWindowRequestV1",
-        description: "Request to add an exception window to the target.",
+        title: "ChecksExceptionWindowRequestV1",
+        description: "Exception window to set on the target. Null removes it.",
         type: :object,
         additionalProperties: false,
-        properties: %{
-          starts_at: %Schema{type: :string, format: :"date-time"},
-          duration: %Schema{type: :integer, minimum: 1, description: "Duration in minutes."}
-        },
+        nullable: true,
+        properties: ExceptionWindowProperties.properties(),
         required: [:starts_at, :duration]
       },
       struct?: false
@@ -115,9 +141,19 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
             description: "Interval applied to the target in minutes."
           },
           last_scheduled_at: %Schema{type: :string, format: :"date-time", nullable: true},
-          exception_windows: %Schema{type: :array, items: ExceptionWindow}
+          exception_window: ExceptionWindow,
+          in_exception_window: %Schema{
+            type: :boolean,
+            description: "Checks cannot be executed now: the target is in its exception window."
+          }
         },
-        required: [:interval, :effective_interval, :last_scheduled_at, :exception_windows]
+        required: [
+          :interval,
+          :effective_interval,
+          :last_scheduled_at,
+          :exception_window,
+          :in_exception_window
+        ]
       },
       struct?: false
     )
@@ -129,7 +165,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
     OpenApiSpex.schema(
       %{
         title: "UpdateChecksScheduleRequestV1",
-        description: "Request to set or reset the checks execution interval of the target.",
+        description: "Sets the checks execution interval and the exception window of the target.",
         type: :object,
         additionalProperties: false,
         properties: %{
@@ -138,9 +174,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
             nullable: true,
             enum: [nil | Interval.values()],
             description: "Interval in minutes. Null resets it to the global one."
-          }
+          },
+          exception_window: ExceptionWindowRequest
         },
-        required: [:interval]
+        required: [:interval, :exception_window]
       },
       struct?: false
     )

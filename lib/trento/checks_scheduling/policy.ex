@@ -15,7 +15,7 @@ defmodule Trento.ChecksScheduling.Policy do
 
   alias Trento.Users.User
 
-  @write_actions [:update, :create_exception_window, :delete_exception_window]
+  @write_actions [:update]
 
   def authorize(action, %User{} = user, %{target_type: target_type})
       when action in @write_actions,

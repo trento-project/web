@@ -43,10 +43,10 @@ defmodule TrentoWeb.V1.ChecksScheduleController do
   def show(conn, %{id: target_id}), do: render_schedule(conn, target_id)
 
   operation :update,
-    summary: "Sets or resets the checks execution interval of a host or cluster.",
+    summary: "Sets the checks execution interval and the exception window of a host or cluster.",
     parameters: @target_id,
     request_body:
-      {"Checks execution interval.", "application/json",
+      {"Checks execution interval and exception window.", "application/json",
        ChecksSchedule.UpdateChecksScheduleRequest},
     responses: [
       ok: {"Checks execution schedule.", "application/json", ChecksSchedule.ChecksSchedule},
@@ -55,54 +55,14 @@ defmodule TrentoWeb.V1.ChecksScheduleController do
     ]
 
   def update(%{assigns: %{target_type: target_type}} = conn, %{id: target_id}) do
-    %{interval: interval} = OpenApiSpex.body_params(conn)
+    %{interval: interval, exception_window: exception_window} = OpenApiSpex.body_params(conn)
 
-    with {:ok, _} <- ChecksScheduling.set_target_interval(target_id, target_type, interval) do
+    with {:ok, _} <-
+           ChecksScheduling.update_target_schedule(target_id, target_type, %{
+             interval: interval,
+             exception_window: exception_window
+           }) do
       render_schedule(conn, target_id)
-    end
-  end
-
-  operation :create_exception_window,
-    summary: "Adds a checks exception window to a host or cluster.",
-    parameters: @target_id,
-    request_body:
-      {"Exception window.", "application/json", ChecksSchedule.CreateExceptionWindowRequest},
-    responses: [
-      created: {"Exception window.", "application/json", ChecksSchedule.ExceptionWindow},
-      forbidden: Schema.Forbidden.response(),
-      unprocessable_entity: Schema.UnprocessableEntity.response()
-    ]
-
-  def create_exception_window(%{assigns: %{target_type: target_type}} = conn, %{id: target_id}) do
-    attrs = OpenApiSpex.body_params(conn)
-
-    with {:ok, window} <- ChecksScheduling.add_exception_window(target_id, target_type, attrs) do
-      conn
-      |> put_status(:created)
-      |> render(:exception_window, %{exception_window: window})
-    end
-  end
-
-  operation :delete_exception_window,
-    summary: "Deletes a checks exception window of a host or cluster.",
-    parameters:
-      @target_id ++
-        [
-          window_id: [
-            in: :path,
-            required: true,
-            schema: %OpenApiSpex.Schema{type: :string, format: :uuid}
-          ]
-        ],
-    responses: [
-      no_content: "The exception window has been deleted.",
-      forbidden: Schema.Forbidden.response(),
-      not_found: Schema.NotFound.response()
-    ]
-
-  def delete_exception_window(conn, %{id: target_id, window_id: window_id}) do
-    with :ok <- ChecksScheduling.delete_exception_window(target_id, window_id) do
-      send_resp(conn, :no_content, "")
     end
   end
 
@@ -115,7 +75,10 @@ defmodule TrentoWeb.V1.ChecksScheduleController do
 
     render(conn, :checks_schedule, %{
       checks_schedule:
-        Map.put(schedule, :effective_interval, schedule.interval || global_interval)
+        Map.merge(schedule, %{
+          effective_interval: schedule.interval || global_interval,
+          in_exception_window: ChecksScheduling.in_exception_window?(target_id)
+        })
     })
   end
 end
