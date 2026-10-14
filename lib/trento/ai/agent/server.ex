@@ -19,6 +19,7 @@ defmodule Trento.AI.Agent.Server do
   @callback subscribe(String.t()) :: {:ok, pid(), reference()} | {:error, term()}
   @callback add_message(String.t(), Message.t()) :: :ok | {:error, term()}
   @callback cancel(String.t()) :: :ok | {:error, term()}
+  @callback fetch_pid(String.t()) :: {:ok, pid()} | {:error, :not_running | :registry_unavailable}
   @callback get_agent(String.t()) :: {:ok, Sagents.Agent.t()} | {:error, term()}
   @callback get_info(String.t()) ::
               %{state: Sagents.State.t()} | {:error, :registry_unavailable}
@@ -30,6 +31,7 @@ defmodule Trento.AI.Agent.Server do
   def subscribe(agent_id), do: impl().subscribe(agent_id)
   def add_message(agent_id, message), do: impl().add_message(agent_id, message)
   def cancel(agent_id), do: impl().cancel(agent_id)
+  def fetch_pid(agent_id), do: impl().fetch_pid(agent_id)
   def get_agent(agent_id), do: impl().get_agent(agent_id)
   def get_info(agent_id), do: impl().get_info(agent_id)
   def get_status(agent_id), do: impl().get_status(agent_id)

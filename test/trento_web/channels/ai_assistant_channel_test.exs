@@ -1058,8 +1058,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       Process.exit(server_pid, :kill)
       assert_push("conversation_expired", %{thread_id: "t1"})
 
-      stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :not_running end)
       stub_agent_run(spawn_fake_agent_server())
+      stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:error, :not_running} end)
       push_prompt(socket, jwt, "t1")
 
       assert_push("ag_ui_event", %{
@@ -1077,13 +1077,15 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       finish_run(socket)
 
       # The agent is no longer registered, but no :DOWN has reached the channel yet.
-      stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :not_running end)
+      stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:error, :not_running} end)
       push_prompt(socket, jwt, "t1")
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
         "message" => "This conversation has expired. Start a new chat to continue."
       })
+
+      assert_push("conversation_expired", %{thread_id: "t1"})
 
       refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
     end
@@ -1103,6 +1105,8 @@ defmodule TrentoWeb.AIAssistantChannelTest do
         "message" => "This conversation has expired. Start a new chat to continue."
       })
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
       refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
     end
 
@@ -1119,7 +1123,6 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert_push("conversation_expired", %{thread_id: "t1"})
 
       socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
-      stub(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> :not_running end)
       stub_agent_run(spawn_fake_agent_server())
       push_prompt(socket, jwt, "t2")
 
@@ -1864,6 +1867,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # Stubs the Agent.run/3 adapter chain to report `server_pid`, for any number of runs.
   defp stub_agent_run(server_pid) do
     stub(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, server_pid} end)
+    stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:ok, server_pid} end)
     stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
     stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, server_pid, make_ref()} end)
     stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)

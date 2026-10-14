@@ -105,7 +105,7 @@ defmodule Trento.AI.AgentTest do
       server_pid = spawn(fn -> :ok end)
 
       # No start_agent_sync expectation
-      stub(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id -> :idle end)
+      expect(Trento.AI.Agent.Server.Mock, :fetch_pid, fn ^agent_id -> {:ok, server_pid} end)
       stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
 
       expect(Trento.AI.Agent.Server.Mock, :subscribe, fn ^agent_id ->
@@ -119,7 +119,7 @@ defmodule Trento.AI.AgentTest do
 
     test "reports an expired conversation instead of starting a new agent when the given one is gone",
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
-      expect(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id -> :not_running end)
+      expect(Trento.AI.Agent.Server.Mock, :fetch_pid, fn ^agent_id -> {:error, :not_running} end)
 
       # No start_agent_sync / subscribe / add_message expectations
       assert {:error, :conversation_expired} =
@@ -130,11 +130,10 @@ defmodule Trento.AI.AgentTest do
          %{agent: agent, agent_id: agent_id, prompt: prompt} do
       restarted_pid = spawn(fn -> :ok end)
 
-      stub(Trento.AI.Agent.Server.Mock, :get_status, fn ^agent_id -> :idle end)
-      stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
-      stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, restarted_pid, make_ref()} end)
+      expect(Trento.AI.Agent.Server.Mock, :fetch_pid, fn ^agent_id -> {:ok, restarted_pid} end)
 
-      # No start_agent_sync / add_message expectations
+      # Refused before touching the other agent: no get_agent / update_agent_and_state /
+      # subscribe / add_message expectations
       assert {:error, :conversation_expired} =
                TrentoAIAgent.run(agent, prompt, agent_pid: spawn(fn -> :ok end))
     end
@@ -327,6 +326,16 @@ defmodule Trento.AI.AgentTest do
 
       # No get_agent / subscribe / add_message expectations — verify_on_exit! catches strays.
       assert {:error, :registry_unavailable} = TrentoAIAgent.run(agent, prompt)
+    end
+
+    test "aborts the run when the given agent cannot be looked up",
+         %{agent: agent, agent_id: agent_id, prompt: prompt} do
+      expect(Trento.AI.Agent.Server.Mock, :fetch_pid, fn ^agent_id ->
+        {:error, :registry_unavailable}
+      end)
+
+      assert {:error, :registry_unavailable} =
+               TrentoAIAgent.run(agent, prompt, agent_pid: spawn(fn -> :ok end))
     end
 
     test "aborts the run when get_agent reports the registry is unavailable",

@@ -86,7 +86,6 @@ defmodule Trento.AI.Agent do
          :ok <- ensure_not_running(agent_id),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
          {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
-         :ok <- guard_against_expired_agent(server_pid, agent_pid),
          :ok <- AgentServer.add_message(agent_id, Message.new_user!(prompt)) do
       {:ok, server_pid}
     end
@@ -139,16 +138,13 @@ defmodule Trento.AI.Agent do
          do: :ok
   end
 
-  defp ensure_started(%Sagents.Agent{agent_id: agent_id}, _current_agent) do
-    case AgentServer.get_status(agent_id) do
-      :not_running -> {:error, :conversation_expired}
-      _ -> :ok
+  defp ensure_started(%Sagents.Agent{agent_id: agent_id}, agent_pid) do
+    case AgentServer.fetch_pid(agent_id) do
+      {:ok, ^agent_pid} -> :ok
+      {:error, :registry_unavailable} = error -> error
+      _ -> {:error, :conversation_expired}
     end
   end
-
-  defp guard_against_expired_agent(_current, nil = _previous), do: :ok
-  defp guard_against_expired_agent(current, current), do: :ok
-  defp guard_against_expired_agent(_current, _previous), do: {:error, :conversation_expired}
 
   defp ensure_not_running(agent_id) do
     case AgentServer.get_status(agent_id) do

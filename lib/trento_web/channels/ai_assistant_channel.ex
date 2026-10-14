@@ -241,6 +241,12 @@ defmodule TrentoWeb.AIAssistantChannel do
         |> activate_run(run_id)
         |> AgUi.run_started(run_id, thread_id)
 
+      {:error, :conversation_expired} ->
+        socket
+        |> reset_run()
+        |> AgUi.run_error(:conversation_expired)
+        |> tap(&push(&1, "conversation_expired", %{thread_id: thread_id}))
+
       {:error, reason} ->
         Logger.error("Failed to start agent: #{inspect(reason)}")
 
