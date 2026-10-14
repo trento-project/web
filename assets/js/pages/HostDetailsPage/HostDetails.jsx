@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import React, { useState, useId } from 'react';
-import { get, startCase, some } from 'lodash';
+import { get, noop, startCase, some } from 'lodash';
 import classNames from 'classnames';
 import {
   EOS_CLEAR_ALL,
@@ -39,6 +39,7 @@ import {
   SimpleAcceptanceOperationModal,
   OperationForbiddenModal,
 } from '@common/OperationModals';
+import OperationSchedules from '@common/OperationSchedules';
 
 import { subHours } from 'date-fns';
 
@@ -98,6 +99,9 @@ function HostDetails({
   requestHostChecksExecution,
   requestOperation,
   inExceptionWindow = false,
+  operationSchedules = [],
+  scheduleOperation = noop,
+  cancelOperationSchedule = noop,
   cleanForbiddenOperation,
   navigate,
   timezone,
@@ -208,9 +212,13 @@ function HostDetails({
             isHanaRunning={some(sapInstances, { type: DATABASE_TYPE })}
             isAppRunning={some(sapInstances, { type: APPLICATION_TYPE })}
             isOpen={!!saptuneSolutionOperationModalOpen}
-            onRequest={(solution) => {
+            schedulable
+            timezone={timezone}
+            onRequest={(solution, schedule) => {
               closeOperationModal();
-              requestOperation(currentOperation, { solution });
+              schedule
+                ? scheduleOperation(currentOperation, { solution }, schedule)
+                : requestOperation(currentOperation, { solution });
             }}
             onCancel={closeOperationModal}
           />
@@ -218,8 +226,12 @@ function HostDetails({
             operation={currentOperation}
             descriptionResolverArgs={{ hostName: hostname }}
             isOpen={!!simpleOperationModalOpen}
-            onRequest={() => {
-              requestOperation(currentOperation, {});
+            schedulable
+            timezone={timezone}
+            onRequest={(_params, schedule) => {
+              schedule
+                ? scheduleOperation(currentOperation, {}, schedule)
+                : requestOperation(currentOperation, {});
               closeOperationModal();
             }}
             onCancel={closeOperationModal}
@@ -350,6 +362,13 @@ function HostDetails({
         )}
         {versionWarningMessage && (
           <Banner type="warning">{versionWarningMessage}</Banner>
+        )}
+        {operationsEnabled && (
+          <OperationSchedules
+            schedules={operationSchedules}
+            timezone={timezone}
+            onCancel={cancelOperationSchedule}
+          />
         )}
         <div className="flex xl:flex-row flex-col">
           <HostSummary

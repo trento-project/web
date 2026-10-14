@@ -205,6 +205,14 @@ defmodule TrentoWeb.Router do
           post "/hosts/:id/operations/#{host_operation}", HostController, host_operation
         end
 
+        get "/hosts/:id/operation_schedules", OperationScheduleController, :index
+        post "/hosts/:id/operation_schedules", OperationScheduleController, :create
+        put "/hosts/:id/operation_schedules/:schedule_id", OperationScheduleController, :update
+
+        delete "/hosts/:id/operation_schedules/:schedule_id",
+               OperationScheduleController,
+               :delete
+
         for cluster_operation <- ClusterOperations.values() do
           post "/clusters/:id/operations/#{cluster_operation}",
                ClusterController,

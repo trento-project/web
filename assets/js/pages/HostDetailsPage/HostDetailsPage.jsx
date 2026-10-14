@@ -47,6 +47,7 @@ import {
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
 
 import HostDetails from './HostDetails';
+import { useOperationSchedules } from './useOperationSchedules';
 
 const chartsEnabled = getFromConfig('chartsEnabled');
 const operationsEnabled = getFromConfig('operationsEnabled');
@@ -63,6 +64,8 @@ function HostDetailsPage() {
   );
   const { abilities, timezone } = useSelector(getUserProfile);
   const { schedule: checksSchedule } = useChecksSchedule(TARGET_HOST, hostID);
+  const { operationSchedules, scheduleOperation, cancelOperationSchedule } =
+    useOperationSchedules(hostID, operationsEnabled);
 
   const lastExecution = useSelector(getLastExecution(hostID));
   const catalog = useSelector(getCatalog);
@@ -163,6 +166,9 @@ function HostDetailsPage() {
       timezone={timezone}
       operationsEnabled={operationsEnabled}
       inExceptionWindow={!!checksSchedule?.in_exception_window}
+      operationSchedules={operationSchedules}
+      scheduleOperation={scheduleOperation}
+      cancelOperationSchedule={cancelOperationSchedule}
       runningOperation={runningOperation}
       cleanUpHost={() => {
         dispatch(deregisterHost({ id: hostID, hostname: host.hostname }));

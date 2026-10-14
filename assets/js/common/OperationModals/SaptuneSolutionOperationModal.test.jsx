@@ -136,7 +136,7 @@ describe('SaptuneSolutionOperationModal', () => {
     await user.click(screen.getByText('HANA'));
     await user.click(screen.getByText('Request'));
 
-    expect(mockOnRequest).toHaveBeenCalledWith('HANA');
+    expect(mockOnRequest).toHaveBeenCalledWith('HANA', null);
   });
 
   it('should render Application solutions', async () => {
