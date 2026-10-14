@@ -21,6 +21,13 @@ a Mox mock without booting the real sagents stack.
 @callback cancel(String.t()) :: :ok | {:error, term()}
 ```
 
+# `fetch_pid`
+
+```elixir
+@callback fetch_pid(String.t()) ::
+  {:ok, pid()} | {:error, :not_running | :registry_unavailable}
+```
+
 # `get_agent`
 
 ```elixir
@@ -57,6 +64,8 @@ a Mox mock without booting the real sagents stack.
 # `add_message`
 
 # `cancel`
+
+# `fetch_pid`
 
 # `get_agent`
 

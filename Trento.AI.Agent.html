@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="dist/html-elixir-RXHHCTJW.css" />
 
-    <script defer src="dist/sidebar_items-C069A1BD.js"></script>
+    <script defer src="dist/sidebar_items-254AB9E7.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-MI33G4N7.js"></script>
 
@@ -208,7 +208,7 @@ process to its event stream, and send the user prompt. Returns
       <h1 class="signature" translate="no">cancel(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L114" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L118" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -271,7 +271,7 @@ to tools that need it, without polluting <code class="inline">:scope</code>.</li
       <h1 class="signature" translate="no">run(maybe_new_agent, prompt, opts \\ [])</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L75" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L81" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -289,7 +289,11 @@ to tools that need it, without polluting <code class="inline">:scope</code>.</li
 <p>Ensure the agent for <code class="inline">:agent_id</code> is running, subscribe the calling
 process to its event stream, and send the user prompt. Returns
 <code class="inline">{:ok, server_pid}</code> or the first <code class="inline">{:error, reason}</code> from the start/subscribe/send chain.</p><p>Returns <code class="inline">{:error, :agent_busy}</code> while a run is in flight: sagents would
-queue the prompt behind it, and its events would read as this run's.</p>
+queue the prompt behind it, and its events would read as this run's.</p><p>Pass <code class="inline">:agent_pid</code> to continue the conversation held by that agent
+server. When the thread's agent is gone, or is another process (sagents
+restarts a crashed server with an empty state), returns
+<code class="inline">{:error, :conversation_expired}</code> instead of sending the prompt to an agent
+that would answer without the conversation.</p>
   </section>
 </section>
 <section class="detail" id="stop/1">
@@ -302,7 +306,7 @@ queue the prompt behind it, and its events would read as this run's.</p>
       <h1 class="signature" translate="no">stop(agent_id)</h1>
 
 
-        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L102" class="icon-action" rel="help nofollow" aria-label="View Source">
+        <a href="https://github.com/trento-project/web/blob/main/lib/trento/ai/agent.ex#L106" class="icon-action" rel="help nofollow" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 

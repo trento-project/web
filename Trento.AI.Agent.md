@@ -54,6 +54,12 @@ process to its event stream, and send the user prompt. Returns
 Returns `{:error, :agent_busy}` while a run is in flight: sagents would
 queue the prompt behind it, and its events would read as this run's.
 
+Pass `:agent_pid` to continue the conversation held by that agent
+server. When the thread's agent is gone, or is another process (sagents
+restarts a crashed server with an empty state), returns
+`{:error, :conversation_expired}` instead of sending the prompt to an agent
+that would answer without the conversation.
+
 # `stop`
 
 ```elixir

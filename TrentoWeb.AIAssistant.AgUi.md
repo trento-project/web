@@ -36,8 +36,12 @@ is already true. Flips `:message_started` to true on emit.
 # `run_error`
 
 ```elixir
-@spec run_error(Phoenix.Socket.t(), String.t()) :: Phoenix.Socket.t()
+@spec run_error(Phoenix.Socket.t(), term()) :: Phoenix.Socket.t()
 ```
+
+Emits `RUN_ERROR`. `%LangChainError{}` messages are meant for the user; any
+other reason, binaries included, is mapped to a fixed sentence, so internal
+terms never reach the client. Callers log the raw reason themselves.
 
 # `run_finished`
 
