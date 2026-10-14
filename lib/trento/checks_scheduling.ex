@@ -11,7 +11,8 @@ defmodule Trento.ChecksScheduling do
   the interval set for the target, the global interval set from the environment,
   the global interval saved in the settings, the default interval.
 
-  No execution is requested for a target inside one of its exception windows.
+  No execution is requested for a target inside its exception window,
+  a one-time or recurring time window (see `Trento.Scheduling.Recurrence`).
   """
 
   import Ecto.Query
@@ -61,55 +62,67 @@ defmodule Trento.ChecksScheduling do
   @spec get_target_schedule(String.t()) :: %{
           interval: pos_integer() | nil,
           last_scheduled_at: DateTime.t() | nil,
-          exception_windows: [ExceptionWindow.t()]
+          exception_window: ExceptionWindow.t() | nil
         }
   def get_target_schedule(target_id) do
     schedule = Repo.get(TargetSchedule, target_id) || %TargetSchedule{}
 
-    windows =
-      Repo.all(
-        from w in ExceptionWindow,
-          where: w.target_id == ^target_id,
-          order_by: [asc: w.starts_at]
-      )
-
     %{
       interval: schedule.interval,
       last_scheduled_at: schedule.last_scheduled_at,
-      exception_windows: windows
+      exception_window: Repo.one(from w in ExceptionWindow, where: w.target_id == ^target_id)
     }
   end
 
-  @spec set_target_interval(String.t(), target_type(), pos_integer() | nil) ::
-          {:ok, TargetSchedule.t()} | {:error, Ecto.Changeset.t()}
-  def set_target_interval(target_id, target_type, interval) do
-    (Repo.get(TargetSchedule, target_id) || %TargetSchedule{})
-    |> TargetSchedule.changeset(%{
-      target_id: target_id,
-      target_type: target_type,
-      interval: interval
-    })
-    |> Repo.insert_or_update()
+  @doc """
+  Sets the interval of a target and replaces its exception window, in one transaction.
+  A nil interval resets the target to the global interval,
+  a nil exception window removes it.
+  """
+  @spec update_target_schedule(String.t(), target_type(), %{
+          interval: pos_integer() | nil,
+          exception_window: map() | nil
+        }) ::
+          {:ok, %{interval: pos_integer() | nil, exception_window: ExceptionWindow.t() | nil}}
+          | {:error, Ecto.Changeset.t()}
+  def update_target_schedule(target_id, target_type, %{
+        interval: interval,
+        exception_window: window_attrs
+      }) do
+    schedule_changeset =
+      TargetSchedule.changeset(Repo.get(TargetSchedule, target_id) || %TargetSchedule{}, %{
+        target_id: target_id,
+        target_type: target_type,
+        interval: interval
+      })
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert_or_update(:schedule, schedule_changeset)
+    |> Ecto.Multi.delete_all(
+      :previous_windows,
+      from(w in ExceptionWindow, where: w.target_id == ^target_id)
+    )
+    |> Ecto.Multi.run(:window, fn repo, _ ->
+      insert_exception_window(repo, target_id, target_type, window_attrs)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{schedule: schedule, window: window}} ->
+        {:ok, %{interval: schedule.interval, exception_window: window}}
+
+      {:error, _step, %Ecto.Changeset{} = changeset, _} ->
+        {:error, changeset}
+    end
   end
 
-  @spec add_exception_window(String.t(), target_type(), map()) ::
-          {:ok, ExceptionWindow.t()} | {:error, Ecto.Changeset.t()}
-  def add_exception_window(target_id, target_type, attrs) do
+  defp insert_exception_window(_repo, _target_id, _target_type, nil), do: {:ok, nil}
+
+  defp insert_exception_window(repo, target_id, target_type, attrs) do
     %ExceptionWindow{}
     |> ExceptionWindow.changeset(
       Map.merge(attrs, %{target_id: target_id, target_type: target_type})
     )
-    |> Repo.insert()
-  end
-
-  @spec delete_exception_window(String.t(), String.t()) :: :ok | {:error, :not_found}
-  def delete_exception_window(target_id, window_id) do
-    case Repo.delete_all(
-           from w in ExceptionWindow, where: w.id == ^window_id and w.target_id == ^target_id
-         ) do
-      {1, _} -> :ok
-      {0, _} -> {:error, :not_found}
-    end
+    |> repo.insert()
   end
 
   defp schedulable_targets do

@@ -3,14 +3,17 @@
 
 defmodule Trento.ChecksScheduling.ExceptionWindow do
   @moduledoc """
-  Time window in which checks are not executed for a host or a cluster.
+  One-time or recurring time window in which checks are not executed for a host or a cluster.
 
-  `duration` is in minutes.
+  `duration` is in minutes. Recurring windows use the same recurrence rules as
+  operation schedules, see `Trento.Scheduling.Recurrence`.
   """
 
   use Ecto.Schema
 
   import Ecto.Changeset
+
+  alias Trento.Scheduling.Recurrence
 
   @type t :: %__MODULE__{}
 
@@ -21,6 +24,11 @@ defmodule Trento.ChecksScheduling.ExceptionWindow do
     field :target_type, Ecto.Enum, values: [:host, :cluster]
     field :starts_at, :utc_datetime_usec
     field :duration, :integer
+    field :timezone, :string, default: "Etc/UTC"
+    field :frequency, Ecto.Enum, values: [:daily, :weekly, :monthly, :yearly]
+    field :interval, :integer, default: 1
+    field :weekdays, {:array, :integer}, default: []
+    field :ends_on, :date
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -28,14 +36,24 @@ defmodule Trento.ChecksScheduling.ExceptionWindow do
   @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(window, attrs) do
     window
-    |> cast(attrs, [:target_id, :target_type, :starts_at, :duration])
-    |> validate_required([:target_id, :target_type, :starts_at, :duration])
+    |> cast(attrs, [
+      :target_id,
+      :target_type,
+      :starts_at,
+      :duration,
+      :timezone,
+      :frequency,
+      :interval,
+      :weekdays,
+      :ends_on
+    ])
+    |> validate_required([:target_id, :target_type, :starts_at, :duration, :timezone])
     |> validate_number(:duration, greater_than: 0)
+    |> validate_number(:interval, greater_than: 0)
+    |> validate_subset(:weekdays, 1..7)
   end
 
   @spec active?(t(), DateTime.t()) :: boolean()
-  def active?(%__MODULE__{starts_at: starts_at, duration: duration}, at) do
-    DateTime.compare(at, starts_at) != :lt and
-      DateTime.compare(at, DateTime.add(starts_at, duration, :minute)) == :lt
-  end
+  def active?(%__MODULE__{} = window, at),
+    do: Recurrence.within_occurrence?(window, window.duration, at)
 end
