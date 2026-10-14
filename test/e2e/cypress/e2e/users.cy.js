@@ -456,6 +456,7 @@ describe('Users', () => {
       usersPage.clickGenerateTokenButton();
       usersPage.typeTokenName();
       usersPage.clickModalGenerateTokenButton();
+      usersPage.modalGenerateTokenIsNotDisplayed();
       usersPage.newAccessTokenIsDisplayed().then((token) => {
         usersPage.apiPersonalAccessTokenAuthorized(token);
       });
