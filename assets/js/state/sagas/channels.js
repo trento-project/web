@@ -62,7 +62,10 @@ import {
   updateLastExecution,
 } from '@state/lastExecutions';
 
-import { operationCompleted } from '@state/runningOperations';
+import {
+  operationCompleted,
+  setRunningOperation,
+} from '@state/runningOperations';
 
 import { userUpdated, userLocked, userDeleted } from '@state/user';
 import { activityLogUsersPushed } from '@state/activityLog';
@@ -253,6 +256,15 @@ const executionEvents = [
 ];
 
 const operationEvents = [
+  {
+    // Shows operations requested by the server too, for example scheduled ones
+    name: 'operation_started',
+    action: setRunningOperation,
+    transform: ({ group_id: groupID, operation_type: operation }) => ({
+      groupID,
+      operation,
+    }),
+  },
   {
     name: 'operation_completed',
     action: operationCompleted,

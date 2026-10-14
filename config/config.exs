@@ -138,7 +138,7 @@ config :trento, :checks_execution, interval: nil
 
 config :trento, Oban,
   repo: Trento.Repo,
-  queues: [default: 5, checks: 1],
+  queues: [default: 5, checks: 1, operations: 5],
   pruner: [max_age: {7, :days}],
   lifeline: [rescue_after: {30, :minutes}],
   cron: [

@@ -64,6 +64,8 @@ function SaptuneSolutionOperationModal({
   isHanaRunning,
   isAppRunning,
   isOpen = false,
+  schedulable = false,
+  timezone,
   onRequest = noop,
   onCancel = noop,
 }) {
@@ -85,7 +87,9 @@ function SaptuneSolutionOperationModal({
         solution === NOT_SELECTED || solution === currentlyApplied
       }
       isOpen={isOpen}
-      onRequest={() => onRequest(solution)}
+      schedulable={schedulable}
+      timezone={timezone}
+      onRequest={(schedule) => onRequest(solution, schedule)}
       onCancel={() => {
         onCancel();
         setSolution(currentlyApplied || NOT_SELECTED);

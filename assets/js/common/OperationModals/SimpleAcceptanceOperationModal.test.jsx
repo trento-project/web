@@ -160,7 +160,7 @@ describe('SimpleAcceptanceOperationModal', () => {
     expect(screen.getByText('Request')).toBeEnabled();
     await user.click(screen.getByText('Request'));
 
-    expect(onRequest).toHaveBeenCalledWith({});
+    expect(onRequest).toHaveBeenCalledWith({}, null);
   });
 
   it('should call onCancel callback', async () => {

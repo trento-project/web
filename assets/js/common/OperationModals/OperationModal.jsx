@@ -14,6 +14,12 @@ import {
   waiveOperationDisclaimer,
 } from '@lib/operations';
 
+import ScheduleFields, {
+  initialScheduleForm,
+  isScheduleFormValid,
+  toScheduleRequest,
+} from './ScheduleFields';
+
 function DisclaimerContent({
   dontShowAgainDisclaimerChecked,
   setDontShowAgainDisclaimerChecked,
@@ -46,6 +52,8 @@ function OperationModal({
   operationText,
   requestDisabled = false,
   isOpen = false,
+  schedulable = false,
+  timezone = 'Etc/UTC',
   onRequest = noop,
   onCancel = noop,
   children,
@@ -55,8 +63,12 @@ function OperationModal({
   );
   const [dontShowAgainDisclaimerChecked, setDontShowAgainDisclaimerChecked] =
     useState(false);
+  const [scheduleForm, setScheduleForm] = useState(() =>
+    initialScheduleForm(timezone)
+  );
 
   const resolvedTitle = showDisclaimer ? 'Disclaimer' : title;
+  const scheduling = schedulable && scheduleForm.type !== 'now';
 
   const maybeWaiveDisclaimerAndContinue = () => {
     dontShowAgainDisclaimerChecked && waiveOperationDisclaimer();
@@ -64,12 +76,14 @@ function OperationModal({
     setDontShowAgainDisclaimerChecked(false);
   };
 
+  // onRequest receives the schedule, or null when the operation is requested now
   const resolvedOnProceedClick = showDisclaimer
     ? maybeWaiveDisclaimerAndContinue
-    : onRequest;
+    : () => onRequest(toScheduleRequest(scheduleForm, timezone));
 
   useEffect(() => {
     isOpen && setShowDisclaimer(shouldShowOperationDisclaimer());
+    isOpen && setScheduleForm(initialScheduleForm(timezone));
   }, [isOpen]);
 
   return (
@@ -92,6 +106,13 @@ function OperationModal({
             {description}
           </p>
           {children}
+          {schedulable && (
+            <ScheduleFields
+              form={scheduleForm}
+              timezone={timezone}
+              onChange={setScheduleForm}
+            />
+          )}
         </>
       )}
       <div className="flex justify-start gap-2 mt-4">
@@ -99,10 +120,15 @@ function OperationModal({
           type="default-fit"
           className="inline-block mx-0.5 border-green-500 border w-fit"
           size="small"
-          disabled={showDisclaimer ? false : requestDisabled}
+          disabled={
+            showDisclaimer
+              ? false
+              : requestDisabled || !isScheduleFormValid(scheduleForm)
+          }
           onClick={resolvedOnProceedClick}
         >
-          {showDisclaimer ? 'Proceed' : 'Request'}
+          {showDisclaimer && 'Proceed'}
+          {!showDisclaimer && (scheduling ? 'Schedule' : 'Request')}
         </Button>
         <Button
           type="primary-white-fit"
