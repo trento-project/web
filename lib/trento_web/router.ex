@@ -407,6 +407,8 @@ defmodule TrentoWeb.Router do
   end
 
   if Mix.env() == :dev do
+    import TrentoWeb.DevRoutes
+
     # Enables the Swoosh mailbox preview in development.
     #
     # Note that preview only shows emails that were sent by the same
@@ -415,6 +417,9 @@ defmodule TrentoWeb.Router do
       pipe_through :browser
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
+
+      # Oban Web dashboard to inspect scheduled and periodic jobs
+      oban_dashboard("/oban")
     end
   end
 
