@@ -18,7 +18,7 @@ defmodule Mix.Tasks.RepairProjections do
 
   @shortdoc "Rebuild projections marked for reset"
   def run(args) do
-    {opts, _, _} = OptionsParser.parse(args, strict: [timeout: :integer])
+    {opts, _, _} = OptionParser.parse(args, strict: [timeout: :integer])
     timeout = Keyword.get(opts, :timeout, @default_replay_timeout)
 
     # Ensure we don't start serving during replay of the
