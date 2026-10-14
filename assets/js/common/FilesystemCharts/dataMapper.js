@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { keyBy, get } from 'lodash';
 import { pipe, map, fromPairs, compact } from 'lodash/fp';

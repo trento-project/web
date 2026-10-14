@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { eventChannel, END } from 'redux-saga';
 import { all, call, fork, put, select, take } from 'redux-saga/effects';

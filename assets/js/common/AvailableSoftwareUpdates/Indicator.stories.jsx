@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { EOS_UPDATE_OUTLINED } from 'eos-icons-react';
 import React from 'react';

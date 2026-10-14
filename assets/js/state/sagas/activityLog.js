@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 import { put, takeEvery } from 'redux-saga/effects';
 import { setUsers, ACTIVITY_LOG_USERS_PUSHED } from '@state/activityLog';

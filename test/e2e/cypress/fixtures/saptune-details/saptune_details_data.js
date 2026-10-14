@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 export const saptuneDetailsData = {
   appliedNotes: '941735, 1771258, 2578899, 2993054, 1656250, 900929',

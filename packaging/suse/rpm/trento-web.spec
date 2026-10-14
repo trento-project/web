@@ -20,8 +20,7 @@ Name:           trento-web
 Version:        0
 Release:        0
 Summary:        Trento server component
-# FIXME: Select a correct license from https://github.com/openSUSE/spec-cleaner#spdx-licenses
-License:        Apache-2.0
+License:        GPL-3.0-or-later
 URL:            https://github.com/trento-project/web
 Source:         %{name}-%{version}.tar.gz
 Source1:        deps.tar.gz

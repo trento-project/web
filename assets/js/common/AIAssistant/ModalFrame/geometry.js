@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: SUSE LLC
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 // Gap kept between the frame and the viewport edges, until the user moves it
 const VIEWPORT_MARGIN = 24;
