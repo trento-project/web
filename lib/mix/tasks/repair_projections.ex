@@ -17,13 +17,16 @@ defmodule Mix.Tasks.RepairProjections do
   @default_replay_timeout 300_000
 
   @shortdoc "Rebuild projections marked for reset"
-  def run(_args) do
+  def run(args) do
+    {opts, _, _} = OptionsParser.parse(args, strict: [timeout: :integer])
+    timeout = Keyword.get(opts, :timeout, @default_replay_timeout)
+
     # Ensure we don't start serving during replay of the
     # events. Concerning mostly during production release task.
     disable_endpoint_server()
 
     with :ok <- start_dependency_processes(),
-         {:ok, count} <- check_and_rebuild_projectors() do
+         {:ok, count} <- check_and_rebuild_projectors(timeout) do
       Logger.info(
         IO.ANSI.format([:green, "Projections repair complete. #{count} events processed."])
       )
@@ -65,7 +68,7 @@ defmodule Mix.Tasks.RepairProjections do
     end
   end
 
-  defp check_and_rebuild_projectors do
+  defp check_and_rebuild_projectors(timeout) do
     # Projectors to rebuild are marked with the special value `0`.
     projectors_to_rebuild =
       "SELECT projection_name FROM projection_versions WHERE last_seen_event_number = 0;"
@@ -77,7 +80,7 @@ defmodule Mix.Tasks.RepairProjections do
       :no_rebuild_needed
     else
       Logger.info("Rebuilding projectors: #{Enum.join(projectors_to_rebuild, ", ")}...")
-      replay_all_with_archived_events(projectors_to_rebuild)
+      replay_all_with_archived_events(projectors_to_rebuild, timeout)
     end
   end
 
@@ -87,7 +90,7 @@ defmodule Mix.Tasks.RepairProjections do
   # well. Additionally, we make use of optimizations such as using
   # Postgrex.stream() instead of the manual chunking used by the
   # EventStore implementation.
-  defp replay_all_with_archived_events(projectors_to_rebuild) do
+  defp replay_all_with_archived_events(projectors_to_rebuild, timeout) do
     projector_modules_map = Map.take(get_projector_modules(), projectors_to_rebuild)
     {:ok, pid} = Postgrex.start_link(Trento.EventStore.config())
 
@@ -103,7 +106,7 @@ defmodule Mix.Tasks.RepairProjections do
               count + 1
             end)
           end,
-          timeout: @default_replay_timeout
+          timeout: timeout
         )
 
       case transaction_result do
