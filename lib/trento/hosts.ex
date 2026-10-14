@@ -10,6 +10,7 @@ defmodule Trento.Hosts do
 
   alias Trento.Repo
 
+  alias Trento.ChecksScheduling
   alias Trento.Heartbeats.Heartbeat
 
   alias Trento.Hosts.Projections.{
@@ -98,26 +99,6 @@ defmodule Trento.Hosts do
     end
   end
 
-  def request_hosts_checks_execution do
-    query =
-      from(h in HostReadModel,
-        select: h.id,
-        where: is_nil(h.deregistered_at)
-      )
-
-    query
-    |> Repo.all()
-    |> Enum.each(fn host_id ->
-      case request_checks_execution(host_id) do
-        :ok ->
-          :ok
-
-        {:error, reason} ->
-          Logger.error("Failed to request checks execution, host: #{host_id}, reason: #{reason}")
-      end
-    end)
-  end
-
   @spec select_checks(String.t(), [String.t()]) :: :ok | {:error, any}
   def select_checks(host_id, checks) do
     Logger.debug("Selecting checks, host: #{host_id}")
@@ -138,7 +119,9 @@ defmodule Trento.Hosts do
       %HostReadModel{} = host ->
         Logger.debug("Requesting checks execution, host: #{host_id}")
 
-        maybe_request_checks_execution(host)
+        if ChecksScheduling.in_exception_window?(host_id),
+          do: {:error, :checks_exception_window},
+          else: maybe_request_checks_execution(host)
 
       nil ->
         Logger.error("Requested checks execution for a non-existing host: #{host_id}")

@@ -21,13 +21,19 @@ import PageHeader from '@common/PageHeader';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+import ChecksSchedule from '@pages/ChecksSelection/ChecksSchedule';
+import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+import { inExceptionWindow } from '@lib/model/checksSchedule';
+import { isPermitted } from '@lib/model/users';
 
 function HostSettingsPage() {
   const dispatch = useDispatch();
   const { hostID } = useParams();
   const [selection, setSelection] = useState([]);
 
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
+  const { schedule, changeInterval, addWindow, deleteWindow } =
+    useChecksSchedule(TARGET_HOST, hostID);
   const host = useSelector(getHost(hostID));
   const selectedChecks = useSelector((state) =>
     getHostSelectedChecks(state, hostID)
@@ -99,6 +105,7 @@ function HostSettingsPage() {
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:host_checks_selection']}
         checkExecutionPermittedFor={['all:host_checks_execution']}
+        inExceptionWindow={inExceptionWindow(schedule?.exception_windows)}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
@@ -107,6 +114,19 @@ function HostSettingsPage() {
         provider={provider}
         agentVersion={agentVersion}
       />
+      {schedule && (
+        <ChecksSchedule
+          schedule={schedule}
+          timezone={timezone}
+          canEdit={isPermitted(abilities, [
+            'all:all',
+            'all:host_checks_selection',
+          ])}
+          onChangeInterval={changeInterval}
+          onAddWindow={addWindow}
+          onDeleteWindow={deleteWindow}
+        />
+      )}
       <ChecksSelection
         groupID={hostID}
         catalog={checksSelection}

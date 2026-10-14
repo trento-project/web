@@ -18,10 +18,7 @@ defmodule Trento.ClustersTest do
 
   alias Trento.SapSystems.Projections.SapSystemReadModel
 
-  alias Trento.Checks.V1.{
-    ExecutionRequested,
-    Target
-  }
+  alias Trento.Checks.V1.Target
 
   alias Trento.Operations.V1.{
     OperationRequested,
@@ -254,6 +251,23 @@ defmodule Trento.ClustersTest do
       assert :ok = Clusters.request_checks_execution(cluster_id)
     end
 
+    test "should not start checks execution inside an exception window of the cluster" do
+      %{id: cluster_id} = insert(:cluster, type: ClusterType.hana_scale_up())
+
+      Repo.insert!(%Trento.ChecksScheduling.ExceptionWindow{
+        target_id: cluster_id,
+        target_type: :cluster,
+        starts_at: DateTime.add(DateTime.utc_now(), -10, :minute),
+        duration: 60
+      })
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
+        :ok
+      end)
+
+      assert {:error, :checks_exception_window} = Clusters.request_checks_execution(cluster_id)
+    end
+
     test "should not start checks execution if the cluster is not registered" do
       expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
         :ok
@@ -280,196 +294,6 @@ defmodule Trento.ClustersTest do
       end)
 
       assert {:error, :amqp_error} = Clusters.request_checks_execution(cluster_id)
-    end
-
-    test "should request checks execution for all relevant registered clusters" do
-      checks = [Faker.UUID.v4(), Faker.UUID.v4()]
-
-      # Registered Hana scale up cluster and related hosts
-      %{id: registered_hana_scale_up_id} =
-        insert(:cluster,
-          type: ClusterType.hana_scale_up(),
-          selected_checks: checks
-        )
-
-      [
-        %{id: registered_hana_scale_up_host1},
-        %{id: registered_hana_scale_up_host2}
-      ] = insert_list(2, :host, cluster_id: registered_hana_scale_up_id)
-
-      # Registered Hana scale out cluster and related hosts
-      %{id: registered_hana_scale_out_id} =
-        insert(:cluster,
-          type: ClusterType.hana_scale_out(),
-          selected_checks: checks
-        )
-
-      [
-        %{id: registered_hana_scale_out_host1},
-        %{id: registered_hana_scale_out_host2}
-      ] = insert_list(2, :host, cluster_id: registered_hana_scale_out_id)
-
-      # Registered ASCS/ERS cluster and related hosts
-      %SapSystemReadModel{id: sap_system_id, sid: sid} =
-        insert(:sap_system, ensa_version: EnsaVersion.ensa1())
-
-      sap_instances =
-        build_list(1, :clustered_sap_instance,
-          sid: sid,
-          resource_type: SapInstanceResourceType.sap_instance()
-        )
-
-      %{id: registered_ascs_ers_cluster_id} =
-        insert(:cluster,
-          type: ClusterType.ascs_ers(),
-          selected_checks: checks,
-          sap_instances: sap_instances,
-          details:
-            build(:ascs_ers_cluster_details,
-              sap_systems:
-                build_list(2, :ascs_ers_cluster_sap_system, filesystem_resource_based: true)
-            )
-        )
-
-      [
-        %{id: registered_ascs_ers_cluster_host1},
-        %{id: registered_ascs_ers_cluster_host2}
-      ] =
-        [ascs_ers_host1, ascs_ers_host2] =
-        insert_list(2, :host, cluster_id: registered_ascs_ers_cluster_id)
-
-      Enum.each(
-        [ascs_ers_host1, ascs_ers_host2],
-        fn %{id: host_id} = host ->
-          insert(:application_instance,
-            sap_system_id: sap_system_id,
-            host_id: host_id,
-            host: host,
-            sid: sid
-          )
-        end
-      )
-
-      # Deregistered cluster
-      %{id: deregistred_cluster_id} =
-        insert(:cluster,
-          type: ClusterType.hana_scale_up(),
-          selected_checks: checks,
-          deregistered_at: DateTime.utc_now()
-        )
-
-      [
-        %{id: deregistred_cluster_host1},
-        %{id: deregistred_cluster_host2}
-      ] =
-        insert_list(2, :host, cluster_id: deregistred_cluster_id)
-
-      # Registered Unknown cluster and related hosts
-      %{id: unknown_registered_cluster_id} =
-        insert(:cluster,
-          type: ClusterType.unknown(),
-          selected_checks: checks
-        )
-
-      # An execution should be requested for the registered hana scale up cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id:
-                                                                               ^registered_hana_scale_up_id,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_hana_scale_up_host1,
-                                                                                 checks: ^checks
-                                                                               },
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_hana_scale_up_host2,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      # An execution should be requested for the registered hana scale out cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id:
-                                                                               ^registered_hana_scale_out_id,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_hana_scale_out_host1,
-                                                                                 checks: ^checks
-                                                                               },
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_hana_scale_out_host2,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      # An execution should be requested for the registered ASCS/ERS cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id:
-                                                                               ^registered_ascs_ers_cluster_id,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_ascs_ers_cluster_host1,
-                                                                                 checks: ^checks
-                                                                               },
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^registered_ascs_ers_cluster_host2,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      # No execution should be requested for the deregistered cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id:
-                                                                               ^deregistred_cluster_id,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^deregistred_cluster_host1,
-                                                                                 checks: ^checks
-                                                                               },
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^deregistred_cluster_host2,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      # No execution should be requested for the unknown cluster
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id:
-                                                                               ^unknown_registered_cluster_id
-                                                                           } ->
-        :ok
-      end)
-
-      assert :ok = Clusters.request_clusters_checks_execution()
     end
   end
 

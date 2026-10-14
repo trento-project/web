@@ -135,6 +135,28 @@ defmodule TrentoWeb.Router do
            HostController,
            :request_checks_execution
 
+      for {target_type, path} <- [host: "/hosts/:id", cluster: "/clusters/:id"] do
+        get "#{path}/checks/schedule", ChecksScheduleController, :show,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}s_checks_schedule"
+
+        put "#{path}/checks/schedule", ChecksScheduleController, :update,
+          assigns: %{target_type: target_type},
+          as: :"#{target_type}s_checks_schedule"
+
+        post "#{path}/checks/exception_windows",
+             ChecksScheduleController,
+             :create_exception_window,
+             assigns: %{target_type: target_type},
+             as: :"#{target_type}s_checks_schedule"
+
+        delete "#{path}/checks/exception_windows/:window_id",
+               ChecksScheduleController,
+               :delete_exception_window,
+               assigns: %{target_type: target_type},
+               as: :"#{target_type}s_checks_schedule"
+      end
+
       delete "/hosts/:id", HostController, :delete
 
       post "/hosts/:id/tags", TagsController, :add_tag_to_host,
@@ -261,6 +283,9 @@ defmodule TrentoWeb.Router do
         # Activity Log Settings
         put "/activity_log", SettingsController, :update_activity_log_settings
         get "/activity_log", SettingsController, :get_activity_log_settings
+
+        get "/checks_execution", SettingsController, :get_checks_execution_settings
+        put "/checks_execution", SettingsController, :update_checks_execution_settings
 
         scope "/smlm" do
           get "/", SettingsController, :get_smlm_settings
