@@ -67,6 +67,7 @@ const permissionsInputField =
   'label:contains("Permissions") + div span div div:eq(0)';
 const emptyListAccessTokens = 'p:contains("No keys issued.")';
 const generateTokenButton = 'button:contains("Generate Token")';
+const modalGenerateTokenTitle = 'h2:contains("Generate Personal Access Token")';
 const modalGenerateTokenButton = 'button:contains("Generate Token"):eq(1)';
 const generatedTokenButton = 'button:contains("Close"):visible';
 const deleteTokenButton = 'button:contains("Delete")';
@@ -504,6 +505,9 @@ export const selectTimezone = (timezone) =>
 
 export const timezoneValueIsDisplayed = (timezone) =>
   cy.get(timezoneStoredValue).should('have.value', timezone);
+
+export const modalGenerateTokenIsNotDisplayed = () =>
+  cy.get(modalGenerateTokenTitle).should('not.exist');
 
 // API
 export const interceptDeleteUser = () =>
