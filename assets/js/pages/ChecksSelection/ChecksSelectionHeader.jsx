@@ -24,13 +24,13 @@ function ChecksSelectionHeader({
   userAbilities,
   checkSelectionPermittedFor,
   checkExecutionPermittedFor,
+  inExceptionWindow = false,
   onSaveSelection = () => {},
   onStartExecution = () => {},
 }) {
-  const isAbleToStartExecution = canStartExecution(
-    savedSelection,
-    isSavingSelection
-  );
+  const isAbleToStartExecution =
+    canStartExecution(savedSelection, isSavingSelection) && !inExceptionWindow;
+  const showTooltip = isAbleToStartExecution || inExceptionWindow;
   return (
     <div className="w-full px-2 sm:px-0">
       {backTo}
@@ -60,8 +60,12 @@ function ChecksSelectionHeader({
             >
               <Tooltip
                 className="w-56"
-                content="Click Start Execution or wait for Trento to periodically run checks."
-                visible={showTooltipOnlyOnHover(isAbleToStartExecution)}
+                content={
+                  inExceptionWindow
+                    ? 'Checks cannot be executed during exception window'
+                    : 'Click Start Execution or wait for Trento to periodically run checks.'
+                }
+                visible={showTooltipOnlyOnHover(showTooltip)}
                 wrap={false}
               >
                 <Button

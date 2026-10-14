@@ -23,6 +23,30 @@ import {
   updateSettings as updateAlertingSettings,
   sendTestEmail as sendAlertingTestEmail,
 } from '@lib/api/alertingSettings';
+import {
+  getChecksExecutionSettings,
+  updateChecksExecutionSettings,
+} from '@lib/api/checksSchedule';
+
+export const useChecksExecutionSettings = () => {
+  const [settings, setSettings] = useState(null);
+
+  useEffect(() => {
+    getChecksExecutionSettings()
+      .then(({ data }) => setSettings(data))
+      .catch(logError);
+  }, []);
+
+  const changeChecksExecutionSettings = (newSettings) =>
+    updateChecksExecutionSettings(newSettings)
+      .then(({ data }) => setSettings(data))
+      .catch(logError);
+
+  return {
+    checksExecutionSettings: settings,
+    changeChecksExecutionSettings,
+  };
+};
 
 export const useSuseMultiLinuxManagerSettings = () => {
   const dispatch = useDispatch();

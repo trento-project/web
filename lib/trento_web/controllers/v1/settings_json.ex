@@ -25,6 +25,11 @@ defmodule TrentoWeb.V1.SettingsJSON do
         expire_at: expire_at
       }
 
+  def checks_execution_settings(%{
+        checks_execution_settings: %{interval: interval, enforced_from_env: enforced_from_env}
+      }),
+      do: %{interval: interval, enforced_from_env: enforced_from_env}
+
   def activity_log_settings(%{
         activity_log_settings: %{retention_time: %{value: value, unit: unit}}
       }),
