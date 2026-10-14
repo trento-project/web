@@ -39,11 +39,13 @@ import {
 
 import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
 import AlertingSettingsModal from '@common/AlertingSettingsModal';
+import ChecksExecutionSettingsConfig from '@common/ChecksExecutionSettingsConfig';
 
 import {
   useApiKeySettings,
   useSuseMultiLinuxManagerSettings,
   useAlertingSettings,
+  useChecksExecutionSettings,
 } from '@pages/SettingsPage/hooks';
 
 const apiKeySettingsPermittedFor = ['all:api_key_settings'];
@@ -135,6 +137,9 @@ function SettingsPage() {
     sendTestEmail: sendAlertingTestEmail,
     clearSubmitErrors: clearAlertingSubmitErrors,
   } = useAlertingSettings();
+
+  const { checksExecutionSettings, changeChecksExecutionSettings } =
+    useChecksExecutionSettings();
 
   const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
     useState(false);
@@ -402,6 +407,18 @@ function SettingsPage() {
           />
         </div>
       </section>
+
+      {checksExecutionSettings && (
+        <section>
+          <div className="pb-4">
+            <ChecksExecutionSettingsConfig
+              settings={checksExecutionSettings}
+              userAbilities={abilities}
+              onChange={changeChecksExecutionSettings}
+            />
+          </div>
+        </section>
+      )}
     </>
   );
 }

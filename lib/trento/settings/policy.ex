@@ -17,6 +17,7 @@ defmodule Trento.Settings.Policy do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksExecutionSettings,
     SmlmSettings
   }
 
@@ -25,6 +26,7 @@ defmodule Trento.Settings.Policy do
   @action_to_resource %{
     update_api_key_settings: Trento.Settings.ApiKeySettings,
     update_activity_log_settings: Trento.Settings.ActivityLogSettings,
+    update_checks_execution_settings: Trento.Settings.ChecksExecutionSettings,
     save_smlm_settings: Trento.Settings.SmlmSettings,
     update_smlm_settings: Trento.Settings.SmlmSettings,
     delete_smlm_settings: Trento.Settings.SmlmSettings,
@@ -40,6 +42,11 @@ defmodule Trento.Settings.Policy do
 
   def authorize(:update_activity_log_settings, %User{} = user, ActivityLogSettings),
     do: has_global_ability?(user) or has_activity_logs_settings_change_ability?(user)
+
+  def authorize(:update_checks_execution_settings, %User{} = user, ChecksExecutionSettings),
+    do:
+      has_global_ability?(user) or
+        user_has_ability?(user, %{name: "all", resource: "checks_execution_settings"})
 
   def authorize(action, %User{} = user, SmlmSettings)
       when action in [

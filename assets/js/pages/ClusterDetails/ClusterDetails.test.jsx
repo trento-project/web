@@ -193,7 +193,7 @@ describe('ClusterDetails ClusterDetails component', () => {
         navigate={mockNavigate}
       />
     );
-    await user.click(screen.getByRole('button', { name: 'Check Selection' }));
+    await user.click(screen.getByRole('button', { name: 'Check Settings' }));
     expect(mockNavigate).toHaveBeenCalledWith(`/clusters/${id}/settings`);
 
     await user.click(screen.getByRole('button', { name: 'Show Results' }));

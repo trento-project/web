@@ -30,6 +30,10 @@ import Banner from '@common/Banners';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
+import ChecksSchedule from '@pages/ChecksSelection/ChecksSchedule';
+import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
+import { inExceptionWindow } from '@lib/model/checksSchedule';
+import { isPermitted } from '@lib/model/users';
 
 const catalogBanner = {
   [UNKNOWN_PROVIDER]: (
@@ -47,8 +51,10 @@ function ClusterSettingsPage() {
   const { clusterID } = useParams();
   const [selection, setSelection] = useState([]);
 
-  const { abilities } = useSelector(getUserProfile);
+  const { abilities, timezone } = useSelector(getUserProfile);
   const cluster = useSelector(getCluster(clusterID));
+  const { schedule, changeInterval, addWindow, deleteWindow } =
+    useChecksSchedule(TARGET_CLUSTER, clusterID);
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
@@ -136,6 +142,7 @@ function ClusterSettingsPage() {
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:cluster_checks_selection']}
         checkExecutionPermittedFor={['all:cluster_checks_execution']}
+        inExceptionWindow={inExceptionWindow(schedule?.exception_windows)}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
@@ -146,6 +153,19 @@ function ClusterSettingsPage() {
         provider={provider}
         architectureType={architectureType}
       />
+      {schedule && (
+        <ChecksSchedule
+          schedule={schedule}
+          timezone={timezone}
+          canEdit={isPermitted(abilities, [
+            'all:all',
+            'all:cluster_checks_selection',
+          ])}
+          onChangeInterval={changeInterval}
+          onAddWindow={addWindow}
+          onDeleteWindow={deleteWindow}
+        />
+      )}
       <ChecksSelection
         groupID={clusterID}
         catalog={checksSelection}

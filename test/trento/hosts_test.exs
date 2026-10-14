@@ -5,7 +5,6 @@ defmodule Trento.HostsTest do
   use ExUnit.Case
   use Trento.DataCase
 
-  import ExUnit.CaptureLog
   import Trento.Factory
   import Mox
 
@@ -17,11 +16,6 @@ defmodule Trento.HostsTest do
   alias Trento.Hosts.Projections.{
     HostReadModel,
     SlesSubscriptionReadModel
-  }
-
-  alias Trento.Checks.V1.{
-    ExecutionRequested,
-    Target
   }
 
   alias Trento.Operations.V1.{
@@ -240,6 +234,23 @@ defmodule Trento.HostsTest do
       assert :ok = Hosts.request_checks_execution(host_id)
     end
 
+    test "should not start an execution inside an exception window of the host" do
+      %{id: host_id} = insert(:host)
+
+      Repo.insert!(%Trento.ChecksScheduling.ExceptionWindow{
+        target_id: host_id,
+        target_type: :host,
+        starts_at: DateTime.add(DateTime.utc_now(), -10, :minute),
+        duration: 60
+      })
+
+      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher, _, _ ->
+        :ok
+      end)
+
+      assert {:error, :checks_exception_window} = Hosts.request_checks_execution(host_id)
+    end
+
     test "should not start an execution for an unregistered host" do
       %{id: deregistered_host} = insert(:host, deregistered_at: DateTime.utc_now())
 
@@ -270,59 +281,6 @@ defmodule Trento.HostsTest do
       end)
 
       assert {:error, :amqp_error} = Hosts.request_checks_execution(host_id)
-    end
-
-    test "should request host checks execution for hosts when checks are selected" do
-      checks = [Faker.UUID.v4(), Faker.UUID.v4()]
-      %{id: host_id1} = insert(:host, id: Faker.UUID.v4(), selected_checks: checks)
-
-      %{id: host_id2} =
-        insert(:host,
-          selected_checks: checks,
-          deregistered_at: DateTime.utc_now()
-        )
-
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 1, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id: ^host_id1,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^host_id1,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      expect(Trento.Infrastructure.Messaging.Adapter.Mock, :publish, 0, fn Publisher,
-                                                                           "executions",
-                                                                           %ExecutionRequested{
-                                                                             group_id: ^host_id2,
-                                                                             targets: [
-                                                                               %Target{
-                                                                                 agent_id:
-                                                                                   ^host_id2,
-                                                                                 checks: ^checks
-                                                                               }
-                                                                             ]
-                                                                           } ->
-        :ok
-      end)
-
-      assert :ok = Hosts.request_hosts_checks_execution()
-    end
-
-    test "should log an error message when host checks execution is requested but no checks selected" do
-      %{id: host_id} = insert(:host, selected_checks: [])
-
-      expected_logger_message =
-        "Failed to request checks execution, host: #{host_id}, reason: no_checks_selected"
-
-      assert capture_log(fn -> Hosts.request_hosts_checks_execution() end) =~
-               expected_logger_message
     end
   end
 

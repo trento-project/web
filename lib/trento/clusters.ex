@@ -37,6 +37,7 @@ defmodule Trento.Clusters do
     Operations
   }
 
+  alias Trento.ChecksScheduling
   alias Trento.Repo
 
   @checkable_clusters [
@@ -44,6 +45,9 @@ defmodule Trento.Clusters do
     ClusterType.hana_scale_out(),
     ClusterType.ascs_ers()
   ]
+
+  @spec checkable_cluster_types :: [ClusterType.t()]
+  def checkable_cluster_types, do: @checkable_clusters
 
   @spec by_id(String.t()) :: {:ok, ClusterReadModel.t()} | {:error, :not_found}
   def by_id(id) do
@@ -81,7 +85,9 @@ defmodule Trento.Clusters do
       %ClusterReadModel{} = cluster ->
         Logger.debug("Requesting checks execution, cluster: #{cluster_id}")
 
-        maybe_request_checks_execution(cluster)
+        if ChecksScheduling.in_exception_window?(cluster_id),
+          do: {:error, :checks_exception_window},
+          else: maybe_request_checks_execution(cluster)
 
       nil ->
         Logger.error("Requested checks execution for a non-existing cluster: #{cluster_id}")
@@ -122,29 +128,6 @@ defmodule Trento.Clusters do
       enriched_data ->
         %ClusterReadModel{cluster | cib_last_written: enriched_data.cib_last_written}
     end
-  end
-
-  @spec request_clusters_checks_execution :: :ok | {:error, any}
-  def request_clusters_checks_execution do
-    query =
-      from(c in ClusterReadModel,
-        select: c.id,
-        where: c.type in @checkable_clusters and is_nil(c.deregistered_at)
-      )
-
-    query
-    |> Repo.all()
-    |> Enum.each(fn cluster_id ->
-      case request_checks_execution(cluster_id) do
-        :ok ->
-          :ok
-
-        {:error, reason} ->
-          Logger.error(
-            "Failed to request checks execution, cluster: #{cluster_id}, reason: #{reason}"
-          )
-      end
-    end)
   end
 
   @spec update_cib_last_written(String.t(), String.t()) :: {:ok, Ecto.Schema.t()} | {:error, any}

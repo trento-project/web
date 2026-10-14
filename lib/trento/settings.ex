@@ -13,11 +13,13 @@ defmodule Trento.Settings do
     ActivityLogSettings,
     AlertingSettings,
     ApiKeySettings,
+    ChecksExecutionSettings,
     InstallationSettings,
     SmlmSettings,
     SSOCertificatesSettings
   }
 
+  alias Trento.ChecksScheduling.Interval
   alias Trento.Support.DateService
 
   require Trento.ActivityLog.RetentionPeriodUnit, as: RetentionPeriodUnit
@@ -236,6 +238,38 @@ defmodule Trento.Settings do
       end
     end
   end
+
+  # Checks execution settings
+
+  @spec get_checks_execution_settings() :: {:ok, ChecksExecutionSettings.t()}
+  def get_checks_execution_settings do
+    case checks_execution_interval_from_env() do
+      nil ->
+        {:ok,
+         Repo.one(ChecksExecutionSettings.base_query()) ||
+           %ChecksExecutionSettings{interval: Interval.default()}}
+
+      interval ->
+        {:ok, %ChecksExecutionSettings{interval: interval, enforced_from_env: true}}
+    end
+  end
+
+  @spec update_checks_execution_settings(%{interval: pos_integer()}) ::
+          {:ok, ChecksExecutionSettings.t()}
+          | {:error, :checks_execution_settings_enforced}
+          | {:error, Ecto.Changeset.t()}
+  def update_checks_execution_settings(settings) do
+    if checks_execution_interval_from_env() do
+      {:error, :checks_execution_settings_enforced}
+    else
+      (Repo.one(ChecksExecutionSettings.base_query()) || %ChecksExecutionSettings{})
+      |> ChecksExecutionSettings.changeset(settings)
+      |> Repo.insert_or_update()
+    end
+  end
+
+  defp checks_execution_interval_from_env,
+    do: Application.get_env(:trento, :checks_execution, [])[:interval]
 
   defp alerting_settings_enforced_from_env? do
     Application.get_env(:trento, :alerting)

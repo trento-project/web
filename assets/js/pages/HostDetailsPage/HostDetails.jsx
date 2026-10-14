@@ -284,7 +284,7 @@ function HostDetails({
                 onClick={() => navigate(`/hosts/${hostID}/settings`)}
               >
                 <EOS_PLAYLIST_ADD_CHECK_FILLED className="inline-block fill-jungle-green-500" />{' '}
-                Check Selection
+                Check Settings
               </Button>
 
               <Button
