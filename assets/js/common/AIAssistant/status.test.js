@@ -24,7 +24,7 @@ describe('AIAssistant status', () => {
       ${OK}               | ${false} | ${false} | ${true}   | ${false}
       ${CLEARED}          | ${true}  | ${false} | ${false}  | ${true}
       ${RESTORED}         | ${false} | ${true}  | ${true}   | ${true}
-      ${'unknown'}        | ${false} | ${false} | ${true}   | ${true}
+      ${'foo'}            | ${false} | ${false} | ${true}   | ${true}
     `(
       'describes the $configurationStatus configuration',
       ({ configurationStatus, cleared, restored, available, readOnly }) => {
@@ -44,7 +44,7 @@ describe('AIAssistant status', () => {
       ${CLEARED}          | ${ACTIVE}          | ${CLEARED}
       ${CLEARED}          | ${EXPIRED}         | ${CLEARED}
       ${RESTORED}         | ${EXPIRED}         | ${RESTORED}
-      ${'unknown'}        | ${ACTIVE}          | ${UNKNOWN}
+      ${'bar'}            | ${ACTIVE}          | ${UNKNOWN}
       ${undefined}        | ${ACTIVE}          | ${UNKNOWN}
     `(
       'is $reason when the configuration is $configurationStatus and the conversation is $conversationStatus',
