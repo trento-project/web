@@ -446,6 +446,8 @@ const hostnamesWithPassingHeartbeat = (hosts) =>
     .filter(({ heartbeat }) => heartbeat === 'passing')
     .map(({ hostname }) => hostname);
 
+const heartbeatPollIntervalMs = 1000;
+
 export const waitForHeartbeatsExpired = (timeout = 30000) =>
   apiLogin().then(({ accessToken }) => {
     const deadline = Date.now() + timeout;
@@ -459,7 +461,10 @@ export const waitForHeartbeatsExpired = (timeout = 30000) =>
             `Hosts still sending heartbeats after ${timeout}ms: ${hostnames.join(', ')}`
           );
         }
-        return pollUntilNoHeartbeats();
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        return cy
+          .wait(heartbeatPollIntervalMs, { log: false })
+          .then(pollUntilNoHeartbeats);
       });
 
     return pollUntilNoHeartbeats();
