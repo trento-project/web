@@ -67,6 +67,7 @@ defmodule TrentoWeb.V1.ChecksScheduleControllerTest do
       assert %{
                interval: nil,
                effective_interval: 5,
+               global_interval: 5,
                exception_window: nil,
                in_exception_window: false
              } =
@@ -85,6 +86,7 @@ defmodule TrentoWeb.V1.ChecksScheduleControllerTest do
       assert %{
                interval: 60,
                effective_interval: 60,
+               global_interval: 5,
                exception_window: %{
                  frequency: "weekly",
                  weekdays: [1, 5],

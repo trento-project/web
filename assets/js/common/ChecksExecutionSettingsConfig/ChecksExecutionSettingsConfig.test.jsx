@@ -13,26 +13,27 @@ import ChecksExecutionSettingsConfig, {
 const adminAbilities = [{ name: 'all', resource: 'all' }];
 
 describe('ChecksExecutionSettingsConfig', () => {
-  it('should change the global checks execution interval', async () => {
+  it('should show the global checks execution frequency', async () => {
     const user = userEvent.setup();
-    const onChange = jest.fn();
+    const onEditClick = jest.fn();
 
     render(
       <ChecksExecutionSettingsConfig
-        settings={{ interval: 5, enforced_from_env: false }}
+        settings={{ interval: 15, enforced_from_env: false }}
         userAbilities={adminAbilities}
-        onChange={onChange}
+        onEditClick={onEditClick}
       />
     );
 
-    const select = screen.getByLabelText('Global checks execution frequency');
-    expect(select).toHaveValue('5');
+    expect(screen.getByText('Check Executions')).toBeVisible();
+    expect(screen.getByText('Check Execution Frequency')).toBeVisible();
+    expect(screen.getByText('Every 15 minutes')).toBeVisible();
 
-    await user.selectOptions(select, '360');
-    expect(onChange).toHaveBeenCalledWith({ interval: 360 });
+    await user.click(screen.getByRole('button', { name: 'Edit Settings' }));
+    expect(onEditClick).toHaveBeenCalled();
   });
 
-  it('should not allow changes to an interval enforced from the environment', async () => {
+  it('should not allow editing a frequency enforced from the environment', async () => {
     const user = userEvent.setup();
 
     render(
@@ -43,13 +44,15 @@ describe('ChecksExecutionSettingsConfig', () => {
     );
 
     expect(screen.getByText('Every 10 minutes')).toBeVisible();
-    expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Edit Settings' })
+    ).toBeDisabled();
 
-    await user.hover(screen.getByText('Every 10 minutes'));
+    await user.hover(screen.getByRole('button', { name: 'Edit Settings' }));
     expect(screen.getByText(ENFORCED_FROM_ENV_MESSAGE)).toBeVisible();
   });
 
-  it('should not allow changes without permission', () => {
+  it('should not allow editing without permission', () => {
     render(
       <ChecksExecutionSettingsConfig
         settings={{ interval: 5, enforced_from_env: false }}
@@ -58,7 +61,7 @@ describe('ChecksExecutionSettingsConfig', () => {
     );
 
     expect(
-      screen.getByLabelText('Global checks execution frequency')
+      screen.getByRole('button', { name: 'Edit Settings' })
     ).toBeDisabled();
   });
 });
