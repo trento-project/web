@@ -396,12 +396,15 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       assert %{loading: true} = wait_assigns(socket)
     end
 
-    test "emits RUN_ERROR with the binary reason passed verbatim (no prefix)",
-         %{socket: socket} do
+    test "emits a generic RUN_ERROR for a raw binary reason", %{socket: socket} do
       seed_assigns(socket, %{run_has_started: true})
-      send(socket.channel_pid, {:agent, {:status_changed, :error, "boom"}})
+      reason = ~s(Failed to build chain: %RuntimeError{message: "internal detail"})
+      send(socket.channel_pid, {:agent, {:status_changed, :error, reason}})
 
-      assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => "boom"})
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Sorry, something went wrong. Please try again."
+      })
     end
 
     test "emits RUN_ERROR with `Sorry, ...` prefix for %LangChainError{}",
@@ -416,14 +419,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       })
     end
 
-    test "emits RUN_ERROR with `Sorry, ...` + inspect for arbitrary term",
-         %{socket: socket} do
+    test "emits a generic RUN_ERROR, never the raw reason", %{socket: socket} do
       seed_assigns(socket, %{run_has_started: true})
-      send(socket.channel_pid, {:agent, {:status_changed, :error, :timeout}})
+      crash = {%RuntimeError{message: "internal detail"}, [{Mod, :fun, 1, []}]}
+      send(socket.channel_pid, {:agent, {:status_changed, :error, crash}})
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Sorry, I encountered an error: :timeout"
+        "message" => "Sorry, something went wrong. Please try again."
       })
     end
   end
@@ -991,7 +994,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_info {:DOWN, ...} — agent server death" do
     setup :join_socket_with_ai_config
 
-    test "emits RUN_ERROR and clears loading when the agent server dies mid-run",
+    test "emits RUN_ERROR, clears loading and expires the conversation when the agent server dies mid-run",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1011,13 +1014,14 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Agent stopped unexpectedly: :killed"
+        "message" => "The assistant stopped unexpectedly."
       })
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       assert %{loading: false} = wait_assigns(socket)
     end
 
-    test "stays quiet when the agent server dies with no run in flight",
+    test "expires the conversation without a RUN_ERROR when the agent server dies with no run in flight",
          %{socket: socket, access_token: jwt} do
       server_pid = spawn_fake_agent_server()
 
@@ -1036,10 +1040,125 @@ defmodule TrentoWeb.AIAssistantChannelTest do
       send(socket.channel_pid, {:agent, {:status_changed, :idle, nil}})
       assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"})
 
-      # Inactivity shutdown of an idle AgentServer is normal, not a failed run.
+      # Inactivity shutdown of an idle AgentServer is not a failed run, but its context is gone.
       Process.exit(server_pid, :kill)
 
+      assert_push("conversation_expired", %{thread_id: "t1"})
       refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    test "refuses a prompt on the expired thread instead of answering it without context",
+         %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      Process.exit(server_pid, :kill)
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      stub_agent_run(spawn_fake_agent_server())
+      stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:error, :not_running} end)
+      push_prompt(socket, jwt, "t1")
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "This conversation has expired. Start a new chat to continue."
+      })
+
+      refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
+    end
+
+    test "refuses a prompt once the thread's agent is gone, before its :DOWN is handled",
+         %{socket: socket, access_token: jwt} do
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      # The agent is no longer registered, but no :DOWN has reached the channel yet.
+      stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:error, :not_running} end)
+      push_prompt(socket, jwt, "t1")
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "This conversation has expired. Start a new chat to continue."
+      })
+
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
+    end
+
+    test "refuses a prompt once another agent holds the thread",
+         %{socket: socket, access_token: jwt} do
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      # Registered under the same thread, but a different process: the conversation is not in it.
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t1")
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "This conversation has expired. Start a new chat to continue."
+      })
+
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      refute_push("ag_ui_event", %{"type" => "RUN_STARTED"}, 100)
+    end
+
+    test "answers a new chat once the conversation expired", %{socket: socket, access_token: jwt} do
+      server_pid = spawn_fake_agent_server()
+
+      stub_agent_run(server_pid)
+      stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> {:error, :noproc} end)
+      stub(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn _ -> {:error, :not_found} end)
+      push_prompt(socket, jwt, "t1")
+      finish_run(socket)
+
+      Process.exit(server_pid, :kill)
+      assert_push("conversation_expired", %{thread_id: "t1"})
+
+      socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+      stub_agent_run(spawn_fake_agent_server())
+      push_prompt(socket, jwt, "t2")
+
+      assert_push("ag_ui_event", %{"type" => "RUN_STARTED", "threadId" => "t2"})
+    end
+
+    for action <- ["abandon_thread", :ai_configuration_cleared] do
+      @action action
+      test "does not expire the conversation when #{inspect(action)} stops the agent",
+           %{socket: socket, access_token: jwt} do
+        server_pid = spawn_fake_agent_server()
+
+        stub_agent_run(server_pid)
+        stub(Trento.AI.Agent.Server.Mock, :cancel, fn _ -> :ok end)
+
+        expect(Trento.AI.Agent.Supervisor.Mock, :stop_agent, fn "t1" ->
+          Process.exit(server_pid, :kill)
+          :ok
+        end)
+
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => "r1",
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_STARTED"})
+
+        case @action do
+          "abandon_thread" -> socket |> push("abandon_thread", %{}) |> assert_reply(:ok)
+          :ai_configuration_cleared -> send(socket.channel_pid, {:ai_configuration, :cleared})
+        end
+
+        refute_push("conversation_expired", _, 100)
+      end
     end
 
     test "does not accumulate monitors across runs on the same agent server",
@@ -1117,7 +1236,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in send_message/3 — error paths before the agent starts" do
     setup :join_socket_without_ai_config
 
-    test "emits verbatim RUN_ERROR when user has no AI configuration",
+    test "emits a RUN_ERROR explaining that the user has no AI configuration",
          %{socket: socket, access_token: jwt} do
       push(socket, "send_message", %{
         "message" => "hi",
@@ -1128,7 +1247,24 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Failed to start agent. No AI configuration found for user."
+        "message" => "The assistant has no AI configuration. Set one up in your profile."
+      })
+    end
+
+    test "emits a RUN_ERROR explaining that the user no longer exists" do
+      %{socket: socket, access_token: jwt} =
+        join_channel(System.unique_integer([:positive]) + 1_000_000, %{})
+
+      push(socket, "send_message", %{
+        "message" => "hi",
+        "run_id" => "r1",
+        "thread_id" => "t1",
+        "access_token" => jwt
+      })
+
+      assert_push("ag_ui_event", %{
+        "type" => "RUN_ERROR",
+        "message" => "Your user account is no longer available."
       })
     end
 
@@ -1152,7 +1288,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   describe "handle_in send_message/3 — error paths while the agent starts" do
     setup :join_socket_with_ai_config
 
-    test "emits verbatim RUN_ERROR when sagents start_agent_sync fails",
+    test "emits a generic RUN_ERROR when sagents start_agent_sync fails",
          %{socket: socket, access_token: jwt} do
       # run_agent probes the running agent (for model-drift detection) before
       # starting it — brand-new thread here, so :not_found.
@@ -1171,8 +1307,31 @@ defmodule TrentoWeb.AIAssistantChannelTest do
 
       assert_push("ag_ui_event", %{
         "type" => "RUN_ERROR",
-        "message" => "Failed to start agent: :boom"
+        "message" => "Sorry, something went wrong. Please try again."
       })
+    end
+
+    for {name, status, message} <- [
+          {"a busy agent", :running,
+           "The assistant is still answering a previous message. Try again in a moment."},
+          {"an unavailable registry", {:error, :registry_unavailable},
+           "The assistant is restarting. Try again in a moment."}
+        ] do
+      @status status
+      @message message
+      test "explains #{name} in plain words", %{socket: socket, access_token: jwt} do
+        expect(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, self()} end)
+        expect(Trento.AI.Agent.Server.Mock, :get_status, fn _ -> @status end)
+
+        push(socket, "send_message", %{
+          "message" => "hi",
+          "run_id" => "r1",
+          "thread_id" => "t1",
+          "access_token" => jwt
+        })
+
+        assert_push("ag_ui_event", %{"type" => "RUN_ERROR", "message" => @message})
+      end
     end
   end
 
@@ -1530,6 +1689,39 @@ defmodule TrentoWeb.AIAssistantChannelTest do
     end
   end
 
+  describe "Conversation expiry — integration (real supervisor + server)" do
+    @describetag :integration
+
+    setup [:fresh_thread, :join_socket_with_ai_config, :real_sagents_adapters, :fake_llm]
+
+    @tag ai_config_overrides: [inactivity_timeout: 1_000]
+    test "expires the conversation once the idle timeout stops the agent",
+         %{socket: socket, access_token: jwt, thread_id: thread_id} do
+      %{task_pid: task_pid} = start_run!(socket, jwt, run_id: "r1")
+      send(task_pid, :release)
+      assert_push("ag_ui_event", %{"type" => "RUN_FINISHED"}, @integration_timeout)
+
+      assert_push("conversation_expired", %{thread_id: ^thread_id}, @integration_timeout)
+      refute_push("ag_ui_event", %{"type" => "RUN_ERROR"}, 100)
+    end
+
+    # The idle timeout fires mid-run; sagents' terminate/2 then waits for the run's task, which ends after 1 s.
+    @tag ai_config_overrides: [inactivity_timeout: 300]
+    @tag fake_llm: [block_for: 1_000]
+    test "fails the run in flight and expires the conversation when the idle timeout cuts the run",
+         %{socket: socket, access_token: jwt, thread_id: thread_id} do
+      start_run!(socket, jwt, run_id: "r1")
+
+      assert_push(
+        "ag_ui_event",
+        %{"type" => "RUN_ERROR", "message" => "The assistant stopped unexpectedly."},
+        @integration_timeout
+      )
+
+      assert_push("conversation_expired", %{thread_id: ^thread_id}, @integration_timeout)
+    end
+  end
+
   describe "viewer presence — integration (real supervisor + server)" do
     @describetag :integration
 
@@ -1675,6 +1867,7 @@ defmodule TrentoWeb.AIAssistantChannelTest do
   # Stubs the Agent.run/3 adapter chain to report `server_pid`, for any number of runs.
   defp stub_agent_run(server_pid) do
     stub(Trento.AI.Agent.Supervisor.Mock, :start_agent_sync, fn _ -> {:ok, server_pid} end)
+    stub(Trento.AI.Agent.Server.Mock, :fetch_pid, fn _ -> {:ok, server_pid} end)
     stub(Trento.AI.Agent.Server.Mock, :get_agent, fn _ -> {:error, :not_found} end)
     stub(Trento.AI.Agent.Server.Mock, :subscribe, fn _ -> {:ok, server_pid, make_ref()} end)
     stub(Trento.AI.Agent.Server.Mock, :add_message, fn _, _ -> :ok end)

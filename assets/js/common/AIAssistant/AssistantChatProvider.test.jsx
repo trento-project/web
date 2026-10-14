@@ -7,7 +7,7 @@ import '@testing-library/jest-dom';
 import { CONNECTING, CONNECTED } from '@lib/ai/connectionStatus';
 
 import { useAgUiRuntime } from '@assistant-ui/react-ag-ui';
-import { WebSocketAIAgent } from '@lib/ai';
+import { EXPIRED, WebSocketAIAgent } from '@lib/ai';
 import { makeMockSocket } from '@lib/test-utils/phoenixDoubles';
 import { SocketContext } from '@common/SocketProvider';
 import AssistantChatProvider from './AssistantChatProvider';
@@ -146,6 +146,21 @@ describe('AssistantChatProvider', () => {
     expect(onAIConfigurationCleared).toHaveBeenCalled();
     expect(onAIConfigurationCreated).toHaveBeenCalled();
     expect(onModelChanged).toHaveBeenCalledWith(modelPayload);
+  });
+
+  it('forwards onConversationStatusChange to the agent', async () => {
+    const onConversationStatusChange = jest.fn();
+    const { channel } = renderProvider({
+      threadID: 'thread-1',
+      onConversationStatusChange,
+    });
+    await waitFor(() => expect(channel()).toBeDefined());
+
+    await act(async () => {
+      channel().emit('conversation_expired', { thread_id: 'thread-1' });
+    });
+
+    expect(onConversationStatusChange).toHaveBeenCalledWith(EXPIRED);
   });
 
   it('keeps the same agent when the callback identities change', async () => {

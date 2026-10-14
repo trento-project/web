@@ -40,6 +40,11 @@ defmodule Trento.Infrastructure.AI.SagentsAgentServerTest do
       assert {:error, :registry_unavailable} = SagentsAgentServer.get_status(agent_id)
     end
 
+    test "fetch_pid/1 answers {:error, :registry_unavailable} instead of raising",
+         %{agent_id: agent_id} do
+      assert {:error, :registry_unavailable} = SagentsAgentServer.fetch_pid(agent_id)
+    end
+
     test "get_info/1 answers {:error, :registry_unavailable} instead of raising",
          %{agent_id: agent_id} do
       assert {:error, :registry_unavailable} = SagentsAgentServer.get_info(agent_id)

@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { useAuiState } from '@assistant-ui/react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { CONNECTION_STATUS } from '@lib/ai';
+import { CONNECTION_STATUS, CONVERSATION_STATUS } from '@lib/ai';
 
 import AssistantChatProvider from './AssistantChatProvider';
 import AssistantThread from './AssistantThread';
@@ -21,6 +21,7 @@ function AssistantUI({
   open,
   connectionStatus,
   configurationStatus,
+  conversationStatus,
   onOpenChange,
   onNewThread,
   handleClose,
@@ -36,6 +37,7 @@ function AssistantUI({
       <AssistantThread
         connectionStatus={connectionStatus}
         configurationStatus={configurationStatus}
+        conversationStatus={conversationStatus}
         onClose={handleClose}
         onNewThread={onNewThread}
         isEmpty={isEmpty}
@@ -56,6 +58,9 @@ function AIAssistant({ userID, aiConfigured = true, open = false }) {
   );
   const [configurationStatus, setConfigurationStatus] = useState(
     aiConfigured ? CONFIGURATION_STATUS.OK : CONFIGURATION_STATUS.CLEARED
+  );
+  const [conversationStatus, setConversationStatus] = useState(
+    CONVERSATION_STATUS.ACTIVE
   );
   const [modelNotice, setModelNotice] = useState(null);
 
@@ -96,11 +101,13 @@ function AIAssistant({ userID, aiConfigured = true, open = false }) {
       onAIConfigurationCleared={handleAIConfigurationCleared}
       onAIConfigurationCreated={handleAIConfigurationCreated}
       onModelChanged={handleModelChanged}
+      onConversationStatusChange={setConversationStatus}
     >
       <AssistantUI
         open={isOpen}
         connectionStatus={connectionStatus}
         configurationStatus={configurationStatus}
+        conversationStatus={conversationStatus}
         onOpenChange={setIsOpen}
         onNewThread={startNewThread}
         handleClose={handleClose}

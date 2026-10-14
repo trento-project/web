@@ -1,27 +1,30 @@
 // SPDX-FileCopyrightText: SUSE LLC
 // SPDX-License-Identifier: Apache-2.0
 
-import { CONNECTING, CONNECTED, DISCONNECTED } from '@lib/ai';
+import { ACTIVE, CONNECTING, CONNECTED, DISCONNECTED, EXPIRED } from '@lib/ai';
 
 import {
   OK,
   CLEARED,
   RESTORED,
+  UNKNOWN,
   canSendMessage,
   effectiveConnectionStatus,
+  readOnlyReason,
   isChatReadOnly,
   isConfigurationAvailable,
   isConfigurationCleared,
   isConfigurationRestored,
 } from './status';
 
-describe('AIAssistant configuration status', () => {
+describe('AIAssistant status', () => {
   describe('status predicates', () => {
     it.each`
       configurationStatus | cleared  | restored | available | readOnly
       ${OK}               | ${false} | ${false} | ${true}   | ${false}
       ${CLEARED}          | ${true}  | ${false} | ${false}  | ${true}
       ${RESTORED}         | ${false} | ${true}  | ${true}   | ${true}
+      ${'foo'}            | ${false} | ${false} | ${true}   | ${true}
     `(
       'describes the $configurationStatus configuration',
       ({ configurationStatus, cleared, restored, available, readOnly }) => {
@@ -33,20 +36,52 @@ describe('AIAssistant configuration status', () => {
     );
   });
 
+  describe('readOnlyReason', () => {
+    it.each`
+      configurationStatus | conversationStatus | reason
+      ${OK}               | ${ACTIVE}          | ${null}
+      ${OK}               | ${EXPIRED}         | ${EXPIRED}
+      ${CLEARED}          | ${ACTIVE}          | ${CLEARED}
+      ${CLEARED}          | ${EXPIRED}         | ${CLEARED}
+      ${RESTORED}         | ${EXPIRED}         | ${RESTORED}
+      ${'bar'}            | ${ACTIVE}          | ${UNKNOWN}
+      ${undefined}        | ${ACTIVE}          | ${UNKNOWN}
+    `(
+      'is $reason when the configuration is $configurationStatus and the conversation is $conversationStatus',
+      ({ configurationStatus, conversationStatus, reason }) => {
+        expect(readOnlyReason(configurationStatus, conversationStatus)).toBe(
+          reason
+        );
+      }
+    );
+  });
+
   describe('canSendMessage', () => {
     it.each`
-      connectionStatus | configurationStatus | allowed
-      ${CONNECTED}     | ${OK}               | ${true}
-      ${CONNECTED}     | ${RESTORED}         | ${false}
-      ${CONNECTED}     | ${CLEARED}          | ${false}
-      ${CONNECTING}    | ${OK}               | ${false}
-      ${DISCONNECTED}  | ${OK}               | ${false}
+      connectionStatus | configurationStatus | conversationStatus | allowed
+      ${CONNECTED}     | ${OK}               | ${ACTIVE}          | ${true}
+      ${CONNECTED}     | ${RESTORED}         | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${CLEARED}          | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${undefined}        | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${null}             | ${ACTIVE}          | ${false}
+      ${CONNECTED}     | ${OK}               | ${EXPIRED}         | ${false}
+      ${CONNECTING}    | ${OK}               | ${ACTIVE}          | ${false}
+      ${DISCONNECTED}  | ${OK}               | ${ACTIVE}          | ${false}
     `(
-      'is $allowed when $connectionStatus and the configuration is $configurationStatus',
-      ({ connectionStatus, configurationStatus, allowed }) => {
-        expect(canSendMessage(connectionStatus, configurationStatus)).toBe(
-          allowed
-        );
+      'is $allowed when $connectionStatus, the configuration is $configurationStatus and the conversation is $conversationStatus',
+      ({
+        connectionStatus,
+        configurationStatus,
+        conversationStatus,
+        allowed,
+      }) => {
+        expect(
+          canSendMessage(
+            connectionStatus,
+            configurationStatus,
+            conversationStatus
+          )
+        ).toBe(allowed);
       }
     );
   });

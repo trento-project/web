@@ -8,17 +8,17 @@ import { ThreadPrimitive } from '@assistant-ui/react';
 import { EOS_CLOSE } from 'eos-icons-react';
 
 import Button from '@common/Button';
-import { getProviderLabel } from '@lib/ai';
+import { CONVERSATION_STATUS, getProviderLabel } from '@lib/ai';
 
 import ChatHeader from './ChatHeader';
 import PromptComposer from './PromptComposer';
 import { AssistantMessage, UserMessage } from './MessageBubble';
 import ThreadWelcome from './ThreadWelcome';
 import {
+  CONFIGURATION_STATUS,
   canSendMessage,
   effectiveConnectionStatus,
-  isConfigurationCleared,
-  isConfigurationRestored,
+  readOnlyReason,
 } from './status';
 
 function ThreadBanner({ children }) {
@@ -55,6 +55,20 @@ function RestoredBanner() {
     </ThreadBanner>
   );
 }
+
+function ExpiredBanner() {
+  return (
+    <ThreadBanner>
+      This conversation has expired. Start a new chat to continue.
+    </ThreadBanner>
+  );
+}
+
+const READ_ONLY_BANNERS = {
+  [CONFIGURATION_STATUS.CLEARED]: ClearedBanner,
+  [CONFIGURATION_STATUS.RESTORED]: RestoredBanner,
+  [CONVERSATION_STATUS.EXPIRED]: ExpiredBanner,
+};
 
 function ModelChangeBanner({ provider, model, onDismiss = noop }) {
   return (
@@ -120,6 +134,7 @@ export function ThreadMessages({ isRunning = false, isChatActive = false }) {
 function AssistantThread({
   connectionStatus,
   configurationStatus,
+  conversationStatus = CONVERSATION_STATUS.ACTIVE,
   isEmpty = false,
   isRunning = false,
   onNewThread = noop,
@@ -132,7 +147,14 @@ function AssistantThread({
     configurationStatus
   );
 
-  const isChatActive = canSendMessage(connection, configurationStatus);
+  const isChatActive = canSendMessage(
+    connection,
+    configurationStatus,
+    conversationStatus
+  );
+
+  const ReadOnlyBanner =
+    READ_ONLY_BANNERS[readOnlyReason(configurationStatus, conversationStatus)];
 
   return (
     <ThreadContainer>
@@ -150,8 +172,7 @@ function AssistantThread({
 
         <ThreadMessages isChatActive={isChatActive} isRunning={isRunning} />
         <ThreadPrimitive.ViewportFooter className="sticky bottom-0 mx-auto mt-auto flex w-full max-w-[var(--thread-max-width)] flex-col bg-white pt-4 pb-4">
-          {isConfigurationCleared(configurationStatus) && <ClearedBanner />}
-          {isConfigurationRestored(configurationStatus) && <RestoredBanner />}
+          {ReadOnlyBanner && <ReadOnlyBanner />}
           {modelNotice && (
             <ModelChangeBanner
               {...modelNotice}
@@ -161,6 +182,7 @@ function AssistantThread({
           <PromptComposer
             connectionStatus={connection}
             configurationStatus={configurationStatus}
+            conversationStatus={conversationStatus}
             isRunning={isRunning}
           />
         </ThreadPrimitive.ViewportFooter>

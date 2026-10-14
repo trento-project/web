@@ -10,3 +10,9 @@ export {
   CONNECTION_STATUS,
   isOnline,
 } from './connectionStatus';
+export {
+  ACTIVE,
+  EXPIRED,
+  CONVERSATION_STATUS,
+  isConversationExpired,
+} from './conversationStatus';

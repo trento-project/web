@@ -38,10 +38,15 @@ defmodule TrentoWeb.AIAssistant.AgUi do
   def run_finished(socket, run_id, thread_id),
     do: push_event(socket, %RunFinished{run_id: run_id, thread_id: thread_id})
 
-  @spec run_error(Socket.t(), String.t()) :: Socket.t()
-  def run_error(socket, message),
+  @doc """
+  Emits `RUN_ERROR`. `%LangChainError{}` messages are meant for the user; any
+  other reason, binaries included, is mapped to a fixed sentence, so internal
+  terms never reach the client. Callers log the raw reason themselves.
+  """
+  @spec run_error(Socket.t(), term()) :: Socket.t()
+  def run_error(socket, reason),
     do:
-      message
+      reason
       |> format_error()
       |> then(&push_event(socket, %RunError{message: &1}))
 
@@ -108,13 +113,28 @@ defmodule TrentoWeb.AIAssistant.AgUi do
       })
 
   @spec format_error(term()) :: String.t()
-  defp format_error(message) when is_binary(message), do: message
-
   defp format_error(%LangChainError{message: message}),
     do: "Sorry, I encountered an error: #{message}"
 
-  defp format_error(reason),
-    do: "Sorry, I encountered an error: #{inspect(reason)}"
+  defp format_error(:no_ai_configuration),
+    do: "The assistant has no AI configuration. Set one up in your profile."
+
+  defp format_error(:user_not_found),
+    do: "Your user account is no longer available."
+
+  defp format_error(:agent_busy),
+    do: "The assistant is still answering a previous message. Try again in a moment."
+
+  defp format_error(:registry_unavailable),
+    do: "The assistant is restarting. Try again in a moment."
+
+  defp format_error(:agent_down),
+    do: "The assistant stopped unexpectedly."
+
+  defp format_error(:conversation_expired),
+    do: "This conversation has expired. Start a new chat to continue."
+
+  defp format_error(_reason), do: "Sorry, something went wrong. Please try again."
 
   @spec push_event(Socket.t(), struct()) :: Socket.t()
   defp push_event(socket, event) do

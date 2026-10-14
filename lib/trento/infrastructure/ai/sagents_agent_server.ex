@@ -25,6 +25,9 @@ defmodule Trento.Infrastructure.AI.SagentsAgentServer do
   defdelegate cancel(agent_id), to: Sagents.AgentServer
 
   @impl Trento.AI.Agent.Server
+  defdelegate fetch_pid(agent_id), to: Sagents.AgentServer
+
+  @impl Trento.AI.Agent.Server
   def get_agent(agent_id),
     do: rescue_registry_unavailable(fn -> Sagents.AgentServer.get_agent(agent_id) end)
 

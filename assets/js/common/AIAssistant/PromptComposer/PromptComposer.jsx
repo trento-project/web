@@ -7,12 +7,12 @@ import { EOS_STOP_FILLED } from 'eos-icons-react';
 import { ComposerPrimitive } from '@assistant-ui/react';
 
 import Button from '@common/Button';
-import { CONNECTION_STATUS } from '@lib/ai';
+import { CONNECTION_STATUS, CONVERSATION_STATUS } from '@lib/ai';
 
 import {
   CONFIGURATION_STATUS,
   canSendMessage,
-  isChatReadOnly,
+  readOnlyReason,
 } from '../status';
 
 const COMPOSER_INPUT_CLASS_NAME =
@@ -27,12 +27,13 @@ const PLACEHOLDERS = {
   [CONNECTION_STATUS.DISCONNECTED]: 'Offline - waiting to reconnect...',
 };
 
-// Read-only has two causes that need different wording:
+// Read-only causes that need different wording:
 // - CLEARED means there is nothing left to answer with
-// - RESTORED means a configuration is back but a new chat needs to be started
+// - RESTORED and EXPIRED mean a new chat needs to be started
 const READ_ONLY_PLACEHOLDERS = {
   [CONFIGURATION_STATUS.CLEARED]: 'AI Assistant is disabled',
   [CONFIGURATION_STATUS.RESTORED]: 'Start a new chat to continue',
+  [CONVERSATION_STATUS.EXPIRED]: 'Start a new chat to continue',
 };
 
 const footnote = (
@@ -85,13 +86,19 @@ function StopButton() {
 function PromptComposer({
   connectionStatus,
   configurationStatus = CONFIGURATION_STATUS.OK,
+  conversationStatus = CONVERSATION_STATUS.ACTIVE,
   isRunning = false,
 }) {
-  const inputDisabled = !canSendMessage(connectionStatus, configurationStatus);
-  const placeholder = isChatReadOnly(configurationStatus)
+  const inputDisabled = !canSendMessage(
+    connectionStatus,
+    configurationStatus,
+    conversationStatus
+  );
+  const reason = readOnlyReason(configurationStatus, conversationStatus);
+  const placeholder = reason
     ? get(
         READ_ONLY_PLACEHOLDERS,
-        configurationStatus,
+        reason,
         READ_ONLY_PLACEHOLDERS[CONFIGURATION_STATUS.CLEARED]
       )
     : get(

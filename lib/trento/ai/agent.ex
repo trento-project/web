@@ -70,15 +70,19 @@ defmodule Trento.AI.Agent do
 
   Returns `{:error, :agent_busy}` while a run is in flight: sagents would
   queue the prompt behind it, and its events would read as this run's.
+
+  Pass `:agent_pid` to continue the conversation held by that agent
+  server. When the thread's agent is gone, or is another process (sagents
+  restarts a crashed server with an empty state), returns
+  `{:error, :conversation_expired}` instead of sending the prompt to an agent
+  that would answer without the conversation.
   """
   @spec run(Sagents.Agent.t(), String.t(), keyword()) :: {:ok, pid()} | {:error, term()}
   def run(%Sagents.Agent{agent_id: agent_id} = maybe_new_agent, prompt, opts \\ []) do
     refresh_when = Keyword.get(opts, :refresh_when, &default_refresh_when/2)
+    agent_pid = Keyword.get(opts, :agent_pid)
 
-    with {:ok, _} <-
-           agent_id
-           |> start_opts(maybe_new_agent)
-           |> AgentSupervisor.start_agent_sync(),
+    with :ok <- ensure_started(maybe_new_agent, agent_pid),
          :ok <- ensure_not_running(agent_id),
          :ok <- maybe_refresh_agent(agent_id, maybe_new_agent, refresh_when),
          {:ok, server_pid, _monitor_ref} <- AgentServer.subscribe(agent_id),
@@ -128,6 +132,19 @@ defmodule Trento.AI.Agent do
   end
 
   defp default_refresh_when(_current_agent, _new_agent), do: :noop
+
+  defp ensure_started(%Sagents.Agent{agent_id: agent_id} = agent, nil = _current_agent) do
+    with {:ok, _} <- agent_id |> start_opts(agent) |> AgentSupervisor.start_agent_sync(),
+         do: :ok
+  end
+
+  defp ensure_started(%Sagents.Agent{agent_id: agent_id}, agent_pid) do
+    case AgentServer.fetch_pid(agent_id) do
+      {:ok, ^agent_pid} -> :ok
+      {:error, :registry_unavailable} = error -> error
+      _ -> {:error, :conversation_expired}
+    end
+  end
 
   defp ensure_not_running(agent_id) do
     case AgentServer.get_status(agent_id) do
