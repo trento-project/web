@@ -30,10 +30,9 @@ import Banner from '@common/Banners';
 
 import ChecksSelection, { useChecksSelection } from '@pages/ChecksSelection';
 import ChecksSelectionHeader from '@pages/ChecksSelection/ChecksSelectionHeader';
-import ChecksSchedule from '@pages/ChecksSelection/ChecksSchedule';
+import TargetChecksExecutions from '@pages/ChecksSelection/TargetChecksExecutions';
+import TargetChecksExecutionsModal from '@pages/ChecksSelection/TargetChecksExecutionsModal';
 import { useChecksSchedule } from '@pages/ChecksSelection/scheduleHooks';
-import { inExceptionWindow } from '@lib/model/checksSchedule';
-import { isPermitted } from '@lib/model/users';
 
 const catalogBanner = {
   [UNKNOWN_PROVIDER]: (
@@ -53,8 +52,11 @@ function ClusterSettingsPage() {
 
   const { abilities, timezone } = useSelector(getUserProfile);
   const cluster = useSelector(getCluster(clusterID));
-  const { schedule, changeInterval, addWindow, deleteWindow } =
-    useChecksSchedule(TARGET_CLUSTER, clusterID);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const { schedule, saveSchedule } = useChecksSchedule(
+    TARGET_CLUSTER,
+    clusterID
+  );
 
   const clusterHosts = useSelector((state) =>
     getClusterHosts(state, clusterID)
@@ -142,7 +144,7 @@ function ClusterSettingsPage() {
         userAbilities={abilities}
         checkSelectionPermittedFor={['all:cluster_checks_selection']}
         checkExecutionPermittedFor={['all:cluster_checks_execution']}
-        inExceptionWindow={inExceptionWindow(schedule?.exception_windows)}
+        inExceptionWindow={!!schedule?.in_exception_window}
         onSaveSelection={saveSelection}
         onStartExecution={requestChecksExecution}
       />
@@ -154,17 +156,26 @@ function ClusterSettingsPage() {
         architectureType={architectureType}
       />
       {schedule && (
-        <ChecksSchedule
-          schedule={schedule}
-          timezone={timezone}
-          canEdit={isPermitted(abilities, [
-            'all:all',
-            'all:cluster_checks_selection',
-          ])}
-          onChangeInterval={changeInterval}
-          onAddWindow={addWindow}
-          onDeleteWindow={deleteWindow}
-        />
+        <>
+          <TargetChecksExecutions
+            targetType="cluster"
+            schedule={schedule}
+            timezone={timezone}
+            userAbilities={abilities}
+            permittedFor={['all:cluster_checks_selection']}
+            onEditClick={() => setScheduleModalOpen(true)}
+          />
+          <TargetChecksExecutionsModal
+            key={`checks-executions-${JSON.stringify(schedule)}-${scheduleModalOpen}`}
+            open={scheduleModalOpen}
+            schedule={schedule}
+            timezone={timezone}
+            onSave={(newSchedule) =>
+              saveSchedule(newSchedule).then(() => setScheduleModalOpen(false))
+            }
+            onCancel={() => setScheduleModalOpen(false)}
+          />
+        </>
       )}
       <ChecksSelection
         groupID={clusterID}

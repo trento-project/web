@@ -77,6 +77,7 @@ defmodule TrentoWeb.V1.ChecksScheduleController do
       checks_schedule:
         Map.merge(schedule, %{
           effective_interval: schedule.interval || global_interval,
+          global_interval: global_interval,
           in_exception_window: ChecksScheduling.in_exception_window?(target_id)
         })
     })
