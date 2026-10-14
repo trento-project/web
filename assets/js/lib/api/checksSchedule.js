@@ -16,18 +16,8 @@ export const updateChecksExecutionSettings = (settings) =>
 export const getChecksSchedule = (targetType, targetID) =>
   networkClient.get(`${targetChecksPath(targetType, targetID)}/schedule`);
 
-export const updateChecksSchedule = (targetType, targetID, interval) =>
-  networkClient.put(`${targetChecksPath(targetType, targetID)}/schedule`, {
-    interval,
-  });
-
-export const createExceptionWindow = (targetType, targetID, window) =>
-  networkClient.post(
-    `${targetChecksPath(targetType, targetID)}/exception_windows`,
-    window
-  );
-
-export const deleteExceptionWindow = (targetType, targetID, windowID) =>
-  networkClient.delete(
-    `${targetChecksPath(targetType, targetID)}/exception_windows/${windowID}`
+export const updateChecksSchedule = (targetType, targetID, schedule) =>
+  networkClient.put(
+    `${targetChecksPath(targetType, targetID)}/schedule`,
+    schedule
   );

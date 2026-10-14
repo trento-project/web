@@ -6,8 +6,6 @@ import { useDispatch } from 'react-redux';
 
 import { notify } from '@state/notifications';
 import {
-  createExceptionWindow,
-  deleteExceptionWindow,
   getChecksSchedule,
   updateChecksSchedule,
 } from '@lib/api/checksSchedule';
@@ -27,20 +25,11 @@ export const useChecksSchedule = (targetType, targetID) => {
     if (targetID) refresh();
   }, [targetType, targetID]);
 
-  const changeInterval = (interval) =>
-    updateChecksSchedule(targetType, targetID, interval)
+  // Saves the interval and the exception window of the target together
+  const saveSchedule = (newSchedule) =>
+    updateChecksSchedule(targetType, targetID, newSchedule)
       .then(({ data }) => setSchedule(data))
-      .catch(() => notifyError('Unable to change the checks frequency'));
+      .catch(() => notifyError('Unable to save the checks execution settings'));
 
-  const addWindow = (window) =>
-    createExceptionWindow(targetType, targetID, window)
-      .then(refresh)
-      .catch(() => notifyError('Unable to add the exception window'));
-
-  const deleteWindow = (windowID) =>
-    deleteExceptionWindow(targetType, targetID, windowID)
-      .then(refresh)
-      .catch(() => notifyError('Unable to delete the exception window'));
-
-  return { schedule, changeInterval, addWindow, deleteWindow };
+  return { schedule, saveSchedule };
 };

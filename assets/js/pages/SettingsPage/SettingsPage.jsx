@@ -40,6 +40,7 @@ import {
 import AlertingSettingsConfig from '@common/AlertingSettingsConfig';
 import AlertingSettingsModal from '@common/AlertingSettingsModal';
 import ChecksExecutionSettingsConfig from '@common/ChecksExecutionSettingsConfig';
+import ChecksExecutionSettingsModal from '@common/ChecksExecutionSettingsModal';
 
 import {
   useApiKeySettings,
@@ -140,6 +141,8 @@ function SettingsPage() {
 
   const { checksExecutionSettings, changeChecksExecutionSettings } =
     useChecksExecutionSettings();
+  const [checksExecutionModalOpen, setChecksExecutionModalOpen] =
+    useState(false);
 
   const [alertingSettingsModalOpen, setAlertingSettingsModalOpen] =
     useState(false);
@@ -414,7 +417,18 @@ function SettingsPage() {
             <ChecksExecutionSettingsConfig
               settings={checksExecutionSettings}
               userAbilities={abilities}
-              onChange={changeChecksExecutionSettings}
+              onEditClick={() => setChecksExecutionModalOpen(true)}
+            />
+            <ChecksExecutionSettingsModal
+              key={`checksexecutionmodal-${checksExecutionSettings.interval}-${checksExecutionModalOpen}`}
+              open={checksExecutionModalOpen}
+              initialInterval={checksExecutionSettings.interval}
+              onSave={(newSettings) =>
+                changeChecksExecutionSettings(newSettings).then(() =>
+                  setChecksExecutionModalOpen(false)
+                )
+              }
+              onCancel={() => setChecksExecutionModalOpen(false)}
             />
           </div>
         </section>

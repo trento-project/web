@@ -140,6 +140,10 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
             type: :integer,
             description: "Interval applied to the target in minutes."
           },
+          global_interval: %Schema{
+            type: :integer,
+            description: "Global interval in minutes, applied when the target has none."
+          },
           last_scheduled_at: %Schema{type: :string, format: :"date-time", nullable: true},
           exception_window: ExceptionWindow,
           in_exception_window: %Schema{
@@ -150,6 +154,7 @@ defmodule TrentoWeb.OpenApi.V1.Schema.ChecksSchedule do
         required: [
           :interval,
           :effective_interval,
+          :global_interval,
           :last_scheduled_at,
           :exception_window,
           :in_exception_window

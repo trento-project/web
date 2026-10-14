@@ -131,6 +131,27 @@ describe('HostDetails component', () => {
       expect(screen.getByText('Select some Checks first!')).toBeInTheDocument();
     });
 
+    it('should disable start execution button inside an exception window', async () => {
+      const user = userEvent.setup();
+
+      renderWithRouter(
+        <HostDetails
+          agentVersion="1.0.0"
+          selectedChecks={['check1']}
+          inExceptionWindow
+          userAbilities={userAbilities}
+        />
+      );
+
+      const startExecutionButton = screen.getByText('Start Execution');
+      expect(startExecutionButton).toBeDisabled();
+
+      await user.hover(startExecutionButton);
+      expect(
+        screen.getByText('Checks cannot be executed during exception window')
+      ).toBeInTheDocument();
+    });
+
     it('should enable start execution button when checks are selected', async () => {
       const user = userEvent.setup();
       const selectedChecks = [faker.animal.bear(), faker.animal.bear()];

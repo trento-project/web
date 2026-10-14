@@ -175,6 +175,36 @@ describe('ClusterDetails ClusterDetails component', () => {
     }
   );
 
+  it('should disable start check execution button inside an exception window', async () => {
+    const user = userEvent.setup();
+    const { id, name, details } = clusterFactory.build();
+
+    renderWithRouter(
+      <ClusterDetails
+        clusterID={id}
+        clusterName={name}
+        details={details}
+        hasSelectedChecks
+        inExceptionWindow
+        hosts={[]}
+        selectedChecks={['check1']}
+        userAbilities={[{ name: 'all', resource: 'all' }]}
+        onStartExecution={noop}
+        navigate={noop}
+      />
+    );
+
+    const startExecutionButton = screen.getByRole('button', {
+      name: 'Start Execution',
+    });
+    expect(startExecutionButton).toBeDisabled();
+
+    await user.hover(startExecutionButton);
+    expect(
+      screen.getByText('Checks cannot be executed during exception window')
+    ).toBeInTheDocument();
+  });
+
   it('should navigate to the proper pages when check selection and result buttons are clicked', async () => {
     const user = userEvent.setup();
     const { id, name, details } = clusterFactory.build();
