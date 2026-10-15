@@ -359,18 +359,19 @@ export const getApiKey = () =>
       .then((response) => response.body.generated_api_key)
   );
 
+const apiGetHosts = (accessToken) =>
+  cy
+    .request({
+      url: '/api/v1/hosts',
+      auth: { bearer: accessToken },
+      log: false,
+    })
+    .then(({ body }) => body);
+
 const isTestDataLoaded = () =>
-  apiLogin().then(({ accessToken }) =>
-    cy
-      .request({
-        url: '/api/v1/hosts',
-        method: 'GET',
-        auth: {
-          bearer: accessToken,
-        },
-      })
-      .then(({ body }) => body.length !== 0)
-  );
+  apiLogin()
+    .then(({ accessToken }) => apiGetHosts(accessToken))
+    .then((hosts) => hosts.length !== 0);
 
 export const startAgentsHeartbeat = (agents) => {
   if (Cypress.expose('web_mode') === 'dev') {
@@ -440,19 +441,35 @@ export const apiDeregisterHost = (hostId) =>
 export const stopAgentsHeartbeat = (agents = []) =>
   cy.task('stopAgentsHeartbeat', { agents });
 
+const hostnamesWithPassingHeartbeat = (hosts) =>
+  hosts
+    .filter(({ heartbeat }) => heartbeat === 'passing')
+    .map(({ hostname }) => hostname);
+
+export const waitForHeartbeatsExpired = (timeout = 30000, interval = 1000) =>
+  apiLogin().then(({ accessToken }) => {
+    const deadline = Date.now() + timeout;
+
+    const pollUntilNoHeartbeats = () =>
+      apiGetHosts(accessToken).then((hosts) => {
+        const hostnames = hostnamesWithPassingHeartbeat(hosts);
+        if (hostnames.length === 0) return;
+        if (Date.now() > deadline) {
+          throw new Error(
+            `Hosts heartbeats not expired after ${timeout}ms: ${hostnames.join(', ')}`
+          );
+        }
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        return cy.wait(interval, { log: false }).then(pollUntilNoHeartbeats);
+      });
+
+    return pollUntilNoHeartbeats();
+  });
+
 export const isHostRegistered = (hostId) =>
   apiLogin()
-    .then(({ accessToken }) => {
-      const url = '/api/v1/hosts/';
-      return cy.request({
-        method: 'GET',
-        url: url,
-        auth: {
-          bearer: accessToken,
-        },
-      });
-    })
-    .then(({ body }) => body.some((host) => host.id === hostId));
+    .then(({ accessToken }) => apiGetHosts(accessToken))
+    .then((hosts) => hosts.some((host) => host.id === hostId));
 
 export const loginWithoutAbilities = () =>
   apiLoginAndCreateSession(user.username, password);

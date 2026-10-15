@@ -4,7 +4,11 @@
 import * as sapSystemsOverviewPage from '../pageObject/sap_systems_overview_po';
 
 context('SAP Systems Overview', () => {
-  before(() => sapSystemsOverviewPage.preloadTestData());
+  before(() => {
+    sapSystemsOverviewPage.stopAgentsHeartbeat();
+    sapSystemsOverviewPage.waitForHeartbeatsExpired();
+    sapSystemsOverviewPage.preloadTestData();
+  });
 
   beforeEach(() => {
     cy.clearAllSessionStorage();

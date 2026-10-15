@@ -69,7 +69,8 @@ const sapSystemNwq = {
 const instancesData = availableSAPSystems.flatMap((system) => system.instances);
 
 // Selectors
-const sapSystemsTableRows = 'tbody tr[class=""]';
+const sapSystemsTableRows =
+  'tbody > tr:has(> td[aria-label="collapsible-icon-cell"])';
 const firstSystemApplicationLayerRows =
   'tbody tr:nth-child(odd):eq(0) + tr td div[class*="row-group"]:eq(0) div[class*="row border"]';
 const cleanUpButton = 'button:contains("Clean up")';
