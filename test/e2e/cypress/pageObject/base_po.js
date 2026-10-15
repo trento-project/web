@@ -446,9 +446,7 @@ const hostnamesWithPassingHeartbeat = (hosts) =>
     .filter(({ heartbeat }) => heartbeat === 'passing')
     .map(({ hostname }) => hostname);
 
-const heartbeatPollIntervalMs = 1000;
-
-export const waitForHeartbeatsExpired = (timeout = 30000) =>
+export const waitForHeartbeatsExpired = (timeout = 30000, interval = 1000) =>
   apiLogin().then(({ accessToken }) => {
     const deadline = Date.now() + timeout;
 
@@ -458,13 +456,11 @@ export const waitForHeartbeatsExpired = (timeout = 30000) =>
         if (hostnames.length === 0) return;
         if (Date.now() > deadline) {
           throw new Error(
-            `Hosts still sending heartbeats after ${timeout}ms: ${hostnames.join(', ')}`
+            `Hosts heartbeats not expired after ${timeout}ms: ${hostnames.join(', ')}`
           );
         }
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        return cy
-          .wait(heartbeatPollIntervalMs, { log: false })
-          .then(pollUntilNoHeartbeats);
+        return cy.wait(interval, { log: false }).then(pollUntilNoHeartbeats);
       });
 
     return pollUntilNoHeartbeats();
