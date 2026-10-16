@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-29T19:57:17Z",
-    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
-    "run_id": "33271477372",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 41,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-29T20:18:59Z",
     "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
     "run_id": "33272238596",
@@ -5846,6 +5835,22 @@
       },
       {
         "name": "should mark database data as sync when the agent starts reporting data again::HANA database details Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-16T20:01:44Z",
+    "commit": "539f5e47e879d3d9289dfb9f7edcb21e41eed69d",
+    "run_id": "38958142334",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 41,
+      "failed_runs": 1
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.SettingsTest::test Alerting settings from DB successfully updated when called with correct input",
         "score": 0.02501
       }
     ]
