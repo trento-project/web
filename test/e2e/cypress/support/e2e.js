@@ -44,6 +44,27 @@ before(() => {
 const authDebugEvents = [];
 
 Cypress.on('window:before:load', (win) => {
+  const NativeWebSocket = win.WebSocket;
+  win.WebSocket = function (...args) {
+    const socket = new NativeWebSocket(...args);
+    socket.addEventListener('message', (event) => {
+      if (
+        typeof event.data === 'string' &&
+        /user_(locked|deleted|updated)/.test(event.data)
+      ) {
+        authDebugEvents.push(`ws(${event.data.slice(0, 200)})`);
+      }
+    });
+    return socket;
+  };
+  win.WebSocket.prototype = NativeWebSocket.prototype;
+  Object.assign(win.WebSocket, {
+    CONNECTING: 0,
+    OPEN: 1,
+    CLOSING: 2,
+    CLOSED: 3,
+  });
+
   const { removeItem, clear } = win.Storage.prototype;
   win.Storage.prototype.removeItem = function (key) {
     if (this === win.localStorage && /token/.test(key)) {
@@ -57,6 +78,18 @@ Cypress.on('window:before:load', (win) => {
     }
     return clear.call(this);
   };
+});
+
+beforeEach(() => {
+  cy.intercept('/api/**', (req) => {
+    req.on('response', (res) => {
+      if (res.statusCode >= 400) {
+        authDebugEvents.push(
+          `http(${req.method} ${req.url} -> ${res.statusCode})`
+        );
+      }
+    });
+  });
 });
 
 afterEach(function () {
