@@ -39,6 +39,11 @@ export default (on, config) => {
 
   cypressSplit(on, config);
   on('task', {
+    debugLog(message) {
+      // eslint-disable-next-line no-console
+      console.log(`[auth-debug] ${message}`);
+      return null;
+    },
     async exec({ command, timeout = EXEC_DEFAULT_TIMEOUT }) {
       return await execAsync(command, { timeout });
     },

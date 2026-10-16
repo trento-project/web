@@ -11,6 +11,7 @@ context('Clusters Overview', () => {
     clustersOverviewPage.interceptInitialDataFetch();
     clustersOverviewPage.visit();
     clustersOverviewPage.validateUrl();
+    clustersOverviewPage.waitForInitialDataFetch();
   });
 
   describe('Registered Clusters should be available in the overview', () => {
