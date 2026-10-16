@@ -14,6 +14,10 @@ defmodule Trento.Support.HttpClientTest do
     Record.extract(:Extension, from_lib: "public_key/include/public_key.hrl")
   )
 
+  @server_auth {1, 3, 6, 1, 5, 5, 7, 3, 1}
+  @client_auth {1, 3, 6, 1, 5, 5, 7, 3, 2}
+  @code_signing {1, 3, 6, 1, 5, 5, 7, 3, 3}
+
   @host "trento.local"
   @url "https://#{@host}/wanda/api/all/openapi"
 
@@ -33,23 +37,10 @@ defmodule Trento.Support.HttpClientTest do
 
     [ca_der | _] = Keyword.fetch!(server, :cacerts)
 
-    # The event OTP 27.1.3 raises for a CA with keyUsage [keyCertSign, cRLSign]
-    # and extKeyUsage [serverAuth]:
-    # https://github.com/erlang/otp/blob/OTP-27.1.3/lib/public_key/src/pubkey_cert.erl#L892
-    key_usage_mismatch =
-      {:bad_cert,
-       {:key_usage_mismatch,
-        {extension(extnID: {2, 5, 29, 15}, critical: true, extnValue: [:keyCertSign, :cRLSign]),
-         extension(
-           extnID: {2, 5, 29, 37},
-           critical: false,
-           extnValue: [{1, 3, 6, 1, 5, 5, 7, 3, 1}]
-         )}}}
-
     %{
       ca: :public_key.pkix_decode_cert(ca_der, :otp),
       peer: :public_key.pkix_decode_cert(Keyword.fetch!(server, :cert), :otp),
-      key_usage_mismatch: key_usage_mismatch
+      key_usage_mismatch: key_usage_mismatch([@server_auth])
     }
   end
 
@@ -70,6 +61,22 @@ defmodule Trento.Support.HttpClientTest do
       {verify_fun, state} = verify_fun(@url)
 
       assert {:valid, ^state} = verify_fun.(ca, event, state)
+    end
+
+    test "a CA certificate whose extKeyUsage lists serverAuth and clientAuth is accepted",
+         %{ca: ca} do
+      {verify_fun, state} = verify_fun(@url)
+
+      assert {:valid, ^state} =
+               verify_fun.(ca, key_usage_mismatch([@server_auth, @client_auth]), state)
+    end
+
+    test "a CA certificate whose extKeyUsage adds a non-TLS purpose is still rejected",
+         %{ca: ca} do
+      {verify_fun, state} = verify_fun(@url)
+
+      assert {:fail, {:bad_cert, {:key_usage_mismatch, _}}} =
+               verify_fun.(ca, key_usage_mismatch([@server_auth, @code_signing]), state)
     end
 
     test "an end-entity certificate reported with key_usage_mismatch is still rejected",
@@ -96,4 +103,14 @@ defmodule Trento.Support.HttpClientTest do
 
   defp verify_fun(url),
     do: url |> HttpClient.inject_ssl([]) |> Keyword.fetch!(:ssl) |> Keyword.fetch!(:verify_fun)
+
+  # The event OTP 27.1.3 raises for a CA with keyUsage [keyCertSign, cRLSign]
+  # and the given extKeyUsage purposes:
+  # https://github.com/erlang/otp/blob/OTP-27.1.3/lib/public_key/src/pubkey_cert.erl#L892
+  defp key_usage_mismatch(purposes) do
+    {:bad_cert,
+     {:key_usage_mismatch,
+      {extension(extnID: {2, 5, 29, 15}, critical: true, extnValue: [:keyCertSign, :cRLSign]),
+       extension(extnID: {2, 5, 29, 37}, critical: false, extnValue: purposes)}}}
+  end
 end

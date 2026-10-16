@@ -34,6 +34,8 @@ defmodule Trento.Support.HttpClient do
   )
 
   @id_ce_basic_constraints {2, 5, 29, 19}
+  @id_kp_server_auth {1, 3, 6, 1, 5, 5, 7, 3, 1}
+  @id_kp_client_auth {1, 3, 6, 1, 5, 5, 7, 3, 2}
 
   @callback get(url :: String.t(), headers :: list(), options :: keyword()) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -75,8 +77,10 @@ defmodule Trento.Support.HttpClient do
   # - fix (OTP-19240, OTP 27.2.2): https://github.com/erlang/otp/commit/e0ef3fbd7e48f8c38c3118335680b2c999ebd96f
   #
   # SUSE ships 27.1.3 without the fix: erlang27 on SLE 15 and erlang on SLE 16.
-  # This verify_fun accepts that one error for CA certificates only, the rule the
-  # upstream fix applies, and passes every other event to hackney's default verify_fun.
+  # This verify_fun accepts that one error for a CA certificate whose extKeyUsage
+  # lists only serverAuth and clientAuth, the purposes the upstream fix exempts for
+  # CAs, and passes every other event to hackney's default verify_fun.
+  # - fixed rule: https://github.com/erlang/otp/blob/OTP-27.2.2/lib/public_key/src/pubkey_cert.erl#L1819-L1835
   # - verify_fun contract: https://github.com/erlang/otp/blob/OTP-27.1.3/lib/ssl/src/ssl.erl#L753-L812
   # - ssl still validates extensions and revocation around the verify_fun:
   #   https://github.com/erlang/otp/blob/OTP-27.1.3/lib/ssl/src/ssl_handshake.erl#L2078-L2161
@@ -102,8 +106,10 @@ defmodule Trento.Support.HttpClient do
 
   defp accept_ca_key_usage_mismatch(default_fun) do
     fn
-      cert, {:bad_cert, {:key_usage_mismatch, _}} = event, state ->
-        if ca_certificate?(cert), do: {:valid, state}, else: default_fun.(cert, event, state)
+      cert, {:bad_cert, {:key_usage_mismatch, {_key_usage, ext_key_usage}}} = event, state ->
+        if ca_certificate?(cert) and tls_purposes_only?(ext_key_usage),
+          do: {:valid, state},
+          else: default_fun.(cert, event, state)
 
       cert, event, state ->
         default_fun.(cert, event, state)
@@ -124,4 +130,9 @@ defmodule Trento.Support.HttpClient do
   end
 
   defp ca_certificate?(_), do: false
+
+  defp tls_purposes_only?(extension(extnValue: purposes)) when is_list(purposes),
+    do: Enum.all?(purposes, &(&1 in [@id_kp_server_auth, @id_kp_client_auth]))
+
+  defp tls_purposes_only?(_), do: false
 end
