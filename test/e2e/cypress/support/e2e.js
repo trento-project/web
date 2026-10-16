@@ -39,3 +39,12 @@ before(() => {
     );
   }
 });
+
+// Chrome aborts in-flight XHRs when a test navigates away (e.g. click link +
+// go back); the app surfaces this as an unhandled Axios rejection that would
+// fail an otherwise correct test.
+Cypress.on('uncaught:exception', (err) => {
+  const isAbortedRequest =
+    err.name === 'AxiosError' && err.message.includes('Request aborted');
+  return !isAbortedRequest;
+});
