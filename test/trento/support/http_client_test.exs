@@ -99,10 +99,39 @@ defmodule Trento.Support.HttpClientTest do
       {verify_fun, state} = verify_fun("https://other.example/wanda")
       assert {:fail, _} = verify_fun.(peer, :valid_peer, state)
     end
+
+    test "the hostname check follows a server_name_indication override", %{peer: peer} do
+      {verify_fun, state} =
+        verify_fun("https://10.0.0.1/wanda", server_name_indication: String.to_charlist(@host))
+
+      assert {:valid, _} = verify_fun.(peer, :valid_peer, state)
+    end
+
+    test "verify: :verify_none gets no workaround verify_fun" do
+      ssl = @url |> HttpClient.inject_ssl(ssl: [verify: :verify_none]) |> Keyword.fetch!(:ssl)
+
+      assert :verify_none = Keyword.fetch!(ssl, :verify)
+      refute Keyword.has_key?(ssl, :verify_fun)
+    end
+
+    test "a caller verify_fun is kept" do
+      caller_verify_fun = {fn _, _, state -> {:valid, state} end, :caller_state}
+
+      ssl =
+        @url
+        |> HttpClient.inject_ssl(ssl: [verify_fun: caller_verify_fun])
+        |> Keyword.fetch!(:ssl)
+
+      assert [^caller_verify_fun] = Keyword.get_values(ssl, :verify_fun)
+    end
   end
 
-  defp verify_fun(url),
-    do: url |> HttpClient.inject_ssl([]) |> Keyword.fetch!(:ssl) |> Keyword.fetch!(:verify_fun)
+  defp verify_fun(url, ssl \\ []),
+    do:
+      url
+      |> HttpClient.inject_ssl(ssl: ssl)
+      |> Keyword.fetch!(:ssl)
+      |> Keyword.fetch!(:verify_fun)
 
   # The event OTP 27.1.3 raises for a CA with keyUsage [keyCertSign, cRLSign]
   # and the given extKeyUsage purposes:
