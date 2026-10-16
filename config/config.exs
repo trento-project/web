@@ -281,6 +281,9 @@ config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm,
 config :trento, Trento.Infrastructure.SoftwareUpdates.SmlmApi,
   executor: Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor
 
+config :trento, Trento.Infrastructure.SoftwareUpdates.Smlm.HttpExecutor,
+  http_client: Trento.Support.HttpClient
+
 config :bodyguard,
   # The second element of the {:error, reason} tuple returned on auth failure
   default_error: :forbidden
