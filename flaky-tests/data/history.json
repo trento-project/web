@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-30T19:59:30Z",
-    "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
-    "run_id": "33331698017",
-    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
-    "metrics": {
-      "completed_runs": 39,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.TrentoWeb.AIAssistantChannelTest::test handle_in send_message/3 — access_token validation replies {-error, -unauthorized} when token sub does not match the socket user",
-        "score": 0.05001
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-30T20:00:35Z",
     "commit": "d72ef27dd1b589db88a9271d173862491811a2e3",
     "run_id": "33331698017",
@@ -5814,6 +5794,22 @@
       {
         "name": "should run a checks execution with customized check values::Checks customization Execution with customized check values should run a checks execution with customized check values",
         "score": 0.02501
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-10-17T19:26:02Z",
+    "commit": "d9a65e9f7043ebca8c85acd2e6be6ac544112657",
+    "run_id": "39061474426",
+    "suite": "Backend — Elixir 1.19.5-otp-27, OTP 27.3.4.11",
+    "metrics": {
+      "completed_runs": 40,
+      "failed_runs": 2
+    },
+    "top_flaky_tests": [
+      {
+        "name": "Elixir.Trento.Infrastructure.Alerting.AlertingTest::test Alerting the configured recipient about crucial facts with email notifications Notify heartbeat failed filtering out deregistered clusters",
+        "score": 0.2323
       }
     ]
   }
