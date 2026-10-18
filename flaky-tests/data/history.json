@@ -1,25 +1,5 @@
 [
   {
-    "timestamp": "2026-08-31T22:09:55Z",
-    "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
-    "run_id": "33443488590",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 38,
-      "failed_runs": 2
-    },
-    "top_flaky_tests": [
-      {
-        "name": "Elixir.Trento.UsersTest::test users validate_totp/2 validates totp correctly",
-        "score": 0.05001
-      },
-      {
-        "name": "Elixir.Trento.Hosts.HostTest::test saptune should update saptune version when status data is empty",
-        "score": 0.02501
-      }
-    ]
-  },
-  {
     "timestamp": "2026-08-31T22:26:06Z",
     "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
     "run_id": "33444220097",
@@ -5790,6 +5770,17 @@
     "commit": "d9a65e9f7043ebca8c85acd2e6be6ac544112657",
     "run_id": "39159735645",
     "suite": "Jest — Node 24.13.1",
+    "metrics": {
+      "completed_runs": 50,
+      "failed_runs": 0
+    },
+    "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-18T20:11:27Z",
+    "commit": "d9a65e9f7043ebca8c85acd2e6be6ac544112657",
+    "run_id": "39159735645",
+    "suite": "Jest — Node 20.20.0",
     "metrics": {
       "completed_runs": 50,
       "failed_runs": 0
