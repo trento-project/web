@@ -38,6 +38,7 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: write
+      actions: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -50,6 +51,8 @@ jobs:
       - name: Analyze Flaky Tests and Generate Summary
         id: analyze
         working-directory: hack/flaky_tests_analysis
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           process_runs() {
             local reports_dir="$1"
@@ -184,8 +187,13 @@ jobs:
                  )')
             fi
 
+            # Use the run start date so long runs finishing after midnight UTC
+            # are not attributed to the following day
+            local run_started_at
+            run_started_at="$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}" --jq .run_started_at)"
+
             jq -n \
-              --arg timestamp "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+              --arg timestamp "$run_started_at" \
               --arg commit "${{ github.sha }}" \
               --arg run_id "${{ github.run_id }}" \
               --arg suite "${{ inputs.suite-name }}" \
