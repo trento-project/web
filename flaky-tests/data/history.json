@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-08-31T22:26:06Z",
-    "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
-    "run_id": "33444220097",
-    "suite": "Jest — Node 24.13.1",
-    "metrics": {
-      "completed_runs": 50,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-08-31T22:27:20Z",
     "commit": "de642af3bdd38a61b8da06a67acc8d4fcec06761",
     "run_id": "33444220097",
@@ -5786,5 +5775,53 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-18T23:58:50Z",
+    "commit": "d9a65e9f7043ebca8c85acd2e6be6ac544112657",
+    "run_id": "39164689828",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 17
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should start autorefresh ticker::Activity Log page Autorefresh should start autorefresh ticker",
+        "score": 0.25
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.1160
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.09051
+      },
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.08077
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark SAP system data as sync when the agent with a database instance starts reporting data again::SAP Systems Overview Stale data should mark SAP system data as sync when the agent with a database instance starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should mark database data as sync when the agent starts reporting data again::Databases Overview Stale data should mark database data as sync when the agent starts reporting data again",
+        "score": 0.05001
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.02501
+      },
+      {
+        "name": "should mark the database and database cluster health as stale when a clustered database instance agent stops reporting::Homepage Stale data should mark the database and database cluster health as stale when a clustered database instance agent stops reporting",
+        "score": 0.02501
+      }
+    ]
   }
 ]
