@@ -28,13 +28,7 @@ defmodule Trento.Infrastructure.SoftwareUpdates.Adapter.SmlmHttpExecutorTest do
 
   describe "Http executor certificate handling" do
     test "should support chained certificates" do
-      scenarios = [
-        %{cert: "one_entry_chain.pem", expected_entries: 1},
-        %{cert: "two_entries_chain.pem", expected_entries: 2},
-        %{cert: "three_entries_chain.pem", expected_entries: 3}
-      ]
-
-      for %{cert: cert, expected_entries: expected_entries} <- scenarios do
+      for {cert, expected_entries} <- @ca_fixtures do
         assert cert
                |> load_certificate_content()
                |> HttpExecutor.get_cert_der()
