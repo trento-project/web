@@ -104,5 +104,7 @@ if Application.get_env(:trento, :flaky_tests_detection)[:enabled?] == true do
   ExUnit.configure(formatters: [JUnitFormatter, ExUnit.CLIFormatter])
 end
 
-ExUnit.start(capture_log: true)
+# The TLS handshake tests run in their own CI job, on OTP 27.1.3 and on the dev
+# OTP: mix test --only tls_handshake
+ExUnit.start(capture_log: true, exclude: [:tls_handshake])
 Ecto.Adapters.SQL.Sandbox.mode(Trento.Repo, :manual)
