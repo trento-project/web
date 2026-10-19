@@ -7,7 +7,7 @@ import { noop } from 'lodash';
 import Modal from '@common/Modal';
 import Button from '@common/Button';
 import Label from '@common/Label';
-import Input from '@common/Input';
+import { Checkbox } from '@common/Input';
 import Banner from '@common/Banners';
 import {
   shouldShowOperationDisclaimer,
@@ -28,9 +28,8 @@ function DisclaimerContent({
       <div className="flex space-x-1 items-center pt-2">
         <Label className="cursor-pointer">
           Don&apos;t show this again
-          <Input
-            className="inline-block cursor-pointer ml-1 centered"
-            type="checkbox"
+          <Checkbox
+            className="ml-2"
             checked={dontShowAgainDisclaimerChecked}
             onChange={() => setDontShowAgainDisclaimerChecked((prev) => !prev)}
           />
