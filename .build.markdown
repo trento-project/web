@@ -478,6 +478,8 @@ Trento.Support.Event.md
 Trento.Support.EventHandlerFailureContext.md
 Trento.Support.Helpers.AbilitiesTestHelper.md
 Trento.Support.Helpers.AlertingSettingsHelper.md
+Trento.Support.Helpers.TestCertificates.md
+Trento.Support.Helpers.TlsTestServer.md
 Trento.Support.HttpClient.md
 Trento.Support.HttpUtils.md
 Trento.Support.IntermediateEvent.md

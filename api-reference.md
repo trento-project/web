@@ -835,6 +835,12 @@ check supported values and validate possible values
   - [Trento.Support.Helpers.AbilitiesTestHelper](Trento.Support.Helpers.AbilitiesTestHelper.md): Helper functions to setup abilities.
   - [Trento.Support.Helpers.AlertingSettingsHelper](Trento.Support.Helpers.AlertingSettingsHelper.md): Test helper functions for alerting settings.
 
+  - [Trento.Support.Helpers.TestCertificates](Trento.Support.Helpers.TestCertificates.md): Generates, with the `openssl` command, the certificate chains used to test
+`Trento.Support.HttpClient` against a real TLS server.
+  - [Trento.Support.Helpers.TlsTestServer](Trento.Support.Helpers.TlsTestServer.md): A minimal HTTPS server for tests: it listens on 127.0.0.1 on a random port,
+serves the given certificate chain and answers every request with
+`200 ok`. A client that rejects the chain fails the handshake, the server
+ignores that and accepts the next connection.
   - [Trento.Support.HttpClient](Trento.Support.HttpClient.md): Shared HTTP client behaviour wrapping `HTTPoison`. The default implementation
 forwards to HTTPoison and injects secure SSL defaults (`verify_peer` with the
 system CA bundle); callers can override individual SSL keys by passing their
