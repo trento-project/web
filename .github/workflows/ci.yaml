@@ -441,8 +441,10 @@ jobs:
         with:
           compose-file: "./docker-compose.yaml"
           down-flags: "--volumes"
+      - name: Wait for PostgreSQL
+        run: timeout 120 bash -c 'until docker compose exec -T postgres pg_isready -h 127.0.0.1 -U postgres; do sleep 2; done'
       - name: Run TLS handshake tests
-        run: mix test --only tls_handshake --trace
+        run: mix test --only tls_handshake
 
   coveralls-finish:
     needs: [test-elixir]
