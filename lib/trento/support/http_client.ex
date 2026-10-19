@@ -12,19 +12,10 @@ defmodule Trento.Support.HttpClient do
   require Logger
   require Record
 
+  alias X509.Certificate
+  alias X509.Certificate.Extension
+
   @public_key_hrl "public_key/include/public_key.hrl"
-  Record.defrecordp(
-    :otp_certificate,
-    :OTPCertificate,
-    Record.extract(:OTPCertificate, from_lib: @public_key_hrl)
-  )
-
-  Record.defrecordp(
-    :otp_tbs_certificate,
-    :OTPTBSCertificate,
-    Record.extract(:OTPTBSCertificate, from_lib: @public_key_hrl)
-  )
-
   Record.defrecordp(:extension, :Extension, Record.extract(:Extension, from_lib: @public_key_hrl))
 
   Record.defrecordp(
@@ -32,10 +23,6 @@ defmodule Trento.Support.HttpClient do
     :BasicConstraints,
     Record.extract(:BasicConstraints, from_lib: @public_key_hrl)
   )
-
-  @id_ce_basic_constraints {2, 5, 29, 19}
-  @id_kp_server_auth {1, 3, 6, 1, 5, 5, 7, 3, 1}
-  @id_kp_client_auth {1, 3, 6, 1, 5, 5, 7, 3, 2}
 
   @callback get(url :: String.t(), headers :: list(), options :: keyword()) ::
               {:ok, HTTPoison.Response.t()} | {:error, HTTPoison.Error.t()}
@@ -129,23 +116,19 @@ defmodule Trento.Support.HttpClient do
     end
   end
 
-  defp ca_certificate?(
-         otp_certificate(tbsCertificate: otp_tbs_certificate(extensions: extensions))
-       )
-       when is_list(extensions) do
-    Enum.any?(
-      extensions,
-      &match?(
-        extension(extnID: @id_ce_basic_constraints, extnValue: basic_constraints(cA: true)),
-        &1
-      )
+  defp ca_certificate?(cert) when Record.is_record(cert, :OTPCertificate) do
+    match?(
+      extension(extnValue: basic_constraints(cA: true)),
+      Certificate.extension(cert, :basic_constraints)
     )
   end
 
   defp ca_certificate?(_), do: false
 
-  defp tls_purposes_only?(extension(extnValue: purposes)) when is_list(purposes),
-    do: Enum.all?(purposes, &(&1 in [@id_kp_server_auth, @id_kp_client_auth]))
+  defp tls_purposes_only?(extension(extnValue: purposes)) when is_list(purposes) do
+    extension(extnValue: tls_purposes) = Extension.ext_key_usage([:serverAuth, :clientAuth])
+    Enum.all?(purposes, &(&1 in tls_purposes))
+  end
 
   defp tls_purposes_only?(_), do: false
 end

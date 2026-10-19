@@ -4,43 +4,28 @@
 defmodule Trento.Support.HttpClientTest do
   use ExUnit.Case, async: true
 
-  require Record
-
   alias Trento.Support.HttpClient
-
-  Record.defrecordp(
-    :extension,
-    :Extension,
-    Record.extract(:Extension, from_lib: "public_key/include/public_key.hrl")
-  )
-
-  @server_auth {1, 3, 6, 1, 5, 5, 7, 3, 1}
-  @client_auth {1, 3, 6, 1, 5, 5, 7, 3, 2}
-  @code_signing {1, 3, 6, 1, 5, 5, 7, 3, 3}
+  alias X509.Certificate.Extension
 
   @host "trento.local"
   @url "https://#{@host}/wanda/api/all/openapi"
 
   setup_all do
-    san =
-      extension(
-        extnID: {2, 5, 29, 17},
-        critical: false,
-        extnValue: [dNSName: String.to_charlist(@host)]
-      )
+    peer_extensions = [Extension.subject_alt_name([@host]), Extension.basic_constraints(false)]
 
     %{server_config: server} =
       :public_key.pkix_test_data(%{
-        server_chain: %{root: [], intermediates: [[]], peer: [extensions: [san]]},
+        server_chain: %{root: [], intermediates: [[]], peer: [extensions: peer_extensions]},
         client_chain: %{root: [], intermediates: [], peer: []}
       })
 
     [ca_der | _] = Keyword.fetch!(server, :cacerts)
 
     %{
+      ca_der: ca_der,
       ca: :public_key.pkix_decode_cert(ca_der, :otp),
       peer: :public_key.pkix_decode_cert(Keyword.fetch!(server, :cert), :otp),
-      key_usage_mismatch: key_usage_mismatch([@server_auth])
+      key_usage_mismatch: key_usage_mismatch([:serverAuth])
     }
   end
 
@@ -68,7 +53,7 @@ defmodule Trento.Support.HttpClientTest do
       {verify_fun, state} = verify_fun(@url)
 
       assert {:valid, ^state} =
-               verify_fun.(ca, key_usage_mismatch([@server_auth, @client_auth]), state)
+               verify_fun.(ca, key_usage_mismatch([:serverAuth, :clientAuth]), state)
     end
 
     test "a CA certificate whose extKeyUsage adds a non-TLS purpose is still rejected",
@@ -76,7 +61,7 @@ defmodule Trento.Support.HttpClientTest do
       {verify_fun, state} = verify_fun(@url)
 
       assert {:fail, {:bad_cert, {:key_usage_mismatch, _}}} =
-               verify_fun.(ca, key_usage_mismatch([@server_auth, @code_signing]), state)
+               verify_fun.(ca, key_usage_mismatch([:serverAuth, :codeSigning]), state)
     end
 
     test "an end-entity certificate reported with key_usage_mismatch is still rejected",
@@ -84,6 +69,13 @@ defmodule Trento.Support.HttpClientTest do
       {verify_fun, state} = verify_fun(@url)
 
       assert {:fail, {:bad_cert, {:key_usage_mismatch, _}}} = verify_fun.(peer, event, state)
+    end
+
+    test "a certificate that is not a decoded OTPCertificate goes to hackney's verify_fun",
+         %{ca_der: ca_der, key_usage_mismatch: event} do
+      {verify_fun, state} = verify_fun(@url)
+
+      assert {:fail, {:bad_cert, {:key_usage_mismatch, _}}} = verify_fun.(ca_der, event, state)
     end
 
     test "other certificate errors are still rejected", %{ca: ca} do
@@ -139,7 +131,6 @@ defmodule Trento.Support.HttpClientTest do
   defp key_usage_mismatch(purposes) do
     {:bad_cert,
      {:key_usage_mismatch,
-      {extension(extnID: {2, 5, 29, 15}, critical: true, extnValue: [:keyCertSign, :cRLSign]),
-       extension(extnID: {2, 5, 29, 37}, critical: false, extnValue: purposes)}}}
+      {Extension.key_usage([:keyCertSign, :cRLSign]), Extension.ext_key_usage(purposes)}}}
   end
 end
