@@ -1,16 +1,5 @@
 [
   {
-    "timestamp": "2026-09-01T20:06:58Z",
-    "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
-    "run_id": "33551910892",
-    "suite": "Backend — Elixir 1.15.7-otp-26, OTP 26.2.1",
-    "metrics": {
-      "completed_runs": 46,
-      "failed_runs": 0
-    },
-    "top_flaky_tests": []
-  },
-  {
     "timestamp": "2026-09-01T20:29:21Z",
     "commit": "d83868fa7332fc8c6ad1cc5c1ddfab2f7d607526",
     "run_id": "33553541522",
@@ -5762,5 +5751,45 @@
       "failed_runs": 0
     },
     "top_flaky_tests": []
+  },
+  {
+    "timestamp": "2026-10-20T01:30:52Z",
+    "commit": "d48baf6dfd20e151242971c76990cd795102fa91",
+    "run_id": "39334362580",
+    "suite": "E2E",
+    "metrics": {
+      "completed_runs": 100,
+      "failed_runs": 22
+    },
+    "top_flaky_tests": [
+      {
+        "name": "should not load the page twice::Activity Log page Navigation should not load the page twice",
+        "score": 0.1747
+      },
+      {
+        "name": "should preserve filters when the activity log sidebar entry is clicked from the activity log view::Activity Log page Filtering should preserve filters when the activity log sidebar entry is clicked from the activity log view",
+        "score": 0.1566
+      },
+      {
+        "name": "should preserve filters when coming back to activity log view::Activity Log page Filtering should preserve filters when coming back to activity log view",
+        "score": 0.1356
+      },
+      {
+        "name": "should preserve filters in the upgradable packages view::SUSE Multi-Linux Manager overviews Persistent filters should preserve filters in the upgradable packages view",
+        "score": 0.07251
+      },
+      {
+        "name": "should fail to login if TOTP code is not given::Users TOTP authentication should fail to login if TOTP code is not given",
+        "score": 0.05001
+      },
+      {
+        "name": "should be able to create a new user with deleted user username and email::Users Delete user should be able to create a new user with deleted user username and email",
+        "score": 0.02501
+      },
+      {
+        "name": "should have a correct link to each host::HANA database details The hosts table shows the attached hosts to this HANA database should have a correct link to each host",
+        "score": 0.02501
+      }
+    ]
   }
 ]
