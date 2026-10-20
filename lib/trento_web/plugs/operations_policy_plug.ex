@@ -8,7 +8,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
 
   Options:
   - policy: Operations policy implementing Trento.Operations.PolicyBehaviour
-  - resource: Function returning the resource to be authorized. If it returns `nil` {:error, :not_found} is fallen back
+  - resource: Function returning the resource or list of resources to be authorized. If it returns `nil` {:error, :not_found} is fallen back
   - operation: Function returning the operation to authorize. If it returns `nil` {:error, :operation_not_found} is fallen back
   - params: Function returning the operation params. It returns an empty map by default.
   - assigns_to: Atom defining where the authorized resource is assigned in the conn once the plug finishes successfully.
@@ -27,7 +27,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
        when action in HostOperations.values()
 
   def get_resource(conn) do
-    # return the resource to be authorized
+    # return the resource or resource list to be authorized
   end
 
   def get_operation(conn) do
@@ -39,6 +39,8 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
   end
   ```
   """
+
+  alias Trento.Support.OperationsHelper
 
   import Plug.Conn
 
@@ -102,6 +104,9 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
       nil ->
         {:error, :not_found}
 
+      {:error, reason} ->
+        {:error, :not_found, reason}
+
       found_resource ->
         {:ok, found_resource}
     end
@@ -117,10 +122,35 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlug do
     end
   end
 
+  defp handle_permission(policy, operation, resources, params) when is_list(resources) do
+    result =
+      OperationsHelper.reduce_operation_authorizations(resources, :ok, fn resource ->
+        operation
+        |> policy.authorize_operation(resource, params)
+        |> with_resource_metadata(resource, policy)
+      end)
+
+    case result do
+      :ok -> :ok
+      {:error, errors} -> {:error, :forbidden, errors}
+    end
+  end
+
   defp handle_permission(policy, operation, resource, params) do
     case policy.authorize_operation(operation, resource, params) do
       :ok -> :ok
       {:error, errors} -> {:error, :forbidden, errors}
     end
+  end
+
+  defp with_resource_metadata(:ok, _, _), do: :ok
+
+  defp with_resource_metadata({:error, errors}, resource, policy) do
+    resource_metadata = Map.put(policy.metadata(resource), :mass_operation, true)
+
+    {:error,
+     Enum.map(errors, fn error ->
+       Map.update!(error, :metadata, &Enum.concat(&1, [resource_metadata]))
+     end)}
   end
 end
