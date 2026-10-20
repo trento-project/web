@@ -53,9 +53,9 @@ export const SingleOperation = {
   },
 };
 
-export const MassOperation = {
+export const BulkOperation = {
   args: {
-    operation: 'My mass operation',
+    operation: 'My bulk operation',
     errors: [
       {
         detail: 'Authorization error 1: {0}',
@@ -69,7 +69,7 @@ export const MassOperation = {
             id: 'resource-1',
             label: 'Resource 1',
             type: 'cluster',
-            mass_operation: true,
+            bulk_operation: true,
           },
         ],
       },
@@ -80,7 +80,7 @@ export const MassOperation = {
             id: 'resource-1',
             label: 'Resource 1',
             type: 'cluster',
-            mass_operation: true,
+            bulk_operation: true,
           },
         ],
       },
@@ -91,7 +91,7 @@ export const MassOperation = {
             id: 'resource-2',
             label: 'Resource 2',
             type: 'cluster',
-            mass_operation: true,
+            bulk_operation: true,
           },
         ],
       },

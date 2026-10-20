@@ -195,7 +195,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
                      "id" => 2,
                      "label" => "resource2",
                      "type" => "host",
-                     "mass_operation" => true
+                     "bulk_operation" => true
                    }
                  ]
                },
@@ -208,7 +208,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
                      "id" => 3,
                      "label" => "resource3",
                      "type" => "host",
-                     "mass_operation" => true
+                     "bulk_operation" => true
                    }
                  ]
                },
@@ -220,7 +220,7 @@ defmodule TrentoWeb.Plugs.OperationsPolicyPlugTest do
                      "id" => 4,
                      "label" => "resource4",
                      "type" => "host",
-                     "mass_operation" => true
+                     "bulk_operation" => true
                    }
                  ]
                }
