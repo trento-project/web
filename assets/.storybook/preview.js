@@ -4,9 +4,6 @@
 import { jsx as _jsx } from 'react/jsx-runtime';
 import { withState } from '@lib/test-utils';
 
-import { jsx as _jsx } from 'react/jsx-runtime';
-import { withState } from '@lib/test-utils';
-
 import '../../priv/static/assets/app.css';
 
 export default {
